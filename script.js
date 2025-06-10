@@ -2,8 +2,7 @@ let presets = null;
 
 async function fetchPresets() {
   try {
-	const cacheBuster = new Date().getTime(); // or a version number you control
-    const response = await fetch('https://gist.githubusercontent.com/lucacrippa88/1b7af8f70b3b11c56f8f8fe2d2666140/raw/presets.json?cb=${cacheBuster}');  
+    const response = await fetch('https://raw.githubusercontent.com/lucacrippa88/PedalPlex/refs/heads/main/presets.json');  
     presets = await response.json();
     populatePresets(presets);
     loadSelectedPreset(presets);
