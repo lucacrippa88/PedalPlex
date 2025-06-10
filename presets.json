@@ -1,0 +1,38 @@
+{
+  "Default": [
+    {
+      "name": "Overdrive",
+      "color": "#d35400",
+      "controls": [
+        { "label": "Level", "type": "knob", "min": 0, "max": 10, "value": 5 },
+        { "label": "Tone", "type": "knob", "min": 0, "max": 10, "value": 6 },
+        { "label": "Drive", "type": "knob", "min": 0, "max": 10, "value": 7 },
+        { "label": "Bypass", "type": "switch", "value": false }
+      ]
+    }
+  ],
+  "Ambient Delay": [
+    {
+      "name": "Delay",
+      "color": "#2980b9",
+      "controls": [
+        { "label": "Time", "type": "knob", "min": 0, "max": 1000, "value": 700 },
+        { "label": "Feedback", "type": "knob", "min": 0, "max": 10, "value": 8 },
+        { "label": "Mix", "type": "knob", "min": 0, "max": 10, "value": 5 },
+        { "label": "Bypass", "type": "switch", "value": false }
+      ]
+    }
+  ],
+  "Funky Chorus": [
+    {
+      "name": "Chorus",
+      "color": "#16a085",
+      "controls": [
+        { "label": "Rate", "type": "knob", "min": 0, "max": 10, "value": 4 },
+        { "label": "Depth", "type": "knob", "min": 0, "max": 10, "value": 5 },
+        { "label": "Mix", "type": "knob", "min": 0, "max": 10, "value": 6 },
+        { "label": "Bypass", "type": "switch", "value": true }
+      ]
+    }
+  ]
+}
