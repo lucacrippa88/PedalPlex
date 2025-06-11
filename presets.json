@@ -9,18 +9,6 @@
         { "label": "Mix", "type": "knob", "min": 0, "max": 10, "value": 5 },
         { "label": "Bypass", "type": "switch", "value": false }
       ]
-    },
-    {
-      "name": "Flanger BF-3",
-      "color": "#a0448f",
-      "controls": [
-        { "label": "Res", "type": "knob-in", "min": 0, "max": 10, "value": 5 },
-        { "label": "Manual", "type": "knob-out", "min": 0, "max": 10, "value": 6 },
-        { "label": "Depth", "type": "knob", "min": 0, "max": 10, "value": 7 },
-        { "label": "Rate", "type": "knob", "min": 0, "max": 10, "value": 7 },
-        { "label": "Mode", "type": "knob-select", "modes": ["Ultra","Standard","Gate/Pan", "Momentary"], "value": "Standard" },
-        { "label": "Bypass", "type": "switch", "value": false }
-      ]
     }
   ],
   "Ambient Delay": [
