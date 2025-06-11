@@ -173,7 +173,7 @@ function loadPedals() {
           knobRow.appendChild(knobContainer);
         }
 
-     /*    if (control.type === "switch") {
+        if (control.type === "switch") {
           const label = document.createElement("label");
           label.className = "switch"
           label.textContent = control.label + ": ";
@@ -189,59 +189,55 @@ function loadPedals() {
           label.appendChild(checkbox);
           label.appendChild(slider);
           switchRow.appendChild(label);
-        } */
+        } 
 
-          if (control.type === "switch") {
+  
+
+        if (control.type === "3way") {
   const switchContainer = document.createElement("div");
   switchContainer.className = "three-way-switch";
+
+  const label = document.createElement("div");
+  label.className = "control-label";
+  label.textContent = control.label;
+  switchContainer.appendChild(label);
 
   const stateLabel = document.createElement("div");
   stateLabel.className = "switch-state-label";
 
-  // Handle multi-position switch with values
-  if (Array.isArray(control.values) && control.values.length >= 2) {
-    let currentIndex = control.values.indexOf(control.value);
-    if (currentIndex === -1) currentIndex = 0;
+  let currentIndex = control.values.indexOf(control.value);
+  if (currentIndex === -1) currentIndex = 0;
 
+  stateLabel.textContent = control.values[currentIndex];
+
+  const toggleTrack = document.createElement("div");
+  toggleTrack.className = "toggle-track";
+
+  const toggleThumb = document.createElement("div");
+  toggleThumb.className = "toggle-thumb";
+
+  function updateThumb() {
+    const percent = (100 / (control.values.length - 1)) * currentIndex;
+    toggleThumb.style.left = `${percent}%`;
     stateLabel.textContent = control.values[currentIndex];
-
-    const toggleTrack = document.createElement("div");
-    toggleTrack.className = "toggle-track";
-
-    const toggleThumb = document.createElement("div");
-    toggleThumb.className = "toggle-thumb";
-
-    // Position thumb based on index
-    function updateThumb() {
-      const percent = (100 / (control.values.length - 1)) * currentIndex;
-      toggleThumb.style.left = `${percent}%`;
-      stateLabel.textContent = control.values[currentIndex];
-    }
-
-    toggleTrack.addEventListener("click", () => {
-      currentIndex = (currentIndex + 1) % control.values.length;
-      control.value = control.values[currentIndex];
-      updateThumb();
-    });
-
-    updateThumb();
-
-    toggleTrack.appendChild(toggleThumb);
-    switchContainer.appendChild(stateLabel);
-    switchContainer.appendChild(toggleTrack);
-    switchRow.appendChild(switchContainer);
-  } else {
-    // fallback for simple binary switch
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = control.value;
-    const label = document.createElement("label");
-    label.textContent = control.label;
-    switchContainer.appendChild(label);
-    switchContainer.appendChild(checkbox);
-    switchRow.appendChild(switchContainer);
   }
+
+  toggleTrack.addEventListener("click", () => {
+    currentIndex = (currentIndex + 1) % control.values.length;
+    control.value = control.values[currentIndex];
+    updateThumb();
+  });
+
+  updateThumb();
+  toggleTrack.appendChild(toggleThumb);
+  switchContainer.appendChild(stateLabel);
+  switchContainer.appendChild(toggleTrack);
+  switchRow.appendChild(switchContainer);
 }
+
+
+
+
 
 
 
