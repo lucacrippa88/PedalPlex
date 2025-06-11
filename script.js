@@ -117,6 +117,85 @@ function loadPedals() {
   }
 }
 
+
+
+
+
+
+
+
+function createControl(control, parent) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "control-wrapper";
+
+  if (control.type === "knob-out") {
+    const outer = createKnob(control, "outer");
+    wrapper.appendChild(outer);
+
+    // Look for a paired knob-in in the controls array
+    const innerControl = parent.pairedKnobs?.find(k => k.label === control.label.replace("Manual", "Res"));
+    if (innerControl) {
+      const inner = createKnob(innerControl, "inner");
+      outer.appendChild(inner); // append inside outer knob
+    }
+  } else if (control.type === "knob") {
+    wrapper.appendChild(createKnob(control));
+  } else if (control.type === "knob-select") {
+    wrapper.appendChild(createKnobSelect(control));
+  } else if (control.type === "switch") {
+    wrapper.appendChild(createSwitch(control));
+  }
+
+  return wrapper;
+}
+
+
+
+
+
+
+function createKnobSelect(control) {
+  const knob = document.createElement("div");
+  knob.className = "knob select";
+  knob.innerText = control.value;
+
+  knob.onclick = () => {
+    const index = control.modes.indexOf(control.value);
+    control.value = control.modes[(index + 1) % control.modes.length];
+    knob.innerText = control.value;
+  };
+
+  return knob;
+}
+
+
+
+
+
+function createKnob(control, variant) {
+  const knob = document.createElement("div");
+  knob.className = `knob ${variant || ""}`;
+  knob.title = `${control.label}: ${control.value}`;
+
+  knob.style.setProperty("--rotation", (control.value / control.max * 270 - 135) + "deg");
+
+  knob.onclick = () => {
+    control.value = (control.value + 1) % (control.max + 1);
+    knob.style.setProperty("--rotation", (control.value / control.max * 270 - 135) + "deg");
+    knob.title = `${control.label}: ${control.value}`;
+  };
+
+  return knob;
+}
+
+
+
+
+
+
+
+
+
 // THIS GOES AT THE BOTTOM
 window.onload = () => {
   fetchPresets();
