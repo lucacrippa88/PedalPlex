@@ -13,7 +13,6 @@
         { "label": "Feedb", "type": "knob", "min": 0, "max": 10, "value": 8 },
         { "label": "Time", "type": "knob", "min": 0, "max": 10, "value": 5 },
         { "label": "Mode", "type": "knob", "span": "all", "values":["Loop", "Analog", "Standard", "Tape", "Warm", "Reverse", "+Rv", "Shim", "Mod", "Warp", "Glt"], "value": 4 },
-        { "label": "Led", "type": "switch", "value": true }
       ]
     },
     {
@@ -29,7 +28,6 @@
         { "label": "Depth", "type": "knob", "min": 0, "max": 10, "value": 8 },
         { "label": "Rate", "type": "knob", "min": 0, "max": 10, "value": 5 },
         { "label": "Mode", "type": "knob", "values":["Moment", "Gate", "Standard", "Ultra"], "value": 2 },
-        { "label": "Led", "type": "switch", "value": true }
       ]
     },
     {
@@ -44,9 +42,9 @@
         { "label": "Volume", "type": "knob", "min": 0, "max": 10, "value": 7 },
         { "label": "Tone", "type": "knob", "min": 0, "max": 10, "value": 8 },
         { "label": "Sustain", "type": "knob", "min": 0, "max": 10, "value": 5 },
-        { "label": "Led", "type": "switch", "value": true },
-        { "label": "Tone", "type": "switch", "value": true },
-        { "label": "Wicker", "type": "switch", "value": false }
+        { "label": "Tone", "type": "switch", "values": ["on", "off"], "value": "on" },
+        { "label": "Tone 2", "type": "switch", "values": ["on", "mid", "off"], "value": "mid" },
+        { "label": "Wicker", "type": "switch", "values": ["on", "mid","off"], "value": "off" }
       ]
     }
   ],
