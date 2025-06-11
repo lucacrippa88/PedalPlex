@@ -42,6 +42,7 @@ function loadPedals() {
       const pedalDiv = document.createElement("div");
       pedalDiv.className = "pedal";
       pedalDiv.style.backgroundColor = pedal.color || "#333";
+      const knobColor = pedal["knobs-color"] || "#ccc";
 
       const title = document.createElement("h2");
       title.textContent = pedal.name;
@@ -60,6 +61,9 @@ function loadPedals() {
 
           const knob = document.createElement("div");
           knob.className = "knob";
+          knob.style.borderColor = knobColor;
+          knob.style.background = `radial-gradient(circle at 30% 30%, ${knobColor}, #111)`;
+
 
           const valueLabel = document.createElement("div");
           valueLabel.className = "value-label";
