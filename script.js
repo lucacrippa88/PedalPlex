@@ -194,57 +194,62 @@ function loadPedals() {
   
 
         if (control.type === "3way") {
-  const switchContainer = document.createElement("div");
-  switchContainer.className = "three-way-switch";
+          const switchContainer = document.createElement("div");
+          switchContainer.className = "three-way-switch";
 
-  const label = document.createElement("div");
-  label.className = "control-label";
-  label.textContent = control.label;
-  switchContainer.appendChild(label);
+          const label = document.createElement("div");
+          label.className = "control-label";
+          label.textContent = control.label;
+          switchContainer.appendChild(label);
 
-  const stateLabel = document.createElement("div");
-  stateLabel.className = "switch-state-label";
+          const stateLabel = document.createElement("div");
+          stateLabel.className = "switch-state-label";
 
-  let currentIndex = control.values.indexOf(control.value);
-  if (currentIndex === -1) currentIndex = 0;
+          let currentIndex = control.values.indexOf(control.value);
+          if (currentIndex === -1) currentIndex = 0;
 
-  stateLabel.textContent = control.values[currentIndex];
+          stateLabel.textContent = control.values[currentIndex];
 
-  const toggleTrack = document.createElement("div");
-  toggleTrack.className = "toggle-track";
+          const toggleTrack = document.createElement("div");
+          toggleTrack.className = "toggle-track";
 
-  const toggleThumb = document.createElement("div");
-  toggleThumb.className = "toggle-thumb";
+          const toggleThumb = document.createElement("div");
+          toggleThumb.className = "toggle-thumb";
 
-  function updateThumb() {
-    const percent = (100 / (control.values.length - 1)) * currentIndex;
-    toggleThumb.style.left = `${percent}%`;
-    stateLabel.textContent = control.values[currentIndex];
-  }
+          function updateThumb() {
+            const positions = control.values.length;
+            const currentIndex = control.values.indexOf(control.value);
+            const percent = (100 / (positions - 1)) * currentIndex;
 
-  toggleTrack.addEventListener("click", () => {
-    currentIndex = (currentIndex + 1) % control.values.length;
-    control.value = control.values[currentIndex];
-    updateThumb();
-  });
+            toggleThumb.style.left = `${percent}%`;
 
-  updateThumb();
-  toggleTrack.appendChild(toggleThumb);
-  switchContainer.appendChild(stateLabel);
-  switchContainer.appendChild(toggleTrack);
-  switchRow.appendChild(switchContainer);
-}
+            // Adjust transform
+            if (currentIndex === 0) {
+              toggleThumb.style.transform = 'translateX(0%)';
+            } else if (currentIndex === positions - 1) {
+              toggleThumb.style.transform = 'translateX(-100%)';
+            } else {
+              toggleThumb.style.transform = 'translateX(-50%)';
+            }
 
+          }
 
+          toggleTrack.addEventListener("click", () => {
+            currentIndex = (currentIndex + 1) % control.values.length;
+            control.value = control.values[currentIndex];
+            updateThumb();
+          });
 
-
-
-
+          updateThumb();
+          toggleTrack.appendChild(toggleThumb);
+          switchContainer.appendChild(stateLabel);
+          switchContainer.appendChild(toggleTrack);
+          switchRow.appendChild(switchContainer);
+        }
 
       }); 
 
-      
-
+    
       pedalDiv.appendChild(knobRow);
       pedalDiv.appendChild(switchRow);
       container.appendChild(pedalDiv);
