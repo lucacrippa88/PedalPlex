@@ -43,7 +43,8 @@ function loadPedals() {
       pedalDiv.className = "pedal";
       pedalDiv.style.backgroundColor = pedal.color || "#333";
       const knobColor = pedal["knobs-color"] || "#ccc";
-      const knobBorder = pedal["knobs-border"] || "#ccc";
+      const knobBorder = pedal["knobs-border"] || "#333";
+      const knobIndicator = pedal["knobs-indicator"] || "#fff";
 
       const title = document.createElement("h2");
       title.textContent = pedal.name;
@@ -64,6 +65,12 @@ function loadPedals() {
           knob.className = "knob";
           knob.style.background = `${knobColor}`;
           knob.style.borderColor = `${knobBorder}`;
+
+          const indicator = document.createElement("div");
+          indicator.className = "knob-indicator";
+          indicator.style.backgroundColor = knobIndicator;
+          knob.appendChild(indicator);
+
 
 
           const valueLabel = document.createElement("div");

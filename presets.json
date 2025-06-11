@@ -4,7 +4,7 @@
       "name": "Digital Delay DD-8",
       "color": "#f0f0f0",
       "knobs-color": "#3dc6fc",
-      "knobs-border": "#000000",
+      "knobs-border": "#424242",
       "knobs-indicator": "#000000",
       "controls": [
         { "label": "E.Level", "type": "knob", "min": 0, "max": 10, "value": 7 },
@@ -18,7 +18,7 @@
       "name": "Flanger BF-3",
       "color": "#a0448f",
       "knobs-color": "#1a1a1a",
-      "knobs-border": "#000000",
+      "knobs-border": "#424242",
       "knobs-indicator": "#ffffff",
       "controls": [
         { "label": "Manual", "type": "knob", "min": 0, "max": 10, "value": 7 },
