@@ -12,7 +12,7 @@
         { "label": "Feedb", "type": "knob", "min": 0, "max": 10, "value": 8 },
         { "label": "Time", "type": "knob", "min": 0, "max": 10, "value": 5 },
         { "label": "Mode", "type": "knob", "span": "all", "values":["Loop", "Analog", "Standard", "Tape", "Warm", "Reverse", "+Rv", "Shim", "Mod", "Warp", "Glt"], "value": 4 },
-        { "label": "Bypass", "type": "switch", "value": true }
+        { "label": "Check", "type": "switch", "value": true }
       ]
     },
     {
@@ -27,7 +27,23 @@
         { "label": "Depth", "type": "knob", "min": 0, "max": 10, "value": 8 },
         { "label": "Rate", "type": "knob", "min": 0, "max": 10, "value": 5 },
         { "label": "Mode", "type": "knob", "values":["Moment", "Gate", "Standard", "Ultra"], "value": 2 },
-        { "label": "Bypass", "type": "switch", "value": true }
+        { "label": "Check", "type": "switch", "value": true }
+      ]
+    },
+    {
+      "name": "Big Muff Pi Tone Wicker",
+      "color": "#a0448f",
+      "inside-color": "#ffffff",
+      "knobs-color": "#1a1a1a",
+      "knobs-border": "#424242",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        { "label": "Volume", "type": "knob", "min": 0, "max": 10, "value": 7 },
+        { "label": "Tone", "type": "knob", "min": 0, "max": 10, "value": 8 },
+        { "label": "Sustain", "type": "knob", "min": 0, "max": 10, "value": 5 },
+        { "label": "Check", "type": "switch", "value": true },
+        { "label": "Tone", "type": "switch", "value": true },
+        { "label": "Wicker", "type": "switch", "value": false }
       ]
     }
   ],
