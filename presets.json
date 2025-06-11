@@ -12,7 +12,7 @@
     },
     {
       "name": "Flanger BF-3",
-      "color": "#d35400",
+      "color": "#a0448f",
       "controls": [
         { "label": "Level", "type": "knob", "min": 0, "max": 10, "value": 5 },
         { "label": "Tone", "type": "knob", "min": 0, "max": 10, "value": 6 },

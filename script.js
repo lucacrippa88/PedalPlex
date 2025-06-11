@@ -2,7 +2,7 @@ let presets = null;
 
 async function fetchPresets() {
   try {
-    const response = await fetch('https://raw.githubusercontent.com/lucacrippa88/PedalPlex/refs/heads/main/presets.json');  
+    const response = await fetch('https://raw.githubusercontent.com/lucacrippa88/PedalPlex/refs/heads/main/presets.json');  // CAPRIRE CHE METTERCI DENTRO
     presets = await response.json();
     populatePresets(presets);
     loadSelectedPreset(presets);
