@@ -4,7 +4,6 @@ async function fetchPresets() {
   try {
     const response = await fetch('https://lucacrippa88.github.io/PedalPlex/presets.json');
     presets = await response.json();
-    console.log("Presets loaded:", presets);
     populatePresets();
     loadSelectedPreset();
   } catch (e) {
@@ -13,7 +12,7 @@ async function fetchPresets() {
   }
 }
 
-// Fill dropdown with preset names
+// 2. Fill dropdown with preset names
 function populatePresets() {
   const select = document.getElementById("presetSelect");
   select.innerHTML = "";
@@ -24,20 +23,16 @@ function populatePresets() {
     option.textContent = name;
     select.appendChild(option);
   }
-
-  // Optionally select first preset
-  if (select.options.length > 0) select.selectedIndex = 0;
 }
 
-// Load selected preset JSON into textarea and render pedals
+// 3. Load selected preset into textarea
 function loadSelectedPreset() {
   const selected = document.getElementById("presetSelect").value;
-  if (!selected || !presets[selected]) return;
   document.getElementById("jsonInput").value = JSON.stringify(presets[selected], null, 2);
   loadPedals();
 }
 
-// Render pedals on screen from JSON textarea
+// 4. Render pedals on screen from JSON textarea
 function loadPedals() {
   const input = document.getElementById("jsonInput").value;
   const container = document.getElementById("pedalboard");
@@ -64,43 +59,17 @@ function loadPedals() {
         if (control.type === "knob") {
           const knobContainer = document.createElement("div");
           knobContainer.className = "knob-container";
-          knobContainer.style.position = "relative";
 
           const knob = document.createElement("div");
           knob.className = "knob";
 
-          const indicator = document.createElement("div");
-          indicator.className = "knob-indicator";
-          knob.appendChild(indicator);
-
+          // Handle discrete knob with values array
           if (control.values) {
-            // Discrete knob with fixed positions from values array
+            // Discrete knob rotation logic
             const steps = control.values.length;
-            let index = control.value || 0;
-            knob.dataset.index = index;
+            const angleStep = 270 / (steps - 1);
+            let angle = angleStep * control.value - 135;  // control.value is index
 
-            let angle = (index / (steps - 1)) * 270 - 135;
-            knob.style.transform = `rotate(${angle}deg)`;
-
-            // Show selected mode label on top
-            const modeLabel = document.createElement("div");
-            modeLabel.className = "mode-label";
-            modeLabel.textContent = control.values[index];
-            knobContainer.appendChild(modeLabel);
-
-            // Rotate to next mode on click
-            knob.addEventListener("click", () => {
-              index = (index + 1) % steps;
-              knob.dataset.index = index;
-              control.value = index;
-              modeLabel.textContent = control.values[index];
-              angle = (index / (steps - 1)) * 270 - 135;
-              knob.style.transform = `rotate(${angle}deg)`;
-            });
-          } else {
-            // Continuous rotation knob
-            const range = control.max - control.min;
-            let angle = (control.value - control.min) / range * 270 - 135;
             knob.style.transform = `rotate(${angle}deg)`;
 
             let dragging = false;
@@ -109,6 +78,7 @@ function loadPedals() {
             document.addEventListener("mouseup", () => dragging = false);
             document.addEventListener("mousemove", e => {
               if (!dragging) return;
+
               const rect = knob.getBoundingClientRect();
               const centerX = rect.left + rect.width / 2;
               const centerY = rect.top + rect.height / 2;
@@ -116,10 +86,83 @@ function loadPedals() {
               const dy = centerY - e.clientY;
               let rad = Math.atan2(dy, dx);
               let deg = rad * (180 / Math.PI);
-              let clamped = Math.max(-135, Math.min(135, deg));
-              knob.style.transform = `rotate(${clamped}deg)`;
+              deg = Math.max(-135, Math.min(135, deg));
 
-              const percent = (clamped + 135) / 270;
+              knob.style.transform = `rotate(${deg}deg)`;
+
+              let index = Math.round((deg + 135) / angleStep);
+              index = Math.max(0, Math.min(steps - 1, index));
+              control.value = index;
+
+              // Show selected mode text on knob
+              knob.textContent = control.values[index];
+              knob.style.color = "#fff";
+              knob.style.fontSize = "0.6em";
+              knob.style.textAlign = "center";
+              knob.style.lineHeight = knob.style.height || "50px";
+            });
+
+            // Show initial mode text on knob
+            knob.textContent = control.values[control.value];
+            knob.style.color = "#fff";
+            knob.style.fontSize = "0.6em";
+            knob.style.textAlign = "center";
+            knob.style.lineHeight = knob.style.height || "50px";
+
+          } else {
+            // Continuous knob rotation logic
+
+            // Determine rotation range based on span
+            let minAngle, maxAngle;
+            if (control.span === "all") {
+              minAngle = 0;
+              maxAngle = 360;
+            } else {
+              minAngle = -135;
+              maxAngle = 135;
+            }
+
+            const range = control.max - control.min;
+            let angle;
+            if (control.span === "all") {
+              angle = ((control.value - control.min) / range) * 360;
+            } else {
+              angle = ((control.value - control.min) / range) * 270 - 135;
+            }
+
+            knob.style.transform = `rotate(${angle}deg)`;
+
+            let dragging = false;
+
+            knob.addEventListener("mousedown", () => dragging = true);
+            document.addEventListener("mouseup", () => dragging = false);
+            document.addEventListener("mousemove", e => {
+              if (!dragging) return;
+
+              const rect = knob.getBoundingClientRect();
+              const centerX = rect.left + rect.width / 2;
+              const centerY = rect.top + rect.height / 2;
+              const dx = e.clientX - centerX;
+              const dy = centerY - e.clientY;
+              let rad = Math.atan2(dy, dx);
+              let deg = rad * (180 / Math.PI);
+
+              if (control.span === "all") {
+                if (deg < 0) deg += 360;
+                deg = Math.max(0, Math.min(360, deg));
+              } else {
+                deg = Math.max(-135, Math.min(135, deg));
+              }
+
+              knob.style.transform = `rotate(${deg}deg)`;
+
+              let percent;
+              if (control.span === "all") {
+                percent = deg / 360;
+              } else {
+                percent = (deg + 135) / 270;
+              }
+
               control.value = Math.round(control.min + percent * (control.max - control.min));
             });
           }
@@ -153,19 +196,20 @@ function loadPedals() {
     });
   } catch (e) {
     alert("Invalid JSON!");
-    console.error(e);
   }
 }
 
-// Event listeners
+// THIS GOES AT THE BOTTOM
 window.onload = () => {
   fetchPresets();
 
+  // Add event listener for preset selection change
   document.getElementById("presetSelect").addEventListener("change", () => {
     loadSelectedPreset();
   });
 
-  document.getElementById("jsonInput").addEventListener("input", () => {
+  // Add event listener for manual JSON editing load button
+  document.getElementById("loadJsonBtn")?.addEventListener("click", () => {
     loadPedals();
   });
 };
