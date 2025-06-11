@@ -76,6 +76,17 @@ button {
   transition: transform 0.1s;
 }
 
+.knob {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid #000; /* overridden by JS */
+  background: #111; /* overridden by JS */
+  position: relative;
+  transition: transform 0.1s ease;
+  cursor: pointer;
+}
+
 .knob::after {
   content: "";
   position: absolute;
@@ -83,7 +94,7 @@ button {
   left: 50%;
   width: 4px;
   height: 14px;
-  background: black;
+  background: black; /* overridden by JS */
   transform: translateX(-50%);
 }
 
@@ -115,4 +126,8 @@ button {
   color: white;
   pointer-events: none;
 }
+
+
+
+
 
