@@ -3,6 +3,7 @@
     {
       "name": "Digital Delay DD-8",
       "color": "#f0f0f0",
+      "font-color": "#ffffff",
       "inside-color": "#000000",
       "knobs-color": "#3dc6fc",
       "knobs-border": "#424242",
@@ -18,6 +19,7 @@
     {
       "name": "Flanger BF-3",
       "color": "#a0448f",
+      "font-color": "#ffffff",
       "inside-color": "#000000",
       "knobs-color": "#1a1a1a",
       "knobs-border": "#424242",
@@ -32,7 +34,8 @@
     },
     {
       "name": "Big Muff Pi Tone Wicker",
-      "color": "#a0448f",
+      "color": "#ffffff",
+      "font-color": "#000000",
       "inside-color": "#ffffff",
       "knobs-color": "#1a1a1a",
       "knobs-border": "#424242",
