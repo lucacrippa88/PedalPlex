@@ -63,7 +63,7 @@ function loadPedals() {
           const knob = document.createElement("div");
           knob.className = "knob";
           knob.style.background = `${knobColor}`;
-          knob.style.border = `3p solid ${knobBorder}`;
+          knob.style.borderColor = `${knobBorder}`;
 
 
           const valueLabel = document.createElement("div");
