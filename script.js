@@ -12,11 +12,9 @@ async function fetchPresets() {
   }
 }
 
-// 2. Fill dropdown with preset names
 function populatePresets() {
   const select = document.getElementById("presetSelect");
   select.innerHTML = "";
-
   for (const name in presets) {
     const option = document.createElement("option");
     option.value = name;
@@ -25,14 +23,12 @@ function populatePresets() {
   }
 }
 
-// 3. Load selected preset into textarea
 function loadSelectedPreset() {
   const selected = document.getElementById("presetSelect").value;
   document.getElementById("jsonInput").value = JSON.stringify(presets[selected], null, 2);
   loadPedals();
 }
 
-// 4. Render pedals on screen from JSON textarea
 function loadPedals() {
   const input = document.getElementById("jsonInput").value;
   const container = document.getElementById("pedalboard");
@@ -63,12 +59,11 @@ function loadPedals() {
           const knob = document.createElement("div");
           knob.className = "knob";
 
-          // Handle discrete knob with values array
+          // Discrete knob with values array (modes)
           if (control.values) {
-            // Discrete knob rotation logic
             const steps = control.values.length;
             const angleStep = 270 / (steps - 1);
-            let angle = angleStep * control.value - 135;  // control.value is index
+            let angle = angleStep * control.value - 135;
 
             knob.style.transform = `rotate(${angle}deg)`;
 
@@ -94,7 +89,6 @@ function loadPedals() {
               index = Math.max(0, Math.min(steps - 1, index));
               control.value = index;
 
-              // Show selected mode text on knob
               knob.textContent = control.values[index];
               knob.style.color = "#fff";
               knob.style.fontSize = "0.6em";
@@ -102,29 +96,67 @@ function loadPedals() {
               knob.style.lineHeight = knob.style.height || "50px";
             });
 
-            // Show initial mode text on knob
             knob.textContent = control.values[control.value];
             knob.style.color = "#fff";
             knob.style.fontSize = "0.6em";
             knob.style.textAlign = "center";
             knob.style.lineHeight = knob.style.height || "50px";
 
-          } else {
-            // Continuous knob rotation logic
+          } 
+          // Discrete full 360° knob
+          else if (control.span === "all" && control.values && control.values.length > 1) {
+            // Treat it like discrete with full 360°
+            const steps = control.values.length;
+            const angleStep = 360 / steps;
+            let angle = angleStep * control.value; // control.value is index
 
-            // Determine rotation range based on span
-            let minAngle, maxAngle;
+            knob.style.transform = `rotate(${angle}deg)`;
+
+            let dragging = false;
+
+            knob.addEventListener("mousedown", () => dragging = true);
+            document.addEventListener("mouseup", () => dragging = false);
+            document.addEventListener("mousemove", e => {
+              if (!dragging) return;
+
+              const rect = knob.getBoundingClientRect();
+              const centerX = rect.left + rect.width / 2;
+              const centerY = rect.top + rect.height / 2;
+              const dx = e.clientX - centerX;
+              const dy = centerY - e.clientY;
+              let rad = Math.atan2(dy, dx);
+              let deg = rad * (180 / Math.PI);
+              if (deg < 0) deg += 360;
+
+              knob.style.transform = `rotate(${deg}deg)`;
+
+              let index = Math.round(deg / angleStep) % steps;
+              control.value = index;
+
+              knob.textContent = control.values[index];
+              knob.style.color = "#fff";
+              knob.style.fontSize = "0.6em";
+              knob.style.textAlign = "center";
+              knob.style.lineHeight = knob.style.height || "50px";
+            });
+
+            knob.textContent = control.values[control.value];
+            knob.style.color = "#fff";
+            knob.style.fontSize = "0.6em";
+            knob.style.textAlign = "center";
+            knob.style.lineHeight = knob.style.height || "50px";
+
+          } 
+          // Continuous knob (default)
+          else {
+            let minAngle = -135;
+            let maxAngle = 135;
+            let range = control.max - control.min;
+
+            let angle;
             if (control.span === "all") {
               minAngle = 0;
               maxAngle = 360;
-            } else {
-              minAngle = -135;
-              maxAngle = 135;
-            }
-
-            const range = control.max - control.min;
-            let angle;
-            if (control.span === "all") {
               angle = ((control.value - control.min) / range) * 360;
             } else {
               angle = ((control.value - control.min) / range) * 270 - 135;
@@ -163,7 +195,7 @@ function loadPedals() {
                 percent = (deg + 135) / 270;
               }
 
-              control.value = Math.round(control.min + percent * (control.max - control.min));
+              control.value = Math.round(control.min + percent * range);
             });
           }
 
@@ -199,16 +231,13 @@ function loadPedals() {
   }
 }
 
-// THIS GOES AT THE BOTTOM
 window.onload = () => {
   fetchPresets();
 
-  // Add event listener for preset selection change
   document.getElementById("presetSelect").addEventListener("change", () => {
     loadSelectedPreset();
   });
 
-  // Add event listener for manual JSON editing load button
   document.getElementById("loadJsonBtn")?.addEventListener("click", () => {
     loadPedals();
   });
