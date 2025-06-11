@@ -2,7 +2,7 @@
   "Default": [
     {
       "name": "Digital Delay DD-8",
-      "color": "#2980b9",
+      "color": "#f0f0f0",
       "controls": [
         { "label": "E.Level", "type": "knob", "min": 0, "max": 10, "value": 7 },
         { "label": "Feedback", "type": "knob", "min": 0, "max": 10, "value": 8 },
