@@ -8,7 +8,7 @@
       "knobs-indicator": "#000000",
       "controls": [
         { "label": "E.Level", "type": "knob", "min": 0, "max": 10, "value": 7 },
-        { "label": "Feedback", "type": "knob", "min": 0, "max": 10, "value": 8 },
+        { "label": "Feedb", "type": "knob", "min": 0, "max": 10, "value": 8 },
         { "label": "Time", "type": "knob", "min": 0, "max": 10, "value": 5 },
         { "label": "Mode", "type": "knob", "span": "all", "values":["Loop", "Analog", "Standard", "Tape", "Warm", "Reverse", "+Rv", "Shim", "Mod", "Warp", "Glt"], "value": 4 },
         { "label": "Bypass", "type": "switch", "value": true }
