@@ -40,7 +40,8 @@ button {
   width: 220px;
   border-radius: 10px;
   border: 15px solid #fff;
-  color: white; /* overridden by JS */
+  background-color: white; /* overridden by JS */
+  color: #000; /* overridden by JS */
   display: flex;
   flex-direction: column;
   align-items: center;
