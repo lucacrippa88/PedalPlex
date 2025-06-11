@@ -42,10 +42,12 @@ function loadPedals() {
       const pedalDiv = document.createElement("div");
       pedalDiv.className = "pedal";
       pedalDiv.style.borderColor = pedal.color || "#333";
-      pedalDiv.style.backgroundColor = pedal.inside-color || "#333";
+      const insideColor = pedal["inside-color"] || "#000";
       const knobColor = pedal["knobs-color"] || "#ccc";
       const knobBorder = pedal["knobs-border"] || "#333";
       const knobIndicator = pedal["knobs-indicator"] || "#fff";
+
+      pedalDiv.style.background = `${insideColor}`;
 
       const title = document.createElement("h2");
       title.textContent = pedal.name;
