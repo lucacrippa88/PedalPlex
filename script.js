@@ -1,202 +1,123 @@
-let presets = null;
+const presetURL = "https://lucacrippa88.github.io/guitar-pedal-presets/presets.json";
+    let presets = [];
 
-async function fetchPresets() {
-  try {
-    const response = await fetch('https://lucacrippa88.github.io/PedalPlex/presets.json');
-    presets = await response.json();
-    populatePresets(presets);
-    loadSelectedPreset(presets);
-  } catch (e) {
-    console.error("Failed to load presets:", e);
-    alert("Could not load presets.json");
-  }
-}
+    async function fetchPresets() {
+      try {
+        const res = await fetch(presetURL);
+        presets = await res.json();
+        populatePresets();
+        loadSelectedPreset();
+      } catch (e) {
+        console.error("Failed to load presets:", e);
+        alert("Could not load presets.json");
+      }
+    }
 
+    function populatePresets() {
+      const select = document.getElementById("preset-select");
+      presets.forEach((preset, i) => {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = preset.name;
+        select.appendChild(option);
+      });
+      select.onchange = loadSelectedPreset;
+    }
 
-// 2. Fill dropdown with preset names
-function populatePresets() {
-  const select = document.getElementById("presetSelect");
-  select.innerHTML = "";
+    function loadSelectedPreset() {
+      const idx = document.getElementById("preset-select").value;
+      const preset = presets[idx];
+      const board = document.getElementById("pedal-board");
+      board.innerHTML = "";
+      const pedal = createPedal(preset);
+      board.appendChild(pedal);
+    }
 
-  for (const name in presets) {
-    const option = document.createElement("option");
-    option.value = name;
-    option.textContent = name;
-    select.appendChild(option);
-  }
-}
+    function createPedal(preset) {
+      const container = document.createElement("div");
+      container.className = "pedal";
+      container.style.backgroundColor = preset.color;
 
-// 3. Load selected preset into textarea
-function loadSelectedPreset() {
-  const selected = document.getElementById("presetSelect").value;
-  document.getElementById("jsonInput").value = JSON.stringify(presets[selected], null, 2);
-  loadPedals();
-}
+      const name = document.createElement("div");
+      name.className = "pedal-name";
+      name.textContent = preset.name;
+      container.appendChild(name);
 
-// 4. Render pedals on screen from JSON textarea
-function loadPedals() {
-  const input = document.getElementById("jsonInput").value;
-  const container = document.getElementById("pedalboard");
-  container.innerHTML = "";
+      const row = document.createElement("div");
+      row.className = "control-row";
 
-  try {
-    const pedals = JSON.parse(input);
-
-    pedals.forEach(pedal => {
-      const pedalDiv = document.createElement("div");
-      pedalDiv.className = "pedal";
-      pedalDiv.style.backgroundColor = pedal.color || "#333";
-
-      const title = document.createElement("h2");
-      title.textContent = pedal.name;
-      pedalDiv.appendChild(title);
-
-      const knobRow = document.createElement("div");
-      knobRow.className = "knob-row";
-      const switchRow = document.createElement("div");
-      switchRow.className = "control-row";
-
-      pedal.controls.forEach(control => {
-        if (control.type === "knob") {
-          const knobContainer = document.createElement("div");
-          knobContainer.className = "knob-container";
-
-          const knob = document.createElement("div");
-          knob.className = "knob";
-
-          const range = control.max - control.min;
-          let angle = (control.value - control.min) / range * 270 - 135;
-          knob.style.transform = `rotate(${angle}deg)`;
-
-          let dragging = false;
-
-          knob.addEventListener("mousedown", () => dragging = true);
-          document.addEventListener("mouseup", () => dragging = false);
-          document.addEventListener("mousemove", e => {
-            if (!dragging) return;
-            const rect = knob.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const dx = e.clientX - centerX;
-            const dy = centerY - e.clientY;
-            let rad = Math.atan2(dy, dx);
-            let deg = rad * (180 / Math.PI);
-            let clamped = Math.max(-135, Math.min(135, deg));
-            knob.style.transform = `rotate(${clamped}deg)`;
-          });
-
-          const label = document.createElement("div");
-          label.className = "control-label";
-          label.textContent = control.label;
-
-          knobContainer.appendChild(knob);
-          knobContainer.appendChild(label);
-          knobRow.appendChild(knobContainer);
-        }
-
-        if (control.type === "switch") {
-          const label = document.createElement("label");
-          label.textContent = control.label + ": ";
-
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.checked = control.value;
-          checkbox.className = "switch";
-
-          label.appendChild(checkbox);
-          switchRow.appendChild(label);
-        }
+      preset.controls.forEach(control => {
+        row.appendChild(createControl(control, preset.controls));
       });
 
-      pedalDiv.appendChild(knobRow);
-      pedalDiv.appendChild(switchRow);
-      container.appendChild(pedalDiv);
-    });
-  } catch (e) {
-    alert("Invalid JSON!");
-  }
-}
-
-
-
-
-
-
-
-
-function createControl(control, parent) {
-  const wrapper = document.createElement("div");
-  wrapper.className = "control-wrapper";
-
-  if (control.type === "knob-out") {
-    const outer = createKnob(control, "outer");
-    wrapper.appendChild(outer);
-
-    // Look for a paired knob-in in the controls array
-    const innerControl = parent.pairedKnobs?.find(k => k.label === control.label.replace("Manual", "Res"));
-    if (innerControl) {
-      const inner = createKnob(innerControl, "inner");
-      outer.appendChild(inner); // append inside outer knob
+      container.appendChild(row);
+      return container;
     }
-  } else if (control.type === "knob") {
-    wrapper.appendChild(createKnob(control));
-  } else if (control.type === "knob-select") {
-    wrapper.appendChild(createKnobSelect(control));
-  } else if (control.type === "switch") {
-    wrapper.appendChild(createSwitch(control));
-  }
 
-  return wrapper;
-}
+    function createControl(control, allControls) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "control-wrapper";
 
+      if (control.type === "knob-out") {
+        const outer = createKnob(control, "outer");
+        wrapper.appendChild(outer);
 
+        const innerControl = allControls.find(c => c.type === "knob-in");
+        if (innerControl) {
+          const inner = createKnob(innerControl, "inner");
+          outer.appendChild(inner);
+        }
+      } else if (control.type === "knob") {
+        wrapper.appendChild(createKnob(control));
+      } else if (control.type === "knob-select") {
+        wrapper.appendChild(createKnobSelect(control));
+      } else if (control.type === "switch") {
+        wrapper.appendChild(createSwitch(control));
+      }
 
+      return wrapper;
+    }
 
+    function createKnob(control, variant) {
+      const knob = document.createElement("div");
+      knob.className = `knob ${variant || ""}`;
+      knob.title = `${control.label}: ${control.value}`;
+      knob.style.setProperty("--rotation", `${(control.value / control.max) * 270 - 135}deg`);
 
+      knob.onclick = () => {
+        control.value = (control.value + 1) % (control.max + 1);
+        knob.style.setProperty("--rotation", `${(control.value / control.max) * 270 - 135}deg`);
+        knob.title = `${control.label}: ${control.value}`;
+      };
 
-function createKnobSelect(control) {
-  const knob = document.createElement("div");
-  knob.className = "knob select";
-  knob.innerText = control.value;
+      return knob;
+    }
 
-  knob.onclick = () => {
-    const index = control.modes.indexOf(control.value);
-    control.value = control.modes[(index + 1) % control.modes.length];
-    knob.innerText = control.value;
-  };
+    function createKnobSelect(control) {
+      const knob = document.createElement("div");
+      knob.className = "knob select";
+      knob.innerText = control.value;
 
-  return knob;
-}
+      knob.onclick = () => {
+        const index = control.modes.indexOf(control.value);
+        control.value = control.modes[(index + 1) % control.modes.length];
+        knob.innerText = control.value;
+      };
 
+      return knob;
+    }
 
+    function createSwitch(control) {
+      const sw = document.createElement("div");
+      sw.className = "switch";
+      sw.textContent = control.value ? "On" : "Off";
 
+      sw.onclick = () => {
+        control.value = !control.value;
+        sw.textContent = control.value ? "On" : "Off";
+      };
 
+      return sw;
+    }
 
-function createKnob(control, variant) {
-  const knob = document.createElement("div");
-  knob.className = `knob ${variant || ""}`;
-  knob.title = `${control.label}: ${control.value}`;
-
-  knob.style.setProperty("--rotation", (control.value / control.max * 270 - 135) + "deg");
-
-  knob.onclick = () => {
-    control.value = (control.value + 1) % (control.max + 1);
-    knob.style.setProperty("--rotation", (control.value / control.max * 270 - 135) + "deg");
-    knob.title = `${control.label}: ${control.value}`;
-  };
-
-  return knob;
-}
-
-
-
-
-
-
-
-
-
-// THIS GOES AT THE BOTTOM
-window.onload = () => {
-  fetchPresets();
-};
+    window.onload = fetchPresets;
