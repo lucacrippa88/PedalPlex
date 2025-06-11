@@ -87,15 +87,25 @@ button {
   cursor: pointer;
 }
 
-.knob::after {
+/* .knob::after {
   content: "";
   position: absolute;
   top: 6px;
   left: 50%;
   width: 4px;
   height: 14px;
-  background: black; /* overridden by JS */
+  background: black;
   transform: translateX(-50%);
+} */
+
+.knob-indicator {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 4px;
+  height: 14px;
+  transform: translateX(-50%);
+  background-color: #fff; /* overridden by JS */
 }
 
 .control-label {
