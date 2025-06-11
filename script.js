@@ -4,8 +4,8 @@ async function fetchPresets() {
   try {
     const response = await fetch('https://lucacrippa88.github.io/PedalPlex/presets.json');
     presets = await response.json();
-    populatePresets();
-    loadSelectedPreset();
+    populatePresets(presets);
+    loadSelectedPreset(presets);
   } catch (e) {
     console.error("Failed to load presets:", e);
     alert("Could not load presets.json");
@@ -15,6 +15,7 @@ async function fetchPresets() {
 function populatePresets() {
   const select = document.getElementById("presetSelect");
   select.innerHTML = "";
+
   for (const name in presets) {
     const option = document.createElement("option");
     option.value = name;
@@ -55,147 +56,94 @@ function loadPedals() {
         if (control.type === "knob") {
           const knobContainer = document.createElement("div");
           knobContainer.className = "knob-container";
+          knobContainer.style.position = "relative";
 
           const knob = document.createElement("div");
           knob.className = "knob";
 
-          // Discrete knob with values array (modes)
-          if (control.values) {
-            const steps = control.values.length;
-            const angleStep = 270 / (steps - 1);
-            let angle = angleStep * control.value - 135;
+          const valueLabel = document.createElement("div");
+          valueLabel.className = "value-label";
 
-            knob.style.transform = `rotate(${angle}deg)`;
-
-            let dragging = false;
-
-            knob.addEventListener("mousedown", () => dragging = true);
-            document.addEventListener("mouseup", () => dragging = false);
-            document.addEventListener("mousemove", e => {
-              if (!dragging) return;
-
-              const rect = knob.getBoundingClientRect();
-              const centerX = rect.left + rect.width / 2;
-              const centerY = rect.top + rect.height / 2;
-              const dx = e.clientX - centerX;
-              const dy = centerY - e.clientY;
-              let rad = Math.atan2(dy, dx);
-              let deg = rad * (180 / Math.PI);
-              deg = Math.max(-135, Math.min(135, deg));
-
-              knob.style.transform = `rotate(${deg}deg)`;
-
-              let index = Math.round((deg + 135) / angleStep);
-              index = Math.max(0, Math.min(steps - 1, index));
-              control.value = index;
-
-              knob.textContent = control.values[index];
-              knob.style.color = "#fff";
-              knob.style.fontSize = "0.6em";
-              knob.style.textAlign = "center";
-              knob.style.lineHeight = knob.style.height || "50px";
-            });
-
-            knob.textContent = control.values[control.value];
-            knob.style.color = "#fff";
-            knob.style.fontSize = "0.6em";
-            knob.style.textAlign = "center";
-            knob.style.lineHeight = knob.style.height || "50px";
-
-          } 
-          // Discrete full 360° knob
-          else if (control.span === "all" && control.values && control.values.length > 1) {
-            // Treat it like discrete with full 360°
+          // Handle discrete knob with span: all (0–360°)
+          if (Array.isArray(control.values) && control.span === "all") {
             const steps = control.values.length;
             const angleStep = 360 / steps;
-            let angle = angleStep * control.value; // control.value is index
-
+            let index = control.value || 0;
+            let angle = index * angleStep;
             knob.style.transform = `rotate(${angle}deg)`;
+            valueLabel.textContent = control.values[index];
+            knobContainer.appendChild(valueLabel);
 
             let dragging = false;
-
             knob.addEventListener("mousedown", () => dragging = true);
             document.addEventListener("mouseup", () => dragging = false);
             document.addEventListener("mousemove", e => {
               if (!dragging) return;
-
               const rect = knob.getBoundingClientRect();
               const centerX = rect.left + rect.width / 2;
               const centerY = rect.top + rect.height / 2;
               const dx = e.clientX - centerX;
               const dy = centerY - e.clientY;
               let rad = Math.atan2(dy, dx);
-              let deg = rad * (180 / Math.PI);
-              if (deg < 0) deg += 360;
-
-              knob.style.transform = `rotate(${deg}deg)`;
-
-              let index = Math.round(deg / angleStep) % steps;
-              control.value = index;
-
-              knob.textContent = control.values[index];
-              knob.style.color = "#fff";
-              knob.style.fontSize = "0.6em";
-              knob.style.textAlign = "center";
-              knob.style.lineHeight = knob.style.height || "50px";
+              let deg = (rad * 180) / Math.PI;
+              deg = (deg + 360) % 360;
+              let newIndex = Math.round(deg / angleStep) % steps;
+              knob.style.transform = `rotate(${newIndex * angleStep}deg)`;
+              control.value = newIndex;
+              valueLabel.textContent = control.values[newIndex];
             });
 
-            knob.textContent = control.values[control.value];
-            knob.style.color = "#fff";
-            knob.style.fontSize = "0.6em";
-            knob.style.textAlign = "center";
-            knob.style.lineHeight = knob.style.height || "50px";
-
-          } 
-          // Continuous knob (default)
-          else {
-            let minAngle = -135;
-            let maxAngle = 135;
-            let range = control.max - control.min;
-
-            let angle;
-            if (control.span === "all") {
-              minAngle = 0;
-              maxAngle = 360;
-              angle = ((control.value - control.min) / range) * 360;
-            } else {
-              angle = ((control.value - control.min) / range) * 270 - 135;
-            }
-
+          } else if (Array.isArray(control.values)) {
+            // Handle discrete knob with 270° range (default)
+            const steps = control.values.length;
+            const angleStep = 270 / (steps - 1);
+            let index = control.value || 0;
+            let angle = index * angleStep - 135;
             knob.style.transform = `rotate(${angle}deg)`;
+            valueLabel.textContent = control.values[index];
+            knobContainer.appendChild(valueLabel);
 
             let dragging = false;
-
             knob.addEventListener("mousedown", () => dragging = true);
             document.addEventListener("mouseup", () => dragging = false);
             document.addEventListener("mousemove", e => {
               if (!dragging) return;
-
               const rect = knob.getBoundingClientRect();
               const centerX = rect.left + rect.width / 2;
               const centerY = rect.top + rect.height / 2;
               const dx = e.clientX - centerX;
               const dy = centerY - e.clientY;
               let rad = Math.atan2(dy, dx);
-              let deg = rad * (180 / Math.PI);
+              let deg = (rad * 180) / Math.PI;
+              deg = Math.max(-135, Math.min(135, deg));
+              let relDeg = deg + 135;
+              let newIndex = Math.round(relDeg / angleStep);
+              newIndex = Math.max(0, Math.min(steps - 1, newIndex));
+              knob.style.transform = `rotate(${newIndex * angleStep - 135}deg)`;
+              control.value = newIndex;
+              valueLabel.textContent = control.values[newIndex];
+            });
 
-              if (control.span === "all") {
-                if (deg < 0) deg += 360;
-                deg = Math.max(0, Math.min(360, deg));
-              } else {
-                deg = Math.max(-135, Math.min(135, deg));
-              }
+          } else {
+            // Analog knob with continuous value
+            const range = control.max - control.min;
+            let angle = (control.value - control.min) / range * 270 - 135;
+            knob.style.transform = `rotate(${angle}deg)`;
 
+            let dragging = false;
+            knob.addEventListener("mousedown", () => dragging = true);
+            document.addEventListener("mouseup", () => dragging = false);
+            document.addEventListener("mousemove", e => {
+              if (!dragging) return;
+              const rect = knob.getBoundingClientRect();
+              const centerX = rect.left + rect.width / 2;
+              const centerY = rect.top + rect.height / 2;
+              const dx = e.clientX - centerX;
+              const dy = centerY - e.clientY;
+              let rad = Math.atan2(dy, dx);
+              let deg = (rad * 180) / Math.PI;
+              deg = Math.max(-135, Math.min(135, deg));
               knob.style.transform = `rotate(${deg}deg)`;
-
-              let percent;
-              if (control.span === "all") {
-                percent = deg / 360;
-              } else {
-                percent = (deg + 135) / 270;
-              }
-
-              control.value = Math.round(control.min + percent * range);
             });
           }
 
@@ -228,17 +176,10 @@ function loadPedals() {
     });
   } catch (e) {
     alert("Invalid JSON!");
+    console.error(e);
   }
 }
 
 window.onload = () => {
   fetchPresets();
-
-  document.getElementById("presetSelect").addEventListener("change", () => {
-    loadSelectedPreset();
-  });
-
-  document.getElementById("loadJsonBtn")?.addEventListener("click", () => {
-    loadPedals();
-  });
 };

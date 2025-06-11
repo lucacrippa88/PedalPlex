@@ -8,7 +8,7 @@
         { "label": "Feedback", "type": "knob", "min": 0, "max": 10, "value": 8 },
         { "label": "Time", "type": "knob", "min": 0, "max": 10, "value": 5 },
         { "label": "Mode", "type": "knob", "span": "all", "values":["Loop", "Analog", "Standard", "Tape", "Warm", "Reverse", "+Rv", "Shim", "Mod", "Warp", "Glt"], "value": 4 },
-        { "label": "Bypass", "type": "switch", "value": false }
+        { "label": "Bypass", "type": "switch", "value": true }
       ]
     },
     {
@@ -19,7 +19,7 @@
         { "label": "Depth", "type": "knob", "min": 0, "max": 10, "value": 8 },
         { "label": "Rate", "type": "knob", "min": 0, "max": 10, "value": 5 },
         { "label": "Mode", "type": "knob", "values":["Moment", "Gate", "Standard", "Ultra"], "value": 2 },
-        { "label": "Bypass", "type": "switch", "value": false }
+        { "label": "Bypass", "type": "switch", "value": true }
       ]
     }
   ],
