@@ -4,7 +4,7 @@
       "name": "Digital Delay DD-8",
       "color": "#f0f0f0",
       "knobs-color": "#3dc6fc",
-      "knobs-border": "#000000",
+      "knobs-border": "#ffffff",
       "knobs-indicator": "#000000",
       "controls": [
         { "label": "E.Level", "type": "knob", "min": 0, "max": 10, "value": 7 },
