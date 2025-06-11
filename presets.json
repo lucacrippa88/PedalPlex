@@ -12,7 +12,7 @@
         { "label": "E.Level", "type": "knob", "min": 0, "max": 10, "value": 7 },
         { "label": "Feedb", "type": "knob", "min": 0, "max": 10, "value": 8 },
         { "label": "Time", "type": "knob", "min": 0, "max": 10, "value": 5 },
-        { "label": "Mode", "type": "knob", "span": "all", "values":["Loop", "Analog", "Standard", "Tape", "Warm", "Reverse", "+Rv", "Shim", "Mod", "Warp", "Glt"], "value": 4 },
+        { "label": "Mode", "type": "knob", "span": "all", "values":["Loop", "Analog", "Standard", "Tape", "Warm", "Reverse", "+Rv", "Shim", "Mod", "Warp", "Glt"], "value": 4 }
       ]
     },
     {
@@ -27,7 +27,7 @@
         { "label": "Manual", "type": "knob", "min": 0, "max": 10, "value": 7 },
         { "label": "Depth", "type": "knob", "min": 0, "max": 10, "value": 8 },
         { "label": "Rate", "type": "knob", "min": 0, "max": 10, "value": 5 },
-        { "label": "Mode", "type": "knob", "values":["Moment", "Gate", "Standard", "Ultra"], "value": 2 },
+        { "label": "Mode", "type": "knob", "values":["Moment", "Gate", "Standard", "Ultra"], "value": 2 }
       ]
     },
     {
