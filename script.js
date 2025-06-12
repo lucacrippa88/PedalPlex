@@ -46,48 +46,45 @@ $(document).ready(function () {
             }
 
             // Mouse drag to change knob value
-            // Mouse drag to change knob value
-knob.on("mousedown", function (e) {
-  const startY = e.pageY;
-  const startValue = control.value;
+            knob.on("mousedown", function (e) {
+              const startY = e.pageY;
+              const startValue = control.value;
 
-  $(document).on("mousemove.knob", function (e2) {
-    const delta = startY - e2.pageY;
-    const steps = Math.round(delta / 5);
+              $(document).on("mousemove.knob", function (e2) {
+                const delta = startY - e2.pageY;
+                const steps = Math.round(delta / 5);
 
-    if (control.values && Array.isArray(control.values)) {
-      // discrete values: step must be clamped in values index range
-      let newIndex = control.values.indexOf(control.value);
-      if (newIndex === -1) newIndex = 0; // fallback
-      newIndex = Math.min(Math.max(newIndex + steps, 0), control.values.length - 1);
-      control.value = control.values[newIndex];
-    } else {
-      // continuous values
-      const min = control.min ?? 0;
-      const max = control.max ?? 100; // Ensure max is defined
+                if (control.values && Array.isArray(control.values)) {
+                  // discrete values: step must be clamped in values index range
+                  let newIndex = control.values.indexOf(control.value);
+                  if (newIndex === -1) newIndex = 0; // fallback
+                  newIndex = Math.min(Math.max(newIndex + steps, 0), control.values.length - 1);
+                  control.value = control.values[newIndex];
+                } else {
+                  // continuous values
+                  const min = control.min ?? 0;
+                  const max = control.max ?? 100;
+                  let newValue = startValue + steps;
+                  newValue = Math.min(Math.max(newValue, min), max);
+                  control.value = newValue;
+                }
 
-      let newValue = startValue + steps;
-      newValue = Math.min(Math.max(newValue, min), max);
-      control.value = newValue;
-    }
+                const rotation = getRotationFromValue(control, control.value);
+                knob.data("rotation", rotation);
+                knob.css("transform", `rotate(${rotation}deg)`);
 
-    const rotation = getRotationFromValue(control, control.value);
-    knob.data("rotation", rotation);
-    knob.css("transform", `rotate(${rotation}deg)`);
+                // Update label text for discrete values
+                if ($valueLabel) {
+                  $valueLabel.text(
+                    typeof control.value === "number" ? control.values[control.value] : control.value
+                  );
+                }
+              });
 
-    // Update label text for discrete values
-    if ($valueLabel) {
-      $valueLabel.text(
-        typeof control.value === "number" ? control.values[control.value] : control.value
-      );
-    }
-  });
-
-  $(document).on("mouseup.knob", function () {
-    $(document).off(".knob");
-  });
-});
-
+              $(document).on("mouseup.knob", function () {
+                $(document).off(".knob");
+              });
+            });
 
             // Append label and knob + value label below knob if applicable
             const $label = $("<div>").addClass("label-top").text(control.label);
