@@ -6,17 +6,19 @@
         { "label": "E.Level", "value": 14 },
         { "label": "Feedb", "value": 14 },
         { "label": "Time", "value": 13 },
-        { "label": "Mode", "value": "Tape" }
+        { "label": "Mode", "value": "Tape" },
+        { "label": "Check", "value": 1}
       ]
     },
     {
       "name": "Flanger BF-3",
       "controls": [
-        { "label": "Res", "value": 14 },
-        { "label": "Depth", "value": 14 },
+        { "label": "Res", "value": 7 },
+        { "label": "Depth", "value": 9 },
         { "label": "Rate", "value": 13 },
-        { "label": "Mode", "value": "Tape" },
-        { "label": "Manual", "value": 13 }
+        { "label": "Mode", "value": "Standard" },
+        { "label": "Manual", "value": 10 },
+        { "label": "Check", "value": 1}
       ]
     }
   ]

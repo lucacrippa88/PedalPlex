@@ -25,6 +25,11 @@ $(document).ready(function () {
               })
               .css("--indicator-color", pedal["knobs-indicator"]);
 
+              if (control.position === "left") {
+                //knob.css({}) // ADD HERE THE BEHAVIOUR
+              }
+
+
             // Calculate rotation
             const rotation = getRotationFromValue(control, control.value);
             knob.data("rotation", rotation);
