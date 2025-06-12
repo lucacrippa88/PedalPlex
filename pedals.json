@@ -121,9 +121,9 @@
     {
       "name": "TS Mini",
       "size": "small",
-      "color": "#ffffff",
-      "font-color": "#000000",
-      "inside-color": "#ffffff",
+      "color": "#159651",
+      "font-color": "#ffffff",
+      "inside-color": "#159651",
       "knobs-color": "#1a1a1a",
       "knobs-border": "#424242",
       "knobs-indicator": "#ffffff",

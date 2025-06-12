@@ -1,24 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Guitar Pedalboard</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Pedalboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Guitar Pedalboard</h1>
-	  
-	  
-	  	<div class="container">
-		  <select id="presetSelect"></select>
-		  <button onclick="loadSelectedPreset()">Load Preset</button>
-		  <textarea id="jsonInput"></textarea>
-		  <div id="pedalboard"></div>
-		</div>
-	  
-  </div>
+  <div id="pedalboard"></div>
+
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
