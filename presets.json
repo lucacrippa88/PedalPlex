@@ -2,74 +2,11 @@
   "Default": [
     {
       "name": "Digital Delay DD-8",
-      "color": "#f0f0f0",
-      "font-color": "#ffffff",
-      "inside-color": "#000000",
-      "knobs-color": "#3dc6fc",
-      "knobs-border": "#424242",
-      "knobs-indicator": "#000000",
       "controls": [
-        { "label": "E.Level", "type": "knob", "min": 0, "max": 10, "value": 7 },
-        { "label": "Feedb", "type": "knob", "min": 0, "max": 10, "value": 8 },
-        { "label": "Time", "type": "knob", "min": 0, "max": 10, "value": 5 },
-        { "label": "Mode", "type": "knob", "span": "all", "values":["Loop", "Analog", "Standard", "Tape", "Warm", "Reverse", "+Rv", "Shim", "Mod", "Warp", "Glt"], "value": 4 }
-      ]
-    },
-    {
-      "name": "Flanger BF-3",
-      "color": "#a0448f",
-      "font-color": "#ffffff",
-      "inside-color": "#000000",
-      "knobs-color": "#1a1a1a",
-      "knobs-border": "#424242",
-      "knobs-indicator": "#ffffff",
-      "controls": [
-        { "label": "Manual", "type": "knob", "min": 0, "max": 10, "value": 7 },
-        { "label": "Depth", "type": "knob", "min": 0, "max": 10, "value": 8 },
-        { "label": "Rate", "type": "knob", "min": 0, "max": 10, "value": 5 },
-        { "label": "Mode", "type": "knob", "values":["Moment", "Gate", "Standard", "Ultra"], "value": 2 }
-      ]
-    },
-    {
-      "name": "Big Muff Pi Tone Wicker",
-      "color": "#ffffff",
-      "font-color": "#000000",
-      "inside-color": "#ffffff",
-      "knobs-color": "#1a1a1a",
-      "knobs-border": "#424242",
-      "knobs-indicator": "#ffffff",
-      "controls": [
-        { "label": "Volume", "type": "knob", "min": 0, "max": 10, "value": 7 },
-        { "label": "Tone", "type": "knob", "min": 0, "max": 10, "value": 8 },
-        { "label": "Sustain", "type": "knob", "min": 0, "max": 10, "value": 5 },
-        { "label": "Tone", "type": "switch", "value": true },
-        { "label": "Wicker", "type": "switch", "value": false },
-        { "label": "Valve", "type": "3way", "values": ["EL84", "EL34", "6L6"], "value": "EL84" },
-        { "label": "Power", "type": "3way", "values": ["1W", "20W", "100W"], "value": "20W" }
-      ]
-    }
-  ],
-  "Ambient Delay": [
-    {
-      "name": "Delay",
-      "color": "#2980b9",
-      "controls": [
-        { "label": "Time", "type": "knob", "min": 0, "max": 1000, "value": 700 },
-        { "label": "Feedback", "type": "knob", "min": 0, "max": 10, "value": 8 },
-        { "label": "Mix", "type": "knob", "min": 0, "max": 10, "value": 5 },
-        { "label": "Bypass", "type": "switch", "value": false }
-      ]
-    }
-  ],
-  "Funky Chorus": [
-    {
-      "name": "Chorus",
-      "color": "#16a085",
-      "controls": [
-        { "label": "Rate", "type": "knob", "min": 0, "max": 10, "value": 4 },
-        { "label": "Depth", "type": "knob", "min": 0, "max": 10, "value": 5 },
-        { "label": "Mix", "type": "knob", "min": 0, "max": 10, "value": 6 },
-        { "label": "Bypass", "type": "switch", "value": true }
+        { "label": "E.Level", "value": 7 },
+        { "label": "Feedb", "value": 8 },
+        { "label": "Time", "value": 5 },
+        { "label": "Mode", "value": "Tape" }
       ]
     }
   ]

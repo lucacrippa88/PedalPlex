@@ -26,23 +26,14 @@ $(document).ready(function () {
               .css("--indicator-color", pedal["knobs-indicator"]);
 
             // Calculate rotation
-            let rotation;
-            if (control.values && Array.isArray(control.values)) {
-              // Discrete values: index-based rotation
-              rotation = getRotationFromValue(control, control.value);
-            } else {
-              // Continuous numeric knob
-              rotation = getRotationFromValue(control, control.value);
-            }
+            const rotation = getRotationFromValue(control, control.value);
             knob.data("rotation", rotation);
             knob.css("transform", `rotate(${rotation}deg)`);
 
-            // Create the value label below the knob (only for discrete values)
+            // Create value label if using discrete values
             let $valueLabel = null;
             if (control.values && Array.isArray(control.values)) {
-              $valueLabel = $("<div>").addClass("knob-value-label").text(
-                typeof control.value === "number" ? control.values[control.value] : control.value
-              );
+              $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
             }
 
             // Mouse drag to change knob value
@@ -55,13 +46,13 @@ $(document).ready(function () {
                 const steps = Math.round(delta / 5);
 
                 if (control.values && Array.isArray(control.values)) {
-                  // discrete values: step must be clamped in values index range
-                  let newIndex = control.values.indexOf(control.value);
-                  if (newIndex === -1) newIndex = 0; // fallback
-                  newIndex = Math.min(Math.max(newIndex + steps, 0), control.values.length - 1);
+                  // Discrete values
+                  let currentIndex = control.values.indexOf(startValue);
+                  if (currentIndex === -1) currentIndex = 0;
+                  let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
                   control.value = control.values[newIndex];
                 } else {
-                  // continuous values
+                  // Continuous values
                   const min = control.min ?? 0;
                   const max = control.max ?? 100;
                   let newValue = startValue + steps;
@@ -73,11 +64,8 @@ $(document).ready(function () {
                 knob.data("rotation", rotation);
                 knob.css("transform", `rotate(${rotation}deg)`);
 
-                // Update label text for discrete values
                 if ($valueLabel) {
-                  $valueLabel.text(
-                    typeof control.value === "number" ? control.values[control.value] : control.value
-                  );
+                  $valueLabel.text(control.value);
                 }
               });
 
@@ -86,35 +74,27 @@ $(document).ready(function () {
               });
             });
 
-            // Append label and knob + value label below knob if applicable
             const $label = $("<div>").addClass("label-top").text(control.label);
             const $container = $("<div>").addClass("knob-container");
-
-            if ($valueLabel) {
-              $container.append(knob, $valueLabel); // knob then value label
-            } else {
-              $container.append(knob);
-            }
-
+            $container.append(knob);
+            if ($valueLabel) $container.append($valueLabel);
             $row.append($("<div>").append($label, $container));
           }
 
           if (control.type === "led") {
             const selectedColor = control.colors[control.value] || "#000000";
-
             const led = $("<div>").addClass("led").css("background-color", selectedColor);
 
-            // Add glow if color is not black
+            // Glow if not black
             if (selectedColor.toLowerCase() !== "#000000" && selectedColor.toLowerCase() !== "black") {
-                led.css("box-shadow", `0 0 8px 3px ${selectedColor}`);
+              led.css("box-shadow", `0 0 8px 3px ${selectedColor}`);
             } else {
-                led.css("box-shadow", "none");
+              led.css("box-shadow", "none");
             }
 
             const $label = $("<div>").addClass("label-top").text(control.label);
             $row.append($("<div>").append($label, led));
           }
-
 
           if (control.type === "multi") {
             const $label = $("<div>").addClass("label-top").text(control.label);
@@ -152,25 +132,35 @@ $(document).ready(function () {
     }
   }
 
-function getRotationFromValue(control, value) {
-  const min = control.min ?? 0;
-  const max = control.max ?? (control.values?.length - 1 ?? 1);
-  const range = max - min;
+  function getRotationFromValue(control, value) {
+    let index = 0;
+    let range = 1;
+    let min = 0;
+    let max = 1;
 
-  let angleRange, angleOffset;
+    if (control.values && Array.isArray(control.values)) {
+      index = control.values.indexOf(value);
+      if (index === -1) index = 0;
+      min = 0;
+      max = control.values.length - 1;
+    } else {
+      min = control.min ?? 0;
+      max = control.max ?? 100;
+      index = value;
+    }
 
-  if (control.span === "all") {
-    // Full circle from 0 to 360 degrees
-    angleRange = 360;
-    angleOffset = 0;
-  } else {
-    // Default 270 degrees from -135 to +135 degrees
-    angleRange = 270;
-    angleOffset = -135;
+    range = max - min;
+
+    let angleRange, angleOffset;
+    if (control.span === "all") {
+      angleRange = 360;
+      angleOffset = 0;
+    } else {
+      angleRange = 270;
+      angleOffset = -135;
+    }
+
+    const ratio = (index - min) / range;
+    return angleOffset + ratio * angleRange;
   }
-
-  const ratio = (value - min) / range;
-  return angleOffset + ratio * angleRange;
-}
-
 });
