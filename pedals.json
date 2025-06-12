@@ -83,9 +83,9 @@
             ]
         },
         { "row": [
-                { "label": "Clean", "type": "led", "colors": ["#000000", "#ffffff", "ff9999"], "value": 0},
-                { "label": "Crunch", "type": "led", "colors": ["#000000", "#ffffff", "ff0000"], "value": 0},
-                { "label": "Overdrive", "type": "led", "colors": ["#000000", "#ffffff", "ff0066"], "value": 2},
+                { "label": "Clean", "type": "led", "colors": ["#000000", "#ffffff", "#ff9999"], "value": 0},
+                { "label": "Crunch", "type": "led", "colors": ["#000000", "#ffffff", "#ff0000"], "value": 0},
+                { "label": "Overdrive", "type": "led", "colors": ["#000000", "#ffffff", "#ff0066"], "value": 2},
                 { "label": "Boost", "type": "led", "colors": ["#000000", "#ffffff"], "value": 1}
             ]
         }
