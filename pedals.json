@@ -64,7 +64,7 @@
                 { "label": "Gain", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Volume", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Boost", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Reverb", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Rev", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Presence", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Master", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Cab Sim", "type": "multi", "values": ["Cab 1", "Cab 2", "Cab 3"], "value": "Cab 3" }
