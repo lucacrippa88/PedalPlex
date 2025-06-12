@@ -98,7 +98,7 @@
     {
       "name": "Big Muff",
       "size": "large",
-      "logo": "font-family:bigmuff; font-size:50px; letter-spacing:-0.3rem; color:#148E69",
+      "logo": "font-family:bigmuff; font-size:30px; letter-spacing:-0.3rem; color:#148E69",
       "color": "#ffffff",
       "font-color": "#000000",
       "inside-color": "#ffffff",
