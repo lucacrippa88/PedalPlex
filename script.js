@@ -132,7 +132,13 @@ $(document).ready(function () {
         $pedalDiv.append($row);
       });
 
-      $pedalDiv.append($("<div>").addClass("pedal-name").text(pedal.name));
+      //$pedalDiv.append($("<div>").addClass("pedal-name").text(pedal.name));
+      const $nameDiv = $("<div>")
+        .addClass("pedal-name")
+        .text(pedal.name)
+        .attr("style", pedal.logo || ""); // Apply logo style if present
+        $pedalDiv.append($nameDiv);
+
       $("#pedalboard").append($pedalDiv);
     });
   });
