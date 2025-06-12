@@ -1,11 +1,20 @@
 {
-  "Default": [
+  "Run Like Hell": [
     {
       "name": "Digital Delay DD-8",
       "controls": [
-        { "label": "E.Level", "value": 7 },
-        { "label": "Feedb", "value": 8 },
-        { "label": "Time", "value": 5 },
+        { "label": "E.Level", "value": 14 },
+        { "label": "Feedb", "value": 14 },
+        { "label": "Time", "value": 13 },
+        { "label": "Mode", "value": "Tape" }
+      ]
+    },
+    {
+      "name": "Flanger BF-3",
+      "controls": [
+        { "label": "E.Level", "value": 14 },
+        { "label": "Feedb", "value": 14 },
+        { "label": "Time", "value": 13 },
         { "label": "Mode", "value": "Tape" }
       ]
     }
