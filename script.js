@@ -1,6 +1,28 @@
 $(document).ready(function () {
+  let pedals = [];
+  let presets = {};
+
+  // Load presets first
+  $.getJSON("https://lucacrippa88.github.io/PedalPlex/presets.json", function (presetData) {
+    presets = presetData;
+
+    // Populate preset dropdown
+    const $selector = $("<select id='preset-selector'><option disabled selected>Select a song preset</option></select><br><br>");
+    for (const songName in presets) {
+      $selector.append($("<option>").val(songName).text(songName));
+    }
+
+    $selector.on("change", function () {
+      const selected = $(this).val();
+      applyPreset(selected);
+    });
+
+    $("#pedalboard").before($selector); // Add dropdown before pedalboard
+  });
+
+  // Load pedalboard
   $.getJSON("https://lucacrippa88.github.io/PedalPlex/pedals.json", function (data) {
-    const pedals = data["Pedalboard 1"];
+    pedals = data["Pedalboard 1"];
 
     pedals.forEach(pedal => {
       const $pedalDiv = $("<div>").addClass("pedal").css({
@@ -8,7 +30,7 @@ $(document).ready(function () {
         border: `15px solid ${pedal["color"]}`,
         color: pedal["font-color"],
         width: getPedalWidth(pedal.size)
-      });
+      }).attr("data-pedal-name", pedal.name);
 
       // Controls
       pedal.controls.forEach(controlRow => {
@@ -23,25 +45,22 @@ $(document).ready(function () {
                 background: pedal["knobs-color"],
                 border: `2px solid ${pedal["knobs-border"]}`
               })
-              .css("--indicator-color", pedal["knobs-indicator"]);
+              .css("--indicator-color", pedal["knobs-indicator"])
+              .attr("data-control-label", control.label);
 
-              if (control.position === "left") {
-                //knob.css({}) // ADD HERE THE BEHAVIOUR
-              }
+            if (control.position === "left") {
+              knob.css("margin-left", "auto");
+            }
 
-
-            // Calculate rotation
             const rotation = getRotationFromValue(control, control.value);
             knob.data("rotation", rotation);
             knob.css("transform", `rotate(${rotation}deg)`);
 
-            // Create value label if using discrete values
             let $valueLabel = null;
             if (control.values && Array.isArray(control.values)) {
               $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
             }
 
-            // Mouse drag to change knob value
             knob.on("mousedown", function (e) {
               const startY = e.pageY;
               const startValue = control.value;
@@ -51,13 +70,11 @@ $(document).ready(function () {
                 const steps = Math.round(delta / 5);
 
                 if (control.values && Array.isArray(control.values)) {
-                  // Discrete values
                   let currentIndex = control.values.indexOf(startValue);
                   if (currentIndex === -1) currentIndex = 0;
                   let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
                   control.value = control.values[newIndex];
                 } else {
-                  // Continuous values
                   const min = control.min ?? 0;
                   const max = control.max ?? 100;
                   let newValue = startValue + steps;
@@ -80,8 +97,7 @@ $(document).ready(function () {
             });
 
             const $label = $("<div>").addClass("label-top").text(control.label);
-            const $container = $("<div>").addClass("knob-container");
-            $container.append(knob);
+            const $container = $("<div>").addClass("knob-container").append(knob);
             if ($valueLabel) $container.append($valueLabel);
             $row.append($("<div>").append($label, $container));
           }
@@ -89,21 +105,14 @@ $(document).ready(function () {
           if (control.type === "led") {
             const selectedColor = control.colors[control.value] || "#000000";
             const led = $("<div>").addClass("led").css("background-color", selectedColor);
-
-            // Glow if not black
-            if (selectedColor.toLowerCase() !== "#000000" && selectedColor.toLowerCase() !== "black") {
-              led.css("box-shadow", `0 0 8px 3px ${selectedColor}`);
-            } else {
-              led.css("box-shadow", "none");
-            }
-
+            led.css("box-shadow", selectedColor.toLowerCase() !== "#000000" ? `0 0 8px 3px ${selectedColor}` : "none");
             const $label = $("<div>").addClass("label-top").text(control.label);
             $row.append($("<div>").append($label, led));
           }
 
           if (control.type === "multi") {
             const $label = $("<div>").addClass("label-top").text(control.label);
-            const $select = $("<select>");
+            const $select = $("<select>").attr("data-control-label", control.label);
             control.values.forEach(val => {
               const $option = $("<option>").val(val).text(val);
               if (val === control.value) $option.attr("selected", true);
@@ -114,7 +123,7 @@ $(document).ready(function () {
 
           if (control.type === "switch") {
             const $label = $("<div>").addClass("label-top").text(control.label);
-            const $input = $("<input type='checkbox'>").prop("checked", control.value);
+            const $input = $("<input type='checkbox'>").prop("checked", control.value).attr("data-control-label", control.label);
             $row.append($("<div>").append($label, $input));
           }
         });
@@ -127,6 +136,59 @@ $(document).ready(function () {
     });
   });
 
+  function applyPreset(songName) {
+    const songPreset = presets[songName];
+    if (!songPreset) return;
+
+    songPreset.forEach(presetPedal => {
+      const $pedalDiv = $(`.pedal[data-pedal-name="${presetPedal.name}"]`);
+      if (!$pedalDiv.length) return;
+
+      presetPedal.controls.forEach(presetControl => {
+        const label = presetControl.label;
+        const value = presetControl.value;
+
+        // Try to find knob or other matching control
+        const $control = $pedalDiv.find(`[data-control-label="${label}"]`);
+        if (!$control.length) return;
+
+        if ($control.is("div.knob, div.smallknob")) {
+          const controlObj = findControlObject(presetPedal.name, label);
+          if (!controlObj) return;
+
+          controlObj.value = value;
+          const rotation = getRotationFromValue(controlObj, value);
+          $control.data("rotation", rotation);
+          $control.css("transform", `rotate(${rotation}deg`) ;
+          $control.siblings(".knob-value-label").text(value);
+        }
+
+        if ($control.is("select")) {
+          $control.val(value);
+        }
+
+        if ($control.is("input[type='checkbox']")) {
+          $control.prop("checked", value);
+        }
+      });
+    });
+  }
+
+  function findControlObject(pedalName, controlLabel) {
+    for (const pedal of pedals) {
+      if (pedal.name === pedalName) {
+        for (const row of pedal.controls) {
+          for (const ctrl of row.row) {
+            if (ctrl.label === controlLabel) {
+              return ctrl;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   function getPedalWidth(size) {
     switch (size) {
       case "small": return "100px";
@@ -138,10 +200,7 @@ $(document).ready(function () {
   }
 
   function getRotationFromValue(control, value) {
-    let index = 0;
-    let range = 1;
-    let min = 0;
-    let max = 1;
+    let index = 0, range = 1, min = 0, max = 1;
 
     if (control.values && Array.isArray(control.values)) {
       index = control.values.indexOf(value);
@@ -156,16 +215,10 @@ $(document).ready(function () {
 
     range = max - min;
 
-    let angleRange, angleOffset;
-    if (control.span === "all") {
-      angleRange = 360;
-      angleOffset = 0;
-    } else {
-      angleRange = 270;
-      angleOffset = -135;
-    }
-
+    let angleRange = control.span === "all" ? 360 : 270;
+    let angleOffset = control.span === "all" ? 0 : -135;
     const ratio = (index - min) / range;
+
     return angleOffset + ratio * angleRange;
   }
 });
