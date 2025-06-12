@@ -46,45 +46,48 @@ $(document).ready(function () {
             }
 
             // Mouse drag to change knob value
-            knob.on("mousedown", function (e) {
-              const startY = e.pageY;
-              const startValue = control.value;
+            // Mouse drag to change knob value
+knob.on("mousedown", function (e) {
+  const startY = e.pageY;
+  const startValue = control.value;
 
-              $(document).on("mousemove.knob", function (e2) {
-                const delta = startY - e2.pageY;
-                const steps = Math.round(delta / 5);
+  $(document).on("mousemove.knob", function (e2) {
+    const delta = startY - e2.pageY;
+    const steps = Math.round(delta / 5);
 
-                if (control.values && Array.isArray(control.values)) {
-                  // discrete values: step must be clamped in values index range
-                  let newIndex = control.values.indexOf(control.value);
-                  if (newIndex === -1) newIndex = 0; // fallback
-                  newIndex = Math.min(Math.max(newIndex + steps, 0), control.values.length - 1);
-                  control.value = control.values[newIndex];
-                } else {
-                  // continuous values
-                  const min = control.min ?? 0;
-                  const max = control.max ?? 100;
-                  let newValue = startValue + steps;
-                  newValue = Math.min(Math.max(newValue, min), max);
-                  control.value = newValue;
-                }
+    if (control.values && Array.isArray(control.values)) {
+      // discrete values: step must be clamped in values index range
+      let newIndex = control.values.indexOf(control.value);
+      if (newIndex === -1) newIndex = 0; // fallback
+      newIndex = Math.min(Math.max(newIndex + steps, 0), control.values.length - 1);
+      control.value = control.values[newIndex];
+    } else {
+      // continuous values
+      const min = control.min ?? 0;
+      const max = control.max ?? 100; // Ensure max is defined
 
-                const rotation = getRotationFromValue(control, control.value);
-                knob.data("rotation", rotation);
-                knob.css("transform", `rotate(${rotation}deg)`);
+      let newValue = startValue + steps;
+      newValue = Math.min(Math.max(newValue, min), max);
+      control.value = newValue;
+    }
 
-                // Update label text for discrete values
-                if ($valueLabel) {
-                  $valueLabel.text(
-                    typeof control.value === "number" ? control.values[control.value] : control.value
-                  );
-                }
-              });
+    const rotation = getRotationFromValue(control, control.value);
+    knob.data("rotation", rotation);
+    knob.css("transform", `rotate(${rotation}deg)`);
 
-              $(document).on("mouseup.knob", function () {
-                $(document).off(".knob");
-              });
-            });
+    // Update label text for discrete values
+    if ($valueLabel) {
+      $valueLabel.text(
+        typeof control.value === "number" ? control.values[control.value] : control.value
+      );
+    }
+  });
+
+  $(document).on("mouseup.knob", function () {
+    $(document).off(".knob");
+  });
+});
+
 
             // Append label and knob + value label below knob if applicable
             const $label = $("<div>").addClass("label-top").text(control.label);
@@ -152,21 +155,25 @@ $(document).ready(function () {
     }
   }
 
-  function getRotationFromValue(control, value) {
-    const min = control.min ?? 0;
-    const max = control.max ?? (control.values?.length - 1 ?? 1);
-    const range = max - min;
-    const angleRange = 270;
-    const angleOffset = -135;
+function getRotationFromValue(control, value) {
+  const min = control.min ?? 0;
+  const max = control.max ?? (control.values?.length - 1 ?? 1);
+  const range = max - min;
 
-    // For discrete values, value can be a string, so convert to index
-    let valForRotation = value;
-    if (control.values && Array.isArray(control.values)) {
-      valForRotation = control.values.indexOf(value);
-      if (valForRotation === -1) valForRotation = 0;
-    }
+  let angleRange, angleOffset;
 
-    const ratio = (valForRotation - min) / range;
-    return angleOffset + ratio * angleRange;
+  if (control.span === "all") {
+    // Full circle from 0 to 360 degrees
+    angleRange = 360;
+    angleOffset = 0;
+  } else {
+    // Default 270 degrees from -135 to +135 degrees
+    angleRange = 270;
+    angleOffset = -135;
   }
+
+  const ratio = (value - min) / range;
+  return angleOffset + ratio * angleRange;
+}
+
 });
