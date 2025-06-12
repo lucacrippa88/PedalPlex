@@ -29,7 +29,8 @@ $(document).ready(function () {
         background: pedal["inside-color"],
         border: `15px solid ${pedal["color"]}`,
         color: pedal["font-color"],
-        width: getPedalWidth(pedal.size)
+        width: getPedalWidth(pedal.size),
+        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.3)", // <- Add this line
       }).attr("data-pedal-name", pedal.name);
 
       // Controls
@@ -104,9 +105,9 @@ $(document).ready(function () {
 
           if (control.type === "led") {
             const selectedColor = control.colors[control.value] || "#000000";
-            const led = $("<div>").addClass("led").css("background-color", selectedColor);
+            const $label = $("<div>").addClass("label-top").text(control.label);
+            const led = $("<div>").addClass("led").css("background-color", selectedColor).attr("data-control-label", control.label);
             led.css("box-shadow", selectedColor.toLowerCase() !== "#000000" ? `0 0 8px 3px ${selectedColor}` : "none");
-            const $label = $("<div>").addClass("label-top").text(control.label).attr("data-control-label", control.label);
             $row.append($("<div>").append($label, led));
           }
 
@@ -148,12 +149,9 @@ $(document).ready(function () {
         const label = presetControl.label;
         const value = presetControl.value;
 
-        // Try to find LEDs
-  
-
         // Try to find knob or other matching control
         const $control = $pedalDiv.find(`[data-control-label="${label}"]`);
-        console.log($control)
+        //console.log($control)
 
         if (!$control.length) return;
 
@@ -170,7 +168,19 @@ $(document).ready(function () {
 
         if ($control.is("select")) {
           $control.val(value);
-          
+        }
+
+        if ($control.is("div.led")) {
+            const controlObj = findControlObject(presetPedal.name, label);
+            if (!controlObj || !controlObj.colors) return;
+
+            const newColor = controlObj.colors[value] || "#000000";
+            $control.css("background-color", newColor);
+            if (newColor.toLowerCase() !== "#000000" && newColor.toLowerCase() !== "black") {
+                $control.css("box-shadow", `0 0 8px 3px ${newColor}`);
+            } else {
+                $control.css("box-shadow", "none");
+            }
         }
 
         if ($control.is("input[type='checkbox']")) {

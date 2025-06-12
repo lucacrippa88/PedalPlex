@@ -90,7 +90,7 @@
                 { "label": "Clean Ch.", "type": "led", "colors": ["#000000", "#ffffff", "#ff9999"], "value": 0},
                 { "label": "Crunch Ch.", "type": "led", "colors": ["#000000", "#ffffff", "#ff0000"], "value": 0},
                 { "label": "Overdrive Ch.", "type": "led", "colors": ["#000000", "#ffffff", "#ff0066"], "value": 0},
-                { "label": "Booster", "type": "led", "colors": ["#000000", "#ffffff"], "value": 0}
+                { "label": "Boost Ch.", "type": "led", "colors": ["#000000", "#ffffff"], "value": 0}
             ]
         }
       ]
@@ -112,8 +112,8 @@
             ]
         },
         { "row": [
-                { "label": "Tone", "type": "switch", "value": true },
-                { "label": "Wicker", "type": "switch", "value": false }
+                { "label": "Tone", "type": "multi", "values": ["On", "Off"], "value": "On" },
+                { "label": "Wicker", "type": "multi", "values": ["On", "Off"], "value": "Off" }
             ]
         },
         { "row": [
