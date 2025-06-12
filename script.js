@@ -100,10 +100,21 @@ $(document).ready(function () {
           }
 
           if (control.type === "led") {
-            const led = $("<div>").addClass("led").css("background", control.color);
+            const selectedColor = control.colors[control.value] || "#000000";
+
+            const led = $("<div>").addClass("led").css("background-color", selectedColor);
+
+            // Add glow if color is not black
+            if (selectedColor.toLowerCase() !== "#000000" && selectedColor.toLowerCase() !== "black") {
+                led.css("box-shadow", `0 0 8px 3px ${selectedColor}`);
+            } else {
+                led.css("box-shadow", "none");
+            }
+
             const $label = $("<div>").addClass("label-top").text(control.label);
             $row.append($("<div>").append($label, led));
           }
+
 
           if (control.type === "multi") {
             const $label = $("<div>").addClass("label-top").text(control.label);

@@ -11,7 +11,7 @@
       "knobs-indicator": "#000000",
       "controls": [
         { "row": [
-                { "label": "Check", "type": "led", "color": "#000000"}
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
             ]
         },
         { "row": [
@@ -34,7 +34,7 @@
       "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
-                { "label": "Check", "type": "led", "color": "#f70000"}
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 1}
             ]
         },
         { "row": [
@@ -73,7 +73,7 @@
                 { "label": "ISF", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Response", "type": "multi", "values": ["EL84", "EL34", "6L6"], "value": "EL84" },
                 { "label": "Power", "type": "multi", "values": ["1W", "20W", "100W"], "value": "20W" },
-                { "label": "Reverb", "type": "led", "color": "#ffffff"}
+                { "label": "Boost", "type": "led", "colors": ["#000000", "#ffffff"], "value": 0}
             ]
         },
         { "row": [
@@ -83,10 +83,10 @@
             ]
         },
         { "row": [
-                { "label": "Clean", "type": "led", "color": "#f70000"},
-                { "label": "Crunch", "type": "led", "color": "#000000"},
-                { "label": "Overdrive", "type": "led", "color": "#000000"},
-                { "label": "Boost", "type": "led", "color": "#000000"}
+                { "label": "Clean", "type": "led", "colors": ["#000000", "#ffffff", "ff9999"], "value": 1},
+                { "label": "Crunch", "type": "led", "colors": ["#000000", "#ffffff", "ff0000"], "value": 1},
+                { "label": "Overdrive", "type": "led", "colors": ["#000000", "#ffffff", "ff0066"], "value": 1},
+                { "label": "Boost", "type": "led", "colors": ["#000000", "#ffffff"], "value": 0}
             ]
         }
       ]
@@ -113,7 +113,7 @@
             ]
         },
         { "row": [
-                { "label": "Check", "type": "led", "color": "#f70000"}
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 1}
             ]
         }
       ]
@@ -130,7 +130,7 @@
       "controls": [
         { "row": [
                 { "label": "Tone", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Check", "type": "led", "color": "#f70000"},
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0},
                 { "label": "Level", "type": "smallknob", "min": 7, "max": 17, "value": 12 }
             ]
         },
