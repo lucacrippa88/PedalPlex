@@ -63,7 +63,7 @@
         { "row": [
                 { "label": "Gain", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Volume", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Boost", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Boost Vol.", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Reverb", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Presence", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Master", "type": "knob", "min": 7, "max": 17, "value": 12 },
@@ -77,7 +77,7 @@
                 { "label": "ISF", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Response", "type": "multi", "values": ["EL84", "EL34", "6L6"], "value": "EL84" },
                 { "label": "Power", "type": "multi", "values": ["1W", "20W", "100W"], "value": "20W" },
-                { "label": "Reverb", "type": "led", "colors": ["#000000", "#ffffff"], "value": 1}
+                { "label": "Reverb", "type": "led", "colors": ["#000000", "#ffffff"], "value": 0}
             ]
         },
         { "row": [
@@ -87,10 +87,10 @@
             ]
         },
         { "row": [
-                { "label": "Clean", "type": "led", "colors": ["#000000", "#ffffff", "#ff9999"], "value": 0},
-                { "label": "Crunch", "type": "led", "colors": ["#000000", "#ffffff", "#ff0000"], "value": 0},
-                { "label": "Overdrive", "type": "led", "colors": ["#000000", "#ffffff", "#ff0066"], "value": 2},
-                { "label": "Boost", "type": "led", "colors": ["#000000", "#ffffff"], "value": 1}
+                { "label": "Clean Ch.", "type": "led", "colors": ["#000000", "#ffffff", "#ff9999"], "value": 0},
+                { "label": "Crunch Ch.", "type": "led", "colors": ["#000000", "#ffffff", "#ff0000"], "value": 0},
+                { "label": "Overdrive Ch.", "type": "led", "colors": ["#000000", "#ffffff", "#ff0066"], "value": 0},
+                { "label": "Boost", "type": "led", "colors": ["#000000", "#ffffff"], "value": 0}
             ]
         }
       ]
