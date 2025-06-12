@@ -4,7 +4,8 @@ $(document).ready(function () {
 
     pedals.forEach(pedal => {
       const $pedalDiv = $("<div>").addClass("pedal").css({
-        background: pedal.color,
+        background: pedal["inside-color"],
+        border: `15px solid ${pedal["color"]}`,
         color: pedal["font-color"],
         width: getPedalWidth(pedal.size)
       });
@@ -22,26 +23,29 @@ $(document).ready(function () {
                 background: pedal["knobs-color"],
                 border: `2px solid ${pedal["knobs-border"]}`
               })
-              .css("--indicator-color", pedal["knobs-indicator"])
-              .data("rotation", getRotationFromValue(control, control.value));
+              .css("--indicator-color", pedal["knobs-indicator"]);
 
-            knob.css("transform", `rotate(${knob.data("rotation")}deg)`);
-            knob.get(0).style.setProperty("--knob-indicator", pedal["knobs-indicator"]);
+            // Calculate rotation
+            let rotation;
+            if (control.values && Array.isArray(control.values)) {
+              // Discrete values: index-based rotation
+              rotation = getRotationFromValue(control, control.value);
+            } else {
+              // Continuous numeric knob
+              rotation = getRotationFromValue(control, control.value);
+            }
+            knob.data("rotation", rotation);
+            knob.css("transform", `rotate(${rotation}deg)`);
 
-            knob.get(0).style.setProperty("--knob-indicator", pedal["knobs-indicator"]);
-            knob.get(0).style.setProperty("--knob-border", pedal["knobs-border"]);
+            // Create the value label below the knob (only for discrete values)
+            let $valueLabel = null;
+            if (control.values && Array.isArray(control.values)) {
+              $valueLabel = $("<div>").addClass("knob-value-label").text(
+                typeof control.value === "number" ? control.values[control.value] : control.value
+              );
+            }
 
-            knob.get(0).style.setProperty("--knob-color", pedal["knobs-color"]);
-
-            knob.css({
-              backgroundColor: pedal["knobs-color"]
-            });
-
-            knob.get(0).style.setProperty("--knob-indicator", pedal["knobs-indicator"]);
-            knob.get(0).style.setProperty("--knob-border", pedal["knobs-border"]);
-
-            knob.find('::after');
-
+            // Mouse drag to change knob value
             knob.on("mousedown", function (e) {
               const startY = e.pageY;
               const startValue = control.value;
@@ -49,12 +53,32 @@ $(document).ready(function () {
               $(document).on("mousemove.knob", function (e2) {
                 const delta = startY - e2.pageY;
                 const steps = Math.round(delta / 5);
-                const newValue = Math.min(Math.max(startValue + steps, control.min), control.max);
-                control.value = newValue;
 
-                const rotation = getRotationFromValue(control, newValue);
+                if (control.values && Array.isArray(control.values)) {
+                  // discrete values: step must be clamped in values index range
+                  let newIndex = control.values.indexOf(control.value);
+                  if (newIndex === -1) newIndex = 0; // fallback
+                  newIndex = Math.min(Math.max(newIndex + steps, 0), control.values.length - 1);
+                  control.value = control.values[newIndex];
+                } else {
+                  // continuous values
+                  const min = control.min ?? 0;
+                  const max = control.max ?? 100;
+                  let newValue = startValue + steps;
+                  newValue = Math.min(Math.max(newValue, min), max);
+                  control.value = newValue;
+                }
+
+                const rotation = getRotationFromValue(control, control.value);
                 knob.data("rotation", rotation);
                 knob.css("transform", `rotate(${rotation}deg)`);
+
+                // Update label text for discrete values
+                if ($valueLabel) {
+                  $valueLabel.text(
+                    typeof control.value === "number" ? control.values[control.value] : control.value
+                  );
+                }
               });
 
               $(document).on("mouseup.knob", function () {
@@ -62,8 +86,17 @@ $(document).ready(function () {
               });
             });
 
+            // Append label and knob + value label below knob if applicable
             const $label = $("<div>").addClass("label-top").text(control.label);
-            $row.append($("<div>").append($label, knob));
+            const $container = $("<div>").addClass("knob-container");
+
+            if ($valueLabel) {
+              $container.append(knob, $valueLabel); // knob then value label
+            } else {
+              $container.append(knob);
+            }
+
+            $row.append($("<div>").append($label, $container));
           }
 
           if (control.type === "led") {
@@ -100,11 +133,11 @@ $(document).ready(function () {
 
   function getPedalWidth(size) {
     switch (size) {
-      case "small": return "100px";
-      case "standard": return "160px";
-      case "large": return "220px";
-      case "xlarge": return "300px";
-      default: return "160px";
+      case "small": return "120px";
+      case "standard": return "190px";
+      case "large": return "210px";
+      case "xlarge": return "400px";
+      default: return "190px";
     }
   }
 
@@ -115,7 +148,14 @@ $(document).ready(function () {
     const angleRange = 270;
     const angleOffset = -135;
 
-    const ratio = (value - min) / range;
+    // For discrete values, value can be a string, so convert to index
+    let valForRotation = value;
+    if (control.values && Array.isArray(control.values)) {
+      valForRotation = control.values.indexOf(value);
+      if (valForRotation === -1) valForRotation = 0;
+    }
+
+    const ratio = (valForRotation - min) / range;
     return angleOffset + ratio * angleRange;
   }
 });
