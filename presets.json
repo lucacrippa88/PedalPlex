@@ -43,7 +43,9 @@
         { "label": "Tone", "type": "knob", "min": 0, "max": 10, "value": 8 },
         { "label": "Sustain", "type": "knob", "min": 0, "max": 10, "value": 5 },
         { "label": "Tone", "type": "switch", "value": true },
-        { "label": "Wicker", "type": "switch", "value": false }
+        { "label": "Wicker", "type": "switch", "value": false },
+        { "label": "Valve", "type": "3way", "values": ["EL84", "EL34", "6L6"], "value": "EL84" },
+        { "label": "Power", "type": "3way", "values": ["1W", "20W", "100W"], "value": "20W" }
       ]
     }
   ],

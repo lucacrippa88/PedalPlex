@@ -173,6 +173,10 @@ function loadPedals() {
           knobRow.appendChild(knobContainer);
         }
 
+
+
+
+
         if (control.type === "switch") {
           const label = document.createElement("label");
           label.className = "switch"
@@ -192,6 +196,7 @@ function loadPedals() {
         } 
 
   
+        
 
         if (control.type === "3way") {
           const switchContainer = document.createElement("div");
