@@ -106,7 +106,7 @@ $(document).ready(function () {
             const selectedColor = control.colors[control.value] || "#000000";
             const led = $("<div>").addClass("led").css("background-color", selectedColor);
             led.css("box-shadow", selectedColor.toLowerCase() !== "#000000" ? `0 0 8px 3px ${selectedColor}` : "none");
-            const $label = $("<div>").addClass("label-top").text(control.label);
+            const $label = $("<div>").addClass("label-top").text(control.label).attr("data-control-label", control.label);
             $row.append($("<div>").append($label, led));
           }
 
@@ -148,8 +148,13 @@ $(document).ready(function () {
         const label = presetControl.label;
         const value = presetControl.value;
 
+        // Try to find LEDs
+  
+
         // Try to find knob or other matching control
         const $control = $pedalDiv.find(`[data-control-label="${label}"]`);
+        console.log($control)
+
         if (!$control.length) return;
 
         if ($control.is("div.knob, div.smallknob")) {
@@ -165,6 +170,7 @@ $(document).ready(function () {
 
         if ($control.is("select")) {
           $control.val(value);
+          
         }
 
         if ($control.is("input[type='checkbox']")) {
