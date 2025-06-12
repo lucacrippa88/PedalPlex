@@ -133,7 +133,7 @@ $(document).ready(function () {
 
   function getPedalWidth(size) {
     switch (size) {
-      case "small": return "120px";
+      case "small": return "100px";
       case "standard": return "190px";
       case "large": return "210px";
       case "xlarge": return "400px";

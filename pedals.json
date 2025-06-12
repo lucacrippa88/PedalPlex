@@ -73,7 +73,7 @@
                 { "label": "ISF", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Response", "type": "multi", "values": ["EL84", "EL34", "6L6"], "value": "EL84" },
                 { "label": "Power", "type": "multi", "values": ["1W", "20W", "100W"], "value": "20W" },
-                { "label": "Reverb", "type": "switch", "value": false }
+                { "label": "Reverb", "type": "led", "color": "#ffffff"}
             ]
         },
         { "row": [
