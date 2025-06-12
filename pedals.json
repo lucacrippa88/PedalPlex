@@ -45,7 +45,7 @@
             ]
         },
         { "row": [
-                { "label": "Manual", "type": "smallknob", "min": 7, "max": 17, "value": 12 }
+                { "label": "Manual", "type": "knob", "position": "left", "min": 7, "max": 17, "value": 12 }
             ]
         }
       ]
