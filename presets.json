@@ -12,10 +12,11 @@
     {
       "name": "Flanger BF-3",
       "controls": [
-        { "label": "E.Level", "value": 14 },
-        { "label": "Feedb", "value": 14 },
-        { "label": "Time", "value": 13 },
-        { "label": "Mode", "value": "Tape" }
+        { "label": "Res", "value": 14 },
+        { "label": "Depth", "value": 14 },
+        { "label": "Rate", "value": 13 },
+        { "label": "Mode", "value": "Tape" },
+        { "label": "Manual", "value": 13 }
       ]
     }
   ]
