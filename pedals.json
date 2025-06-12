@@ -63,7 +63,7 @@
         { "row": [
                 { "label": "Gain", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Volume", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Boost Vol.", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Boost", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Reverb", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Presence", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Master", "type": "knob", "min": 7, "max": 17, "value": 12 },
@@ -90,7 +90,7 @@
                 { "label": "Clean Ch.", "type": "led", "colors": ["#000000", "#ffffff", "#ff9999"], "value": 0},
                 { "label": "Crunch Ch.", "type": "led", "colors": ["#000000", "#ffffff", "#ff0000"], "value": 0},
                 { "label": "Overdrive Ch.", "type": "led", "colors": ["#000000", "#ffffff", "#ff0066"], "value": 0},
-                { "label": "Boost", "type": "led", "colors": ["#000000", "#ffffff"], "value": 0}
+                { "label": "Booster", "type": "led", "colors": ["#000000", "#ffffff"], "value": 0}
             ]
         }
       ]
