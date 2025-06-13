@@ -31,7 +31,7 @@
       "color": "#a0448f",
       "font-color": "#ffffff",
       "inside-color": "#212121",
-      "knobs-color": "#1a1a1a",
+      "knobs-color": "#191919",
       "knobs-border": "#424242",
       "knobs-indicator": "#ffffff",
       "controls": [
@@ -53,10 +53,10 @@
       "name": "Amped 3",
       "width": "xlarge",
       "height": "xlarge",
-      "color": "#252525",
+      "color": "#282828",
       "font-color": "#ffffff",
-      "inside-color": "#252525",
-      "knobs-color": "#292929",
+      "inside-color": "#282828",
+      "knobs-color": "#191919",
       "knobs-border": "#000000",
       "knobs-indicator": "#ffffff",
       "controls": [
