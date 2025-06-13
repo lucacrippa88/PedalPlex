@@ -38,7 +38,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start; /* Align children to top */
-  gap: px;
+  gap: 0px;
   min-width: 40px;
   /*height: 70px; /* fix height so all knobs align */
 }
@@ -68,7 +68,7 @@ body {
 .knob::after {
   content: '';
   position: absolute;
-  top: 3px;
+  top: 2px;
   left: 50%;
   transform: translateX(-50%);
   width: 4px;
@@ -78,8 +78,8 @@ body {
 }
 
 .smallknob {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   position: relative;
   cursor: pointer;

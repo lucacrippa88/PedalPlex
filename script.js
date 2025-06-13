@@ -102,8 +102,8 @@ $(document).ready(function () {
         if (control.position === "under-top" && control.type === "smallknob") {
         $label = $("<div>").css({
             position: "absolute",
-            right: "-10px",
-            top: "50%",
+            left: "20px",
+            top: "110px",
             transform: "translateY(-50%)",
             "white-space": "nowrap",
             "font-size": "10px"
@@ -125,7 +125,7 @@ $(document).ready(function () {
         if (control.position === "under-top" && $row.children().length > 0) {
             // Nest this knob under the previous control in this row
             const $prev = $row.children().last();
-            $prev.append($("<div>").css("margin-top", "-54px").append($label, $container));
+            $prev.append($("<div>").css("margin-top", "-52px").append($label, $container));
         } else {
             $row.append($knobWrapper);
         }
