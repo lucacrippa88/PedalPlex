@@ -22,7 +22,7 @@ $(document).ready(function () {
 
   // Load pedalboard
   $.getJSON("https://lucacrippa88.github.io/PedalPlex/pedals.json", function (data) {
-    pedals = data["Pedalboard 1"];
+    pedals = data["Pedals"];
 
     pedals.forEach(pedal => {
       const $pedalDiv = $("<div>").addClass("pedal").css({
