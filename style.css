@@ -22,7 +22,8 @@ body {
 }
 
 .pedal-name {
-  margin-top: 10px;
+  position: absolute;
+  bottom: 5px;
   font-weight: bold;
 }
 
