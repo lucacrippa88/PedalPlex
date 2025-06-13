@@ -12,7 +12,7 @@
       "knobs-indicator": "#000000",
       "controls": [
         { "row": [
-                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
+                { "label": "", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
             ]
         },
         { "row": [
@@ -36,7 +36,7 @@
       "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
-                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
+                { "label": "", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
             ]
         },
         { "row": [
@@ -55,7 +55,7 @@
     {
       "name": "Amped 3",
       "width": "xlarge",
-      "height": "large",
+      "height": "xlarge",
       "color": "#2e2e2e",
       "font-color": "#ffffff",
       "inside-color": "#2e2e2e",
