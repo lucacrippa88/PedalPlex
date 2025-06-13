@@ -30,7 +30,7 @@
         { "label": "Reverb", "value": 14 },
         { "label": "Presence", "value": 11 },
         { "label": "Master", "value": 9},
-        { "label": "Cabinet Sim", "value": "Cabinet 3"},
+        { "label": "Cabinet Sim", "value": "US Mod 1x10"},
         { "label": "Bass", "value": 14},
         { "label": "Middle", "value": 10},
         { "label": "Treble", "value": 11},
