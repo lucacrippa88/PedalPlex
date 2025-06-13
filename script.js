@@ -29,7 +29,8 @@ $(document).ready(function () {
         background: pedal["inside-color"],
         border: `15px solid ${pedal["color"]}`,
         color: pedal["font-color"],
-        width: getPedalWidth(pedal.size),
+        width: getPedalWidth(pedal.width),
+        height: getPedalHeight(pedal.height),
         boxShadow: "0 8px 16px rgba(0, 0, 0, 0.3)", // <- Add this line
       }).attr("data-pedal-name", pedal.name);
 
@@ -211,8 +212,18 @@ $(document).ready(function () {
     return null;
   }
 
-  function getPedalWidth(size) {
-    switch (size) {
+  function getPedalWidth(width) {
+    switch (width) {
+      case "small": return "100px";
+      case "standard": return "190px";
+      case "large": return "210px";
+      case "xlarge": return "400px";
+      default: return "190px";
+    }
+  }
+
+  function getPedalHeight(height) {
+    switch (height) {
       case "small": return "100px";
       case "standard": return "190px";
       case "large": return "210px";

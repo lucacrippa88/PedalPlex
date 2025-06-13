@@ -2,7 +2,8 @@
   "Pedalboard 1": [
     {
       "name": "Digital Delay DD-8",
-      "size": "standard",
+      "width": "standard",
+      "height": "standard",
       "color": "#f0f0f0",
       "font-color": "#ffffff",
       "inside-color": "#000000",
@@ -25,7 +26,8 @@
     },
     {
       "name": "Flanger BF-3",
-      "size": "standard",
+      "width": "standard",
+      "height": "standard",
       "color": "#a0448f",
       "font-color": "#ffffff",
       "inside-color": "#000000",
@@ -52,7 +54,8 @@
     },
     {
       "name": "Amped 3",
-      "size": "xlarge",
+      "width": "xlarge",
+      "height": "large",
       "color": "#2e2e2e",
       "font-color": "#ffffff",
       "inside-color": "#2e2e2e",
@@ -97,7 +100,8 @@
     },
     {
       "name": "Big Muff",
-      "size": "large",
+      "width": "large",
+      "height": "standard",
       "logo": "font-family:bigmuff; font-size:47px; letter-spacing:-0.25rem; word-spacing:-10px; position: relative; top:-53px; color:#148E69",
       "color": "#ffffff",
       "font-color": "#000000",
@@ -125,7 +129,8 @@
     },
     {
       "name": "TS Mini",
-      "size": "small",
+      "width": "small",
+      "height": "standard",
       "color": "#159651",
       "font-color": "#ffffff",
       "inside-color": "#159651",
