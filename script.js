@@ -31,7 +31,7 @@ $(document).ready(function () {
         color: pedal["font-color"],
         width: getPedalWidth(pedal.width),
         height: getPedalHeight(pedal.height),
-        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.3)", // <- Add this line
+        boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`, // <- Add this line
       }).attr("data-pedal-name", pedal.name);
 
       // Controls
@@ -40,69 +40,78 @@ $(document).ready(function () {
 
         controlRow.row.forEach(control => {
           if (control.type === "knob" || control.type === "smallknob") {
-            const isSmall = control.type === "smallknob";
-            const knob = $("<div>")
-              .addClass(isSmall ? "smallknob" : "knob")
-              .css({
-                background: pedal["knobs-color"],
-                border: `2px solid ${pedal["knobs-border"]}`
-              })
-              .css("--indicator-color", pedal["knobs-indicator"])
-              .attr("data-control-label", control.label);
+  const isSmall = control.type === "smallknob";
+  const knob = $("<div>")
+    .addClass(isSmall ? "smallknob" : "knob")
+    .css({
+      background: pedal["knobs-color"],
+      border: `2px solid ${pedal["knobs-border"]}`
+    })
+    .css("--indicator-color", pedal["knobs-indicator"])
+    .attr("data-control-label", control.label);
 
-            if (control.position === "left") {
-              knob.css("margin-left", "auto");
-            }
+  if (control.position === "left") {
+    knob.css("margin-left", "auto");
+  }
 
-            const rotation = getRotationFromValue(control, control.value);
-            knob.data("rotation", rotation);
-            knob.css("transform", `rotate(${rotation}deg)`);
+  const rotation = getRotationFromValue(control, control.value);
+  knob.data("rotation", rotation);
+  knob.css("transform", `rotate(${rotation}deg)`);
 
-            let $valueLabel = null;
-            if (control.values && Array.isArray(control.values)) {
-              $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
-            }
+  let $valueLabel = null;
+  if (control.values && Array.isArray(control.values)) {
+    $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
+  }
 
-            knob.on("mousedown", function (e) {
-              const startY = e.pageY;
-              const startValue = control.value;
+  knob.on("mousedown", function (e) {
+    const startY = e.pageY;
+    const startValue = control.value;
 
-              $(document).on("mousemove.knob", function (e2) {
-                const delta = startY - e2.pageY;
-                const steps = Math.round(delta / 5);
+    $(document).on("mousemove.knob", function (e2) {
+      const delta = startY - e2.pageY;
+      const steps = Math.round(delta / 5);
 
-                if (control.values && Array.isArray(control.values)) {
-                  let currentIndex = control.values.indexOf(startValue);
-                  if (currentIndex === -1) currentIndex = 0;
-                  let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
-                  control.value = control.values[newIndex];
-                } else {
-                  const min = control.min ?? 0;
-                  const max = control.max ?? 100;
-                  let newValue = startValue + steps;
-                  newValue = Math.min(Math.max(newValue, min), max);
-                  control.value = newValue;
-                }
+      if (control.values && Array.isArray(control.values)) {
+        let currentIndex = control.values.indexOf(startValue);
+        if (currentIndex === -1) currentIndex = 0;
+        let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
+        control.value = control.values[newIndex];
+      } else {
+        const min = control.min ?? 0;
+        const max = control.max ?? 100;
+        let newValue = startValue + steps;
+        newValue = Math.min(Math.max(newValue, min), max);
+        control.value = newValue;
+      }
 
-                const rotation = getRotationFromValue(control, control.value);
-                knob.data("rotation", rotation);
-                knob.css("transform", `rotate(${rotation}deg)`);
+      const newRotation = getRotationFromValue(control, control.value);
+      knob.data("rotation", newRotation);
+      knob.css("transform", `rotate(${newRotation}deg)`);
+      if ($valueLabel) {
+        $valueLabel.text(control.value);
+      }
+    });
 
-                if ($valueLabel) {
-                  $valueLabel.text(control.value);
-                }
-              });
+    $(document).on("mouseup.knob", function () {
+      $(document).off(".knob");
+    });
+  });
 
-              $(document).on("mouseup.knob", function () {
-                $(document).off(".knob");
-              });
-            });
+  const $label = $("<div>").addClass("label-top").text(control.label);
+  const $container = $("<div>").addClass("knob-container").append(knob);
+  if ($valueLabel) $container.append($valueLabel);
 
-            const $label = $("<div>").addClass("label-top").text(control.label);
-            const $container = $("<div>").addClass("knob-container").append(knob);
-            if ($valueLabel) $container.append($valueLabel);
-            $row.append($("<div>").append($label, $container));
-          }
+  const $knobWrapper = $("<div>").append($label, $container);
+
+  if (control.position === "under-top" && $row.children().length > 0) {
+    // Nest this knob under the previous control in this row
+    const $prev = $row.children().last();
+    $prev.append($("<div>").css("margin-top", "-25px").append($label, $container));
+  } else {
+    $row.append($knobWrapper);
+  }
+}
+
 
           if (control.type === "led") {
             const selectedColor = control.colors[control.value] || "#000000";
