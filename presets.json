@@ -24,23 +24,23 @@
     {
       "name": "Amped 3",
       "controls": [
-        { "label": "Gain", "value": 7 },
-        { "label": "Volume", "value": 9 },
-        { "label": "Bst", "value": 13 },
-        { "label": "Reverb", "value": 10 },
-        { "label": "Presence", "value": 10 },
+        { "label": "Gain", "value": 11 },
+        { "label": "Volume", "value": 14 },
+        { "label": "Bst", "value": 15 },
+        { "label": "Reverb", "value": 14 },
+        { "label": "Presence", "value": 11 },
         { "label": "Master", "value": 9},
         { "label": "Cabinet Sim", "value": "Cabinet 3"},
-        { "label": "Bass", "value": 9},
-        { "label": "Middle", "value": 9},
-        { "label": "Treble", "value": 9},
+        { "label": "Bass", "value": 14},
+        { "label": "Middle", "value": 10},
+        { "label": "Treble", "value": 11},
         { "label": "ISF", "value": 7},
         { "label": "Response", "value": "6L6"},
         { "label": "Power", "value": "20W"},
         { "label": "Reverb", "value": "Light"},
         { "label": "Boost", "value": "Pre"},
         { "label": "Reverb Ch.", "value": 1},
-        { "label": "Crunch", "value": "Super"},
+        { "label": "Crunch", "value": "Crunch"},
         { "label": "Crunch Ch.", "value": 1}
       ]
     }
