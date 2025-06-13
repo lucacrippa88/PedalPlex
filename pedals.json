@@ -43,7 +43,7 @@
         },
         { "row": [
                 { "label": "Manual", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Res", "type": "smallknob", "position": "inside-top", "min": 7, "max": 17, "value": 12 },
+                { "label": "Res", "type": "smallknob", "position": "under-top", "min": 7, "max": 17, "value": 12 },
                 { "label": "Depth", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Rate", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Mode", "type": "knob", "values":["Mom", "Gate", "Std", "Ultra"], "value": "Std" }
