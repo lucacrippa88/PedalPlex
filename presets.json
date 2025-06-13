@@ -27,7 +27,7 @@
         { "label": "Gain", "value": 11 },
         { "label": "Volume", "value": 14 },
         { "label": "Bst", "value": 15 },
-        { "label": "Reverb", "value": 14 },
+        { "label": "Rev", "value": 14 },
         { "label": "Presence", "value": 11 },
         { "label": "Master", "value": 9},
         { "label": "Cabinet Sim", "value": "Cabinet 3"},
