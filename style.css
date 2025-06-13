@@ -24,7 +24,6 @@ body {
 .pedal-name {
   position: absolute;
   bottom: 5px;
-  font-weight: bold;
 }
 
 .row {
