@@ -99,7 +99,7 @@ $(document).ready(function () {
 
         //const $label = $("<div>").addClass("label-top").text(control.label);
         let $label;
-        if (control.position === "inside-top" && control.type === "smallknob") {
+        if (control.position === "under-top" && control.type === "smallknob") {
         $label = $("<div>").css({
             position: "absolute",
             right: "-10px",
@@ -114,8 +114,7 @@ $(document).ready(function () {
 
         const $container = $("<div>").addClass("knob-container").append(knob);
         $container.css({
-            position: "relative",
-            top:"-29px"
+            position: "relative"
         });
         $container.append($label);
 
