@@ -67,7 +67,7 @@
                 { "label": "Rev", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Presence", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Master", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Cabinet Sim", "type": "multi", "values": ["Cab 1", "Cab 2", "Cab 3"], "value": "Cab 3" }
+                { "label": "Cabinet Sim", "type": "multi", "values": ["Cabinet 1", "Cabinet 2", "Cabinet 3"], "value": "Cabinet 1" }
             ]
         },
         { "row": [
