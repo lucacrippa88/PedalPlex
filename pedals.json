@@ -20,7 +20,7 @@
                 { "label": "E.Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Feedb", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Time", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Mode", "type": "knob", "span": "all", "values":["Loop", "Analog", "Std", "Tape", "Warm", "Reverse", "+Rv", "Shim", "Mod", "Warp", "Glt", ""], "value": "Std" }
+                { "label": "Mode", "type": "knob", "span": "all", "values":["Std", "Analog", "Loop", "GLT", "Warp", "Mod", "Shim", "+Rv", "Reverse", "Warm", "Tape", "Std"], "value": "Std" }
             ]
         }
       ]
