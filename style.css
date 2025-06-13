@@ -149,3 +149,22 @@ body {
   margin-top: 4px;
   align-self: center;
 }
+
+
+
+
+
+
+
+@font-face {
+  font-family: bigmuff;
+  src: url("fonts/ITC Pioneer Regular.otf");
+}
+@font-face {
+  font-family: boss;
+  src: url("fonts/BossStyle-Bold.otf");
+}
+@font-face {
+  font-family: amped;
+  src: url("fonts/BebasNeue-Regular.otf");
+}
