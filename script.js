@@ -226,8 +226,8 @@ $(document).ready(function () {
     switch (height) {
       case "small": return "100px";
       case "standard": return "160px";
-      case "large": return "300px";
-      case "xlarge": return "400px";
+      case "large": return "200px";
+      case "xlarge": return "300px";
       default: return "400px";
     }
   }
