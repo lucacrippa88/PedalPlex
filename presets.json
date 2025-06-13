@@ -16,7 +16,7 @@
         { "label": "Res", "value": 7 },
         { "label": "Depth", "value": 9 },
         { "label": "Rate", "value": 13 },
-        { "label": "Mode", "value": "Standard" },
+        { "label": "Mode", "value": "Std" },
         { "label": "Manual", "value": 10 },
         { "label": "Check", "value": 1}
       ]
