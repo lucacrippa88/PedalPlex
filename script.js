@@ -225,10 +225,10 @@ $(document).ready(function () {
   function getPedalHeight(height) {
     switch (height) {
       case "small": return "100px";
-      case "standard": return "190px";
-      case "large": return "210px";
+      case "standard": return "160px";
+      case "large": return "300px";
       case "xlarge": return "400px";
-      default: return "190px";
+      default: return "400px";
     }
   }
 
