@@ -118,7 +118,7 @@ $(document).ready(function () {
             if (control.position === "under-top" && $row.children().length > 0) {
                 // Append under previous control
                 const $prev = $row.children().last();
-                $prev.append($("<div>").css("margin-top", "5px").append($label, led));
+                $prev.append($("<div>").css("margin-top", "0px").append($label, led));
             } else {
                 // Default behavior
                 $row.append($ledContainer);
