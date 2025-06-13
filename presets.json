@@ -35,7 +35,7 @@
         { "label": "Middle", "value": 9},
         { "label": "Treble", "value": 9},
         { "label": "ISF", "value": 7},
-        { "label": "Response", "value": "6L6"},
+        { "label": "Resp", "value": "6L6"},
         { "label": "Power", "value": "20W"},
         { "label": "Reverb", "value": "Light"},
         { "label": "Boost", "value": "Pre"},
