@@ -37,8 +37,9 @@
         { "label": "ISF", "value": 7},
         { "label": "Response", "value": "6L6"},
         { "label": "Power", "value": "20W"},
-        { "label": "Reverb", "value": 1},
-        { "label": "Crunch", "value": "Super Crunch"},
+        { "label": "Reverb", "value": "Light"},
+        { "label": "Reverb Ch.", "value": 1},
+        { "label": "Crunch", "value": "Super"},
         { "label": "Crunch Ch.", "value": 1}
       ]
     }
