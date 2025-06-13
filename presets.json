@@ -26,7 +26,7 @@
       "controls": [
         { "label": "Gain", "value": 7 },
         { "label": "Volume", "value": 9 },
-        { "label": "Boost", "value": 13 },
+        { "label": "Bst", "value": 13 },
         { "label": "Reverb", "value": 10 },
         { "label": "Presence", "value": 10 },
         { "label": "Master", "value": 9},
@@ -38,6 +38,7 @@
         { "label": "Response", "value": "6L6"},
         { "label": "Power", "value": "20W"},
         { "label": "Reverb", "value": "Light"},
+        { "label": "Boost", "value": "Pre"},
         { "label": "Reverb Ch.", "value": 1},
         { "label": "Crunch", "value": "Super"},
         { "label": "Crunch Ch.", "value": 1}

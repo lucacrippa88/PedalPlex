@@ -66,7 +66,7 @@
         { "row": [
                 { "label": "Gain", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Volume", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Boost", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Bst", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Rev", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Presence", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Master", "type": "knob", "min": 7, "max": 17, "value": 12 },
@@ -86,17 +86,13 @@
         },
         { "row": [
                 { "label": "Clean", "type": "multi", "values": ["Warm", "Bright"], "value": "Warm" },
+                { "label": "Clean Ch.", "type": "led", "position": "under-top", "colors": ["#000000", "#ffffff", "#ff9999"], "value": 0},
                 { "label": "Crunch", "type": "multi", "values": ["Crunch", "Super"], "value": "Super" },
+                { "label": "Crunch Ch.", "type": "led", "position": "under-top", "colors": ["#000000", "#ffffff", "#ff0000"], "value": 0},
                 { "label": "Overdrive", "type": "multi", "values": ["OD1", "OD2"], "value": "OD2" },
-                { "label": "Booster", "type": "multi", "values": ["Pre", "Post"], "value": "Pre" }
-
-            ]
-        },
-        { "row": [
-                { "label": "Clean Ch.", "type": "led", "colors": ["#000000", "#ffffff", "#ff9999"], "value": 0},
-                { "label": "Crunch Ch.", "type": "led", "colors": ["#000000", "#ffffff", "#ff0000"], "value": 0},
-                { "label": "Overdrive Ch.", "type": "led", "colors": ["#000000", "#ffffff", "#ff0066"], "value": 0},
-                { "label": "Boost Ch.", "type": "led", "colors": ["#000000", "#ffffff"], "value": 0}
+                { "label": "Overdrive Ch.", "type": "led", "position": "under-top", "colors": ["#000000", "#ffffff", "#ff0066"], "value": 0},
+                { "label": "Boost", "type": "multi", "values": ["Pre", "Post"], "value": "Pre" },
+                { "label": "Boost Ch.", "type": "led", "position": "under-top", "colors": ["#000000", "#ffffff"], "value": 0}
             ]
         }
       ]
