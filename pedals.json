@@ -109,9 +109,9 @@
       "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
-                { "label": "Volume", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Tone", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Sustain", "type": "knob", "min": 7, "max": 17, "value": 12 }
+                { "label": "Volume", "type": "largeknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Tone", "type": "largeknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Sustain", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
             ]
         },
         { "row": [

@@ -27,7 +27,7 @@ $(document).ready(function () {
     pedals.forEach(pedal => {
       const $pedalDiv = $("<div>").addClass("pedal").css({
         background: pedal["inside-color"],
-        border: `15px solid ${pedal["color"]}`,
+        border: `10px solid ${pedal["color"]}`,
         color: pedal["font-color"],
         width: getPedalWidth(pedal.width),
         height: getPedalHeight(pedal.height),

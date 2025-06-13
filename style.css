@@ -62,7 +62,7 @@ body {
   position: relative;
   transform: rotate(0deg);
   cursor: pointer;
-  margin-bottom: 4px; /* space below knob for value label */
+  /*margin-bottom: 4px; /* space below knob for value label */
 }
 
 .knob::after {
