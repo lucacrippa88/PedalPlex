@@ -12,7 +12,7 @@
       "knobs-indicator": "#000000",
       "controls": [
         { "row": [
-                { "label": "", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
             ]
         },
         { "row": [
@@ -36,7 +36,7 @@
       "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
-                { "label": "", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
             ]
         },
         { "row": [
@@ -86,7 +86,9 @@
         { "row": [
                 { "label": "Clean", "type": "multi", "values": ["Warm", "Bright"], "value": "Warm" },
                 { "label": "Crunch", "type": "multi", "values": ["Crunch", "Super Crunch"], "value": "Super Crunch" },
-                { "label": "Overdrive", "type": "multi", "values": ["OD1", "OD2"], "value": "OD2" }
+                { "label": "Overdrive", "type": "multi", "values": ["OD1", "OD2"], "value": "OD2" },
+                { "label": "Booster", "type": "multi", "values": ["Pre", "Post"], "value": "Pre" }
+
             ]
         },
         { "row": [
@@ -122,7 +124,7 @@
             ]
         },
         { "row": [
-                { "label": "", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
             ]
         }
       ]
