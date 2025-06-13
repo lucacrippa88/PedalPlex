@@ -101,7 +101,7 @@
     {
       "name": "Big Muff",
       "width": "large",
-      "height": "standard",
+      "height": "large",
       "logo": "font-family:bigmuff; font-size:47px; letter-spacing:-0.25rem; word-spacing:-10px; position: relative; top:-53px; color:#148E69",
       "color": "#ffffff",
       "font-color": "#000000",
@@ -130,7 +130,7 @@
     {
       "name": "TS Mini",
       "width": "small",
-      "height": "standard",
+      "height": "large",
       "color": "#159651",
       "font-color": "#ffffff",
       "inside-color": "#159651",
