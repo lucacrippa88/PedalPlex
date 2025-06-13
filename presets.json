@@ -27,7 +27,7 @@
         { "label": "Gain", "value": 7 },
         { "label": "Volume", "value": 9 },
         { "label": "Boost", "value": 13 },
-        { "label": "Reverb", "value": 10 },
+        { "label": "Rev", "value": 10 },
         { "label": "Presence", "value": 10 },
         { "label": "Master", "value": 9},
         { "label": "Cab Sim", "value": "Cab 3"},
@@ -37,8 +37,9 @@
         { "label": "ISF", "value": 7},
         { "label": "Response", "value": "6L6"},
         { "label": "Power", "value": "20W"},
-        { "label": "Reverb", "value": 1},
-        { "label": "Crunch", "value": "Super Crunch"},
+        { "label": "Reverb", "value": "Light"},
+        { "label": "Reverb Ch.", "value": 1},
+        { "label": "Crunch", "value": "Super"},
         { "label": "Crunch Ch.", "value": 1}
       ]
     }

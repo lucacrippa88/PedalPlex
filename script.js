@@ -106,7 +106,7 @@ $(document).ready(function () {
 
           if (control.type === "led") {
             const selectedColor = control.colors[control.value] || "#000000";
-            const $label = $("<div>").addClass("label-top").text(control.label);
+            const $label = $("<div>").addClass("label-top");//.text(control.label);
             const led = $("<div>").addClass("led").css("background-color", selectedColor).attr("data-control-label", control.label);
             led.css("box-shadow", selectedColor.toLowerCase() !== "#000000" ? `0 0 8px 3px ${selectedColor}` : "none");
             $row.append($("<div>").append($label, led));
@@ -158,7 +158,6 @@ $(document).ready(function () {
 
         // Try to find knob or other matching control
         const $control = $pedalDiv.find(`[data-control-label="${label}"]`);
-        //console.log($control)
 
         if (!$control.length) return;
 
