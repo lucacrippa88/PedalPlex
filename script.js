@@ -97,8 +97,28 @@ $(document).ready(function () {
             });
         });
 
-        const $label = $("<div>").addClass("label-top").text(control.label);
+        //const $label = $("<div>").addClass("label-top").text(control.label);
+        let $label;
+        if (control.position === "inside-top" && control.type === "smallknob") {
+        $label = $("<div>").css({
+            position: "absolute",
+            right: "-10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            "white-space": "nowrap",
+            "font-size": "10px"
+        }).text(control.label);
+        } else {
+        $label = $("<div>").addClass("label-top").text(control.label);
+        }
+
         const $container = $("<div>").addClass("knob-container").append(knob);
+        $container.css({
+            position: "relative",
+            top:"-29px"
+        });
+        $container.append($label);
+
         if ($valueLabel) $container.append($valueLabel);
 
         const $knobWrapper = $("<div>").append($label, $container);
