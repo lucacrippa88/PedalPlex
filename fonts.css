@@ -2,3 +2,7 @@
   font-family: bigmuff;
   src: url("fonts/ITC Pioneer Regular.otf");
 }
+@font-face {
+  font-family: boss;
+  src: url("fonts/BossStyle-Bold.otf");
+}
