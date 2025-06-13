@@ -114,7 +114,7 @@ $(document).ready(function () {
 
         const $container = $("<div>").addClass("knob-container").append(knob);
         $container.css({
-            position: "relative"
+            position: "relative",
         });
         $container.append($label);
 
@@ -125,7 +125,7 @@ $(document).ready(function () {
         if (control.position === "under-top" && $row.children().length > 0) {
             // Nest this knob under the previous control in this row
             const $prev = $row.children().last();
-            $prev.append($("<div>").css("margin-top", "-25px").append($label, $container));
+            $prev.append($("<div>").css("margin-top", "-54px").append($label, $container));
         } else {
             $row.append($knobWrapper);
         }
