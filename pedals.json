@@ -85,7 +85,7 @@
         },
         { "row": [
                 { "label": "Clean", "type": "multi", "values": ["Warm", "Bright"], "value": "Warm" },
-                { "label": "Crunch", "type": "multi", "values": ["Crunch", "Super Crunch"], "value": "Super Crunch" },
+                { "label": "Crunch", "type": "multi", "values": ["Crunch", "Super"], "value": "Super" },
                 { "label": "Overdrive", "type": "multi", "values": ["OD1", "OD2"], "value": "OD2" },
                 { "label": "Booster", "type": "multi", "values": ["Pre", "Post"], "value": "Pre" }
 
