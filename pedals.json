@@ -55,6 +55,7 @@
       "name": "Amped 3",
       "width": "xlarge",
       "height": "xlarge",
+      "logo": "font-family:amped; font-size:18px; position:absolute; bottom:5px; color:#ffffff",
       "color": "#282828",
       "font-color": "#ffffff",
       "inside-color": "#282828",

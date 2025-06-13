@@ -6,3 +6,7 @@
   font-family: boss;
   src: url("fonts/BossStyle-Bold.otf");
 }
+@font-face {
+  font-family: amped;
+  src: url("fonts/BebasNeue-Regular.otf");
+}
