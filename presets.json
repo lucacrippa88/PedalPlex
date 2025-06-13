@@ -30,7 +30,7 @@
         { "label": "Reverb", "value": 10 },
         { "label": "Presence", "value": 10 },
         { "label": "Master", "value": 9},
-        { "label": "Cab Sim", "value": "Cab 3"},
+        { "label": "Cabinet Sim", "value": "Cabinet 3"},
         { "label": "Bass", "value": 9},
         { "label": "Middle", "value": 9},
         { "label": "Treble", "value": 9},
