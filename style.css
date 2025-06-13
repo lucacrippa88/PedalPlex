@@ -38,7 +38,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start; /* Align children to top */
-  gap: 4px;
+  gap: px;
   min-width: 40px;
   /*height: 70px; /* fix height so all knobs align */
 }
@@ -68,7 +68,7 @@ body {
 .knob::after {
   content: '';
   position: absolute;
-  top: 6px;
+  top: 3px;
   left: 50%;
   transform: translateX(-50%);
   width: 4px;
