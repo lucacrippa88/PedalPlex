@@ -107,10 +107,24 @@ $(document).ready(function () {
           if (control.type === "led") {
             const selectedColor = control.colors[control.value] || "#000000";
             const $label = $("<div>").addClass("label-top");//.text(control.label);
-            const led = $("<div>").addClass("led").css("background-color", selectedColor).attr("data-control-label", control.label);
+            const led = $("<div>")
+                .addClass("led")
+                .css("background-color", selectedColor)
+                .attr("data-control-label", control.label);
             led.css("box-shadow", selectedColor.toLowerCase() !== "#000000" ? `0 0 8px 3px ${selectedColor}` : "none");
-            $row.append($("<div>").append($label, led));
-          }
+
+            const $ledContainer = $("<div>").append($label, led);
+
+            if (control.position === "under-top" && $row.children().length > 0) {
+                // Append under previous control
+                const $prev = $row.children().last();
+                $prev.append($("<div>").css("margin-top", "5px").append($label, led));
+            } else {
+                // Default behavior
+                $row.append($ledContainer);
+            }
+            }
+
 
           if (control.type === "multi") {
             const $label = $("<div>").addClass("label-top").text(control.label);
