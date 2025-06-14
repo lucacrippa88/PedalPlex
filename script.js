@@ -20,11 +20,23 @@ $(document).ready(function () {
     $("#pedalboard").before($selector); // Add dropdown before pedalboard
   });
 
-  // Load pedalboard
+
+    // Load pedalboard
+  $.getJSON("https://lucacrippa88.github.io/PedalPlex/pedalboard.json", function (pedalboardData) {
+    pedalboard = pedalboardData;
+
+  
+
+
+  // Load catalog and populate pedalboard
   $.getJSON("https://lucacrippa88.github.io/PedalPlex/pedals.json", function (data) {
     pedals = data["Pedals"];
 
     pedals.forEach(pedal => {
+
+        if (pedalboard.pedalboard.some(item => item.includes(pedal.name))) {
+
+    
       const $pedalDiv = $("<div>").addClass("pedal").css({
         background: pedal["inside-color"],
         border: `10px solid ${pedal["color"]}`,
@@ -183,6 +195,9 @@ $(document).ready(function () {
         $pedalDiv.append($nameDiv);
 
       $("#pedalboard").append($pedalDiv);
+
+    } // end check if pedal in catalog is also in pedalboard
+
     });
   });
 
@@ -296,4 +311,7 @@ $(document).ready(function () {
 
     return angleOffset + ratio * angleRange;
   }
-});
+
+}); // end pedals catalog loop
+
+}); // end pedalboard loop
