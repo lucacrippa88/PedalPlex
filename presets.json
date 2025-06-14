@@ -1,47 +1,100 @@
 {
-  "Run Like Hell": [
+  "Presets": [
     {
-      "name": "Digital Delay DD-8",
-      "controls": [
-        { "label": "E.Level", "value": 14 },
-        { "label": "Feedb", "value": 14 },
-        { "label": "Time", "value": 13 },
-        { "label": "Mode", "value": "Tape" },
-        { "label": "Check", "value": 1}
+      "Run Like Hell": [
+        {
+          "name": "Digital Delay DD-8",
+          "controls": [
+            { "label": "E.Level", "value": 14 },
+            { "label": "Feedb", "value": 14 },
+            { "label": "Time", "value": 13 },
+            { "label": "Mode", "value": "Tape" },
+            { "label": "Check", "value": 1}
+          ]
+        },
+        {
+          "name": "Flanger BF-3",
+          "controls": [
+            { "label": "Res", "value": 7 },
+            { "label": "Depth", "value": 9 },
+            { "label": "Rate", "value": 13 },
+            { "label": "Mode", "value": "Std" },
+            { "label": "Manual", "value": 10 },
+            { "label": "Check", "value": 1}
+          ]
+        },
+        {
+          "name": "AMPED 3",
+          "controls": [
+            { "label": "Gain", "value": 11 },
+            { "label": "Volume", "value": 14 },
+            { "label": "Bst", "value": 15 },
+            { "label": "Rev", "value": 14 },
+            { "label": "Presence", "value": 11 },
+            { "label": "Master", "value": 9},
+            { "label": "Cabinet Sim", "value": "Cabinet 3"},
+            { "label": "Bass", "value": 14},
+            { "label": "Middle", "value": 10},
+            { "label": "Treble", "value": 11},
+            { "label": "ISF", "value": 7},
+            { "label": "Response", "value": "6L6"},
+            { "label": "Power", "value": "20W"},
+            { "label": "Reverb", "value": "Light"},
+            { "label": "Boost", "value": "Pre"},
+            { "label": "Reverb Ch.", "value": 1},
+            { "label": "Crunch", "value": "Crunch"},
+            { "label": "Crunch Ch.", "value": 1}
+          ]
+        }
       ]
     },
     {
-      "name": "Flanger BF-3",
-      "controls": [
-        { "label": "Res", "value": 7 },
-        { "label": "Depth", "value": 9 },
-        { "label": "Rate", "value": 13 },
-        { "label": "Mode", "value": "Std" },
-        { "label": "Manual", "value": 10 },
-        { "label": "Check", "value": 1}
-      ]
-    },
-    {
-      "name": "AMPED 3",
-      "controls": [
-        { "label": "Gain", "value": 11 },
-        { "label": "Volume", "value": 14 },
-        { "label": "Bst", "value": 15 },
-        { "label": "Rev", "value": 14 },
-        { "label": "Presence", "value": 11 },
-        { "label": "Master", "value": 9},
-        { "label": "Cabinet Sim", "value": "Cabinet 3"},
-        { "label": "Bass", "value": 14},
-        { "label": "Middle", "value": 10},
-        { "label": "Treble", "value": 11},
-        { "label": "ISF", "value": 7},
-        { "label": "Response", "value": "6L6"},
-        { "label": "Power", "value": "20W"},
-        { "label": "Reverb", "value": "Light"},
-        { "label": "Boost", "value": "Pre"},
-        { "label": "Reverb Ch.", "value": 1},
-        { "label": "Crunch", "value": "Crunch"},
-        { "label": "Crunch Ch.", "value": 1}
+      "Supermassive Black Hole": [
+        {
+          "name": "Flanger BF-3",
+          "controls": [
+            { "label": "Res", "value": 7 },
+            { "label": "Depth", "value": 7 },
+            { "label": "Rate", "value": 7 },
+            { "label": "Mode", "value": "Std" },
+            { "label": "Manual", "value": 7 },
+            { "label": "Check", "value": 1}
+          ]
+        },
+        {
+          "name": "AMPED 3",
+          "controls": [
+            { "label": "Gain", "value": 11 },
+            { "label": "Volume", "value": 14 },
+            { "label": "Bst", "value": 15 },
+            { "label": "Rev", "value": 14 },
+            { "label": "Presence", "value": 11 },
+            { "label": "Master", "value": 9},
+            { "label": "Cabinet Sim", "value": "Cabinet 3"},
+            { "label": "Bass", "value": 14},
+            { "label": "Middle", "value": 10},
+            { "label": "Treble", "value": 11},
+            { "label": "ISF", "value": 7},
+            { "label": "Response", "value": "6L6"},
+            { "label": "Power", "value": "20W"},
+            { "label": "Reverb", "value": "Light"},
+            { "label": "Boost", "value": "Pre"},
+            { "label": "Reverb Ch.", "value": 0},
+            { "label": "Clean", "value": "Warm"},
+            { "label": "Clean Ch.", "value": 1}
+          ]
+        },
+        {
+          "name": "Big Muff",
+          "controls": [
+            { "label": "Volume", "value": 12 },
+            { "label": "Tone", "value": 11 },
+            { "label": "Sustain", "value": 14 },
+            { "label": "T", "value": "On" },
+            { "label": "W", "value": "On" },
+            { "label": "Check", "value": 1}
+          ]
+        }
       ]
     }
   ]
