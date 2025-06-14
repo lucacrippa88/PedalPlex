@@ -204,11 +204,11 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
     // Build a quick lookup for each pedal's preset controls
     const presetMap = {};
     songPresetArray.forEach(p => {
-        presetMap[p.name] = {};
-        configuredPedals.add(p.name);
+        presetMap[p.id] = {};
+        configuredPedals.add(p.id);
         p.controls.forEach(controlObj => {
         const [label, value] = Object.entries(controlObj)[0];
-        presetMap[p.name][label] = value;
+        presetMap[p.id][label] = value;
         });
     });
 
@@ -216,7 +216,7 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
         const $pedalDiv = $(this);
         const pedalName = $pedalDiv.data("pedal-name");
         const isInPreset = configuredPedals.has(pedalName);
-        const defaultPedal = pedals.find(p => p.name === pedalName);
+        const defaultPedal = pedals.find(p => p.id === pedalName);
         if (!defaultPedal) return;
 
         defaultPedal.controls.forEach(row => {
@@ -261,7 +261,7 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
 
   function findControlObject(pedalName, controlLabel) {
     for (const pedal of pedals) {
-      if (pedal.name === pedalName) {
+      if (pedal.id === pedalName) {
         for (const row of pedal.controls) {
           for (const ctrl of row.row) {
             if (ctrl.label === controlLabel) {
