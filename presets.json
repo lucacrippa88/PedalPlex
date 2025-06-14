@@ -42,7 +42,7 @@
             { "Reverb": "Light"},
             { "Boost": "Pre"},
             { "Reverb Ch.": 1},
-            { "Clean": "Warm"},
+            { "crunch": "Crunch"},
             { "Crunch Ch.": 1}
           ]
         }
@@ -79,7 +79,6 @@
             { "Power": "20W"},
             { "Reverb": "Light"},
             { "Boost": "Pre"},
-            { "Reverb Ch.": 0},
             { "Clean": "Warm"},
             { "Clean Ch.": 1}
           ]

@@ -282,69 +282,66 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
 
 
 function applyPreset(songName) {
-  const songPreset = presets[songName];
-  if (!songPreset) return;
+  const songPresetArray = presets[songName];
+  if (!songPresetArray) return;
 
-  // Map pedals from preset by name for easy lookup
-  const presetPedalsMap = {};
-  songPreset.forEach(pedal => {
-    presetPedalsMap[pedal.name] = pedal;
+  const configuredPedals = new Set();
+
+  // Build a quick lookup for each pedal's preset controls
+  const presetMap = {};
+  songPresetArray.forEach(p => {
+    presetMap[p.name] = {};
+    configuredPedals.add(p.name);
+    p.controls.forEach(controlObj => {
+      const [label, value] = Object.entries(controlObj)[0];
+      presetMap[p.name][label] = value;
+    });
   });
 
-  // Iterate over pedals on the pedalboard
   $(".pedal").each(function () {
-    const pedalName = $(this).data("pedal-name");
     const $pedalDiv = $(this);
-
-    // Find preset pedal config or null if missing
-    const presetPedal = presetPedalsMap[pedalName] || null;
-
-    // Find default pedal from pedals.json
+    const pedalName = $pedalDiv.data("pedal-name");
+    const isInPreset = configuredPedals.has(pedalName);
     const defaultPedal = pedals.find(p => p.name === pedalName);
-    if (!defaultPedal) return; // skip if no pedal data
+    if (!defaultPedal) return;
 
-    // Create a map of preset control values for this pedal (label => value)
-    let presetControlsMap = {};
-    if (presetPedal) {
-      presetPedal.controls.forEach(ctrlObj => {
-        const [label, value] = Object.entries(ctrlObj)[0]; // e.g. ["E.Level", 14]
-        presetControlsMap[label] = value;
-      });
-    }
-
-    // For each control in default pedal, decide value from preset or default
     defaultPedal.controls.forEach(row => {
       row.row.forEach(ctrl => {
-        const label = ctrl.label;
-        const valueToSet = (label in presetControlsMap) ? presetControlsMap[label] : ctrl.value;
-
-        // Update the underlying control object value as well
-        ctrl.value = valueToSet;
-
-        // Find the UI control element inside this pedal div
-        const $control = $pedalDiv.find(`[data-control-label="${label}"]`);
+        const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
         if (!$control.length) return;
 
-        // Update UI control accordingly:
+        // Determine value to set: from preset if present, else default
+        let newValue = ctrl.value;
+        if (isInPreset && presetMap[pedalName]?.hasOwnProperty(ctrl.label)) {
+          newValue = presetMap[pedalName][ctrl.label];
+        }
+
+        // Update visual and state
         if ($control.is("div.knob, div.smallknob, div.largeknob")) {
-          const rotation = getRotationFromValue(ctrl, valueToSet);
+          ctrl.value = newValue;
+          const rotation = getRotationFromValue(ctrl, newValue);
           $control.data("rotation", rotation);
           $control.css("transform", `rotate(${rotation}deg)`);
-          $control.siblings(".knob-value-label").text(valueToSet);
-        } else if ($control.is("select")) {
-          $control.val(valueToSet);
-        } else if ($control.is("div.led")) {
-          const newColor = ctrl.colors?.[valueToSet] || "#000000";
-          $control.css("background-color", newColor);
-          $control.css("box-shadow", newColor.toLowerCase() !== "#000000" && newColor.toLowerCase() !== "black" ? `0 0 8px 3px ${newColor}` : "none");
-        } else if ($control.is("input[type='checkbox']")) {
-          $control.prop("checked", valueToSet);
+          $control.siblings(".knob-value-label").text(newValue);
+        }
+
+        if ($control.is("select")) {
+          $control.val(newValue);
+        }
+
+        if ($control.is("div.led")) {
+          const color = ctrl.colors?.[newValue] || "#000000";
+          $control.css("background-color", color);
+          $control.css("box-shadow", color.toLowerCase() !== "#000000" ? `0 0 8px 3px ${color}` : "none");
+        }
+
+        if ($control.is("input[type='checkbox']")) {
+          $control.prop("checked", !!newValue);
         }
       });
     });
   });
 }
-
 
 
 
