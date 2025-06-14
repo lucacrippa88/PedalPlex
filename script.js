@@ -5,21 +5,28 @@ $(document).ready(function () {
 
   const loadJSON = url => $.getJSON(url);
 
-  // Step 1: Load presets and build dropdown
-  loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetData => {
-    presets = presetData;
-
-    const $selector = $("<select id='preset-selector'><option disabled selected>Select a song preset</option></select><br><br>");
-    for (const songName in presets) {
-      $selector.append($("<option>").val(songName).text(songName));
-    }
-
-    $selector.on("change", function () {
-      const selected = $(this).val();
-      applyPreset(selected);
+// Step 1: Load presets and build dropdown
+loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetData => {
+  // Flatten the array of preset objects into a single presets map
+  presets = {};
+  presetData.Presets.forEach(presetObj => {
+    Object.entries(presetObj).forEach(([songName, preset]) => {
+      presets[songName] = preset;
     });
+  });
 
-    $("#pedalboard").before($selector);
+  // Create dropdown
+  const $selector = $("<select id='preset-selector'><option disabled selected>Select a song preset</option></select><br><br>");
+  for (const songName in presets) {
+    $selector.append($("<option>").val(songName).text(songName));
+  }
+
+  $selector.on("change", function () {
+    const selected = $(this).val();
+    applyPreset(selected);
+  });
+
+  $("#pedalboard").before($selector); // Insert the dropdown
 
     // Load pedalboard next
     return loadJSON("https://lucacrippa88.github.io/PedalPlex/pedalboard.json");
