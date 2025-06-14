@@ -42,7 +42,7 @@
             { "Reverb": "Light"},
             { "Boost": "Pre"},
             { "Reverb Ch.": 1},
-            { "crunch": "Crunch"},
+            { "Crunch": "Crunch"},
             { "Crunch Ch.": 1}
           ]
         }
