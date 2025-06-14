@@ -106,7 +106,11 @@
             { "label": "Boost", "value": "Pre"},
             { "label": "Reverb Ch.", "value": 0},
             { "label": "Clean", "value": "Warm"},
-            { "label": "Clean Ch.", "value": 1}
+            { "label": "Clean Ch.", "value": 1},
+            { "label": "Crunch", "value": "Crunch"},
+            { "label": "Crunch Ch.", "value": 0},
+            { "label": "Overdrive", "value": "OD1"},
+            { "label": "Overdrive Ch.", "value": 0}
           ]
         },
         {
