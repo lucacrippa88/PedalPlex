@@ -45,11 +45,32 @@
             { "label": "Crunch", "value": "Crunch"},
             { "label": "Crunch Ch.", "value": 1}
           ]
+        },
+        {
+          "name": "Big Muff",
+          "controls": [
+            { "label": "Volume", "value": 12 },
+            { "label": "Tone", "value": 11 },
+            { "label": "Sustain", "value": 14 },
+            { "label": "T", "value": "On" },
+            { "label": "W", "value": "Off" },
+            { "label": "Check", "value": 0}
+          ]
         }
       ]
     },
     {
       "Supermassive Black Hole": [
+        {
+          "name": "Digital Delay DD-8",
+          "controls": [
+            { "label": "E.Level", "value": 14 },
+            { "label": "Feedb", "value": 14 },
+            { "label": "Time", "value": 13 },
+            { "label": "Mode", "value": "Tape" },
+            { "label": "Check", "value": 0}
+          ]
+        },
         {
           "name": "Flanger BF-3",
           "controls": [
