@@ -280,6 +280,7 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
 }
 
 
+
   function findControlObject(pedalName, controlLabel) {
     for (const pedal of pedals) {
       if (pedal.name === pedalName) {
