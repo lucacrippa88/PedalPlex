@@ -42,8 +42,12 @@
             { "label": "Reverb", "value": "Light"},
             { "label": "Boost", "value": "Pre"},
             { "label": "Reverb Ch.", "value": 1},
+            { "label": "Clean", "value": "Warm"},
+            { "label": "Clean Ch.", "value": 0},
             { "label": "Crunch", "value": "Crunch"},
-            { "label": "Crunch Ch.", "value": 1}
+            { "label": "Crunch Ch.", "value": 1},
+            { "label": "Overdrive", "value": "OD1"},
+            { "label": "Overdrive Ch.", "value": 0}
           ]
         },
         {
