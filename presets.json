@@ -49,17 +49,6 @@
             { "label": "Overdrive", "value": "OD1"},
             { "label": "Overdrive Ch.", "value": 0}
           ]
-        },
-        {
-          "name": "Big Muff",
-          "controls": [
-            { "label": "Volume", "value": 12 },
-            { "label": "Tone", "value": 11 },
-            { "label": "Sustain", "value": 14 },
-            { "label": "T", "value": "On" },
-            { "label": "W", "value": "Off" },
-            { "label": "Check", "value": 0}
-          ]
         }
       ]
     },

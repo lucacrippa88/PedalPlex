@@ -188,50 +188,97 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
 
   // Helper functions remain unchanged
   function applyPreset(songName) {
-    const songPreset = presets[songName];
-    if (!songPreset) return;
+  const songPreset = presets[songName];
+  if (!songPreset) return;
 
-    songPreset.forEach(presetPedal => {
-      const $pedalDiv = $(`.pedal[data-pedal-name="${presetPedal.name}"]`);
-      if (!$pedalDiv.length) return;
+  // Track which pedals were configured by the preset
+  const configuredPedals = new Set(songPreset.map(p => p.name));
 
-      presetPedal.controls.forEach(presetControl => {
-        const label = presetControl.label;
-        const value = presetControl.value;
-        const $control = $pedalDiv.find(`[data-control-label="${label}"]`);
+  // Step 1: Apply preset values to matching pedals
+  songPreset.forEach(presetPedal => {
+    const $pedalDiv = $(`.pedal[data-pedal-name="${presetPedal.name}"]`);
+    if (!$pedalDiv.length) return;
 
+    presetPedal.controls.forEach(presetControl => {
+      const label = presetControl.label;
+      const value = presetControl.value;
+
+      const $control = $pedalDiv.find(`[data-control-label="${label}"]`);
+      if (!$control.length) return;
+
+      if ($control.is("div.knob, div.smallknob, div.largeknob")) {
+        const controlObj = findControlObject(presetPedal.name, label);
+        if (!controlObj) return;
+
+        controlObj.value = value;
+        const rotation = getRotationFromValue(controlObj, value);
+        $control.data("rotation", rotation);
+        $control.css("transform", `rotate(${rotation}deg)`);
+        $control.siblings(".knob-value-label").text(value);
+      }
+
+      if ($control.is("select")) {
+        $control.val(value);
+      }
+
+      if ($control.is("div.led")) {
+        const controlObj = findControlObject(presetPedal.name, label);
+        if (!controlObj || !controlObj.colors) return;
+
+        const newColor = controlObj.colors[value] || "#000000";
+        $control.css("background-color", newColor);
+        if (newColor.toLowerCase() !== "#000000" && newColor.toLowerCase() !== "black") {
+          $control.css("box-shadow", `0 0 8px 3px ${newColor}`);
+        } else {
+          $control.css("box-shadow", "none");
+        }
+      }
+
+      if ($control.is("input[type='checkbox']")) {
+        $control.prop("checked", value);
+      }
+    });
+  });
+
+  // Step 2: For any pedal in the pedalboard not in the preset, reset to default
+  $(".pedal").each(function () {
+    const pedalName = $(this).data("pedal-name");
+    if (configuredPedals.has(pedalName)) return; // skip pedals already configured
+
+    const $pedalDiv = $(this);
+    const defaultPedal = pedals.find(p => p.name === pedalName);
+    if (!defaultPedal) return;
+
+    defaultPedal.controls.forEach(row => {
+      row.row.forEach(ctrl => {
+        const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
         if (!$control.length) return;
 
         if ($control.is("div.knob, div.smallknob, div.largeknob")) {
-          const controlObj = findControlObject(presetPedal.name, label);
-          if (!controlObj) return;
-
-          controlObj.value = value;
-          const rotation = getRotationFromValue(controlObj, value);
+          const rotation = getRotationFromValue(ctrl, ctrl.value);
           $control.data("rotation", rotation);
           $control.css("transform", `rotate(${rotation}deg)`);
-          $control.siblings(".knob-value-label").text(value);
+          $control.siblings(".knob-value-label").text(ctrl.value);
         }
 
         if ($control.is("select")) {
-          $control.val(value);
+          $control.val(ctrl.value);
         }
 
         if ($control.is("div.led")) {
-          const controlObj = findControlObject(presetPedal.name, label);
-          if (!controlObj || !controlObj.colors) return;
-
-          const newColor = controlObj.colors[value] || "#000000";
+          const newColor = ctrl.colors?.[ctrl.value] || "#000000";
           $control.css("background-color", newColor);
           $control.css("box-shadow", newColor.toLowerCase() !== "#000000" ? `0 0 8px 3px ${newColor}` : "none");
         }
 
         if ($control.is("input[type='checkbox']")) {
-          $control.prop("checked", value);
+          $control.prop("checked", ctrl.value);
         }
       });
     });
-  }
+  });
+}
+
 
   function findControlObject(pedalName, controlLabel) {
     for (const pedal of pedals) {
