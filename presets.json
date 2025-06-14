@@ -116,7 +116,7 @@
             { "Power": "20W"},
             { "Reverb": "Light"},
             { "Boost": "Pre"},
-            { "Clean": "Warm"},
+            { "Clean": "Bright"},
             { "Clean Ch.": 1}
           ]
         },

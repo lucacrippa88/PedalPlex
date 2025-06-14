@@ -1,6 +1,7 @@
 {
   "Pedals": [
     {
+      "id": "Boss Digital Delay DD-8",
       "name": "Digital Delay DD-8",
       "width": "standard",
       "height": "standard",
@@ -26,6 +27,7 @@
       ]
     },
     {
+      "id": "Boss Flanger BF-3",
       "name": "Flanger BF-3",
       "width": "standard",
       "height": "standard",
@@ -52,6 +54,7 @@
       ]
     },
     {
+      "id": "Blackstar Dept.10 Amped 3",
       "name": "AMPED 3",
       "width": "xlarge",
       "height": "xlarge",
@@ -98,6 +101,7 @@
       ]
     },
     {
+      "id": "Electro Harmonix Big Muff Pi Tone Wicker",
       "name": "Big Muff",
       "width": "large",
       "height": "large",
@@ -127,6 +131,7 @@
       ]
     },
     {
+      "id": "Ibanez Tube Screamer Mini",
       "name": "TS Mini",
       "width": "small",
       "height": "large",
