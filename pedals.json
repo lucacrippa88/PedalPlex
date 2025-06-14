@@ -116,8 +116,8 @@
             ]
         },
         { "row": [
-                { "label": "Tone", "type": "multi", "values": ["On", "Off"], "value": "On" },
-                { "label": "Wicker", "type": "multi", "values": ["On", "Off"], "value": "Off" }
+                { "label": "T", "type": "multi", "values": ["On", "Off"], "value": "On" },
+                { "label": "W", "type": "multi", "values": ["On", "Off"], "value": "Off" }
             ]
         },
         { "row": [
