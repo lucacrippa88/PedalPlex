@@ -95,6 +95,43 @@
           ]
         }
       ]
+    },
+    {
+      "Black Dog": [
+        {
+          "name": "AMPED 3",
+          "controls": [
+            { "Gain": 11 },
+            { "Volume": 14 },
+            { "Bst": 15 },
+            { "Rev": 14 },
+            { "Presence": 11 },
+            { "Master": 9},
+            { "Cabinet Sim": "Cabinet 1"},
+            { "Bass": 14},
+            { "Middle": 10},
+            { "Treble": 11},
+            { "ISF": 17},
+            { "Response": "EL84"},
+            { "Power": "20W"},
+            { "Reverb": "Light"},
+            { "Boost": "Pre"},
+            { "Clean": "Warm"},
+            { "Clean Ch.": 1}
+          ]
+        },
+        {
+          "name": "Big Muff",
+          "controls": [
+            { "Volume": 12 },
+            { "Tone": 10 },
+            { "Sustain": 13 },
+            { "T": "On" },
+            { "W": "Off" },
+            { "Check": 1}
+          ]
+        }
+      ]
     }
   ]
 }
