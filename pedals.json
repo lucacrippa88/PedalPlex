@@ -54,6 +54,31 @@
       ]
     },
     {
+      "id": "Boss Dyna Drive DN-2",
+      "name": "Dyna Drive DN-2",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#101c67",
+      "color": "#e18e36",
+      "font-color": "#000000",
+      "inside-color": "#e18e36",
+      "knobs-color": "#c2c7cc",
+      "knobs-border": "#000000",
+      "knobs-indicator": "#000000",
+      "controls": [
+        { "row": [
+                { "label": "Level", "type": "largeknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0},
+                { "label": "Drive", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
+            ]
+        },
+        { "row": [
+                { "label": "Tone", "type": "knob", "min": 7, "max": 17, "value": 12 }
+            ]
+        }
+      ]
+    },
+    {
       "id": "Blackstar Dept.10 Amped 3",
       "name": "AMPED 3",
       "width": "xlarge",
