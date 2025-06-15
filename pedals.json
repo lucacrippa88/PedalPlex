@@ -55,7 +55,7 @@
     },
     {
       "id": "Boss Turbo Distortion DS-2",
-      "name": "TURBO Distortion DS-2",
+      "name": "TURBO Dist DS-2",
       "width": "standard",
       "height": "standard",
       "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
@@ -64,7 +64,7 @@
       "inside-color": "#212121",
       "knobs-color": "#e38120",
       "knobs-border": "#424242",
-      "knobs-indicator": "#ffffff",
+      "knobs-indicator": "#000000",
       "controls": [
         { "row": [
                 { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
