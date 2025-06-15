@@ -219,13 +219,13 @@
       "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
-                { "label": "Mod", "type": "multi", "values": ["On", "Off"], "value": "On" },
+                { "label": "Mod", "type": "multi", "position": "left", "values": ["On", "Off"], "value": "On" },
                 { "label": "Mix", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
             ]
         },
         { "row": [
                 { "label": "Regen", "type": "largeknob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Check", "type": "led", "position": "lower", "colors": ["#000000", "#0569ff"], "value": 1},
+                { "label": "Check", "type": "led", "position": "lower", "colors": ["#000000", "#1998ff"], "value": 1},
                 { "label": "Delay", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
             ]
         }
