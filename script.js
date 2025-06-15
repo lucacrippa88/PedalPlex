@@ -136,8 +136,8 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
                 const $prev = $row.children().last();
                 $prev.append($("<div>").css("margin-top", "-52px").append($label, $container));
               } else if (control.position === "higher") {
-            $knobWrapper.css("margin-top", "-30px");
-            $row.append($knobWrapper);
+                  $knobWrapper.css("margin-top", "-30px");
+                  $row.append($knobWrapper);
             } else {
                 $row.append($knobWrapper);
               }
@@ -156,6 +156,9 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
               if (control.position === "under-top" && $row.children().length > 0) {
                 const $prev = $row.children().last();
                 $prev.append($("<div>").css("margin-top", "0px").append($label, led));
+              } else if (control.position === "lower") {
+                  $knobWrapper.css("margin-top", "30px");
+                  $row.append($knobWrapper);
               } else {
                 $row.append($ledContainer);
               }
