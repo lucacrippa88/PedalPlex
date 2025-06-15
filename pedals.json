@@ -214,19 +214,19 @@
       "color": "#2b5217",
       "font-color": "#ffffff",
       "inside-color": "#2b5217",
-      "knobs-color": "#000000",
-      "knobs-border": "#424242",
+      "knobs-color": "#141414",
+      "knobs-border": "#000000",
       "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
                 { "label": "Mod", "type": "multi", "position": "left", "values": ["On", "Off"], "value": "On" },
-                { "label": "Mix", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
+                { "label": "Mix", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 }
             ]
         },
         { "row": [
-                { "label": "Regen", "type": "largeknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Regen", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 },
                 { "label": "Check", "type": "led", "position": "lower", "colors": ["#000000", "#1998ff"], "value": 1},
-                { "label": "Delay", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
+                { "label": "Delay", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 }
             ]
         }
       ]
