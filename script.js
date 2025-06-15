@@ -165,6 +165,25 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
             }
 
 
+            if (control.type === "slider") {
+              const $label = $("<div>").addClass("slider-label").text(control.label);
+              const $slider = $("<input type='range'>")
+                .attr("min", control.min)
+                .attr("max", control.max)
+                .val(control.value)
+                .addClass("vertical")
+                .attr("data-control-label", control.label);
+
+              $slider.on("input", function () {
+                control.value = parseInt(this.value);
+              });
+
+              const $wrapper = $("<div>").addClass("slider-container").append($slider, $label);
+              $row.append($wrapper);
+            }
+
+
+
             if (control.type === "multi") {
               const $label = $("<div>").addClass("label-top").text(control.label);
               const $select = $("<select>").attr("data-control-label", control.label);
@@ -257,7 +276,11 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
             }
 
             if ($control.is("select")) {
-            $control.val(newValue);
+              $control.val(newValue);
+            }
+
+            if ($control.is("input[type='range']")) {
+              $control.val(newValue);
             }
 
             if ($control.is("div.led")) {
