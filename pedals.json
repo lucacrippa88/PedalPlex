@@ -220,16 +220,13 @@
       "controls": [
         { "row": [
                 { "label": "Mod", "type": "multi", "values": ["On", "Off"], "value": "On" },
-                { "label": "Mix", "type": "knob", "min": 7, "max": 17, "value": 12 }
+                { "label": "Mix", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
             ]
         },
         { "row": [
-                { "label": "Regen", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Delay", "type": "knob", "min": 7, "max": 17, "value": 12 }
-            ]
-        },
-        { "row": [
-                { "label": "Check", "type": "led", "colors": ["#000000", "#0569ff"], "value": 1}
+                { "label": "Regen", "type": "largeknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Check", "type": "led", "colors": ["#000000", "#0569ff"], "value": 1},
+                { "label": "Delay", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
             ]
         }
       ]
