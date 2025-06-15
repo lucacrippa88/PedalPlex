@@ -207,10 +207,10 @@
     },
     {
       "id": "MXR Carbon Copy",
-      "name": "Carbon Copy",
+      "name": "carbon copy",
       "width": "standard",
       "height": "large",
-      "logo": "font-family:mxr; font-size:18px; position:absolute; bottom:5px; color:#ffffff",
+      "logo": "font-family:mxr; font-size:30px; position:absolute; bottom:5px; color:#ffffff",
       "color": "#2b5217",
       "font-color": "#ffffff",
       "inside-color": "#2b5217",
@@ -220,12 +220,13 @@
       "controls": [
         { "row": [
                 { "label": "Mod", "type": "multi", "values": ["On", "Off"], "value": "On" },
-                { "label": "Mix", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
+                { "label": "Mix", "type": "largeknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "" }
             ]
         },
         { "row": [
                 { "label": "Regen", "type": "largeknob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Check", "type": "led", "colors": ["#000000", "#0569ff"], "value": 1},
+                { "label": "Check", "type": "led", "position": "lower", "colors": ["#000000", "#0569ff"], "value": 1},
                 { "label": "Delay", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
             ]
         }
