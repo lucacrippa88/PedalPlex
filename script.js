@@ -123,16 +123,7 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
                   "font-size": "10px"
                 }).text(control.label);
               } 
-              else if (control.position === "higher" && control.type === "smallknob") {
-                $label = $("<div>").css({
-                  position: "absolute",
-                  left: "20px",
-                  top: "110px",
-                  transform: "translateY(-50%)",
-                  "white-space": "nowrap",
-                  "font-size": "10px"
-                }).text(control.label);
-              } else {
+ else {
                 $label = $("<div>").addClass("label-top").text(control.label);
               }
 
@@ -144,6 +135,9 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
               if (control.position === "under-top" && $row.children().length > 0) {
                 const $prev = $row.children().last();
                 $prev.append($("<div>").css("margin-top", "-52px").append($label, $container));
+              } else if (control.position === "higher" && $row.children().length > 0) {
+                const $prev = $row.children().last();
+                $prev.append($("<div>").css("margin-top", "-30px").append($label, $container));
               } else {
                 $row.append($knobWrapper);
               }
