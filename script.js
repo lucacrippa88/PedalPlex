@@ -156,21 +156,14 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
               if (control.position === "under-top" && $row.children().length > 0) {
                 const $prev = $row.children().last();
                 $prev.append($("<div>").css("margin-top", "0px").append($label, led));
+              } else if (control.position === "lower") {
+                $row.append($ledContainer);
+                $ledContainer.css("margin-top", "65px");
               } else {
                 $row.append($ledContainer);
               }
             }
 
-            // if (control.type === "multi") {
-            //   const $label = $("<div>").addClass("label-top").text(control.label);
-            //   const $select = $("<select>").attr("data-control-label", control.label);
-            //   control.values.forEach(val => {
-            //     const $option = $("<option>").val(val).text(val);
-            //     if (val === control.value) $option.attr("selected", true);
-            //     $select.append($option);
-            //   });
-            //   $row.append($("<div>").append($label, $select));
-            // }
 
             if (control.type === "multi") {
               const $label = $("<div>").addClass("label-top").text(control.label);
