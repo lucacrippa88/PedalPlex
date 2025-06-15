@@ -209,13 +209,13 @@
       "id": "MXR Carbon Copy",
       "name": "Carbon Copy",
       "width": "standard",
-      "height": "standard",
+      "height": "large",
       "logo": "font-family:mxr; font-size:18px; position:absolute; bottom:5px; color:#ffffff",
       "color": "#2b5217",
       "font-color": "#ffffff",
       "inside-color": "#2b5217",
-      "knobs-color": "#c2c7cc",
-      "knobs-border": "#000000",
+      "knobs-color": "#000000",
+      "knobs-border": "#424242",
       "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
@@ -229,7 +229,7 @@
             ]
         },
         { "row": [
-                { "label": "Check", "type": "led", "colors": ["#000000", "#0569ff"], "value": 0}
+                { "label": "Check", "type": "led", "colors": ["#000000", "#0569ff"], "value": 1}
             ]
         }
       ]
