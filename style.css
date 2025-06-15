@@ -176,3 +176,7 @@ body {
   font-family: amped;
   src: url("fonts/BebasNeue-Regular.otf");
 }
+@font-face {
+  font-family: mxr;
+  src: url("fonts/eurostile.TTF");
+}
