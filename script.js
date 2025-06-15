@@ -63,9 +63,10 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
                 .addClass(isSmall ? "smallknob" : "knob")
                 .addClass(isLarge ? "largeknob" : "knob")
                 .css({
-                  background: pedal["knobs-color"],
-                  border: `2px solid ${pedal["knobs-border"]}`
+                    background: pedal["knobs-color"],
+                    border: `${control.border === "thick" ? "10px" : "2px"} solid ${pedal["knobs-border"]}`
                 })
+
                 .css("--indicator-color", pedal["knobs-indicator"])
                 .attr("data-control-label", control.label);
 
@@ -134,10 +135,10 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
               if (control.position === "under-top" && $row.children().length > 0) {
                 const $prev = $row.children().last();
                 $prev.append($("<div>").css("margin-top", "-52px").append($label, $container));
-              } else if (control.position === "higher" && $row.children().length > 0) {
-                const $prev = $row.children().last();
-                $prev.append($("<div>").css("margin-top", "-30px").append($label, $container));
-              } else {
+              } else if (control.position === "higher") {
+            $knobWrapper.css("margin-top", "-30px");
+            $row.append($knobWrapper);
+            } else {
                 $row.append($knobWrapper);
               }
             }

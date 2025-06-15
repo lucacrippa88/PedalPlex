@@ -54,6 +54,32 @@
       ]
     },
     {
+      "id": "Boss Turbo Distortion DS-2",
+      "name": "TURBO Distortion DS-2",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "color": "#e38120",
+      "font-color": "#ffffff",
+      "inside-color": "#212121",
+      "knobs-color": "#e38120",
+      "knobs-border": "#424242",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        { "row": [
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
+            ]
+        },
+        { "row": [
+                { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Tone", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Dist", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Turbo", "type": "knob", "values":["I", "II"], "value": "I" }
+            ]
+        }
+      ]
+    },
+    {
       "id": "Boss Dyna Drive DN-2",
       "name": "Dyna Drive DN-2",
       "width": "standard",
