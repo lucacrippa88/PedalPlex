@@ -220,8 +220,7 @@
       "controls": [
         { "row": [
                 { "label": "Mod", "type": "multi", "values": ["On", "Off"], "value": "On" },
-                { "label": "Mix", "type": "largeknob", "min": 7, "max": 17, "value": 12 },
-                { "label": "" }
+                { "label": "Mix", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
             ]
         },
         { "row": [
