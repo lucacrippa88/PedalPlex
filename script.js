@@ -122,6 +122,16 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
                   "white-space": "nowrap",
                   "font-size": "10px"
                 }).text(control.label);
+              } 
+              else if (control.position === "higher" && control.type === "smallknob") {
+                $label = $("<div>").css({
+                  position: "absolute",
+                  left: "20px",
+                  top: "110px",
+                  transform: "translateY(-50%)",
+                  "white-space": "nowrap",
+                  "font-size": "10px"
+                }).text(control.label);
               } else {
                 $label = $("<div>").addClass("label-top").text(control.label);
               }
