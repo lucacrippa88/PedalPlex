@@ -73,7 +73,7 @@
             ]
         },
         { "row": [
-                { "label": "Tone", "type": "smallknob", "position": "higher", "min": 7, "max": 17, "value": 12 }
+                { "label": "Tone", "type": "knob", "position": "higher", "min": 7, "max": 17, "value": 12 }
             ]
         }
       ]

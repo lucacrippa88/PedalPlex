@@ -122,8 +122,7 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
                   "white-space": "nowrap",
                   "font-size": "10px"
                 }).text(control.label);
-              } 
- else {
+              } else {
                 $label = $("<div>").addClass("label-top").text(control.label);
               }
 
