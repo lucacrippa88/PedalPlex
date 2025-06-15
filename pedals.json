@@ -63,7 +63,7 @@
       "font-color": "#ffffff",
       "inside-color": "#212121",
       "knobs-color": "#e38120",
-      "knobs-border": "#424242",
+      "knobs-border": "#000000",
       "knobs-indicator": "#000000",
       "controls": [
         { "row": [
