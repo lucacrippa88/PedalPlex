@@ -161,7 +161,8 @@ body {
 
 
 .align-left {
-  margin-right: auto;
+  position: absolute;
+  left: 8px;
 }
 
 
