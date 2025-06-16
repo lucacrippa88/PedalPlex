@@ -183,9 +183,10 @@
     },
     {
       "id": "Ibanez Tube Screamer Mini",
-      "name": "TS Mini",
+      "name": "Tube Screamer",
       "width": "small",
       "height": "large",
+      "logo": "font-family:tsmini; font-size:20px; position:absolute; bottom:5px; color:#ffffff",
       "color": "#159651",
       "font-color": "#ffffff",
       "inside-color": "#159651",
