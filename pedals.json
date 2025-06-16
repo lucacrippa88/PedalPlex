@@ -225,7 +225,7 @@
         },
         { "row": [
                 { "label": "Regen", "type": "largeknob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Check", "type": "led", "position": "lower", "colors": ["#000000", "#0062ff"], "value": 1},
+                { "label": "Check", "type": "led", "position": "lower", "colors": ["#000000", "#00d5ff"], "value": 1},
                 { "label": "Delay", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
             ]
         }
