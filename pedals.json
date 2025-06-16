@@ -301,7 +301,7 @@
       "knobs-indicator": "#000000",
       "controls": [
         { "row": [
-                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 1},
+                { "label": "Check", "type": "led", "colors": ["#000000", "#00ff26"], "value": 1},
                 { "label": "Blend", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
             ]
         },
