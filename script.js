@@ -137,7 +137,7 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
 
               if (control.position === "under-top" && $row.children().length > 0) {
                 const $prev = $row.children().last();
-                $prev.append($("<div>").css("margin-top", "-52px").append($label, $container));
+                $prev.append($("<div>").css("margin-top", "-53px").append($label, $container));
               } else if (control.position === "higher") {
                   $knobWrapper.css("margin-top", "-30px");
                   $row.append($knobWrapper);
