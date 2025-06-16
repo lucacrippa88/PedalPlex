@@ -41,6 +41,7 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
     // Render pedals after everything has loaded
     pedals.forEach(pedal => {
       if (pedalboard.pedalboard.some(item => item.includes(pedal.id))) {
+        console.log(pedal)
 
         const $pedalDiv = $("<div>").addClass("pedal").css({
           background: pedal["inside-color"],
@@ -166,6 +167,7 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
 
 
             if (control.type === "slider") {
+               
               const $label = $("<div>").addClass("slider-label").text(control.label);
               const $slider = $("<input type='range'>")
                 .attr("min", control.min)
@@ -177,6 +179,8 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
               $slider.on("input", function () {
                 control.value = parseInt(this.value);
               });
+
+             
 
               const $wrapper = $("<div>").addClass("slider-container").append($slider, $label);
               $row.append($wrapper);
