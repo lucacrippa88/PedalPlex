@@ -180,8 +180,6 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
                 control.value = parseInt(this.value);
               });
 
-             
-
               const $wrapper = $("<div>").addClass("slider-container").append($slider, $label);
               $row.append($wrapper);
             }
