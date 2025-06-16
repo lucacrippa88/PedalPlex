@@ -237,12 +237,12 @@
       "width": "standard",
       "height": "standard",
       "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#101c67",
-      "color": "#f0f0f0",
-      "font-color": "#ffffff",
+      "color": "#b8adaa",
+      "font-color": "#3c3642",
       "inside-color": "#212121",
-      "knobs-color": "#3dc6fc",
+      "knobs-color": "#000000",
       "knobs-border": "#424242",
-      "knobs-indicator": "#000000",
+      "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
                 { "label": "Check", "type": "led", "position": "right", "colors": ["#000000", "#f70000"], "value": 0}
