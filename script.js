@@ -163,6 +163,11 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
               } else {
                 $row.append($ledContainer);
               }
+
+              if (control.position === "right") {
+                $ledContainer.addClass("align-right");
+              }
+
             }
 
 

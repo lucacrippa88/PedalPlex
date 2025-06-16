@@ -245,7 +245,7 @@
       "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
-                { "label": "Check", "type": "led", "position": "right", "colors": ["#000000", "#f70000"], "value": 0}
+                { "label": "Check", "type": "led", "position": "right", "colors": ["#000000", "#f70000"], "value": 1}
             ]
         },
         { "row": [
