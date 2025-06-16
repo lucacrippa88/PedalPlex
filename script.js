@@ -390,3 +390,22 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
     return angleOffset + ratio * angleRange;
   }
 });
+
+
+const pedalboardSelect = document.getElementById('pedalboardSelect');
+
+Object.keys(pedalboards).forEach(id => {
+  const option = document.createElement('option');
+  option.value = id;
+  option.textContent = id === 'default' ? 'Main Pedalboard' : id;
+  pedalboardSelect.appendChild(option);
+});
+
+
+pedalboardSelect.addEventListener('change', (e) => {
+  const selectedPedalboardId = e.target.value;
+  const pedals = pedalboards[selectedPedalboardId];
+  
+  // You could now re-render pedal controls or filter presets if needed
+  console.log("Selected Pedalboard:", pedals);
+});
