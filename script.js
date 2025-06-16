@@ -28,49 +28,10 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
 
   $("#pedalboard").before($selector); // Insert the dropdown
 
-
-
     // Load pedalboard next
     return loadJSON("https://lucacrippa88.github.io/PedalPlex/pedalboard.json");
   }).then(pedalboardData => {
-    //pedalboard = pedalboardData;
-
-
-
-
-    
-    
-    // If pedalboardData is not an array, wrap it into an array
-    if (Array.isArray(pedalboardData)) {
-      pedalboards = pedalboardData;
-    } else {
-      pedalboards = [pedalboardData];
-    }
-
-
-    // Create pedalboard selector dropdown
-    const $pedalboardSelector = $("<select id='pedalboard-selector'><option disabled selected>Select pedalboard</option></select><br><br>");
-    pedalboards.forEach((pb, i) => {
-      const name = pb.name || `Pedalboard ${i + 1}`;
-      $pedalboardSelector.append($("<option>").val(i).text(name));
-    });
-
-    $("#pedalboard").before($pedalboardSelector);
-
-    currentPedalboard = pedalboards[0];
-    $pedalboardSelector.val(0);
-
-    $pedalboardSelector.on("change", function () {
-      const index = $(this).val();
-      currentPedalboard = pedalboards[index];
-      renderPedalboard();
-    });
-
-
-
-
-
-
+    pedalboard = pedalboardData;
 
     // Load pedal catalog
     return loadJSON("https://lucacrippa88.github.io/PedalPlex/pedals.json");
@@ -104,16 +65,23 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
           height: getPedalHeight(pedal.height)
         };
 
-        let $pedalDiv;
-        if (inside === "full") {
-          $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
-            .attr("data-pedal-name", pedal.name);
-        } else {
-          $pedalDiv = $("<div>").addClass("pedal").css({
-            ...baseCss,
-            boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-          }).attr("data-pedal-name", pedal.name);
-        }
+
+
+  let $pedalDiv;
+  if (inside === "full") {
+    $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
+      .attr("data-pedal-name", pedal.name);
+  } else {
+    $pedalDiv = $("<div>").addClass("pedal").css({
+      ...baseCss,
+      boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
+    }).attr("data-pedal-name", pedal.name);
+  }
+
+
+
+
+
 
 
         // Controls rendering (identical to your original)
@@ -429,5 +397,3 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
     return angleOffset + ratio * angleRange;
   }
 });
-
-
