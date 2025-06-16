@@ -43,37 +43,39 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
       if (pedalboard.pedalboard.some(item => item.includes(pedal.id))) {
         console.log(pedal)
 
-        const insideColor = pedal["inside-color"];
-        var inside;
-        // Use regex to check if there's anything after the color code
-        if (/#([0-9a-fA-F]{3,6})\s+(.+)/.test(insideColor)){
-          // There is something after the color (e.g., "full")
-          inside = insideColor.match(/#([0-9a-fA-F]{3,6})\s+(.+)/)[2];
-        } else {
-          // Only the color code is present
-          inside = "";
+        const insideColorRaw = pedal["inside-color"];
+        let inside = "";
+        let colorOnly = insideColorRaw;
+
+        // Use regex to extract color and anything extra (like "full")
+        const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+
+        if (match) {
+          colorOnly = match[1]; // just the hex color
+          inside = match[2] || ""; // optional: "full" or empty
         }
 
-        console.log(inside)
+        console.log("Parsed inside:", inside, "length:", inside.length);
 
-        if (inside == "full") {
-          const $pedalDiv = $("<div>").addClass("pedal").css({
-            background: pedal["inside-color"],
-            border: `10px solid ${pedal["color"]}`,
-            color: pedal["font-color"],
-            width: getPedalWidth(pedal.width),
-            height: getPedalHeight(pedal.height),
-          }).attr("data-pedal-name", pedal.name);
-        } else if (inside == "") {
-          const $pedalDiv = $("<div>").addClass("pedal").css({
-            background: pedal["inside-color"],
-            border: `10px solid ${pedal["color"]}`,
-            color: pedal["font-color"],
-            width: getPedalWidth(pedal.width),
-            height: getPedalHeight(pedal.height),
+        const baseCss = {
+          background: colorOnly,
+          border: `10px solid ${pedal["color"]}`,
+          color: pedal["font-color"],
+          width: getPedalWidth(pedal.width),
+          height: getPedalHeight(pedal.height)
+        };
+
+        let $pedalDiv;
+        if (inside === "full") {
+          $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
+            .attr("data-pedal-name", pedal.name);
+        } else {
+          $pedalDiv = $("<div>").addClass("pedal").css({
+            ...baseCss,
             boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
           }).attr("data-pedal-name", pedal.name);
         }
+
 
         // Controls rendering (identical to your original)
         pedal.controls.forEach(controlRow => {
