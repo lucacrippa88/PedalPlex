@@ -200,7 +200,7 @@
             ]
         },
         { "row": [
-                { "label": "Overdrive", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
+                { "label": "Overdrive", "type": "xlargeknob", "min": 7, "max": 17, "value": 12 }
             ]
         }
       ]
