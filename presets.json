@@ -185,6 +185,102 @@
           ]
         }
       ]
+    },
+    {
+      "Nevermind album": [
+        {
+          "name": "AMPED 3",
+          "controls": [
+            { "Gain": 11 },
+            { "Volume": 16 },
+            { "Bst": 15 },
+            { "Rev": 10 },
+            { "Presence": 17 },
+            { "Master": 9},
+            { "Cabinet Sim": "Cabinet 2"},
+            { "Bass": 9},
+            { "Middle": 13},
+            { "Treble": 13},
+            { "ISF": 13},
+            { "Response": "6L6"},
+            { "Power": "20W"},
+            { "Reverb": "Dark"},
+            { "Boost": "Pre"},
+            { "Clean": "Bright"},
+            { "Clean Ch.": 1}
+          ]
+        },
+        {
+          "name": "Big Muff",
+          "controls": [
+            { "Volume": 12 },
+            { "Tone": 12 },
+            { "Sustain": 15 },
+            { "T": "On" },
+            { "W": "On" },
+            { "Check": 1}
+          ]
+        },
+        {
+          "name": "Flanger BF-3",
+          "controls": [
+            { "Res": 7 },
+            { "Depth": 9 },
+            { "Rate": 9 },
+            { "Mode": "Std" },
+            { "Manual": 9 },
+            { "Check": 1}
+          ]
+        }
+      ]
+    },
+    {
+      "Come As You Are": [
+        {
+          "name": "AMPED 3",
+          "controls": [
+            { "Gain": 11 },
+            { "Volume": 16 },
+            { "Bst": 15 },
+            { "Rev": 10 },
+            { "Presence": 17 },
+            { "Master": 9},
+            { "Cabinet Sim": "Cabinet 2"},
+            { "Bass": 9},
+            { "Middle": 13},
+            { "Treble": 13},
+            { "ISF": 13},
+            { "Response": "6L6"},
+            { "Power": "20W"},
+            { "Reverb": "Dark"},
+            { "Boost": "Pre"},
+            { "Clean": "Bright"},
+            { "Clean Ch.": 1}
+          ]
+        },
+        {
+          "name": "Big Muff",
+          "controls": [
+            { "Volume": 12 },
+            { "Tone": 12 },
+            { "Sustain": 15 },
+            { "T": "On" },
+            { "W": "On" },
+            { "Check": 1}
+          ]
+        },
+        {
+          "name": "Flanger BF-3",
+          "controls": [
+            { "Res": 7 },
+            { "Depth": 9 },
+            { "Rate": 14 },
+            { "Mode": "Std" },
+            { "Manual": 10 },
+            { "Check": 1}
+          ]
+        }
+      ]
     }
   ]
 }
