@@ -247,6 +247,17 @@
         { "row": [
                 { "label": "Check", "type": "led", "position": "right", "colors": ["#000000", "#f70000"], "value": 0}
             ]
+        },
+        { "row": [
+                { "label": "100", "type": "slider", "orientation": "vertical", "min": 0, "max": 10, "value": 5 },
+                { "label": "200", "type": "slider", "orientation": "vertical", "min": 0, "max": 10, "value": 5 },
+                { "label": "400", "type": "slider", "orientation": "vertical", "min": 0, "max": 10, "value": 5 },
+                { "label": "800", "type": "slider", "orientation": "vertical", "min": 0, "max": 10, "value": 5 },
+                { "label": "1.6k", "type": "slider", "orientation": "vertical", "min": 0, "max": 10, "value": 5 },
+                { "label": "3.2k", "type": "slider", "orientation": "vertical", "min": 0, "max": 10, "value": 5 },
+                { "label": "6.4k", "type": "slider", "orientation": "vertical", "min": 0, "max": 10, "value": 5 },
+                { "label": "Lvl", "type": "slider", "orientation": "vertical", "min": 0, "max": 10, "value": 5 }
+            ]
         }
       ]
     }
