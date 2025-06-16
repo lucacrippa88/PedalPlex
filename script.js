@@ -28,10 +28,49 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
 
   $("#pedalboard").before($selector); // Insert the dropdown
 
+
+
     // Load pedalboard next
     return loadJSON("https://lucacrippa88.github.io/PedalPlex/pedalboard.json");
   }).then(pedalboardData => {
-    pedalboard = pedalboardData;
+    //pedalboard = pedalboardData;
+
+
+
+
+    
+    
+    // If pedalboardData is not an array, wrap it into an array
+    if (Array.isArray(pedalboardData)) {
+      pedalboards = pedalboardData;
+    } else {
+      pedalboards = [pedalboardData];
+    }
+
+
+    // Create pedalboard selector dropdown
+    const $pedalboardSelector = $("<select id='pedalboard-selector'><option disabled selected>Select pedalboard</option></select><br><br>");
+    pedalboards.forEach((pb, i) => {
+      const name = pb.name || `Pedalboard ${i + 1}`;
+      $pedalboardSelector.append($("<option>").val(i).text(name));
+    });
+
+    $("#pedalboard").before($pedalboardSelector);
+
+    currentPedalboard = pedalboards[0];
+    $pedalboardSelector.val(0);
+
+    $pedalboardSelector.on("change", function () {
+      const index = $(this).val();
+      currentPedalboard = pedalboards[index];
+      renderPedalboard();
+    });
+
+
+
+
+
+
 
     // Load pedal catalog
     return loadJSON("https://lucacrippa88.github.io/PedalPlex/pedals.json");
@@ -392,20 +431,3 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
 });
 
 
-const pedalboardSelect = document.getElementById('pedalboardSelect');
-
-Object.keys(pedalboards).forEach(id => {
-  const option = document.createElement('option');
-  option.value = id;
-  option.textContent = id === 'default' ? 'Main Pedalboard' : id;
-  pedalboardSelect.appendChild(option);
-});
-
-
-pedalboardSelect.addEventListener('change', (e) => {
-  const selectedPedalboardId = e.target.value;
-  const pedals = pedalboards[selectedPedalboardId];
-  
-  // You could now re-render pedal controls or filter presets if needed
-  console.log("Selected Pedalboard:", pedals);
-});
