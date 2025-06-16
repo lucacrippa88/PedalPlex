@@ -178,6 +178,7 @@
             { "Response": "EL84"},
             { "Power": "20W"},
             { "Reverb": "Light"},
+            { "Reverb Ch.": 1},
             { "Boost": "Pre"},
             { "Crunch": "Super"},
             { "Crunch Ch.": 1}
