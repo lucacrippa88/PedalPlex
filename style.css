@@ -177,7 +177,7 @@ body {
 
 input[type="range"].vertical {
   writing-mode: bt-lr; /* Bottom to top, left to right */
-  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
   width: 8px;
   height: 70px;
   background: transparent;
