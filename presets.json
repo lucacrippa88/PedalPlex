@@ -102,19 +102,19 @@
           "name": "AMPED 3",
           "controls": [
             { "Gain": 11 },
-            { "Volume": 14 },
+            { "Volume": 16 },
             { "Bst": 15 },
-            { "Rev": 14 },
-            { "Presence": 11 },
+            { "Rev": 10 },
+            { "Presence": 17 },
             { "Master": 9},
             { "Cabinet Sim": "Cabinet 1"},
-            { "Bass": 14},
-            { "Middle": 10},
-            { "Treble": 11},
-            { "ISF": 17},
+            { "Bass": 9},
+            { "Middle": 13},
+            { "Treble": 13},
+            { "ISF": 13},
             { "Response": "EL84"},
             { "Power": "20W"},
-            { "Reverb": "Light"},
+            { "Reverb": "Dark"},
             { "Boost": "Pre"},
             { "Clean": "Bright"},
             { "Clean Ch.": 1}
@@ -129,6 +129,32 @@
             { "T": "On" },
             { "W": "Off" },
             { "Check": 1}
+          ]
+        }
+      ]
+    },
+    {
+      "Back in Black album": [
+        {
+          "name": "AMPED 3",
+          "controls": [
+            { "Gain": 11 },
+            { "Volume": 15 },
+            { "Bst": 14 },
+            { "Rev": 11 },
+            { "Presence": 11 },
+            { "Master": 9},
+            { "Cabinet Sim": "Cabinet 1"},
+            { "Bass": 11},
+            { "Middle": 10},
+            { "Treble": 11},
+            { "ISF": 17},
+            { "Response": "EL34"},
+            { "Power": "20W"},
+            { "Reverb": "Dark"},
+            { "Boost": "Pre"},
+            { "Crunch": "Crunch"},
+            { "Crunch Ch.": 2}
           ]
         }
       ]
