@@ -42,7 +42,17 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
     pedals.forEach(pedal => {
       if (pedalboard.pedalboard.some(item => item.includes(pedal.id))) {
         console.log(pedal)
-        console.log(pedal.inside)
+
+        const insideColor = pedal["inside-color"];
+        // Use regex to check if there's anything after the color code
+        if (/#([0-9a-fA-F]{3,6})\s+(.+)/.test(insideColor)) {
+          // There is something after the color (e.g., "full")
+          console.log("Extra value found:", insideColor.match(/#([0-9a-fA-F]{3,6})\s+(.+)/)[2]);
+        } else {
+          // Only the color code is present
+          console.log("Only color:", insideColor);
+        }
+
 
           const $pedalDiv = $("<div>").addClass("pedal").css({
             background: pedal["inside-color"],

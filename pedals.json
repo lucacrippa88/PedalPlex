@@ -295,7 +295,7 @@
       "logo": "font-family:sp; font-size:45px; position:absolute; bottom:0px; color:#ffffff",
       "color": "#f0f0f0",
       "font-color": "#ffffff",
-      "inside-color": "#212121",
+      "inside-color": "#141414 full",
       "knobs-color": "#9e9e9e",
       "knobs-border": "#ffffff",
       "knobs-indicator": "#000000",
