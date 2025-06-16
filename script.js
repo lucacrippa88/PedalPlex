@@ -44,16 +44,27 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
         console.log(pedal)
 
         const insideColor = pedal["inside-color"];
+        var inside;
         // Use regex to check if there's anything after the color code
-        if (/#([0-9a-fA-F]{3,6})\s+(.+)/.test(insideColor)) {
+        if (/#([0-9a-fA-F]{3,6})\s+(.+)/.test(insideColor)){
           // There is something after the color (e.g., "full")
-          console.log("Extra value found:", insideColor.match(/#([0-9a-fA-F]{3,6})\s+(.+)/)[2]);
+          inside = insideColor.match(/#([0-9a-fA-F]{3,6})\s+(.+)/)[2];
         } else {
           // Only the color code is present
-          console.log("Only color:", insideColor);
+          inside = "";
         }
 
+        console.log(inside)
 
+        if (inside == "full") {
+          const $pedalDiv = $("<div>").addClass("pedal").css({
+            background: pedal["inside-color"],
+            border: `10px solid ${pedal["color"]}`,
+            color: pedal["font-color"],
+            width: getPedalWidth(pedal.width),
+            height: getPedalHeight(pedal.height),
+          }).attr("data-pedal-name", pedal.name);
+        } else if (inside == "") {
           const $pedalDiv = $("<div>").addClass("pedal").css({
             background: pedal["inside-color"],
             border: `10px solid ${pedal["color"]}`,
@@ -62,7 +73,7 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
             height: getPedalHeight(pedal.height),
             boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
           }).attr("data-pedal-name", pedal.name);
-
+        }
 
         // Controls rendering (identical to your original)
         pedal.controls.forEach(controlRow => {
