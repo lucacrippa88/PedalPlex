@@ -42,25 +42,17 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
     pedals.forEach(pedal => {
       if (pedalboard.pedalboard.some(item => item.includes(pedal.id))) {
         console.log(pedal)
+        console.log(pedal.inside)
 
-        if (pedal.inside !== "full") {
           const $pedalDiv = $("<div>").addClass("pedal").css({
             background: pedal["inside-color"],
             border: `10px solid ${pedal["color"]}`,
             color: pedal["font-color"],
             width: getPedalWidth(pedal.width),
             height: getPedalHeight(pedal.height),
-            boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`,
+            boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
           }).attr("data-pedal-name", pedal.name);
-        } else {
-          const $pedalDiv = $("<div>").addClass("pedal").css({
-            background: pedal["inside-color"],
-            border: `10px solid ${pedal["color"]}`,
-            color: pedal["font-color"],
-            width: getPedalWidth(pedal.width),
-            height: getPedalHeight(pedal.height),
-          }).attr("data-pedal-name", pedal.name);
-        }
+
 
         // Controls rendering (identical to your original)
         pedal.controls.forEach(controlRow => {
