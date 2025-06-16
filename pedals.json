@@ -260,6 +260,31 @@
             ]
         }
       ]
+    },
+    {
+      "id": "Boss Chorus CE-2w",
+      "name": "Chorus CE-2w",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "color": "#278ba9",
+      "font-color": "#000000",
+      "inside-color": "#278ba9",
+      "knobs-color": "#c2c7cc",
+      "knobs-border": "#000000",
+      "knobs-indicator": "#000000",
+      "controls": [
+        { "row": [
+                { "label": "Rate", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 },
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0},
+                { "label": "Depth", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 }
+            ]
+        },
+        { "row": [
+                { "label": "S", "type": "multi", "values": ["Std", "Chorus", "Vibrato"], "value": "Std" }
+            ]
+        }
+      ]
     }
   ]
 }
