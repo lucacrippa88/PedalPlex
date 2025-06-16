@@ -119,6 +119,27 @@ body {
   background-color: var(--indicator-color, #fff);
 }
 
+.xlargeknob {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.xlargeknob::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 8px;
+  border-radius: 1px;
+  background-color: var(--indicator-color, #fff);
+}
+
 .knob-value-label {
   font-size: 12px;
   font-weight: bold;
@@ -155,7 +176,8 @@ body {
 
 .knob,
 .smallknob,
-.largeknob {
+.largeknob,
+.xlargeknob {
   box-sizing: border-box;
 }
 

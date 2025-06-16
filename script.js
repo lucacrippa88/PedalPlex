@@ -57,12 +57,14 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
           const $row = $("<div>").addClass("row");
 
           controlRow.row.forEach(control => {
-            if (control.type === "knob" || control.type === "smallknob" || control.type === "largeknob") {
+            if (control.type === "knob" || control.type === "smallknob" || control.type === "largeknob" || control.type === "xlargeknob") {
               const isSmall = control.type === "smallknob";
               const isLarge = control.type === "largeknob";
+              const isXLarge = control.type === "xlargeknob";
               const knob = $("<div>")
                 .addClass(isSmall ? "smallknob" : "knob")
                 .addClass(isLarge ? "largeknob" : "knob")
+                .addClass(isXLarge ? "xlargeknob" : "knob")
                 .css({
                     background: pedal["knobs-color"],
                     border: `${control.border === "thick" ? "10px" : "2px"} solid ${pedal["knobs-border"]}`
@@ -273,7 +275,7 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
             }
 
             // Update visual and state
-            if ($control.is("div.knob, div.smallknob, div.largeknob")) {
+            if ($control.is("div.knob, div.smallknob, div.largeknob, div.xlargeknob")) {
             // Update knob's internal value and rotation
             ctrl.value = newValue;
             const rotation = getRotationFromValue(ctrl, newValue);
