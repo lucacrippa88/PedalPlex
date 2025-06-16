@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pedalboard Builder</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    #catalog, #selected-pedals { margin-top: 1rem; min-height: 2rem; }
+    .pedal-item {
+      cursor: pointer;
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      margin: 5px;
+      display: inline-block;
+      border-radius: 4px;
+      background-color: white;
+      position: relative;
+    }
+    .pedal-item:hover:not(.selected-catalog) { background-color: #eef; }
+    .pedal-item.selected-catalog {
+      background-color: #ddd;
+      color: #888;
+      cursor: default;
+    }
+    .pedal-item.selected-board {
+      background-color: #fff5e6;
+      cursor: grab;
+    }
+    .delete-btn {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    #selected-pedals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .drag-over {
+      border: 2px dashed #555;
+    }
+    .dragging {
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Pedalboard Builder</h1>
+
+<p>Select a predefined pedalboard:</p>
+<select id="pedalboard-selector">
+  <option value="">-- Select a pedalboard --</option>
+  <option value="https://lucacrippa88.github.io/PedalPlex/pedalboard.json">My Pedalboard</option>
+</select>
+
+<br><br>
+<label for="search">Search Pedals:</label>
+<input type="text" id="search" placeholder="Type to search..." style="margin-bottom: 1rem; display: block;" />
+
+
+
+<div id="catalog">Loading pedals...</div>
+
+<h2>Your Pedalboard:</h2>
+
+<div id="selected-pedals"></div>
+
+
+<button id="reset-button" style="margin-top: 10px;">Reset Pedalboard</button>
+
+<script>
+async function loadJSON(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return response.json();
+}
+
+const catalogDiv = document.getElementById('catalog');
+const selectedPedalsDiv = document.getElementById('selected-pedals');
+const selector = document.getElementById('pedalboard-selector');
+
+let pedalsCatalog = [];
+let selectedPedals = [];
+
+function renderCatalog() {
+  catalogDiv.innerHTML = '';
+  pedalsCatalog.forEach(pedal => {
+    const isSelected = selectedPedals.some(p => p.id === pedal.id);
+    const item = document.createElement('div');
+    item.className = 'pedal-item' + (isSelected ? ' selected-catalog' : '');
+    item.textContent = pedal.id;
+    item.title = pedal.id;
+    if (!isSelected) {
+      item.onclick = () => addPedal(pedal);
+    }
+    catalogDiv.appendChild(item);
+  });
+}
+
+function renderSelectedPedals() {
+  selectedPedalsDiv.innerHTML = '';
+  selectedPedals.forEach((pedal, index) => {
+    const item = document.createElement('div');
+    item.className = 'pedal-item selected-board';
+    item.textContent = pedal.id;
+    item.title = pedal.id;
+    item.setAttribute('draggable', 'true');
+    item.dataset.index = index;
+
+    // Drag handlers
+    item.addEventListener('dragstart', (e) => {
+      item.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', index);
+    });
+    item.addEventListener('dragend', () => {
+      item.classList.remove('dragging');
+      selectedPedalsDiv.querySelectorAll('.pedal-item').forEach(i => i.classList.remove('drag-over'));
+    });
+    item.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      item.classList.add('drag-over');
+    });
+    item.addEventListener('dragleave', () => {
+      item.classList.remove('drag-over');
+    });
+    item.addEventListener('drop', (e) => {
+      e.preventDefault();
+      item.classList.remove('drag-over');
+      const draggedIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+      const targetIndex = parseInt(item.dataset.index, 10);
+      if (!isNaN(draggedIndex) && draggedIndex !== targetIndex) {
+        const [draggedPedal] = selectedPedals.splice(draggedIndex, 1);
+        selectedPedals.splice(targetIndex, 0, draggedPedal);
+        renderSelectedPedals();
+      }
+    });
+
+    // Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '×';
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (confirm(`Remove "${pedal.id}" from your pedalboard?`)) {
+        selectedPedals.splice(index, 1);
+        renderSelectedPedals();
+        renderCatalog();
+      }
+    };
+
+    item.appendChild(deleteBtn);
+    selectedPedalsDiv.appendChild(item);
+  });
+}
+
+function addPedal(pedal) {
+  if (selectedPedals.some(p => p.id === pedal.id)) return;
+  selectedPedals.push(pedal);
+  renderSelectedPedals();
+  renderCatalog();
+}
+
+loadJSON('https://lucacrippa88.github.io/PedalPlex/pedals.json')
+  .then(data => {
+    if (data && Array.isArray(data.Pedals)) {
+      pedalsCatalog = data.Pedals.sort((a, b) => a.id.localeCompare(b.id));
+      renderCatalog();
+    } else {
+      catalogDiv.textContent = 'No pedals found in the data.';
+    }
+  })
+  .catch(err => {
+    catalogDiv.textContent = 'Failed to load pedals.';
+    console.error(err);
+  });
+
+selector.addEventListener('change', async () => {
+  const url = selector.value;
+  if (!url) return;
+
+  try {
+    const data = await loadJSON(url);
+    if (Array.isArray(data.pedalboard)) {
+      selectedPedals = data.pedalboard
+        .map(name => pedalsCatalog.find(p => p.id === name))
+        .filter(p => p);
+      renderSelectedPedals();
+      renderCatalog();
+    }
+  } catch (err) {
+    alert('Failed to load pedalboard.');
+    console.error(err);
+  }
+});
+
+
+document.getElementById('reset-button').addEventListener('click', () => {
+  if (confirm('Clear all pedals from your pedalboard?')) {
+    selectedPedals = [];
+    renderSelectedPedals();
+    renderCatalog();
+  }
+});
+
+
+
+
+
+// Handle search filtering
+const searchInput = document.getElementById('search');
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.toLowerCase();
+  renderCatalog(query);
+});
+
+// Modify renderCatalog to support filtering
+function renderCatalog(filter = '') {
+  catalogDiv.innerHTML = '';
+  pedalsCatalog
+    .filter(pedal => pedal.id.toLowerCase().includes(filter))
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .forEach(pedal => {
+      const item = document.createElement('div');
+      item.className = 'pedal-item';
+      item.textContent = pedal.id;
+      item.title = pedal.id;
+
+      // Gray out selected pedals
+      if (selectedPedals.find(p => p.id === pedal.id)) {
+        item.style.opacity = '0.5';
+        item.style.pointerEvents = 'none';
+      }
+
+      item.onclick = () => addPedal(pedal);
+      catalogDiv.appendChild(item);
+    });
+}
+
+
+
+</script>
+
+</body>
+</html>
