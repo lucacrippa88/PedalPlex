@@ -75,6 +75,7 @@
 
 <div id="selected-pedals"></div>
 
+<button id="save-button" style="margin-top: 10px;">Save Pedalboard</button>
 
 <button id="reset-button" style="margin-top: 10px;">Reset Pedalboard</button>
 
@@ -245,6 +246,36 @@ function renderCatalog(filter = '') {
       catalogDiv.appendChild(item);
     });
 }
+
+
+document.getElementById('save-button').addEventListener('click', async () => {
+  // Map only the pedal IDs for saving
+  const pedalIds = selectedPedals.map(p => p.id);
+
+  const response = await fetch('https://www.cineteatrosanluigi.it/plex/save_pedalboard.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      user_id: 'user-0',
+      pedalboard: pedalIds
+    })
+  });
+
+  try {
+    const result = await response.json();
+    if (result.success) {
+      alert("Pedalboard saved successfully!");
+    } else {
+      alert("Error saving pedalboard: " + result.error);
+    }
+  } catch (err) {
+    console.error('Invalid response:', err);
+    alert("Unexpected error saving pedalboard.");
+  }
+});
+
+
+
 
 
 

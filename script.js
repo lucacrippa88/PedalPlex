@@ -38,10 +38,9 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
   }).then(data => {
     pedals = data["Pedals"];
 
-    // Render pedals after everything has loaded
+    // Render pedals after everything has loaded ---------------------------------------
     pedals.forEach(pedal => {
       if (pedalboard.pedalboard.some(item => item.includes(pedal.id))) {
-        console.log(pedal)
 
         const insideColorRaw = pedal["inside-color"];
         let inside = "";
@@ -54,8 +53,6 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
           colorOnly = match[1]; // just the hex color
           inside = match[2] || ""; // optional: "full" or empty
         }
-
-        console.log("Parsed inside:", inside, "length:", inside.length);
 
         const baseCss = {
           background: colorOnly,
@@ -271,7 +268,7 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
   });
 
   // Helper functions remain unchanged
-    function applyPreset(songName) {
+  function applyPreset(songName) {
     const songPresetArray = presets[songName];
     if (!songPresetArray) return;
 
@@ -287,6 +284,20 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
         presetMap[p.name][label] = value;
         });
     });
+
+
+const presetPedals = getPedalsInPreset(songPresetArray);
+const pedalsOnBoard = getPedalList();
+//console.log("Pedals used in preset:", presetPedals);
+//console.log("Pedals currently on the board:", pedalsOnBoard);
+
+// Print if a pedal from the preset is missing on the pedalboard
+presetPedals.forEach(pedal => {
+  if (!pedalsOnBoard.includes(pedal)) {
+    alert(`Missing pedal on pedalboard: ${pedal}`);
+  }
+});
+
 
     $(".pedal").each(function () {
         const $pedalDiv = $(this);
@@ -397,3 +408,28 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
     return angleOffset + ratio * angleRange;
   }
 });
+
+
+function getPedalList() {
+  const pedalList = [];
+
+  $(".pedal").each(function () {
+    const $pedalDiv = $(this);
+    const pedalName = $pedalDiv.data("pedal-name");
+    if (pedalName) {
+      pedalList.push(pedalName);
+    }
+  });
+
+  return pedalList;
+}
+
+
+
+function getPedalsInPreset(songPresetArray) {
+
+  if (!songPresetArray) return [];
+
+  const pedalNames = songPresetArray.map(p => p.name);
+  return [...new Set(pedalNames)]; // Ensures uniqueness
+}
