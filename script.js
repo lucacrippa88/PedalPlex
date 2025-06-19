@@ -5,11 +5,17 @@ $(document).ready(function () {
 
   const loadJSON = url => $.getJSON(url);
 
+  //console.log(readDB("user-0", "presets"));
+
 // Step 1: Load presets and build dropdown
-loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetData => {
-  // Flatten the array of preset objects into a single presets map
+readDB("user-0", "presets").then(presetData => {
+  if (!presetData || !presetData.presets) {
+    throw new Error("No presets found");
+  }
+
+  // Flatten Cloudant presets format
   presets = {};
-  presetData.Presets.forEach(presetObj => {
+  presetData.presets.forEach(presetObj => {
     Object.entries(presetObj).forEach(([songName, preset]) => {
       presets[songName] = preset;
     });
@@ -26,12 +32,21 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
     applyPreset(selected);
   });
 
-  $("#pedalboard").before($selector); // Insert the dropdown
+  $("#pedalboard").before($selector); // Insert dropdown
 
-    // Load pedalboard next
-    return loadJSON("https://lucacrippa88.github.io/PedalPlex/pedalboard.json");
-  }).then(pedalboardData => {
-    pedalboard = pedalboardData;
+}).then(() => {
+  return readDB("user-0", "pedalboard");
+})
+.then(() => {
+  return readDB("user-0", "pedalboard"); // Or pass dynamic user ID
+  }).then(queryResult => {
+    if (!queryResult) {
+      throw new Error("No queried_pedalboard found");
+    }
+
+  const queried_pedalboard = queryResult;
+  pedalboard = queried_pedalboard; // Overwrite global `pedalboard` with the queried one
+
 
     // Load pedal catalog
     return loadJSON("https://lucacrippa88.github.io/PedalPlex/pedals.json");
@@ -39,8 +54,12 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
     pedals = data["Pedals"];
 
     // Render pedals after everything has loaded ---------------------------------------
-    pedals.forEach(pedal => {
-      if (pedalboard.pedalboard.some(item => item.includes(pedal.id))) {
+    //pedals.forEach(pedal => {
+      //if (pedalboard.pedalboard.some(item => item.includes(pedal.id))) {
+
+    pedalboard.pedalboard.forEach(pedalId => {
+      const pedal = pedals.find(p => p.id === pedalId);
+      if (!pedal) return;
 
         const insideColorRaw = pedal["inside-color"];
         let inside = "";
@@ -264,7 +283,9 @@ loadJSON("https://lucacrippa88.github.io/PedalPlex/presets.json").then(presetDat
         }
 
       }
-    });
+    );
+
+
   });
 
   // Helper functions remain unchanged
@@ -433,3 +454,50 @@ function getPedalsInPreset(songPresetArray) {
   const pedalNames = songPresetArray.map(p => p.name);
   return [...new Set(pedalNames)]; // Ensures uniqueness
 }
+
+
+
+
+// Waiting for query...
+const resultsDiv = document.getElementById("results");
+resultsDiv.textContent = "Loading pedals..."; 
+
+
+// Get pedalboard from DB
+async function readDB(userId, read) {
+
+      // Build selector
+      const selector = {
+        user_id: { "$eq": userId }
+      }
+      const query = {
+        selector,
+        limit: 20
+      };
+
+      try {
+        const response = await fetch("https://www.cineteatrosanluigi.it/plex/get_pedalboard.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(query)
+        });
+
+        const data = await response.json();
+        if (!data.docs || data.docs.length === 0) {
+          resultsDiv.textContent = "No pedalboards found.";
+          return;
+        }
+
+        resultsDiv.innerHTML = "";
+        if (read == "pedalboard") {
+          const queried_pedalboard = { pedalboard: data.docs[0].pedalboard };
+          return queried_pedalboard;
+        } else if (read == "presets") {
+          const queried_presets = { presets: data.docs[0].presets };
+          return queried_presets;
+        }
+
+      } catch (err) {
+        alert('Failed to load. '+err.message);
+      }
+    }
