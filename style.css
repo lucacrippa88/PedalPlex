@@ -462,3 +462,7 @@ input[type="range"].vertical {
   font-family: sp;
   src: url("fonts/Lobster-Regular.ttf");
 }
+@font-face {
+  font-family: orangeamps;
+  src: url("fonts/AmpedOrange.ttf");
+}
