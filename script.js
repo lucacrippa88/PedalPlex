@@ -90,6 +90,8 @@ $(document).ready(function () {
         }).attr("data-pedal-name", pedal.name);
       }
 
+      
+
       // Controls rendering (same as original)
       pedal.controls.forEach(controlRow => {
         const $row = $("<div>").addClass("row");
@@ -270,6 +272,7 @@ $(document).ready(function () {
 
       const $nameDiv = $("<div>").addClass("pedal-name").text(pedal.name).attr("style", pedal.logo || "");
       $pedalDiv.append($nameDiv);
+
 
       $("#pedalboard").append($pedalDiv);
 

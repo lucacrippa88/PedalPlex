@@ -17,12 +17,12 @@
         { "row": [
                 { "label": "Power", "type": "multi", "values": ["Full", "Stby", "Half"], "value": "Stby" },
                 { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0},
-                { "label": "Fat Vol", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Fat Tone", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Fat Gain", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Tiny Vol", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Tiny Tone", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Tiny Gain", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "F Vol", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "F Tone", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "F Gain", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "T Vol", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "T Tone", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "T Gain", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Channel", "type": "multi", "values": ["Tiny Terror", "Fat"], "value": "Tiny Terror" }
             ]
         }
