@@ -3,11 +3,11 @@
     {
       "id": "Orange Dual Terror",
       "name": "Orange Dual Terror",
-      "width": "xlarge",
+      "width": "wide",
       "height": "standard",
       "logo": "font-family:orangeamps; font-size:18px; position:absolute; bottom:5px; color:#000000",
       "color": "#fc7b03",
-      "font-color": "#00000",
+      "font-color": "#000000",
       "inside-color": "#ffffff full",
       "knobs-color": "#000000",
       "knobs-border": "#424242",
