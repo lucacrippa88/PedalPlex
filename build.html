@@ -2,30 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pedalboard Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PedalPlex</title>
+  <link rel="stylesheet" href="https://unpkg.com/carbon-components/css/carbon-components.min.css">
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Custom inline styles for layout */
+    .search-and-buttons {
+      display: flex;
+      align-items: center;
+      margin-top: 3rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+  </style>
 </head>
 <body>
 
-<h1>Pedalboard Builder</h1>
+  <div class="bx--grid page-content">
+    <div class="bx--row">
+      <div class="bx--col-lg-12">
 
-<label for="search">Search Pedals:</label>
-<input type="text" id="search" placeholder="Type to search..." style="margin-bottom: 1rem; display: block;" />
+        <h3 class="bx--type-expressive-heading-04" style="margin-top: 1rem;">Your pedalboard:</h3><br><br>
 
-<div id="catalog"></div>
+        <div class="results" id="results" style="margin-top: 1rem;"></div>
+        <div id="selected-pedals" style="margin-top: 1rem;"></div>
 
-<h2>Your Pedalboard:</h2>
+        <div class="search-and-buttons">
+          <input type="text" id="search" class="bx--text-input" placeholder="Search to add pedals..." />
 
-<div class="results" id="results"></div>
-<div id="selected-pedals"></div>
+          <div class="bx--btn-set">
+            <button id="save-button" class="bx--btn bx--btn--primary" style="margin-left: 8px; min-height: 0.5rem; border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.3) 0px 8px 16px;">Save Pedalboard</button>
+            <button id="reset-button" class="bx--btn bx--btn--secondary" style="margin-left: 8px; min-height: 0.5rem; border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.3) 0px 8px 16px;">Reset Pedalboard</button>
+          </div>
+        </div>
 
-<button id="save-button" style="margin-top: 10px;">Save Pedalboard</button>
-<button id="reset-button" style="margin-top: 10px;">Reset Pedalboard</button>
+        <div id="catalog" class="bx--tile-group" style="margin-top: 2rem;"></div>
 
+      </div>
+    </div>
+  </div>
 
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="build.js"></script>
+  <script src="nav.js"></script>
 
 </body>
-
-<script src="build.js"></script>
 </html>
