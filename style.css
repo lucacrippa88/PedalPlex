@@ -8,7 +8,7 @@
       z-index: 3000;
       display: flex;
       align-items: center;
-      background-color: #f4f4f4;
+      background-color: rgb(25,25,25);
       padding: 1rem;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
@@ -20,7 +20,12 @@
       margin-right: 1rem;
     }
 
-    .menu-icon,
+    .menu-icon {
+      width: 24px;
+      height: 24px;
+      fill: #ffffff;
+    }
+
     .close-icon {
       width: 24px;
       height: 24px;
@@ -30,7 +35,7 @@
     .title {
       font-size: 1.25rem;
       font-weight: 600;
-      color: #161616;
+      color: #ffffff;
     }
 
     .fullscreen-menu {
@@ -59,6 +64,8 @@
       background: none;
       border: none;
       cursor: pointer;
+      position: absolute;
+      left: 16px;
     }
 
     .fullscreen-nav {
@@ -66,7 +73,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      /* justify-content: center; */
     }
 
     .fullscreen-nav a {
@@ -364,8 +371,6 @@ input[type="range"].vertical {
       color: white;
       border: none;
       border-radius: 50%;
-      width: 18px;
-      height: 18px;
       font-size: 12px;
       cursor: pointer;
     }
@@ -382,6 +387,17 @@ input[type="range"].vertical {
     }
 
 
+    .rotate-btn {
+     position: absolute;
+      bottom: -8px;
+      right: -8px;
+      background: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 12px;
+      cursor: pointer;
+    }
 
 
 
@@ -390,6 +406,33 @@ input[type="range"].vertical {
 
 
 
+
+
+
+.bx--loading-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  background: none;
+}
+
+
+
+
+.bx--text-input {
+  width: 30%!important;
+  border-radius: 8px;
+}
+
+.bx--btn {
+  margin-left: 8px;
+  min-height: 0.5rem;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 8px 16px;
+  max-width: 8rem!important;
+}
 
 
 

@@ -5,7 +5,6 @@ $(document).ready(function () {
 
   const loadJSON = url => $.getJSON(url);
 
-  //console.log(readDB("user-0", "presets"));
 
 // Step 1: Load presets and build dropdown
 readDB("user-0", "presets").then(presetData => {
@@ -22,7 +21,7 @@ readDB("user-0", "presets").then(presetData => {
   });
 
   // Create dropdown
-  const $selector = $("<select id='preset-selector'><option disabled selected>Select a song preset</option></select><br><br>");
+  const $selector = $("<select id='preset-selector' style='font-size:0.875rem;height:42px;'><option disabled selected>Select a song preset</option></select><br><br>");
   for (const songName in presets) {
     $selector.append($("<option>").val(songName).text(songName));
   }
@@ -54,9 +53,6 @@ readDB("user-0", "presets").then(presetData => {
     pedals = data["Pedals"];
 
     // Render pedals after everything has loaded ---------------------------------------
-    //pedals.forEach(pedal => {
-      //if (pedalboard.pedalboard.some(item => item.includes(pedal.id))) {
-
     pedalboard.pedalboard.forEach(pedalId => {
       const pedal = pedals.find(p => p.id === pedalId);
       if (!pedal) return;
@@ -93,10 +89,6 @@ readDB("user-0", "presets").then(presetData => {
       boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
     }).attr("data-pedal-name", pedal.name);
   }
-
-
-
-
 
 
 
@@ -194,31 +186,51 @@ readDB("user-0", "presets").then(presetData => {
               }
             }
 
+            
+
             if (control.type === "led") {
-              const selectedColor = control.colors[control.value] || "#000000";
+              const colors = Array.isArray(control.colors) ? control.colors : ["#000000"];
+              const numColors = colors.length;
+              let currentIndex = typeof control.value === "number" ? control.value : 0;
+
               const $label = $("<div>").addClass("label-top");
+
               const led = $("<div>")
                 .addClass("led")
-                .css("background-color", selectedColor)
-                .attr("data-control-label", control.label);
-              led.css("box-shadow", selectedColor.toLowerCase() !== "#000000" ? `0 0 8px 3px ${selectedColor}` : "none");
+                .attr("data-control-label", control.label)
+                .css("cursor", "pointer");
+
+              const setColor = (index) => {
+                const color = colors[index] || "#000000";
+                led.css("background-color", color);
+                led.css("box-shadow", color !== "#000000" ? `0 0 8px 3px ${color}` : "none");
+                control.value = index; // update value in control object
+                led.data("colorIndex", index);
+              };
+
+              setColor(currentIndex);
+
+              led.on("click", function () {
+                let index = (led.data("colorIndex") + 1) % numColors;
+                setColor(index);
+              });
 
               const $ledContainer = $("<div>").append($label, led);
+
               if (control.position === "under-top" && $row.children().length > 0) {
                 const $prev = $row.children().last();
                 $prev.append($("<div>").css("margin-top", "0px").append($label, led));
               } else if (control.position === "lower") {
+                $ledContainer.css("margin-top", "-20px");
                 $row.append($ledContainer);
-                $ledContainer.css("margin-top", "65px");
               } else {
                 $row.append($ledContainer);
               }
-
-              if (control.position === "right") {
-                $ledContainer.addClass("align-right");
-              }
-
             }
+
+
+
+
 
 
             if (control.type === "slider") {
@@ -275,11 +287,32 @@ readDB("user-0", "presets").then(presetData => {
 
         $("#pedalboard").append($pedalDiv);
 
+        $(".page-content").append("<br><br><br>");
+
+        // After the presets dropdown is fully populated and inserted, add an edit preset button:
+        if ($("#edit-btn").length === 0) {
+          const $editBtn = $(`
+            <button id="edit-btn" class="bx--btn bx--btn--primary" type="button">
+              Edit preset
+            </button>
+          `);
+
+          //$("#preset-selector").after($editBtn);
+          $(".page-content").append($editBtn);
+
+        }
+
         // After the presets dropdown is fully populated and inserted, add a reset button:
         if ($("#refresh-btn").length === 0) {
-        const $refreshBtn = $('<button id="refresh-btn" type="button" style="margin-left: 8px;">Reset controls</button>');
-        $("#preset-selector").after($refreshBtn);
-        $refreshBtn.on("click", () => location.reload());
+          const $refreshBtn = $(`
+            <button id="refresh-btn" class="bx--btn bx--btn--secondary" type="button">
+              Reset controls
+            </button>
+          `);
+
+          $("#preset-selector").after($refreshBtn);
+          $(".page-content").append($refreshBtn);
+          $refreshBtn.on("click", () => location.reload());
         }
 
       }
@@ -309,13 +342,22 @@ readDB("user-0", "presets").then(presetData => {
 
 const presetPedals = getPedalsInPreset(songPresetArray);
 const pedalsOnBoard = getPedalList();
-//console.log("Pedals used in preset:", presetPedals);
-//console.log("Pedals currently on the board:", pedalsOnBoard);
 
 // Print if a pedal from the preset is missing on the pedalboard
 presetPedals.forEach(pedal => {
   if (!pedalsOnBoard.includes(pedal)) {
-    alert(`Missing pedal on pedalboard: ${pedal}`);
+
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: `Missing pedal on pedalboard: ${pedal}`,
+      confirmButtonText: 'Ok',
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--danger'
+      }
+    });
+
   }
 });
 
@@ -386,81 +428,30 @@ presetPedals.forEach(pedal => {
     return null;
   }
 
-  function getPedalWidth(width) {
-    switch (width) {
-      case "small": return "100px";
-      case "standard": return "190px";
-      case "large": return "210px";
-      case "xlarge": return "400px";
-      default: return "190px";
-    }
-  }
 
-  function getPedalHeight(height) {
-    switch (height) {
-      case "small": return "100px";
-      case "standard": return "160px";
-      case "large": return "200px";
-      case "xlarge": return "265px";
-      default: return "400px";
-    }
-  }
 
-  function getRotationFromValue(control, value) {
-    let index = 0, range = 1, min = 0, max = 1;
 
-    if (control.values && Array.isArray(control.values)) {
-      index = control.values.indexOf(value);
-      if (index === -1) index = 0;
-      min = 0;
-      max = control.values.length - 1;
-    } else {
-      min = control.min ?? 0;
-      max = control.max ?? 100;
-      index = value;
-    }
-
-    range = max - min;
-
-    let angleRange = control.span === "all" ? 360 : 270;
-    let angleOffset = control.span === "all" ? 0 : -135;
-    const ratio = (index - min) / range;
-
-    return angleOffset + ratio * angleRange;
-  }
 });
 
 
-function getPedalList() {
-  const pedalList = [];
 
-  $(".pedal").each(function () {
-    const $pedalDiv = $(this);
-    const pedalName = $pedalDiv.data("pedal-name");
-    if (pedalName) {
-      pedalList.push(pedalName);
-    }
-  });
-
-  return pedalList;
-}
-
-
-
-function getPedalsInPreset(songPresetArray) {
-
-  if (!songPresetArray) return [];
-
-  const pedalNames = songPresetArray.map(p => p.name);
-  return [...new Set(pedalNames)]; // Ensures uniqueness
-}
 
 
 
 
 // Waiting for query...
 const resultsDiv = document.getElementById("results");
-resultsDiv.textContent = "Loading pedals..."; 
+
+resultsDiv.innerHTML = `
+  <div class="bx--loading-overlay">
+    <div class="bx--loading" role="status">
+      <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+        <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+        <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+      </svg>
+    </div>
+  </div>
+`;
 
 
 // Get pedalboard from DB
@@ -498,6 +489,48 @@ async function readDB(userId, read) {
         }
 
       } catch (err) {
-        alert('Failed to load. '+err.message);
+
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Failed to load." +err.message,
+          confirmButtonText: 'Ok',
+          buttonsStyling: false,
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--danger'
+          }
+        });
+
       }
     }
+
+
+
+
+
+
+
+// Load pedals.json once and cache
+let pedalsJsonCache = null;
+
+fetch('https://lucacrippa88.github.io/PedalPlex/pedals.json')
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+    return res.json();
+  })
+  .then(data => {
+    // Adjust this depending on your JSON structure:
+    // If your JSON root is an object with a "pedals" array:
+    if (data.pedals && Array.isArray(data.pedals)) {
+      pedalsJsonCache = data.pedals;
+    } else if (data.Pedals && Array.isArray(data.Pedals)) {
+      pedalsJsonCache = data.Pedals; // <-- add this line to handle uppercase key
+    } else if (Array.isArray(data)) {
+      pedalsJsonCache = data;
+    } else {
+      console.warn("Unexpected pedals.json structure:", data);
+      pedalsJsonCache = [];
+    }
+
+  })
+  .catch(err => console.error('Failed to load pedals.json:', err));
