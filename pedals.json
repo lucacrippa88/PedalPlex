@@ -2,10 +2,11 @@
   "Pedals": [
     {
       "id": "Orange Dual Terror",
-      "name": "Orange Dual Terror",
+      "name": "Orange",
+      "type": "ampli",
       "width": "wide",
       "height": "standard",
-      "logo": "font-family:orangeamps; font-size:37px; position:absolute; bottom:5px; color:#000000",
+      "logo": "font-family:orangeamps; font-size:70px; position:absolute; left:30px; color:#000000",
       "color": "#fc7b03",
       "font-color": "#000000",
       "inside-color": "#ffffff full",
@@ -30,6 +31,7 @@
     {
       "id": "Boss Digital Delay DD-8",
       "name": "Digital Delay DD-8",
+      "type": "pedal",
       "width": "standard",
       "height": "standard",
       "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#101c67",
@@ -56,6 +58,7 @@
     {
       "id": "Boss Flanger BF-3",
       "name": "Flanger BF-3",
+      "type": "pedal",
       "width": "standard",
       "height": "standard",
       "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
@@ -83,6 +86,7 @@
     {
       "id": "Boss Turbo Distortion DS-2",
       "name": "TURBO Dist DS-2",
+      "type": "pedal",
       "width": "standard",
       "height": "standard",
       "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
@@ -109,6 +113,7 @@
     {
       "id": "Boss Dyna Drive DN-2",
       "name": "Dyna Drive DN-2",
+      "type": "pedal",
       "width": "standard",
       "height": "standard",
       "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
@@ -134,6 +139,7 @@
     {
       "id": "Blackstar Dept.10 Amped 3",
       "name": "AMPED 3",
+      "type": "pedal",
       "width": "xlarge",
       "height": "xlarge",
       "logo": "font-family:amped; font-size:18px; letter-spacing: 0.5rem; word-spacing:-5px; position:absolute; bottom:5px; color:#ffffff",
@@ -181,6 +187,7 @@
     {
       "id": "Electro Harmonix Big Muff Pi Tone Wicker",
       "name": "Big Muff",
+      "type": "pedal",
       "width": "large",
       "height": "large",
       "logo": "font-family:bigmuff; font-size:47px; letter-spacing: -0.25rem; word-spacing:-10px; position: relative; top:-36px; color:#148E69",
@@ -211,6 +218,7 @@
     {
       "id": "Ibanez Tube Screamer Mini",
       "name": "Tube Screamer",
+      "type": "pedal",
       "width": "small",
       "height": "large",
       "logo": "font-family:tsmini; font-size:18px; letter-spacing: 0.1rem; position:absolute; bottom:5px; color:#ffffff",
@@ -236,6 +244,7 @@
     {
       "id": "MXR Carbon Copy",
       "name": "carbon copy",
+      "type": "pedal",
       "width": "standard",
       "height": "large",
       "logo": "font-family:mxr; font-size:30px; position:absolute; bottom:5px; color:#ffffff",
@@ -262,6 +271,7 @@
     {
       "id": "Boss Equalizer GE-7",
       "name": "Equalizer GE-7",
+      "type": "pedal",
       "width": "standard",
       "height": "standard",
       "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#3c3642",
@@ -292,6 +302,7 @@
     {
       "id": "Boss Chorus CE-2w",
       "name": "Chorus CE-2w",
+      "type": "pedal",
       "width": "standard",
       "height": "standard",
       "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
@@ -317,6 +328,7 @@
     {
       "id": "Xotic SP Compressor",
       "name": "SP",
+      "type": "pedal",
       "width": "small",
       "height": "large",
       "logo": "font-family:sp; font-size:45px; position:absolute; bottom:0px; color:#ffffff",
