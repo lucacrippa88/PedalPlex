@@ -5,7 +5,7 @@
       "name": "Orange Dual Terror",
       "width": "wide",
       "height": "standard",
-      "logo": "font-family:orangeamps; font-size:18px; position:absolute; bottom:5px; color:#101c67",
+      "logo": "font-family:orangeamps; font-size:18px; position:absolute; bottom:5px; color:#000000",
       "color": "#fc7b03",
       "font-color": "#00000",
       "inside-color": "#ffffff full",
