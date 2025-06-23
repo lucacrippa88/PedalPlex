@@ -12,8 +12,6 @@ const selector = document.getElementById('pedalboard-selector');
 let pedalsCatalog = [];
 let selectedPedals = [];
 
-
-
 // Helper to extract only the color value from the "logo" CSS string
 function extractColorFromLogo(logoStr) {
   const match = logoStr.match(/color\s*:\s*(#[0-9a-fA-F]{3,6})/);
@@ -23,8 +21,6 @@ function extractColorFromLogo(logoStr) {
 // Render the catalog pedals (from pedals.json)
 function renderCatalog(filter = '') {
   catalogDiv.innerHTML = '';
-
-  // Do not render anything if filter is empty
   if (!filter.trim()) return;
 
   pedalsCatalog
@@ -50,9 +46,6 @@ function renderCatalog(filter = '') {
     });
 }
 
-
-
-
 // Render the selected pedals (from DB or user selection)
 function renderSelectedPedals() {
   selectedPedalsDiv.innerHTML = '';
@@ -66,14 +59,12 @@ function renderSelectedPedals() {
     item.style.color = extractColorFromLogo(pedal.logo);
     item.style.maxWidth = '100px';
 
-    // Apply rotation style (default to 0)
     const rotation = pedal.rotation || 0;
     item.style.transform = `rotate(${rotation}deg)`;
 
     item.setAttribute('draggable', 'true');
     item.dataset.index = index;
 
-    // Drag handlers (unchanged)
     item.addEventListener('dragstart', (e) => {
       item.classList.add('dragging');
       e.dataTransfer.setData('text/plain', index);
@@ -102,7 +93,6 @@ function renderSelectedPedals() {
       }
     });
 
-    // Delete button (unchanged)
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = '×';
     deleteBtn.className = 'delete-btn';
@@ -127,14 +117,12 @@ function renderSelectedPedals() {
       });
     };
 
-    // Rotate button
     const rotateBtn = document.createElement('button');
-    rotateBtn.textContent = '↻'; // rotate icon
+    rotateBtn.textContent = '↻';
     rotateBtn.className = 'rotate-btn';
     rotateBtn.style.marginLeft = '4px';
     rotateBtn.onclick = (e) => {
       e.stopPropagation();
-      // cycle rotation: 0 -> 90 -> 180 -> 270 -> 0
       const currentRotation = pedal.rotation || 0;
       const newRotation = (currentRotation + 90) % 360;
       pedal.rotation = newRotation;
@@ -148,24 +136,18 @@ function renderSelectedPedals() {
   });
 }
 
-
 // Add pedal helper (no duplicates)
 function addPedal(pedal) {
   if (selectedPedals.some(p => p.id === pedal.id)) return;
-  selectedPedals.push(pedal);
+  selectedPedals.push({ ...pedal, rotation: 0 });
   renderSelectedPedals();
   renderCatalog(searchInput.value.toLowerCase());
 }
-
-
-
-
 
 loadJSON('https://lucacrippa88.github.io/PedalPlex/pedals.json')
   .then(data => {
     if (data && Array.isArray(data.Pedals)) {
       pedalsCatalog = data.Pedals.sort((a, b) => a.id.localeCompare(b.id));
-      //renderCatalog();
     } else {
       catalogDiv.textContent = 'No pedals found in the data.';
     }
@@ -175,9 +157,8 @@ loadJSON('https://lucacrippa88.github.io/PedalPlex/pedals.json')
     console.error(err);
   });
 
-// Waiting for query...
+// Loading indicator
 const resultsDiv = document.getElementById("results");
-
 resultsDiv.innerHTML = `
   <div class="bx--loading-overlay">
     <div class="bx--loading" role="status">
@@ -189,67 +170,84 @@ resultsDiv.innerHTML = `
   </div>
 `;
 
-
-
-// Get pedalboard from DB
+// Load pedalboard from DB
 async function loadPedalboardDB(userId) {
+  const selector = {
+    user_id: { "$eq": userId }
+  };
 
-      // Build selector
-      const selector = {
-        user_id: { "$eq": userId }
-      }
+  const query = {
+    selector,
+    limit: 20
+  };
 
-      const query = {
-        selector,
-        limit: 20
-      };
+  try {
+    console.log("Sending query:", query);
 
-      try {
-        const response = await fetch("https://www.cineteatrosanluigi.it/plex/get_pedalboard.php", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(query)
-        });
+    const response = await fetch("https://www.cineteatrosanluigi.it/plex/get_pedalboard.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(query)
+    });
 
-        const data = await response.json();
-        if (!data.docs || data.docs.length === 0) {
-          resultsDiv.textContent = "No pedalboards found.";
-          return;
-        }
+    console.log("Response status:", response.status);
 
-        resultsDiv.innerHTML = "";
-
-        const firstDoc = data.docs[0];
-        if (firstDoc && Array.isArray(firstDoc.pedalboard)) {
-        selectedPedals = firstDoc.pedalboard
-            .map(id => pedalsCatalog.find(p => p.id === id))
-            .filter(p => p); // Remove undefined (in case a pedal no longer exists)
-
-        renderSelectedPedals();
-        renderCatalog();
-        }
-
-      } catch (err) {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to load pedalboard." +err.message,
-          confirmButtonText: 'Ok',
-          buttonsStyling: false,
-          customClass: {
-            confirmButton: 'bx--btn bx--btn--danger'
-          }
-        });
-      }
+    if (!response.ok) {
+      const text = await response.text();
+      console.error("Fetch error, response text:", text);
+      resultsDiv.textContent = "Failed to load pedalboard: " + response.status;
+      return;
     }
 
-    userId = "user-0";
+    const data = await response.json();
+    console.log("Received data:", data);
 
-    window.addEventListener('DOMContentLoaded', loadPedalboardDB(userId));
+    if (!data.docs || data.docs.length === 0) {
+      resultsDiv.textContent = "No pedalboards found.";
+      return;
+    }
+
+    resultsDiv.innerHTML = "";
+
+    const firstDoc = data.docs[0];
+    if (firstDoc && Array.isArray(firstDoc.pedalboard)) {
+      selectedPedals = firstDoc.pedalboard
+        .map(entry => {
+          const basePedal = pedalsCatalog.find(p => p.id === entry.id);
+          if (basePedal) {
+            return { ...basePedal, rotation: entry.rotation || 0 };
+          }
+          return null;
+        })
+        .filter(p => p);
+
+      renderSelectedPedals();
+      renderCatalog(searchInput.value.toLowerCase());
+    } else {
+      console.warn("pedalboard field missing or invalid in firstDoc", firstDoc);
+      resultsDiv.textContent = "Pedalboard data is invalid.";
+    }
+  } catch (err) {
+    console.error("Error loading pedalboard:", err);
+    resultsDiv.textContent = "Failed to load pedalboard: " + err.message;
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Failed to load pedalboard. " + err.message,
+      confirmButtonText: 'Ok',
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--danger'
+      }
+    });
+  }
+}
 
 
+const userId = "user-0";
+window.addEventListener('DOMContentLoaded', () => loadPedalboardDB(userId));
 
-// Reset (empty) pedalboard
+// Reset pedalboard
 document.getElementById('reset-button').addEventListener('click', () => {
   if (confirm('Clear all pedals from your pedalboard?')) {
     selectedPedals = [];
@@ -265,62 +263,58 @@ searchInput.addEventListener('input', () => {
   renderCatalog(query);
 });
 
-
-
-
 // Save pedalboard to DB
 document.getElementById('save-button').addEventListener('click', async () => {
-
-  const pedalIds = selectedPedals.map(p => p.id);
+  const pedalData = selectedPedals.map(p => ({
+    id: p.id,
+    rotation: p.rotation || 0
+  }));
 
   const response = await fetch('https://www.cineteatrosanluigi.it/plex/save_pedalboard.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      user_id: 'user-0',
-      pedalboard: pedalIds
+      user_id: userId,
+      pedalboard: pedalData
     })
   });
 
   try {
     const result = await response.json();
     if (result.success) {
-      //alert("Pedalboard saved successfully!");
-        Swal.fire({
-          icon: "success",
-          title: "Done!",
-          text: "Pedalboard saved successfully!",
-          confirmButtonText: 'Ok',
-          buttonsStyling: false,
-          customClass: {
-            confirmButton: 'bx--btn bx--btn--primary'
-          }
-        });
-    } else {
-      //alert("Error saving pedalboard: " + result.error);
       Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Error saving pedalboard: " + result.error,
-          confirmButtonText: 'Ok',
-          buttonsStyling: false,
-          customClass: {
-            confirmButton: 'bx--btn bx--btn--primary'
-          }
-        });
+        icon: "success",
+        title: "Done!",
+        text: "Pedalboard saved successfully!",
+        confirmButtonText: 'Ok',
+        buttonsStyling: false,
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary'
+        }
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Error saving pedalboard: " + result.error,
+        confirmButtonText: 'Ok',
+        buttonsStyling: false,
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary'
+        }
+      });
     }
   } catch (err) {
     console.error('Invalid response:', err);
-   // alert("Unexpected error saving pedalboard.");
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Unexpected error saving pedalboard.",
-          confirmButtonText: 'Ok',
-          buttonsStyling: false,
-          customClass: {
-            confirmButton: 'bx--btn bx--btn--primary'
-          }
-        });
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Unexpected error saving pedalboard.",
+      confirmButtonText: 'Ok',
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary'
+      }
+    });
   }
 });

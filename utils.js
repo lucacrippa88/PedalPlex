@@ -118,7 +118,7 @@ $(document).on('click', '#edit-btn', function () {
     },
     showCancelButton: true,
     showDenyButton: true,  // This enables the deny button
-    confirmButtonText: "Save new",
+    confirmButtonText: "Save preset",
     denyButtonText: "Delete",
     cancelButtonText: "Cancel",
     customClass: {
@@ -180,36 +180,33 @@ $(document).on('click', '#edit-btn', function () {
         return;
       }
       const userId = "user-0";  // or dynamic
-      const presetDataArray = collectPedalControlValues(presetName);
+const presetDataObject = collectPedalControlValues(presetName);
 
-      if (!presetDataArray || presetDataArray.length === 0) {
-        Swal.fire({
-          icon: "error",
-          title: "No preset data",
-          text: "Failed to collect preset data."
-        });
-        return;
-      }
+$.ajax({
+  url: 'https://www.cineteatrosanluigi.it/plex/update_preset.php',
+  type: 'POST',
+  contentType: 'application/json',
+  data: JSON.stringify({
+    user_id: userId,
+    preset_name: presetName,
+    pedals: presetDataObject[presetName]
+  }),
+  success: function(response) {
+    Swal.fire('Saved!', 'Preset saved successfully.', 'success');
+    console.log('Update success:', response);
+  },
+  error: function(xhr, status, error) {
+    Swal.fire('Error', 'Failed to save preset.', 'error');
+    console.error('Update failed:', status, error);
+    console.error("Payload:", JSON.stringify({
+      user_id: userId,
+      preset_name: presetName,
+      pedals: presetDataObject[presetName]
+    }));
+    console.error("Server said:", xhr.responseText);
+  }
+});
 
-      // AJAX call to save preset (your existing code)
-      $.ajax({
-        url: 'https://www.cineteatrosanluigi.it/plex/save_preset.php',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({
-          user_id: userId,
-          preset: presetDataArray[0]
-        }),
-        success: function(response) {
-          Swal.fire('Saved!', 'Preset saved successfully.', 'success');
-          console.log('Update success:', response);
-          // Update UI or preset list here
-        },
-        error: function(xhr, status, error) {
-          Swal.fire('Error', 'Failed to save preset.', 'error');
-          console.error('Update failed:', status, error);
-        }
-      });
 
     } else if (result.isDenied) {
       // DELETE action triggered here
@@ -260,8 +257,6 @@ $(document).on('click', '#edit-btn', function () {
     }
   });
 });
-
-
 
 
 
@@ -369,3 +364,44 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
 
 
 
+
+// Make knobs usable also on touch screen
+document.querySelectorAll('.knob, .smallknob, .largeknob, .xlargeknob').forEach(knob => {
+  let startAngle = 0;
+  let currentRotation = 0;
+  let center = { x: 0, y: 0 };
+
+  const getAngle = (x, y) => {
+    return Math.atan2(y - center.y, x - center.x) * 180 / Math.PI;
+  };
+
+  const startTouch = (e) => {
+    const rect = knob.getBoundingClientRect();
+    center = {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    };
+    const touch = e.touches[0];
+    startAngle = getAngle(touch.clientX, touch.clientY) - currentRotation;
+    e.preventDefault();
+  };
+
+  const moveTouch = (e) => {
+    if (e.touches.length > 0) {
+      const touch = e.touches[0];
+      const angle = getAngle(touch.clientX, touch.clientY);
+      const rotation = angle - startAngle;
+      currentRotation = rotation;
+      knob.style.transform = `rotate(${rotation}deg)`;
+      e.preventDefault();
+    }
+  };
+
+  const endTouch = () => {
+    // You could persist value here if needed
+  };
+
+  knob.addEventListener('touchstart', startTouch, { passive: false });
+  knob.addEventListener('touchmove', moveTouch, { passive: false });
+  knob.addEventListener('touchend', endTouch);
+});
