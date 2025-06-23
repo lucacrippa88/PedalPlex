@@ -5,7 +5,7 @@
       "name": "Orange Dual Terror",
       "width": "wide",
       "height": "standard",
-      "logo": "font-family:orangeamps; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "logo": "font-family:orangeamps; font-size:37px; position:absolute; bottom:5px; color:#000000",
       "color": "#fc7b03",
       "font-color": "#000000",
       "inside-color": "#ffffff full",
@@ -15,6 +15,7 @@
       "controls": [
         { "row": [
                 { "label": "Power", "type": "multi", "values": ["Full", "Stby", "Half"], "value": "Stby" },
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0},
                 { "label": "Fat Vol", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Fat Tone", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Fat Gain", "type": "knob", "min": 7, "max": 17, "value": 12 },
