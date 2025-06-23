@@ -23,6 +23,12 @@ $(document).ready(function() {
         <a href="index.html">View your presets</a>
         <a href="build.html">Edit your pedalboard</a>
       </div>
+      <div class="menu-bottom" style="text-align: center; margin-top: auto; padding: 1rem; font-size: 1rem; color: #000;">
+        <span style='font-style:italic'>Rock 'n' roll will never die!</span>
+      </div>
+      <div class="menu-footer" style="text-align: center; margin-top: auto; padding: 1rem; font-size: 0.75rem; color: #aaa;">
+        Made with love by <a href='https://github.com/lucacrippa88' target='_blank'>@luca.crippa88</a><br><br>© 2025 PedalPlex. All rights reserved.
+      </div>
     </div>
   `;
 
@@ -38,20 +44,3 @@ $(document).ready(function() {
     $("#fullscreenMenu").removeClass("active");
   });
 });
-
-
-
-const menuToggle = document.getElementById('menuToggle');
-const fullscreenMenu = document.getElementById('fullscreenMenu');
-const closeMenu = document.getElementById('closeMenu');
-
-menuToggle.addEventListener('click', () => {
-    fullscreenMenu.classList.add('active');
-});
-
-closeMenu.addEventListener('click', () => {
-    fullscreenMenu.classList.remove('active');
-});
-
-carbonComponents = window.CarbonComponents;
-carbonComponents.watch();  // activates all JS Carbon widgets
