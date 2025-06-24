@@ -39,7 +39,7 @@
       "width": "wide",
       "height": "standard",
       "logo": "font-family:marshall; font-size:70px; position:absolute; margin:auto; color:#ffffff",
-      "color": "#000000",
+      "color": "#1c1c1c",
       "font-color": "#000000",
       "inside-color": "#ffd700",
       "knobs-color": "#ffd700",
