@@ -267,22 +267,24 @@ $(document).ready(function () {
 
 
             if (control.type === "lcd") {
-              const $label = $("<div>").addClass("label-top").text(control.label);
+              const $label = $("<div>").addClass("label-top");
 
               const $lcd = $("<input type='text'>")
                 .val(control.value)
                 .attr("data-control-label", control.label)
                 .css({
-                  width: `${control.width * 10}px`,   // Customize this multiplier as needed
-                  height: `${control.height * 10}px`,
+                  width: `${control.width * 5}px`,   // Customize this multiplier as needed
+                  height: `${control.height * 5}px`,
                   fontFamily: "monospace",
-                  fontSize: "14px",
+                  fontSize: "16px",
                   textAlign: "center",
                   backgroundColor: "#111",
-                  color: "#0f0",
+                  color: "#fc0000",
                   border: "2px solid #333",
                   borderRadius: "4px",
-                  padding: "2px"
+                  padding: "2px",
+                  position: "relative",
+                  top: "15px"
                 });
 
               // Optional: Make it editable and reflect changes in control object
