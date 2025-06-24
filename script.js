@@ -241,7 +241,10 @@ $(document).ready(function () {
               } else if (control.position === "lower") {
                 $ledContainer.css("margin-top", "27px");
                 $row.append($ledContainer);
-              } else {
+              } else if (control.position === "right") {
+                $ledContainer.css({"right": "12px", position: "absolute"});
+                $row.append($ledContainer);
+              }else {
                 $row.append($ledContainer);
               }
             }
