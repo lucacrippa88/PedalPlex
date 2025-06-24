@@ -476,3 +476,8 @@ input[type="range"].vertical {
   font-family: orangeamps;
   src: url("fonts/AmpedOrange.ttf");
 }
+@font-face {
+  font-family: marshall;
+  src: url("fonts/Amplify_PersonalUseOnly.ttf");
+}
+

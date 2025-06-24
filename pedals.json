@@ -1,6 +1,34 @@
 {
   "Pedals": [
     {
+      "id": "Marshall JCM800",
+      "name": "Marshall",
+      "type": "ampli",
+      "width": "wide",
+      "height": "standard",
+      "logo": "font-family:marshall; font-size:65px; position:absolute; left:30px; color:#ffffff",
+      "color": "#000000",
+      "font-color": "#000000",
+      "inside-color": "#bfa100",
+      "knobs-color": "#bfa100",
+      "knobs-border": "#000000",
+      "knobs-indicator": "#000000",
+      "controls": [
+        { "row": [
+                { "label": "Power", "type": "led", "colors": ["#000000", "#f70000"], "value": 0},
+                { "label": "Standby", "type": "led", "colors": ["#000000", "#f70000"], "value": 0},
+                { "label": "Presence", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Bass", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Middle", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Treble", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Master", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Pre-amp", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Sensitivity", "type": "multi", "values": ["High", "None", "Low"], "value": "None" }
+            ]
+        }
+      ]
+    },
+    {
       "id": "Orange Dual Terror",
       "name": "ORANGE",
       "type": "ampli",
