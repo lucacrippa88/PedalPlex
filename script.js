@@ -89,7 +89,7 @@ $(document).ready(function () {
               boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
             }).attr("data-pedal-name", pedal.name);
           }
-        } else if (pedal.type === "ampli") {
+        } else if (pedal.type === "head") {
           if (inside === "full") {
             $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
               .attr("data-pedal-name", pedal.name);
@@ -102,8 +102,8 @@ $(document).ready(function () {
         }
 
 
-        if (pedal.type === "ampli") {
-          const $nameDiv = $("<div>").addClass("ampli-name").text(pedal.name).attr("style", pedal.logo || "");
+        if (pedal.type === "head") {
+          const $nameDiv = $("<div>").addClass("head-name").text(pedal.name).attr("style", pedal.logo || "");
           $pedalDiv.append($nameDiv);
         }
 
@@ -112,7 +112,7 @@ $(document).ready(function () {
         pedal.controls.forEach(controlRow => {
           const $row = $("<div>").addClass("row");
 
-          if (pedal.type === "ampli") {
+          if (pedal.type === "head") {
             $row.addClass("lower-row");
           }
 

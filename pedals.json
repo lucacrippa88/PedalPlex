@@ -90,10 +90,10 @@
     {
       "id": "Orange Terror Stamp",
       "name": "ORANGE",
-      "type": "ampli",
-      "width": "standard",
+      "type": "pedal-inverted",
+      "width": "large",
       "height": "standard",
-      "logo": "font-family:orangeamps; font-size:65px; position:absolute; left:30px; color:#000000",
+      "logo": "font-family:orangeamps; font-size:35px; position:absolute; left:10px; color:#000000",
       "color": "#fc7b03",
       "font-color": "#000000",
       "inside-color": "#ffffff full",
