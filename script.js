@@ -89,7 +89,7 @@ $(document).ready(function () {
               boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
             }).attr("data-pedal-name", pedal.name);
           }
-        } else if (pedal.type === "head") {
+        } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
           if (inside === "full") {
             $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
               .attr("data-pedal-name", pedal.name);
@@ -102,7 +102,7 @@ $(document).ready(function () {
         }
 
 
-        if (pedal.type === "head") {
+        if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
           const $nameDiv = $("<div>").addClass("head-name").text(pedal.name).attr("style", pedal.logo || "");
           $pedalDiv.append($nameDiv);
         }
@@ -113,6 +113,9 @@ $(document).ready(function () {
           const $row = $("<div>").addClass("row");
 
           if (pedal.type === "head") {
+            $row.addClass("lowest-row");
+          }
+          if (pedal.type === "pedal-inverted") {
             $row.addClass("lower-row");
           }
 
@@ -239,7 +242,7 @@ $(document).ready(function () {
                 const $prev = $row.children().last();
                 $prev.append($("<div>").css("margin-top", "0px").append($label, led));
               } else if (control.position === "lower") {
-                $ledContainer.css("margin-top", "27px");
+                $ledContainer.css("margin-top", "25px");
                 $row.append($ledContainer);
               } else if (control.position === "right") {
                 $ledContainer.css({"right": "12px", position: "absolute"});
