@@ -239,7 +239,7 @@ $(document).ready(function () {
                 const $prev = $row.children().last();
                 $prev.append($("<div>").css("margin-top", "0px").append($label, led));
               } else if (control.position === "lower") {
-                $ledContainer.css("margin-top", "-20px");
+                $ledContainer.css("margin-top", "50px");
                 $row.append($ledContainer);
               } else {
                 $row.append($ledContainer);
@@ -433,6 +433,10 @@ $(document).ready(function () {
           }
 
           if ($control.is("select")) {
+            $control.val(newValue);
+          }
+
+          if ($control.is("input[type='text']")) {
             $control.val(newValue);
           }
 
