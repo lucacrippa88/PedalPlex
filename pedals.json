@@ -3,7 +3,7 @@
     {
       "id": "Vox AC30",
       "name": "VOX",
-      "type": "ampli",
+      "type": "head",
       "width": "wide",
       "height": "standard",
       "logo": "font-family:vox; font-size:60px; text-decoration:line-through; position:absolute; left:20px; color:#807d52",
@@ -35,7 +35,7 @@
     {
       "id": "Marshall JCM800",
       "name": "Marshall",
-      "type": "ampli",
+      "type": "head",
       "width": "wide",
       "height": "standard",
       "logo": "font-family:marshall; font-size:70px; position:absolute; margin:auto; color:#ffffff",
@@ -62,7 +62,7 @@
     {
       "id": "Orange Dual Terror",
       "name": "ORANGE",
-      "type": "ampli",
+      "type": "head",
       "width": "wide",
       "height": "standard",
       "logo": "font-family:orangeamps; font-size:65px; position:absolute; left:30px; color:#000000",
