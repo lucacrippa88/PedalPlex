@@ -2,16 +2,16 @@
   "Pedals": [
     {
       "id": "Vox AC30",
-      "name": "Vox",
+      "name": "VOX",
       "type": "ampli",
-      "width": "wide",
+      "width": "wider",
       "height": "standard",
-      "logo": "font-family:vox; font-size:70px; position:absolute; margin-auto; color:#ffd700",
-      "color": "#2b2a29",
+      "logo": "font-family:vox; font-size:60px; position:absolute; left:20px; color:#807d52",
+      "color": "#524739",
       "font-color": "#ffffff",
       "inside-color": "#810027",
       "knobs-color": "#000000",
-      "knobs-border": "#2b2a29",
+      "knobs-border": "#524739",
       "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
@@ -24,8 +24,8 @@
                 { "label": "Rv Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Tr Speed", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Tr Depth", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Tone Cut", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Volume", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "T Cut", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Vol", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Stby", "type": "multi", "values": ["Stby", "HT", "On"], "value": "Stby" },
                 { "label": "Power", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
             ]
@@ -38,7 +38,7 @@
       "type": "ampli",
       "width": "wide",
       "height": "standard",
-      "logo": "font-family:marshall; font-size:70px; position:absolute; margin-auto; color:#ffffff",
+      "logo": "font-family:marshall; font-size:70px; position:absolute; margin:auto; color:#ffffff",
       "color": "#000000",
       "font-color": "#000000",
       "inside-color": "#ffd700",
