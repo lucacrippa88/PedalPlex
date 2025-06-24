@@ -16,16 +16,16 @@
       "controls": [
         { "row": [
                 { "label": "Inputs", "type": "multi", "values": ["N Low", "N High", "TB Low", "TB High"], "value": "N Low" },
-                { "label": "N Vol", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "TB Vol", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "TB Treb", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "TB Bass", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Rv Tone", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Rv Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Tr Speed", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Tr Depth", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "T Cut", "type": "knob", "min": 7, "max": 17, "value": 12 },
-                { "label": "Vol", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "N Vol", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "TB Vol", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "TB Treb", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "TB Bass", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Rv Tone", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Rv Level", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Tr Speed", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Tr Depth", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "T Cut", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Vol", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Stby", "type": "multi", "values": ["Stby", "HT", "On"], "value": "Stby" },
                 { "label": "Power", "type": "led", "position": "under-top", "colors": ["#000000", "#f70000"], "value": 0}
             ]
