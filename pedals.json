@@ -296,24 +296,24 @@
       "width": "standard",
       "height": "standard",
       "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
-      "color": "#d4dce3",
+      "color": "#ff630f",
       "font-color": "#000000",
       "inside-color": "#d4dce3",
-      "knobs-color": "#c2c7cc",
-      "knobs-border": "#000000",
-      "knobs-indicator": "#000000",
+      "knobs-color": "#000000",
+      "knobs-border": "#c2c7cc",
+      "knobs-indicator": "#ffffff",
       "controls": [
-        {
+        { 
           "row": [
-            { "label": "Level", "type": "knob", "border": "thick", "min": 7, "max": 17, "value": 12 },
-            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 },
-            { "label": "Low", "type": "knob", "border": "thick", "min": 7, "max": 17, "value": 12 }
-          ]
+              { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
+            ]
         },
         {
           "row": [
-            { "label": "High", "type": "knob", "position": "higher", "min": 7, "max": 17, "value": 12 },
-            { "label": "Dist", "type": "largeknob", "position": "higher", "min": 7, "max": 17, "value": 12 }
+            { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Low", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "High", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Dist", "type": "knob", "min": 7, "max": 17, "value": 12 }
           ]
         }
       ]
