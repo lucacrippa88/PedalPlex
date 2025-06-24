@@ -47,7 +47,7 @@
       "knobs-indicator": "#000000",
       "controls": [
         { "row": [
-                { "label": "Power", "type": "led", "colors": ["#000000", "#f70000"], "value": 0},
+                { "label": "Power", "type": "led", "position": "lower", "colors": ["#000000", "#f70000"], "value": 0},
                 { "label": "Presence", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Bass", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Middle", "type": "knob", "min": 7, "max": 17, "value": 12 },
@@ -75,7 +75,7 @@
       "controls": [
         { "row": [
                 { "label": "Power", "type": "multi", "values": ["Full", "Stby", "Half"], "value": "Stby" },
-                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0},
+                { "label": "Check", "type": "led", "position": "lower", "colors": ["#000000", "#f70000"], "value": 0},
                 { "label": "F Vol", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "F Tone", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "F Gain", "type": "knob", "min": 7, "max": 17, "value": 12 },
@@ -440,7 +440,7 @@
       "knobs-indicator": "#000000",
       "controls": [
         { "row": [
-                { "label": "Check", "type": "led", "colors": ["#000000", "#00ff26"], "value": 0},
+                { "label": "Check", "type": "led", "colors": ["#9e9e9e", "#00ff26"], "value": 0},
                 { "label": "Blend", "type": "largeknob", "min": 7, "max": 17, "value": 12 }
             ]
         },
