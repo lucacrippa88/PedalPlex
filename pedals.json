@@ -27,7 +27,7 @@
                 { "label": "T Cut", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Vol", "type": "knob", "min": 7, "max": 17, "value": 12 },
                 { "label": "Stby", "type": "multi", "values": ["Stby", "HT", "On"], "value": "Stby" },
-                { "label": "Power", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
+                { "label": "Power", "type": "led", "position": "under-top", "colors": ["#000000", "#f70000"], "value": 0}
             ]
         }
       ]
