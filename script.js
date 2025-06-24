@@ -213,17 +213,10 @@ $(document).ready(function () {
 
               const $label = $("<div>").addClass("label-top");
 
-              if (control.mode !== "strip") {
-                const led = $("<div>")
-                  .addClass("led-strip")
-                  .attr("data-control-label", control.label)
-                  .css("cursor", "pointer");
-              } else {
-                const led = $("<div>")
-                  .addClass("led")
-                  .attr("data-control-label", control.label)
-                  .css("cursor", "pointer");
-              }
+              const led = $("<div>")
+                .addClass("led")
+                .attr("data-control-label", control.label)
+                .css("cursor", "pointer");
 
               const setColor = (index) => {
                 const color = colors[index] || "#000000";
