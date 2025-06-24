@@ -6,7 +6,7 @@
       "type": "ampli",
       "width": "wider",
       "height": "standard",
-      "logo": "font-family:vox; font-size:60px; position:absolute; left:20px; color:#807d52",
+      "logo": "font-family:vox; font-size:60px; text-decoration:line-through; position:absolute; left:20px; color:#807d52",
       "color": "#524739",
       "font-color": "#ffffff",
       "inside-color": "#810027",
