@@ -122,8 +122,8 @@
             ]
         },
         { "row": [
-                { "label": "Check", "type": "led", "mode": "strip", "colors": ["#000000", "#f70000"], "value": 0},
-                { "label": "Memory", "type": "led", "mode": "strip", "colors": ["#000000", "#f70000"], "value": 0}
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0},
+                { "label": "Memory", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
             ]
         }
       ]
