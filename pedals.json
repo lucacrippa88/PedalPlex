@@ -15,7 +15,7 @@
       "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
-                { "label": "Inputs", "type": "multi", "values": ["N Low", "N High", "TB Low", "TB High"], "value": "N Low" },
+                { "label": "Inputs", "type": "multi", "values": ["N-L", "N-H", "TB-L", "TB-H"], "value": "N-L" },
                 { "label": "N Vol", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
                 { "label": "TB Vol", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
                 { "label": "TB Treb", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
