@@ -181,6 +181,34 @@
       ]
     },
     {
+      "id": "Boss Mega Distortion MD-2",
+      "name": "Mega Dist MD-2",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "color": "#ff5500",
+      "font-color": "#000000",
+      "inside-color": "#ff5500",
+      "knobs-color": "#000000",
+      "knobs-border": "#303030",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        { "row": [
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
+            ]
+        },
+        { "row": [
+                { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Bottom", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Tone", "type": "smallknob", "position": "under-top", "min": 7, "max": 17, "value": 12 },
+                { "label": "Dist", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Gain", "type": "knob", "min": 7, "max": 17, "value": 12 }
+            ]
+        }
+      ]
+    },
+    {
       "id": "Boss Angry Driver JB-2",
       "name": "Angry Driver JB-2",
       "type": "pedal",
