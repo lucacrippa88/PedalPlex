@@ -7,11 +7,11 @@
       "width": "wider",
       "height": "standard",
       "logo": "font-family:vox; font-size:60px; text-decoration:line-through; position:absolute; left:20px; color:#807d52",
-      "color": "#524739",
+      "color": "#403f37",
       "font-color": "#ffffff",
-      "inside-color": "#810027",
+      "inside-color": "#85114d",
       "knobs-color": "#000000",
-      "knobs-border": "#524739",
+      "knobs-border": "#403f37",
       "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
