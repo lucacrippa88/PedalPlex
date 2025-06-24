@@ -149,7 +149,7 @@ html {
   /*height: 70px; /* fix height so all knobs align */
 }
 
-.row.lower-row > div {
+.row.lowest-row > div {
   min-width: 0px;
 }
 
@@ -158,6 +158,11 @@ html {
 }
 
 .lower-row {
+  position: relative;
+  top: 50px;
+}
+
+.lowest-row {
   position: relative;
   top: 85px;
 }
