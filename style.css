@@ -149,6 +149,10 @@ html {
   /*height: 70px; /* fix height so all knobs align */
 }
 
+.row.lower-row > div {
+  min-width: 0px;
+}
+
 .row > div > select {
   margin-bottom: 10px;
 }
