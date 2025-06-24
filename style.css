@@ -129,7 +129,7 @@ html {
 
 .ampli-name {
   position: absolute;
-  top: 22px;
+  /* top: 22px; */
 }
 
 .row {
@@ -479,5 +479,9 @@ input[type="range"].vertical {
 @font-face {
   font-family: marshall;
   src: url("fonts/Amplify_PersonalUseOnly.ttf");
+}
+@font-face {
+  font-family: vox;
+  src: url("fonts/PlayfairDisplay-Black.ttf");
 }
 
