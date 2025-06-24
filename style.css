@@ -278,6 +278,14 @@ html {
   z-index: 10;
 }
 
+.led-strip {
+  width: 45px;
+  height: 12px;
+  border-radius: 50%;
+  margin-top: 4px;
+  transition: box-shadow 0.3s ease;
+  z-index: 10;
+}
 
 
 .row > div > .led,

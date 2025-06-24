@@ -213,10 +213,17 @@ $(document).ready(function () {
 
               const $label = $("<div>").addClass("label-top");
 
-              const led = $("<div>")
-                .addClass("led")
-                .attr("data-control-label", control.label)
-                .css("cursor", "pointer");
+              if (control.mode !== "strip") {
+                const led = $("<div>")
+                  .addClass("led-strip")
+                  .attr("data-control-label", control.label)
+                  .css("cursor", "pointer");
+              } else {
+                const led = $("<div>")
+                  .addClass("led")
+                  .attr("data-control-label", control.label)
+                  .css("cursor", "pointer");
+              }
 
               const setColor = (index) => {
                 const color = colors[index] || "#000000";
@@ -262,6 +269,40 @@ $(document).ready(function () {
               const $wrapper = $("<div>").addClass("slider-container").append($slider, $label);
               $row.append($wrapper);
             }
+
+
+
+
+            if (control.type === "lcd") {
+              const $label = $("<div>").addClass("label-top").text(control.label);
+
+              const $lcd = $("<input type='text'>")
+                .val(control.value)
+                .attr("data-control-label", control.label)
+                .css({
+                  width: `${control.width * 10}px`,   // Customize this multiplier as needed
+                  height: `${control.height * 10}px`,
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  textAlign: "center",
+                  backgroundColor: "#111",
+                  color: "#0f0",
+                  border: "2px solid #333",
+                  borderRadius: "4px",
+                  padding: "2px"
+                });
+
+              // Optional: Make it editable and reflect changes in control object
+              $lcd.on("input", function () {
+                control.value = $(this).val();
+              });
+
+              const $wrapper = $("<div>").addClass("lcd-wrapper").append($label, $lcd);
+              $row.append($wrapper);
+            }
+
+
+
 
             if (control.type === "multi") {
               const $label = $("<div>").addClass("label-top").text(control.label);
