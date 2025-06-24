@@ -239,7 +239,7 @@ $(document).ready(function () {
                 const $prev = $row.children().last();
                 $prev.append($("<div>").css("margin-top", "0px").append($label, led));
               } else if (control.position === "lower") {
-                $ledContainer.css("margin-top", "50px");
+                $ledContainer.css("margin-top", "27px");
                 $row.append($ledContainer);
               } else {
                 $row.append($ledContainer);
