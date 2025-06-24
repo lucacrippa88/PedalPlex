@@ -127,6 +127,11 @@ html {
   bottom: 5px;
 }
 
+.ampli-name {
+  position: absolute;
+  top: 22px;
+}
+
 .row {
   display: flex;
   justify-content: center;
@@ -146,6 +151,11 @@ html {
 
 .row > div > select {
   margin-bottom: 10px;
+}
+
+.lower-row {
+  position: relative;
+  top: 85px;
 }
 
 .knob-container {
