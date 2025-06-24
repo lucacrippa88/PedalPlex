@@ -88,6 +88,46 @@
       ]
     },
     {
+      "id": "Boss Digital Delay DD-200",
+      "name": "Digital Delay DD-200",
+      "type": "pedal",
+      "width": "large",
+      "height": "large",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#23307c",
+      "color": "#f0f0f0",
+      "font-color": "#23307c",
+      "inside-color": "#f0f0f0",
+      "knobs-color": "#7a7979",
+      "knobs-border": "#424242",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        { "row": [
+                { "label": "Time", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Feedb", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "E.Level", "type": "knob", "min": 7, "max": 17, "value": 12 }
+           ]
+        },
+        { "row": [
+                { "label": "Mode", "type": "knob", "span": "all", "values":["Std", "Analog", "Tape", "Drum", "Shim", "Tera", "Pad", "Ptn", "Lo-Fi", "Dual", "Duck", "Rev", "Std"], "value": "Std" },
+                { "label": "Param", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Tone", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Mod Depth", "type": "knob", "min": 7, "max": 17, "value": 12 }
+            ]
+        },
+        { "row": [
+                { "label": "Tap", "type": "multi", "values": ["1/2", "1/4", "1/8"], "value": "1/4" },
+                { "label": "Dot", "type": "multi", "values": ["Tri", "Dot", "Off"], "value": "Off" },
+                { "label": "Mem", "type": "multi", "values": ["Man", "1", "2", "3", "4"], "value": "Man" }
+            ]
+        },
+        { "row": [
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0},
+                { "label": "Memory", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
+            ]
+        }
+      ]
+    },
+    {
       "id": "Boss Digital Delay DD-8",
       "name": "Digital Delay DD-8",
       "type": "pedal",
