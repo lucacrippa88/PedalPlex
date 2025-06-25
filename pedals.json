@@ -776,6 +776,90 @@
           ]
         }
       ]
+    },
+    {
+      "id": "Boss Overdrive SD-1",
+      "name": "OverDrive SD-1",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "color": "#f7e800",
+      "font-color": "#000000",
+      "inside-color": "#f7e800",
+      "knobs-color": "#c2c7cc",
+      "knobs-border": "#000000",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        {
+          "row": [
+            { "label": "Tone", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 },
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 },
+            { "label": "Level", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Drive", "type": "knob", "position": "higher", "min": 7, "max": 17, "value": 12 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Boss Overdrive OD-3",
+      "name": "OverDrive OD-3",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "color": "#f4b400",
+      "font-color": "#000000",
+      "inside-color": "#f4b400",
+      "knobs-color": "#d1b899",
+      "knobs-border": "#000000",
+      "knobs-indicator": "#000000",
+      "controls": [
+        {
+          "row": [
+            { "label": "Tone", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 },
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 },
+            { "label": "Level", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Drive", "type": "knob", "position": "higher", "min": 7, "max": 17, "value": 12 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Boss Blues Driver BD-2",
+      "name": "Blues Driver BD-2",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#edbf1a",
+      "color": "#264985",
+      "font-color": "#edbf1a",
+      "inside-color": "#264985",
+      "knobs-color": "#d1b899",
+      "knobs-border": "#000000",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        {
+          "row": [
+            { "label": "Tone", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 },
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 },
+            { "label": "Level", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Gain", "type": "knob", "position": "higher", "min": 7, "max": 17, "value": 12 }
+          ]
+        }
+      ]
     }
   ]
 }
