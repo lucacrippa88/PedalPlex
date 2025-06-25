@@ -1025,6 +1025,67 @@
             ]
         }
       ]
+    },
+    {
+      "id": "Boss Fuzz FZ-5",
+      "name": "Fuzz FZ-5",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "color": "#757575",
+      "font-color": "#000000",
+      "inside-color": "#757575",
+      "knobs-color": "#c2c7cc",
+      "knobs-border": "#000000",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        {
+          "row": [
+            { "label": "Level", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 },
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 },
+            { "label": "Fuzz", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Tone", "type": "knob", "values":["F", "M", "D"], "value": "M" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Boss Fuzz FZ-1w",
+      "name": "Fuzz FZ-1w",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "color": "#757575",
+      "font-color": "#000000",
+      "inside-color": "#757575",
+      "knobs-color": "#c2c7cc",
+      "knobs-border": "#000000",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        {
+          "row": [
+            { "label": "Level", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 },
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 },
+            { "label": "Fuzz", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Tone", "type": "knob", "position": "higher", "min": 7, "max": 17, "value": 12 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Mode", "type": "multi", "position": "highest", "values": ["V", "M"], "value": "V" }
+          ]
+        }
+      ]
     }
   ]
 }
