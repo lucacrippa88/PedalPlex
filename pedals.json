@@ -589,6 +589,160 @@
             ]
         }
       ]
+    },
+    {
+      "id": "Boss Power Stack ST-2",
+      "name": "Power Stack ST-2",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "color": "#f3cb25",
+      "font-color": "#000000",
+      "inside-color": "#f3cb25",
+      "knobs-color": "#000000",
+      "knobs-border": "#303030",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        {
+          "row": [
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Bass", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Treble", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Sound", "type": "knob", "values":["Crunch", "Drive", "Ultra"], "value": "Drive" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Boss Metal Core ML-2",
+      "name": "Metal Core ML-2",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#ffffff",
+      "color": "#1a1a1a",
+      "font-color": "#ffffff",
+      "inside-color": "#1a1a1a",
+      "knobs-color": "#000000",
+      "knobs-border": "#303030",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        {
+          "row": [
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Low", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "High", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Dist", "type": "knob", "min": 7, "max": 17, "value": 12 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Boss Metal Zone MT-2",
+      "name": "Metal Zone MT-2",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#ff5500",
+      "color": "#1a1a1a",
+      "font-color": "#ff5500",
+      "inside-color": "#1a1a1a",
+      "knobs-color": "#000000",
+      "knobs-border": "#303030",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        {
+          "row": [
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Low", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "High", "type": "smallknob", "position": "under-top", "min": 7, "max": 17, "value": 12 },
+            { "label": "Mid Freq", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Mid", "type": "smallknob", "position": "under-top", "min": 7, "max": 17, "value": 12 },
+            { "label": "Dist", "type": "knob", "min": 7, "max": 17, "value": 12 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Boss Metal Zone MT-2W",
+      "name": "Metal Zone MT-2W",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#ff5500",
+      "color": "#1a1a1a",
+      "font-color": "#ff5500",
+      "inside-color": "#1a1a1a",
+      "knobs-color": "#000000",
+      "knobs-border": "#303030",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        {
+          "row": [
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Low", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "High", "type": "smallknob", "position": "under-top", "min": 7, "max": 17, "value": 12 },
+            { "label": "Mid Freq", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Mid", "type": "smallknob", "position": "under-top", "min": 7, "max": 17, "value": 12 },
+            { "label": "Dist", "type": "knob", "min": 7, "max": 17, "value": 12 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "S", "type": "multi", "values": ["S", "C"], "value": "S" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Boss Heavy Metal HM-2W",
+      "name": "Heavy Metal HM-2W",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#fcb512",
+      "color": "#1a1a1a",
+      "font-color": "#fcb512",
+      "inside-color": "#1a1a1a",
+      "knobs-color": "#000000",
+      "knobs-border": "#303030",
+      "knobs-indicator": "#fcb512",
+      "controls": [
+        {
+          "row": [
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "L", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "H", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Dist", "type": "knob", "min": 7, "max": 17, "value": 12 }
+          ]
+        }
+      ]
     }
   ]
 }
