@@ -77,7 +77,6 @@ $(document).ready(function () {
         };
 
         let $pedalDiv;
-        console.log(pedal.type)
 
         if (pedal.type === "pedal") {
           if (inside === "full") {
@@ -183,7 +182,7 @@ $(document).ready(function () {
               if (control.position === "under-top" && control.type === "smallknob") {
                 $label = $("<div>").css({
                   position: "absolute",
-                  left: "20px",
+                  "margin-left": "5px",
                   top: "110px",
                   transform: "translateY(-50%)",
                   "white-space": "nowrap",
@@ -306,6 +305,7 @@ $(document).ready(function () {
 
 
             if (control.type === "multi") {
+
               const $label = $("<div>").addClass("label-top").text(control.label);
               const $select = $("<select>").attr("data-control-label", control.label);
               control.values.forEach(val => {
@@ -318,6 +318,9 @@ $(document).ready(function () {
 
               if (control.position === "left") {
                 $wrapper.addClass("align-left");
+              } else if (control.position === "higher") {
+                console.log(control)
+                $wrapper.addClass("align-top");
               }
 
               $row.append($wrapper);
