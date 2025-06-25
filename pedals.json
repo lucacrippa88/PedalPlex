@@ -744,7 +744,7 @@
         }
       ]
     },
-        {
+    {
       "id": "Boss Distortion DS-1w",
       "name": "Distortion DS-1w",
       "type": "pedal",
@@ -778,8 +778,8 @@
       ]
     },
     {
-      "id": "Boss Overdrive SD-1",
-      "name": "OverDrive SD-1",
+      "id": "Boss Super OverDrive SD-1",
+      "name": "Super OverDr SD-1",
       "type": "pedal",
       "width": "standard",
       "height": "standard",
@@ -892,7 +892,7 @@
     },
     {
       "id": "Boss OverDrive/Distortion OS-2",
-      "name": "OverDrive/Dist OS-2",
+      "name": "OverDr/Dist OS-2",
       "type": "pedal",
       "width": "standard",
       "height": "standard",
@@ -915,6 +915,72 @@
             { "label": "Tone", "type": "knob", "min": 7, "max": 17, "value": 12 },
             { "label": "Drive", "type": "knob", "min": 7, "max": 17, "value": 12 },
             { "label": "Color", "type": "knob", "min": 7, "max": 17, "value": 12 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Boss Super OverDrive SD-1w",
+      "name": "Super OverDr SD-1w",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "color": "#f7e800",
+      "font-color": "#000000",
+      "inside-color": "#f7e800",
+      "knobs-color": "#c2c7cc",
+      "knobs-border": "#000000",
+      "knobs-indicator": "#000000",
+      "controls": [
+        {
+          "row": [
+            { "label": "Tone", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 },
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 },
+            { "label": "Level", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Dist", "type": "knob", "position": "higher", "min": 7, "max": 17, "value": 12 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Mode", "type": "multi", "position": "highest", "values": ["S", "C"], "value": "S" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Boss Blues Driver BD-2w",
+      "name": "Blues Driver BD-2w",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#edbf1a",
+      "color": "#264985",
+      "font-color": "#edbf1a",
+      "inside-color": "#264985",
+      "knobs-color": "#c2c7cc",
+      "knobs-border": "#000000",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        {
+          "row": [
+            { "label": "Tone", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 },
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 },
+            { "label": "Level", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Dist", "type": "knob", "position": "higher", "min": 7, "max": 17, "value": 12 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Mode", "type": "multi", "position": "highest", "values": ["S", "C"], "value": "S" }
           ]
         }
       ]
