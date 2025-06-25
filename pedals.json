@@ -710,7 +710,7 @@
         },
         {
           "row": [
-            { "label": "S", "type": "multi", "values": ["S", "C"], "value": "S" }
+            { "label": "S", "type": "multi", "potision": "higher", "values": ["S", "C"], "value": "S" }
           ]
         }
       ]
