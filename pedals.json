@@ -815,9 +815,9 @@
       "color": "#f4b400",
       "font-color": "#000000",
       "inside-color": "#f4b400",
-      "knobs-color": "#d1b899",
+      "knobs-color": "#c9b483",
       "knobs-border": "#000000",
-      "knobs-indicator": "#000000",
+      "knobs-indicator": "#ffffff",
       "controls": [
         {
           "row": [
@@ -843,7 +843,7 @@
       "color": "#264985",
       "font-color": "#edbf1a",
       "inside-color": "#264985",
-      "knobs-color": "#d1b899",
+      "knobs-color": "#c9b483",
       "knobs-border": "#000000",
       "knobs-indicator": "#ffffff",
       "controls": [
@@ -857,6 +857,64 @@
         {
           "row": [
             { "label": "Gain", "type": "knob", "position": "higher", "min": 7, "max": 17, "value": 12 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Boss Overdrive OD-1X",
+      "name": "OverDrive OD-1X",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "color": "#f5c002",
+      "font-color": "#000000",
+      "inside-color": "#d4dce3",
+      "knobs-color": "#f5c002",
+      "knobs-border": "#000000",
+      "knobs-indicator": "#000000",
+      "controls": [
+        {
+          "row": [
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Low", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "High", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Drive", "type": "knob", "min": 7, "max": 17, "value": 12 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Boss OverDrive/Distortion OS-2",
+      "name": "OverDrive/Dist OS-2",
+      "type": "pedal",
+      "width": "standard",
+      "height": "standard",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "color": "#f7c200",
+      "font-color": "#ffffff",
+      "inside-color": "#212121",
+      "knobs-color": "#f7c200",
+      "knobs-border": "#000000",
+      "knobs-indicator": "#000000",
+      "controls": [
+        {
+          "row": [
+            { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0 }
+          ]
+        },
+        {
+          "row": [
+            { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Tone", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Drive", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "Color", "type": "knob", "min": 7, "max": 17, "value": 12 }
           ]
         }
       ]
