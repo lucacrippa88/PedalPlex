@@ -772,7 +772,7 @@
         },
         {
           "row": [
-            { "label": "Mode", "type": "multi", "position": "higher", "values": ["S", "C"], "value": "S" }
+            { "label": "Mode", "type": "multi", "position": "highest", "values": ["S", "C"], "value": "S" }
           ]
         }
       ]
