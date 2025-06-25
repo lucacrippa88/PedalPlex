@@ -672,7 +672,7 @@
             { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
             { "label": "Low", "type": "knob", "min": 7, "max": 17, "value": 12 },
             { "label": "High", "type": "smallknob", "position": "under-top", "min": 7, "max": 17, "value": 12 },
-            { "label": "Mid Freq", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "M Fr", "type": "knob", "min": 7, "max": 17, "value": 12 },
             { "label": "Mid", "type": "smallknob", "position": "under-top", "min": 7, "max": 17, "value": 12 },
             { "label": "Dist", "type": "knob", "min": 7, "max": 17, "value": 12 }
           ]
@@ -680,8 +680,8 @@
       ]
     },
     {
-      "id": "Boss Metal Zone MT-2W",
-      "name": "Metal Zone MT-2W",
+      "id": "Boss Metal Zone MT-2w",
+      "name": "Metal Zone MT-2w",
       "type": "pedal",
       "width": "standard",
       "height": "standard",
@@ -703,7 +703,7 @@
             { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
             { "label": "Low", "type": "knob", "min": 7, "max": 17, "value": 12 },
             { "label": "High", "type": "smallknob", "position": "under-top", "min": 7, "max": 17, "value": 12 },
-            { "label": "Mid Freq", "type": "knob", "min": 7, "max": 17, "value": 12 },
+            { "label": "M Fr", "type": "knob", "min": 7, "max": 17, "value": 12 },
             { "label": "Mid", "type": "smallknob", "position": "under-top", "min": 7, "max": 17, "value": 12 },
             { "label": "Dist", "type": "knob", "min": 7, "max": 17, "value": 12 }
           ]
@@ -716,8 +716,8 @@
       ]
     },
     {
-      "id": "Boss Heavy Metal HM-2W",
-      "name": "Heavy Metal HM-2W",
+      "id": "Boss Heavy Metal HM-2w",
+      "name": "Heavy Metal HM-2w",
       "type": "pedal",
       "width": "standard",
       "height": "standard",
