@@ -1049,7 +1049,7 @@
         },
         {
           "row": [
-            { "label": "Tone", "type": "knob", "values":["F", "M", "D"], "value": "M" }
+            { "label": "Mode", "type": "knob", "position": "higher", "values":["F", "M", "D"], "value": "M" }
           ]
         }
       ]
