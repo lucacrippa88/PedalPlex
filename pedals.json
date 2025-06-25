@@ -304,7 +304,7 @@
       "inside-color": "#f47920",
       "knobs-color": "#c2c7cc",
       "knobs-border": "#000000",
-      "knobs-indicator": "#000000",
+      "knobs-indicator": "#ffffff",
       "controls": [
         {
           "row": [
@@ -332,7 +332,7 @@
       "inside-color": "#e18e36",
       "knobs-color": "#c2c7cc",
       "knobs-border": "#000000",
-      "knobs-indicator": "#000000",
+      "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
                 { "label": "Level", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 },
@@ -550,7 +550,7 @@
       "inside-color": "#278ba9",
       "knobs-color": "#c2c7cc",
       "knobs-border": "#000000",
-      "knobs-indicator": "#000000",
+      "knobs-indicator": "#ffffff",
       "controls": [
         { "row": [
                 { "label": "Rate", "type": "largeknob", "border": "thick", "min": 7, "max": 17, "value": 12 },
@@ -756,7 +756,7 @@
       "inside-color": "#f47920",
       "knobs-color": "#c2c7cc",
       "knobs-border": "#000000",
-      "knobs-indicator": "#000000",
+      "knobs-indicator": "#ffffff",
       "controls": [
         {
           "row": [
@@ -779,7 +779,7 @@
     },
     {
       "id": "Boss Super OverDrive SD-1",
-      "name": "Super OverDr SD-1",
+      "name": "SUPER OverDr SD-1",
       "type": "pedal",
       "width": "standard",
       "height": "standard",
@@ -873,7 +873,7 @@
       "inside-color": "#d4dce3",
       "knobs-color": "#f5c002",
       "knobs-border": "#000000",
-      "knobs-indicator": "#000000",
+      "knobs-indicator": "#ffffff",
       "controls": [
         {
           "row": [
@@ -921,7 +921,7 @@
     },
     {
       "id": "Boss Super OverDrive SD-1w",
-      "name": "Super OverDr SD-1w",
+      "name": "SUPER OverDr SD-1w",
       "type": "pedal",
       "width": "standard",
       "height": "standard",
@@ -931,7 +931,7 @@
       "inside-color": "#f7e800",
       "knobs-color": "#c2c7cc",
       "knobs-border": "#000000",
-      "knobs-indicator": "#000000",
+      "knobs-indicator": "#ffffff",
       "controls": [
         {
           "row": [
@@ -982,6 +982,47 @@
           "row": [
             { "label": "Mode", "type": "multi", "position": "highest", "values": ["S", "C"], "value": "S" }
           ]
+        }
+      ]
+    },
+    {
+      "id": "Boss Hybrid Drive OD-200",
+      "name": "Hybrid Drive OD-200",
+      "type": "pedal",
+      "width": "large",
+      "height": "xlarge",
+      "logo": "font-family:boss; font-size:18px; position:absolute; bottom:5px; color:#000000",
+      "color": "#fba30a",
+      "font-color": "#000000",
+      "inside-color": "#fba30a",
+      "knobs-color": "#7a7979",
+      "knobs-border": "#424242",
+      "knobs-indicator": "#ffffff",
+      "controls": [
+        { "row": [
+                { "label": "Screen", "type": "lcd", "width": 10, "height": 5, "value": "000"},
+                { "label": "Param", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Level", "type": "knob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Drive", "type": "knob", "min": 7, "max": 17, "value": 12 }
+           ]
+        },
+        { "row": [
+                { "label": "Mode", "type": "knob", "span": "all", "values":["Overdr", "Blues", "Scream", "Cntr", "X-Dr", "Dist", "X-Dist", "Stack", "Fat", "Brown", "X-Metal", "Fuzz", "Overdr"], "value": "Overdr" },
+                { "label": "Low", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "Mid", "type": "smallknob", "min": 7, "max": 17, "value": 12 },
+                { "label": "High", "type": "smallknob", "min": 7, "max": 17, "value": 12 }
+            ]
+        },
+        { "row": [
+                { "label": "Boost", "type": "multi", "values": ["Type", "Post", "Pre"], "value": "Type" },
+                { "label": "Gate", "type": "multi", "values": ["Decay", "Thresh", "Off"], "value": "Off" },
+                { "label": "Mem", "type": "multi", "values": ["Man", "1", "2", "3", "4"], "value": "Man" }
+            ]
+        },
+        { "row": [
+                { "label": "Check", "type": "led", "colors": ["#000000", "#f70000"], "value": 0},
+                { "label": "Mem/Boost", "type": "led", "colors": ["#000000", "#f70000"], "value": 0}
+            ]
         }
       ]
     }
