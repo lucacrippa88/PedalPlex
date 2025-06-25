@@ -201,7 +201,7 @@ $(document).ready(function () {
                 const $prev = $row.children().last();
                 $prev.append($("<div>").css("margin-top", "-53px").append($label, $container));
               } else if (control.position === "higher") {
-                $knobWrapper.css("margin-top", "-30px");
+                $knobWrapper.css("margin-top", "-10px");
                 $row.append($knobWrapper);
               } else {
                 $row.append($knobWrapper);
@@ -319,8 +319,9 @@ $(document).ready(function () {
               if (control.position === "left") {
                 $wrapper.addClass("align-left");
               } else if (control.position === "higher") {
-                console.log(control)
                 $wrapper.addClass("align-top");
+              }  else if (control.position === "highest") {
+                $wrapper.addClass("align-top-est");
               }
 
               $row.append($wrapper);
