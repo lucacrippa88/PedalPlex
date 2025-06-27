@@ -1,9 +1,13 @@
+
+
 $(document).ready(function () {
   let pedals = [];
   let presets = {};
   let pedalboard = {};
 
   const loadJSON = url => $.getJSON(url);
+
+  
 
   // Step 1: Load presets and build dropdown
   readDB("user-0", "presets").then(presetData => {
@@ -42,336 +46,346 @@ $(document).ready(function () {
 
       pedalboard = queryResult; // Overwrite global `pedalboard` with the queried one
 
+      
+
       // Load pedal catalog
-      return loadJSON("https://lucacrippa88.github.io/PedalPlex/pedals.json");
-    }).then(data => {
-      pedals = data["Pedals"];
+      // Load pedal catalog from PHP backend
+      return fetch("https://www.cineteatrosanluigi.it/plex/get_pedals.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}) // adjust if needed
+      })
+      .then(data => data.json())
+      .then(data => {
+        pedals = data.Pedals;
 
-      // Render pedals after everything has loaded ---------------------------------------
-      pedalboard.pedalboard.forEach(pedalEntry => {
-        const pedalName = pedalEntry.name || pedalEntry.pedalName || pedalEntry.id || pedalEntry;
-        const angle = Number(pedalEntry.angle ?? pedalEntry.rotation ?? 0);
+      
+        // Render pedals after everything has loaded ---------------------------------------
+        pedalboard.pedalboard.forEach(pedalEntry => {
+          const pedalName = pedalEntry.name || pedalEntry.pedalName || pedalEntry.id || pedalEntry;
+          const angle = Number(pedalEntry.angle ?? pedalEntry.rotation ?? 0);
 
-        const pedal = pedals.find(p => p.name === pedalName || p.id === pedalName);
-        if (!pedal) return;
+          const pedal = pedals.find(p => p.name === pedalName || p.id === pedalName);
+          if (!pedal) return;
 
-        const insideColorRaw = pedal["inside-color"];
-        let inside = "";
-        let colorOnly = insideColorRaw;
+          const insideColorRaw = pedal["inside-color"];
+          let inside = "";
+          let colorOnly = insideColorRaw;
 
-        // Use regex to extract color and anything extra (like "full")
-        const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+          // Use regex to extract color and anything extra (like "full")
+          const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
 
-        if (match) {
-          colorOnly = match[1]; // just the hex color
-          inside = match[2] || ""; // optional: "full" or empty
-        }
-
-        const baseCss = {
-          background: colorOnly,
-          border: `10px solid ${pedal["color"]}`,
-          color: pedal["font-color"],
-          width: getPedalWidth(pedal.width),
-          height: getPedalHeight(pedal.height),
-          transform: `rotate(${angle}deg)`  // <-- Apply pedal rotation here
-        };
-
-        let $pedalDiv;
-
-        if (pedal.type === "pedal") {
-          if (inside === "full") {
-            $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
-              .attr("data-pedal-name", pedal.name);
-          } else {
-            $pedalDiv = $("<div>").addClass("pedal").css({
-              ...baseCss,
-              boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-            }).attr("data-pedal-name", pedal.name);
+          if (match) {
+            colorOnly = match[1]; // just the hex color
+            inside = match[2] || ""; // optional: "full" or empty
           }
-        } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-          if (inside === "full") {
-            $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
-              .attr("data-pedal-name", pedal.name);
-          } else {
-            $pedalDiv = $("<div>").addClass("pedal").css({
-              ...baseCss,
-              boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
-            }).attr("data-pedal-name", pedal.name);
-          }
-        }
 
+          const baseCss = {
+            background: colorOnly,
+            border: `10px solid ${pedal["color"]}`,
+            color: pedal["font-color"],
+            width: getPedalWidth(pedal.width),
+            height: getPedalHeight(pedal.height),
+            transform: `rotate(${angle}deg)`  // <-- Apply pedal rotation here
+          };
 
-        if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-          const $nameDiv = $("<div>").addClass("head-name").text(pedal.name).attr("style", pedal.logo || "");
-          $pedalDiv.append($nameDiv);
-        }
+          let $pedalDiv;
 
-
-        // Controls rendering (same as original)
-        pedal.controls.forEach(controlRow => {
-          const $row = $("<div>").addClass("row");
-
-          if (pedal.type === "head") {
-            $row.addClass("lowest-row");
-          }
-          if (pedal.type === "pedal-inverted") {
-            $row.addClass("lower-row");
+          if (pedal.type === "pedal") {
+            if (inside === "full") {
+              $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
+                .attr("data-pedal-name", pedal.name);
+            } else {
+              $pedalDiv = $("<div>").addClass("pedal").css({
+                ...baseCss,
+                boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
+              }).attr("data-pedal-name", pedal.name);
+            }
+          } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+            if (inside === "full") {
+              $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
+                .attr("data-pedal-name", pedal.name);
+            } else {
+              $pedalDiv = $("<div>").addClass("pedal").css({
+                ...baseCss,
+                boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
+              }).attr("data-pedal-name", pedal.name);
+            }
           }
 
 
-          controlRow.row.forEach(control => {
-            if (control.type === "knob" || control.type === "smallknob" || control.type === "largeknob" || control.type === "xlargeknob") {
-              const isSmall = control.type === "smallknob";
-              const isLarge = control.type === "largeknob";
-              const isXLarge = control.type === "xlargeknob";
-              const knob = $("<div>")
-                .addClass(isSmall ? "smallknob" : "knob")
-                .addClass(isLarge ? "largeknob" : "knob")
-                .addClass(isXLarge ? "xlargeknob" : "knob")
-                .css({
-                  background: pedal["knobs-color"],
-                  border: `${control.border === "thick" ? "10px" : "2px"} solid ${pedal["knobs-border"]}`
-                })
-                .css("--indicator-color", pedal["knobs-indicator"])
-                .attr("data-control-label", control.label);
+          if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+            const $nameDiv = $("<div>").addClass("head-name").text(pedal.name).attr("style", pedal.logo || "");
+            $pedalDiv.append($nameDiv);
+          }
 
-              const rotation = getRotationFromValue(control, control.value);
-              knob.data("rotation", rotation);
-              knob.css("transform", `rotate(${rotation}deg)`);
 
-              let $valueLabel = null;
-              if (control.values && Array.isArray(control.values)) {
-                $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
-              }
+          // Controls rendering (same as original)
+          pedal.controls.forEach(controlRow => {
+            const $row = $("<div>").addClass("row");
 
-              knob.on("mousedown", function (e) {
-                const startY = e.pageY;
-                const startValue = control.value;
+            if (pedal.type === "head") {
+              $row.addClass("lowest-row");
+            }
+            if (pedal.type === "pedal-inverted") {
+              $row.addClass("lower-row");
+            }
 
-                $(document).on("mousemove.knob", function (e2) {
-                  const delta = startY - e2.pageY;
-                  const steps = Math.round(delta / 5);
 
-                  if (control.values && Array.isArray(control.values)) {
-                    let currentIndex = control.values.indexOf(startValue);
-                    if (currentIndex === -1) currentIndex = 0;
-                    let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
-                    control.value = control.values[newIndex];
-                  } else {
-                    const min = control.min ?? 0;
-                    const max = control.max ?? 100;
-                    let newValue = startValue + steps;
-                    newValue = Math.min(Math.max(newValue, min), max);
-                    control.value = newValue;
-                  }
+            controlRow.row.forEach(control => {
+              if (control.type === "knob" || control.type === "smallknob" || control.type === "largeknob" || control.type === "xlargeknob") {
+                const isSmall = control.type === "smallknob";
+                const isLarge = control.type === "largeknob";
+                const isXLarge = control.type === "xlargeknob";
+                const knob = $("<div>")
+                  .addClass(isSmall ? "smallknob" : "knob")
+                  .addClass(isLarge ? "largeknob" : "knob")
+                  .addClass(isXLarge ? "xlargeknob" : "knob")
+                  .css({
+                    background: pedal["knobs-color"],
+                    border: `${control.border === "thick" ? "10px" : "2px"} solid ${pedal["knobs-border"]}`
+                  })
+                  .css("--indicator-color", pedal["knobs-indicator"])
+                  .attr("data-control-label", control.label);
 
-                  const newRotation = getRotationFromValue(control, control.value);
-                  knob.data("rotation", newRotation);
-                  knob.css("transform", `rotate(${newRotation}deg)`);
-                  if ($valueLabel) {
-                    $valueLabel.text(control.value);
-                  }
+                const rotation = getRotationFromValue(control, control.value);
+                knob.data("rotation", rotation);
+                knob.css("transform", `rotate(${rotation}deg)`);
+
+                let $valueLabel = null;
+                if (control.values && Array.isArray(control.values)) {
+                  $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
+                }
+
+                knob.on("mousedown", function (e) {
+                  const startY = e.pageY;
+                  const startValue = control.value;
+
+                  $(document).on("mousemove.knob", function (e2) {
+                    const delta = startY - e2.pageY;
+                    const steps = Math.round(delta / 5);
+
+                    if (control.values && Array.isArray(control.values)) {
+                      let currentIndex = control.values.indexOf(startValue);
+                      if (currentIndex === -1) currentIndex = 0;
+                      let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
+                      control.value = control.values[newIndex];
+                    } else {
+                      const min = control.min ?? 0;
+                      const max = control.max ?? 100;
+                      let newValue = startValue + steps;
+                      newValue = Math.min(Math.max(newValue, min), max);
+                      control.value = newValue;
+                    }
+
+                    const newRotation = getRotationFromValue(control, control.value);
+                    knob.data("rotation", newRotation);
+                    knob.css("transform", `rotate(${newRotation}deg)`);
+                    if ($valueLabel) {
+                      $valueLabel.text(control.value);
+                    }
+                  });
+
+                  $(document).on("mouseup.knob", function () {
+                    $(document).off(".knob");
+                  });
                 });
 
-                $(document).on("mouseup.knob", function () {
-                  $(document).off(".knob");
-                });
-              });
+                let $label;
+                if (control.position === "under-top" && control.type === "smallknob") {
+                  $label = $("<div>").css({
+                    position: "absolute",
+                    "margin-left": "5px",
+                    top: "110px",
+                    transform: "translateY(-50%)",
+                    "white-space": "nowrap",
+                    "font-size": "10px"
+                  }).text(control.label);
+                } else {
+                  $label = $("<div>").addClass("label-top").text(control.label);
+                }
 
-              let $label;
-              if (control.position === "under-top" && control.type === "smallknob") {
-                $label = $("<div>").css({
-                  position: "absolute",
-                  "margin-left": "5px",
-                  top: "110px",
-                  transform: "translateY(-50%)",
-                  "white-space": "nowrap",
-                  "font-size": "10px"
-                }).text(control.label);
-              } else {
-                $label = $("<div>").addClass("label-top").text(control.label);
+                const $container = $("<div>").addClass("knob-container").append(knob).css({ position: "relative" });
+                $container.append($label);
+                if ($valueLabel) $container.append($valueLabel);
+                const $knobWrapper = $("<div>").append($label, $container);
+
+                if (control.position === "under-top" && $row.children().length > 0) {
+                  const $prev = $row.children().last();
+                  $prev.append($("<div>").css("margin-top", "-53px").append($label, $container));
+                } else if (control.position === "higher") {
+                  $knobWrapper.css("margin-top", "-10px");
+                  $row.append($knobWrapper);
+                } else {
+                  $row.append($knobWrapper);
+                }
               }
 
-              const $container = $("<div>").addClass("knob-container").append(knob).css({ position: "relative" });
-              $container.append($label);
-              if ($valueLabel) $container.append($valueLabel);
-              const $knobWrapper = $("<div>").append($label, $container);
+              if (control.type === "led") {
+                const colors = Array.isArray(control.colors) ? control.colors : ["#000000"];
+                const numColors = colors.length;
+                let currentIndex = typeof control.value === "number" ? control.value : 0;
 
-              if (control.position === "under-top" && $row.children().length > 0) {
-                const $prev = $row.children().last();
-                $prev.append($("<div>").css("margin-top", "-53px").append($label, $container));
-              } else if (control.position === "higher") {
-                $knobWrapper.css("margin-top", "-10px");
-                $row.append($knobWrapper);
-              } else {
-                $row.append($knobWrapper);
-              }
-            }
+                const $label = $("<div>").addClass("label-top");
 
-            if (control.type === "led") {
-              const colors = Array.isArray(control.colors) ? control.colors : ["#000000"];
-              const numColors = colors.length;
-              let currentIndex = typeof control.value === "number" ? control.value : 0;
+                const led = $("<div>")
+                  .addClass("led")
+                  .attr("data-control-label", control.label)
+                  .css("cursor", "pointer");
 
-              const $label = $("<div>").addClass("label-top");
+                const setColor = (index) => {
+                  const color = colors[index] || "#000000";
+                  led.css("background-color", color);
+                  led.css("box-shadow", color !== "#000000" ? `0 0 8px 3px ${color}` : "none");
+                  control.value = index; // update value in control object
+                  led.data("colorIndex", index);
+                };
 
-              const led = $("<div>")
-                .addClass("led")
-                .attr("data-control-label", control.label)
-                .css("cursor", "pointer");
+                setColor(currentIndex);
 
-              const setColor = (index) => {
-                const color = colors[index] || "#000000";
-                led.css("background-color", color);
-                led.css("box-shadow", color !== "#000000" ? `0 0 8px 3px ${color}` : "none");
-                control.value = index; // update value in control object
-                led.data("colorIndex", index);
-              };
-
-              setColor(currentIndex);
-
-              led.on("click", function () {
-                let index = (led.data("colorIndex") + 1) % numColors;
-                setColor(index);
-              });
-
-              const $ledContainer = $("<div>").append($label, led);
-
-              if (control.position === "under-top" && $row.children().length > 0) {
-                const $prev = $row.children().last();
-                $prev.append($("<div>").css("margin-top", "0px").append($label, led));
-              } else if (control.position === "lower") {
-                $ledContainer.css("margin-top", "25px");
-                $row.append($ledContainer);
-              } else if (control.position === "right") {
-                $ledContainer.css({"right": "12px", position: "absolute"});
-                $row.append($ledContainer);
-              }else {
-                $row.append($ledContainer);
-              }
-            }
-
-            if (control.type === "slider") {
-              const $label = $("<div>").addClass("slider-label").text(control.label);
-              const $slider = $("<input type='range'>")
-                .attr("min", control.min)
-                .attr("max", control.max)
-                .val(control.value)
-                .addClass("vertical")
-                .attr("data-control-label", control.label);
-
-              $slider.on("input", function () {
-                control.value = parseInt(this.value);
-              });
-
-              const $wrapper = $("<div>").addClass("slider-container").append($slider, $label);
-              $row.append($wrapper);
-            }
-
-
-
-
-            if (control.type === "lcd") {
-              const $label = $("<div>").addClass("label-top");
-
-              const $lcd = $("<input type='text'>")
-                .val(control.value)
-                .attr("data-control-label", control.label)
-                .css({
-                  width: `${control.width * 5}px`,   // Customize this multiplier as needed
-                  height: `${control.height * 5}px`,
-                  fontFamily: "monospace",
-                  fontSize: "16px",
-                  textAlign: "center",
-                  backgroundColor: "#111",
-                  color: "#fc0000",
-                  border: "2px solid #333",
-                  borderRadius: "4px",
-                  padding: "2px",
-                  position: "relative",
-                  top: "15px"
+                led.on("click", function () {
+                  let index = (led.data("colorIndex") + 1) % numColors;
+                  setColor(index);
                 });
 
-              // Optional: Make it editable and reflect changes in control object
-              $lcd.on("input", function () {
-                control.value = $(this).val();
-              });
+                const $ledContainer = $("<div>").append($label, led);
 
-              const $wrapper = $("<div>").addClass("lcd-wrapper").append($label, $lcd);
-              $row.append($wrapper);
-            }
-
-
-
-
-            if (control.type === "multi") {
-
-              const $label = $("<div>").addClass("label-top").text(control.label);
-              const $select = $("<select>").attr("data-control-label", control.label);
-              control.values.forEach(val => {
-                const $option = $("<option>").val(val).text(val);
-                if (val === control.value) $option.attr("selected", true);
-                $select.append($option);
-              });
-
-              const $wrapper = $("<div>").append($label, $select);
-
-              if (control.position === "left") {
-                $wrapper.addClass("align-left");
-              } else if (control.position === "higher") {
-                $wrapper.addClass("align-top");
-              }  else if (control.position === "highest") {
-                $wrapper.addClass("align-top-est");
+                if (control.position === "under-top" && $row.children().length > 0) {
+                  const $prev = $row.children().last();
+                  $prev.append($("<div>").css("margin-top", "0px").append($label, led));
+                } else if (control.position === "lower") {
+                  $ledContainer.css("margin-top", "25px");
+                  $row.append($ledContainer);
+                } else if (control.position === "right") {
+                  $ledContainer.css({"right": "12px", position: "absolute"});
+                  $row.append($ledContainer);
+                }else {
+                  $row.append($ledContainer);
+                }
               }
 
-              $row.append($wrapper);
-            }
+              if (control.type === "slider") {
+                const $label = $("<div>").addClass("slider-label").text(control.label);
+                const $slider = $("<input type='range'>")
+                  .attr("min", control.min)
+                  .attr("max", control.max)
+                  .val(control.value)
+                  .addClass("vertical")
+                  .attr("data-control-label", control.label);
 
-            if (control.type === "switch") {
-              const $label = $("<div>").addClass("label-top").text(control.label);
-              const $input = $("<input type='checkbox'>").prop("checked", control.value).attr("data-control-label", control.label);
-              $row.append($("<div>").append($label, $input));
-            }
+                $slider.on("input", function () {
+                  control.value = parseInt(this.value);
+                });
+
+                const $wrapper = $("<div>").addClass("slider-container").append($slider, $label);
+                $row.append($wrapper);
+              }
+
+
+
+
+              if (control.type === "lcd") {
+                const $label = $("<div>").addClass("label-top");
+
+                const $lcd = $("<input type='text'>")
+                  .val(control.value)
+                  .attr("data-control-label", control.label)
+                  .css({
+                    width: `${control.width * 5}px`,   // Customize this multiplier as needed
+                    height: `${control.height * 5}px`,
+                    fontFamily: "monospace",
+                    fontSize: "16px",
+                    textAlign: "center",
+                    backgroundColor: "#111",
+                    color: "#fc0000",
+                    border: "2px solid #333",
+                    borderRadius: "4px",
+                    padding: "2px",
+                    position: "relative",
+                    top: "15px"
+                  });
+
+                // Optional: Make it editable and reflect changes in control object
+                $lcd.on("input", function () {
+                  control.value = $(this).val();
+                });
+
+                const $wrapper = $("<div>").addClass("lcd-wrapper").append($label, $lcd);
+                $row.append($wrapper);
+              }
+
+
+
+
+              if (control.type === "multi") {
+
+                const $label = $("<div>").addClass("label-top").text(control.label);
+                const $select = $("<select>").attr("data-control-label", control.label);
+                control.values.forEach(val => {
+                  const $option = $("<option>").val(val).text(val);
+                  if (val === control.value) $option.attr("selected", true);
+                  $select.append($option);
+                });
+
+                const $wrapper = $("<div>").append($label, $select);
+
+                if (control.position === "left") {
+                  $wrapper.addClass("align-left");
+                } else if (control.position === "higher") {
+                  $wrapper.addClass("align-top");
+                }  else if (control.position === "highest") {
+                  $wrapper.addClass("align-top-est");
+                }
+
+                $row.append($wrapper);
+              }
+
+              if (control.type === "switch") {
+                const $label = $("<div>").addClass("label-top").text(control.label);
+                const $input = $("<input type='checkbox'>").prop("checked", control.value).attr("data-control-label", control.label);
+                $row.append($("<div>").append($label, $input));
+              }
+            });
+
+            $pedalDiv.append($row);
           });
 
-          $pedalDiv.append($row);
+          if (pedal.type === "pedal") {
+            const $nameDiv = $("<div>").addClass("pedal-name").text(pedal.name).attr("style", pedal.logo || "");
+            $pedalDiv.append($nameDiv);
+          }
+
+
+          $("#pedalboard").append($pedalDiv);
+
+          $(".page-content").append("<br><br><br>");
+
+          // After the presets dropdown is fully populated and inserted, add an edit preset button:
+          if ($("#edit-btn").length === 0) {
+            const $editBtn = $(`
+            <button id="edit-btn" class="bx--btn bx--btn--primary" type="button">
+              Edit preset
+            </button>
+          `);
+
+            $(".page-content").append($editBtn);
+          }
+
+          // After the presets dropdown is fully populated and inserted, add a reset button:
+          if ($("#refresh-btn").length === 0) {
+            const $refreshBtn = $(`
+            <button id="refresh-btn" class="bx--btn bx--btn--secondary" type="button">
+              Reset controls
+            </button>
+          `);
+
+            $("#preset-selector").after($refreshBtn);
+            $(".page-content").append($refreshBtn);
+            $refreshBtn.on("click", () => location.reload());
+          }
         });
-
-        if (pedal.type === "pedal") {
-          const $nameDiv = $("<div>").addClass("pedal-name").text(pedal.name).attr("style", pedal.logo || "");
-          $pedalDiv.append($nameDiv);
-        }
-
-
-        $("#pedalboard").append($pedalDiv);
-
-        $(".page-content").append("<br><br><br>");
-
-        // After the presets dropdown is fully populated and inserted, add an edit preset button:
-        if ($("#edit-btn").length === 0) {
-          const $editBtn = $(`
-          <button id="edit-btn" class="bx--btn bx--btn--primary" type="button">
-            Edit preset
-          </button>
-        `);
-
-          $(".page-content").append($editBtn);
-        }
-
-        // After the presets dropdown is fully populated and inserted, add a reset button:
-        if ($("#refresh-btn").length === 0) {
-          const $refreshBtn = $(`
-          <button id="refresh-btn" class="bx--btn bx--btn--secondary" type="button">
-            Reset controls
-          </button>
-        `);
-
-          $("#preset-selector").after($refreshBtn);
-          $(".page-content").append($refreshBtn);
-          $refreshBtn.on("click", () => location.reload());
-        }
       });
-    });
+      });
 
   // Helper functions remain unchanged
   function applyPreset(songName) {
@@ -561,27 +575,31 @@ async function readDB(userId, read) {
 }
 
 
-// Load pedals.json once and cache
+// Load pedal catalog once and cache
 let pedalsJsonCache = null;
 
-fetch('https://lucacrippa88.github.io/PedalPlex/pedals.json')
+fetch('https://www.cineteatrosanluigi.it/plex/get_pedals.php', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({})  // Send empty JSON or params if needed
+})
   .then(res => {
     if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
     return res.json();
   })
   .then(data => {
     // Adjust this depending on your JSON structure:
-    // If your JSON root is an object with a "pedals" array:
     if (data.pedals && Array.isArray(data.pedals)) {
       pedalsJsonCache = data.pedals;
     } else if (data.Pedals && Array.isArray(data.Pedals)) {
-      pedalsJsonCache = data.Pedals; // <-- add this line to handle uppercase key
+      pedalsJsonCache = data.Pedals;
     } else if (Array.isArray(data)) {
       pedalsJsonCache = data;
     } else {
-      console.warn("Unexpected pedals.json structure:", data);
+      console.warn("Unexpected pedal catalog structure:", data);
       pedalsJsonCache = [];
     }
-
   })
-  .catch(err => console.error('Failed to load pedals.json:', err));
+  .catch(err => console.error('Failed to load pedal catalog:', err));
