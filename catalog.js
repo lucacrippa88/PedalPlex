@@ -390,7 +390,7 @@ const $editBtn = $("<button>")
       const idx = pedals.findIndex(p => p.id === pedal.id);
       if (idx !== -1) pedals[idx] = updated;
 
-console.log(JSON.stringify(updated))
+console.log(JSON.stringify(updated)) 
 
 
                 fetch('https://www.cineteatrosanluigi.it/plex/update_pedals.php', {
