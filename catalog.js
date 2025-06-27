@@ -1,5 +1,3 @@
-
-
 $(document).ready(function () {
   let pedals = [];
   let presets = {};
@@ -23,18 +21,7 @@ $(document).ready(function () {
       });
     });
 
-    // Create dropdown
-    const $selector = $("<select id='preset-selector' style='font-size:0.875rem;height:42px;'><option disabled selected>Select a song preset</option></select><br><br><br><br>");
-    for (const songName in presets) {
-      $selector.append($("<option>").val(songName).text(songName));
-    }
 
-    $selector.on("change", function () {
-      const selected = $(this).val();
-      applyPreset(selected);
-    });
-
-    $("#pedalboard").before($selector); // Insert dropdown
 
   }).then(() => {
     return readDB("user-0", "pedalboard");
@@ -47,8 +34,6 @@ $(document).ready(function () {
       pedalboard = queryResult; // Overwrite global `pedalboard` with the queried one
 
       
-
-      // Load pedal catalog
       // Load pedal catalog from PHP backend
       return fetch("https://www.cineteatrosanluigi.it/plex/get_pedals.php", {
         method: "POST",
@@ -58,82 +43,83 @@ $(document).ready(function () {
       .then(data => data.json())
       .then(data => {
         pedals = data.Pedals;
+        pedalsRev = data._rev; // Store the revision for later use
+        pedalsId = data._id; // Store the id for later use
+
+
+
 
       
         // Render pedals after everything has loaded ---------------------------------------
-        pedalboard.pedalboard.forEach(pedalEntry => {
-          const pedalName = pedalEntry.name || pedalEntry.pedalName || pedalEntry.id || pedalEntry;
-          const angle = Number(pedalEntry.angle ?? pedalEntry.rotation ?? 0);
+ 
+// Render ALL pedals from the pedal catalog, regardless of pedalboard content
+pedals.forEach(pedal => {
+  const pedalName = pedal.name || pedal.id;
+  const angle = 0; // default rotation for catalog pedals (or pedal.angle if available)
 
-          const pedal = pedals.find(p => p.name === pedalName || p.id === pedalName);
-          if (!pedal) return;
+  const insideColorRaw = pedal["inside-color"];
+  let inside = "";
+  let colorOnly = insideColorRaw;
 
-          const insideColorRaw = pedal["inside-color"];
-          let inside = "";
-          let colorOnly = insideColorRaw;
+  // Use regex to extract color and anything extra (like "full")
+  const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
 
-          // Use regex to extract color and anything extra (like "full")
-          const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+  if (match) {
+    colorOnly = match[1]; // just the hex color
+    inside = match[2] || ""; // optional: "full" or empty
+  }
 
-          if (match) {
-            colorOnly = match[1]; // just the hex color
-            inside = match[2] || ""; // optional: "full" or empty
-          }
+  const baseCss = {
+    background: colorOnly,
+    border: `10px solid ${pedal["color"]}`,
+    color: pedal["font-color"],
+    width: getPedalWidth(pedal.width),
+    height: getPedalHeight(pedal.height),
+    transform: `rotate(${angle}deg)`  // Apply pedal rotation here
+  };
 
-          const baseCss = {
-            background: colorOnly,
-            border: `10px solid ${pedal["color"]}`,
-            color: pedal["font-color"],
-            width: getPedalWidth(pedal.width),
-            height: getPedalHeight(pedal.height),
-            transform: `rotate(${angle}deg)`  // <-- Apply pedal rotation here
-          };
+  let $pedalDiv;
 
-          let $pedalDiv;
+  if (pedal.type === "pedal") {
+    if (inside === "full") {
+      $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
+        .attr("data-pedal-name", pedal.name);
+    } else {
+      $pedalDiv = $("<div>").addClass("pedal").css({
+        ...baseCss,
+        boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
+      }).attr("data-pedal-name", pedal.name);
+    }
+  } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+    if (inside === "full") {
+      $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
+        .attr("data-pedal-name", pedal.name);
+    } else {
+      $pedalDiv = $("<div>").addClass("pedal").css({
+        ...baseCss,
+        boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
+      }).attr("data-pedal-name", pedal.name);
+    }
+  }
 
-          if (pedal.type === "pedal") {
-            if (inside === "full") {
-              $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
-                .attr("data-pedal-name", pedal.name);
-            } else {
-              $pedalDiv = $("<div>").addClass("pedal").css({
-                ...baseCss,
-                boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-              }).attr("data-pedal-name", pedal.name);
-            }
-          } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-            if (inside === "full") {
-              $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
-                .attr("data-pedal-name", pedal.name);
-            } else {
-              $pedalDiv = $("<div>").addClass("pedal").css({
-                ...baseCss,
-                boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
-              }).attr("data-pedal-name", pedal.name);
-            }
-          }
+  if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+    const $nameDiv = $("<div>").addClass("head-name").text(pedal.name).attr("style", pedal.logo || "");
+    $pedalDiv.append($nameDiv);
+  }
 
+  // Controls rendering (same as original)
+  pedal.controls.forEach(controlRow => {
+    const $row = $("<div>").addClass("row");
 
-          if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-            const $nameDiv = $("<div>").addClass("head-name").text(pedal.name).attr("style", pedal.logo || "");
-            $pedalDiv.append($nameDiv);
-          }
+    if (pedal.type === "head") {
+      $row.addClass("lowest-row");
+    }
+    if (pedal.type === "pedal-inverted") {
+      $row.addClass("lower-row");
+    }
 
-
-          // Controls rendering (same as original)
-          pedal.controls.forEach(controlRow => {
-            const $row = $("<div>").addClass("row");
-
-            if (pedal.type === "head") {
-              $row.addClass("lowest-row");
-            }
-            if (pedal.type === "pedal-inverted") {
-              $row.addClass("lower-row");
-            }
-
-
-            controlRow.row.forEach(control => {
-              if (control.type === "knob" || control.type === "smallknob" || control.type === "largeknob" || control.type === "xlargeknob") {
+    controlRow.row.forEach(control => {
+      if (control.type === "knob" || control.type === "smallknob" || control.type === "largeknob" || control.type === "xlargeknob") {
                 const isSmall = control.type === "smallknob";
                 const isLarge = control.type === "largeknob";
                 const isXLarge = control.type === "xlargeknob";
@@ -345,158 +331,126 @@ $(document).ready(function () {
                 const $input = $("<input type='checkbox'>").prop("checked", control.value).attr("data-control-label", control.label);
                 $row.append($("<div>").append($label, $input));
               }
-            });
+    });
 
-            $pedalDiv.append($row);
-          });
+    $pedalDiv.append($row);
+  });
 
-          if (pedal.type === "pedal") {
-            const $nameDiv = $("<div>").addClass("pedal-name").text(pedal.name).attr("style", pedal.logo || "");
-            $pedalDiv.append($nameDiv);
-          }
+  const $nameDiv = $("<div>")
+  .addClass(pedal.type === "pedal" ? "pedal-name" : "head-name")
+  .text(pedal.name)
+  .attr("style", pedal.logo || "");
+
+// Create edit icon button
+const $editBtn = $("<button>")
+  .addClass("edit-btn")
+  .attr("title", "Edit pedal JSON")
+  .html(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+      <path d="M4 26.586V28h1.414L17.874 15.54l-1.414-1.414L4 26.586zM27.707 9.707a1 1 0 0 0 0-1.414l-4-4a1 1 0 0 0-1.414 0l-2.586 2.586 5.414 5.414 2.586-2.586z"/>
+    </svg>
+  `)
+  .on("click", () => {
+  // Clone pedal and remove the id so user cannot edit it
+  const pedalCopy = { ...pedal };
+  delete pedalCopy.id;
+
+  // Stringify without the id property
+  const pedalJson = JSON.stringify(pedalCopy, null, 2);
+
+  Swal.fire({
+    title: `Edit ${pedal.id}`,
+    input: 'textarea',
+    width: 800,
+    inputValue: pedalJson,
+    inputAttributes: {
+      'aria-label': 'Editable JSON',
+      style: 'height:400px;font-family:monospace;font-size:12px;'
+    },
+    showCancelButton: true,
+    confirmButtonText: 'Save',
+    customClass: {
+      confirmButton: 'bx--btn bx--btn--primary',
+      cancelButton: 'bx--btn bx--btn--secondary'
+    },
+    preConfirm: (inputValue) => {
+      try {
+        return JSON.parse(inputValue);
+      } catch (e) {
+        Swal.showValidationMessage('Invalid JSON');
+      }
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const updated = result.value;
+
+      // Restore the original pedal.id to the updated object
+      updated.id = pedal.id;
+
+      const idx = pedals.findIndex(p => p.id === pedal.id);
+      if (idx !== -1) pedals[idx] = updated;
+
+console.log(JSON.stringify(updated))
 
 
-          $("#pedalboard").append($pedalDiv);
+                fetch('https://www.cineteatrosanluigi.it/plex/update_pedals.php', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    _id: pedalsId,
+                    _rev: pedalsRev,
+                    pedal: updated
+                })
 
-          $(".page-content").append("<br><br><br>");
+                })
+                .then(res => res.json())
+                .then(data => {
+                if (data.success) {  // matches the Python response {"success": True, ...}
+                    Swal.fire('Saved!', '', 'success');
+                } else {
+                    Swal.fire('Error', data.error || 'Failed to save', 'error');
+                }
+                })
+                .catch(err => {
+                Swal.fire('Error', err.message || 'Failed to save', 'error');
+                });
 
-          // After the presets dropdown is fully populated and inserted, add an edit preset button:
-          if ($("#edit-btn").length === 0) {
-            const $editBtn = $(`
-            <button id="edit-btn" class="bx--btn bx--btn--primary" type="button">
-              Edit preset
-            </button>
-          `);
 
-            $(".page-content").append($editBtn);
-          }
 
-          // After the presets dropdown is fully populated and inserted, add a reset button:
-          if ($("#refresh-btn").length === 0) {
+
+    }
+  });
+});
+
+
+$nameDiv.append($editBtn);
+$pedalDiv.append($nameDiv);
+
+
+        $("#pedalboard").append($pedalDiv);
+
+        $(".page-content").append("<br><br><br>");
+
+        // Append refresh button as in your existing logic
+        if ($("#refresh-btn").length === 0) {
             const $refreshBtn = $(`
             <button id="refresh-btn" class="bx--btn bx--btn--secondary" type="button">
-              Reset controls
+                Reset controls
             </button>
-          `);
-
+            `);
             $("#preset-selector").after($refreshBtn);
             $(".page-content").append($refreshBtn);
             $refreshBtn.on("click", () => location.reload());
-          }
-        });
-      });
-      });
-
-  // Helper functions remain unchanged
-  function applyPreset(songName) {
-    const songPresetArray = presets[songName];
-    if (!songPresetArray) return;
-
-    const configuredPedals = new Set();
-
-    // Build a quick lookup for each pedal's preset controls
-    const presetMap = {};
-    songPresetArray.forEach(p => {
-      presetMap[p.name] = {};
-      configuredPedals.add(p.name);
-      p.controls.forEach(controlObj => {
-        const [label, value] = Object.entries(controlObj)[0];
-        presetMap[p.name][label] = value;
-      });
-    });
-
-
-    const presetPedals = getPedalsInPreset(songPresetArray);
-    const pedalsOnBoard = getPedalList();
-
-    // Print if a pedal from the preset is missing on the pedalboard
-    presetPedals.forEach(pedal => {
-      if (!pedalsOnBoard.includes(pedal)) {
-
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: `Missing pedal on pedalboard: ${pedal}`,
-          confirmButtonText: 'Ok',
-          buttonsStyling: false,
-          customClass: {
-            confirmButton: 'bx--btn bx--btn--danger'
-          }
-        });
-
-      }
-    });
-
-
-    $(".pedal").each(function () {
-      const $pedalDiv = $(this);
-      const pedalName = $pedalDiv.data("pedal-name");
-      const isInPreset = configuredPedals.has(pedalName);
-      const defaultPedal = pedals.find(p => p.name === pedalName);
-      if (!defaultPedal) return;
-
-      defaultPedal.controls.forEach(row => {
-        row.row.forEach(ctrl => {
-          const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
-          if (!$control.length) return;
-
-          // Determine value to set: from preset if present, else default
-          let newValue = ctrl.value;
-          if (isInPreset && presetMap[pedalName]?.hasOwnProperty(ctrl.label)) {
-            newValue = presetMap[pedalName][ctrl.label];
-          }
-
-          // Update visual and state
-          if ($control.is("div.knob, div.smallknob, div.largeknob, div.xlargeknob")) {
-            // Update knob's internal value and rotation
-            ctrl.value = newValue;
-            const rotation = getRotationFromValue(ctrl, newValue);
-            $control.data("rotation", rotation);
-            $control.css("transform", `rotate(${rotation}deg)`);
-            $control.siblings(".knob-value-label").text(newValue);
-          }
-
-          if ($control.is("select")) {
-            $control.val(newValue);
-          }
-
-          if ($control.is("input[type='text']")) {
-            $control.val(newValue);
-          }
-
-          if ($control.is("input[type='range']")) {
-            $control.val(newValue);
-          }
-
-          if ($control.is("div.led")) {
-            const color = ctrl.colors?.[newValue] || "#000000";
-            $control.css("background-color", color);
-            $control.css("box-shadow", color.toLowerCase() !== "#000000" ? `0 0 8px 3px ${color}` : "none");
-          }
-
-          if ($control.is("input[type='checkbox']")) {
-            $control.prop("checked", !!newValue);
-          }
-        });
-      });
-    });
-  }
-
-
-  function findControlObject(pedalName, controlLabel) {
-    for (const pedal of pedals) {
-      if (pedal.id === pedalName) {
-        for (const row of pedal.controls) {
-          for (const ctrl of row.row) {
-            if (ctrl.label === controlLabel) {
-              return ctrl;
-            }
-          }
         }
-      }
-    }
-    return null;
-  }
+        });
+
+
+
+      });
+      });
+
 
 
 
@@ -552,6 +506,7 @@ async function readDB(userId, read) {
     resultsDiv.innerHTML = "";
     if (read == "pedalboard") {
       const queried_pedalboard = { pedalboard: data.docs[0].pedalboard };
+      //const queried_pedalboard = { pedalboard: data.docs[0] }; // unusuful, but can be used to get the whole pedalboard object
       return queried_pedalboard;
     } else if (read == "presets") {
       const queried_presets = { presets: data.docs[0].presets };
