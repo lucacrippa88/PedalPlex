@@ -181,8 +181,11 @@ $(document).on('click', '#edit-btn', function () {
         });
         return;
       }
-      const userId = "user-0";  // or dynamic
+
+const userId = "user-0";  // or dynamic
 const presetDataObject = collectPedalControlValues(presetName);
+
+console.log(presetDataObject)
 
 $.ajax({
   url: 'https://www.cineteatrosanluigi.it/plex/update_preset.php',
