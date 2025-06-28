@@ -20,8 +20,9 @@ $(document).ready(function() {
         </button>
       </div>
       <div class="fullscreen-nav">
-        <a href="index.html">View your presets</a>
-        <a href="build.html">Edit your pedalboard</a>
+        <a href="presets.html">View your presets</a>
+        <a href="pedalboard.html">Edit your pedalboard</a>
+        <a href="catalog.html">Edit pedals catalog</a>
       </div>
       <div class="menu-bottom" style="text-align: center; margin-top: auto; padding: 1rem; font-size: 1rem; color: #000;">
         <span style='font-style:italic'>Rock 'n' roll will never die!</span>
