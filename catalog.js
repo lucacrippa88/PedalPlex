@@ -29,6 +29,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             pedals.forEach(pedal => {
+
+                console.log(pedal);
                 
                 const pedalName = pedal.name || pedal.id;
                 const pedalId = pedal._id || pedal.id;

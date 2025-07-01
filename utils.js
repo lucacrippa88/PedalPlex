@@ -428,6 +428,7 @@ function renderPedalControls(pedal, $pedalDiv) {
         if (pedal.type === "pedal-inverted") { $row.addClass("lower-row"); }
 
         controlRow.row.forEach(control => {
+          console.log(control);
 
             // Knobs (small, large, xlarge)
             if (["knob", "smallknob", "largeknob", "xlargeknob"].includes(control.type)) {
@@ -435,13 +436,17 @@ function renderPedalControls(pedal, $pedalDiv) {
                 const isLarge = control.type === "largeknob";
                 const isXLarge = control.type === "xlargeknob";
 
+                // Determine knob color and border based on control-specific override or pedal defaults
+                const knobColor = control["knob-color"] ?? pedal["knobs-color"];
+                const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
+
                 const knob = $("<div>")
                     .addClass(isSmall ? "smallknob" : "knob")
                     .addClass(isLarge ? "largeknob" : "knob")
                     .addClass(isXLarge ? "xlargeknob" : "knob")
                     .css({
-                        background: pedal["knobs-color"],
-                        border: `${control.border === "thick" ? "10px" : "2px"} solid ${pedal["knobs-border"]}`
+                        background: knobColor,
+                        border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}`
                     })
                     .css("--indicator-color", pedal["knobs-indicator"])
                     .attr("data-control-label", control.label);
