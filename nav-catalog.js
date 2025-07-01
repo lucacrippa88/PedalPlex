@@ -1,6 +1,6 @@
-$(document).ready(function() {
-  const navHtml = `
-<header style="display: flex; align-items: center; justify-content: space-between;">
+$(document).ready(function () {
+    const navHtml = `
+    <header style="display: flex; align-items: center; justify-content: space-between;">
       <!-- Left: menu toggle + title -->
       <div style="display: flex; align-items: center; gap: 1rem;">
         <button class="menu-toggle" id="menuToggle" aria-label="Open menu" style="background:none; border:none; cursor:pointer;">
@@ -9,14 +9,13 @@ $(document).ready(function() {
           </svg>
         </button>
 
-        <div class="title">PedalPlex</div>
+        <div class="title">PedalPlex</div><span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Catalog</span>
       </div>
-
 
       <!-- Right: search toggle, input, create button -->
       <div style="display: flex; align-items: center; gap: 1rem;">
-
-        <span style="font-size: 0.75rem; opacity: 0.7;">Add gears</span>
+      
+      <span id="pedalCount" style="font-size: 0.75rem; opacity: 0.7;"></span>
 
         <button id="toggleFilterBtn" aria-label="Toggle search" style="background:none; border:none; cursor:pointer; padding:4px;">
             <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -29,35 +28,13 @@ $(document).ready(function() {
         <input 
           type="text" 
           id="pedalFilterInput" 
-          placeholder="..." 
-          style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 200px; display: none;" 
+          placeholder="Filter gears..." 
+          style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;" 
           aria-label="Filter pedals"/>
-      
+
         <button
-          id="saveBtn"
+          id="createPedalBtn"
           class="bx--btn bx--btn--primary bx--btn--sm"
-          type="button"
-          aria-label="Save pedalboard"
-          style="display: flex; align-items: center; gap: 0.5rem;">
-          <svg
-            focusable="false"
-            preserveAspectRatio="xMidYMid meet"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            width="16"
-            height="16"
-            viewBox="0 0 32 32"
-            aria-hidden="true"
-            class="bx--btn__icon">
-            <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
-          </svg>
-          Save
-        </button>
-
-
-        <button
-          id="createBtn"
-          class="bx--btn bx--btn--secondary bx--btn--sm"
           type="button"
           aria-label="Create New Gear"
           style="display: flex; align-items: center; gap: 0.5rem;">
@@ -73,13 +50,12 @@ $(document).ready(function() {
             class="bx--btn__icon">
             <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
-          Add pedalboard
+          Add gear
         </button>
-
       </div>
-
-      
     </header>
+
+
 
     <div class="fullscreen-menu" id="fullscreenMenu">
       <div class="fullscreen-header">
@@ -105,46 +81,45 @@ $(document).ready(function() {
     </div>
   `;
 
-  // Prepend the navigation HTML to the body
-  $("body").prepend(navHtml);
+    // Prepend the navigation HTML to the body
+    $("body").prepend(navHtml);
+    $(document).on('click', '#createPedalBtn', createNewPedal);
 
-  // Setup event listeners for menu toggle and close buttons
-  $("#menuToggle").on("click", function() {
-    $("#fullscreenMenu").addClass("active");
-  });
+    // Setup event listeners for menu toggle and close buttons
+    $("#menuToggle").on("click", function () {
+        $("#fullscreenMenu").addClass("active");
+    });
 
-  $("#closeMenu").on("click", function() {
-    $("#fullscreenMenu").removeClass("active");
-  });
-
-
-  // Toggle filter input visibility
-  $("#toggleFilterBtn").on("click", function () {
-      const input = $("#pedalFilterInput");
-      if (input.is(":visible")) {
-          input.hide().val("");
-      } else {
-          input.show().focus();
-      }
-  });
-
-  $("#pedalFilterInput").on("input", function () {
-      const filterValue = $(this).val().toLowerCase();
-      console.log("Filtering pedals by:", filterValue);
-      // Add your filtering logic here
-  });
+    $("#closeMenu").on("click", function () {
+        $("#fullscreenMenu").removeClass("active");
+    });
 
 
-  $("#saveBtn").on("click", function() {
-    if (typeof savePedalboard === "function") {
-      savePedalboard();
-    } else {
-      console.warn("savePedalboard() function not found");
-    }
-  });
+    // Toggle filter input visibility
+    $("#toggleFilterBtn").on("click", function () {
+        const input = $("#pedalFilterInput");
+        if (input.is(":visible")) {
+            input.hide().val("");
+        } else {
+            input.show().focus();
+        }
+    });
 
+    $("#pedalFilterInput").on("input", function () {
+        const filterValue = $(this).val().toLowerCase();
+
+        $(".pedal").each(function () {
+            const $pedal = $(this);
+            const name = $pedal.data("pedal-id")?.toLowerCase() || "";
+
+            if (name.includes(filterValue)) {
+                $pedal.show();
+            } else {
+                $pedal.hide();
+            }
+        });
+
+    });
 
 
 });
-
-

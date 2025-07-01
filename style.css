@@ -106,11 +106,30 @@ html {
 }
 
 
-#pedalboard {
+
+#pedalAddDropdownContainer {
+  background: white;
+  max-height: 300px;
+  overflow-y: auto;
+  width: 200px; /* or same width as input */
+  z-index: 1000;
+}
+
+
+
+
+#catalog {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
+}
+
+#pedalboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
 }
 
 .pedal {
@@ -125,6 +144,11 @@ html {
 .pedal-name {
   position: absolute;
   bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap; /* optional: prevents line breaks */
+  text-align: center;
+  width: max-content; /* make sure it wraps around content size */
 }
 
 .head-name {
@@ -155,6 +179,14 @@ html {
 
 .row > div > select {
   margin-bottom: 10px;
+}
+
+#pedalboardSelect {
+  height: 25px;
+}
+
+#pedalFilterInput {
+  height: 13px;
 }
 
 .lower-row {
@@ -321,7 +353,7 @@ html {
 }
 
 .align-top {
-  margin-top: -20px;
+  margin-top: -15px;
 }
 
 .align-top-est {
@@ -405,7 +437,7 @@ input[type="range"].vertical {
       position: fixed;
       top: -5%;
       right: -5%;
-      background: #0078d7; /* Blue background */
+      background: #0f62fe; /* Blue background */
       border: none;
       border-radius: 50%;
       cursor: pointer;
@@ -530,5 +562,9 @@ input[type="range"].vertical {
 @font-face {
   font-family: vox;
   src: url("fonts/PlayfairDisplay-Black.ttf");
+}
+@font-face {
+  font-family: bubbly;
+  src: url("fonts/Talina.otf");
 }
 
