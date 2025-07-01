@@ -1,560 +1,124 @@
-$(document).ready(function () {
-  let pedals = [];
-  let presets = {};
-  let pedalboard = {};
+document.addEventListener("DOMContentLoaded", function () {
+    const resultsDiv = document.getElementById("catalog");
 
-  const loadJSON = url => $.getJSON(url);
+    // Show loading spinner
+    resultsDiv.innerHTML = `
+      <div class="bx--loading-overlay">
+        <div class="bx--loading" role="status">
+          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+          </svg>
+        </div>
+      </div>
+    `;
 
-  
+    fetch("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(pedals => {
+            resultsDiv.innerHTML = ""; // Clear loader
+            $("#pedalCount").text(`${pedals.length} gears`);
 
-  // Step 1: Load presets and build dropdown
-  readDB("user-0", "presets").then(presetData => {
-    if (!presetData || !presetData.presets) {
-      throw new Error("No presets found");
-    }
-
-    // Flatten Cloudant presets format
-    presets = {};
-    presetData.presets.forEach(presetObj => {
-      Object.entries(presetObj).forEach(([songName, preset]) => {
-        presets[songName] = preset;
-      });
-    });
-
-
-
-  }).then(() => {
-    return readDB("user-0", "pedalboard");
-  })
-    .then(queryResult => {
-      if (!queryResult) {
-        throw new Error("No queried_pedalboard found");
-      }
-
-      pedalboard = queryResult; // Overwrite global `pedalboard` with the queried one
-
-      
-      // Load pedal catalog from PHP backend
-      return fetch("https://www.cineteatrosanluigi.it/plex/get_pedals.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}) // adjust if needed
-      })
-      .then(data => data.json())
-      .then(data => {
-        pedals = data.Pedals;
-        pedalsRev = data._rev; // Store the revision for later use
-        pedalsId = data._id; // Store the id for later use
+            // Sort pedals alphabetically by _id
+            pedals.sort((a, b) => a._id - b._id);
 
 
+            pedals.forEach(pedal => {
+                
+                const pedalName = pedal.name || pedal.id;
+                const pedalId = pedal._id || pedal.id;
+                const angle = 0;
 
+                const insideColorRaw = pedal["inside-color"];
+                let inside = "";
+                let colorOnly = insideColorRaw;
 
-      
-        // Render pedals after everything has loaded ---------------------------------------
- 
-// Render ALL pedals from the pedal catalog, regardless of pedalboard content
-pedals.forEach(pedal => {
-  const pedalName = pedal.name || pedal.id;
-  const angle = 0; // default rotation for catalog pedals (or pedal.angle if available)
-
-  const insideColorRaw = pedal["inside-color"];
-  let inside = "";
-  let colorOnly = insideColorRaw;
-
-  // Use regex to extract color and anything extra (like "full")
-  const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-
-  if (match) {
-    colorOnly = match[1]; // just the hex color
-    inside = match[2] || ""; // optional: "full" or empty
-  }
-
-  const baseCss = {
-    background: colorOnly,
-    border: `10px solid ${pedal["color"]}`,
-    color: pedal["font-color"],
-    width: getPedalWidth(pedal.width),
-    height: getPedalHeight(pedal.height),
-    transform: `rotate(${angle}deg)`  // Apply pedal rotation here
-  };
-
-  let $pedalDiv;
-
-  if (pedal.type === "pedal") {
-    if (inside === "full") {
-      $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
-        .attr("data-pedal-name", pedal.name);
-    } else {
-      $pedalDiv = $("<div>").addClass("pedal").css({
-        ...baseCss,
-        boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-      }).attr("data-pedal-name", pedal.name);
-    }
-  } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-    if (inside === "full") {
-      $pedalDiv = $("<div>").addClass("pedal").css(baseCss)
-        .attr("data-pedal-name", pedal.name);
-    } else {
-      $pedalDiv = $("<div>").addClass("pedal").css({
-        ...baseCss,
-        boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
-      }).attr("data-pedal-name", pedal.name);
-    }
-  }
-
-  if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-    const $nameDiv = $("<div>").addClass("head-name").text(pedal.name).attr("style", pedal.logo || "");
-    $pedalDiv.append($nameDiv);
-  }
-
-  // Controls rendering (same as original)
-  pedal.controls.forEach(controlRow => {
-    const $row = $("<div>").addClass("row");
-
-    if (pedal.type === "head") {
-      $row.addClass("lowest-row");
-    }
-    if (pedal.type === "pedal-inverted") {
-      $row.addClass("lower-row");
-    }
-
-    controlRow.row.forEach(control => {
-      if (control.type === "knob" || control.type === "smallknob" || control.type === "largeknob" || control.type === "xlargeknob") {
-                const isSmall = control.type === "smallknob";
-                const isLarge = control.type === "largeknob";
-                const isXLarge = control.type === "xlargeknob";
-                const knob = $("<div>")
-                  .addClass(isSmall ? "smallknob" : "knob")
-                  .addClass(isLarge ? "largeknob" : "knob")
-                  .addClass(isXLarge ? "xlargeknob" : "knob")
-                  .css({
-                    background: pedal["knobs-color"],
-                    border: `${control.border === "thick" ? "10px" : "2px"} solid ${pedal["knobs-border"]}`
-                  })
-                  .css("--indicator-color", pedal["knobs-indicator"])
-                  .attr("data-control-label", control.label);
-
-                const rotation = getRotationFromValue(control, control.value);
-                knob.data("rotation", rotation);
-                knob.css("transform", `rotate(${rotation}deg)`);
-
-                let $valueLabel = null;
-                if (control.values && Array.isArray(control.values)) {
-                  $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
+                const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+                if (match) {
+                    colorOnly = match[1];
+                    inside = match[2] || "";
                 }
 
-                knob.on("mousedown", function (e) {
-                  const startY = e.pageY;
-                  const startValue = control.value;
-
-                  $(document).on("mousemove.knob", function (e2) {
-                    const delta = startY - e2.pageY;
-                    const steps = Math.round(delta / 5);
-
-                    if (control.values && Array.isArray(control.values)) {
-                      let currentIndex = control.values.indexOf(startValue);
-                      if (currentIndex === -1) currentIndex = 0;
-                      let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
-                      control.value = control.values[newIndex];
-                    } else {
-                      const min = control.min ?? 0;
-                      const max = control.max ?? 100;
-                      let newValue = startValue + steps;
-                      newValue = Math.min(Math.max(newValue, min), max);
-                      control.value = newValue;
-                    }
-
-                    const newRotation = getRotationFromValue(control, control.value);
-                    knob.data("rotation", newRotation);
-                    knob.css("transform", `rotate(${newRotation}deg)`);
-                    if ($valueLabel) {
-                      $valueLabel.text(control.value);
-                    }
-                  });
-
-                  $(document).on("mouseup.knob", function () {
-                    $(document).off(".knob");
-                  });
-                });
-
-                let $label;
-                if (control.position === "under-top" && control.type === "smallknob") {
-                  $label = $("<div>").css({
-                    position: "absolute",
-                    "margin-left": "5px",
-                    top: "110px",
-                    transform: "translateY(-50%)",
-                    "white-space": "nowrap",
-                    "font-size": "10px"
-                  }).text(control.label);
-                } else {
-                  $label = $("<div>").addClass("label-top").text(control.label);
-                }
-
-                const $container = $("<div>").addClass("knob-container").append(knob).css({ position: "relative" });
-                $container.append($label);
-                if ($valueLabel) $container.append($valueLabel);
-                const $knobWrapper = $("<div>").append($label, $container);
-
-                if (control.position === "under-top" && $row.children().length > 0) {
-                  const $prev = $row.children().last();
-                  $prev.append($("<div>").css("margin-top", "-53px").append($label, $container));
-                } else if (control.position === "higher") {
-                  $knobWrapper.css("margin-top", "-10px");
-                  $row.append($knobWrapper);
-                } else {
-                  $row.append($knobWrapper);
-                }
-              }
-
-              if (control.type === "led") {
-                const colors = Array.isArray(control.colors) ? control.colors : ["#000000"];
-                const numColors = colors.length;
-                let currentIndex = typeof control.value === "number" ? control.value : 0;
-
-                const $label = $("<div>").addClass("label-top");
-
-                const led = $("<div>")
-                  .addClass("led")
-                  .attr("data-control-label", control.label)
-                  .css("cursor", "pointer");
-
-                const setColor = (index) => {
-                  const color = colors[index] || "#000000";
-                  led.css("background-color", color);
-                  led.css("box-shadow", color !== "#000000" ? `0 0 8px 3px ${color}` : "none");
-                  control.value = index; // update value in control object
-                  led.data("colorIndex", index);
+                const baseCss = {
+                    background: colorOnly,
+                    border: `10px solid ${pedal["color"]}`,
+                    color: pedal["font-color"],
+                    width: getPedalWidth(pedal.width),
+                    height: getPedalHeight(pedal.height),
+                    transform: `rotate(${angle}deg)`,
+                    display: 'inline-block'
                 };
 
-                setColor(currentIndex);
+                let $pedalDiv;
 
-                led.on("click", function () {
-                  let index = (led.data("colorIndex") + 1) % numColors;
-                  setColor(index);
-                });
-
-                const $ledContainer = $("<div>").append($label, led);
-
-                if (control.position === "under-top" && $row.children().length > 0) {
-                  const $prev = $row.children().last();
-                  $prev.append($("<div>").css("margin-top", "0px").append($label, led));
-                } else if (control.position === "lower") {
-                  $ledContainer.css("margin-top", "25px");
-                  $row.append($ledContainer);
-                } else if (control.position === "right") {
-                  $ledContainer.css({"right": "12px", position: "absolute"});
-                  $row.append($ledContainer);
-                }else {
-                  $row.append($ledContainer);
-                }
-              }
-
-              if (control.type === "slider") {
-                const $label = $("<div>").addClass("slider-label").text(control.label);
-                const $slider = $("<input type='range'>")
-                  .attr("min", control.min)
-                  .attr("max", control.max)
-                  .val(control.value)
-                  .addClass("vertical")
-                  .attr("data-control-label", control.label);
-
-                $slider.on("input", function () {
-                  control.value = parseInt(this.value);
-                });
-
-                const $wrapper = $("<div>").addClass("slider-container").append($slider, $label);
-                $row.append($wrapper);
-              }
-
-
-
-
-              if (control.type === "lcd") {
-                const $label = $("<div>").addClass("label-top");
-
-                const $lcd = $("<input type='text'>")
-                  .val(control.value)
-                  .attr("data-control-label", control.label)
-                  .css({
-                    width: `${control.width * 5}px`,   // Customize this multiplier as needed
-                    height: `${control.height * 5}px`,
-                    fontFamily: "monospace",
-                    fontSize: "16px",
-                    textAlign: "center",
-                    backgroundColor: "#111",
-                    color: "#fc0000",
-                    border: "2px solid #333",
-                    borderRadius: "4px",
-                    padding: "2px",
-                    position: "relative",
-                    top: "15px"
-                  });
-
-                // Optional: Make it editable and reflect changes in control object
-                $lcd.on("input", function () {
-                  control.value = $(this).val();
-                });
-
-                const $wrapper = $("<div>").addClass("lcd-wrapper").append($label, $lcd);
-                $row.append($wrapper);
-              }
-
-
-
-
-              if (control.type === "multi") {
-
-                const $label = $("<div>").addClass("label-top").text(control.label);
-                const $select = $("<select>").attr("data-control-label", control.label);
-                control.values.forEach(val => {
-                  const $option = $("<option>").val(val).text(val);
-                  if (val === control.value) $option.attr("selected", true);
-                  $select.append($option);
-                });
-
-                const $wrapper = $("<div>").append($label, $select);
-
-                if (control.position === "left") {
-                  $wrapper.addClass("align-left");
-                } else if (control.position === "higher") {
-                  $wrapper.addClass("align-top");
-                }  else if (control.position === "highest") {
-                  $wrapper.addClass("align-top-est");
+                if (pedal.type === "pedal") {
+                    if (inside === "full") {
+                        $pedalDiv = $("<div>").addClass("pedal").css(baseCss).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+                    } else {
+                        $pedalDiv = $("<div>").addClass("pedal").css({
+                            ...baseCss,
+                            boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
+                        }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+                    }
+                } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+                    if (inside === "full") {
+                        $pedalDiv = $("<div>").addClass("pedal").css(baseCss).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);;
+                    } else {
+                        $pedalDiv = $("<div>").addClass("pedal").css({
+                            ...baseCss,
+                            boxShadow: `0 8px 16px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
+                        }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+                    }
                 }
 
-                $row.append($wrapper);
-              }
 
-              if (control.type === "switch") {
-                const $label = $("<div>").addClass("label-top").text(control.label);
-                const $input = $("<input type='checkbox'>").prop("checked", control.value).attr("data-control-label", control.label);
-                $row.append($("<div>").append($label, $input));
-              }
-    });
-
-    $pedalDiv.append($row);
-  });
-
-  const $nameDiv = $("<div>")
-  .addClass(pedal.type === "pedal" ? "pedal-name" : "head-name")
-  .text(pedal.name)
-  .attr("style", pedal.logo || "");
-
-// Create edit icon button
-const $editBtn = $("<button>")
-  .addClass("edit-btn")
-  .attr("title", "Edit pedal JSON")
-  .html(`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-      <path d="M4 26.586V28h1.414L17.874 15.54l-1.414-1.414L4 26.586zM27.707 9.707a1 1 0 0 0 0-1.414l-4-4a1 1 0 0 0-1.414 0l-2.586 2.586 5.414 5.414 2.586-2.586z"/>
-    </svg>
-  `)
-  .on("click", () => {
-  // Clone pedal and remove the id so user cannot edit it
-  const pedalCopy = { ...pedal };
-  delete pedalCopy.id;
-
-  // Stringify without the id property
-  const pedalJson = JSON.stringify(pedalCopy, null, 2);
-
-  Swal.fire({
-    title: `Edit ${pedal.id}`,
-    input: 'textarea',
-    width: 800,
-    inputValue: pedalJson,
-    inputAttributes: {
-      'aria-label': 'Editable JSON',
-      style: 'height:400px;font-family:monospace;font-size:12px;'
-    },
-    showCancelButton: true,
-    confirmButtonText: 'Save',
-    customClass: {
-      confirmButton: 'bx--btn bx--btn--primary',
-      cancelButton: 'bx--btn bx--btn--secondary'
-    },
-    preConfirm: (inputValue) => {
-      try {
-        return JSON.parse(inputValue);
-      } catch (e) {
-        Swal.showValidationMessage('Invalid JSON');
-      }
-    }
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const updated = result.value;
-
-      // Restore the original pedal.id to the updated object
-      updated.id = pedal.id;
-
-      const idx = pedals.findIndex(p => p.id === pedal.id);
-      if (idx !== -1) pedals[idx] = updated;
-
-console.log(JSON.stringify(updated)) 
-
-
-                fetch('https://www.cineteatrosanluigi.it/plex/update_pedals.php', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    _id: pedalsId,
-                    _rev: pedalsRev,
-                    pedal: updated
-                })
-
-                })
-                .then(res => res.json())
-                .then(data => {
-                if (data.success) {  // matches the Python response {"success": True, ...}
-                    Swal.fire('Saved!', '', 'success');
-                } else {
-                    Swal.fire('Error', data.error || 'Failed to save', 'error');
+                // Manage head and pedal-inverted logos
+                if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+                    const $nameDiv = $("<div>").addClass("head-name").text(pedal.name).attr("style", pedal.logo || "");
+                    $pedalDiv.append($nameDiv);
                 }
-                })
-                .catch(err => {
-                Swal.fire('Error', err.message || 'Failed to save', 'error');
-                });
 
+                // Render pedal controls
+                renderPedalControls(pedal, $pedalDiv);
 
+                // Manage pedal logos
+                const $nameDiv = $("<div>")
+                if (pedal.type === "pedal") {
+                    const $nameDiv = $("<div>").addClass("pedal-name").text(pedal.name).attr("style", pedal.logo || "");
+                    $pedalDiv.append($nameDiv);
+                }
 
+                // Edit icon button (just create the button without the .on("click") here)
+                const $editBtn = $("<button>")
+                    .addClass("edit-btn")
+                    .attr("title", "Edit pedal JSON")
+                    .data("pedal", pedal)
+                    .html(`
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
+                        <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
+                        </svg>
+                    `);
 
-    }
-  });
-});
+                // Setup the edit button handler
+                setupEditPedalHandler(pedals);
 
+                // Append elements to the pedal div
+                $pedalDiv.append($editBtn);
+                $pedalDiv.append($nameDiv);
 
-$nameDiv.append($editBtn);
-$pedalDiv.append($nameDiv);
-
-
-        $("#pedalboard").append($pedalDiv);
-
-        $(".page-content").append("<br><br><br>");
-
-        // Append refresh button as in your existing logic
-        if ($("#refresh-btn").length === 0) {
-            const $refreshBtn = $(`
-            <button id="refresh-btn" class="bx--btn bx--btn--secondary" type="button">
-                Reset controls
-            </button>
-            `);
-            $("#preset-selector").after($refreshBtn);
-            $(".page-content").append($refreshBtn);
-            $refreshBtn.on("click", () => location.reload());
-        }
+                // Append to results
+                $(resultsDiv).append($pedalDiv);
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching pedals:", error);
+            resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${error.message}</p>`;
         });
 
 
-
-      });
-      });
-
-
-
-
-
 });
-
-
-
-
-
-
-
-// Waiting for query...
-const resultsDiv = document.getElementById("results");
-
-resultsDiv.innerHTML = `
-  <div class="bx--loading-overlay">
-    <div class="bx--loading" role="status">
-      <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-        <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-        <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-      </svg>
-    </div>
-  </div>
-`;
-
-
-// Get pedalboard from DB
-async function readDB(userId, read) {
-
-  // Build selector
-  const selector = {
-    user_id: { "$eq": userId }
-  }
-  const query = {
-    selector,
-    limit: 20
-  };
-
-  try {
-    const response = await fetch("https://www.cineteatrosanluigi.it/plex/get_pedalboard.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(query)
-    });
-
-    const data = await response.json();
-    if (!data.docs || data.docs.length === 0) {
-      resultsDiv.textContent = "No pedalboards found.";
-      return;
-    }
-
-    resultsDiv.innerHTML = "";
-    if (read == "pedalboard") {
-      const queried_pedalboard = { pedalboard: data.docs[0].pedalboard };
-      //const queried_pedalboard = { pedalboard: data.docs[0] }; // unusuful, but can be used to get the whole pedalboard object
-      return queried_pedalboard;
-    } else if (read == "presets") {
-      const queried_presets = { presets: data.docs[0].presets };
-      return queried_presets;
-    }
-
-  } catch (err) {
-
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "Failed to load." + err.message,
-      confirmButtonText: 'Ok',
-      buttonsStyling: false,
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--danger'
-      }
-    });
-
-  }
-}
-
-
-// Load pedal catalog once and cache
-let pedalsJsonCache = null;
-
-fetch('https://www.cineteatrosanluigi.it/plex/get_pedals.php', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({})  // Send empty JSON or params if needed
-})
-  .then(res => {
-    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-    return res.json();
-  })
-  .then(data => {
-    // Adjust this depending on your JSON structure:
-    if (data.pedals && Array.isArray(data.pedals)) {
-      pedalsJsonCache = data.pedals;
-    } else if (data.Pedals && Array.isArray(data.Pedals)) {
-      pedalsJsonCache = data.Pedals;
-    } else if (Array.isArray(data)) {
-      pedalsJsonCache = data;
-    } else {
-      console.warn("Unexpected pedal catalog structure:", data);
-      pedalsJsonCache = [];
-    }
-  })
-  .catch(err => console.error('Failed to load pedal catalog:', err));

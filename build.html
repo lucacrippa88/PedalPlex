@@ -6,43 +6,23 @@
   <title>PedalPlex</title>
   <link rel="stylesheet" href="https://unpkg.com/carbon-components/css/carbon-components.min.css">
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Custom inline styles for layout */
-    .search-and-buttons {
-      display: flex;
-      align-items: center;
-      margin-top: 3rem;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-  </style>
 </head>
 <body>
 
-  <div class="bx--grid page-content">
-    <div class="bx--row">
-      <div class="bx--col-lg-12">
-
-        <h3 class="bx--type-expressive-heading-04" style="margin-top: 1rem;">Your pedalboard:</h3><br><br>
-
-        <div class="results" id="results" style="margin-top: 1rem;"></div>
-        <div id="selected-pedals" style="margin-top: 1rem;"></div>
-
-        <div class="search-and-buttons">
-          <input type="text" id="search" class="bx--text-input" placeholder="Search to add pedals..." />
-
-          <div class="bx--btn-set">
-            <button id="save-button" class="bx--btn bx--btn--primary" style="margin-left: 8px; min-height: 0.5rem; border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.3) 0px 8px 16px;">Save Pedalboard</button>
-            <button id="reset-button" class="bx--btn bx--btn--secondary" style="margin-left: 8px; min-height: 0.5rem; border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.3) 0px 8px 16px;">Reset Pedalboard</button>
-          </div>
-        </div>
-
-        <div id="catalog" class="bx--tile-group" style="margin-top: 2rem;"></div>
-
+  <div class="page-content">
+    
+      <div id="pedalAddDropdownContainer"></div>
+      <div style="display: inline-flex; align-items: center; gap: 8px;">
+        <select id="pedalboardSelect"></select>
+        <button id="renameBoardBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button">Edit</button>
       </div>
-    </div>
+
+      <br><br><br><br>
+
+      <div id="pedalboard"></div>
+
   </div>
+
 
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
