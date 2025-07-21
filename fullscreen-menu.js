@@ -12,9 +12,9 @@ window.fullscreenMenuHtml = `
   </div>
 
   <div class="fullscreen-nav">
-    <a href="preset.html">Edit your presets</a>
-    <a href="pedalboard.html">Manage pedalboards</a>
-    <a href="catalog.html">View gears catalog</a>
+    <a href="/preset.html">Edit your presets</a>
+    <a href="/pedalboard.html">Manage pedalboards</a>
+    <a href="/catalog.html">View gears catalog</a>
     <br><br>
     <button id="profileBtn" class="bx--btn bx--btn--secondary"
       style="display: flex; align-items: center; gap: 0.5rem;">
