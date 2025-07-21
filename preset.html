@@ -20,19 +20,34 @@
     Checking authentication...
   </div>
   
+  <!-- Main content area -->
   <div class="page-content" style="display: none;">
-    <div id="catalog"></div>
+    <div id="preset-controls" style="display: none; align-items: center; gap: 8px;">
+      <select id="pedalboardSelect"></select>
+      <select id="presetSelect" style="margin-left: 16px;"></select>
+      <button id="renamePresetBtn" class="bx--btn bx--btn--secondary" type="button">Edit</button>
+    </div>
 
-    <!-- Load scripts after content is visible -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="utils.js"></script>
-    <script src="catalog.js"></script>
-    <script src="fullscreen-menu.js"></script>
-    <script src="nav-catalog.js"></script>
+    <br><br><br><br>
+
+    <div id="preset"></div>
   </div>
 
-<script>
-  $.ajax({
+  <!-- Fallback content -->
+  <div id="noPedalboardsContainer" style="display: none; text-align: center; margin-top: 7em;">
+    <p style="font-size: 1.25em;">No pedalboards found.</p>
+    <a href="pedalboard.html" class="bx--btn bx--btn--primary" style="margin-top: 1em;">Go to Pedalboards</a>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="utils.js"></script>
+  <script src="preset.js"></script>
+  <script src="fullscreen-menu.js"></script>
+  <script src="nav-preset.js"></script>
+
+  <script>
+    $.ajax({
     url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH.php',
     method: 'GET',
     dataType: 'json',
@@ -44,33 +59,19 @@
 
       window.currentUser = userFromServer;  // Save globally
 
-      // Initialize nav passing the authenticated user from server
-      if (typeof initNavCatalog === 'function') {
-        initNavCatalog(userFromServer.username);
-      }
-
-      // Call a function in catalog.js to init and pass the role
-      if (typeof initCatalog === 'function') {
-        initCatalog(userFromServer.role);
-      }
+      if (typeof initNavPreset === 'function') initNavPreset();
+      if (typeof initPreset === 'function') initPreset(window.currentUser);
+      
     },
-    error: function(xhr) {
-      $('#loadingMessage').hide();
-
-      if (xhr.status === 401) {
-        // Not authenticated: redirect to login
-        window.location.href = 'auth.html';
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to verify authentication. Please try again later.'
-        });
+      error: function(xhr) {
+        if (xhr.status === 401) {
+          window.location.href = 'auth.html';
+        } else {
+          alert('Failed to verify authentication. Please try again.');
+        }
       }
-    }
-  });
-</script>
-
+    });
+  </script>
 
 </body>
 </html>

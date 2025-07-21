@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PedalPlex</title>
+  <link rel="stylesheet" href="https://unpkg.com/carbon-components/css/carbon-components.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+  <div id="loadingMessage" style="font-size:1.2em; text-align:center; margin-top: 2em; display: flex; flex-direction: column; align-items: center; gap: 0.5em;">
+    <div class="bx--loading bx--loading--small" role="alert" aria-live="assertive" aria-label="Loading">
+      <svg class="bx--loading__svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+        <circle class="bx--loading__background" cx="50" cy="50" r="44" stroke-width="8"></circle>
+        <circle class="bx--loading__stroke" cx="50" cy="50" r="44" stroke-width="8"></circle>
+      </svg>
+    </div>
+    Checking authentication...
+  </div>
+  
+  <div id="pageContent">
+    <div class="page-content">
+      <div id="pedalAddDropdownContainer"></div>
+      <div id="pedalboard-controls" style="display: none; align-items: center; gap: 8px;">
+        <select id="pedalboardSelect"></select>
+        <button id="renameBoardBtn" class="bx--btn bx--btn--secondary" type="button">Edit</button>
+      </div>
+
+      <br /><br /><br /><br />
+
+      <div id="pedalboard"></div>
+    </div>
+
+    <!-- Load scripts after content is visible -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="utils.js"></script>
+    <script src="pedalboard.js"></script>
+    <script src="fullscreen-menu.js"></script>
+    <script src="nav-pedalboard.js"></script>
+  </div>
+
+  <script>
+    $.ajax({
+      url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH.php',
+      method: 'GET',
+      dataType: 'json',
+      xhrFields: { withCredentials: true },
+      success: function(userFromServer) {
+
+        $('#loadingMessage').hide();
+        $('#pageContent').show();
+
+        window.currentUser = userFromServer;  // Save globally
+
+        if (typeof initNavPedalboard === 'function') initNavPedalboard();
+        if (typeof initPedalboard === 'function') initPedalboard(window.currentUser);
+
+      },
+      error: function(xhr) {
+        console.error('Auth check failed:', xhr.status, xhr.responseText);
+        if (xhr.status === 401) {
+          window.location.href = 'auth.html';
+        } else {
+          alert('Failed to verify authentication. Please try again.');
+        }
+      }
+
+    });
+  </script>
+
+</body>
+</html>
