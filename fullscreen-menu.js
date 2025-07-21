@@ -66,7 +66,7 @@ $(document).ready(function () {
 
   // Profile button
   $(document).on('click', '#profileBtn', function () {
-    window.location.href = 'profile.html';
+    window.location.href = '/profile.html';
   });
 
   // Logout button
@@ -77,7 +77,7 @@ $(document).ready(function () {
       xhrFields: { withCredentials: true },
       success: function (res) {
         if (res.success) {
-          window.location.href = 'auth.html';
+          window.location.href = '/index.html';
         } else {
           alert('Logout failed.');
         }
