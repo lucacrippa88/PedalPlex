@@ -13,6 +13,16 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
+    #username, #password, #email, #newPassword, #oldPassword {
+      font-size: 0.875rem;
+      padding: 6px 12px;
+      border: 1px solid rgb(140, 140, 140);
+      border-radius: 4px;
+      outline-offset: 2px;
+      width: 150px;
+      height: 28px;
+    }
+
     .menu-toggle {
       background: none;
       border: none;
@@ -33,6 +43,7 @@
     }
 
     .title {
+      position: relative;
       font-size: 1.25rem;
       font-weight: 600;
       color: #ffffff;
@@ -40,14 +51,17 @@
 
     .fullscreen-menu {
       position: fixed;
-      top: 64px; /* height of header */
+      /*top: 64px; /* height of header */
+      top: 0px;
       left: 0;
       width: 100%;
-      height: calc(100% - 64px);
+      /* height: calc(100% - 64px); */
+      height: 100%;
       background: #f4f4f4;
       display: none;
       flex-direction: column;
-      z-index: 2000;
+      /* z-index: 2000; */
+      z-index: 5000;
     }
 
     .fullscreen-menu.active {
@@ -91,7 +105,7 @@
 
 
 body {
-  background: #222;
+  background: #2e2e2e;
   color: #fff;
   padding: 20px;
   font-family: 'IBM Plex Sans', sans-serif;
@@ -121,25 +135,39 @@ html {
 #catalog {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 10px;
   justify-content: center;
+  overflow-x: hidden; /* hides horizontal scrollbar */
+  max-width: 100vw;   /* constrain max width to viewport */
+  white-space: normal; /* allow wrapping if inline-block used */
+}
+
+#preset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden; /* hides horizontal scrollbar */
+  max-width: 100vw;   /* constrain max width to viewport */
+  white-space: normal; /* allow wrapping if inline-block used */
 }
 
 #pedalboard {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
   align-items: center;
 }
 
-.pedal {
-  border-radius: 8px;
-  padding: 15px;
+.pedal-catalog, .pedal {
+  border-radius: 10px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
 }
+
 
 .pedal-name {
   position: absolute;
@@ -153,7 +181,6 @@ html {
 
 .head-name {
   position: absolute;
-  /* top: 22px; */
 }
 
 .row {
@@ -170,7 +197,6 @@ html {
   justify-content: flex-start; /* Align children to top */
   gap: 0px;
   min-width: 40px;
-  /*height: 70px; /* fix height so all knobs align */
 }
 
 .row.lowest-row > div {
@@ -181,8 +207,9 @@ html {
   margin-bottom: 10px;
 }
 
-#pedalboardSelect {
-  height: 25px;
+#pedalboardSelect, #presetSelect {
+  height: 40px;
+  font-size: initial;
 }
 
 #pedalFilterInput {
@@ -214,7 +241,6 @@ html {
   position: relative;
   transform: rotate(0deg);
   cursor: pointer;
-  /*margin-bottom: 4px; /* space below knob for value label */
 }
 
 .knob::after {
@@ -352,6 +378,10 @@ html {
   right: 12px;
 }
 
+.align-bottom {
+  margin-top: 25px;
+}
+
 .align-top {
   margin-top: -15px;
 }
@@ -371,19 +401,31 @@ html {
 }
 
 input[type="range"].vertical {
-  writing-mode: bt-lr; /* Bottom to top, left to right */
+  writing-mode: bt-lr;
   appearance: slider-vertical;
   width: 8px;
-  height: 70px;
+  height: 100px;
   background: transparent;
 }
 
-.slider-label {
-  font-size: 10px;
-  text-align: center;
-  margin-top: 4px;
-  color: inherit;
+input[type="range"].verticalsmall {
+  writing-mode: bt-lr;
+  appearance: slider-vertical;
+  width: 8px;
+  height: 50px;
+  background: transparent;
 }
+
+input[type="range"].horizontal {
+  width: 100%;
+  height: 6px;
+}
+
+.slider-label {
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
 
 
 
@@ -506,7 +548,6 @@ input[type="range"].vertical {
 
 
 .bx--text-input {
-  width: 30%!important;
   border-radius: 8px;
 }
 
@@ -571,5 +612,51 @@ input[type="range"].vertical {
   font-family: ibanez;
   src: url("fonts/SecretAgentPersonalUse-vPzE.ttf");
 }
-
-
+@font-face {
+  font-family: fender;
+  src: url("fonts/StratoRegular-2d5o.ttf");
+}
+@font-face {
+  font-family: walrus;
+  src: url("fonts/acumin-pro-condensed.otf");
+}
+@font-face {
+  font-family: yamaha;
+  src: url("fonts/yamaha.ttf");
+}
+@font-face {
+  font-family: strymon1;
+  src: url("fonts/dinot-regular.otf");
+}
+@font-face {
+  font-family: moonieeyes;
+  src: url("fonts/MoonieEyes.otf");
+}
+@font-face {
+  font-family: goldenhills;
+  src: url("fonts/GoldenHills.ttf");
+}
+@font-face {
+  font-family: cute;
+  src: url("fonts/cute.ttf");
+}
+@font-face {
+  font-family: grapple;
+  src: url("fonts/grapple.ttf");
+}
+@font-face {
+  font-family: funky;
+  src: url("fonts/TF Funky Fusion Demo.ttf");
+}
+@font-face {
+  font-family: balloon;
+  src: url("fonts/balloon.TTF");
+}
+@font-face {
+  font-family: fuzzface;
+  src: url("fonts/staccato.TTF");
+}
+@font-face {
+  font-family: compacta;
+  src: url("fonts/compacta.ttf");
+}

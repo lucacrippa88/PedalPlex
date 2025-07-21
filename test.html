@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IBM Code Engine Function Test</title>
+</head>
+<body>
+  <h1>Say Hello</h1>
+
+  <input type="text" id="nameInput" placeholder="Enter your name">
+  <button onclick="callFunction()">Send</button>
+
+  <p id="response"></p>
+
+  <script>
+    async function callFunction() {
+      const name = document.getElementById("nameInput").value;
+      const url = "https://hello-world.1xxvwrb607ps.eu-de.codeengine.appdomain.cloud";
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ name })
+        });
+
+        const raw = await response.text();
+        console.log("Status:", response.status);
+        console.log("Raw response:", raw);
+
+        if (!response.ok) throw new Error("Non-200 response");
+
+        const result = JSON.parse(raw);
+        document.getElementById("response").innerText = result.body;
+      } catch (error) {
+        console.error("Error calling function:", error);
+        document.getElementById("response").innerText = "Function call failed.";
+      }
+    }
+  </script>
+</body>
+</html>

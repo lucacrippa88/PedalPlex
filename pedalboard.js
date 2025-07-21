@@ -1,13 +1,32 @@
 let selectedBoardIndex = 0;
 window.allPedalboards = []; // store all pedalboards here
 
-document.addEventListener('DOMContentLoaded', () => {
-  const userId = getUserId();
+
+function initPedalboard() {
+  const userId = window.currentUser?.userid;
+
+  if (!userId) {
+    console.error("User ID not found. Make sure window.currentUser is set before calling initPedalboard.");
+    return;
+  }
+
+  const resultsDiv = document.getElementById("pedalboard");
 
   window.catalog = [];
   window.pedalboard = {
     pedals: []
   };
+
+  // Show loading spinner
+  resultsDiv.innerHTML = `
+    <div class="bx--loading-overlay">
+      <div class="bx--loading" role="status">
+        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+        </svg>
+      </div>
+    </div>`;
 
 
   // Load catalog
@@ -17,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return response.json();
     })
     .then(catalog => {
+      resultsDiv.innerHTML = ""; // Clear loader
       window.catalog = catalog;
       setupFilterUI(window.catalog);
 
@@ -37,11 +57,50 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .then(data => {
       if (!data.docs || !Array.isArray(data.docs) || data.docs.length === 0) {
-        renderPedalboard(); // Render empty if no boards
+        $("#pedalboard-controls").css("display", "none");
+        resultsDiv.innerHTML = `
+          <div style="text-align: center; margin-top: 40px;">
+            <p style="font-size: 1.1em; margin-bottom: 20px;">
+              No pedalboards found. Create a new one!
+            </p>
+            <button
+              id="createBtn"
+              class="bx--btn bx--btn--secondary"
+              type="button"
+              aria-label="Create New Pedalboard"
+              style="
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin: 0 auto;
+              ">
+              <svg
+                focusable="false"
+                preserveAspectRatio="xMidYMid meet"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                width="16"
+                height="16"
+                viewBox="0 0 32 32"
+                aria-hidden="true"
+                class="bx--btn__icon">
+                <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Create pedalboard
+            </button>
+          </div>
+        `;
         return;
       }
+      $("#pedalboard-controls").css("display", "inline-flex");
 
-      console.log('Pedalboards fetched:', data.docs);
+
+      // Sort pedalboards alphabetically by board_name, case-insensitive
+      data.docs.sort((a, b) => {
+        const nameA = (a.board_name || '').toLowerCase();
+        const nameB = (b.board_name || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
 
       window.allPedalboards = data.docs; // STORE all pedalboards here
 
@@ -69,16 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch(error => {
       console.error('Error:', error.message || error);
     });
-});
 
-
-
-
-
-
-function getUserId() {
-  return 'user123';
 }
+
 
 
 
@@ -126,7 +178,6 @@ function setupFilterUI(pedals) {
     // Reduce padding to make button smaller
     btn.style.padding = '2px 6px';
 
-    // Insert Carbon Plus icon SVG inside button
     btn.innerHTML = `
       <svg focusable="false" preserveAspectRatio="xMidYMid meet" 
         xmlns="http://www.w3.org/2000/svg" fill="currentColor" 
@@ -158,10 +209,10 @@ function setupFilterUI(pedals) {
           const cancelBtn = Swal.getCancelButton();
 
           if (confirmBtn) {
-            confirmBtn.className = 'bx--btn bx--btn--primary'; // Carbon Primary style
+            confirmBtn.className = 'bx--btn bx--btn--primary'; 
           }
           if (cancelBtn) {
-            cancelBtn.className = 'bx--btn bx--btn--secondary'; // Carbon Secondary style
+            cancelBtn.className = 'bx--btn bx--btn--secondary'; 
           }
         }
       });
@@ -192,10 +243,10 @@ function setupFilterUI(pedals) {
           const cancelBtn = Swal.getCancelButton();
 
           if (confirmBtn) {
-            confirmBtn.className = 'bx--btn bx--btn--primary'; // Primary
+            confirmBtn.className = 'bx--btn bx--btn--primary'; 
           }
           if (cancelBtn) {
-            cancelBtn.className = 'bx--btn bx--btn--secondary'; // Secondary
+            cancelBtn.className = 'bx--btn bx--btn--secondary'; 
           }
         }
       });
@@ -242,7 +293,6 @@ function setupFilterUI(pedals) {
       item.style.justifyContent = 'space-between';
       item.style.alignItems = 'center';
       item.style.padding = '6px';
-      //item.style.borderBottom = '1px solid #eee';
 
       const label = document.createElement('span');
       label.textContent = pedal._id;
@@ -302,7 +352,7 @@ function renderPedalboard() {
   container.innerHTML = '';
 
   if (!window.pedalboard.pedals || window.pedalboard.pedals.length === 0) {
-    container.textContent = 'Pedalboard is empty.';
+    container.textContent = "No pedals found.";
     return;
   }
 
@@ -321,7 +371,7 @@ function renderPedalboard() {
     const rowDiv = document.createElement('div');
     rowDiv.style.display = 'flex';
     rowDiv.style.flexWrap = 'wrap';
-    rowDiv.style.marginBottom = '20px';
+    rowDiv.style.marginBottom = '10px';
 
     rowsMap[rowNum].forEach(pbPedal => {
       const pedalData = window.catalog.find(p => p._id === pbPedal.pedal_id);
@@ -334,13 +384,13 @@ function renderPedalboard() {
       pedalDiv.className = 'pedalboard-pedal';
       pedalDiv.style.backgroundColor = pedalData.color || '#444';
       pedalDiv.style.color = pedalData['font-color'] || '#fff';
-      pedalDiv.style.margin = '12px';
-      pedalDiv.style.padding = '8px';
+      pedalDiv.style.margin = '5px';
+      pedalDiv.style.padding = '5px';
       pedalDiv.style.display = 'flex';
       pedalDiv.style.flexDirection = 'column';
       pedalDiv.style.justifyContent = 'center';
       pedalDiv.style.alignItems = 'center';
-      pedalDiv.style.borderRadius = '4px';
+      pedalDiv.style.borderRadius = '8px';
       pedalDiv.style.width = '200px';
       pedalDiv.style.height = '120px';
       pedalDiv.style.boxSizing = 'border-box';
@@ -365,7 +415,6 @@ function renderPedalboard() {
       else rowSpan.style.color = pedalData['font-color'] || '#ddd';
       pedalDiv.appendChild(rowSpan);
 
-      // Add click event to open SweetAlert2 modal
       pedalDiv.addEventListener('click', () => {
         openEditPedalModal(pbPedal);
       });
@@ -479,7 +528,6 @@ function openEditPedalModal(pbPedal) {
 
 
 
-
 function extractColorFromLogo(logoCss) {
   if (!logoCss) return null;
   const match = logoCss.match(/color\s*:\s*([^;]+);?/i);
@@ -487,25 +535,52 @@ function extractColorFromLogo(logoCss) {
 }
 
 
-function savePedalboard() {
-  const userId = getUserId();
 
-  if (!window.allPedalboards || selectedBoardIndex === undefined || selectedBoardIndex < 0 || selectedBoardIndex >= window.allPedalboards.length) {
+
+
+
+
+
+
+function savePedalboard() {
+  const saveBtn = document.getElementById('saveBtn');
+  const userId = currentUser.userid;
+
+  if (saveBtn) {
+    saveBtn.classList.add('cds--btn', 'cds--btn--primary'); 
+  }
+
+  if (
+    !window.allPedalboards ||
+    !Array.isArray(window.allPedalboards) ||
+    selectedBoardIndex === undefined ||
+    selectedBoardIndex < 0 ||
+    selectedBoardIndex >= window.allPedalboards.length
+  ) {
+    if (saveBtn) saveBtn.disabled = true;
+
     Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: 'No pedalboard selected or invalid index',
+      text: 'No pedalboard selected!',
+      confirmButtonText: 'Ok',
+      customClass: {
+        confirmButton: "bx--btn bx--btn--primary",
+      }
+    }).then(() => {
+      location.reload();
     });
+
     return;
   }
+
+  if (saveBtn) saveBtn.disabled = false;
 
   window.allPedalboards[selectedBoardIndex] = {
     ...window.pedalboard
   };
 
   const pedalboardToSave = window.allPedalboards[selectedBoardIndex];
-
-  console.log('Saving pedalboard:', pedalboardToSave);
 
   fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
     method: 'POST',
@@ -556,6 +631,7 @@ function savePedalboard() {
 
 
 
+
 $(document).ready(function () {
   $(document).on('click', '#createBtn', function () {
     Swal.fire({
@@ -577,7 +653,7 @@ $(document).ready(function () {
     }).then((result) => {
       if (result.isConfirmed) {
         const boardName = result.value;
-        const userId = 'user123'; // hard-coded user ID for now
+        const userId = currentUser.userid;
 
         fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php', {
           method: "POST",
@@ -591,7 +667,6 @@ $(document).ready(function () {
         })
           .then(res => res.json())
           .then(data => {
-            console.log("Response from PHP:", data);
             if (data.ok) {
               Swal.fire({
                 icon: 'success',
@@ -626,14 +701,14 @@ $(document).ready(function () {
 
 
 
-
 document.getElementById('renameBoardBtn').addEventListener('click', () => {
   if (window.allPedalboards.length === 0) {
     Swal.fire('No pedalboard to rename');
     return;
   }
 
-  const currentName = window.allPedalboards[selectedBoardIndex].board_name || `Pedalboard ${selectedBoardIndex + 1}`;
+  const currentBoard = window.allPedalboards[selectedBoardIndex];
+  const currentName = currentBoard.board_name || `Pedalboard ${selectedBoardIndex + 1}`;
 
   Swal.fire({
     title: 'Edit pedalboard',
@@ -655,80 +730,122 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
       }
     }
   }).then(result => {
-    // Edit logic
     if (result.isConfirmed) {
       const newName = result.value.trim();
-      // Update local data
       window.allPedalboards[selectedBoardIndex].board_name = newName;
       window.pedalboard.board_name = newName;
 
-      // Update dropdown option text
       const dropdown = document.getElementById('pedalboardSelect');
       dropdown.options[selectedBoardIndex].textContent = newName;
 
-      // Save to server
       savePedalboard();
+    }
 
-    } else if (result.isDenied) {
-      // Delete logic with confirmation
+    // DELETE LOGIC
+    else if (result.isDenied) {
+      const userId = currentUser.userid;
+      const boardId = currentBoard._id;
 
-      const userId = getUserId();
-      console.log(userId);
+      console.log("board_id: ", boardId)
 
-      Swal.fire({
-        title: `Delete "${currentName}"?`,
-        text: 'This cannot be undone.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, delete it',
-        cancelButtonText: 'Cancel',
-        customClass: {
-          confirmButton: "bx--btn bx--btn--danger",
-          cancelButton: "bx--btn bx--btn--secondary",
-        }}).then(confirm => {
-        if (confirm.isConfirmed) {
-          fetch('https://www.cineteatrosanluigi.it/plex/DELETE_PEDALBOARD.php', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-              user_id: userId,
-              board_id: window.allPedalboards[selectedBoardIndex]._id
-            })
-          })
-            .then(res => res.json())
-            .then(data => {
-              if (data.ok) {
-                Swal.fire('Deleted!', 'The pedalboard has been deleted.', 'success');
+      // Check if there are related presets first
+      fetch('https://www.cineteatrosanluigi.it/plex/CHECK_PRESETS_FOR_BOARD.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          board_id: boardId
+        })
+      })
+      .then(res => res.json())
+      .then(check => {
+        console.log("check: ", check)
+        if (check.has_presets) {
+          Swal.fire({
+            title: 'Cannot delete',
+            text: 'This pedalboard has linked presets and cannot be deleted.',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary'
+            }
+          });
+        } else {
+          // If no presets, confirm deletion
+          Swal.fire({
+            title: `Delete "${currentName}"?`,
+            text: 'This cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it',
+            cancelButtonText: 'Cancel',
+            customClass: {
+              confirmButton: "bx--btn bx--btn--danger",
+              cancelButton: "bx--btn bx--btn--secondary",
+            }
+          }).then(confirm => {
+            if (confirm.isConfirmed) {
+              Swal.fire({
+                title: "Deleting...",
+                didOpen: () => Swal.showLoading(),
+                allowOutsideClick: false
+              });
+              fetch('https://www.cineteatrosanluigi.it/plex/DELETE_PEDALBOARD.php', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                  user_id: userId,
+                  board_id: boardId
+                })
+              })
+              .then(res => res.json())
+              .then(data => {
+                if (data.ok) {
+                  Swal.fire({
+                    title: 'Deleted!',
+                    text: 'The pedalboard has been deleted.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                  });
 
-                // Remove from local list
-                window.allPedalboards.splice(selectedBoardIndex, 1);
+                  window.allPedalboards.splice(selectedBoardIndex, 1);
+                  const dropdown = document.getElementById('pedalboardSelect');
+                  dropdown.remove(selectedBoardIndex);
 
-                const dropdown = document.getElementById('pedalboardSelect');
-                dropdown.remove(selectedBoardIndex);
-
-                if (window.allPedalboards.length > 0) {
-                  // Select the first remaining board
-                  selectedBoardIndex = 0;
-                  window.pedalboard = structuredClone(window.allPedalboards[0]);
-                  renderPedalboard(window.pedalboard);
-                  dropdown.selectedIndex = 0;
+                  if (window.allPedalboards.length > 0) {
+                    selectedBoardIndex = 0;
+                    window.pedalboard = structuredClone(window.allPedalboards[0]);
+                    renderPedalboard(window.pedalboard);
+                    dropdown.selectedIndex = 0;
+                  } else {
+                    selectedBoardIndex = -1;
+                    window.pedalboard = null;
+                    const contentEl = document.getElementById('pedalboard');
+                    if (contentEl) contentEl.innerHTML = '';
+                    location.reload();                
+                  }
                 } else {
-                  // No pedalboards left
-                  selectedBoardIndex = -1;
-                  window.pedalboard = null;
-                  document.getElementById('pedalboardContent').innerHTML = '';
+                  Swal.fire('Error', data.error || 'Failed to delete pedalboard.', 'error');
                 }
-              } else {
-                Swal.fire('Error', data.error || 'Failed to delete pedalboard.', 'error');
-              }
-            })
-            .catch(() => {
-              Swal.fire('Error', 'Network error occurred.', 'error');
-            });
-          }
-        });
-      }
+              })
+              .catch((err) => {
+                console.error('Delete request failed:', err);
+                Swal.fire('Error', 'Network error occurred.', 'error');
+              });
+            }
+          });
+        }
+      })
+      .catch(() => {
+        Swal.fire('Error', 'Failed to check for related presets.', 'error');
+      });
+    }
   });
 });
+
+
+

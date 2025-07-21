@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PedalPlex</title>
+  <link rel="stylesheet" href="https://unpkg.com/carbon-components/css/carbon-components.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+  <script>
+    $.get('http://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH.php', function(user) {
+      console.log("ciao")
+      console.log("Welcome, " + user.username);
+    }, function() {
+      window.location.href = 'auth.html';
+    });
+  </script>
+
+  <div class="page-content">
+    
+    <h2>Change Password</h2><br><br>
+
+<form id="changePasswordForm" style="max-width: 400px; margin: auto;">
+  
+
+  <!-- Password with toggle -->
+  <div style="position: relative; margin-bottom: 10px;">
+    <input type="password" id="oldPassword" placeholder="Old Password" required class="bx--text-input"
+        style="width: 100%;" />
+    <button type="button" id="togglePasswordOld" aria-label="Show password" 
+        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="bx--icon" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
+        <path d="M16,10a6,6,0,1,1-6,6A6,6,0,0,1,16,10Zm0-2C10.5,8,5.8,12,4,16c1.8,4,6.5,8,12,8s10.2-4,12-8C26.2,12,21.5,8,16,8Z"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Password with toggle -->
+  <div style="position: relative; margin-bottom: 10px;">
+    <input type="password" id="newPassword" placeholder="New Password" required class="bx--text-input"
+        style="width: 100%;" />
+    <button type="button" id="togglePasswordNew" aria-label="Show password" 
+        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="bx--icon" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
+        <path d="M16,10a6,6,0,1,1-6,6A6,6,0,0,1,16,10Zm0-2C10.5,8,5.8,12,4,16c1.8,4,6.5,8,12,8s10.2-4,12-8C26.2,12,21.5,8,16,8Z"/>
+      </svg>
+    </button>
+  </div>
+
+  <br>
+
+  <button class="bx--btn bx--btn--primary" type="submit" style="width: 100%;">Change Password</button>
+</form>
+
+
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="fullscreen-menu.js"></script>
+  <script src="nav.js"></script>
+
+  <script>
+    $('#changePasswordForm').submit(function (e) {
+      e.preventDefault();
+
+      $.ajax({
+        url: 'https://www.cineteatrosanluigi.it/plex/USER_CHANGE_PASSWORD.php',
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        xhrFields: {
+          withCredentials: true
+        },
+        data: JSON.stringify({
+          oldPassword: $('#oldPassword').val(),
+          newPassword: $('#newPassword').val()
+        }),
+        success: function (res) {
+          Swal.fire({
+            title: 'Password changed!',
+            text: 'You will be redirected shortly.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            allowEscapeKey: false
+          });
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        },
+        error: function (res) {
+          let errorMsg = "Unknown error";
+          try {
+            const json = JSON.parse(res.responseText);
+            errorMsg = json.error || errorMsg;
+          } catch (e) {
+            errorMsg = res.statusText || errorMsg;
+          }
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Change Failed',
+            text: errorMsg,
+            confirmButtonText: 'OK',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--danger'
+            }
+          });
+        }
+      });
+    });
+  </script>
+
+<script>
+  // View password icon
+  const toggleOld = document.getElementById('togglePasswordOld');
+  const toggleNew = document.getElementById('togglePasswordNew');
+  const oldInput = document.getElementById('oldPassword');
+  const newInput = document.getElementById('newPassword');
+
+  toggleOld.addEventListener('click', () => {
+    oldInput.type = oldInput.type === 'password' ? 'text' : 'password';
+  });
+
+  toggleNew.addEventListener('click', () => {
+    newInput.type = newInput.type === 'password' ? 'text' : 'password';
+  });
+</script>
+
+
+
+</body>
+</html>
