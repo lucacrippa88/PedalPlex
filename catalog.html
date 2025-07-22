@@ -20,7 +20,7 @@
     Checking authentication...
   </div>
   
-  <div class="page-content" style="display: none;">
+  <div id="page-content" style="display: none;">
     <div id="catalog"></div>
 
     <!-- Load scripts after content is visible -->
@@ -57,7 +57,7 @@
       },
       success: function(userFromServer) {
         $('#loadingMessage').hide();
-        $('.page-content').show();
+        $('#page-content').show();
 
         window.currentUser = userFromServer;
 

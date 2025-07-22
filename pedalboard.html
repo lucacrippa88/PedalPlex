@@ -20,9 +20,9 @@
     Checking authentication...
   </div>
   
-  <div id="pageContent">
-    <div class="page-content">
-      <div id="pedalAddDropdownContainer"></div>
+  <div id="page-content">
+    <!-- <div class="page-content"> -->
+      <!-- <div id="pedalAddDropdownContainer"></div> -->
       <div id="pedalboard-controls" style="display: none; align-items: center; gap: 8px;">
         <select id="pedalboardSelect"></select>
         <button id="renameBoardBtn" class="bx--btn bx--btn--secondary" type="button">Edit</button>
@@ -31,7 +31,7 @@
       <br /><br /><br /><br />
 
       <div id="pedalboard"></div>
-    </div>
+    <!-- </div> -->
 
     <!-- Load scripts after content is visible -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -49,7 +49,7 @@
       alert('Please run this app via a local HTTP server for full functionality.');
 
       $('#loadingMessage').hide();
-      $('#pageContent').hide();
+      $('#page-content').hide();
       return;
     }
 
