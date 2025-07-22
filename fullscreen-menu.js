@@ -12,9 +12,9 @@ window.fullscreenMenuHtml = `
   </div>
 
   <div class="fullscreen-nav">
-    <a href="preset.html">Edit your presets</a>
-    <a href="pedalboard.html">Manage pedalboards</a>
-    <a href="catalog.html">View gears catalog</a>
+    <a href="preset">Edit your presets</a>
+    <a href="pedalboard">Manage pedalboards</a>
+    <a href="catalog">View gears catalog</a>
     <br><br>
     <button id="profileBtn" class="bx--btn bx--btn--secondary"
       style="display: flex; align-items: center; gap: 0.5rem;">
@@ -66,7 +66,7 @@ $(document).ready(function () {
 
   // Profile button
   $(document).on('click', '#profileBtn', function () {
-    window.location.href = 'profile.html';
+    window.location.href = 'profile';
   });
 
   // Logout
@@ -100,27 +100,11 @@ $(document).ready(function () {
         });
 
         setTimeout(() => {
-          window.location.href = 'index.html';
+          window.location.href = '/';
         }, 2000);
       }
     });
   });
 
-  // $(document).on('click', '#logoutBtn', function () {
-  //   $.ajax({
-  //     url: 'https://www.cineteatrosanluigi.it/plex/USER_LOGOUT.php',
-  //     method: 'POST',
-  //     xhrFields: { withCredentials: true },
-  //     success: function (res) {
-  //       if (res.success) {
-  //         window.location.href = 'index.html';
-  //       } else {
-  //         alert('Logout failed.');
-  //       }
-  //     },
-  //     error: function () {
-  //       alert('Logout request failed.');
-  //     }
-  //   });
-  // });
+
 });
