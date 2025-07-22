@@ -1,5 +1,7 @@
 function initCatalog(userRole) {
 
+  console.log("Start")
+
   const resultsDiv = document.getElementById("catalog");
 
   // Show loading spinner
