@@ -100,7 +100,7 @@ $(document).ready(function () {
         });
 
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = '/PedalPlex/';
         }, 2000);
       }
     });
