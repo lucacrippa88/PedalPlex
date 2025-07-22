@@ -61,7 +61,7 @@
 
         window.currentUser = userFromServer;
 
-        if (typeof initNavPedalboard === 'function') initNavPedalboard();
+        if (typeof initNavCatalog === 'function') initNavCatalog();
         if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
       },
       error: function(xhr) {
