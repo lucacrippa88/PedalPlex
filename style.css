@@ -103,6 +103,10 @@
     }
 
 
+    .swal2-container {
+      z-index: 99999 !important;
+    }
+
 
 body {
   background: #2e2e2e;

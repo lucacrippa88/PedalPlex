@@ -69,41 +69,42 @@ $(document).ready(function () {
     window.location.href = 'profile.html';
   });
 
-$(document).on('click', '#logoutBtn', function () {
-  Swal.fire({
-    title: 'Are you sure you want to logout?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Logout',
-    cancelButtonText: 'Cancel',
-    customClass: {
-      confirmButton: 'bx--btn bx--btn--danger',
-      cancelButton: 'bx--btn bx--btn--secondary'
-    },
-    buttonsStyling: false
-  }).then((result) => {
-    if (result.isConfirmed) {
-      localStorage.removeItem('authToken');
+  // Logout
+  $(document).on('click', '#logoutBtn', function () {
+    Swal.fire({
+      title: 'Are you sure you want to logout?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Logout',
+      cancelButtonText: 'Cancel',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--danger',
+        cancelButton: 'bx--btn bx--btn--secondary'
+      },
+      buttonsStyling: false
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem('authToken');
 
-      Swal.fire({
-        title: 'Logged out',
-        text: 'Redirecting to login page...',
-        icon: 'success',
-        timer: 2000,
-        showConfirmButton: false,
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        customClass: {
-          popup: 'swal2-carbon-popup'
-        }
-      });
+        Swal.fire({
+          title: 'Logged out',
+          text: 'Redirecting to login page...',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          customClass: {
+            popup: 'swal2-carbon-popup'
+          }
+        });
 
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 2000);
-    }
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 2000);
+      }
+    });
   });
-});
 
   // $(document).on('click', '#logoutBtn', function () {
   //   $.ajax({
