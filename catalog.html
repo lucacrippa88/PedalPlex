@@ -63,7 +63,7 @@
 
         console.log(userFromServer.role)
 
-        if (typeof initNavCatalog === 'function') initNavCatalog();
+        if (typeof initNavCatalog === 'function') initNavCatalog(userFromServer.role);
         if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
       },
       error: function(xhr) {
