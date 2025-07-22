@@ -77,7 +77,7 @@
         window.currentUser = userFromServer;
 
         if (typeof initNavPreset === 'function') initNavPreset();
-        if (typeof initPedalboard === 'function') initPreset();
+        if (typeof initPreset === 'function') initPreset();
       },
       error: function(xhr) {
         console.error('Auth check failed:', xhr.status, xhr.responseText);
