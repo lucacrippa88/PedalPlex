@@ -1,4 +1,4 @@
-function initNavPedalboard() {
+$(document).ready(function () {
   const navHtml = `
     <header style="display: flex; align-items: center; justify-content: space-between;">
       <!-- Left: menu toggle + title -->
@@ -32,4 +32,4 @@ function initNavPedalboard() {
     $("#fullscreenMenu").removeClass("active");
   });
 
-}
+});
