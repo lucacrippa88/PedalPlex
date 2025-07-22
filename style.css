@@ -98,7 +98,7 @@
     }
 
     /* Padding for page content */
-    .page-content {
+    #page-content {
       padding-top: 64px;
     }
 
