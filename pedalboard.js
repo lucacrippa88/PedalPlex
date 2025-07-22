@@ -3,6 +3,7 @@ window.allPedalboards = []; // store all pedalboards here
 
 
 function initPedalboard() {
+  console.log("initPedalboard start")
   const userId = window.currentUser?.userid;
   console.log(userId)
 
