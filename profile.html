@@ -10,15 +10,6 @@
 </head>
 <body>
 
-  <!-- <script>
-    $.get('http://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH.php', function(user) {
-      console.log("ciao")
-      console.log("Welcome, " + user.username);
-    }, function() {
-      window.location.href = 'auth.html';
-    });
-  </script> -->
-
   <div id="page-content">
     
     <h2>Change Password</h2><br><br>
@@ -75,7 +66,7 @@
 
     const token = localStorage.getItem('authToken');
     if (!token) {
-      window.location.href = 'index.html';
+      window.location.href = '/';
       return;
     }
 
@@ -100,7 +91,7 @@
         console.error('Auth check failed:', xhr.status, xhr.responseText);
         if (xhr.status === 401) {
           localStorage.removeItem('authToken');
-          window.location.href = 'index.html';
+          window.location.href = '/';
         } else {
           alert('Failed to verify authentication. Please try again.');
         }

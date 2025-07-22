@@ -55,7 +55,7 @@
 
     const token = localStorage.getItem('authToken');
     if (!token) {
-      window.location.href = 'index.html';
+      window.location.href = '/';
       return;
     }
 
@@ -79,7 +79,7 @@
         console.error('Auth check failed:', xhr.status, xhr.responseText);
         if (xhr.status === 401) {
           localStorage.removeItem('authToken');
-          window.location.href = 'index.html';
+          window.location.href = '/';
         } else {
           alert('Failed to verify authentication. Please try again.');
         }

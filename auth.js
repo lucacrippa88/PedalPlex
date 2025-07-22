@@ -61,7 +61,7 @@ $('#authForm').on('submit', function (e) {
 
         // Redirect after 2 seconds
         setTimeout(function () {
-          window.location.href = 'pedalboard.html';
+          window.location.href = 'pedalboard';
         }, 2000);
 
       } else if (!isLogin) {

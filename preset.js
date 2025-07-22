@@ -171,7 +171,7 @@ async function renderFullPedalboard() {
     `;
 
     document.getElementById('createBtn').addEventListener('click', function () {
-      window.location.href = 'pedalboard.html';
+      window.location.href = 'pedalboard';
     });
 
     return;
