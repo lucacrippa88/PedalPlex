@@ -53,6 +53,8 @@ $('#authForm').on('submit', function (e) {
           text: 'Welcome, ' + (res.username || username) + '!',
           timer: 2000, 
           showConfirmButton: false,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
           customClass: {
             confirmButton: 'bx--btn bx--btn--primary'
           },
@@ -73,6 +75,8 @@ $('#authForm').on('submit', function (e) {
           customClass: {
             confirmButton: 'bx--btn bx--btn--primary'
           },
+          allowOutsideClick: false,
+          allowEscapeKey: false,
           buttonsStyling: false
         }).then(function () {
           $('#toggleForm').click(); // Switch to login form
