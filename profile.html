@@ -10,20 +10,19 @@
 </head>
 <body>
 
-  <script>
+  <!-- <script>
     $.get('http://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH.php', function(user) {
       console.log("ciao")
       console.log("Welcome, " + user.username);
     }, function() {
       window.location.href = 'auth.html';
     });
-  </script>
+  </script> -->
 
   <div id="page-content">
     
     <h2>Change Password</h2><br><br>
-
-<form id="changePasswordForm" style="max-width: 400px; margin: auto;">
+    <form id="changePasswordForm" style="max-width: 400px; margin: auto;">
   
 
   <!-- Password with toggle -->
@@ -62,6 +61,39 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="fullscreen-menu.js"></script>
   <script src="nav.js"></script>
+
+
+  <script>
+    // Check user authentication
+    $(document).ready(function() {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        window.location.href = 'auth.html';
+        return;
+      }
+
+      $.ajax({
+        url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php', // or your correct auth URL
+        method: 'GET',
+        dataType: 'json',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function(user) {
+          console.log("Welcome, " + user.username);
+          $('#loadingMessage').hide();
+          $('#page-content').show();
+        },
+        error: function(xhr) {
+          console.warn('Authentication failed:', xhr.status);
+          localStorage.removeItem('authToken');
+          window.location.href = 'auth.html';
+        }
+      });
+    });
+  </script>
+
+
 
   <script>
     $('#changePasswordForm').submit(function (e) {
@@ -132,9 +164,6 @@
     newInput.type = newInput.type === 'password' ? 'text' : 'password';
   });
 </script>
-
-
-  
 
 
 
