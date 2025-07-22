@@ -9,6 +9,9 @@ window.allPedalboards = [];
 
 function initPreset() {
 
+  console.log("Start")
+
+
   const userId = window.currentUser?.userid;
   resultsDiv = document.getElementById("preset");
 
