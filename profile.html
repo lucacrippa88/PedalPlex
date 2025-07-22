@@ -23,37 +23,36 @@
     
     <h2>Change Password</h2><br><br>
     <form id="changePasswordForm" style="max-width: 400px; margin: auto;">
-  
+    
 
-  <!-- Password with toggle -->
-  <div style="position: relative; margin-bottom: 10px;">
-    <input type="password" id="oldPassword" placeholder="Old Password" required class="bx--text-input"
-        style="width: 100%;" />
-    <button type="button" id="togglePasswordOld" aria-label="Show password" 
-        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
-        <svg xmlns="http://www.w3.org/2000/svg" class="bx--icon" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
-        <path d="M16,10a6,6,0,1,1-6,6A6,6,0,0,1,16,10Zm0-2C10.5,8,5.8,12,4,16c1.8,4,6.5,8,12,8s10.2-4,12-8C26.2,12,21.5,8,16,8Z"/>
-      </svg>
-    </button>
-  </div>
+      <!-- Password with toggle -->
+      <div style="position: relative; margin-bottom: 10px;">
+        <input type="password" id="oldPassword" placeholder="Old Password" required class="bx--text-input"
+            style="width: 100%;" />
+        <button type="button" id="togglePasswordOld" aria-label="Show password" 
+            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="bx--icon" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
+            <path d="M16,10a6,6,0,1,1-6,6A6,6,0,0,1,16,10Zm0-2C10.5,8,5.8,12,4,16c1.8,4,6.5,8,12,8s10.2-4,12-8C26.2,12,21.5,8,16,8Z"/>
+          </svg>
+        </button>
+      </div>
 
-  <!-- Password with toggle -->
-  <div style="position: relative; margin-bottom: 10px;">
-    <input type="password" id="newPassword" placeholder="New Password" required class="bx--text-input"
-        style="width: 100%;" />
-    <button type="button" id="togglePasswordNew" aria-label="Show password" 
-        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
-        <svg xmlns="http://www.w3.org/2000/svg" class="bx--icon" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
-        <path d="M16,10a6,6,0,1,1-6,6A6,6,0,0,1,16,10Zm0-2C10.5,8,5.8,12,4,16c1.8,4,6.5,8,12,8s10.2-4,12-8C26.2,12,21.5,8,16,8Z"/>
-      </svg>
-    </button>
-  </div>
+      <!-- Password with toggle -->
+      <div style="position: relative; margin-bottom: 10px;">
+        <input type="password" id="newPassword" placeholder="New Password" required class="bx--text-input"
+            style="width: 100%;" />
+        <button type="button" id="togglePasswordNew" aria-label="Show password" 
+            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="bx--icon" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
+            <path d="M16,10a6,6,0,1,1-6,6A6,6,0,0,1,16,10Zm0-2C10.5,8,5.8,12,4,16c1.8,4,6.5,8,12,8s10.2-4,12-8C26.2,12,21.5,8,16,8Z"/>
+          </svg>
+        </button>
+      </div>
 
-  <br>
+      <br>
 
-  <button class="bx--btn bx--btn--primary" type="submit" style="width: 100%;">Change Password</button>
-</form>
-
+      <button class="bx--btn bx--btn--primary" type="submit" style="width: 100%;">Change Password</button>
+    </form>
 
   </div>
 
@@ -64,33 +63,50 @@
 
 
   <script>
-    // Check user authentication
-    $(document).ready(function() {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        window.location.href = 'auth.html';
-        return;
-      }
+  // Check user authentication
+  $(document).ready(function() {
+    if (window.location.protocol === 'file:') {
+      alert('Please run this app via a local HTTP server for full functionality.');
 
-      $.ajax({
-        url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php', // or your correct auth URL
-        method: 'GET',
-        dataType: 'json',
-        headers: {
-          'Authorization': 'Bearer ' + token
-        },
-        success: function(user) {
-          console.log("Welcome, " + user.username);
-          $('#loadingMessage').hide();
-          $('#page-content').show();
-        },
-        error: function(xhr) {
-          console.warn('Authentication failed:', xhr.status);
+      $('#loadingMessage').hide();
+      $('#page-content').hide();
+      return;
+    }
+
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      window.location.href = 'index.html';
+      return;
+    }
+
+    $.ajax({
+      url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
+      method: 'GET',
+      dataType: 'json',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      },
+      success: function(userFromServer) {
+        $('#loadingMessage').hide();
+        $('#page-content').show();
+
+        window.currentUser = userFromServer;
+
+        console.log(userFromServer.role)
+
+        if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
+      },
+      error: function(xhr) {
+        console.error('Auth check failed:', xhr.status, xhr.responseText);
+        if (xhr.status === 401) {
           localStorage.removeItem('authToken');
-          window.location.href = 'auth.html';
+          window.location.href = 'index.html';
+        } else {
+          alert('Failed to verify authentication. Please try again.');
         }
-      });
+      }
     });
+  });
   </script>
 
 
