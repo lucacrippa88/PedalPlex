@@ -71,20 +71,28 @@ $(document).ready(function () {
 
   // Logout button
   $(document).on('click', '#logoutBtn', function () {
-    $.ajax({
-      url: 'https://www.cineteatrosanluigi.it/plex/USER_LOGOUT.php',
-      method: 'POST',
-      xhrFields: { withCredentials: true },
-      success: function (res) {
-        if (res.success) {
-          window.location.href = 'index.html';
-        } else {
-          alert('Logout failed.');
-        }
-      },
-      error: function () {
-        alert('Logout request failed.');
-      }
-    });
+    // Remove JWT token from localStorage
+    localStorage.removeItem('authToken');
+
+    // Redirect to login/auth page
+    window.location.href = 'auth.html';
   });
+
+  // $(document).on('click', '#logoutBtn', function () {
+  //   $.ajax({
+  //     url: 'https://www.cineteatrosanluigi.it/plex/USER_LOGOUT.php',
+  //     method: 'POST',
+  //     xhrFields: { withCredentials: true },
+  //     success: function (res) {
+  //       if (res.success) {
+  //         window.location.href = 'index.html';
+  //       } else {
+  //         alert('Logout failed.');
+  //       }
+  //     },
+  //     error: function () {
+  //       alert('Logout request failed.');
+  //     }
+  //   });
+  // });
 });
