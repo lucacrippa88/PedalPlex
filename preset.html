@@ -76,7 +76,7 @@
 
         window.currentUser = userFromServer;
 
-        if (typeof initNavPedalboard === 'function') initNavPedalboard();
+        if (typeof initNavPreset === 'function') initNavPreset();
         if (typeof initPedalboard === 'function') initPreset();
       },
       error: function(xhr) {
