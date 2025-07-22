@@ -1,4 +1,4 @@
-$(document).ready(function () {
+function initNav404() {
   const navHtml = `
     <header style="display: flex; align-items: center; justify-content: space-between;">
       <!-- Left: menu toggle + title -->
@@ -32,4 +32,4 @@ $(document).ready(function () {
     $("#fullscreenMenu").removeClass("active");
   });
 
-});
+}
