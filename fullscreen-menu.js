@@ -45,16 +45,17 @@ window.fullscreenMenuHtml = `
 
 // Song quotes array
 const songQuotes = [
-  "Rock 'n' roll will never die!",
-  "We are the champions, my friend!",
-  "We're not gonna take it!",
-  "I wanna rock and roll all night and party every day!",
-  "I was born with a plastic spoon in my mouth!",
-  "Take it Easy!",
-  "I'd trade all my tomorrows for a single yesterday!",
-  "We learned more from a three-minute record than we ever learned in school!",
-  "You may say I'm a dreamer, but I'm not the only one!",
-  "The answer, my friend, is blowing in the Wind!"
+  // "Rock 'n' roll will never die!",
+  // "We are the champions, my friend!",
+  // "We're not gonna take it!",
+  // "I wanna rock and roll all night and party every day!",
+  // "I was born with a plastic spoon in my mouth!",
+  // "Take it Easy!",
+  // "I'd trade all my tomorrows for a single yesterday!",
+  // "We learned more from a three-minute record than we ever learned in school!",
+  // "You may say I'm a dreamer, but I'm not the only one!",
+  // "The answer, my friend, is blowing in the Wind!"
+  "Mama, I'm Coming Home..."
 ];
 
 // DOM ready
