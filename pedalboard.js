@@ -4,6 +4,7 @@ window.allPedalboards = []; // store all pedalboards here
 
 function initPedalboard() {
   const userId = window.currentUser?.userid;
+  console.log(userId)
 
   if (!userId) {
     console.error("User ID not found. Make sure window.currentUser is set before calling initPedalboard.");
