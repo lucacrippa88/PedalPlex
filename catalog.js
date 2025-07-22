@@ -1,6 +1,6 @@
 function initCatalog(userRole) {
 
-  console.log("Start")
+  console.log("initCatalog user role: ", userRole)
 
   const resultsDiv = document.getElementById("catalog");
 
