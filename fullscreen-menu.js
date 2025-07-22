@@ -69,14 +69,41 @@ $(document).ready(function () {
     window.location.href = 'profile.html';
   });
 
-  // Logout button
-  $(document).on('click', '#logoutBtn', function () {
-    // Remove JWT token from localStorage
-    localStorage.removeItem('authToken');
+$(document).on('click', '#logoutBtn', function () {
+  Swal.fire({
+    title: 'Are you sure you want to logout?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Logout',
+    cancelButtonText: 'Cancel',
+    customClass: {
+      confirmButton: 'bx--btn bx--btn--danger',
+      cancelButton: 'bx--btn bx--btn--secondary'
+    },
+    buttonsStyling: false
+  }).then((result) => {
+    if (result.isConfirmed) {
+      localStorage.removeItem('authToken');
 
-    // Redirect to login/auth page
-    window.location.href = 'auth.html';
+      Swal.fire({
+        title: 'Logged out',
+        text: 'Redirecting to login page...',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        customClass: {
+          popup: 'swal2-carbon-popup'
+        }
+      });
+
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 2000);
+    }
   });
+});
 
   // $(document).on('click', '#logoutBtn', function () {
   //   $.ajax({
