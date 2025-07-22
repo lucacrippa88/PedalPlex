@@ -41,7 +41,7 @@
     <script src="nav-pedalboard.js"></script>
   </div>
 
-  <script>
+  <!-- <script>
     $.ajax({
       url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH.php',
       method: 'GET',
@@ -68,7 +68,58 @@
       }
 
     });
-  </script>
+  </script> -->
+
+<script>
+ $(document).ready(function() {
+  if (window.location.protocol === 'file:') {
+    alert('Please run this app via a local HTTP server for full functionality.');
+
+    $('#loadingMessage').hide();
+    $('#pageContent').hide();
+    return;
+  }
+
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    window.location.href = 'index.html';
+    return;
+  }
+
+  $.ajax({
+    url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
+    method: 'GET',
+    dataType: 'json',
+    headers: {
+      'Authorization': 'Bearer ' + token
+    },
+    success: function(userFromServer) {
+      $('#loadingMessage').hide();
+      $('#pageContent').show();
+
+      window.currentUser = userFromServer;
+
+      if (typeof initNavPedalboard === 'function') initNavPedalboard();
+      if (typeof initPedalboard === 'function') initPedalboard();
+    },
+    error: function(xhr) {
+      console.error('Auth check failed:', xhr.status, xhr.responseText);
+      if (xhr.status === 401) {
+        localStorage.removeItem('authToken');
+        window.location.href = 'index.html';
+      } else {
+        alert('Failed to verify authentication. Please try again.');
+      }
+    }
+  });
+});
+
+
+</script>
+
+
+
+
 
 </body>
 </html>

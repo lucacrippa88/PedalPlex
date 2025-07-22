@@ -12,9 +12,9 @@ window.fullscreenMenuHtml = `
   </div>
 
   <div class="fullscreen-nav">
-    <a href="/preset.html">Edit your presets</a>
-    <a href="/pedalboard.html">Manage pedalboards</a>
-    <a href="/catalog.html">View gears catalog</a>
+    <a href="preset.html">Edit your presets</a>
+    <a href="pedalboard.html">Manage pedalboards</a>
+    <a href="catalog.html">View gears catalog</a>
     <br><br>
     <button id="profileBtn" class="bx--btn bx--btn--secondary"
       style="display: flex; align-items: center; gap: 0.5rem;">
@@ -66,7 +66,7 @@ $(document).ready(function () {
 
   // Profile button
   $(document).on('click', '#profileBtn', function () {
-    window.location.href = '/profile.html';
+    window.location.href = 'profile.html';
   });
 
   // Logout button
@@ -77,7 +77,7 @@ $(document).ready(function () {
       xhrFields: { withCredentials: true },
       success: function (res) {
         if (res.success) {
-          window.location.href = '/index.html';
+          window.location.href = 'index.html';
         } else {
           alert('Logout failed.');
         }

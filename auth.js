@@ -14,92 +14,190 @@ let isLogin = true;
       );
     });
 
-    $('#authForm').on('submit', function (e) {
-      e.preventDefault();
 
-      const username = $('#username').val().trim();
-      const password = $('#password').val();
-      const email = $('#email').val().trim();
 
-      const endpoint = isLogin
-        ? 'https://www.cineteatrosanluigi.it/plex/USER_LOGIN.php'
-        : 'https://www.cineteatrosanluigi.it/plex/USER_REGISTER.php';
 
-      const data = isLogin ? { username: username, password: password } : { username: username, password: password, email: email };
 
-      $.ajax({
-        url: endpoint,
-        method: 'POST',
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify(data),
-        xhrFields: { withCredentials: true },  // always send cookies
-        success: function (res) {
-          console.log('Login response:', res);
 
-          if (isLogin && res.success) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Login Successful',
-              text: 'Welcome, ' + (res.username || username) + '!',
-              timer: 2000, 
-              showConfirmButton: false, 
-              customClass: {
-                confirmButton: 'bx--btn bx--btn--primary'
-              },
-              buttonsStyling: false
-            });
+$('#authForm').on('submit', function (e) {
+  e.preventDefault();
 
-            // Redirect after 2 seconds (same as Swal timer)
-            setTimeout(function () {
-              window.location.href = 'pedalboard.html';
-            }, 2000);
+  const username = $('#username').val().trim();
+  const password = $('#password').val();
+  const email = $('#email').val().trim();
 
-          } else if (!isLogin) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Registration successful',
-              text: 'You can now log in.',
-              confirmButtonText: 'Continue',
-              customClass: {
-                confirmButton: 'bx--btn bx--btn--primary'
-              },
-              buttonsStyling: false
-            }).then(function () {
-              $('#toggleForm').click(); // Switch to login form
-            });
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Login failed',
-              text: res.error || 'Invalid credentials.',
-              confirmButtonText: 'Try Again',
-              customClass: {
-                confirmButton: 'bx--btn bx--btn--danger'
-              },
-              buttonsStyling: false
-            });
-          }
+  const endpoint = isLogin
+    ? 'https://www.cineteatrosanluigi.it/plex/USER_LOGIN_JWT.php'
+    : 'https://www.cineteatrosanluigi.it/plex/USER_REGISTER.php';
+
+  const data = isLogin ? { username: username, password: password } : { username: username, password: password, email: email };
+
+  $.ajax({
+    url: endpoint,
+    method: 'POST',
+    contentType: 'application/json',
+    dataType: 'json',
+    data: JSON.stringify(data),
+    // Remove this since no cookies anymore:
+    // xhrFields: { withCredentials: true },
+    success: function (res) {
+      console.log('Login response:', res);
+
+      if (isLogin && res.token) {
+        // Store JWT token in localStorage
+        localStorage.setItem('authToken', res.token);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Login Successful',
+          text: 'Welcome, ' + (res.username || username) + '!',
+          timer: 2000, 
+          showConfirmButton: false,
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--primary'
+          },
+          buttonsStyling: false
+        });
+
+        // Redirect after 2 seconds
+        setTimeout(function () {
+          window.location.href = 'pedalboard.html';
+        }, 2000);
+
+      } else if (!isLogin) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Registration successful',
+          text: 'You can now log in.',
+          confirmButtonText: 'Continue',
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--primary'
+          },
+          buttonsStyling: false
+        }).then(function () {
+          $('#toggleForm').click(); // Switch to login form
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Login failed',
+          text: res.error || 'Invalid credentials.',
+          confirmButtonText: 'Try Again',
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--danger'
+          },
+          buttonsStyling: false
+        });
+      }
+    },
+    error: function (xhr) {
+      var msg = 'Server error. Please try again.';
+      try {
+        var json = JSON.parse(xhr.responseText);
+        if (json.error) msg = json.error;
+      } catch (e) {}
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: msg,
+        confirmButtonText: 'OK',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--danger'
         },
-        error: function (xhr) {
-          var msg = 'Server error. Please try again.';
-          try {
-            var json = JSON.parse(xhr.responseText);
-            if (json.error) msg = json.error;
-          } catch (e) {}
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: msg,
-            confirmButtonText: 'OK',
-            customClass: {
-              confirmButton: 'bx--btn bx--btn--danger'
-            },
-            buttonsStyling: false
-          });
-        }
+        buttonsStyling: false
       });
-    });
+    }
+  });
+});
+
+
+
+    // $('#authForm').on('submit', function (e) {
+    //   e.preventDefault();
+
+    //   const username = $('#username').val().trim();
+    //   const password = $('#password').val();
+    //   const email = $('#email').val().trim();
+
+    //   const endpoint = isLogin
+    //     ? 'https://www.cineteatrosanluigi.it/plex/USER_LOGIN.php'
+    //     : 'https://www.cineteatrosanluigi.it/plex/USER_REGISTER.php';
+
+    //   const data = isLogin ? { username: username, password: password } : { username: username, password: password, email: email };
+
+    //   $.ajax({
+    //     url: endpoint,
+    //     method: 'POST',
+    //     contentType: 'application/json',
+    //     dataType: 'json',
+    //     data: JSON.stringify(data),
+    //     xhrFields: { withCredentials: true },  // always send cookies
+    //     success: function (res) {
+    //       console.log('Login response:', res);
+
+    //       if (isLogin && res.success) {
+    //         Swal.fire({
+    //           icon: 'success',
+    //           title: 'Login Successful',
+    //           text: 'Welcome, ' + (res.username || username) + '!',
+    //           timer: 2000, 
+    //           showConfirmButton: false, 
+    //           customClass: {
+    //             confirmButton: 'bx--btn bx--btn--primary'
+    //           },
+    //           buttonsStyling: false
+    //         });
+
+    //         // Redirect after 2 seconds (same as Swal timer)
+    //         setTimeout(function () {
+    //           window.location.href = 'pedalboard.html';
+    //         }, 2000);
+
+    //       } else if (!isLogin) {
+    //         Swal.fire({
+    //           icon: 'success',
+    //           title: 'Registration successful',
+    //           text: 'You can now log in.',
+    //           confirmButtonText: 'Continue',
+    //           customClass: {
+    //             confirmButton: 'bx--btn bx--btn--primary'
+    //           },
+    //           buttonsStyling: false
+    //         }).then(function () {
+    //           $('#toggleForm').click(); // Switch to login form
+    //         });
+    //       } else {
+    //         Swal.fire({
+    //           icon: 'error',
+    //           title: 'Login failed',
+    //           text: res.error || 'Invalid credentials.',
+    //           confirmButtonText: 'Try Again',
+    //           customClass: {
+    //             confirmButton: 'bx--btn bx--btn--danger'
+    //           },
+    //           buttonsStyling: false
+    //         });
+    //       }
+    //     },
+    //     error: function (xhr) {
+    //       var msg = 'Server error. Please try again.';
+    //       try {
+    //         var json = JSON.parse(xhr.responseText);
+    //         if (json.error) msg = json.error;
+    //       } catch (e) {}
+    //       Swal.fire({
+    //         icon: 'error',
+    //         title: 'Error',
+    //         text: msg,
+    //         confirmButtonText: 'OK',
+    //         customClass: {
+    //           confirmButton: 'bx--btn bx--btn--danger'
+    //         },
+    //         buttonsStyling: false
+    //       });
+    //     }
+    //   });
+    // });
 
 
 
