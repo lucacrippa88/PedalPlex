@@ -720,6 +720,6 @@ input[type="range"].horizontal {
   background-repeat: repeat;
   height: 0;
   width: auto;
-  padding-bottom: 56.25%;
+  padding-bottom: 63px;
 }
 
