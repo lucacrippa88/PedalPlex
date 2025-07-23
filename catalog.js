@@ -1,370 +1,183 @@
-// function initCatalog(userRole) {
-
-//   console.log("initCatalog user role: ", userRole)
-
-//   const resultsDiv = document.getElementById("catalog");
-
-//   // Show loading spinner
-//   resultsDiv.innerHTML = `
-//       <div class="bx--loading-overlay">
-//         <div class="bx--loading" role="status">
-//           <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-//             <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-//             <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-//           </svg>
-//         </div>
-//       </div>`;
-
-//   fetch("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php")
-//     .then(response => {
-//       if (!response.ok) {
-//         throw new Error("Network response was not ok");
-//       }
-//       return response.json();
-//     })
-//     .then(pedals => {
-//       resultsDiv.innerHTML = ""; // Clear loader
-//       $("#pedalCount").text(`${pedals.length} gears`);
-
-//       // Sort pedals alphabetically by _id
-//       pedals.sort((a, b) => a._id - b._id);
-
-
-//       pedals.forEach(pedal => {
-
-//         const pedalName = pedal.name || pedal.id;
-//         const pedalId = pedal._id || pedal.id;
-//         const angle = 0;
-
-//         const insideColorRaw = pedal["inside-color"];
-//         const insideBorder = pedal["inside-border"] || "";
-//         let inside = "";
-//         let colorOnly = insideColorRaw;
-
-//         const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-//         if (match) {
-//           colorOnly = match[1];
-//           inside = match[2] || "";
-//         }
-
-//         const baseCss = {
-//           background: colorOnly,
-//           border: `5px solid ${pedal["color"]}`, // Outer border
-//           borderRadius: '10px',
-//           color: pedal["font-color"],
-//           width: getPedalWidth(pedal.width),
-//           height: getPedalHeight(pedal.height),
-//           transform: `rotate(${angle}deg)`,
-//           marginBottom: '10px',
-//           display: 'inline-block',
-//           ...(pedal["inside-border"] && {
-//             boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
-//           })
-//         };
-
-//         let $pedalDiv;
-
-//         if (pedal.type === "pedal") {
-//           if (inside === "full") {
-//             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-//               ...baseCss,
-//               boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + 
-//                           (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-//             }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-//           } else {
-//             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-//               ...baseCss,
-//               boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-//             }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-//           }
-//         } else if (pedal.type === "expression") {
-//           if (inside === "full") {
-//             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-//               ...baseCss,
-//               borderRadius: '25px',
-//               boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + 
-//                           (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-//             }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-//           } else {
-//             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-//               ...baseCss,
-//               borderRadius: '25px',
-//               boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-//             }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-//           }
-//         }else if (pedal.type === "combo") {
-//           if (inside === "full") {
-//             $pedalDiv = $("<div>").addClass("pedal-catalog").css(baseCss).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-//           } else {
-//             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-//               ...baseCss,
-//               boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -80px 0 0 ${pedal["color"]}`
-//             }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-//           }
-//         } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-//           if (inside === "full") {
-//             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-//               ...baseCss,
-//               boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + 
-//                           (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-//             }).attr("data-pedal-name", pedal.name)
-//               .attr("data-pedal-id", pedal._id);
-//           } else {
-//             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-//               ...baseCss,
-//               boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
-//             }).attr("data-pedal-name", pedal.name)
-//               .attr("data-pedal-id", pedal._id);
-//           }
-//         } else if (pedal.type === "round") {
-//           $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-//             ...baseCss,
-//             borderRadius: "50%",  
-//             width: getPedalWidth(pedal.width), // Same width and height
-//             height: getPedalWidth(pedal.width), // Same width and height
-//             boxShadow: `0 4px 8px rgba(0,0,0,0.3), inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
-//           }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-//         }
-
-
-//         // Manage head and pedal-inverted logos
-//         if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-//           const $nameDiv = $("<div>").addClass("head-name").html(pedal.name).attr("style", pedal.logo || "");
-//           $pedalDiv.append($nameDiv);
-//         }
-
-//         // Render pedal controls
-//         renderPedalControls(pedal, $pedalDiv);
-
-//         // Manage pedal logos
-//         const $nameDiv = $("<div>")
-//         if ((pedal.type === "pedal") || (pedal.type === "combo") || (pedal.type === "round") || (pedal.type === "expression")) {
-//           const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name).attr("style", pedal.logo || "");
-//           $pedalDiv.append($nameDiv);
-//         }
-
-//         // Edit icon button (just create the button without the .on("click") here)
-//         const $editBtn = $("<button>")
-//           .addClass("edit-btn")
-//           .attr("title", "Edit pedal JSON")
-//           .data("pedal", pedal)
-//           .html(`
-//                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
-//                         <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
-//                         </svg>
-//                     `);
-
-//         // Setup the edit button handler
-//         setupEditPedalHandler(pedals);
-
-//         // Append elements to the pedal div
-//         if (userRole === 'admin') {
-//           $pedalDiv.append($editBtn);
-//         }
-//         $pedalDiv.append($nameDiv);
-
-//         // Append to results
-//         $(resultsDiv).append($pedalDiv);
-//       });
-//     })
-//     .catch(error => {
-//       console.error("Error fetching pedals:", error);
-//       resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${error.message}</p>`;
-//     });
-
-
-// }
-
-
-
-
-
 function initCatalog(userRole) {
-  console.log("initCatalog user role: ", userRole);
+
+  console.log("initCatalog user role: ", userRole)
 
   const resultsDiv = document.getElementById("catalog");
+
+  // Show loading spinner
   resultsDiv.innerHTML = `
-    <div class="bx--loading-overlay">
-      <div class="bx--loading" role="status">
-        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-        </svg>
-      </div>
-    </div>`;
+      <div class="bx--loading-overlay">
+        <div class="bx--loading" role="status">
+          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+          </svg>
+        </div>     
+      </div>`;
 
-  const pageSize = 20;
-  let currentOffset = 0;
-  let isLoading = false;
-  let hasMore = true;
+  fetch("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then(pedals => {
+      resultsDiv.innerHTML = ""; // Clear loader
+      $("#pedalCount").text(`${pedals.length} gears`);
 
-  function loadPedals() {
-    if (isLoading || !hasMore) return;
-    isLoading = true;
+      // Sort pedals alphabetically by _id
+      pedals.sort((a, b) => a._id - b._id);
 
-    fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?offset=${currentOffset}&limit=${pageSize}`)
-      .then(function(response) {
-        if (!response.ok) throw new Error("Network response was not ok");
-        return response.json();
-      })
-      .then(function(pedals) {
-        if (currentOffset === 0) {
-          resultsDiv.innerHTML = ""; // Clear loader
+
+      pedals.forEach(pedal => {
+
+        const pedalName = pedal.name || pedal.id;
+        const pedalId = pedal._id || pedal.id;
+        const angle = 0;
+
+        const insideColorRaw = pedal["inside-color"];
+        const insideBorder = pedal["inside-border"] || "";
+        let inside = "";
+        let colorOnly = insideColorRaw;
+
+        const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+        if (match) {
+          colorOnly = match[1];
+          inside = match[2] || "";
         }
 
-        if (pedals.length < pageSize) {
-          hasMore = false;
-        }
+        const baseCss = {
+          background: colorOnly,
+          border: `5px solid ${pedal["color"]}`, // Outer border
+          borderRadius: '10px',
+          color: pedal["font-color"],
+          width: getPedalWidth(pedal.width),
+          height: getPedalHeight(pedal.height),
+          transform: `rotate(${angle}deg)`,
+          marginBottom: '10px',
+          display: 'inline-block',
+          ...(pedal["inside-border"] && {
+            boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
+          })
+        };
 
-        pedals.sort(function(a, b) {
-          return (a._id || a.id) - (b._id || b.id);
-        });
+        let $pedalDiv;
 
-        pedals.forEach(function(pedal) {
-          const pedalName = pedal.name || pedal.id;
-          const pedalId = pedal._id || pedal.id;
-          const angle = 0;
-
-          const insideColorRaw = pedal["inside-color"];
-          const insideBorder = pedal["inside-border"] || "";
-          let inside = "";
-          let colorOnly = insideColorRaw;
-
-          const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-          if (match) {
-            colorOnly = match[1];
-            inside = match[2] || "";
-          }
-
-          const baseCss = {
-            background: colorOnly,
-            border: `5px solid ${pedal["color"]}`,
-            borderRadius: '10px',
-            color: pedal["font-color"],
-            width: getPedalWidth(pedal.width),
-            height: getPedalHeight(pedal.height),
-            transform: `rotate(${angle}deg)`,
-            marginBottom: '10px',
-            display: 'inline-block'
-          };
-
-          if (pedal["inside-border"]) {
-            baseCss.boxShadow = `inset 0 0 0 3px ${pedal["inside-border"]}`;
-          }
-
-          let $pedalDiv;
-
-          if (pedal.type === "pedal") {
-            if (inside === "full") {
-              $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-                ...baseCss,
-                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-              }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-            } else {
-              $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-                ...baseCss,
-                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-              }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-            }
-          } else if (pedal.type === "expression") {
-            if (inside === "full") {
-              $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-                ...baseCss,
-                borderRadius: '25px',
-                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-              }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-            } else {
-              $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-                ...baseCss,
-                borderRadius: '25px',
-                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-              }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-            }
-          } else if (pedal.type === "combo") {
-            if (inside === "full") {
-              $pedalDiv = $("<div>").addClass("pedal-catalog").css(baseCss).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-            } else {
-              $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-                ...baseCss,
-                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -80px 0 0 ${pedal["color"]}`
-              }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-            }
-          } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-            if (inside === "full") {
-              $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-                ...baseCss,
-                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-              }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-            } else {
-              $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-                ...baseCss,
-                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
-              }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-            }
-          } else if (pedal.type === "round") {
+        if (pedal.type === "pedal") {
+          if (inside === "full") {
             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
               ...baseCss,
-              borderRadius: "50%",
-              width: getPedalWidth(pedal.width),
-              height: getPedalWidth(pedal.width),
-              boxShadow: `0 4px 8px rgba(0,0,0,0.3), inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
+              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + 
+                          (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+          } else {
+            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+              ...baseCss,
+              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
             }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
           }
-
-          // Logos for head and inverted types
-          if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-            const $nameDiv = $("<div>").addClass("head-name").html(pedal.name).attr("style", pedal.logo || "");
-            $pedalDiv.append($nameDiv);
+        } else if (pedal.type === "expression") {
+          if (inside === "full") {
+            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+              ...baseCss,
+              borderRadius: '25px',
+              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + 
+                          (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+          } else {
+            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+              ...baseCss,
+              borderRadius: '25px',
+              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
+            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
           }
-
-          renderPedalControls(pedal, $pedalDiv);
-
-          if ((pedal.type === "pedal") || (pedal.type === "combo") || (pedal.type === "round") || (pedal.type === "expression")) {
-            const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name).attr("style", pedal.logo || "");
-            $pedalDiv.append($nameDiv);
+        }else if (pedal.type === "combo") {
+          if (inside === "full") {
+            $pedalDiv = $("<div>").addClass("pedal-catalog").css(baseCss).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+          } else {
+            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+              ...baseCss,
+              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -80px 0 0 ${pedal["color"]}`
+            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
           }
-
-          const $editBtn = $("<button>")
-            .addClass("edit-btn")
-            .attr("title", "Edit pedal JSON")
-            .data("pedal", pedal)
-            .html(`
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
-                <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
-              </svg>`);
-
-          if (userRole === 'admin') {
-            $pedalDiv.append($editBtn);
+        } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+          if (inside === "full") {
+            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+              ...baseCss,
+              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + 
+                          (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+            }).attr("data-pedal-name", pedal.name)
+              .attr("data-pedal-id", pedal._id);
+          } else {
+            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+              ...baseCss,
+              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
+            }).attr("data-pedal-name", pedal.name)
+              .attr("data-pedal-id", pedal._id);
           }
-
-          $(resultsDiv).append($pedalDiv);
-        });
-
-        setupEditPedalHandler(pedals);
-        currentOffset += pedals.length;
-        isLoading = false;
-      })
-      .catch(function(error) {
-        console.error("Error fetching pedals:", error);
-        if (currentOffset === 0) {
-          resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${error.message}</p>`;
+        } else if (pedal.type === "round") {
+          $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+            ...baseCss,
+            borderRadius: "50%",  
+            width: getPedalWidth(pedal.width), // Same width and height
+            height: getPedalWidth(pedal.width), // Same width and height
+            boxShadow: `0 4px 8px rgba(0,0,0,0.3), inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
+          }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         }
-        isLoading = false;
+
+
+        // Manage head and pedal-inverted logos
+        if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+          const $nameDiv = $("<div>").addClass("head-name").html(pedal.name).attr("style", pedal.logo || "");
+          $pedalDiv.append($nameDiv);
+        }
+
+        // Render pedal controls
+        renderPedalControls(pedal, $pedalDiv);
+
+        // Manage pedal logos
+        const $nameDiv = $("<div>")
+        if ((pedal.type === "pedal") || (pedal.type === "combo") || (pedal.type === "round") || (pedal.type === "expression")) {
+          const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name).attr("style", pedal.logo || "");
+          $pedalDiv.append($nameDiv);
+        }
+
+        // Edit icon button (just create the button without the .on("click") here)
+        const $editBtn = $("<button>")
+          .addClass("edit-btn")
+          .attr("title", "Edit pedal JSON")
+          .data("pedal", pedal)
+          .html(`
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
+                        <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
+                        </svg>
+                    `);
+
+        // Setup the edit button handler
+        setupEditPedalHandler(pedals);
+
+        // Append elements to the pedal div
+        if (userRole === 'admin') {
+          $pedalDiv.append($editBtn);
+        }
+        $pedalDiv.append($nameDiv);
+
+        // Append to results
+        $(resultsDiv).append($pedalDiv);
       });
-  }
+    })
+    .catch(error => {
+      console.error("Error fetching pedals:", error);
+      resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${error.message}</p>`;
+    });
 
-  window.addEventListener("scroll", function () {
-    const scrollTop = window.scrollY || window.pageYOffset;
-    const windowHeight = window.innerHeight;
-    const fullHeight = document.body.offsetHeight;
 
-    if (scrollTop + windowHeight >= fullHeight - 200) {
-      loadPedals();
-    }
-  });
-
-  loadPedals(); // Initial load
 }
+
+
+
+
 
 
 

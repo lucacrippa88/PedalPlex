@@ -56,7 +56,7 @@
         'Authorization': 'Bearer ' + token
       },
       success: function(userFromServer) {
-        $('#loadingMessage').hide();
+        $('#loadingMessage').hide(); 
         $('#page-content').show();
 
         window.currentUser = userFromServer;
