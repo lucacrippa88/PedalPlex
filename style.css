@@ -675,11 +675,6 @@ input[type="range"].horizontal {
 
 
 
-
-
-
-
-
 .diamond-plate {
   display: block;
   position: relative;
@@ -723,6 +718,8 @@ input[type="range"].horizontal {
   background-repeat: repeat;
   height: 0;
   width: auto;
-  padding-bottom: 63px;
+  padding-bottom: 72px;
+  top: -10px;
+  border-radius: 4px;
 }
 
