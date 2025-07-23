@@ -120,8 +120,8 @@ function initCatalog(userRole) {
           $pedalDiv = $("<div>").addClass("pedal-catalog").css({
             ...baseCss,
             borderRadius: "50%",  
-            width: getPedalWidth(pedal.width),
-            height: getPedalHeight(pedal.height),
+            width: getPedalWidth(pedal.width), // Same width and height
+            height: getPedalHeight(pedal.width), // Same width and height
             boxShadow: `0 4px 8px rgba(0,0,0,0.3), inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
           }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         }
