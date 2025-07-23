@@ -677,8 +677,6 @@ input[type="range"].horizontal {
 
 
 
-
-
 .diamond-plate {
   display: block;
   position: relative;
@@ -686,41 +684,42 @@ input[type="range"].horizontal {
   background-image:
 
     /* Masks */
-    linear-gradient(144deg, rgba(150,150,150,1) 16px, transparent 17px),
-    linear-gradient(-34deg, rgba(150,150,150,1) 15px, transparent 16px),
+    linear-gradient(144deg, rgba(150,150,150,1) 10px, transparent 11px),
+    linear-gradient(-34deg, rgba(150,150,150,1) 10px, transparent 11px),
 
     /* Forward slant Angled Diamond Upper Half */
-    linear-gradient(132deg, rgba(255,255,255, 1) 16px, transparent 17px),
-    linear-gradient(128deg, rgba(200,200,200, 0.7) 16px, transparent 17px),
+    linear-gradient(132deg, rgba(255,255,255, 1) 10px, transparent 11px),
+    linear-gradient(128deg, rgba(200,200,200, 0.7) 10px, transparent 11px),
 
     /* Forward slant Angled Diamond Lower Half */
-    linear-gradient(-41deg, rgba(200,200,200, 1) 17px, transparent 18px),
-    linear-gradient(-52deg, rgba(255,255,255, 1) 17px, transparent 18px),
+    linear-gradient(-41deg, rgba(200,200,200, 1) 11px, transparent 12px),
+    linear-gradient(-52deg, rgba(255,255,255, 1) 11px, transparent 12px),
 
     /* Masks */
-    linear-gradient(-125deg, rgba(150,150,150,1) 16px, transparent 17px),
-    linear-gradient(55deg, rgba(150,150,150,1) 15px, transparent 16px),
+    linear-gradient(-125deg, rgba(150,150,150,1) 10px, transparent 11px),
+    linear-gradient(55deg, rgba(150,150,150,1) 10px, transparent 11px),
 
     /* Backward Slant Angled Diamond Lower Half */
-    linear-gradient(-132deg, rgba(200,200,200, 1) 16px, transparent 17px),
-    linear-gradient(-141deg, rgba(255,255,255, 1) 16px, transparent 17px),
+    linear-gradient(-132deg, rgba(200,200,200, 1) 10px, transparent 11px),
+    linear-gradient(-141deg, rgba(255,255,255, 1) 10px, transparent 11px),
 
     /* Backward Slant Angled Diamond Upper Half */
-    linear-gradient(42deg, rgba(255,255,255, 1) 17px, transparent 18px),
-    linear-gradient(38deg, rgba(200,200,200, 0.5) 17px, transparent 18px);
+    linear-gradient(42deg, rgba(255,255,255, 1) 11px, transparent 12px),
+    linear-gradient(38deg, rgba(200,200,200, 0.5) 11px, transparent 12px);
 
-  background-size: 60px 60px;
+  background-size: 40px 40px;
 
   background-position:
-    -10px 6px, -8px -7px,
-    -8px 8px, -8px 10px,
-    -8px -7px, -8px -10px,
-    -14px -1px, -2px -1px, 
-    -16px -1px, -18px -1px,
-    -1px -1px, 1px -1px;
+    -6px 4px, -5px -5px,
+    -5px 5px, -5px 6px,
+    -5px -5px, -5px -6px,
+    -9px 0px, -1px 0px, 
+    -10px 0px, -11px 0px,
+    -1px 0px, 0px 0px;
 
   background-repeat: repeat;
   height: 0;
   width: auto;
   padding-bottom: 56.25%;
 }
+
