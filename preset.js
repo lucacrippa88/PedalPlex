@@ -295,8 +295,8 @@ async function renderFullPedalboard() {
           $pedalDiv = $("<div>").addClass("pedal-catalog").css({
             ...baseCss,
             borderRadius: "50%",  // make it circular
-            width: getPedalWidth(pedal.width),  // make sure width = height
-            height: getPedalHeight(pedal.height),
+            width: getPedalWidth(pedal.width),  // Same width and height
+            height: getPedalHeight(pedal.width), // Same width and height
             boxShadow
           }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         }
