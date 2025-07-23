@@ -370,7 +370,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 if (control.position === "under-top" && $row.children().length > 0) {
                     const $prev = $row.children().last();
                     $prev.append($("<div>").css("margin-top", "0px").append($label, led));
-                } else if (pos.includes("align-top") && $row.children().length > 0) {
+                } else if (control.position === "align-top" && $row.children().length > 0) {
                     const $prev = $row.children().last();
                     $prev.append($("<div>").css("margin-top", "-23px").append($label, $container));
                     return;
