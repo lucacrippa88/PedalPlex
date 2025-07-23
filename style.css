@@ -482,7 +482,7 @@ input[type="range"].horizontal {
     .edit-btn {
       position: fixed;
       top: -5%;
-      right: -5%;
+      right: -2%;
       background: #0f62fe; /* Blue background */
       border: none;
       border-radius: 50%;
