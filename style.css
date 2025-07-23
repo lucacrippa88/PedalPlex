@@ -679,54 +679,48 @@ input[type="range"].horizontal {
 
 
 
-
-
 .diamond-plate {
   display: block;
   position: relative;
   background-color: rgba(150, 150, 150, 1);
   background-image:
 
-/*Masks*/
-linear-gradient(144deg, rgba(150,150,150,1) 26px, transparent 27px),
-linear-gradient(-34deg, rgba(150,150,150,1) 25px, transparent 26px),
+    /* Masks */
+    linear-gradient(144deg, rgba(150,150,150,1) 16px, transparent 17px),
+    linear-gradient(-34deg, rgba(150,150,150,1) 15px, transparent 16px),
 
-/*Forward slant Angled Diamond Upper Half*/
-linear-gradient(132deg, rgba(255,255,255, 1) 26px, transparent 27px),
-linear-gradient(128deg, rgba(200,200,200, 0.7) 26px, transparent 27px),
+    /* Forward slant Angled Diamond Upper Half */
+    linear-gradient(132deg, rgba(255,255,255, 1) 16px, transparent 17px),
+    linear-gradient(128deg, rgba(200,200,200, 0.7) 16px, transparent 17px),
 
-/*Forward slant Angled Diamond Lower Half*/
-linear-gradient(-41deg, rgba(200,200,200, 1) 27px, transparent 28px),
-linear-gradient(-52deg, rgba(255,255,255, 1) 27px, transparent 28px),
+    /* Forward slant Angled Diamond Lower Half */
+    linear-gradient(-41deg, rgba(200,200,200, 1) 17px, transparent 18px),
+    linear-gradient(-52deg, rgba(255,255,255, 1) 17px, transparent 18px),
 
-/*Masks*/
-linear-gradient(-125deg, rgba(150,150,150,1) 26px, transparent 27px),
-linear-gradient(55deg, rgba(150,150,150,1) 25px, transparent 26px),
+    /* Masks */
+    linear-gradient(-125deg, rgba(150,150,150,1) 16px, transparent 17px),
+    linear-gradient(55deg, rgba(150,150,150,1) 15px, transparent 16px),
 
-/*Backward Slant Angled Diamond Lower Half*/
-linear-gradient(-132deg, rgba(200,200,200, 1) 26px, transparent 27px),
-linear-gradient(-141deg, rgba(255,255,255, 1) 26px, transparent 27px),
+    /* Backward Slant Angled Diamond Lower Half */
+    linear-gradient(-132deg, rgba(200,200,200, 1) 16px, transparent 17px),
+    linear-gradient(-141deg, rgba(255,255,255, 1) 16px, transparent 17px),
 
-/*Backward Slant Angled Diamond Upper Half*/
-linear-gradient(42deg, rgba(255,255,255, 1) 27px, transparent 28px),
-linear-gradient(38deg, rgba(200,200,200, 0.5) 27px, transparent 28px)
+    /* Backward Slant Angled Diamond Upper Half */
+    linear-gradient(42deg, rgba(255,255,255, 1) 17px, transparent 18px),
+    linear-gradient(38deg, rgba(200,200,200, 0.5) 17px, transparent 18px);
 
-;
+  background-size: 60px 60px;
 
-background-size:
-100px 100px;
- 
-background-position:
--16px 9px, -13px -11px,
--13px 13px, -13px 16px,
--13px -11px, -13px -16px,
--23px -1px, -3px -1px, 
--26px -1px, -30px -1px,
--2px -1px, 1px -1px
-;
+  background-position:
+    -10px 6px, -8px -7px,
+    -8px 8px, -8px 10px,
+    -8px -7px, -8px -10px,
+    -14px -1px, -2px -1px, 
+    -16px -1px, -18px -1px,
+    -1px -1px, 1px -1px;
 
-background-repeat:repeat;
-height:0;
-width:auto;
-padding-bottom:56.25%;
-	}
+  background-repeat: repeat;
+  height: 0;
+  width: auto;
+  padding-bottom: 56.25%;
+}
