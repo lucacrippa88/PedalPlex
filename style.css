@@ -664,7 +664,10 @@ input[type="range"].horizontal {
   font-family: compacta;
   src: url("fonts/compacta.ttf");
 }
-
+@font-face {
+  font-family: mesa;
+  src: url("fonts/Cowboys 2.0.otf");
+}
 
 
 
