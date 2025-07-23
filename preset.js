@@ -296,7 +296,7 @@ async function renderFullPedalboard() {
             ...baseCss,
             borderRadius: "50%",  // make it circular
             width: getPedalWidth(pedal.width),  // Same width and height
-            height: getPedalHeight(pedal.width), // Same width and height
+            height: getPedalWidth(pedal.width), // Same width and height
             boxShadow
           }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         }
