@@ -497,23 +497,17 @@ function renderPedalControls(pedal, $pedalDiv) {
                 else if (control.position === "right") { $wrapper.addClass("align-right"); } 
                 else if (control.position === "lower") { $wrapper.addClass("align-bottom"); } 
                 else if (control.position === "higher") { $wrapper.addClass("align-top"); } 
-                else if (control.position === "highest") { $wrapper.addClass("align-top-est"); 
-
-                } 
+                else if (control.position === "highest") { $wrapper.addClass("align-top-est"); } 
                 else if (typeof control.position === "string" && control.position.startsWith("margin-right:")) {
                     const match = control.position.match(/margin-right:\s*(\d+)px/);
                     if (match) {
                         const px = match[1] + "px";
                         $wrapper.css("margin-right", px);
                     }
-                } else if (control.position === "under-top" && $row.children().length > 0) {
+                }
+                else if (control.position === "align-top" && $row.children().length > 0) {
                     const $prev = $row.children().last();
-                    const $underTopWrapper = $("<div>")
-                        .css({ "margin-top": "-5px", "display": "flex", "flex-direction": "column", "align-items": "center" })
-                        .append($label, $select);
-                        
-                    $prev.append($underTopWrapper);
-
+                    $prev.append($("<div>").css("margin-top", "8px").append($label, $select));
                 }
                 
                 $row.append($wrapper);
