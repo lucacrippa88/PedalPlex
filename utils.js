@@ -470,6 +470,8 @@ function renderPedalControls(pedal, $pedalDiv) {
                         top: "15px"
                     });
 
+                if (control.shape === "round") { $lcd.css("border-radius", "50%"); } // If shape is round, override border-radius
+
                 $lcd.on("input", function () { control.value = $(this).val(); });
 
                 const $wrapper = $("<div>").addClass("lcd-wrapper").append($label, $lcd);
