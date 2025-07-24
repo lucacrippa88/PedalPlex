@@ -397,41 +397,6 @@ html {
 
 
 
-/* .slider-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 -12px;
-}
-
-input[type="range"].vertical {
-  writing-mode: bt-lr;
-  appearance: slider-vertical;
-  width: 8px;
-  height: 100px;
-  background: transparent;
-}
-
-input[type="range"].verticalsmall {
-  writing-mode: bt-lr;
-  appearance: slider-vertical;
-  width: 8px;
-  height: 50px;
-  background: transparent;
-}
-
-input[type="range"].horizontal {
-  width: 100%;
-  height: 6px;
-}
-
-.slider-label {
-  margin-bottom: 4px;
-  font-size: 12px;
-} */
-
-
-
 .slider-container {
   display: flex;
   flex-direction: column;
@@ -439,77 +404,34 @@ input[type="range"].horizontal {
   margin: 0 -12px;
 }
 
-/* Common vertical slider styling */
-input[type="range"].vertical,
-input[type="range"].verticalsmall {
-  writing-mode: bt-lr; /* Vertical from bottom to top */
-  -webkit-appearance: slider-vertical; /* Safari */
-  appearance: slider-vertical;         /* Standard */
+input[type="range"].vertical {
+  writing-mode: bt-lr;
+  appearance: slider-vertical;
   width: 8px;
+  height: 100px;
   background: transparent;
 }
 
-/* Size variants */
-input[type="range"].vertical {
-  height: 100px;
-}
-
 input[type="range"].verticalsmall {
+  writing-mode: bt-lr;
+  appearance: slider-vertical;
+  width: 8px;
   height: 50px;
+  background: transparent;
 }
 
-/* Horizontal slider */
 input[type="range"].horizontal {
   width: 100%;
   height: 6px;
-}
-
-/* WebKit Thumb (Chrome, Safari) */
-input[type="range"].vertical::-webkit-slider-thumb,
-input[type="range"].verticalsmall::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  background: transparent; /* Change pin color here */
-  border-radius: 50%;
-  cursor: pointer;
-  margin-top: -6px; /* Adjust to align thumb vertically */
-}
-
-/* Firefox Thumb */
-input[type="range"].vertical::-moz-range-thumb,
-input[type="range"].verticalsmall::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  background: transparent;
-  border-radius: 50%;
-  cursor: pointer;
-  border: none;
-}
-
-/* Track styling for Chrome (optional for better appearance) */
-input[type="range"].vertical::-webkit-slider-runnable-track,
-input[type="range"].verticalsmall::-webkit-slider-runnable-track {
-  width: 8px;
-  height: 100%;
-  background: #ccc;
-  border-radius: 4px;
-}
-
-/* Firefox Track (optional) */
-input[type="range"].vertical::-moz-range-track,
-input[type="range"].verticalsmall::-moz-range-track {
-  width: 8px;
-  height: 100%;
-  background: #ccc;
-  border-radius: 4px;
 }
 
 .slider-label {
   margin-bottom: 4px;
   font-size: 12px;
 }
+
+
+
 
 
 
