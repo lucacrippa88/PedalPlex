@@ -471,8 +471,8 @@ function renderPedalControls(pedal, $pedalDiv) {
                     });
 
                 if (control.shape === "round") { 
-                    lcd.css("border-radius", "50%");
-                    lcd.css("font-size", "12px");
+                    $lcd.css("border-radius", "50%");
+                    $lcd.css("font-size", "12px");
                 } 
 
                 $lcd.on("input", function () { control.value = $(this).val(); });
