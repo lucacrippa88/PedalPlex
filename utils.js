@@ -460,7 +460,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                         height: `${control.height * 6}px`,
                         fontFamily: "monospace",
                         fontSize: "17px",
-                        textAlign: "center",
+                        textAlign: "center", 
                         backgroundColor: screenColor,
                         color: textColor,
                         border: "2px solid #333",
@@ -470,7 +470,10 @@ function renderPedalControls(pedal, $pedalDiv) {
                         top: "15px"
                     });
 
-                if (control.shape === "round") { $lcd.css("border-radius", "50%"); } // If shape is round, override border-radius
+                if (control.shape === "round") { 
+                    lcd.css("border-radius", "50%");
+                    lcd.css(fontSize, "12px",);
+                } 
 
                 $lcd.on("input", function () { control.value = $(this).val(); });
 
