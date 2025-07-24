@@ -471,7 +471,7 @@ input[type="range"].verticalsmall::-webkit-slider-thumb {
   appearance: none;
   width: 16px;
   height: 16px;
-  background: #ffffff; /* Change pin color here */
+  background: transparent; /* Change pin color here */
   border-radius: 50%;
   cursor: pointer;
   margin-top: -6px; /* Adjust to align thumb vertically */
@@ -482,7 +482,7 @@ input[type="range"].vertical::-moz-range-thumb,
 input[type="range"].verticalsmall::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  background: #ffffff;
+  background: transparent;
   border-radius: 50%;
   cursor: pointer;
   border: none;
