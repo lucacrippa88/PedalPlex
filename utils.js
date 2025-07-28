@@ -385,7 +385,8 @@ function renderPedalControls(pedal, $pedalDiv) {
                 
                 else if (typeof control.position === "string" && control.position.startsWith("margin-right:")) {
                     // Extract the pixel value
-                    const match = control.position.match(/margin-right:\s*(\d+)px/);
+                    // const match = control.position.match(/margin-right:\s*(\d+)px/);
+                    const match = control.position.match(/margin-right:\s*(-?\d+)px/);
                     if (match) {
                         const px = match[1] + "px";
                         $ledContainer.css("margin-right", px);
@@ -393,7 +394,8 @@ function renderPedalControls(pedal, $pedalDiv) {
                     $row.append($ledContainer);
                 } else if (typeof control.position === "string" && control.position.startsWith("margin-left:")) {
                     // Extract the pixel value
-                    const match = control.position.match(/margin-left:\s*(\d+)px/);
+                    // const match = control.position.match(/margin-left:\s*(\d+)px/);
+                    const match = control.position.match(/margin-left:\s*(-?\d+)px/);
                     if (match) {
                         const px = match[1] + "px";
                         $ledContainer.css("margin-left", px);
