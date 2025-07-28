@@ -238,7 +238,7 @@ function createNewPedal() {
         ]
       }
     ]
-  };
+  }; 
 
   Swal.fire({
     title: 'Create New Pedal',
