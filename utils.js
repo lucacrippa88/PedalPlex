@@ -360,7 +360,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 };
 
                 setColor(currentIndex);
-
+ 
                 led.on("click", function () {
                     let index = (led.data("colorIndex") + 1) % numColors;
                     setColor(index);
@@ -375,6 +375,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                     const $prev = $row.children().last();
                     $prev.append($("<div>").css("margin-top", "8px").append($label, led));
                 }
+                else if (control.position === "xlow") { $ledContainer.css("margin-top", "50px"); $row.append($ledContainer); }
                 else if (control.position === "lowest") { $ledContainer.css("margin-top", "40px"); $row.append($ledContainer); }
                 else if (control.position === "lower") { $ledContainer.css("margin-top", "25px"); $row.append($ledContainer);}
                 else if (control.position === "high") { $ledContainer.css("margin-top", "-15px"); $row.append($ledContainer); }
