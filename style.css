@@ -570,13 +570,13 @@ input[type="range"].horizontal {
 
 
 
-
+ 
 
 
 
 @font-face {
   font-family: bigmuff;
-  src: url("fonts/ITC Pioneer Regular.otf");
+  src: url("fonts/ITC\ Pioneer\ Regular.otf");
 }
 @font-face {
   font-family: boss;
@@ -652,7 +652,7 @@ input[type="range"].horizontal {
 }
 @font-face {
   font-family: funky;
-  src: url("fonts/TF Funky Fusion Demo.ttf");
+  src: url("fonts/TF\ Funky\ Fusion\ Demo.ttf");
 }
 @font-face {
   font-family: balloon;
@@ -668,9 +668,12 @@ input[type="range"].horizontal {
 }
 @font-face {
   font-family: mesa;
-  src: url("fonts/Cowboys 2.0.otf");
+  src: url("fonts/Cowboys\ 2.0.otf");
 }
-
+@font-face {
+  font-family: dookie;
+  src: url("fonts/Bad\ Dookie\ NF\ Regular.ttf");
+}
 
 
 
