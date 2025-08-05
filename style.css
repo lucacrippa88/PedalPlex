@@ -674,7 +674,10 @@ input[type="range"].horizontal {
   font-family: dookie;
   src: url("fonts/Bad\ Dookie\ NF\ Regular.ttf");
 }
-
+@font-face {
+  font-family: script;
+  src: url("fonts/Avenue\ de\ Madison.ttf");
+}
 
 
 
