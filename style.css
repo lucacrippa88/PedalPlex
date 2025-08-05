@@ -678,7 +678,10 @@ input[type="range"].horizontal {
   font-family: script;
   src: url("fonts/Avenue\ de\ Madison.ttf");
 }
-
+@font-face {
+  font-family: cloister;
+  src: url("fonts/CloisterBlack.ttf");
+}
 
 
 
