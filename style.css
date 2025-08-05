@@ -682,7 +682,10 @@ input[type="range"].horizontal {
   font-family: cloister;
   src: url("fonts/CloisterBlack.ttf");
 }
-
+@font-face {
+  font-family: stencil;
+  src: url("fonts/Stencilia-A.ttf");
+}
 
 
 
