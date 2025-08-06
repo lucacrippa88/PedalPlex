@@ -306,13 +306,16 @@ function renderPedalControls(pedal, $pedalDiv) {
                     }
 
                     // align-top logic
+                    if (pos.includes("align-top-clearer") && $row.children().length > 0) {
+                        const $prev = $row.children().last();
+                        $prev.append($("<div>").css("margin-top", "0px").append($label, $container));
+                        return;
+                    }
                     if (pos.includes("align-top-clear") && $row.children().length > 0) {
                         const $prev = $row.children().last();
                         $prev.append($("<div>").css("margin-top", "-14px").append($label, $container));
                         return;
                     }
-
-                    // align-top logic
                     if (pos.includes("align-top") && $row.children().length > 0) {
                         const $prev = $row.children().last();
                         $prev.append($("<div>").css("margin-top", "-23px").append($label, $container));
