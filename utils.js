@@ -431,7 +431,7 @@ function renderPedalControls(pedal, $pedalDiv) {
 
                 // Handle control.position for margin-top
                 if (control.position === "higher") {
-                    $slider.css("margin-top", "-30px");
+                    $slider.css("margin-top", "-30px"); 
                 } else if (control.position === "lower") {
                     $slider.css("margin-top", "30px");
                 }
