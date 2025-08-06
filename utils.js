@@ -429,10 +429,14 @@ function renderPedalControls(pedal, $pedalDiv) {
                 })
                 .on("input", function () { control.value = parseFloat($(this).val()); });
 
-              let $sliderWrapper;
+                // Handle control.position for margin-top
+                if (control.position === "higher") {
+                    $slider.css("margin-top", "-30px");
+                } else if (control.position === "lower") {
+                    $slider.css("margin-top", "30px");
+                }
 
-              if (control.position === "high") { 
-                $slider.css("margin-top", "-30px"); }
+              let $sliderWrapper;
 
               if (control.orientation === "vertical") {
                 $slider.addClass("vertical");
