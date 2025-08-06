@@ -436,38 +436,15 @@ function renderPedalControls(pedal, $pedalDiv) {
                 if (control.position === "higher") {
                     $sliderWrapper = $("<div>")
                     .addClass("slider-wrapper-vertical")
-                    .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "-30px 0px 0px -12px" })
+                    .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" }) // gestire casi qui lower -30px
                     .append($label, $slider);
-                } else if (control.position === "lower") {
-                    $sliderWrapper = $("<div>")
-                    .addClass("slider-wrapper-vertical")
-                    .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "30px 0px 0px -12px" })
-                    .append($label, $slider);
-                } else {
-                    $sliderWrapper = $("<div>")
-                      .addClass("slider-wrapper-vertical")
-                      .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" })
-                      .append($label, $slider);
                 }
-
               } else if (control.orientation === "vertical small") {
-                if (control.position === "higher") {
-                    $sliderWrapper = $("<div>")
-                    .addClass("slider-wrapper-vertical")
-                    .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "-30px 0px 0px -12px" })
-                    .append($label, $slider);
-                } else if (control.position === "lower") {
-                    $sliderWrapper = $("<div>")
-                    .addClass("slider-wrapper-vertical")
-                    .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "30px 0px 0px -12px" })
-                    .append($label, $slider);
-                } else {
-                    $sliderWrapper = $("<div>")
-                      .addClass("slider-wrapper-vertical")
-                      .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" })
-                      .append($label, $slider);
-                }
-                
+                $slider.addClass("verticalsmall");
+                $sliderWrapper = $("<div>")
+                  .addClass("slider-wrapper-vertical")
+                  .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" })
+                  .append($label, $slider);
               } else {
                 $slider.addClass("horizontal");
                 $sliderWrapper = $("<div>")
