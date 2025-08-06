@@ -433,12 +433,11 @@ function renderPedalControls(pedal, $pedalDiv) {
 
               if (control.orientation === "vertical") {
                 $slider.addClass("vertical");
-                if (control.position === "higher") {
-                    $sliderWrapper = $("<div>")
-                    .addClass("slider-wrapper-vertical")
-                    .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" }) // gestire casi qui lower -30px
-                    .append($label, $slider);
-                }
+                $sliderWrapper = $("<div>")
+                .addClass("slider-wrapper-vertical")
+                .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" }) // gestire casi qui lower -30px
+                .append($label, $slider);
+
               } else if (control.orientation === "vertical small") {
                 $slider.addClass("verticalsmall");
                 $sliderWrapper = $("<div>")
