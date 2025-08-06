@@ -433,21 +433,43 @@ function renderPedalControls(pedal, $pedalDiv) {
 
               if (control.orientation === "vertical") {
                 $slider.addClass("vertical");
+                if (control.position === "higher") {
+                    $sliderWrapper = $("<div>")
+                    .addClass("slider-wrapper-vertical")
+                    .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "-30px 0px 0px -12px" })
+                    .append($label, $slider);
+                } else if (control.position === "lower") {
+                    $sliderWrapper = $("<div>")
+                    .addClass("slider-wrapper-vertical")
+                    .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "30px 0px 0px -12px" })
+                    .append($label, $slider);
+                } else {
+                    $sliderWrapper = $("<div>")
+                      .addClass("slider-wrapper-vertical")
+                      .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" })
+                      .append($label, $slider);
+                }
 
-                $sliderWrapper = $("<div>")
-                  .addClass("slider-wrapper-vertical")
-                  .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" })
-                  .append($label, $slider);
               } else if (control.orientation === "vertical small") {
-                $slider.addClass("verticalsmall");
-
-                $sliderWrapper = $("<div>")
-                  .addClass("slider-wrapper-vertical")
-                  .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" })
-                  .append($label, $slider);
+                if (control.position === "higher") {
+                    $sliderWrapper = $("<div>")
+                    .addClass("slider-wrapper-vertical")
+                    .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "-30px 0px 0px -12px" })
+                    .append($label, $slider);
+                } else if (control.position === "lower") {
+                    $sliderWrapper = $("<div>")
+                    .addClass("slider-wrapper-vertical")
+                    .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "30px 0px 0px -12px" })
+                    .append($label, $slider);
+                } else {
+                    $sliderWrapper = $("<div>")
+                      .addClass("slider-wrapper-vertical")
+                      .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" })
+                      .append($label, $slider);
+                }
+                
               } else {
                 $slider.addClass("horizontal");
-
                 $sliderWrapper = $("<div>")
                   .addClass("slider-wrapper-horizontal")
                   .css({ display: "flex", flexDirection: "column", alignItems: "flex-start", marginBottom: "10px", width: "100%" })
