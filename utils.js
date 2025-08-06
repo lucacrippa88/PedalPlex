@@ -432,7 +432,7 @@ function renderPedalControls(pedal, $pedalDiv) {
               let $sliderWrapper;
 
               if (control.position === "high") { 
-                $sliderWrapper.css("margin-top", "-30px"); }
+                $slider.css("margin-top", "-30px"); }
 
               if (control.orientation === "vertical") {
                 $slider.addClass("vertical");
