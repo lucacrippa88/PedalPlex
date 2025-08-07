@@ -690,6 +690,10 @@ input[type="range"].horizontal {
   font-family: broken;
   src: url("fonts/BROKEN74.TTF");
 }
+@font-face {
+  font-family: baliw;
+  src: url("fonts/Baliw.ttf");
+}
 
 
 
