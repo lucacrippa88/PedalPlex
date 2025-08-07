@@ -664,7 +664,7 @@ input[type="range"].horizontal {
 }
 @font-face {
   font-family: compacta;
-  src: url("fonts/compacta.ttf");
+  src: url("fonts/compacta.ttf"); 
 }
 @font-face {
   font-family: mesa;
@@ -685,6 +685,10 @@ input[type="range"].horizontal {
 @font-face {
   font-family: stencil;
   src: url("fonts/Stencilia-A.ttf");
+}
+@font-face {
+  font-family: broken;
+  src: url("fonts/BROKEN74.TTF");
 }
 
 
