@@ -702,7 +702,10 @@ input[type="range"].horizontal {
   font-family: bubbleboddy;
   src: url("fonts/Bubbleboddy-FatTrial.ttf");
 }
-
+@font-face {
+  font-family: tallboy;
+  src: url("fonts/TALLBOY.otf");
+}
 
 
 
