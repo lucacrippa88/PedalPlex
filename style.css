@@ -698,7 +698,10 @@ input[type="range"].horizontal {
   font-family: neonstar;
   src: url("fonts/Neonstar.ttf");
 }
-
+@font-face {
+  font-family: bubbleboddy;
+  src: url("fonts/Bubbleboddy-FatTrial.ttf");
+}
 
 
 
