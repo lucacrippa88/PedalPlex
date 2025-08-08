@@ -694,6 +694,12 @@ input[type="range"].horizontal {
   font-family: baliw;
   src: url("fonts/Baliw.ttf");
 }
+@font-face {
+  font-family: neonstar;
+  src: url("fonts/Neonstar.ttf");
+}
+
+
 
 
 
