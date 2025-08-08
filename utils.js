@@ -326,6 +326,8 @@ function renderPedalControls(pedal, $pedalDiv) {
                     // Vertical adjustments
                     if (pos.includes("highest")) { $knobWrapper.css("margin-top", "-25px"); }
                     else if (pos.includes("higher")) { $knobWrapper.css("margin-top", "-10px"); }
+                    else if (pos.includes("high")) { $knobWrapper.css("margin-top", "-3px"); }
+                    else if (pos.includes("low")) { $knobWrapper.css("margin-top", "9px"); }
                     else if (pos.includes("lower")) { $knobWrapper.css("margin-top", "25px"); }
                     else if (pos.includes("lowest")) { $knobWrapper.css("margin-top", "45px"); }
 
