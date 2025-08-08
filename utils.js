@@ -391,6 +391,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 else if (control.position === "xlow") { $ledContainer.css("margin-top", "50px"); $row.append($ledContainer); }
                 else if (control.position === "lowest") { $ledContainer.css("margin-top", "40px"); $row.append($ledContainer); }
                 else if (control.position === "lower") { $ledContainer.css("margin-top", "25px"); $row.append($ledContainer);}
+                else if (control.position === "low") { $ledContainer.css("margin-top", "10px"); $row.append($ledContainer);}
                 else if (control.position === "high") { $ledContainer.css("margin-top", "-15px"); $row.append($ledContainer); }
                 else if (control.position === "higher") { $ledContainer.css("margin-top", "-25px"); $row.append($ledContainer); }
                 else if (control.position === "highest") { $ledContainer.css("margin-top", "-30px"); $row.append($ledContainer);}
