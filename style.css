@@ -690,7 +690,7 @@ input[type="range"].horizontal {
   font-family: broken;
   src: url("fonts/BROKEN74.TTF");
 }
-@font-face {
+@font-face { 
   font-family: baliw;
   src: url("fonts/Baliw.ttf");
 }
@@ -710,6 +710,13 @@ input[type="range"].horizontal {
   font-family: doublebubble;
   src: url("fonts/Double_Bubble_shadow.otf");
 }
+@font-face {
+  font-family: nightstalker;
+  src: url("fonts/Night\ Stalker\ Free.ttf");
+}
+
+
+
 
 
 .diamond-plate {
