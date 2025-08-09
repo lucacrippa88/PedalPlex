@@ -706,7 +706,10 @@ input[type="range"].horizontal {
   font-family: tallboy;
   src: url("fonts/TALLBOY.otf");
 }
-
+@font-face {
+  font-family: doublebubble;
+  src: url("fonts/Double_Bubble_shadow.otf");
+}
 
 
 .diamond-plate {
