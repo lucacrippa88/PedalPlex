@@ -221,6 +221,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 // Determine knob color and border based on control-specific override or pedal defaults
                 const knobColor = control["knob-color"] ?? pedal["knobs-color"];
                 const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
+                const knobIndicator = control["knobs-indicator"] ?? pedal["knobs-indicator"];
 
                 const knob = $("<div>")
                     .addClass(isSmall ? "smallknob" : "knob")
@@ -230,7 +231,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                         background: knobColor,
                         border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}`
                     })
-                    .css("--indicator-color", pedal["knobs-indicator"])
+                    .css("--indicator-color", knobIndicator)
                     .attr("data-control-label", control.label);
 
                 const rotation = getRotationFromValue(control, control.value);
