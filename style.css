@@ -714,7 +714,10 @@ input[type="range"].horizontal {
   font-family: nightstalker;
   src: url("fonts/Night\ Stalker\ Free.ttf");
 }
-
+@font-face {
+  font-family: arista;
+  src: url("fonts/Arista-Pro-Fat-trial.ttf");
+}
 
 
 
