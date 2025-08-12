@@ -74,31 +74,19 @@ function initCatalog(userRole) {
         let inside = "";
         let colorOnly = insideColorRaw;
 
-        // Check if inside-color is an image URL (http, https, or data URI)
-        // const isImage = /^https?:\/\/|^data:image\//i.test(insideColorRaw);
+        // Check if inside-color is an image URL (http, https, data URI, or local images/)
+        const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
 
-        // if (!isImage) {
-        //   // Existing logic for color + optional text
-        //   const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-        //   if (match) {
-        //     colorOnly = match[1];
-        //     inside = match[2] || "";
-        //   }
-        // }
-
-            // Check if inside-color is an image URL (http, https, data URI, or local images/)
-    const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
-
-    if (isImage) {
-        inside = "full"; // Force full mode for images
-    } else {
-        // Existing logic for color + optional text
-        const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-        if (match) {
+        if (isImage) {
+          inside = "full"; // Force full mode for images
+        } else {
+          // Existing logic for color + optional text
+          const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+          if (match) {
             colorOnly = match[1];
             inside = match[2] || "";
+          }
         }
-    }
 
         const baseCss = {
           border: `5px solid ${pedal["color"]}`, // Outer border
@@ -112,16 +100,13 @@ function initCatalog(userRole) {
           ...(pedal["inside-border"] && {
             boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
           }),
-          ...(isImage ?
-            {
-              backgroundImage: `url("${insideColorRaw}")`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            } :
-            {
-              background: colorOnly
-            }
-          )
+          ...(isImage ? {
+            backgroundImage: `url("${insideColorRaw}")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          } : {
+            background: colorOnly
+          })
         };
 
         let $pedalDiv;
