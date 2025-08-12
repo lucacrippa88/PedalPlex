@@ -74,11 +74,14 @@ function initCatalog(userRole) {
     let inside = "";
     let colorOnly = insideColorRaw;
 
-    // Check if inside-color is an image URL (http, https, or data URI)
-    const isImage = /^https?:\/\/|^data:image\//i.test(insideColorRaw);
+    // Detect if inside-color contains an image
+    const isImage = /^https?:\/\/|^data:image\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
+
+    // Detect "full" mode
+    const isFullImage = isImage && /\bfull\b/i.test(insideColorRaw);
 
     if (!isImage) {
-        // Existing logic for color + optional text
+        // Parse color + optional text
         const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
         if (match) {
             colorOnly = match[1];
@@ -95,14 +98,15 @@ function initCatalog(userRole) {
         transform: `rotate(${angle}deg)`,
         marginBottom: '10px',
         display: 'inline-block',
-        ...(pedal["inside-border"] && {
-            boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
+        ...(insideBorder && {
+            boxShadow: `inset 0 0 0 3px ${insideBorder}`
         }),
         ...(isImage
             ? { 
-                backgroundImage: `url("${insideColorRaw}")`,
+                backgroundImage: `url("${insideColorRaw.replace(/\bfull\b/i, '').trim()}")`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center'
+                backgroundPosition: 'center',
+                ...(isFullImage ? { borderBottom: 'none' } : {}) // Remove bottom border in full mode
               }
             : { background: colorOnly }
         )
