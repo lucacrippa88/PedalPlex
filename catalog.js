@@ -65,58 +65,60 @@ function initCatalog(userRole) {
       //   let $pedalDiv;
 
      pedals.forEach(pedal => {
-    const pedalName = pedal.name || pedal.id;
-    const pedalId = pedal._id || pedal.id;
-    const angle = 0;
+  const pedalName = pedal.name || pedal.id;
+  const pedalId = pedal._id || pedal.id;
+  const angle = 0;
 
-    const insideColorRaw = pedal["inside-color"] || "";
-    const insideBorder = pedal["inside-border"] || "";
+  const colorRaw = pedal["color"] || "";
+  const insideBorder = pedal["inside-border"] || "";
+  let inside = "";
+  let colorOnly = colorRaw;
 
-    let inside = "";
-    let colorOnly = insideColorRaw;
+  // Split colorRaw into main value + optional keyword (like "full")
+  const parts = colorRaw.trim().split(/\s+/);
+  const mainValue = parts[0] || "";
+  const extraKeyword = parts[1] ? parts[1].toLowerCase() : "";
 
-    // Break into parts (url + optional keyword)
-    const parts = insideColorRaw.trim().split(/\s+/);
-    const mainValue = parts[0] || "";
-    const extraKeyword = parts[1] ? parts[1].toLowerCase() : "";
+  // Detect if mainValue is an image URL
+  const isImage = /^https?:\/\/|^data:image\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(mainValue);
+  const isFullImage = isImage && extraKeyword === "full";
 
-    // Detect if mainValue is an image
-    const isImage = /^https?:\/\/|^data:image\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(mainValue);
-    const isFullImage = isImage && extraKeyword === "full";
-
-    if (!isImage) {
-        // Parse color + optional text for non-image values
-        const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-        if (match) {
-            colorOnly = match[1];
-            inside = match[2] || "";
-        }
+  if (!isImage) {
+    // If colorRaw is a hex color (or something else)
+    const match = colorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+    if (match) {
+      colorOnly = match[1];
+      inside = match[2] || "";
     }
+  }
 
-    const baseCss = {
-        border: `5px solid ${pedal["color"]}`, // Outer border
-        borderRadius: '10px',
-        color: pedal["font-color"],
-        width: getPedalWidth(pedal.width),
-        height: getPedalHeight(pedal.height),
-        transform: `rotate(${angle}deg)`,
-        marginBottom: '10px',
-        display: 'inline-block',
-        ...(insideBorder && {
-            boxShadow: `inset 0 0 0 3px ${insideBorder}`
-        }),
-        ...(isImage
-            ? { 
-                backgroundImage: `url("${mainValue}")`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                ...(isFullImage ? { borderBottom: 'none' } : {}) // No bottom border in full mode
-              }
-            : { background: colorOnly }
-        )
-    };
+  const baseCss = {
+    border: `5px solid ${isFullImage ? 'transparent' : mainValue}`, // Hide border in full image mode
+    borderRadius: '10px',
+    color: pedal["font-color"],
+    width: getPedalWidth(pedal.width),
+    height: getPedalHeight(pedal.height),
+    transform: `rotate(${angle}deg)`,
+    marginBottom: '10px',
+    display: 'inline-block',
+    overflow: 'hidden',
+    ...(insideBorder && !isFullImage && {
+      boxShadow: `inset 0 0 0 3px ${insideBorder}`
+    }),
+    ...(isImage
+      ? {
+          backgroundImage: `url("${mainValue}")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          paddingBottom: isFullImage ? 0 : undefined,  // Remove bottom padding if full
+          borderBottom: isFullImage ? 'none' : undefined,
+        }
+      : { background: colorOnly }
+    )
+  };
 
-    let $pedalDiv;
+  let $pedalDiv;
 
         if (pedal.type === "pedal") {
           if (inside === "full") {
