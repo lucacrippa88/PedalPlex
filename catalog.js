@@ -30,39 +30,85 @@ function initCatalog(userRole) {
       pedals.sort((a, b) => a._id - b._id);
 
 
+      // pedals.forEach(pedal => {
+
+      //   const pedalName = pedal.name || pedal.id;
+      //   const pedalId = pedal._id || pedal.id;
+      //   const angle = 0;
+
+      //   const insideColorRaw = pedal["inside-color"];
+      //   const insideBorder = pedal["inside-border"] || "";
+      //   let inside = "";
+      //   let colorOnly = insideColorRaw;
+
+      //   const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+      //   if (match) {
+      //     colorOnly = match[1];
+      //     inside = match[2] || "";
+      //   }
+
+      //   const baseCss = {
+      //     background: colorOnly,
+      //     border: `5px solid ${pedal["color"]}`, // Outer border
+      //     borderRadius: '10px',
+      //     color: pedal["font-color"],
+      //     width: getPedalWidth(pedal.width),
+      //     height: getPedalHeight(pedal.height),
+      //     transform: `rotate(${angle}deg)`,
+      //     marginBottom: '10px',
+      //     display: 'inline-block',
+      //     ...(pedal["inside-border"] && {
+      //       boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
+      //     })
+      //   };
+
+      //   let $pedalDiv;
+
       pedals.forEach(pedal => {
+    const pedalName = pedal.name || pedal.id;
+    const pedalId = pedal._id || pedal.id;
+    const angle = 0;
 
-        const pedalName = pedal.name || pedal.id;
-        const pedalId = pedal._id || pedal.id;
-        const angle = 0;
+    const insideColorRaw = pedal["inside-color"] || "";
+    const insideBorder = pedal["inside-border"] || "";
+    let inside = "";
+    let colorOnly = insideColorRaw;
 
-        const insideColorRaw = pedal["inside-color"];
-        const insideBorder = pedal["inside-border"] || "";
-        let inside = "";
-        let colorOnly = insideColorRaw;
+    // Check if inside-color is an image URL (http, https, or data URI)
+    const isImage = /^https?:\/\/|^data:image\//i.test(insideColorRaw);
 
+    if (!isImage) {
+        // Existing logic for color + optional text
         const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
         if (match) {
-          colorOnly = match[1];
-          inside = match[2] || "";
+            colorOnly = match[1];
+            inside = match[2] || "";
         }
+    }
 
-        const baseCss = {
-          background: colorOnly,
-          border: `5px solid ${pedal["color"]}`, // Outer border
-          borderRadius: '10px',
-          color: pedal["font-color"],
-          width: getPedalWidth(pedal.width),
-          height: getPedalHeight(pedal.height),
-          transform: `rotate(${angle}deg)`,
-          marginBottom: '10px',
-          display: 'inline-block',
-          ...(pedal["inside-border"] && {
+    const baseCss = {
+        border: `5px solid ${pedal["color"]}`, // Outer border
+        borderRadius: '10px',
+        color: pedal["font-color"],
+        width: getPedalWidth(pedal.width),
+        height: getPedalHeight(pedal.height),
+        transform: `rotate(${angle}deg)`,
+        marginBottom: '10px',
+        display: 'inline-block',
+        ...(pedal["inside-border"] && {
             boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
-          })
-        };
+        }),
+        ...(isImage
+            ? { 
+                backgroundImage: `url("${insideColorRaw}")`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }
+            : { background: colorOnly }
+        )
+    };
 
-        let $pedalDiv;
+    let $pedalDiv;
 
         if (pedal.type === "pedal") {
           if (inside === "full") {
