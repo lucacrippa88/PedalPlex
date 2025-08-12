@@ -64,28 +64,21 @@ function initCatalog(userRole) {
 
       //   let $pedalDiv;
 
-     pedals.forEach(pedal => {
+      pedals.forEach(pedal => {
     const pedalName = pedal.name || pedal.id;
     const pedalId = pedal._id || pedal.id;
     const angle = 0;
 
     const insideColorRaw = pedal["inside-color"] || "";
     const insideBorder = pedal["inside-border"] || "";
-
     let inside = "";
     let colorOnly = insideColorRaw;
 
-    // Break into parts (url + optional keyword)
-    const parts = insideColorRaw.trim().split(/\s+/);
-    const mainValue = parts[0] || "";
-    const extraKeyword = parts[1] ? parts[1].toLowerCase() : "";
-
-    // Detect if mainValue is an image
-    const isImage = /^https?:\/\/|^data:image\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(mainValue);
-    const isFullImage = isImage && extraKeyword === "full";
+    // Check if inside-color is an image URL (http, https, or data URI)
+    const isImage = /^https?:\/\/|^data:image\//i.test(insideColorRaw);
 
     if (!isImage) {
-        // Parse color + optional text for non-image values
+        // Existing logic for color + optional text
         const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
         if (match) {
             colorOnly = match[1];
@@ -102,15 +95,14 @@ function initCatalog(userRole) {
         transform: `rotate(${angle}deg)`,
         marginBottom: '10px',
         display: 'inline-block',
-        ...(insideBorder && {
-            boxShadow: `inset 0 0 0 3px ${insideBorder}`
+        ...(pedal["inside-border"] && {
+            boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
         }),
         ...(isImage
             ? { 
-                backgroundImage: `url("${mainValue}")`,
+                backgroundImage: `url("${insideColorRaw}")`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                ...(isFullImage ? { borderBottom: 'none' } : {}) // No bottom border in full mode
+                backgroundPosition: 'center'
               }
             : { background: colorOnly }
         )
