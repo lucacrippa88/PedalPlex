@@ -65,19 +65,33 @@ function initCatalog(userRole) {
       //   let $pedalDiv;
 
       pedals.forEach(pedal => {
-    const pedalName = pedal.name || pedal.id;
-    const pedalId = pedal._id || pedal.id;
-    const angle = 0;
+        const pedalName = pedal.name || pedal.id;
+        const pedalId = pedal._id || pedal.id;
+        const angle = 0;
 
-    const insideColorRaw = pedal["inside-color"] || "";
-    const insideBorder = pedal["inside-border"] || "";
-    let inside = "";
-    let colorOnly = insideColorRaw;
+        const insideColorRaw = pedal["inside-color"] || "";
+        const insideBorder = pedal["inside-border"] || "";
+        let inside = "";
+        let colorOnly = insideColorRaw;
 
-    // Check if inside-color is an image URL (http, https, or data URI)
-    const isImage = /^https?:\/\/|^data:image\//i.test(insideColorRaw);
+        // Check if inside-color is an image URL (http, https, or data URI)
+        // const isImage = /^https?:\/\/|^data:image\//i.test(insideColorRaw);
 
-    if (!isImage) {
+        // if (!isImage) {
+        //   // Existing logic for color + optional text
+        //   const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+        //   if (match) {
+        //     colorOnly = match[1];
+        //     inside = match[2] || "";
+        //   }
+        // }
+
+            // Check if inside-color is an image URL (http, https, data URI, or local images/)
+    const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
+
+    if (isImage) {
+        inside = "full"; // Force full mode for images
+    } else {
         // Existing logic for color + optional text
         const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
         if (match) {
@@ -86,36 +100,38 @@ function initCatalog(userRole) {
         }
     }
 
-    const baseCss = {
-        border: `5px solid ${pedal["color"]}`, // Outer border
-        borderRadius: '10px',
-        color: pedal["font-color"],
-        width: getPedalWidth(pedal.width),
-        height: getPedalHeight(pedal.height),
-        transform: `rotate(${angle}deg)`,
-        marginBottom: '10px',
-        display: 'inline-block',
-        ...(pedal["inside-border"] && {
+        const baseCss = {
+          border: `5px solid ${pedal["color"]}`, // Outer border
+          borderRadius: '10px',
+          color: pedal["font-color"],
+          width: getPedalWidth(pedal.width),
+          height: getPedalHeight(pedal.height),
+          transform: `rotate(${angle}deg)`,
+          marginBottom: '10px',
+          display: 'inline-block',
+          ...(pedal["inside-border"] && {
             boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
-        }),
-        ...(isImage
-            ? { 
-                backgroundImage: `url("${insideColorRaw}")`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }
-            : { background: colorOnly }
-        )
-    };
+          }),
+          ...(isImage ?
+            {
+              backgroundImage: `url("${insideColorRaw}")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            } :
+            {
+              background: colorOnly
+            }
+          )
+        };
 
-    let $pedalDiv;
+        let $pedalDiv;
 
         if (pedal.type === "pedal") {
           if (inside === "full") {
             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
               ...baseCss,
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + 
-                          (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` +
+                (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
             }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
           } else {
             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
@@ -128,8 +144,8 @@ function initCatalog(userRole) {
             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
               ...baseCss,
               borderRadius: '25px',
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + 
-                          (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` +
+                (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
             }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
           } else {
             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
@@ -138,7 +154,7 @@ function initCatalog(userRole) {
               boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
             }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
           }
-        }else if (pedal.type === "combo") {
+        } else if (pedal.type === "combo") {
           if (inside === "full") {
             $pedalDiv = $("<div>").addClass("pedal-catalog").css(baseCss).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
           } else {
@@ -150,22 +166,22 @@ function initCatalog(userRole) {
         } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
           if (inside === "full") {
             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-              ...baseCss,
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + 
-                          (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-            }).attr("data-pedal-name", pedal.name)
+                ...baseCss,
+                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` +
+                  (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+              }).attr("data-pedal-name", pedal.name)
               .attr("data-pedal-id", pedal._id);
           } else {
             $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-              ...baseCss,
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
-            }).attr("data-pedal-name", pedal.name)
+                ...baseCss,
+                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
+              }).attr("data-pedal-name", pedal.name)
               .attr("data-pedal-id", pedal._id);
           }
         } else if (pedal.type === "round") {
           $pedalDiv = $("<div>").addClass("pedal-catalog").css({
             ...baseCss,
-            borderRadius: "50%",  
+            borderRadius: "50%",
             width: getPedalWidth(pedal.width), // Same width and height
             height: getPedalWidth(pedal.width), // Same width and height
             boxShadow: `0 4px 8px rgba(0,0,0,0.3), inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
@@ -284,7 +300,7 @@ function createNewPedal() {
         ]
       }
     ]
-  }; 
+  };
 
   Swal.fire({
     title: 'Create New Pedal',
