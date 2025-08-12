@@ -102,9 +102,7 @@ function initCatalog(userRole) {
             ? { 
                 backgroundImage: `url("${insideColorRaw}")`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` + 
-                          (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+                backgroundPosition: 'center'
               }
             : { background: colorOnly }
         )
