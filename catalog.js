@@ -64,24 +64,28 @@ function initCatalog(userRole) {
 
       //   let $pedalDiv;
 
-      pedals.forEach(pedal => {
+     pedals.forEach(pedal => {
     const pedalName = pedal.name || pedal.id;
     const pedalId = pedal._id || pedal.id;
     const angle = 0;
 
     const insideColorRaw = pedal["inside-color"] || "";
     const insideBorder = pedal["inside-border"] || "";
+
     let inside = "";
     let colorOnly = insideColorRaw;
 
-    // Detect if inside-color contains an image
-    const isImage = /^https?:\/\/|^data:image\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
+    // Break into parts (url + optional keyword)
+    const parts = insideColorRaw.trim().split(/\s+/);
+    const mainValue = parts[0] || "";
+    const extraKeyword = parts[1] ? parts[1].toLowerCase() : "";
 
-    // Detect "full" mode
-    const isFullImage = isImage && /\bfull\b/i.test(insideColorRaw);
+    // Detect if mainValue is an image
+    const isImage = /^https?:\/\/|^data:image\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(mainValue);
+    const isFullImage = isImage && extraKeyword === "full";
 
     if (!isImage) {
-        // Parse color + optional text
+        // Parse color + optional text for non-image values
         const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
         if (match) {
             colorOnly = match[1];
@@ -103,10 +107,10 @@ function initCatalog(userRole) {
         }),
         ...(isImage
             ? { 
-                backgroundImage: `url("${insideColorRaw.replace(/\bfull\b/i, '').trim()}")`,
+                backgroundImage: `url("${mainValue}")`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                ...(isFullImage ? { borderBottom: 'none' } : {}) // Remove bottom border in full mode
+                ...(isFullImage ? { borderBottom: 'none' } : {}) // No bottom border in full mode
               }
             : { background: colorOnly }
         )
