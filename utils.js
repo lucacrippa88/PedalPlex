@@ -222,7 +222,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 // Determine knob color and border based on control-specific override or pedal defaults
                 const knobColor = control["knob-color"] ?? pedal["knobs-color"];
                 const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
-                const knobIndicator = control["knobs-indicator"] ?? pedal["knobs-indicator"];
+                const knobIndicator = control["knob-indicator"] ?? pedal["knobs-indicator"];
 
                 const knob = $("<div>")
                     .addClass(isSmall ? "smallknob" : "knob")
@@ -497,6 +497,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 const $wrapper = $("<div>").addClass("lcd-wrapper").append($label, $lcd);
 
                 if (control.position === "higher") { $lcd.css("margin-top", "-30px"); $row.append($wrapper); }
+                else if (control.position === "high") { $lcd.css("margin-top", "-15px"); $row.append($wrapper); }
                 else if (control.position === "lower") { $lcd.css("margin-top", "10px"); $row.append($wrapper); } 
                 else { $row.append($wrapper); }
 
