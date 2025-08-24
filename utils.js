@@ -94,6 +94,10 @@ function getPedalsInPreset(songPresetArray) {
         angleRange = -180;
         angleOffset = 30;
         break;
+    case "half-shift-inverted":
+        angleRange = 180;
+        angleOffset = 150;
+        break;
     case "quarter":
         angleRange = -90;
         angleOffset = 30;
