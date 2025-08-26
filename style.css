@@ -719,7 +719,10 @@ input[type="range"].horizontal {
   font-family: arista;
   src: url("fonts/Arista-Pro-Fat-trial.ttf");
 }
-
+@font-face {
+  font-family: monsters;
+  src: url("fonts/MonstersHeart-Regular.ttf");
+}
 
 
 
