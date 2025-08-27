@@ -723,6 +723,12 @@ input[type="range"].horizontal {
   font-family: monsters;
   src: url("fonts/MonstersHeart-Regular.ttf");
 }
+@font-face {
+  font-family: magneto;
+  src: url("fonts/MAGNETOB.TTF");
+}
+
+
 
 
 
