@@ -727,7 +727,10 @@ input[type="range"].horizontal {
   font-family: magneto;
   src: url("fonts/MAGNETOB.TTF");
 }
-
+@font-face {
+  font-family: mistress;
+  src: url("fonts/knuckled.ttf");
+}
 
 
 
