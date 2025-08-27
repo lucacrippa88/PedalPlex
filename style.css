@@ -731,7 +731,10 @@ input[type="range"].horizontal {
   font-family: mistress;
   src: url("fonts/knuckled.ttf");
 }
-
+@font-face {
+  font-family: bolton;
+  src: url("fonts/Bolton.ttf");
+}
 
 
 
