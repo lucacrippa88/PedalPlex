@@ -231,18 +231,39 @@ async function renderFullPedalboard() {
         const widthValue = parseFloat(getPedalWidth(pedal.width));
 
         // Base CSS
-        const baseCss = {
-          background: colorOnly,
+        // const baseCss = {
+        //   background: colorOnly,
+        //   border: `5px solid ${pedal["color"]}`, // Outer border
+        //   borderRadius: '10px',
+        //   color: pedal["font-color"],
+        //   width: getPedalWidth(pedal.width),
+        //   height: getPedalHeight(pedal.height),
+        //   transform: `rotate(${angle}deg)`,
+        //   display: 'inline-block',
+        //   transformOrigin: 'center center',
+        //   ...(pedal["inside-border"] && {
+        //     boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
+        //   })
+        // };
+
+                const baseCss = {
           border: `5px solid ${pedal["color"]}`, // Outer border
           borderRadius: '10px',
           color: pedal["font-color"],
           width: getPedalWidth(pedal.width),
           height: getPedalHeight(pedal.height),
           transform: `rotate(${angle}deg)`,
+          marginBottom: '10px',
           display: 'inline-block',
-          transformOrigin: 'center center',
           ...(pedal["inside-border"] && {
             boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
+          }),
+          ...(isImage ? {
+            backgroundImage: `url("${insideColorRaw}")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          } : {
+            background: colorOnly
           })
         };
 
