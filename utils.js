@@ -759,7 +759,6 @@ function renderPedalControls(pedal, $pedalDiv) {
 // window.setupEditPedalHandler = setupEditPedalHandler;
 
 
-
 // Function to create a pedal HTML div from a pedal JSON object
 function createPedalDiv(pedal) {
     const div = document.createElement("div");
@@ -849,7 +848,7 @@ function createPedalDiv(pedal) {
     const btn = document.createElement("button");
     btn.className = "edit-btn";
     btn.title = "Edit pedal JSON";
-    btn.dataset.pedal = JSON.stringify(pedal); // store pedal data for edit
+    $(btn).data("pedal", pedal); // store JS object directly
     btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
                         <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"></path>
                     </svg>`;
@@ -861,7 +860,7 @@ function createPedalDiv(pedal) {
 // Main handler
 function setupEditPedalHandler(pedals) {
     $(document).on("click", ".edit-btn", function () {
-        const pedal = JSON.parse($(this).attr("data-pedal"));
+        const pedal = $(this).data("pedal"); // <-- fixed, direct JS object
         if (!pedal) return console.error("Pedal data not found!");
 
         const pedalCopy = { ...pedal };
@@ -987,3 +986,4 @@ function setupEditPedalHandler(pedals) {
 }
 
 window.setupEditPedalHandler = setupEditPedalHandler;
+
