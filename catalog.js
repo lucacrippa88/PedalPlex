@@ -259,6 +259,8 @@ function createNewPedal() {
     input: 'textarea',
     inputLabel: 'Paste or edit JSON below',
     inputValue: JSON.stringify(samplePedal, null, 2),
+    allowOutsideClick: false,
+    allowEscapeKey: false,
     inputAttributes: {
       'aria-label': 'Editable JSON',
       style: 'height:400px;font-family:monospace;font-size:12px;'
