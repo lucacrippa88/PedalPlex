@@ -283,26 +283,37 @@ function createNewPedal() {
           return false;
         }
 
-        // Collect all "label" values
+        // Collect all "label" values recursively
         const labels = [];
         function collectLabels(obj) {
-          if (obj && typeof obj === "object") {
+          if (Array.isArray(obj)) {
+            obj.forEach(collectLabels);
+          } else if (obj && typeof obj === "object") {
             for (const key in obj) {
               if (key === "label") {
                 labels.push(obj[key]);
               }
               collectLabels(obj[key]);
             }
-          } else if (Array.isArray(obj)) {
-            obj.forEach(collectLabels);
           }
         }
         collectLabels(parsed);
 
-        // Check for duplicates
-        const duplicates = labels.filter((val, idx, arr) => arr.indexOf(val) !== idx);
-        if (duplicates.length > 0) {
-          Swal.showValidationMessage(`Error: Duplicate label(s) found → ${[...new Set(duplicates)].join(", ")}`);
+        // Check for duplicates (case-sensitive by default)
+        const seen = new Set();
+        const duplicates = new Set();
+        labels.forEach(label => {
+          if (seen.has(label)) {
+            duplicates.add(label);
+          } else {
+            seen.add(label);
+          }
+        });
+
+        if (duplicates.size > 0) {
+          Swal.showValidationMessage(
+            `Error: Duplicate label(s) found → ${Array.from(duplicates).join(", ")}`
+          );
           return false;
         }
 
