@@ -30,39 +30,6 @@ function initCatalog(userRole) {
       pedals.sort((a, b) => a._id - b._id);
 
 
-      // pedals.forEach(pedal => {
-
-      //   const pedalName = pedal.name || pedal.id;
-      //   const pedalId = pedal._id || pedal.id;
-      //   const angle = 0;
-
-      //   const insideColorRaw = pedal["inside-color"];
-      //   const insideBorder = pedal["inside-border"] || "";
-      //   let inside = "";
-      //   let colorOnly = insideColorRaw;
-
-      //   const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-      //   if (match) {
-      //     colorOnly = match[1];
-      //     inside = match[2] || "";
-      //   }
-
-      //   const baseCss = {
-      //     background: colorOnly,
-      //     border: `5px solid ${pedal["color"]}`, // Outer border
-      //     borderRadius: '10px',
-      //     color: pedal["font-color"],
-      //     width: getPedalWidth(pedal.width),
-      //     height: getPedalHeight(pedal.height),
-      //     transform: `rotate(${angle}deg)`,
-      //     marginBottom: '10px',
-      //     display: 'inline-block',
-      //     ...(pedal["inside-border"] && {
-      //       boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
-      //     })
-      //   };
-
-      //   let $pedalDiv;
 
       pedals.forEach(pedal => {
         const pedalName = pedal.name || pedal.id;
@@ -167,8 +134,8 @@ function initCatalog(userRole) {
           $pedalDiv = $("<div>").addClass("pedal-catalog").css({
             ...baseCss,
             borderRadius: "50%",
-            width: getPedalWidth(pedal.width), // Same width and height
-            height: getPedalWidth(pedal.width), // Same width and height
+            width: getPedalWidth(pedal.width), // Same width and height for round pedals
+            height: getPedalWidth(pedal.width), // Same width and height for round pedals
             boxShadow: `0 4px 8px rgba(0,0,0,0.3), inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
           }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         }
@@ -190,7 +157,7 @@ function initCatalog(userRole) {
           $pedalDiv.append($nameDiv);
         }
 
-        // Edit icon button (just create the button without the .on("click") here)
+        // Edit icon button
         const $editBtn = $("<button>")
           .addClass("edit-btn")
           .attr("title", "Edit pedal JSON")

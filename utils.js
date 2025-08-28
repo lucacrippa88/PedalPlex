@@ -553,6 +553,9 @@ function renderPedalControls(pedal, $pedalDiv) {
 
 function setupEditPedalHandler(pedals) {
     $(document).on("click", ".edit-btn", function () {
+        
+        console.time("editClick");
+        
         const pedal = $(this).data("pedal");
 
         if (!pedal) {
@@ -564,6 +567,8 @@ function setupEditPedalHandler(pedals) {
         delete pedalCopy._rev;
 
         const pedalJson = JSON.stringify(pedalCopy, null, 2);
+
+        console.timeEnd("editClick");
 
         Swal.fire({
             title: `Edit ${pedal._id}`,
