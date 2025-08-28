@@ -761,24 +761,57 @@ function renderPedalControls(pedal, $pedalDiv) {
 
 
 
+function renderPedalDiv(pedal, pedalDiv) {
+    if (!pedalDiv) return;
+
+    // Update basic styles
+    pedalDiv.style.border = pedal.border || pedalDiv.style.border;
+    pedalDiv.style.background = pedal.background || pedalDiv.style.background;
+    pedalDiv.style.color = pedal.color || pedalDiv.style.color;
+    pedalDiv.style.transform = `rotate(${pedal.rotation || 0}deg)`;
+
+    // Update pedal name
+    const nameDiv = pedalDiv.querySelector('.pedal-name');
+    if (nameDiv) {
+        nameDiv.innerHTML = pedal.nameHtml || pedal.name;
+    }
+
+    // Update sliders
+    if (pedal.sliders && Array.isArray(pedal.sliders)) {
+        const sliderWrappers = pedalDiv.querySelectorAll('.slider-wrapper-vertical');
+        sliderWrappers.forEach((wrapper, i) => {
+            const input = wrapper.querySelector('input[type="range"]');
+            const label = wrapper.querySelector('.slider-label');
+            if (input && pedal.sliders[i] !== undefined) input.value = pedal.sliders[i];
+            if (label && pedal.sliders[i] !== undefined) label.textContent = pedal.sliders[i];
+        });
+    }
+
+    // Update LEDs or other elements if present
+    if (pedal.leds && Array.isArray(pedal.leds)) {
+        const ledDivs = pedalDiv.querySelectorAll('.led');
+        ledDivs.forEach((led, i) => {
+            if (pedal.leds[i] !== undefined) {
+                led.style.backgroundColor = pedal.leds[i].color || led.style.backgroundColor;
+                // You can update boxShadow or other LED styles here if needed
+            }
+        });
+    }
+}
 
 function setupEditPedalHandler(pedals) {
     $(document).on("click", ".edit-btn", function () {
         const pedal = $(this).data("pedal");
-        if (!pedal) {
-            console.error("Pedal data not found!");
-            return;
-        }
+        if (!pedal) return console.error("Pedal data not found!");
 
         const pedalCopy = { ...pedal };
         delete pedalCopy._rev;
-        const pedalJson = JSON.stringify(pedalCopy, null, 2);
 
         Swal.fire({
             title: `Edit ${pedal._id}`,
             input: 'textarea',
             width: 800,
-            inputValue: pedalJson,
+            inputValue: JSON.stringify(pedalCopy, null, 2),
             inputAttributes: {
                 'aria-label': 'Editable JSON',
                 style: 'height:400px;font-family:monospace;font-size:12px;'
@@ -802,13 +835,13 @@ function setupEditPedalHandler(pedals) {
                 try {
                     const parsed = JSON.parse(jsonText);
 
-                    // Check for forbidden logo style
+                    // Check forbidden logo style
                     if (parsed.logo && /position\s*:\s*relative/i.test(parsed.logo)) {
                         Swal.showValidationMessage('Error: "logo" contains forbidden "position: relative"');
                         return false;
                     }
 
-                    // Collect all "label" values recursively
+                    // Check duplicate labels
                     const labels = [];
                     (function collectLabels(obj) {
                         if (Array.isArray(obj)) obj.forEach(collectLabels);
@@ -820,7 +853,6 @@ function setupEditPedalHandler(pedals) {
                         }
                     })(parsed);
 
-                    // Detect duplicates
                     const seen = new Set();
                     const duplicates = new Set();
                     labels.forEach(label => {
@@ -861,24 +893,15 @@ function setupEditPedalHandler(pedals) {
                 .then(data => {
                     Swal.hideLoading();
                     if (data.success) {
-                        // Update pedal DOM (name + any other relevant info)
-                        const nameDiv = pedalDiv.querySelector('.pedal-name');
-                        if (nameDiv) nameDiv.innerHTML = updated.name || pedal.name;
-
-                        Swal.fire({
-                            title: 'Gear saved!',
-                            icon: 'success',
-                            confirmButtonText: 'OK',
-                            customClass: { confirmButton: 'bx--btn bx--btn--primary' }
-                        });
+                        // Re-render the pedal div with updated JSON
+                        renderPedalDiv(updated, pedalDiv);
+                        Swal.fire('Saved!', 'Gear updated successfully', 'success');
                     } else {
-                        console.error("Update failed response:", data);
                         Swal.fire('Error', data.error || 'Failed to save', 'error');
                     }
                 })
                 .catch(err => {
                     Swal.hideLoading();
-                    console.error("Update fetch error:", err);
                     Swal.fire('Error', err.message || 'Failed to save', 'error');
                 });
 
@@ -915,27 +938,13 @@ function setupEditPedalHandler(pedals) {
                             // Remove from DOM
                             pedalDiv.remove();
 
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'The gear has been removed.',
-                                icon: 'success',
-                                confirmButtonText: 'OK',
-                                customClass: { confirmButton: 'bx--btn bx--btn--primary' }
-                            });
+                            Swal.fire('Deleted!', 'Gear removed successfully', 'success');
                         } else {
-                            console.error("Delete failed response:", data);
-                            Swal.fire({
-                                title: 'Error',
-                                text: data.error || 'Failed to delete',
-                                icon: 'error',
-                                confirmButtonText: 'OK',
-                                customClass: { confirmButton: 'bx--btn bx--btn--primary' }
-                            });
+                            Swal.fire('Error', data.error || 'Failed to delete', 'error');
                         }
                     })
                     .catch(err => {
                         Swal.hideLoading();
-                        console.error("Delete fetch error:", err);
                         Swal.fire('Error', err.message || 'Failed to delete', 'error');
                     });
                 });
@@ -945,4 +954,5 @@ function setupEditPedalHandler(pedals) {
 }
 
 window.setupEditPedalHandler = setupEditPedalHandler;
+
 
