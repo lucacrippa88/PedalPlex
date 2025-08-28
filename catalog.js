@@ -283,7 +283,7 @@ function createNewPedal() {
           return false;
         }
 
-        // Collect all "label" values recursively
+        // Collect ALL "label" values anywhere in the JSON
         const labels = [];
         function collectLabels(obj) {
           if (Array.isArray(obj)) {
@@ -299,14 +299,15 @@ function createNewPedal() {
         }
         collectLabels(parsed);
 
-        // Check for duplicates (case-sensitive by default)
+        // Detect duplicates across the ENTIRE JSON
         const seen = new Set();
         const duplicates = new Set();
         labels.forEach(label => {
-          if (seen.has(label)) {
-            duplicates.add(label);
+          const key = String(label).trim(); // normalize whitespace
+          if (seen.has(key)) {
+            duplicates.add(key);
           } else {
-            seen.add(label);
+            seen.add(key);
           }
         });
 
