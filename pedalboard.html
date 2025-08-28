@@ -31,6 +31,12 @@
       <br /><br /><br /><br />
 
       <div id="pedalboard"></div>
+
+      <br>
+      Ready to work with you pedalboard? 
+      <button id="startPresetBtn" onclick="window.location.href='preset'" class="bx--btn bx--btn--secondary" type="button" style="display: none;">
+        Start creating presets!
+      </button>
     <!-- </div> -->
 
     <!-- Load scripts after content is visible -->
@@ -87,6 +93,32 @@
     });
   });
   </script>
+
+
+
+<script>
+function updateStartPresetButtonVisibility() {
+  const pedalboardCount = $('#pedalboardSelect option').length;
+  if (pedalboardCount > 0) {
+    $('#startPresetBtn').show();
+  } else {
+    $('#startPresetBtn').hide();
+  }
+}
+
+// Call this function after pedalboards are populated
+$(document).ready(function() {
+  // Example: if pedalboards are populated after AJAX
+  if (typeof initPedalboard === 'function') {
+    initPedalboard();
+    updateStartPresetButtonVisibility();
+  }
+
+  // Also update if pedalboards are dynamically added later
+  $('#pedalboardSelect').on('change', updateStartPresetButtonVisibility);
+});
+</script>
+
 
 
 </body>
