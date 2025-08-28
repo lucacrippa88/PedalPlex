@@ -551,327 +551,31 @@ function renderPedalControls(pedal, $pedalDiv) {
 
 
 
-// function setupEditPedalHandler(pedals) {
-//     $(document).on("click", ".edit-btn", function () {
-        
-//         const pedal = $(this).data("pedal");
-
-//         if (!pedal) {
-//             console.error("Pedal data not found!");
-//             return;
-//         }
-
-//         const pedalCopy = { ...pedal };
-//         delete pedalCopy._rev;
-
-//         const pedalJson = JSON.stringify(pedalCopy, null, 2);
-
-
-//         Swal.fire({
-//             title: `Edit ${pedal._id}`,
-//             input: 'textarea',
-//             width: 800,
-//             inputValue: pedalJson,
-//             inputAttributes: {
-//                 'aria-label': 'Editable JSON',
-//                 style: 'height:400px;font-family:monospace;font-size:12px;'
-//             },
-//             showCancelButton: true,
-//             showDenyButton: true,
-//             confirmButtonText: 'Save',
-//             denyButtonText: 'Delete',
-//             cancelButtonText: 'Cancel',
-//             customClass: {
-//                 confirmButton: 'bx--btn bx--btn--primary',
-//                 denyButton: 'bx--btn bx--btn--danger',
-//                 cancelButton: 'bx--btn bx--btn--secondary'
-//             },
-//             preConfirm: (jsonText) => {
-//                 if (!jsonText) {
-//                     Swal.showValidationMessage('JSON is required');
-//                     return false;
-//                 }
-
-//                 try {
-//                     const parsed = JSON.parse(jsonText);
-
-//                     // Check for "position: relative" in logo
-//                     if (parsed.logo && /position\s*:\s*relative/i.test(parsed.logo)) {
-//                     Swal.showValidationMessage('Error: "logo" contains forbidden "position: relative"');
-//                     return false;
-//                     }
-
-//                     // Collect ALL "label" values anywhere in the JSON
-//                     const labels = [];
-
-//                     function collectLabels(obj) {
-//                     if (Array.isArray(obj)) {
-//                         obj.forEach(collectLabels); // recurse into array elements
-//                     } else if (obj && typeof obj === 'object') {
-//                         for (const key in obj) {
-//                         if (key === 'label') {
-//                             labels.push(obj[key]);
-//                         }
-//                         // recurse into every property, regardless if it's array or object
-//                         if (obj[key] !== null && obj[key] !== undefined) {
-//                             collectLabels(obj[key]);
-//                         }
-//                         }
-//                     }
-//                     }
-
-//                     collectLabels(parsed);
-
-//                     // Detect duplicates across the ENTIRE JSON
-//                     const seen = new Set();
-//                     const duplicates = new Set();
-//                     labels.forEach(label => {
-//                     const key = String(label).trim(); // normalize whitespace
-//                     if (seen.has(key)) {
-//                         duplicates.add(key);
-//                     } else {
-//                         seen.add(key);
-//                     }
-//                     });
-
-//                     if (duplicates.size > 0) {
-//                     Swal.showValidationMessage(
-//                         `Error: Duplicate label(s) found → ${Array.from(duplicates).join(", ")}`
-//                     );
-//                     return false;
-//                     }
-
-//                     return parsed;
-
-//                 } catch (e) {
-//                     Swal.showValidationMessage('Invalid JSON format');
-//                     return false;
-//                 }
-//             }
-//         }).then((result) => {
-//             if (result.isConfirmed) {
-//                 const updated = result.value;
-//                 updated._rev = pedal._rev;
-
-//                 const revx = pedals.findIndex(p => p._rev === pedal._rev);
-//                 if (revx !== -1) pedals[revx] = updated;
-
-//                 Swal.showLoading();
-
-//                 fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_CATALOG.php', {
-//                     method: 'POST',
-//                     headers: { 'Content-Type': 'application/json' },
-//                     body: JSON.stringify(updated)
-//                 })
-//                 .then(res => res.json())
-//                 .then(data => {
-//                     Swal.hideLoading();
-//                     if (data.success) {
-//                         Swal.fire({
-//                             title: 'Gear saved!',
-//                             icon: 'success',
-//                             confirmButtonText: 'OK',
-//                             customClass: { confirmButton: 'bx--btn bx--btn--primary' }
-//                         }).then(() => location.reload());
-//                     } else {
-//                         console.error("Update failed response:", data);
-//                         Swal.fire('Error', data.error || 'Failed to save', 'error');
-//                     }
-//                 })
-//                 .catch(err => {
-//                     Swal.hideLoading();
-//                     console.error("Update fetch error:", err);
-//                     Swal.fire('Error', err.message || 'Failed to save', 'error');
-//                 });
-
-//             } else if (result.isDenied) {
-//                 Swal.fire({
-//                     title: 'Are you sure?',
-//                     text: `This will permanently delete "${pedal._id}"`,
-//                     icon: 'warning',
-//                     showCancelButton: true,
-//                     confirmButtonText: 'Yes, delete it!',
-//                     cancelButtonText: 'No, cancel!',
-//                     customClass: {
-//                         confirmButton: 'bx--btn bx--btn--danger',
-//                         cancelButton: 'bx--btn bx--btn--secondary'
-//                     }
-//                 }).then((deleteConfirm) => {
-//                     if (deleteConfirm.isConfirmed) {
-//                         Swal.showLoading();
-
-//                         fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FROM_CATALOG.php', {
-//                             method: 'POST',
-//                             headers: { 'Content-Type': 'application/json' },
-//                             body: JSON.stringify({
-//                                 _id: pedal._id,
-//                                 _rev: pedal._rev
-//                             })
-//                         })
-//                         .then(res => res.text())
-//                         .then(text => {
-//                             console.log("Raw delete response:", text);
-
-//                             let data;
-//                             try {
-//                                 data = JSON.parse(text);
-//                             } catch (err) {
-//                                 console.error("Failed to parse delete response JSON:", err);
-//                                 throw new Error("Invalid JSON response from server.");
-//                             }
-
-//                             Swal.hideLoading();
-//                             if (data.success) {
-//                             Swal.fire({
-//                                 title: 'Deleted!',
-//                                 text: 'The gear has been removed.',
-//                                 icon: 'success',
-//                                 confirmButtonText: 'OK',
-//                                 customClass: {
-//                                 confirmButton: 'bx--btn bx--btn--primary'
-//                                 }
-//                             }).then(() => location.reload());
-//                             } else {
-//                             console.error("Delete failed response:", data);
-//                             Swal.fire({
-//                                 title: 'Error',
-//                                 text: data.error || 'Failed to delete',
-//                                 icon: 'error',
-//                                 confirmButtonText: 'OK',
-//                                 customClass: {
-//                                 confirmButton: 'bx--btn bx--btn--primary'
-//                                 }
-//                             });
-//                             }
-//                         })
-//                         .catch(err => {
-//                             console.error("Delete fetch error:", err);
-//                             Swal.hideLoading();
-//                             Swal.fire('Error', err.message || 'Failed to delete', 'error');
-//                         });
-//                     }
-//                 });
-//             }
-//         });
-//     });
-// }
-
-// window.setupEditPedalHandler = setupEditPedalHandler;
-
-
-// Function to create a pedal HTML div from a pedal JSON object
-function createPedalDiv(pedal) {
-    const div = document.createElement("div");
-    div.className = "pedal-catalog";
-    div.setAttribute("data-pedal-id", pedal._id);
-    div.setAttribute("data-pedal-name", pedal.nameHtml || pedal.name);
-    div.style.border = pedal.border || "5px solid #e0bb54";
-    div.style.borderRadius = "10px";
-    div.style.color = pedal.color || "#000";
-    div.style.width = "190px";
-    div.style.height = "160px";
-    div.style.transform = `rotate(${pedal.rotation || 0}deg)`;
-    div.style.marginBottom = "10px";
-    div.style.display = "inline-block";
-    div.style.background = pedal.background || "#e0bb54";
-    div.style.boxShadow = pedal.boxShadow || "rgba(0,0,0,0.3) 0px 4px 8px, rgb(224,187,84) 0px -36px 0px 0px inset";
-
-    // Row container for sliders and LEDs
-    const rowDiv = document.createElement("div");
-    rowDiv.className = "row";
-
-    // Add LEDs
-    if (pedal.leds && Array.isArray(pedal.leds)) {
-        pedal.leds.forEach(ledData => {
-            const ledContainer = document.createElement("div");
-            ledContainer.style.position = "absolute";
-            ledContainer.style.right = ledData.right || "12px";
-
-            const led = document.createElement("div");
-            led.className = "led";
-            led.style.cursor = "pointer";
-            led.style.backgroundColor = ledData.color || "#000";
-            led.style.boxShadow = ledData.boxShadow || "rgba(255,255,255,0.3) -2px -2px 2px inset, rgba(0,0,0,0.6) 1px 1px 2px inset";
-
-            ledContainer.appendChild(led);
-            rowDiv.appendChild(ledContainer);
-        });
-    }
-
-    // Add sliders
-    if (pedal.sliders && Array.isArray(pedal.sliders)) {
-        pedal.sliders.forEach(slider => {
-            const sliderWrapper = document.createElement("div");
-            sliderWrapper.className = "slider-wrapper-vertical";
-            sliderWrapper.style.display = "flex";
-            sliderWrapper.style.flexDirection = "column";
-            sliderWrapper.style.alignItems = "center";
-            sliderWrapper.style.margin = "0px -12px";
-
-            const label = document.createElement("div");
-            label.className = "slider-label";
-            label.textContent = slider.label;
-
-            const input = document.createElement("input");
-            input.type = "range";
-            input.min = slider.min || -15;
-            input.max = slider.max || 15;
-            input.value = slider.value || 0;
-            input.className = "vertical";
-            input.setAttribute("data-control-label", slider.label);
-
-            sliderWrapper.appendChild(label);
-            sliderWrapper.appendChild(input);
-            rowDiv.appendChild(sliderWrapper);
-        });
-    }
-
-    div.appendChild(rowDiv);
-
-    // Pedal name div
-    const nameDiv = document.createElement("div");
-    nameDiv.className = "pedal-name";
-    nameDiv.style.fontFamily = "Gill Sans, sans-serif";
-    nameDiv.style.fontWeight = "600";
-    nameDiv.style.fontSize = "18px";
-    nameDiv.style.position = "absolute";
-    nameDiv.style.bottom = "5px";
-    nameDiv.style.color = pedal.color || "#000";
-    nameDiv.style.padding = "2px";
-    nameDiv.style.borderRadius = "4px";
-    nameDiv.style.boxShadow = "0 0 0 1px black";
-    nameDiv.innerHTML = pedal.nameHtml || pedal.name;
-
-    div.appendChild(nameDiv);
-
-    // Edit button
-    const btn = document.createElement("button");
-    btn.className = "edit-btn";
-    btn.title = "Edit pedal JSON";
-    $(btn).data("pedal", pedal); // store JS object directly
-    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
-                        <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"></path>
-                    </svg>`;
-    div.appendChild(btn);
-
-    return div;
-}
-
-// Main handler
 function setupEditPedalHandler(pedals) {
     $(document).on("click", ".edit-btn", function () {
-        const pedal = $(this).data("pedal"); // <-- fixed, direct JS object
-        if (!pedal) return console.error("Pedal data not found!");
+        
+        const pedal = $(this).data("pedal");
+
+        if (!pedal) {
+            console.error("Pedal data not found!");
+            return;
+        }
 
         const pedalCopy = { ...pedal };
         delete pedalCopy._rev;
+
+        const pedalJson = JSON.stringify(pedalCopy, null, 2);
+
 
         Swal.fire({
             title: `Edit ${pedal._id}`,
             input: 'textarea',
             width: 800,
-            inputValue: JSON.stringify(pedalCopy, null, 2),
-            inputAttributes: { 'aria-label': 'Editable JSON', style: 'height:400px;font-family:monospace;font-size:12px;' },
+            inputValue: pedalJson,
+            inputAttributes: {
+                'aria-label': 'Editable JSON',
+                style: 'height:400px;font-family:monospace;font-size:12px;'
+            },
             showCancelButton: true,
             showDenyButton: true,
             confirmButtonText: 'Save',
@@ -883,55 +587,77 @@ function setupEditPedalHandler(pedals) {
                 cancelButton: 'bx--btn bx--btn--secondary'
             },
             preConfirm: (jsonText) => {
-                if (!jsonText) { Swal.showValidationMessage('JSON is required'); return false; }
+                if (!jsonText) {
+                    Swal.showValidationMessage('JSON is required');
+                    return false;
+                }
+
                 try {
                     const parsed = JSON.parse(jsonText);
 
-                    // Forbidden logo style
+                    // Check for "position: relative" in logo
                     if (parsed.logo && /position\s*:\s*relative/i.test(parsed.logo)) {
-                        Swal.showValidationMessage('Error: "logo" contains forbidden "position: relative"');
-                        return false;
+                    Swal.showValidationMessage('Error: "logo" contains forbidden "position: relative"');
+                    return false;
                     }
 
-                    // Check duplicate labels
+                    // Collect ALL "label" values anywhere in the JSON
                     const labels = [];
-                    (function collectLabels(obj) {
-                        if (Array.isArray(obj)) obj.forEach(collectLabels);
-                        else if (obj && typeof obj === 'object') {
-                            for (const key in obj) {
-                                if (key === 'label') labels.push(obj[key]);
-                                if (obj[key] !== null && obj[key] !== undefined) collectLabels(obj[key]);
-                            }
-                        }
-                    })(parsed);
 
-                    const seen = new Set(), duplicates = new Set();
+                    function collectLabels(obj) {
+                    if (Array.isArray(obj)) {
+                        obj.forEach(collectLabels); // recurse into array elements
+                    } else if (obj && typeof obj === 'object') {
+                        for (const key in obj) {
+                        if (key === 'label') {
+                            labels.push(obj[key]);
+                        }
+                        // recurse into every property, regardless if it's array or object
+                        if (obj[key] !== null && obj[key] !== undefined) {
+                            collectLabels(obj[key]);
+                        }
+                        }
+                    }
+                    }
+
+                    collectLabels(parsed);
+
+                    // Detect duplicates across the ENTIRE JSON
+                    const seen = new Set();
+                    const duplicates = new Set();
                     labels.forEach(label => {
-                        const key = String(label).trim();
-                        if (seen.has(key)) duplicates.add(key); else seen.add(key);
+                    const key = String(label).trim(); // normalize whitespace
+                    if (seen.has(key)) {
+                        duplicates.add(key);
+                    } else {
+                        seen.add(key);
+                    }
                     });
+
                     if (duplicates.size > 0) {
-                        Swal.showValidationMessage(`Error: Duplicate label(s) found → ${Array.from(duplicates).join(", ")}`);
-                        return false;
+                    Swal.showValidationMessage(
+                        `Error: Duplicate label(s) found → ${Array.from(duplicates).join(", ")}`
+                    );
+                    return false;
                     }
 
                     return parsed;
+
                 } catch (e) {
-                    Swal.showValidationMessage('Invalid JSON format'); return false;
+                    Swal.showValidationMessage('Invalid JSON format');
+                    return false;
                 }
             }
         }).then((result) => {
-            const pedalDivOld = document.querySelector(`.pedal-catalog[data-pedal-id="${pedal._id}"]`);
-            if (!pedalDivOld) return;
-
             if (result.isConfirmed) {
                 const updated = result.value;
                 updated._rev = pedal._rev;
 
-                const idx = pedals.findIndex(p => p._rev === pedal._rev);
-                if (idx !== -1) pedals[idx] = updated;
+                const revx = pedals.findIndex(p => p._rev === pedal._rev);
+                if (revx !== -1) pedals[revx] = updated;
 
                 Swal.showLoading();
+
                 fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_CATALOG.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -941,15 +667,22 @@ function setupEditPedalHandler(pedals) {
                 .then(data => {
                     Swal.hideLoading();
                     if (data.success) {
-                        // Replace old div with new one
-                        const newDiv = createPedalDiv(updated);
-                        pedalDivOld.replaceWith(newDiv);
-                        Swal.fire('Saved!', 'Gear updated successfully', 'success');
+                        Swal.fire({
+                            title: 'Gear saved!',
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                            customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+                        }).then(() => location.reload());
                     } else {
+                        console.error("Update failed response:", data);
                         Swal.fire('Error', data.error || 'Failed to save', 'error');
                     }
                 })
-                .catch(err => { Swal.hideLoading(); Swal.fire('Error', err.message || 'Failed to save', 'error'); });
+                .catch(err => {
+                    Swal.hideLoading();
+                    console.error("Update fetch error:", err);
+                    Swal.fire('Error', err.message || 'Failed to save', 'error');
+                });
 
             } else if (result.isDenied) {
                 Swal.fire({
@@ -959,26 +692,64 @@ function setupEditPedalHandler(pedals) {
                     showCancelButton: true,
                     confirmButtonText: 'Yes, delete it!',
                     cancelButtonText: 'No, cancel!',
-                    customClass: { confirmButton: 'bx--btn bx--btn--danger', cancelButton: 'bx--btn bx--btn--secondary' }
-                }).then((delConfirm) => {
-                    if (!delConfirm.isConfirmed) return;
-                    Swal.showLoading();
-                    fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FROM_CATALOG.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ _id: pedal._id, _rev: pedal._rev })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        Swal.hideLoading();
-                        if (data.success) {
-                            const idx = pedals.findIndex(p => p._id === pedal._id);
-                            if (idx !== -1) pedals.splice(idx, 1);
-                            pedalDivOld.remove();
-                            Swal.fire('Deleted!', 'Gear removed successfully', 'success');
-                        } else Swal.fire('Error', data.error || 'Failed to delete', 'error');
-                    })
-                    .catch(err => { Swal.hideLoading(); Swal.fire('Error', err.message || 'Failed to delete', 'error'); });
+                    customClass: {
+                        confirmButton: 'bx--btn bx--btn--danger',
+                        cancelButton: 'bx--btn bx--btn--secondary'
+                    }
+                }).then((deleteConfirm) => {
+                    if (deleteConfirm.isConfirmed) {
+                        Swal.showLoading();
+
+                        fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FROM_CATALOG.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                _id: pedal._id,
+                                _rev: pedal._rev
+                            })
+                        })
+                        .then(res => res.text())
+                        .then(text => {
+                            console.log("Raw delete response:", text);
+
+                            let data;
+                            try {
+                                data = JSON.parse(text);
+                            } catch (err) {
+                                console.error("Failed to parse delete response JSON:", err);
+                                throw new Error("Invalid JSON response from server.");
+                            }
+
+                            Swal.hideLoading();
+                            if (data.success) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'The gear has been removed.',
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                confirmButton: 'bx--btn bx--btn--primary'
+                                }
+                            }).then(() => location.reload());
+                            } else {
+                            console.error("Delete failed response:", data);
+                            Swal.fire({
+                                title: 'Error',
+                                text: data.error || 'Failed to delete',
+                                icon: 'error',
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                confirmButton: 'bx--btn bx--btn--primary'
+                                }
+                            });
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Delete fetch error:", err);
+                            Swal.hideLoading();
+                            Swal.fire('Error', err.message || 'Failed to delete', 'error');
+                        });
+                    }
                 });
             }
         });
@@ -986,4 +757,5 @@ function setupEditPedalHandler(pedals) {
 }
 
 window.setupEditPedalHandler = setupEditPedalHandler;
+
 
