@@ -21,16 +21,17 @@
   </div> -->
   
   <div id="page-content">
-    <!-- <div class="page-content"> -->
-      <div id="pedalAddDropdownContainer"></div>
+
+    <div id="pedalAddDropdownContainer"></div>
       <div id="pedalboard-controls" style="display: none; align-items: center; gap: 8px;">
         <select id="pedalboardSelect"></select>
         <button id="renameBoardBtn" class="bx--btn bx--btn--secondary" type="button">Edit</button>
       </div>
 
-      <br /><br /><br /><br />
+      <br><br><br><br>
 
-      <div id="pedalboard"></div>
+      <div id="pedalboard">
+
 
       <br>
       <span id="startPresetBtn" style="display: none;display: flex; justify-content: center; align-items: center; height: 30vh; text-align: center; flex-direction: column; gap: 1em;">
@@ -38,7 +39,10 @@
           <button onclick="window.location.href='preset'" class="bx--btn bx--btn--secondary" type="button">Create a preset</button>
       </span>
 
-    <!-- </div> -->
+      </div>
+
+
+
 
     <!-- Load scripts after content is visible -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -97,32 +101,32 @@
 
 
 
-<script>
-  function updateStartPresetButtonVisibility() {
-    const pedalboardCount = $('#pedalboardSelect option').length;
-    if (pedalboardCount > 0) {
-      $('#startPresetBtn').show();
-    } else {
-      $('#startPresetBtn').hide();
+  <script>
+    function updateStartPresetButtonVisibility() {
+      const pedalboardCount = $('#pedalboardSelect option').length;
+      if (pedalboardCount > 0) {
+        $('#startPresetBtn').show();
+      } else {
+        $('#startPresetBtn').hide();
+      }
     }
-  }
 
-  // Call this function **after pedalboards are fully populated**
-  function onPedalboardsPopulated() {
-    updateStartPresetButtonVisibility();
-  }
+    // Call this function **after pedalboards are fully populated**
+    function onPedalboardsPopulated() {
+      updateStartPresetButtonVisibility();
+    }
 
-  // Example: hook into initPedalboard if it allows a callback
-  if (typeof initPedalboard === 'function') {
-    initPedalboard(onPedalboardsPopulated); // pass callback if initPedalboard supports it
-  }
+    // Example: hook into initPedalboard if it allows a callback
+    if (typeof initPedalboard === 'function') {
+      initPedalboard(onPedalboardsPopulated); // pass callback if initPedalboard supports it
+    }
 
-  // Fallback: observe changes in the pedalboard select
-  const observer = new MutationObserver(() => {
-    updateStartPresetButtonVisibility();
-  });
-  observer.observe(document.getElementById('pedalboardSelect'), { childList: true });
-</script>
+    // Fallback: observe changes in the pedalboard select
+    const observer = new MutationObserver(() => {
+      updateStartPresetButtonVisibility();
+    });
+    observer.observe(document.getElementById('pedalboardSelect'), { childList: true });
+  </script>
 
 
 
