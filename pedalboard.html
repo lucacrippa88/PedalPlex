@@ -33,14 +33,6 @@
       <div id="pedalboard"></div>
 
 
-      <br>
-      <span id="startPresetBtn" style="display: none;display: flex; justify-content: center; align-items: center; height: 30vh; text-align: center; flex-direction: column; gap: 1em;">
-        Ready to work with you pedalboard? 
-          <button onclick="window.location.href='preset'" class="bx--btn bx--btn--secondary" type="button">Create a preset</button>
-      </span>
-
-
-
     <!-- Load scripts after content is visible -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="utils.js"></script>
@@ -81,14 +73,7 @@
         window.currentUser = userFromServer;
 
         if (typeof initNavPedalboard === 'function') initNavPedalboard();
-        if (typeof initPedalboard === 'function') {
-            initPedalboard(() => {
-              // Only show button if pedalboard has content
-              if ($('#pedalboard').children().length > 0) {
-                $('#startPresetBtn').show();
-              }
-            });
-          }
+        if (typeof initPedalboard === 'function') initPedalboard();
       },
       error: function(xhr) {
         console.error('Auth check failed:', xhr.status, xhr.responseText);
