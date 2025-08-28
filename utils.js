@@ -554,9 +554,9 @@ function renderPedalControls(pedal, $pedalDiv) {
 function setupEditPedalHandler(pedals) {
     $(document).on("click", ".edit-btn", function () {
         
-        console.time("editClick");
-        
         const pedal = $(this).data("pedal");
+
+        console.log(pedal)
 
         if (!pedal) {
             console.error("Pedal data not found!");
@@ -568,7 +568,6 @@ function setupEditPedalHandler(pedals) {
 
         const pedalJson = JSON.stringify(pedalCopy, null, 2);
 
-        console.timeEnd("editClick");
 
         Swal.fire({
             title: `Edit ${pedal._id}`,
