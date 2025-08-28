@@ -168,10 +168,6 @@ function initCatalog(userRole) {
                         </svg>
                     `);
 
-
-        // Setup the edit button handler
-        //setupEditPedalHandler(pedals);
-
         // Append elements to the pedal div
         if (userRole === 'admin') {
           $pedalDiv.append($editBtn);
@@ -182,8 +178,8 @@ function initCatalog(userRole) {
         $(resultsDiv).append($pedalDiv);
       });
 
-        // Setup the edit button handler
-        setupEditPedalHandler(pedals);
+      // Setup the edit button handler
+      setupEditPedalHandler(pedals);
     })
     .catch(error => {
       console.error("Error fetching pedals:", error);
@@ -280,12 +276,36 @@ function createNewPedal() {
       }
       try {
         const parsed = JSON.parse(jsonText);
+
         // Check for "position: relative" in logo
-        console.log(parsed)
         if (parsed.logo && /position\s*:\s*relative/i.test(parsed.logo)) {
           Swal.showValidationMessage('Error: "logo" contains forbidden "position: relative"');
           return false;
         }
+
+        // Collect all "label" values
+        const labels = [];
+        function collectLabels(obj) {
+          if (obj && typeof obj === "object") {
+            for (const key in obj) {
+              if (key === "label") {
+                labels.push(obj[key]);
+              }
+              collectLabels(obj[key]);
+            }
+          } else if (Array.isArray(obj)) {
+            obj.forEach(collectLabels);
+          }
+        }
+        collectLabels(parsed);
+
+        // Check for duplicates
+        const duplicates = labels.filter((val, idx, arr) => arr.indexOf(val) !== idx);
+        if (duplicates.length > 0) {
+          Swal.showValidationMessage(`Error: Duplicate label(s) found → ${[...new Set(duplicates)].join(", ")}`);
+          return false;
+        }
+
         return parsed;
       } catch (e) {
         Swal.showValidationMessage('Invalid JSON format');
