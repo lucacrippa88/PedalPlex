@@ -168,8 +168,9 @@ function initCatalog(userRole) {
                         </svg>
                     `);
 
+
         // Setup the edit button handler
-        setupEditPedalHandler(pedals);
+        //setupEditPedalHandler(pedals);
 
         // Append elements to the pedal div
         if (userRole === 'admin') {
@@ -180,6 +181,9 @@ function initCatalog(userRole) {
         // Append to results
         $(resultsDiv).append($pedalDiv);
       });
+
+        // Setup the edit button handler
+        setupEditPedalHandler(pedals);
     })
     .catch(error => {
       console.error("Error fetching pedals:", error);
