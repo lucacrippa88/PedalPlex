@@ -274,6 +274,7 @@ function createNewPedal() {
         Swal.showValidationMessage('JSON is required');
         return false;
       }
+
       try {
         const parsed = JSON.parse(jsonText);
 
@@ -285,18 +286,23 @@ function createNewPedal() {
 
         // Collect ALL "label" values anywhere in the JSON
         const labels = [];
+
         function collectLabels(obj) {
           if (Array.isArray(obj)) {
-            obj.forEach(collectLabels);
-          } else if (obj && typeof obj === "object") {
+            obj.forEach(collectLabels); // recurse into array elements
+          } else if (obj && typeof obj === 'object') {
             for (const key in obj) {
-              if (key === "label") {
+              if (key === 'label') {
                 labels.push(obj[key]);
               }
-              collectLabels(obj[key]);
+              // recurse into every property, regardless if it's array or object
+              if (obj[key] !== null && obj[key] !== undefined) {
+                collectLabels(obj[key]);
+              }
             }
           }
         }
+
         collectLabels(parsed);
 
         // Detect duplicates across the ENTIRE JSON
@@ -319,6 +325,7 @@ function createNewPedal() {
         }
 
         return parsed;
+
       } catch (e) {
         Swal.showValidationMessage('Invalid JSON format');
         return false;
