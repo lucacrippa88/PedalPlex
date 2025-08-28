@@ -33,10 +33,11 @@
       <div id="pedalboard"></div>
 
       <br>
-      Ready to work with you pedalboard? 
-      <button id="startPresetBtn" onclick="window.location.href='preset'" class="bx--btn bx--btn--secondary" type="button" style="display: none;">
-        Start creating presets!
-      </button>
+      <span id="startPresetBtn" style="display: none;">
+        Ready to work with you pedalboard? 
+          <button onclick="window.location.href='preset'" class="bx--btn bx--btn--secondary" type="button">Create a preset</button>
+      </span>
+
     <!-- </div> -->
 
     <!-- Load scripts after content is visible -->
@@ -97,26 +98,30 @@
 
 
 <script>
-function updateStartPresetButtonVisibility() {
-  const pedalboardCount = $('#pedalboardSelect option').length;
-  if (pedalboardCount > 0) {
-    $('#startPresetBtn').show();
-  } else {
-    $('#startPresetBtn').hide();
+  function updateStartPresetButtonVisibility() {
+    const pedalboardCount = $('#pedalboardSelect option').length;
+    if (pedalboardCount > 0) {
+      $('#startPresetBtn').show();
+    } else {
+      $('#startPresetBtn').hide();
+    }
   }
-}
 
-// Call this function after pedalboards are populated
-$(document).ready(function() {
-  // Example: if pedalboards are populated after AJAX
-  if (typeof initPedalboard === 'function') {
-    initPedalboard();
+  // Call this function **after pedalboards are fully populated**
+  function onPedalboardsPopulated() {
     updateStartPresetButtonVisibility();
   }
 
-  // Also update if pedalboards are dynamically added later
-  $('#pedalboardSelect').on('change', updateStartPresetButtonVisibility);
-});
+  // Example: hook into initPedalboard if it allows a callback
+  if (typeof initPedalboard === 'function') {
+    initPedalboard(onPedalboardsPopulated); // pass callback if initPedalboard supports it
+  }
+
+  // Fallback: observe changes in the pedalboard select
+  const observer = new MutationObserver(() => {
+    updateStartPresetButtonVisibility();
+  });
+  observer.observe(document.getElementById('pedalboardSelect'), { childList: true });
 </script>
 
 
