@@ -214,10 +214,18 @@ async function renderFullPedalboard() {
         let inside = "";
         let colorOnly = insideColorRaw;
 
-        const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-        if (match) {
-          colorOnly = match[1];
-          inside = match[2] || "";
+        // Check if inside-color is an image URL (http, https, data URI, or local images/)
+        const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
+
+        if (isImage) {
+          inside = "full"; // Force full mode for images
+        } else {
+          // Existing logic for color + optional text
+          const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+          if (match) {
+            colorOnly = match[1];
+            inside = match[2] || "";
+          }
         }
 
         const widthValue = parseFloat(getPedalWidth(pedal.width));
