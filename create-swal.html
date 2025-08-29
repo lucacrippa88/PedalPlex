@@ -4,22 +4,33 @@
 <meta charset="UTF-8">
 <title>Pedal Builder</title>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://unpkg.com/carbon-components/css/carbon-components.min.css" />
-<link rel="stylesheet" href="style.css">
-<script src="utils.js"></script>
 <style>
-
+/* Keep your original builder styles intact */
+.pedal-catalog { padding:10px; text-align:center; margin-bottom:10px; display:inline-block; vertical-align:top; }
+.pedal-name { margin-top:5px; font-weight:bold; }
+.control { border:1px solid #ccc; padding:5px; border-radius:5px; }
+.row { margin-bottom:15px; }
+#builder { display:flex; gap:20px; width:100%; height:80vh; overflow-y:auto; }
+#editor { flex:1; min-width:350px; }
+#preview { flex:1; min-width:300px; }
 </style>
 </head>
 <body>
 
-<center><h2>Gear Preview</h2><br><br>
-    <div id="pedal-box"></div></center>
+<button id="open-builder" class="bx--btn bx--btn--primary">Open Pedal Builder</button>
 
-<br><br>
+<script>
+$("#open-builder").on("click", function(){
+  Swal.fire({
+    title: 'Pedal Builder',
+    width: '95%',
+    showConfirmButton: false,
+    showCloseButton: true,
+    html: `
 
 <div id="builder">
-
   <div id="editor">
     <h2>Gear Quick Creation</h2><br><br>
     <div class="pedal-info">
@@ -35,41 +46,31 @@
       <option value="combo">Combo</option>
       <option value="head">Head</option>
       <option value="round">Round</option>
-    </select>
+    </select></label>
     <label>Width <select id="pedal-width"></select></label>
     <label>Height <select id="pedal-height"></select></label>
     <br><br>
     <label>Color <input type="color" id="pedal-color" value="#264985"></label>&ensp;&ensp;
     <label>Font Color <input type="color" id="font-color" value="#ffffff"></label>&ensp;&ensp;
-    <label> Inside Color (Full <input type="checkbox" id="pedal-inside-full-check">)</label><input type="color" id="pedal-inside-color" value="#0d0d0d">&ensp;&ensp;
+    <label> Inside Color (Full <input type="checkbox" id="pedal-inside-full-check">)</label>
+    <input type="color" id="pedal-inside-color" value="#0d0d0d">&ensp;&ensp;
     <label id="inside-border-label" style="display:none;"> Inside Border <input type="checkbox" id="pedal-inside-border-check"><input type="color" id="pedal-inside-border" value="#ffffff"></label>
-    
-    <script>
-        $("#pedal-inside-full-check").on("change", function () {
-            $("#inside-border-label").toggle(this.checked);
-        });
-    </script>
-
     <hr>
     <button class="bx--btn bx--btn--sm bx--btn--primary" id="add-row">+ Add Control Row</button>
     <div id="controls"></div>
   </div>
-
-
   
   <div id="preview">
-<h2>Generated JSON</h2><br><br>
-<textarea id="json-output" style="width:100%;height:300px;font-family:monospace;"></textarea>
-<div id="json-error" style="color:red; font-weight:bold; margin-top:5px;"></div>
+    <h2>Gear Preview</h2><br><br>
+    <div id="pedal-box"></div>
   </div>
 </div>
 
+<br><br>
+<h2>Generated JSON</h2><br><br>
+<pre id="json-output"></pre>
 
-
-
-
-
-<!-- Templates -->
+<!-- Templates (knob, led, slider, lcd, multi) -->
 <script type="text/template" id="knob-template">
 <div class="control" data-type="knob">
   <h4>Knob</h4>
@@ -375,10 +376,7 @@ function buildJSON() {
     pedal.controls.push(rowObj);
   });
 
-//   $("#json-output").text(JSON.stringify(pedal,null,2));
-$("#json-output").val(JSON.stringify(pedal,null,2));
-$("#json-error").text(""); // clear any old error
-
+  $("#json-output").text(JSON.stringify(pedal,null,2));
   const $pedalDiv=$("#pedal-box");
   renderBuilderPedal(pedal,$pedalDiv);
 }
@@ -437,118 +435,10 @@ $(function(){
   $("#editor, #controls").on("input change keyup","input, select, textarea", buildJSON);
   buildJSON();
 });
-
-
-
-$("#json-output").on("input", function(){
-  const $err = $("#json-error");
-  try {
-    const parsed = JSON.parse($(this).val());
-    $err.text(""); // clear error if valid
-    syncUIFromJSON(parsed);
-  } catch(e) {
-    $err.text("❌ Invalid JSON: " + e.message);
-  }
-});
-
-
-
 </script>
-
-
-
-
-<script>
-function syncUIFromJSON(pedal) {
-  // Basic info
-  $("#pedal-id").val(pedal._id || "");
-  $("#pedal-name").val(pedal.name || "");
-  $("#pedal-logo").val(pedal.logo || "");
-  $("#pedal-type").val(pedal.type || "pedal");
-  $("#pedal-width").val(pedal.width || "standard");
-  $("#pedal-height").val(pedal.height || "standard");
-  $("#pedal-color").val(pedal.color || "#264985");
-  $("#font-color").val(pedal["font-color"] || "#ffffff");
-
-  // Inside color + full/border
-  if (pedal["inside-color"]) {
-    const full = pedal["inside-color"].includes("full");
-    $("#pedal-inside-full-check").prop("checked", full);
-    $("#pedal-inside-color").val(pedal["inside-color"].replace(" full",""));
-    $("#inside-border-label").toggle(full);
-  }
-  if (pedal["inside-border"]) {
-    $("#pedal-inside-border-check").prop("checked", true);
-    $("#pedal-inside-border").val(pedal["inside-border"]);
-  } else {
-    $("#pedal-inside-border-check").prop("checked", false);
-  }
-
-  // Clear & rebuild controls
-  $("#controls").empty();
-  if (Array.isArray(pedal.controls)) {
-    pedal.controls.forEach(rowObj => {
-      $("#add-row").trigger("click"); // add empty row
-      const $lastRow = $("#controls .row").last();
-      const $controlsRow = $lastRow.find(".controls-row");
-
-      rowObj.row.forEach(ctrl => {
-        // Pick template
-        let templateId;
-        switch (ctrl.type) {
-          case "knob":
-          case "smallknob":
-          case "largeknob":
-          case "xlargeknob":
-            templateId = "#knob-template"; break;
-          case "led": templateId = "#led-template"; break;
-          case "slider": templateId = "#slider-template"; break;
-          case "lcd": templateId = "#lcd-template"; break;
-          case "multi": templateId = "#multi-template"; break;
-        }
-        if (templateId) {
-          const $ctrl = $($(templateId).html());
-          $ctrl.find(".ctrl-label").val(ctrl.label || "");
-
-          if (ctrl.type.includes("knob")) {
-            $ctrl.find(".ctrl-size").val(ctrl.type);
-            $ctrl.find(".ctrl-min").val(ctrl.min);
-            $ctrl.find(".ctrl-max").val(ctrl.max);
-            $ctrl.find(".ctrl-value").val(ctrl.value);
-            $ctrl.find(".ctrl-knob-color").val(ctrl["knob-color"]);
-            $ctrl.find(".ctrl-knob-border").val(ctrl["knob-border"]);
-            $ctrl.find(".ctrl-knob-indicator").val(ctrl["knob-indicator"]);
-            $ctrl.find(".ctrl-position").val(ctrl.position || "");
-          } else if (ctrl.type==="led") {
-            $ctrl.find(".ctrl-color0").val(ctrl.colors?.[0] || "#000000");
-            $ctrl.find(".ctrl-color1").val(ctrl.colors?.[1] || "#ff0000");
-            $ctrl.find(".ctrl-value").val(ctrl.value);
-            $ctrl.find(".ctrl-position").val(ctrl.position || "");
-          } else if (ctrl.type==="slider") {
-            $ctrl.find(".ctrl-orientation").val(ctrl.orientation || "vertical");
-            $ctrl.find(".ctrl-min").val(ctrl.min);
-            $ctrl.find(".ctrl-max").val(ctrl.max);
-            $ctrl.find(".ctrl-value").val(ctrl.value);
-            $ctrl.find(".ctrl-position").val(ctrl.position || "");
-          } else if (ctrl.type==="lcd") {
-            $ctrl.find(".ctrl-text").val(ctrl.value || "LCD");
-            $ctrl.find(".ctrl-round").prop("checked", ctrl.shape==="round");
-            $ctrl.find(".ctrl-position").val(ctrl.position || "");
-          } else if (ctrl.type==="multi") {
-            $ctrl.find(".ctrl-values").val(ctrl.values?.join(",") || "");
-            $ctrl.find(".ctrl-value").val(ctrl.value);
-            $ctrl.find(".ctrl-position").val(ctrl.position || "");
-          }
-
-          $controlsRow.append($ctrl);
-        }
-      });
-    });
-  }
-
-  // Re-render pedal
-  renderBuilderPedal(pedal, $("#pedal-box"));
-}
+    `
+  });
+});
 </script>
 
 </body>
