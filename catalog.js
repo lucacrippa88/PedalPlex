@@ -33,150 +33,153 @@ function initCatalog(userRole) {
 
       pedals.forEach(pedal => {
 
-        const pedalName = pedal.name || pedal.id;
-        const pedalId = pedal._id || pedal.id;
-        const angle = 0;
+          const $pedalDiv = renderPedal(pedal, userRole);
+  $(resultsDiv).append($pedalDiv);
 
-        const insideColorRaw = pedal["inside-color"] || "";
-        const insideBorder = pedal["inside-border"] || "";
-        let inside = "";
-        let colorOnly = insideColorRaw;
+        // const pedalName = pedal.name || pedal.id;
+        // const pedalId = pedal._id || pedal.id;
+        // const angle = 0;
 
-        // Check if inside-color is an image URL (http, https, data URI, or local images/)
-        const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
+        // const insideColorRaw = pedal["inside-color"] || "";
+        // const insideBorder = pedal["inside-border"] || "";
+        // let inside = "";
+        // let colorOnly = insideColorRaw;
 
-        if (isImage) {
-          inside = "full"; // Force full mode for images
-        } else {
-          // Existing logic for color + optional text
-          const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-          if (match) {
-            colorOnly = match[1];
-            inside = match[2] || "";
-          }
-        }
+        // // Check if inside-color is an image URL (http, https, data URI, or local images/)
+        // const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
 
-        const baseCss = {
-          border: `5px solid ${pedal["color"]}`, // Outer border
-          borderRadius: '10px',
-          color: pedal["font-color"],
-          width: getPedalWidth(pedal.width),
-          height: getPedalHeight(pedal.height),
-          transform: `rotate(${angle}deg)`,
-          marginBottom: '10px',
-          display: 'inline-block',
-          ...(pedal["inside-border"] && {
-            boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
-          }),
-          ...(isImage ? {
-            backgroundImage: `url("${insideColorRaw}")`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          } : {
-            background: colorOnly
-          })
-        };
+        // if (isImage) {
+        //   inside = "full"; // Force full mode for images
+        // } else {
+        //   // Existing logic for color + optional text
+        //   const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+        //   if (match) {
+        //     colorOnly = match[1];
+        //     inside = match[2] || "";
+        //   }
+        // }
 
-        let $pedalDiv;
+        // const baseCss = {
+        //   border: `5px solid ${pedal["color"]}`, // Outer border
+        //   borderRadius: '10px',
+        //   color: pedal["font-color"],
+        //   width: getPedalWidth(pedal.width),
+        //   height: getPedalHeight(pedal.height),
+        //   transform: `rotate(${angle}deg)`,
+        //   marginBottom: '10px',
+        //   display: 'inline-block',
+        //   ...(pedal["inside-border"] && {
+        //     boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
+        //   }),
+        //   ...(isImage ? {
+        //     backgroundImage: `url("${insideColorRaw}")`,
+        //     backgroundSize: 'cover',
+        //     backgroundPosition: 'center'
+        //   } : {
+        //     background: colorOnly
+        //   })
+        // };
 
-        if (pedal.type === "pedal") {
-          if (inside === "full") {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-              ...baseCss,
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` +
-                (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-          } else {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-              ...baseCss,
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-          }
-        } else if (pedal.type === "expression") {
-          if (inside === "full") {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-              ...baseCss,
-              borderRadius: '25px',
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` +
-                (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-          } else {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-              ...baseCss,
-              borderRadius: '25px',
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-          }
-        } else if (pedal.type === "combo") {
-          if (inside === "full") {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css(baseCss).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-          } else {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-              ...baseCss,
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -80px 0 0 ${pedal["color"]}`
-            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-          }
-        } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-          if (inside === "full") {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-                ...baseCss,
-                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` +
-                  (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-              }).attr("data-pedal-name", pedal.name)
-              .attr("data-pedal-id", pedal._id);
-          } else {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-                ...baseCss,
-                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
-              }).attr("data-pedal-name", pedal.name)
-              .attr("data-pedal-id", pedal._id);
-          }
-        } else if (pedal.type === "round") {
-          $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-            ...baseCss,
-            borderRadius: "50%",
-            width: getPedalWidth(pedal.width), // Same width and height for round pedals
-            height: getPedalWidth(pedal.width), // Same width and height for round pedals
-            boxShadow: `0 4px 8px rgba(0,0,0,0.3), inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
-          }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-        }
+        // let $pedalDiv;
+
+        // if (pedal.type === "pedal") {
+        //   if (inside === "full") {
+        //     $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+        //       ...baseCss,
+        //       boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` +
+        //         (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+        //     }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+        //   } else {
+        //     $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+        //       ...baseCss,
+        //       boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
+        //     }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+        //   }
+        // } else if (pedal.type === "expression") {
+        //   if (inside === "full") {
+        //     $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+        //       ...baseCss,
+        //       borderRadius: '25px',
+        //       boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` +
+        //         (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+        //     }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+        //   } else {
+        //     $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+        //       ...baseCss,
+        //       borderRadius: '25px',
+        //       boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
+        //     }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+        //   }
+        // } else if (pedal.type === "combo") {
+        //   if (inside === "full") {
+        //     $pedalDiv = $("<div>").addClass("pedal-catalog").css(baseCss).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+        //   } else {
+        //     $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+        //       ...baseCss,
+        //       boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -80px 0 0 ${pedal["color"]}`
+        //     }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+        //   }
+        // } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+        //   if (inside === "full") {
+        //     $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+        //         ...baseCss,
+        //         boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` +
+        //           (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+        //       }).attr("data-pedal-name", pedal.name)
+        //       .attr("data-pedal-id", pedal._id);
+        //   } else {
+        //     $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+        //         ...baseCss,
+        //         boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
+        //       }).attr("data-pedal-name", pedal.name)
+        //       .attr("data-pedal-id", pedal._id);
+        //   }
+        // } else if (pedal.type === "round") {
+        //   $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+        //     ...baseCss,
+        //     borderRadius: "50%",
+        //     width: getPedalWidth(pedal.width), // Same width and height for round pedals
+        //     height: getPedalWidth(pedal.width), // Same width and height for round pedals
+        //     boxShadow: `0 4px 8px rgba(0,0,0,0.3), inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
+        //   }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+        // }
 
 
-        // Manage head and pedal-inverted logos
-        if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-          const $nameDiv = $("<div>").addClass("head-name").html(pedal.name).attr("style", pedal.logo || "");
-          $pedalDiv.append($nameDiv);
-        }
+        // // Manage head and pedal-inverted logos
+        // if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+        //   const $nameDiv = $("<div>").addClass("head-name").html(pedal.name).attr("style", pedal.logo || "");
+        //   $pedalDiv.append($nameDiv);
+        // }
 
-        // Render pedal controls
-        renderPedalControls(pedal, $pedalDiv);
+        // // Render pedal controls
+        // renderPedalControls(pedal, $pedalDiv);
 
-        // Manage pedal logos
-        const $nameDiv = $("<div>")
-        if ((pedal.type === "pedal") || (pedal.type === "combo") || (pedal.type === "round") || (pedal.type === "expression")) {
-          const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name).attr("style", pedal.logo || "");
-          $pedalDiv.append($nameDiv);
-        }
+        // // Manage pedal logos
+        // const $nameDiv = $("<div>")
+        // if ((pedal.type === "pedal") || (pedal.type === "combo") || (pedal.type === "round") || (pedal.type === "expression")) {
+        //   const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name).attr("style", pedal.logo || "");
+        //   $pedalDiv.append($nameDiv);
+        // }
 
-        // Edit icon button
-        const $editBtn = $("<button>")
-          .addClass("edit-btn")
-          .attr("title", "Edit pedal JSON")
-          .data("pedal", pedal)
-          .html(`
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
-                        <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
-                        </svg>
-                    `);
+        // // Edit icon button
+        // const $editBtn = $("<button>")
+        //   .addClass("edit-btn")
+        //   .attr("title", "Edit pedal JSON")
+        //   .data("pedal", pedal)
+        //   .html(`
+        //                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
+        //                 <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
+        //                 </svg>
+        //             `);
 
-        // Append elements to the pedal div
-        if (userRole === 'admin') {
-          $pedalDiv.append($editBtn);
-        }
-        $pedalDiv.append($nameDiv);
+        // // Append elements to the pedal div
+        // if (userRole === 'admin') {
+        //   $pedalDiv.append($editBtn);
+        // }
+        // $pedalDiv.append($nameDiv);
 
-        // Append to results
-        $(resultsDiv).append($pedalDiv);
+        // // Append to results
+        // $(resultsDiv).append($pedalDiv);
       });
 
       // Setup the edit button handler
@@ -365,4 +368,147 @@ function createNewPedal() {
         });
     }
   });
+}
+
+
+
+
+
+
+
+
+// Reusable function to render a pedal
+function renderPedal(pedal, userRole) {
+  const pedalId = pedal._id || pedal.id;
+  const pedalName = pedal.name || pedal.id;
+  const insideColorRaw = pedal["inside-color"] || "";
+  let inside = "";
+  let colorOnly = insideColorRaw;
+
+  // Detect if inside-color is an image
+  const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
+  if (isImage) {
+    inside = "full";
+  } else {
+    const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+    if (match) {
+      colorOnly = match[1];
+      inside = match[2] || "";
+    }
+  }
+
+  // Base CSS
+  const baseCss = {
+    border: `5px solid ${pedal["color"]}`,
+    borderRadius: '10px',
+    color: pedal["font-color"],
+    width: getPedalWidth(pedal.width),
+    height: getPedalHeight(pedal.height),
+    marginBottom: '10px',
+    display: 'inline-block',
+    ...(pedal["inside-border"] && {
+      boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}`
+    }),
+    ...(isImage ? {
+      backgroundImage: `url("${insideColorRaw}")`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'
+    } : {
+      background: colorOnly
+    })
+  };
+
+  let $pedalDiv;
+
+  // Different rendering per pedal type
+  switch (pedal.type) {
+    case "pedal":
+    case "expression":
+    case "combo":
+    case "head":
+    case "pedal-inverted":
+    case "round":
+      $pedalDiv = $("<div>")
+        .addClass("pedal-catalog")
+        .css(getPedalTypeCss(pedal, baseCss, inside))
+        .attr("data-pedal-name", pedalName)
+        .attr("data-pedal-id", pedalId);
+      break;
+  }
+
+  // Head and inverted pedals → add name/logo
+  if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+    const $nameDiv = $("<div>").addClass("head-name").html(pedal.name).attr("style", pedal.logo || "");
+    $pedalDiv.append($nameDiv);
+  }
+
+  // Render pedal controls
+  renderPedalControls(pedal, $pedalDiv);
+
+  // Add name/logo for others
+  if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
+    const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name).attr("style", pedal.logo || "");
+    $pedalDiv.append($nameDiv);
+  }
+
+  // Add edit button if admin
+  if (userRole === 'admin') {
+    const $editBtn = $("<button>")
+      .addClass("edit-btn")
+      .attr("title", "Edit pedal JSON")
+      .data("pedal", pedal)
+      .html(`
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
+          <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
+        </svg>
+      `);
+    $pedalDiv.append($editBtn);
+  }
+
+  return $pedalDiv;
+}
+
+// Helper: returns CSS depending on type + inside
+function getPedalTypeCss(pedal, baseCss, inside) {
+  switch (pedal.type) {
+    case "pedal":
+      return {
+        ...baseCss,
+        boxShadow: inside === "full"
+          ? `0 4px 8px rgba(0,0,0,0.3)` + (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+          : `0 4px 8px rgba(0,0,0,0.3), inset 0 -36px 0 0 ${pedal["color"]}`
+      };
+    case "expression":
+      return {
+        ...baseCss,
+        borderRadius: "25px",
+        boxShadow: inside === "full"
+          ? `0 4px 8px rgba(0,0,0,0.3)` + (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+          : `0 4px 8px rgba(0,0,0,0.3), inset 0 -36px 0 0 ${pedal["color"]}`
+      };
+    case "combo":
+      return {
+        ...baseCss,
+        boxShadow: inside === "full"
+          ? baseCss.boxShadow || ""
+          : `0 4px 8px rgba(0,0,0,0.3), inset 0 -80px 0 0 ${pedal["color"]}`
+      };
+    case "head":
+    case "pedal-inverted":
+      return {
+        ...baseCss,
+        boxShadow: inside === "full"
+          ? `0 4px 8px rgba(0,0,0,0.3)` + (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
+          : `0 4px 8px rgba(0,0,0,0.3), inset 0 80px 0 0 ${pedal["color"]}`
+      };
+    case "round":
+      return {
+        ...baseCss,
+        borderRadius: "50%",
+        width: getPedalWidth(pedal.width),
+        height: getPedalWidth(pedal.width),
+        boxShadow: `0 4px 8px rgba(0,0,0,0.3), inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
+      };
+  }
+  return baseCss;
 }
