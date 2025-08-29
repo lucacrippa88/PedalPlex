@@ -183,7 +183,7 @@ function initCatalog(userRole) {
       });
 
       // Setup the edit button handler
-      //setupEditPedalHandler(pedals);
+      setupEditPedalHandler(pedals);
     })
     .catch(error => {
       console.error("Error fetching pedals:", error);
@@ -196,9 +196,7 @@ function initCatalog(userRole) {
 
 
 
-document.addEventListener("DOMContentLoaded", () => {
-  setupEditPedalHandler([]);
-});
+
 
 
 

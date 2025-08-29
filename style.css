@@ -499,22 +499,18 @@ input[type="range"].horizontal {
       font-size: 12px;
       cursor: pointer;
     }
-    .edit-btn {
-      position: fixed;
-      top: -5%;
-      right: -2%;
-      background: #0f62fe; /* Blue background */
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      width: 24px;
-      height: 24px;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-    }
+
+    .pedal-catalog {
+  position: relative;
+}
+    .pedal-catalog .edit-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
 
     .edit-btn svg {
       width: 16px;
