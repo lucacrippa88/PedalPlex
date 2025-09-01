@@ -557,9 +557,222 @@ function renderPedalControls(pedal, $pedalDiv) {
 
 
 
+// function setupEditPedalHandler(pedals) {
+//     $(document).on("click", ".edit-btn", function () {
+        
+//         const pedal = $(this).data("pedal");
+
+//         if (!pedal) {
+//             console.error("Pedal data not found!");
+//             return;
+//         }
+
+//         const pedalCopy = { ...pedal };
+//         delete pedalCopy._rev;
+
+//         const pedalJson = JSON.stringify(pedalCopy, null, 2);
+
+
+//         Swal.fire({
+//             title: `Edit ${pedal._id}`,
+//             input: 'textarea',
+//             width: 800,
+//             inputValue: pedalJson,
+//             inputAttributes: {
+//                 'aria-label': 'Editable JSON',
+//                 style: 'height:400px;font-family:monospace;font-size:12px;'
+//             },
+//             showCancelButton: true,
+//             showDenyButton: true,
+//             confirmButtonText: 'Save',
+//             denyButtonText: 'Delete',
+//             cancelButtonText: 'Cancel',
+//             customClass: {
+//                 confirmButton: 'bx--btn bx--btn--primary',
+//                 denyButton: 'bx--btn bx--btn--danger',
+//                 cancelButton: 'bx--btn bx--btn--secondary'
+//             },
+//             preConfirm: (jsonText) => {
+//                 if (!jsonText) {
+//                     Swal.showValidationMessage('JSON is required');
+//                     return false;
+//                 }
+
+//                 try {
+//                     const parsed = JSON.parse(jsonText);
+
+//                     // Check for "position: relative" in logo
+//                     if (parsed.logo && /position\s*:\s*relative/i.test(parsed.logo)) {
+//                     Swal.showValidationMessage('Error: "logo" contains forbidden "position: relative"');
+//                     return false;
+//                     }
+
+//                     // Collect ALL "label" values anywhere in the JSON
+//                     const labels = [];
+
+//                     function collectLabels(obj) {
+//                     if (Array.isArray(obj)) {
+//                         obj.forEach(collectLabels); // recurse into array elements
+//                     } else if (obj && typeof obj === 'object') {
+//                         for (const key in obj) {
+//                         if (key === 'label') {
+//                             labels.push(obj[key]);
+//                         }
+//                         // recurse into every property, regardless if it's array or object
+//                         if (obj[key] !== null && obj[key] !== undefined) {
+//                             collectLabels(obj[key]);
+//                         }
+//                         }
+//                     }
+//                     }
+
+//                     collectLabels(parsed);
+
+//                     // Detect duplicates across the ENTIRE JSON
+//                     const seen = new Set();
+//                     const duplicates = new Set();
+//                     labels.forEach(label => {
+//                     const key = String(label).trim(); // normalize whitespace
+//                     if (seen.has(key)) {
+//                         duplicates.add(key);
+//                     } else {
+//                         seen.add(key);
+//                     }
+//                     });
+
+//                     if (duplicates.size > 0) {
+//                     Swal.showValidationMessage(
+//                         `Error: Duplicate label(s) found → ${Array.from(duplicates).join(", ")}`
+//                     );
+//                     return false;
+//                     }
+
+//                     return parsed;
+
+//                 } catch (e) {
+//                     Swal.showValidationMessage('Invalid JSON format');
+//                     return false;
+//                 }
+//             }
+//         }).then((result) => {
+//             if (result.isConfirmed) {
+//                 const updated = result.value;
+//                 updated._rev = pedal._rev;
+
+//                 const revx = pedals.findIndex(p => p._rev === pedal._rev);
+//                 if (revx !== -1) pedals[revx] = updated;
+
+//                 Swal.showLoading();
+
+//                 fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_CATALOG.php', {
+//                     method: 'POST',
+//                     headers: { 'Content-Type': 'application/json' },
+//                     body: JSON.stringify(updated)
+//                 })
+//                 .then(res => res.json())
+//                 .then(data => {
+//                     Swal.hideLoading();
+//                     if (data.success) {
+//                         Swal.fire({
+//                             title: 'Gear saved!',
+//                             icon: 'success',
+//                             confirmButtonText: 'OK',
+//                             customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+//                         }).then(() => location.reload());
+//                     } else {
+//                         console.error("Update failed response:", data);
+//                         Swal.fire('Error', data.error || 'Failed to save', 'error');
+//                     }
+//                 })
+//                 .catch(err => {
+//                     Swal.hideLoading();
+//                     console.error("Update fetch error:", err);
+//                     Swal.fire('Error', err.message || 'Failed to save', 'error');
+//                 });
+
+//             } else if (result.isDenied) {
+//                 Swal.fire({
+//                     title: 'Are you sure?',
+//                     text: `This will permanently delete "${pedal._id}"`,
+//                     icon: 'warning',
+//                     showCancelButton: true,
+//                     confirmButtonText: 'Yes, delete it!',
+//                     cancelButtonText: 'No, cancel!',
+//                     customClass: {
+//                         confirmButton: 'bx--btn bx--btn--danger',
+//                         cancelButton: 'bx--btn bx--btn--secondary'
+//                     }
+//                 }).then((deleteConfirm) => {
+//                     if (deleteConfirm.isConfirmed) {
+//                         Swal.showLoading();
+
+//                         fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FROM_CATALOG.php', {
+//                             method: 'POST',
+//                             headers: { 'Content-Type': 'application/json' },
+//                             body: JSON.stringify({
+//                                 _id: pedal._id,
+//                                 _rev: pedal._rev
+//                             })
+//                         })
+//                         .then(res => res.text())
+//                         .then(text => {
+//                             console.log("Raw delete response:", text);
+
+//                             let data;
+//                             try {
+//                                 data = JSON.parse(text);
+//                             } catch (err) {
+//                                 console.error("Failed to parse delete response JSON:", err);
+//                                 throw new Error("Invalid JSON response from server.");
+//                             }
+
+//                             Swal.hideLoading();
+//                             if (data.success) {
+//                             Swal.fire({
+//                                 title: 'Deleted!',
+//                                 text: 'The gear has been removed.',
+//                                 icon: 'success',
+//                                 confirmButtonText: 'OK',
+//                                 customClass: {
+//                                 confirmButton: 'bx--btn bx--btn--primary'
+//                                 }
+//                             }).then(() => location.reload());
+//                             } else {
+//                             console.error("Delete failed response:", data);
+//                             Swal.fire({
+//                                 title: 'Error',
+//                                 text: data.error || 'Failed to delete',
+//                                 icon: 'error',
+//                                 confirmButtonText: 'OK',
+//                                 customClass: {
+//                                 confirmButton: 'bx--btn bx--btn--primary'
+//                                 }
+//                             });
+//                             }
+//                         })
+//                         .catch(err => {
+//                             console.error("Delete fetch error:", err);
+//                             Swal.hideLoading();
+//                             Swal.fire('Error', err.message || 'Failed to delete', 'error');
+//                         });
+//                     }
+//                 });
+//             }
+//         });
+//     });
+// }
+
+// window.setupEditPedalHandler = setupEditPedalHandler;
+
+
+
+
+
+
+
 function setupEditPedalHandler(pedals) {
     $(document).on("click", ".edit-btn", function () {
-        
+
         const pedal = $(this).data("pedal");
 
         if (!pedal) {
@@ -567,21 +780,19 @@ function setupEditPedalHandler(pedals) {
             return;
         }
 
+        // Copy pedal without _rev (server-specific)
         const pedalCopy = { ...pedal };
         delete pedalCopy._rev;
 
-        const pedalJson = JSON.stringify(pedalCopy, null, 2);
-
-
+        // Open Swal2 with the builder iframe
         Swal.fire({
             title: `Edit ${pedal._id}`,
-            input: 'textarea',
-            width: 800,
-            inputValue: pedalJson,
-            inputAttributes: {
-                'aria-label': 'Editable JSON',
-                style: 'height:400px;font-family:monospace;font-size:12px;'
-            },
+            html: `<iframe src="create.html" style="width:100%; height:80vh; border:none;" id="swal-builder-iframe"></iframe>`,
+            width: '90%',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: false,
+            showConfirmButton: true,
             showCancelButton: true,
             showDenyButton: true,
             confirmButtonText: 'Save',
@@ -592,67 +803,42 @@ function setupEditPedalHandler(pedals) {
                 denyButton: 'bx--btn bx--btn--danger',
                 cancelButton: 'bx--btn bx--btn--secondary'
             },
-            preConfirm: (jsonText) => {
-                if (!jsonText) {
-                    Swal.showValidationMessage('JSON is required');
+            background: '#2e2e2e',
+            color: '#ffffff',
+            didOpen: () => {
+                // Wait a short time for iframe to load
+                const iframe = document.getElementById('swal-builder-iframe');
+                iframe.addEventListener('load', () => {
+                    if (iframe.contentWindow && typeof iframe.contentWindow.syncUIFromJSON === 'function') {
+                        iframe.contentWindow.syncUIFromJSON(pedalCopy);
+                    }
+                });
+            },
+            preConfirm: () => {
+                const iframe = document.getElementById('swal-builder-iframe');
+                if (!iframe || !iframe.contentWindow || !iframe.contentWindow.getPedalValidation) {
+                    Swal.showValidationMessage('Builder not ready');
                     return false;
                 }
 
-                try {
-                    const parsed = JSON.parse(jsonText);
+                // Get validation from builder
+                const validation = iframe.contentWindow.getPedalValidation();
 
-                    // Check for "position: relative" in logo
-                    if (parsed.logo && /position\s*:\s*relative/i.test(parsed.logo)) {
-                    Swal.showValidationMessage('Error: "logo" contains forbidden "position: relative"');
-                    return false;
-                    }
-
-                    // Collect ALL "label" values anywhere in the JSON
-                    const labels = [];
-
-                    function collectLabels(obj) {
-                    if (Array.isArray(obj)) {
-                        obj.forEach(collectLabels); // recurse into array elements
-                    } else if (obj && typeof obj === 'object') {
-                        for (const key in obj) {
-                        if (key === 'label') {
-                            labels.push(obj[key]);
-                        }
-                        // recurse into every property, regardless if it's array or object
-                        if (obj[key] !== null && obj[key] !== undefined) {
-                            collectLabels(obj[key]);
-                        }
-                        }
-                    }
-                    }
-
-                    collectLabels(parsed);
-
-                    // Detect duplicates across the ENTIRE JSON
-                    const seen = new Set();
-                    const duplicates = new Set();
-                    labels.forEach(label => {
-                    const key = String(label).trim(); // normalize whitespace
-                    if (seen.has(key)) {
-                        duplicates.add(key);
-                    } else {
-                        seen.add(key);
-                    }
-                    });
-
-                    if (duplicates.size > 0) {
-                    Swal.showValidationMessage(
-                        `Error: Duplicate label(s) found → ${Array.from(duplicates).join(", ")}`
-                    );
-                    return false;
-                    }
-
-                    return parsed;
-
-                } catch (e) {
-                    Swal.showValidationMessage('Invalid JSON format');
+                if (validation.cssError) {
+                    Swal.showValidationMessage(`CSS Error: ${validation.cssError}`);
                     return false;
                 }
+                if (validation.hasMissingFields) {
+                    Swal.showValidationMessage("Please fill all required fields!");
+                    return false;
+                }
+                if (validation.duplicateFound) {
+                    Swal.showValidationMessage("Duplicate control labels detected!");
+                    return false;
+                }
+
+                // Everything is fine, return the pedal object
+                return validation.pedal;
             }
         }).then((result) => {
             if (result.isConfirmed) {
@@ -691,6 +877,7 @@ function setupEditPedalHandler(pedals) {
                 });
 
             } else if (result.isDenied) {
+                // Delete logic remains unchanged
                 Swal.fire({
                     title: 'Are you sure?',
                     text: `This will permanently delete "${pedal._id}"`,
@@ -705,7 +892,6 @@ function setupEditPedalHandler(pedals) {
                 }).then((deleteConfirm) => {
                     if (deleteConfirm.isConfirmed) {
                         Swal.showLoading();
-
                         fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FROM_CATALOG.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
@@ -716,42 +902,24 @@ function setupEditPedalHandler(pedals) {
                         })
                         .then(res => res.text())
                         .then(text => {
-                            console.log("Raw delete response:", text);
-
                             let data;
-                            try {
-                                data = JSON.parse(text);
-                            } catch (err) {
-                                console.error("Failed to parse delete response JSON:", err);
-                                throw new Error("Invalid JSON response from server.");
-                            }
+                            try { data = JSON.parse(text); } 
+                            catch (err) { throw new Error("Invalid JSON response from server."); }
 
                             Swal.hideLoading();
                             if (data.success) {
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'The gear has been removed.',
-                                icon: 'success',
-                                confirmButtonText: 'OK',
-                                customClass: {
-                                confirmButton: 'bx--btn bx--btn--primary'
-                                }
-                            }).then(() => location.reload());
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: 'The gear has been removed.',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK',
+                                    customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+                                }).then(() => location.reload());
                             } else {
-                            console.error("Delete failed response:", data);
-                            Swal.fire({
-                                title: 'Error',
-                                text: data.error || 'Failed to delete',
-                                icon: 'error',
-                                confirmButtonText: 'OK',
-                                customClass: {
-                                confirmButton: 'bx--btn bx--btn--primary'
-                                }
-                            });
+                                Swal.fire({ title: 'Error', text: data.error || 'Failed to delete', icon: 'error', confirmButtonText: 'OK', customClass: { confirmButton: 'bx--btn bx--btn--primary' }});
                             }
                         })
                         .catch(err => {
-                            console.error("Delete fetch error:", err);
                             Swal.hideLoading();
                             Swal.fire('Error', err.message || 'Failed to delete', 'error');
                         });
@@ -763,7 +931,6 @@ function setupEditPedalHandler(pedals) {
 }
 
 window.setupEditPedalHandler = setupEditPedalHandler;
-
 
 
 
