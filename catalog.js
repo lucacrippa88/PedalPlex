@@ -83,48 +83,24 @@ function createNewPedal() {
       background: '#2e2e2e',
       color: '#ffffff',
       preConfirm: () => {
-        if (!pedalJSON) {
-            Swal.showValidationMessage('JSON is required');
-            return false;
-        }
+          // Validate via buildJSON()
+          const validation = buildJSON(); // { pedal, cssError, hasMissingFields, duplicateFound }
 
-        try {
-            const parsed = JSON.parse(pedalJSON);
+          if (validation.cssError) {
+              Swal.showValidationMessage(`CSS Error: ${validation.cssError}`);
+              return false;
+          }
+          if (validation.hasMissingFields) {
+              Swal.showValidationMessage("Please fill all required fields!");
+              return false;
+          }
+          if (validation.duplicateFound) {
+              Swal.showValidationMessage("Duplicate control labels detected!");
+              return false;
+          }
 
-            // Same validation logic as before (duplicate labels, forbidden logo)
-            const labels = [];
-            function collectLabels(obj) {
-                if (Array.isArray(obj)) obj.forEach(collectLabels);
-                else if (obj && typeof obj === 'object') {
-                    for (const key in obj) {
-                        if (key === 'label') labels.push(obj[key]);
-                        if (obj[key] !== null && obj[key] !== undefined) collectLabels(obj[key]);
-                    }
-                }
-            }
-            collectLabels(parsed);
-
-            const seen = new Set();
-            const duplicates = new Set();
-            labels.forEach(label => {
-                const key = String(label).trim();
-                if (seen.has(key)) duplicates.add(key);
-                else seen.add(key);
-            });
-
-            if (duplicates.size > 0) {
-                Swal.showValidationMessage(
-                  `Error: Duplicate label(s) found → ${Array.from(duplicates).join(", ")}`
-                );
-                return false;
-            }
-
-            return parsed;
-
-        } catch (e) {
-            Swal.showValidationMessage('Invalid JSON format: ' + e.message);
-            return false;
-        }
+          // Everything is fine, return the pedal object
+          return validation.pedal;
       }
     }).then((result) => {
       if (result.isConfirmed) {
