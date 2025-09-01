@@ -52,11 +52,6 @@ function initCatalog(userRole) {
 
 
 
-
-
-
-function createNewPedal() {
-
   let pedalJSON = null;
 
   // This function will be called from the iframe
@@ -64,6 +59,8 @@ function createNewPedal() {
       pedalJSON = jsonString; 
   }
 
+
+function createNewPedal() {
 
   Swal.fire({
       title: 'Gear Builder',
