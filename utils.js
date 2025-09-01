@@ -827,8 +827,10 @@ function setupEditPedalHandler(pedals) {
             background: '#2e2e2e',
             color: '#ffffff',
             didOpen: () => {
-                // Wait a short time for iframe to load
                 const iframe = document.getElementById('swal-builder-iframe');
+                const spinner = document.getElementById('builder-spinner');
+
+                // Wait a short time for iframe to load
                 iframe.addEventListener('load', () => {
                     const checkReady = setInterval(() => {
                         if (iframe.contentWindow && typeof iframe.contentWindow.syncUIFromJSON === 'function') {
