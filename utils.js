@@ -811,6 +811,10 @@ function setupEditPedalHandler(pedals) {
                 iframe.addEventListener('load', () => {
                     if (iframe.contentWindow && typeof iframe.contentWindow.syncUIFromJSON === 'function') {
                         iframe.contentWindow.syncUIFromJSON(pedalCopy);
+                        
+                        // Disable the _id field so users cannot change it
+                        const idInput = iframe.contentWindow.document.getElementById('pedal-id');
+                        if (idInput) idInput.disabled = true;
                     }
                 });
             },
