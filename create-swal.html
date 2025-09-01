@@ -15,11 +15,10 @@
 <button id="openCreate">Open Pedal Builder</button>
 <script>
 document.getElementById('openCreate').addEventListener('click', async () => {
-    // Fetch the HTML content of create.html
     const response = await fetch('create.html');
     let html = await response.text();
 
-    // Remove <html>, <head>, <body> tags to avoid nesting issues
+    // Remove <html>, <head>, <body> tags
     html = html.replace(/<!DOCTYPE html>/gi, '')
                .replace(/<html[^>]*>/gi, '')
                .replace(/<\/html>/gi, '')
@@ -27,29 +26,47 @@ document.getElementById('openCreate').addEventListener('click', async () => {
                .replace(/<body[^>]*>/gi, '')
                .replace(/<\/body>/gi, '');
 
-    // Open SweetAlert2 modal
+    // Create a temporary container attached to document.body
+    const tempDiv = document.createElement('div');
+    tempDiv.style.display = 'none';
+    tempDiv.id = 'temp-builder-container';
+    tempDiv.innerHTML = html;
+    document.body.appendChild(tempDiv);
+
+    // Dynamically load utils.js first
+    await new Promise((resolve) => {
+        const utilsScript = document.createElement('script');
+        utilsScript.src = 'utils.js';
+        utilsScript.onload = resolve;
+        document.body.appendChild(utilsScript);
+    });
+
+    // Then dynamically load create.js
+    await new Promise((resolve) => {
+        const createScript = document.createElement('script');
+        createScript.src = 'create.js';
+        createScript.onload = resolve;
+        document.body.appendChild(createScript);
+    });
+
+    // Move the container HTML into Swal modal
     Swal.fire({
         title: 'Pedal Builder',
-        html: `<div id="swal-builder-container" style="text-align:left; overflow:auto; max-height:80vh;">${html}</div>`,
+        html: `<div id="swal-builder-container" style="text-align:left; overflow:auto; max-height:80vh;"></div>`,
         width: '90%',
         showCloseButton: true,
         showConfirmButton: false,
         didOpen: () => {
-            const container = document.getElementById('swal-builder-container');
-
-            // Dynamically load utils.js
-            const utilsScript = document.createElement('script');
-            utilsScript.src = 'utils.js';
-            container.appendChild(utilsScript);
-
-            // Then dynamically load create.js
-            const createScript = document.createElement('script');
-            createScript.src = 'create.js';
-            container.appendChild(createScript);
+            const swalContainer = document.getElementById('swal-builder-container');
+            // Move temp container content into the modal
+            const content = document.getElementById('temp-builder-container');
+            swalContainer.appendChild(content);
+            content.style.display = 'block';
         }
     });
 });
 </script>
+
 
 
 </body>
