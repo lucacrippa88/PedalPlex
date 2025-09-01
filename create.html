@@ -56,24 +56,8 @@ body {
             <h2>Gear Quick Creation</h2><br><br>
             <div class="pedal-info">
                 <label>ID <input type="text" class="create-gear-input" id="pedal-id" placeholder="Insert unique gear ID..."></label>
-                
-                
-                <!-- <label>Name <input type="text" class="create-gear-input" id="pedal-name" placeholder="Insert gear name..."></label>
-                <label>Logo style <input type="text" class="create-gear-input" id="pedal-logo" placeholder="Set valid CSS..."></label> -->
-            
-                <!-- Name Editor -->
-                <label for="pedal-name-editor">Name</label>
-                <div id="pedal-name-editor" style="height: 100px;"></div>
-
-                <!-- Logo Editor -->
-                <label for="pedal-logo-editor">Logo style</label>
-                <div id="pedal-logo-editor" style="height: 100px;"></div>
-
-                <!-- Quill CSS + JS -->
-                <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-                <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-
-            
+                <label>Name <input type="text" class="create-gear-input" id="pedal-name" placeholder="Insert gear name..."></label>
+                <label>Logo style <input type="text" class="create-gear-input" id="pedal-logo" placeholder="Set valid CSS..."></label>
             </div>
             <br>
             <label>Type <select id="pedal-type">
@@ -404,10 +388,8 @@ function buildJSON() {
 
 const pedal = {
     _id: $("#pedal-id").val(),
-    // name: $("#pedal-name").val(),
-    // logo: $("#pedal-logo").val(),
-  name: nameEditor.root.innerHTML,     // ✅ from Quill
-  logo: logoEditor.root.innerHTML,     // ✅ from Quill
+    name: $("#pedal-name").val(),
+    logo: $("#pedal-logo").val(),
     type: $("#pedal-type").val(),
     width: $("#pedal-width").val(),
     height: $("#pedal-height").val(),
@@ -918,60 +900,6 @@ function syncUIFromJSON(pedal) {
 
 
 
-<script>
-  // Initialize Quill editors for Pedal Name and Logo
-  // Extend font whitelist if needed
-  const Font = Quill.import('formats/font');
-  Font.whitelist = ['montserrat', 'courier', 'georgia'];
-  Quill.register(Font, true);
-
-  // Create editors
-  const nameEditor = new Quill('#pedal-name-editor', {
-    theme: 'snow',
-    modules: {
-      toolbar: [
-        [{ font: Font.whitelist }],
-        [{ size: [] }],
-        ['bold', 'italic', 'underline'],
-        [{ color: [] }, { background: [] }],
-        [{ align: [] }],
-        ['clean']
-      ]
-    }
-  });
-
-  const logoEditor = new Quill('#pedal-logo-editor', {
-    theme: 'snow',
-    modules: {
-      toolbar: [
-        [{ font: Font.whitelist }],
-        [{ size: [] }],
-        ['bold', 'italic', 'underline'],
-        [{ color: [] }, { background: [] }],
-        [{ align: [] }],
-        ['clean']
-      ]
-    }
-  });
-
-  // Example: get values when saving pedal
-  function getPedalData() {
-    return {
-      name: nameEditor.root.innerHTML,
-      logo: logoEditor.root.innerHTML
-    };
-  }
-
-  // Example: set values when editing pedal
-  function setPedalData(pedal) {
-    nameEditor.root.innerHTML = pedal.name || "";
-    logoEditor.root.innerHTML = pedal.logo || "";
-  }
-
-nameEditor.on('text-change', buildJSON);
-logoEditor.on('text-change', buildJSON);
-
-</script>
 
 
 
