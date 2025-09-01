@@ -382,8 +382,8 @@ $("#add-led").on("click", addLedControl);
     <label>Width <input type="text" class="ctrl-width" value=30></label>
   <label>Height <input type="text" class="ctrl-height" value=10></label>
   <label>Round? <input type="checkbox" class="ctrl-round"></label>
-  <label>Screen <input type="checkbox" id="screen1-check"><input type="color" class="ctrl-screen1" value="#111111"></label>
-  <label>Color <input type="checkbox" id="screen2-check"><input type="color" class="ctrl-screen2" value="#ff0000"></label>
+  <label>Screen <input type="color" class="ctrl-screen1" value="#111111"></label>
+  <label>Color <input type="color" class="ctrl-screen2" value="#ff0000"></label>
   <label>Text <input type="text" class="ctrl-text" value="LCD"></label>
   <br>
   <div class="ctrl-actions">
@@ -428,6 +428,16 @@ $("#add-led").on("click", addLedControl);
             "xlarger", "largest", "wide", "wider", "widest", "xwidest"];
         const heights = ["xsmall", "smaller", "small", "medium", "standard", "large", "+large", "larger", "xlarge",
             "xlarger", "largest", "tall"];
+
+
+
+        // Disable/enable LCD Height when Round is checked
+        $("#controls").on("change", ".ctrl-round", function() {
+            const $ctrl = $(this).closest(".control");
+            const isRound = $(this).is(":checked");
+            $ctrl.find(".ctrl-height").prop("disabled", isRound);
+        });
+
 
         // Show numeric input only for margin-left / margin-right
         $("#controls").on("change", ".ctrl-position", function () {
