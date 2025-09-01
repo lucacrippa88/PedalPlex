@@ -791,7 +791,24 @@ function setupEditPedalHandler(pedals) {
         // Open Swal2 with the builder iframe
         Swal.fire({
             title: `Edit ${pedal._id}`,
-            html: `<iframe src="create.html" style="width:100%; height:80vh; border:none;" id="swal-builder-iframe"></iframe>`,
+            html: `
+            <div style="position:relative; width:100%; height:80vh;">
+                <!-- Spinner overlay -->
+                <div id="builder-spinner" style="position:absolute;top:0;left:0;width:100%;height:100%;
+                    display:flex;align-items:center;justify-content:center;background:rgba(46,46,46,0.9);z-index:10;">
+                <div class="bx--loading" style="width:40px;height:40px;" description="Active loading indicator">
+                    <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+                    <title>Loading</title>
+                    <circle class="bx--loading__background" cx="0" cy="0" r="26"></circle>
+                    <circle class="bx--loading__stroke" cx="0" cy="0" r="26"></circle>
+                    </svg>
+                </div>
+                </div>
+
+                <!-- Iframe (hidden initially) -->
+                <iframe src="create.html" style="width:100%; height:100%; border:none; display:none;" id="swal-builder-iframe"></iframe>
+            </div>
+            `,
             width: '90%',
             allowOutsideClick: false,
             allowEscapeKey: false,
@@ -812,15 +829,6 @@ function setupEditPedalHandler(pedals) {
             didOpen: () => {
                 // Wait a short time for iframe to load
                 const iframe = document.getElementById('swal-builder-iframe');
-                // iframe.addEventListener('load', () => {
-                //     if (iframe.contentWindow && typeof iframe.contentWindow.syncUIFromJSON === 'function') {
-                //         iframe.contentWindow.syncUIFromJSON(pedalCopy);
-
-                //         // Disable the _id field so users cannot change it
-                //         const idInput = iframe.contentWindow.document.getElementById('pedal-id');
-                //         if (idInput) idInput.disabled = true;
-                //     }
-                // });
                 iframe.addEventListener('load', () => {
                     const checkReady = setInterval(() => {
                         if (iframe.contentWindow && typeof iframe.contentWindow.syncUIFromJSON === 'function') {
@@ -830,6 +838,10 @@ function setupEditPedalHandler(pedals) {
                             // Disable the _id field so users cannot change it
                             const idInput = iframe.contentWindow.document.getElementById('pedal-id');
                             if (idInput) idInput.disabled = true;
+
+                            // Hide spinner, show iframe
+                            spinner.style.display = 'none';
+                            iframe.style.display = 'block';
                         }
                     }, 100); // check every 100ms
                 });
