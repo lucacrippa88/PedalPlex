@@ -207,6 +207,15 @@ function buildJSON() {
             window.parent.setPedalJSON(jsonString);
         }
 
+
+        return {
+            pedal,          // the actual pedal object
+            cssError: cssError.trim(), // string, empty if none
+            hasMissingFields: !highlightRequiredFields(), // true if something missing
+            duplicateFound   // true if duplicate labels exist
+        };
+
+
 }
 
 
