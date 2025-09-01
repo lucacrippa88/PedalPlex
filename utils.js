@@ -50,6 +50,8 @@ function getPedalList() {
 }
 
 
+
+
 function getPedalsInPreset(songPresetArray) {
 
   if (!songPresetArray) return [];
@@ -57,6 +59,7 @@ function getPedalsInPreset(songPresetArray) {
   const pedalNames = songPresetArray.map(p => p.name);
   return [...new Set(pedalNames)]; // Ensures uniqueness
 }
+
 
 
   function getRotationFromValue(control, value) {
@@ -766,25 +769,6 @@ window.setupEditPedalHandler = setupEditPedalHandler;
 
 
 
-// Helper: remove font-size from Quill HTML but keep everything else
-function sanitizePedalHTML(html) {
-  const div = document.createElement("div");
-  div.innerHTML = html;
-
-  div.querySelectorAll("[style]").forEach(el => {
-    const styles = el.getAttribute("style")
-      .split(";")
-      .map(s => s.trim())
-      .filter(s => s && !s.startsWith("font-size"));
-    el.setAttribute("style", styles.join("; "));
-  });
-
-  return div.innerHTML;
-}
-
-
-
-
 
 
 // Reusable function to render a pedal
@@ -879,6 +863,7 @@ function renderPedal(pedal, userRole) {
 
   return $pedalDiv;
 }
+
 
 
 

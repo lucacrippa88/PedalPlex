@@ -8,41 +8,38 @@
     <link rel="stylesheet" href="https://unpkg.com/carbon-components/css/carbon-components.min.css" />
     <link rel="stylesheet" href="style.css">
     <script src="utils.js"></script>
+    <script src="create.js"></script>
     <style>
 
         /* Make the builder container a flex layout */
-#builder {
-  display: flex;
-  align-items: flex-start;
-}
+        #builder {
+        display: flex;
+        align-items: flex-start;
+        }
 
-/* Editor takes the left side and can scroll */
-#editor {
-  flex: 1;
-  padding: 20px;
-  max-width: 60%; /* optional, keep it readable */
-}
+        /* Editor takes the left side and can scroll */
+        #editor {
+        flex: 1;
+        padding: 20px;
+        max-width: 60%;
+        }
 
-/* Preview stays fixed on the right */
-#preview {
-  position: fixed;
-  right: 20px;
-  top: 20px;
-  bottom: 20px;
-  width: 55%;
-  /* max-width: 500px; */
-  overflow: auto;       /* ✅ scrolls if pedal is too big */
-  /* background: #fff; */
-  /* border: 1px solid #ddd; */
-  padding: 15px;
-  border-radius: 8px;
-  /* box-shadow: 0 2px 8px rgba(0,0,0,0.1); */
-}
+        /* Preview stays fixed on the right */
+        #preview {
+        position: fixed;
+        right: 20px;
+        top: 20px;
+        bottom: 20px;
+        width: 55%;
+        overflow: auto;
+        padding: 15px;
+        border-radius: 8px;
+        }
 
-body {
-  margin: 0;
-  padding-right: 40%; /* reserve space for preview */
-}
+        body { /* Da capire come integrare nelle altre pagine */
+            margin: 0;
+            padding-right: 40%; /* reserve space for preview */
+        }
 
 
     </style>
@@ -68,51 +65,76 @@ body {
                     <option value="head">Head</option>
                     <option value="round">Round</option>
                 </select>
+                </label>
                 <label>Width <select id="pedal-width"></select></label>
                 <label>Height <select id="pedal-height"></select></label>
                 <br><br>
                 <label>Color <input type="color" id="pedal-color" value="#264985"></label>&ensp;&ensp;
                 <label>Font Color <input type="color" id="font-color" value="#ffffff"></label>&ensp;&ensp;
-                <label> Inside Color (Full <input type="checkbox" id="pedal-inside-full-check">)</label><input type="color" id="pedal-inside-color" value="#0d0d0d">&ensp;&ensp;
+                <br><br>
+                <label>Inside color type <select id="inside-type-select">
+                    <option value="color">Color</option>
+                    <option value="image">Image</option>
+                </select>
+                </label>&ensp;&ensp;
+                
+                <label id="inside-color-label">Color<input type="color" id="pedal-inside-color" value="#0d0d0d"></label>
+                <label id="inside-image-label" style="display:none">Image URL<input type="text" id="pedal-inside-image" placeholder="https://example.com/image.png"></label>
+                <label id="pedal-inside-full-check-label"><input type="checkbox" id="pedal-inside-full-check"> Full (only for colors)</label>
+
+                
                 <label id="inside-border-label" style="display:none;"> Inside Border <input type="checkbox" id="pedal-inside-border-check"><input type="color" id="pedal-inside-border" value="#ffffff"></label>
                 <br><br>
                 <label>Knobs Color <input type="color" id="knobs-color" value="#191919"></label>&ensp;&ensp;
                 <label>Knobs Border <input type="color" id="knobs-border" value="#424242"></label>&ensp;&ensp;
                 <label>Knobs Indicator <input type="color" id="knobs-indicator" value="#ffffff"></label>&ensp;&ensp;
                 <script>
-                    $("#pedal-inside-full-check").on("change", function () {
-                        $("#inside-border-label").toggle(this.checked);
-                    });
+                $("#pedal-inside-full-check").on("change", function () {
+                    const isImage = $("#inside-type-select").val() === "image";
+                    $("#inside-border-label").toggle(this.checked || isImage);
+                });
+
+                // Also update border visibility when inside type changes
+                $("#inside-type-select").on("change", function () {
+                    const isImage = $(this).val() === "image";
+                    const isFull = $("#pedal-inside-full-check").is(":checked");
+                    $("#inside-border-label").toggle(isFull || isImage);
+
+                    if ($(this).val() === "color") {
+                        $("#inside-color-label").show();
+                        $("#inside-image-label").hide();
+                        $("#pedal-inside-full-check-label").show();
+                    } else {
+                        $("#inside-color-label").hide();
+                        $("#inside-image-label").show();
+                        $("#pedal-inside-full-check-label").hide();
+                    }
+                });
                 </script>
 
-                <hr>
-                <button class="bx--btn bx--btn--sm bx--btn--primary" id="add-row">+ Add Control Row</button>
+                <br><br><br><br><br><hr></br><br>
+                
+                <button class="bx--btn bx--btn--sm bx--btn--primary" id="add-row">+ Add Control Row</button><br><br>
                 <div id="controls"></div>
         </div>
 
 
+        <!-- Pedal preview -->
         <div id="preview">
 
             <button class="bx--btn bx--btn--sm bx--btn--secondary" id="toggle-preview" style="color:white;">
                 <svg fill="white" class="icon-eye" xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 32 32" width="16" height="16" 
-                    aria-hidden="true" focusable="false" 
-                    style="margin-right:4px; vertical-align:middle;"
-                    fill="currentColor">
-                    <!-- Default: eye-off, because preview is visible -->
+                    viewBox="0 0 32 32" width="16" height="16" aria-hidden="true" focusable="false" 
+                    style="margin-right:4px; vertical-align:middle;">
                     <path d="M28.28,27.71l-22-22L4.86,7.14,7.6,9.88A16.44,16.44,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27a15.89,15.89,0,0,0,7.12-1.69l3,3Zm-8.45-8.45,1.6,1.6A7,7,0,0,1,16,23c-5.3,0-10.9-3.93-12.93-9A14.63,14.63,0,0,1,9.6,11.41l1.69,1.69A7,7,0,0,0,16,21,6.93,6.93,0,0,0,19.83,19.26Z"/>
                 </svg>
                 Hide Preview
-                </button>
-                <br><br>
+            </button>
+            <br><br>
 
-                <script>
-                const eyeIcon = `
-                    <path d="M30.94,15.66A16.69,16.69,0,0,0,16,5,16.69,16.69,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27,16.69,16.69,0,0,0,30.94,16.34,1,1,0,0,0,30.94,15.66ZM16,25c-5.3,0-10.9-3.93-12.93-9C5.1,10.93,10.7,7,16,7s10.9,3.93,12.93,9C26.9,21.07,21.3,25,16,25Z"/>
-                    <path d="M16,10a6,6,0,1,0,6,6A6,6,0,0,0,16,10Zm0,10a4,4,0,1,1,4-4A4,4,0,0,1,16,20Z"/>`;
-
-                const eyeOffIcon = `
-                    <path d="M28.28,27.71l-22-22L4.86,7.14,7.6,9.88A16.44,16.44,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27a15.89,15.89,0,0,0,7.12-1.69l3,3Zm-8.45-8.45,1.6,1.6A7,7,0,0,1,16,23c-5.3,0-10.9-3.93-12.93-9A14.63,14.63,0,0,1,9.6,11.41l1.69,1.69A7,7,0,0,0,16,21,6.93,6.93,0,0,0,19.83,19.26Z"/>`;
+            <script>
+                const eyeIcon = `<path d="M30.94,15.66A16.69,16.69,0,0,0,16,5,16.69,16.69,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27,16.69,16.69,0,0,0,30.94,16.34,1,1,0,0,0,30.94,15.66ZM16,25c-5.3,0-10.9-3.93-12.93-9C5.1,10.93,10.7,7,16,7s10.9,3.93,12.93,9C26.9,21.07,21.3,25,16,25Z"/><path d="M16,10a6,6,0,1,0,6,6A6,6,0,0,0,16,10Zm0,10a4,4,0,1,1,4-4A4,4,0,0,1,16,20Z"/>`;
+                const eyeOffIcon = `<path d="M28.28,27.71l-22-22L4.86,7.14,7.6,9.88A16.44,16.44,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27a15.89,15.89,0,0,0,7.12-1.69l3,3Zm-8.45-8.45,1.6,1.6A7,7,0,0,1,16,23c-5.3,0-10.9-3.93-12.93-9A14.63,14.63,0,0,1,9.6,11.41l1.69,1.69A7,7,0,0,0,16,21,6.93,6.93,0,0,0,19.83,19.26Z"/>`;
 
                 $("#toggle-preview").on("click", function() {
                     $("#pedal-box").toggle();
@@ -126,20 +148,17 @@ body {
                     }).remove();
                     $(this).append(isVisible ? " Hide Preview" : " Show Preview");
                 });
-                </script>
-
+            </script>
 
         <div id="pedal-box"></div>
+
         </div>
     </div>
 
-
-
-            <h2>Generated JSON</h2><br><br>
-            <textarea id="json-output" style="width:100%;height:300px;font-family:monospace;"></textarea>
-            <div id="json-error" style="color:red; font-weight:bold; margin-top:5px;"></div>
-
-
+    <!-- JSON (to be removed) -->
+    <h2>Generated JSON</h2><br><br>
+    <textarea id="json-output" style="width:100%;height:300px;font-family:monospace;"></textarea>
+    <div id="json-error" style="color:red; font-weight:bold; margin-top:5px;"></div>
 
 
     <!-- Templates -->
@@ -349,6 +368,23 @@ body {
         });
 
 
+        // Switch between inner color or image
+        $("#inside-type-select").on("change", function() {
+        const type = $(this).val();
+        if (type === "color") {
+            $("#inside-color-label").show();
+            $("#inside-image-label").hide();
+            $("#pedal-inside-full-check").show();
+        } else {
+            $("#inside-color-label").hide();
+            $("#inside-image-label").show();
+            $("#pedal-inside-full-check").hide();
+            $("#pedal-inside-full-check-label").hide();
+        }
+        });
+
+
+
         // Enable/disable knob color inputs
         $("#controls").on("change", ".ctrl-knob-color-enable", function () {
             $(this).siblings(".ctrl-knob-color").prop("disabled", !this.checked);
@@ -378,230 +414,7 @@ body {
 
 
 
-
         let isSyncing = false;
-
- // Builder logic
-function buildJSON() {
-
-    if (isSyncing) return; // Skip rebuild during JSON sync
-
-const pedal = {
-    _id: $("#pedal-id").val(),
-    name: $("#pedal-name").val(),
-    logo: $("#pedal-logo").val(),
-    type: $("#pedal-type").val(),
-    width: $("#pedal-width").val(),
-    height: $("#pedal-height").val(),
-    color: $("#pedal-color").val(),
-    "font-color": $("#font-color").val(),
-    "inside-color": $("#pedal-inside-color").val() + ($("#pedal-inside-full-check").is(":checked") ? " full" : ""),
-    "knobs-color": $("#knobs-color").val(),
-    "knobs-border": $("#knobs-border").val(),
-    "knobs-indicator": $("#knobs-indicator").val(),
-    controls: []
-};
-
-const logoVal = $("#pedal-logo").val();
-const el = document.createElement("div");
-el.style.cssText = logoVal;
-
-if (el.getAttribute("style")) {
-    console.log("Valid CSS detected");
-} else {
-    console.log("Not valid CSS");
-}
-
-// Add inside-border only if "Full" is checked
-if ($("#pedal-inside-border-check").is(":checked")) {
-    pedal["inside-border"] = $("#pedal-inside-border").val();
-} else {
-    delete pedal["inside-border"];
-}
-
-// --- helper for position ---
-function getPosition($control) {
-    const posVal = $control.find(".ctrl-position").val();
-    const $posInput = $control.find(".ctrl-position-value");
-
-    if (posVal === "margin-left" || posVal === "margin-right") {
-        const px = parseInt($posInput.val(), 10) || 0;
-        return `${posVal}:${px}px`;
-    } else if (posVal && posVal.trim() !== "") {
-        return posVal;
-    }
-    return undefined;
-}
-
-// --- loop over rows/controls ---
-const allLabels = {};
-let duplicateFound = false;
-
-// First, remove any previous highlighting
-$("#controls .control").css("border", "").css("background-color", "");
-
-$("#controls .row").each(function () {
-    const rowObj = { row: [] };
-    $(this).find(".controls-row .control").each(function () {
-        const type = $(this).data("type");
-        const ctrl = {
-            label: $(this).find(".ctrl-label").val(),
-            type: type
-        };
-
-        const label = ctrl.label?.trim();
-        if (label) {
-            if (allLabels[label]) {
-                allLabels[label].push($(this));
-                duplicateFound = true;
-            } else {
-                allLabels[label] = [$(this)];
-            }
-        }
-
-        if (type.includes("knob")) {
-            const knobType = $(this).find(".ctrl-knob-type").val();
-            if (knobType === "discrete") {
-                const valuesText = $(this).find(".ctrl-values-list").val().trim();
-                const valuesArray = valuesText.split(",").map(v => v.trim());
-                ctrl.values = valuesArray;
-                ctrl.value = $(this).find(".ctrl-value-select").val() || valuesArray[0];
-            } else {
-                ctrl.min = parseInt($(this).find(".ctrl-min").val());
-                ctrl.max = parseInt($(this).find(".ctrl-max").val());
-                ctrl.value = parseInt($(this).find(".ctrl-value").val());
-            }
-            const spanVal = $(this).find(".ctrl-span").val();
-            if (spanVal) ctrl.span = spanVal;
-            if ($(this).find(".ctrl-knob-color-enable").is(":checked")) {
-                ctrl["knob-color"] = $(this).find(".ctrl-knob-color").val();
-            }
-            if ($(this).find(".ctrl-knob-border-enable").is(":checked")) {
-                ctrl["knob-border"] = $(this).find(".ctrl-knob-border").val();
-            }
-            if ($(this).find(".ctrl-knob-indicator-enable").is(":checked")) {
-                ctrl["knob-indicator"] = $(this).find(".ctrl-knob-indicator").val();
-            }
-            if ($(this).find(".ctrl-knob-thick").is(":checked")) {
-                ctrl.border = "thick";
-            }
-            const sizeVal = $(this).find(".ctrl-size").val();
-            ctrl.type = sizeVal === "regular" ? "knob" : sizeVal;
-            const pos = getPosition($(this));
-            if (pos) ctrl.position = pos;
-
-        } else if (type === "led") {
-            ctrl.colors = [
-                $(this).find(".ctrl-color0").val(),
-                $(this).find(".ctrl-color1").val()
-            ];
-            ctrl.value = parseInt($(this).find(".ctrl-value").val());
-            ctrl.showlabel = $(this).find(".ctrl-showlabel").is(":checked") ? "yes" : "no";
-            const pos = getPosition($(this));
-            if (pos) ctrl.position = pos;
-
-        } else if (type === "slider") {
-            ctrl.orientation = $(this).find(".ctrl-orientation").val();
-            ctrl.value = parseInt($(this).find(".ctrl-value").val());
-            const pos = getPosition($(this));
-            if (pos) ctrl.position = pos;
-
-        } else if (type === "lcd") {
-            ctrl.value = $(this).find(".ctrl-text").val();
-            ctrl.shape = $(this).find(".ctrl-round").is(":checked") ? "round" : "";
-            ctrl.width = parseFloat($(this).find(".ctrl-width").val());
-            ctrl.height = parseFloat($(this).find(".ctrl-height").val());
-            ctrl["screen-color"] = $(this).find(".ctrl-screen1").val();
-            ctrl["text-color"] = $(this).find(".ctrl-screen2").val();
-            const pos = getPosition($(this));
-            if (pos) ctrl.position = pos;
-
-        } else if (type === "multi") {
-            ctrl.values = $(this).find(".ctrl-values").val().split(",");
-            ctrl.value = $(this).find(".ctrl-value").val();
-            ctrl.showlabel = $(this).find(".ctrl-showlabel").is(":checked") ? "yes" : "no";
-            const pos = getPosition($(this));
-            if (pos) ctrl.position = pos;
-        }
-
-        rowObj.row.push(ctrl);
-    });
-    pedal.controls.push(rowObj);
-});
-
-// Highlight duplicates
-if (duplicateFound) {
-    $("#json-error").text("Error: Duplicate control labels detected!");
-    Object.values(allLabels).forEach(controlsArray => {
-        if (controlsArray.length > 1) {
-            controlsArray.forEach($ctrl => {
-                $ctrl.css("border", "2px solid red");
-            });
-        }
-    });
-} else {
-    $("#json-error").text("");
-}
-
-$("#json-output").val(JSON.stringify(pedal, null, 2));
-
-const $pedalDiv = $("#pedal-box");
-$pedalDiv.empty().append(renderPedal(pedal));
-
-highlightRequiredFields(); // Highlight missing required fields
-
-}
-
-
-function highlightRequiredFields() {
-    // Clear previous highlights
-    $("#pedal-id, #controls .ctrl-label, #controls .ctrl-values-list").css("border", "");
-
-    let hasError = false;
-
-    // Check Pedal ID
-    const pedalId = $("#pedal-id").val().trim();
-    if (!pedalId) {
-        $("#pedal-id").css("border", "2px solid red");
-        hasError = true;
-    }
-
-    // Check all control labels
-    $("#controls .ctrl-label").each(function() {
-        const labelVal = $(this).val().trim();
-        if (!labelVal) {
-            $(this).css("border", "2px solid red");
-            hasError = true;
-        }
-    });
-
-    // Check values for Multi controls or discrete knobs
-    $("#controls .control").each(function() {
-        const type = $(this).data("type");
-
-        if (type === "multi") {
-            const values = $(this).find(".ctrl-values").val().trim();
-            if (!values) {
-                $(this).find(".ctrl-values").css("border", "2px solid red");
-                hasError = true;
-            }
-        } else if (type.includes("knob") && $(this).find(".ctrl-knob-type").val() === "discrete") {
-            const values = $(this).find(".ctrl-values-list").val().trim();
-            if (!values) {
-                $(this).find(".ctrl-values-list").css("border", "2px solid red");
-                hasError = true;
-            }
-        }
-    });
-
-    return !hasError; // true if all required fields are filled
-}
-
-
-
-
-
-
 
 
         $(function () {
@@ -622,12 +435,12 @@ function highlightRequiredFields() {
                         <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-multi">+ Multi</button>
                         </div>
                         <div class="controls-row" style="display:flex; gap:10px; flex-wrap:nowrap;"></div>
-                        <div class="row-actions">
+                        <div class="row-actions" style="display:flex; gap:6px; flex-wrap:nowrap;">
                         <button class="bx--btn bx--btn--sm bx--btn--secondary row-up">↑ Row</button><br>
                         <button class="bx--btn bx--btn--sm bx--btn--secondary row-down">↓ Row</button><br>
                         <button class="bx--btn bx--btn--sm bx--btn--danger row-remove">✕ Remove Row</button>
                         </div>
-                    </div>
+                    </div><hr><br>
                     `);
                 $("#controls").append(row);
                 buildJSON();
@@ -682,8 +495,9 @@ function highlightRequiredFields() {
             buildJSON();
         });
 
-// Sync values list to select options for knobs
-            $("#controls").on("input", ".ctrl-values-list", function() {
+
+    // Sync values list to select options for knobs
+    $("#controls").on("input", ".ctrl-values-list", function() {
         const $row = $(this).closest(".control");
         const values = $(this).val().split(",").map(v => v.trim()).filter(v => v);
         const $select = $row.find(".ctrl-value-select");
@@ -692,216 +506,17 @@ function highlightRequiredFields() {
         buildJSON();
     });
 
-
-
-        $("#json-output").on("input", function () {
-            const $err = $("#json-error");
-            try {
-                const parsed = JSON.parse($(this).val());
-                $err.text(""); // clear error if valid
-                syncUIFromJSON(parsed);
-            } catch (e) {
-                $err.text("Invalid JSON: " + e.message);
-            }
-        });
-    </script>
-
-
-
-
-    <script>
-function syncUIFromJSON(pedal) {
-
-    isSyncing = true; // Disable buildJSON()
-
-    // --- Helper: restore position (dropdown + numeric px) ---
-    function applyPosition($ctrl, ctrl) {
-        if (ctrl.position) {
-            if (ctrl.position.startsWith("margin-left:") || ctrl.position.startsWith("margin-right:")) {
-                const [side, pxVal] = ctrl.position.split(":");
-                $ctrl.find(".ctrl-position").val(side);
-                $ctrl.find(".ctrl-position-value")
-                    .val(parseInt(pxVal)) // strip "px"
-                    .show();
-            } else {
-                $ctrl.find(".ctrl-position").val(ctrl.position);
-                $ctrl.find(".ctrl-position-value").val("").hide();
-            }
-        } else {
-            $ctrl.find(".ctrl-position").val("").hide();
+    $("#json-output").on("input", function () {
+        const $err = $("#json-error");
+        try {
+            const parsed = JSON.parse($(this).val());
+            $err.text(""); // clear error if valid
+            syncUIFromJSON(parsed);
+        } catch (e) {
+            $err.text("Invalid JSON: " + e.message);
         }
-    }
-
-    // --- Basic pedal info ---
-    $("#pedal-id").val(pedal._id || "");
-    $("#pedal-name").val(pedal.name || "");
-    $("#pedal-logo").val(pedal.logo || "");
-    $("#pedal-type").val(pedal.type || "pedal");
-    $("#pedal-width").val(pedal.width || "standard");
-    $("#pedal-height").val(pedal.height || "standard");
-    $("#pedal-color").val(pedal.color || "#264985");
-    $("#font-color").val(pedal["font-color"] || "#ffffff");
-    $("#knobs-color").val(pedal["knobs-color"] || "#191919");
-    $("#knobs-border").val(pedal["knobs-border"] || "#424242");
-    $("#knobs-indicator").val(pedal["knobs-indicator"] || "#ffffff");
-
-    // --- Inside color + full/border ---
-    if (pedal["inside-color"]) {
-        const full = pedal["inside-color"].includes("full");
-        $("#pedal-inside-full-check").prop("checked", full);
-        $("#pedal-inside-color").val(pedal["inside-color"].replace(" full", ""));
-        $("#inside-border-label").toggle(full);
-    }
-    if (pedal["inside-border"]) {
-        $("#pedal-inside-border-check").prop("checked", true);
-        $("#pedal-inside-border").val(pedal["inside-border"]);
-    } else {
-        $("#pedal-inside-border-check").prop("checked", false);
-    }
-
-    // --- Clear & rebuild controls ---
-    $("#controls").empty();
-    if (Array.isArray(pedal.controls)) {
-        pedal.controls.forEach(rowObj => {
-            $("#add-row").trigger("click"); // add empty row
-            const $lastRow = $("#controls .row").last();
-            const $controlsRow = $lastRow.find(".controls-row");
-
-            rowObj.row.forEach(ctrl => {
-                // --- Pick template ---
-                let templateId;
-                switch (ctrl.type) {
-                    case "knob":
-                    case "smallknob":
-                    case "largeknob":
-                    case "xlargeknob":
-                        templateId = "#knob-template";
-                        break;
-                    case "led":
-                        templateId = "#led-template";
-                        break;
-                    case "slider":
-                        templateId = "#slider-template";
-                        break;
-                    case "lcd":
-                        templateId = "#lcd-template";
-                        break;
-                    case "multi":
-                        templateId = "#multi-template";
-                        break;
-                }
-                if (!templateId) return;
-
-                const $ctrl = $($(templateId).html());
-                $ctrl.find(".ctrl-label").val(ctrl.label || "");
-
-                // --- KNOB ---
-                if (ctrl.type.includes("knob")) {
-                    $ctrl.find(".ctrl-size").val(ctrl.type);
-
-                    if (Array.isArray(ctrl.values) && ctrl.values.length > 0) {
-                        // DISCRETE
-                        $ctrl.find(".ctrl-knob-type").val("discrete").trigger("change");
-                        $ctrl.find(".ctrl-values-list").val(ctrl.values.join(","));
-                        const $select = $ctrl.find(".ctrl-value-select");
-                        $select.empty();
-                        ctrl.values.forEach(v => $select.append(`<option>${v}</option>`));
-                        $select.val(ctrl.value || ctrl.values[0]);
-                        $ctrl.find(".ctrl-span").val(ctrl.span || "");
-                    } else {
-                        // NUMERIC
-                        $ctrl.find(".ctrl-knob-type").val("numeric").trigger("change");
-                        $ctrl.find(".ctrl-min").val(ctrl.min ?? "");
-                        $ctrl.find(".ctrl-max").val(ctrl.max ?? "");
-                        $ctrl.find(".ctrl-value").val(ctrl.value ?? "");
-                        $ctrl.find(".ctrl-values-list").val("");
-                        $ctrl.find(".ctrl-value-select").empty();
-                        $ctrl.find(".ctrl-span").val(ctrl.span || "");
-                    }
-
-                    if (ctrl["knob-color"]) {
-                        $ctrl.find(".ctrl-knob-color-enable").prop("checked", true);
-                        $ctrl.find(".ctrl-knob-color").prop("disabled", false).val(ctrl["knob-color"]);
-                    }
-                    if (ctrl["knob-border"]) {
-                        $ctrl.find(".ctrl-knob-border-enable").prop("checked", true);
-                        $ctrl.find(".ctrl-knob-border").prop("disabled", false).val(ctrl["knob-border"]);
-                    }
-                    if (ctrl["knob-indicator"]) {
-                        $ctrl.find(".ctrl-knob-indicator-enable").prop("checked", true);
-                        $ctrl.find(".ctrl-knob-indicator").prop("disabled", false).val(ctrl["knob-indicator"]);
-                    }
-                    if (ctrl.border === "thick") {
-                        $ctrl.find(".ctrl-knob-thick").prop("checked", true);
-                    }
-
-                    applyPosition($ctrl, ctrl);
-
-                // --- LED ---
-                } else if (ctrl.type === "led") {
-                    $ctrl.find(".ctrl-color0").val(ctrl.colors?.[0] || "#000000");
-                    $ctrl.find(".ctrl-color1").val(ctrl.colors?.[1] || "#ff0000");
-                    $ctrl.find(".ctrl-value").val(ctrl.value);
-                    $ctrl.find(".ctrl-showlabel").prop("checked", ctrl.showlabel === "yes");
-
-                    applyPosition($ctrl, ctrl);
-
-                // --- SLIDER ---
-                } else if (ctrl.type === "slider") {
-                    $ctrl.find(".ctrl-orientation").val(ctrl.orientation || "vertical");
-                    $ctrl.find(".ctrl-min").val(ctrl.min);
-                    $ctrl.find(".ctrl-max").val(ctrl.max);
-                    $ctrl.find(".ctrl-value").val(ctrl.value);
-
-                    applyPosition($ctrl, ctrl);
-
-                // --- LCD ---
-                } else if (ctrl.type === "lcd") {
-                    $ctrl.find(".ctrl-text").val(ctrl.value || "LCD");
-                    $ctrl.find(".ctrl-round").prop("checked", ctrl.shape === "round");
-                    $ctrl.find(".ctrl-width").val(ctrl.width || "");
-                    $ctrl.find(".ctrl-height").val(ctrl.height || "");
-                    $ctrl.find(".ctrl-screen1").val(ctrl["screen-color"] || "#111111");
-                    $ctrl.find(".ctrl-screen2").val(ctrl["text-color"] || "#ff0000");
-
-                    applyPosition($ctrl, ctrl);
-
-                // --- MULTI ---
-                } else if (ctrl.type === "multi") {
-                    $ctrl.find(".ctrl-values").val(ctrl.values?.join(",") || "");
-                    $ctrl.find(".ctrl-value").val(ctrl.value);
-                    $ctrl.find(".ctrl-showlabel").prop("checked", ctrl.showlabel === "yes");
-
-                    applyPosition($ctrl, ctrl);
-                }
-
-                $controlsRow.append($ctrl);
-            });
-        });
-    }
-
-    isSyncing = false; // Re-enable buildJSON
-    buildJSON(); // Rebuild once
-
-    // Re-render pedal
-    $("#pedal-box").empty().append(renderPedal(pedal));
-}
-
-
-
-
-
-
-
-
-
-
+    });
     </script>
-
-
-
-
-
 
 
 </body>
