@@ -52,14 +52,14 @@ function initCatalog(userRole) {
 
 
 
-  let pedalJSON = null;
+let pedalJSON = null;
+function setPedalJSON(jsonString) {
+    pedalJSON = jsonString;
+    console.log(jsonString);
+}
 
-  // This function will be called from the iframe
-  function setPedalJSON(jsonString) {
-      pedalJSON = jsonString; 
-  }
 
-
+// Creation of new gear pedal
 function createNewPedal() {
 
   Swal.fire({
@@ -83,49 +83,49 @@ function createNewPedal() {
       background: '#2e2e2e',
       color: '#ffffff',
       preConfirm: () => {
-    if (!pedalJSON) {
-        Swal.showValidationMessage('JSON is required');
-        return false;
-    }
-
-    try {
-        const parsed = JSON.parse(pedalJSON);
-
-        // Same validation logic as before (duplicate labels, forbidden logo)
-        const labels = [];
-        function collectLabels(obj) {
-            if (Array.isArray(obj)) obj.forEach(collectLabels);
-            else if (obj && typeof obj === 'object') {
-                for (const key in obj) {
-                    if (key === 'label') labels.push(obj[key]);
-                    if (obj[key] !== null && obj[key] !== undefined) collectLabels(obj[key]);
-                }
-            }
-        }
-        collectLabels(parsed);
-
-        const seen = new Set();
-        const duplicates = new Set();
-        labels.forEach(label => {
-            const key = String(label).trim();
-            if (seen.has(key)) duplicates.add(key);
-            else seen.add(key);
-        });
-
-        if (duplicates.size > 0) {
-            Swal.showValidationMessage(
-              `Error: Duplicate label(s) found → ${Array.from(duplicates).join(", ")}`
-            );
+        if (!pedalJSON) {
+            Swal.showValidationMessage('JSON is required');
             return false;
         }
 
-        return parsed;
+        try {
+            const parsed = JSON.parse(pedalJSON);
 
-    } catch (e) {
-        Swal.showValidationMessage('Invalid JSON format');
-        return false;
-    }
-}
+            // Same validation logic as before (duplicate labels, forbidden logo)
+            const labels = [];
+            function collectLabels(obj) {
+                if (Array.isArray(obj)) obj.forEach(collectLabels);
+                else if (obj && typeof obj === 'object') {
+                    for (const key in obj) {
+                        if (key === 'label') labels.push(obj[key]);
+                        if (obj[key] !== null && obj[key] !== undefined) collectLabels(obj[key]);
+                    }
+                }
+            }
+            collectLabels(parsed);
+
+            const seen = new Set();
+            const duplicates = new Set();
+            labels.forEach(label => {
+                const key = String(label).trim();
+                if (seen.has(key)) duplicates.add(key);
+                else seen.add(key);
+            });
+
+            if (duplicates.size > 0) {
+                Swal.showValidationMessage(
+                  `Error: Duplicate label(s) found → ${Array.from(duplicates).join(", ")}`
+                );
+                return false;
+            }
+
+            return parsed;
+
+        } catch (e) {
+            Swal.showValidationMessage('Invalid JSON format: ' + e.message);
+            return false;
+        }
+      }
     }).then((result) => {
       if (result.isConfirmed) {
         const newPedal = result.value;

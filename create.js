@@ -1,7 +1,7 @@
 // Builder logic
 function buildJSON() {
 
-    const jsonData = {}; // existing build logic
+    const data = {};
 
     if (isSyncing) return; // Skip rebuild during JSON sync
 
@@ -200,12 +200,21 @@ function buildJSON() {
         highlightRequiredFields(); // Highlight missing required fields
 
 
-        // Expose JSON to parent (Swal iframe)
+        // Convert to string safely
+        const jsonString = JSON.stringify(data, (key, value) => {
+            // Remove undefined or functions
+            if (typeof value === 'undefined' || typeof value === 'function') {
+                return null;
+            }
+            return value;
+        });
+
+        // Update parent
         if (window.parent && typeof window.parent.setPedalJSON === 'function') {
-            window.parent.setPedalJSON(JSON.stringify(jsonData));
+            window.parent.setPedalJSON(jsonString);
         }
-        
-        return jsonData;
+
+        return data; // optional, in case local use is needed
 
 }
 
