@@ -773,9 +773,7 @@ function renderPedalControls(pedal, $pedalDiv) {
 function setupEditPedalHandler(pedals) {
     $(document).on("click", ".edit-btn", function () {
 
-        // const pedal = $(this).data("pedal");
-        const pedal = JSON.parse($(this).attr("data-pedal"));
-
+        const pedal = $(this).data("pedal");
 
         if (!pedal) {
             console.error("Pedal data not found!");
@@ -783,8 +781,12 @@ function setupEditPedalHandler(pedals) {
         }
 
         // Copy pedal without _rev (server-specific)
-        const pedalCopy = { ...pedal };
+        // const pedalCopy = { ...pedal };
+        // delete pedalCopy._rev;
+
+        const pedalCopy = JSON.parse(JSON.stringify(pedal));
         delete pedalCopy._rev;
+
 
         // Open Swal2 with the builder iframe
         Swal.fire({
@@ -1084,8 +1086,3 @@ function getPedalTypeCss(pedal, baseCss, inside) {
   }
   return baseCss;
 }
-
-
-
-
-
