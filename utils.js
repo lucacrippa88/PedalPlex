@@ -773,7 +773,9 @@ function renderPedalControls(pedal, $pedalDiv) {
 function setupEditPedalHandler(pedals) {
     $(document).on("click", ".edit-btn", function () {
 
-        const pedal = $(this).data("pedal");
+        // const pedal = $(this).data("pedal");
+        const pedal = JSON.parse($(this).attr("data-pedal"));
+
 
         if (!pedal) {
             console.error("Pedal data not found!");
@@ -811,7 +813,7 @@ function setupEditPedalHandler(pedals) {
                 iframe.addEventListener('load', () => {
                     if (iframe.contentWindow && typeof iframe.contentWindow.syncUIFromJSON === 'function') {
                         iframe.contentWindow.syncUIFromJSON(pedalCopy);
-                        
+
                         // Disable the _id field so users cannot change it
                         const idInput = iframe.contentWindow.document.getElementById('pedal-id');
                         if (idInput) idInput.disabled = true;
