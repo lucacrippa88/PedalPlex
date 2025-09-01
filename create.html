@@ -616,6 +616,14 @@ $("#add-led").on("click", addLedControl);
     </script>
 
 
+
+<script>
+$("#editor, #controls").on("input change keyup", "input, select, textarea", function() {
+    buildJSON(); // triggers safe stringify and sends to parent
+});
+</script>
+
+
 </body>
 
 </html>
