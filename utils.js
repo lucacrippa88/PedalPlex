@@ -812,15 +812,28 @@ function setupEditPedalHandler(pedals) {
             didOpen: () => {
                 // Wait a short time for iframe to load
                 const iframe = document.getElementById('swal-builder-iframe');
-                iframe.addEventListener('load', () => {
-                    if (iframe.contentWindow && typeof iframe.contentWindow.syncUIFromJSON === 'function') {
-                        iframe.contentWindow.syncUIFromJSON(pedalCopy);
+                // iframe.addEventListener('load', () => {
+                //     if (iframe.contentWindow && typeof iframe.contentWindow.syncUIFromJSON === 'function') {
+                //         iframe.contentWindow.syncUIFromJSON(pedalCopy);
 
-                        // Disable the _id field so users cannot change it
-                        const idInput = iframe.contentWindow.document.getElementById('pedal-id');
-                        if (idInput) idInput.disabled = true;
-                    }
+                //         // Disable the _id field so users cannot change it
+                //         const idInput = iframe.contentWindow.document.getElementById('pedal-id');
+                //         if (idInput) idInput.disabled = true;
+                //     }
+                // });
+                iframe.addEventListener('load', () => {
+                    const checkReady = setInterval(() => {
+                        if (iframe.contentWindow && typeof iframe.contentWindow.syncUIFromJSON === 'function') {
+                            clearInterval(checkReady);
+                            iframe.contentWindow.syncUIFromJSON(pedalCopy);
+
+                            // Disable the _id field so users cannot change it
+                            const idInput = iframe.contentWindow.document.getElementById('pedal-id');
+                            if (idInput) idInput.disabled = true;
+                        }
+                    }, 100); // check every 100ms
                 });
+
             },
             preConfirm: () => {
                 const iframe = document.getElementById('swal-builder-iframe');
