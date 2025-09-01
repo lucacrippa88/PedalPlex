@@ -825,19 +825,36 @@ function renderPedal(pedal, userRole) {
   }
 
   // Head and inverted pedals → add name/logo
-  if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-    const $nameDiv = $("<div>").addClass("head-name").html(pedal.name).attr("style", pedal.logo || "");
-    $pedalDiv.append($nameDiv);
-  }
+//   if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+//     const $nameDiv = $("<div>").addClass("head-name").html(pedal.name).attr("style", pedal.logo || "");
+//     $pedalDiv.append($nameDiv);
+//   }
+
+if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+  const $nameDiv = $("<div>")
+    .addClass("head-name")
+    .html(pedal.name || "")    // rich text HTML
+    .append(pedal.logo ? $(pedal.logo) : ""); // rich HTML for logo
+  $pedalDiv.append($nameDiv);
+}
 
   // Render pedal controls
   renderPedalControls(pedal, $pedalDiv);
 
   // Add name/logo for others
-  if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
-    const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name).attr("style", pedal.logo || "");
-    $pedalDiv.append($nameDiv);
-  }
+//   if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
+//     const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name).attr("style", pedal.logo || "");
+//     $pedalDiv.append($nameDiv);
+//   }
+
+if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
+  const $nameDiv = $("<div>")
+    .addClass("pedal-name")
+    .css("all", "unset") // optional: remove inherited styles
+    .html(pedal.name || "")
+    .append(pedal.logo ? $(pedal.logo) : "");
+  $pedalDiv.append($nameDiv);
+}
 
   // Add edit button if admin
   if (userRole === 'admin') {
@@ -855,6 +872,8 @@ function renderPedal(pedal, userRole) {
 
   return $pedalDiv;
 }
+
+
 
 // Helper: returns CSS depending on type + inside
 function getPedalTypeCss(pedal, baseCss, inside) {
@@ -900,3 +919,8 @@ function getPedalTypeCss(pedal, baseCss, inside) {
   }
   return baseCss;
 }
+
+
+
+
+

@@ -56,8 +56,24 @@ body {
             <h2>Gear Quick Creation</h2><br><br>
             <div class="pedal-info">
                 <label>ID <input type="text" class="create-gear-input" id="pedal-id" placeholder="Insert unique gear ID..."></label>
-                <label>Name <input type="text" class="create-gear-input" id="pedal-name" placeholder="Insert gear name..."></label>
-                <label>Logo style <input type="text" class="create-gear-input" id="pedal-logo" placeholder="Set valid CSS..."></label>
+                
+                
+                <!-- <label>Name <input type="text" class="create-gear-input" id="pedal-name" placeholder="Insert gear name..."></label>
+                <label>Logo style <input type="text" class="create-gear-input" id="pedal-logo" placeholder="Set valid CSS..."></label> -->
+            
+                <!-- Name Editor -->
+                <label for="pedal-name-editor">Name</label>
+                <div id="pedal-name-editor" style="height: 100px;"></div>
+
+                <!-- Logo Editor -->
+                <label for="pedal-logo-editor">Logo style</label>
+                <div id="pedal-logo-editor" style="height: 100px;"></div>
+
+                <!-- Quill CSS + JS -->
+                <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+                <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+            
             </div>
             <br>
             <label>Type <select id="pedal-type">
@@ -91,19 +107,49 @@ body {
         </div>
 
 
-
         <div id="preview">
 
-        <button id="toggle-preview">Hide Preview</button>
+            <button class="bx--btn bx--btn--sm bx--btn--secondary" id="toggle-preview" style="color:white;">
+                <svg fill="white" class="icon-eye" xmlns="http://www.w3.org/2000/svg" 
+                    viewBox="0 0 32 32" width="16" height="16" 
+                    aria-hidden="true" focusable="false" 
+                    style="margin-right:4px; vertical-align:middle;"
+                    fill="currentColor">
+                    <!-- Default: eye-off, because preview is visible -->
+                    <path d="M28.28,27.71l-22-22L4.86,7.14,7.6,9.88A16.44,16.44,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27a15.89,15.89,0,0,0,7.12-1.69l3,3Zm-8.45-8.45,1.6,1.6A7,7,0,0,1,16,23c-5.3,0-10.9-3.93-12.93-9A14.63,14.63,0,0,1,9.6,11.41l1.69,1.69A7,7,0,0,0,16,21,6.93,6.93,0,0,0,19.83,19.26Z"/>
+                </svg>
+                Hide Preview
+                </button>
+                <br><br>
+
+                <script>
+                const eyeIcon = `
+                    <path d="M30.94,15.66A16.69,16.69,0,0,0,16,5,16.69,16.69,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27,16.69,16.69,0,0,0,30.94,16.34,1,1,0,0,0,30.94,15.66ZM16,25c-5.3,0-10.9-3.93-12.93-9C5.1,10.93,10.7,7,16,7s10.9,3.93,12.93,9C26.9,21.07,21.3,25,16,25Z"/>
+                    <path d="M16,10a6,6,0,1,0,6,6A6,6,0,0,0,16,10Zm0,10a4,4,0,1,1,4-4A4,4,0,0,1,16,20Z"/>`;
+
+                const eyeOffIcon = `
+                    <path d="M28.28,27.71l-22-22L4.86,7.14,7.6,9.88A16.44,16.44,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27a15.89,15.89,0,0,0,7.12-1.69l3,3Zm-8.45-8.45,1.6,1.6A7,7,0,0,1,16,23c-5.3,0-10.9-3.93-12.93-9A14.63,14.63,0,0,1,9.6,11.41l1.69,1.69A7,7,0,0,0,16,21,6.93,6.93,0,0,0,19.83,19.26Z"/>`;
+
+                $("#toggle-preview").on("click", function() {
+                    $("#pedal-box").toggle();
+                    const isVisible = $("#pedal-box").is(":visible");
+
+                    const svg = $(this).find("svg");
+                    svg.html(isVisible ? eyeOffIcon : eyeIcon); // eye-off when visible, eye when hidden
+
+                    $(this).contents().filter(function() {
+                    return this.nodeType === 3; // text node
+                    }).remove();
+                    $(this).append(isVisible ? " Hide Preview" : " Show Preview");
+                });
+                </script>
+
+
         <div id="pedal-box"></div>
         </div>
     </div>
 
-    <script>$("#toggle-preview").on("click", function() {
-                $("#pedal-box").toggle();
-                $(this).text($("#pedal-box").is(":visible") ? "Hide Preview" : "Show Preview");
-            });
-    </script>
+
 
             <h2>Generated JSON</h2><br><br>
             <textarea id="json-output" style="width:100%;height:300px;font-family:monospace;"></textarea>
@@ -356,146 +402,223 @@ function buildJSON() {
 
     if (isSyncing) return; // Skip rebuild during JSON sync
 
-    const pedal = {
-        _id: $("#pedal-id").val(),
-        name: $("#pedal-name").val(),
-        logo: $("#pedal-logo").val(),
-        type: $("#pedal-type").val(),
-        width: $("#pedal-width").val(),
-        height: $("#pedal-height").val(),
-        color: $("#pedal-color").val(),
-        "font-color": $("#font-color").val(),
-        "inside-color": $("#pedal-inside-color").val() + ($("#pedal-inside-full-check").is(":checked") ? " full" : ""),
-        "knobs-color": $("#knobs-color").val(),
-        "knobs-border": $("#knobs-border").val(),
-        "knobs-indicator": $("#knobs-indicator").val(),
-        controls: []
-    };
+const pedal = {
+    _id: $("#pedal-id").val(),
+    // name: $("#pedal-name").val(),
+    // logo: $("#pedal-logo").val(),
+  name: nameEditor.root.innerHTML,     // ✅ from Quill
+  logo: logoEditor.root.innerHTML,     // ✅ from Quill
+    type: $("#pedal-type").val(),
+    width: $("#pedal-width").val(),
+    height: $("#pedal-height").val(),
+    color: $("#pedal-color").val(),
+    "font-color": $("#font-color").val(),
+    "inside-color": $("#pedal-inside-color").val() + ($("#pedal-inside-full-check").is(":checked") ? " full" : ""),
+    "knobs-color": $("#knobs-color").val(),
+    "knobs-border": $("#knobs-border").val(),
+    "knobs-indicator": $("#knobs-indicator").val(),
+    controls: []
+};
 
-    const logoVal = $("#pedal-logo").val();
-    const el = document.createElement("div");
-    el.style.cssText = logoVal;
+const logoVal = $("#pedal-logo").val();
+const el = document.createElement("div");
+el.style.cssText = logoVal;
 
-    if (el.getAttribute("style")) {
-        console.log("Valid CSS detected");
-    } else {
-        console.log("Not valid CSS");
-    }
-
-    // Add inside-border only if "Full" is checked
-    if ($("#pedal-inside-border-check").is(":checked")) {
-        pedal["inside-border"] = $("#pedal-inside-border").val();
-    } else {
-        delete pedal["inside-border"]; // Ensure it's not left behind
-    }
-
-    // --- helper for position ---
-    function getPosition($control) {
-        const posVal = $control.find(".ctrl-position").val();
-        const $posInput = $control.find(".ctrl-position-value");
-
-        if (posVal === "margin-left" || posVal === "margin-right") {
-            const px = parseInt($posInput.val(), 10) || 0;
-            return `${posVal}:${px}px`;
-        } else if (posVal && posVal.trim() !== "") {
-            return posVal;
-        }
-        return undefined;
-    }
-
-    // --- loop over rows/controls ---
-    $("#controls .row").each(function () {
-        const rowObj = { row: [] };
-        $(this).find(".controls-row .control").each(function () {
-            const type = $(this).data("type");
-            const ctrl = {
-                label: $(this).find(".ctrl-label").val(),
-                type: type
-            };
-
-if (type.includes("knob")) {
-
-    const knobType = $(this).find(".ctrl-knob-type").val();
-
-    if (knobType === "discrete") {
-        const valuesText = $(this).find(".ctrl-values-list").val().trim();
-        const valuesArray = valuesText.split(",").map(v => v.trim());
-        ctrl.values = valuesArray;
-        ctrl.value = $(this).find(".ctrl-value-select").val() || valuesArray[0];
-    } else {
-        ctrl.min = parseInt($(this).find(".ctrl-min").val());
-        ctrl.max = parseInt($(this).find(".ctrl-max").val());
-        ctrl.value = parseInt($(this).find(".ctrl-value").val());
-    }
-
-    // ✅ Always handle span once (numeric or discrete)
-    const spanVal = $(this).find(".ctrl-span").val();
-    if (spanVal) ctrl.span = spanVal;
-
-    if ($(this).find(".ctrl-knob-color-enable").is(":checked")) {
-        ctrl["knob-color"] = $(this).find(".ctrl-knob-color").val();
-    }
-    if ($(this).find(".ctrl-knob-border-enable").is(":checked")) {
-        ctrl["knob-border"] = $(this).find(".ctrl-knob-border").val();
-    }
-    if ($(this).find(".ctrl-knob-indicator-enable").is(":checked")) {
-        ctrl["knob-indicator"] = $(this).find(".ctrl-knob-indicator").val();
-    }
-    if ($(this).find(".ctrl-knob-thick").is(":checked")) {
-        ctrl.border = "thick";
-    }
-
-    const sizeVal = $(this).find(".ctrl-size").val();
-    ctrl.type = sizeVal === "regular" ? "knob" : sizeVal;
-
-    const pos = getPosition($(this));
-    if (pos) ctrl.position = pos;
+if (el.getAttribute("style")) {
+    console.log("Valid CSS detected");
+} else {
+    console.log("Not valid CSS");
 }
-            else if (type === "led") {
-                ctrl.colors = [
-                    $(this).find(".ctrl-color0").val(),
-                    $(this).find(".ctrl-color1").val()
-                ];
-                ctrl.value = parseInt($(this).find(".ctrl-value").val());
-                ctrl.showlabel = $(this).find(".ctrl-showlabel").is(":checked") ? "yes" : "no";
-                const pos = getPosition($(this));
-                if (pos) ctrl.position = pos;
 
-            } else if (type === "slider") {
-                ctrl.orientation = $(this).find(".ctrl-orientation").val();
-                ctrl.value = parseInt($(this).find(".ctrl-value").val());
-                const pos = getPosition($(this));
-                if (pos) ctrl.position = pos;
+// Add inside-border only if "Full" is checked
+if ($("#pedal-inside-border-check").is(":checked")) {
+    pedal["inside-border"] = $("#pedal-inside-border").val();
+} else {
+    delete pedal["inside-border"];
+}
 
-            } else if (type === "lcd") {
-                ctrl.value = $(this).find(".ctrl-text").val();
-                ctrl.shape = $(this).find(".ctrl-round").is(":checked") ? "round" : "";
-                ctrl.width = parseFloat($(this).find(".ctrl-width").val());
-                ctrl.height = parseFloat($(this).find(".ctrl-height").val());
-                ctrl["screen-color"] = $(this).find(".ctrl-screen1").val();
-                ctrl["text-color"] = $(this).find(".ctrl-screen2").val();
-                const pos = getPosition($(this));
-                if (pos) ctrl.position = pos;
+// --- helper for position ---
+function getPosition($control) {
+    const posVal = $control.find(".ctrl-position").val();
+    const $posInput = $control.find(".ctrl-position-value");
 
-            } else if (type === "multi") {
-                ctrl.values = $(this).find(".ctrl-values").val().split(",");
-                ctrl.value = $(this).find(".ctrl-value").val();
-                ctrl.showlabel = $(this).find(".ctrl-showlabel").is(":checked") ? "yes" : "no";
-                const pos = getPosition($(this));
-                if (pos) ctrl.position = pos;
+    if (posVal === "margin-left" || posVal === "margin-right") {
+        const px = parseInt($posInput.val(), 10) || 0;
+        return `${posVal}:${px}px`;
+    } else if (posVal && posVal.trim() !== "") {
+        return posVal;
+    }
+    return undefined;
+}
+
+// --- loop over rows/controls ---
+const allLabels = {};
+let duplicateFound = false;
+
+// First, remove any previous highlighting
+$("#controls .control").css("border", "").css("background-color", "");
+
+$("#controls .row").each(function () {
+    const rowObj = { row: [] };
+    $(this).find(".controls-row .control").each(function () {
+        const type = $(this).data("type");
+        const ctrl = {
+            label: $(this).find(".ctrl-label").val(),
+            type: type
+        };
+
+        const label = ctrl.label?.trim();
+        if (label) {
+            if (allLabels[label]) {
+                allLabels[label].push($(this));
+                duplicateFound = true;
+            } else {
+                allLabels[label] = [$(this)];
             }
+        }
 
-            rowObj.row.push(ctrl);
-        });
-        pedal.controls.push(rowObj);
+        if (type.includes("knob")) {
+            const knobType = $(this).find(".ctrl-knob-type").val();
+            if (knobType === "discrete") {
+                const valuesText = $(this).find(".ctrl-values-list").val().trim();
+                const valuesArray = valuesText.split(",").map(v => v.trim());
+                ctrl.values = valuesArray;
+                ctrl.value = $(this).find(".ctrl-value-select").val() || valuesArray[0];
+            } else {
+                ctrl.min = parseInt($(this).find(".ctrl-min").val());
+                ctrl.max = parseInt($(this).find(".ctrl-max").val());
+                ctrl.value = parseInt($(this).find(".ctrl-value").val());
+            }
+            const spanVal = $(this).find(".ctrl-span").val();
+            if (spanVal) ctrl.span = spanVal;
+            if ($(this).find(".ctrl-knob-color-enable").is(":checked")) {
+                ctrl["knob-color"] = $(this).find(".ctrl-knob-color").val();
+            }
+            if ($(this).find(".ctrl-knob-border-enable").is(":checked")) {
+                ctrl["knob-border"] = $(this).find(".ctrl-knob-border").val();
+            }
+            if ($(this).find(".ctrl-knob-indicator-enable").is(":checked")) {
+                ctrl["knob-indicator"] = $(this).find(".ctrl-knob-indicator").val();
+            }
+            if ($(this).find(".ctrl-knob-thick").is(":checked")) {
+                ctrl.border = "thick";
+            }
+            const sizeVal = $(this).find(".ctrl-size").val();
+            ctrl.type = sizeVal === "regular" ? "knob" : sizeVal;
+            const pos = getPosition($(this));
+            if (pos) ctrl.position = pos;
+
+        } else if (type === "led") {
+            ctrl.colors = [
+                $(this).find(".ctrl-color0").val(),
+                $(this).find(".ctrl-color1").val()
+            ];
+            ctrl.value = parseInt($(this).find(".ctrl-value").val());
+            ctrl.showlabel = $(this).find(".ctrl-showlabel").is(":checked") ? "yes" : "no";
+            const pos = getPosition($(this));
+            if (pos) ctrl.position = pos;
+
+        } else if (type === "slider") {
+            ctrl.orientation = $(this).find(".ctrl-orientation").val();
+            ctrl.value = parseInt($(this).find(".ctrl-value").val());
+            const pos = getPosition($(this));
+            if (pos) ctrl.position = pos;
+
+        } else if (type === "lcd") {
+            ctrl.value = $(this).find(".ctrl-text").val();
+            ctrl.shape = $(this).find(".ctrl-round").is(":checked") ? "round" : "";
+            ctrl.width = parseFloat($(this).find(".ctrl-width").val());
+            ctrl.height = parseFloat($(this).find(".ctrl-height").val());
+            ctrl["screen-color"] = $(this).find(".ctrl-screen1").val();
+            ctrl["text-color"] = $(this).find(".ctrl-screen2").val();
+            const pos = getPosition($(this));
+            if (pos) ctrl.position = pos;
+
+        } else if (type === "multi") {
+            ctrl.values = $(this).find(".ctrl-values").val().split(",");
+            ctrl.value = $(this).find(".ctrl-value").val();
+            ctrl.showlabel = $(this).find(".ctrl-showlabel").is(":checked") ? "yes" : "no";
+            const pos = getPosition($(this));
+            if (pos) ctrl.position = pos;
+        }
+
+        rowObj.row.push(ctrl);
+    });
+    pedal.controls.push(rowObj);
+});
+
+// Highlight duplicates
+if (duplicateFound) {
+    $("#json-error").text("Error: Duplicate control labels detected!");
+    Object.values(allLabels).forEach(controlsArray => {
+        if (controlsArray.length > 1) {
+            controlsArray.forEach($ctrl => {
+                $ctrl.css("border", "2px solid red");
+            });
+        }
+    });
+} else {
+    $("#json-error").text("");
+}
+
+$("#json-output").val(JSON.stringify(pedal, null, 2));
+
+const $pedalDiv = $("#pedal-box");
+$pedalDiv.empty().append(renderPedal(pedal));
+
+highlightRequiredFields(); // Highlight missing required fields
+
+}
+
+
+function highlightRequiredFields() {
+    // Clear previous highlights
+    $("#pedal-id, #controls .ctrl-label, #controls .ctrl-values-list").css("border", "");
+
+    let hasError = false;
+
+    // Check Pedal ID
+    const pedalId = $("#pedal-id").val().trim();
+    if (!pedalId) {
+        $("#pedal-id").css("border", "2px solid red");
+        hasError = true;
+    }
+
+    // Check all control labels
+    $("#controls .ctrl-label").each(function() {
+        const labelVal = $(this).val().trim();
+        if (!labelVal) {
+            $(this).css("border", "2px solid red");
+            hasError = true;
+        }
     });
 
-    $("#json-output").val(JSON.stringify(pedal, null, 2));
-    $("#json-error").text(""); // clear any old error
+    // Check values for Multi controls or discrete knobs
+    $("#controls .control").each(function() {
+        const type = $(this).data("type");
 
-    const $pedalDiv = $("#pedal-box");
-    $pedalDiv.empty().append(renderPedal(pedal));
+        if (type === "multi") {
+            const values = $(this).find(".ctrl-values").val().trim();
+            if (!values) {
+                $(this).find(".ctrl-values").css("border", "2px solid red");
+                hasError = true;
+            }
+        } else if (type.includes("knob") && $(this).find(".ctrl-knob-type").val() === "discrete") {
+            const values = $(this).find(".ctrl-values-list").val().trim();
+            if (!values) {
+                $(this).find(".ctrl-values-list").css("border", "2px solid red");
+                hasError = true;
+            }
+        }
+    });
+
+    return !hasError; // true if all required fields are filled
 }
+
+
+
+
+
 
 
 
@@ -783,7 +906,75 @@ function syncUIFromJSON(pedal) {
 }
 
 
+
+
+
+
+
+
+
+
     </script>
+
+
+
+<script>
+  // Initialize Quill editors for Pedal Name and Logo
+  // Extend font whitelist if needed
+  const Font = Quill.import('formats/font');
+  Font.whitelist = ['montserrat', 'courier', 'georgia'];
+  Quill.register(Font, true);
+
+  // Create editors
+  const nameEditor = new Quill('#pedal-name-editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ font: Font.whitelist }],
+        [{ size: [] }],
+        ['bold', 'italic', 'underline'],
+        [{ color: [] }, { background: [] }],
+        [{ align: [] }],
+        ['clean']
+      ]
+    }
+  });
+
+  const logoEditor = new Quill('#pedal-logo-editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ font: Font.whitelist }],
+        [{ size: [] }],
+        ['bold', 'italic', 'underline'],
+        [{ color: [] }, { background: [] }],
+        [{ align: [] }],
+        ['clean']
+      ]
+    }
+  });
+
+  // Example: get values when saving pedal
+  function getPedalData() {
+    return {
+      name: nameEditor.root.innerHTML,
+      logo: logoEditor.root.innerHTML
+    };
+  }
+
+  // Example: set values when editing pedal
+  function setPedalData(pedal) {
+    nameEditor.root.innerHTML = pedal.name || "";
+    logoEditor.root.innerHTML = pedal.logo || "";
+  }
+
+nameEditor.on('text-change', buildJSON);
+logoEditor.on('text-change', buildJSON);
+
+</script>
+
+
+
 
 </body>
 
