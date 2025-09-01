@@ -1,8 +1,6 @@
 // Builder logic
 function buildJSON() {
 
-    const data = {};
-
     if (isSyncing) return; // Skip rebuild during JSON sync
 
         const pedal = {
@@ -192,6 +190,10 @@ function buildJSON() {
         }
 
         $("#json-error").text(cssError); // show all errors in the UI
+
+        const jsonString = JSON.stringify(pedal, null, 2); // use pedal, not data
+
+        // Populate json viewer (to be removed later)
         $("#json-output").val(JSON.stringify(pedal, null, 2));
 
         const $pedalDiv = $("#pedal-box");
@@ -200,21 +202,10 @@ function buildJSON() {
         highlightRequiredFields(); // Highlight missing required fields
 
 
-        // Convert to string safely
-        const jsonString = JSON.stringify(data, (key, value) => {
-            // Remove undefined or functions
-            if (typeof value === 'undefined' || typeof value === 'function') {
-                return null;
-            }
-            return value;
-        });
-
         // Update parent
         if (window.parent && typeof window.parent.setPedalJSON === 'function') {
             window.parent.setPedalJSON(jsonString);
         }
-
-        return data; // optional, in case local use is needed
 
 }
 
