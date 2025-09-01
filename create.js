@@ -1,6 +1,8 @@
 // Builder logic
 function buildJSON() {
 
+    const jsonData = {}; // existing build logic
+
     if (isSyncing) return; // Skip rebuild during JSON sync
 
         const pedal = {
@@ -130,16 +132,6 @@ function buildJSON() {
                     const pos = getPosition($(this));
                     if (pos) ctrl.position = pos;
 
-                // } else if (type === "led") {
-                //     ctrl.colors = [
-                //         $(this).find(".ctrl-color0").val(),
-                //         $(this).find(".ctrl-color1").val()
-                //     ];
-                //     ctrl.value = parseInt($(this).find(".ctrl-value").val());
-                //     ctrl.showlabel = $(this).find(".ctrl-showlabel").is(":checked") ? "yes" : "no";
-                //     const pos = getPosition($(this));
-                //     if (pos) ctrl.position = pos;
-
                 } else if (type === "led") {
                     // Collect all colors dynamically from .ctrl-color inputs
                     ctrl.colors = $(this).find(".ctrl-color").map(function() {
@@ -206,6 +198,14 @@ function buildJSON() {
         $pedalDiv.empty().append(renderPedal(pedal));
 
         highlightRequiredFields(); // Highlight missing required fields
+
+
+        // Expose JSON to parent (Swal iframe)
+        if (window.parent && typeof window.parent.setPedalJSON === 'function') {
+            window.parent.setPedalJSON(JSON.stringify(jsonData));
+        }
+        
+        return jsonData;
 
 }
 
