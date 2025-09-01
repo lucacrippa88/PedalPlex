@@ -765,6 +765,28 @@ window.setupEditPedalHandler = setupEditPedalHandler;
 
 
 
+
+// Helper: remove font-size from Quill HTML but keep everything else
+function sanitizePedalHTML(html) {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+
+  div.querySelectorAll("[style]").forEach(el => {
+    const styles = el.getAttribute("style")
+      .split(";")
+      .map(s => s.trim())
+      .filter(s => s && !s.startsWith("font-size"));
+    el.setAttribute("style", styles.join("; "));
+  });
+
+  return div.innerHTML;
+}
+
+
+
+
+
+
 // Reusable function to render a pedal
 function renderPedal(pedal, userRole) {
   const pedalId = pedal._id || pedal.id;
@@ -833,7 +855,7 @@ function renderPedal(pedal, userRole) {
 if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
   const $nameDiv = $("<div>")
     .addClass("head-name")
-    .html(pedal.name || "")    // rich text HTML
+    .html(sanitizePedalHTML(pedal.name))   // sanitize font-size
     .append(pedal.logo ? $(pedal.logo) : ""); // rich HTML for logo
   $pedalDiv.append($nameDiv);
 }
@@ -850,8 +872,7 @@ if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
 if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
   const $nameDiv = $("<div>")
     .addClass("pedal-name")
-    .css("all", "unset") // optional: remove inherited styles
-    .html(pedal.name || "")
+    .html(sanitizePedalHTML(pedal.name))   // sanitize font-size
     .append(pedal.logo ? $(pedal.logo) : "");
   $pedalDiv.append($nameDiv);
 }
