@@ -7,8 +7,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/carbon-components/css/carbon-components.min.css" />
     <link rel="stylesheet" href="style.css">
-    <script src="utils.js"></script>
-    <script src="create.js"></script>
 
 <title>Pedal Builder</title>
 
@@ -37,18 +35,17 @@ document.getElementById('openCreate').addEventListener('click', async () => {
         showCloseButton: true,
         showConfirmButton: false,
         didOpen: () => {
-            // Load scripts dynamically after modal opens
-            const loadScript = (src) => {
-                const s = document.createElement('script');
-                s.src = src;
-                document.body.appendChild(s);
-            };
-            loadScript('utils.js');
-            loadScript('create.js');
+            const container = document.getElementById('swal-builder-container');
 
-            // Optional: adjust styles inside modal
-            const preview = document.querySelector('#preview');
-            if (preview) preview.style.position = 'relative';
+            // Dynamically load utils.js
+            const utilsScript = document.createElement('script');
+            utilsScript.src = 'utils.js';
+            container.appendChild(utilsScript);
+
+            // Then dynamically load create.js
+            const createScript = document.createElement('script');
+            createScript.src = 'create.js';
+            container.appendChild(createScript);
         }
     });
 });
