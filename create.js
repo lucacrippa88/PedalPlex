@@ -130,13 +130,29 @@ function buildJSON() {
                     const pos = getPosition($(this));
                     if (pos) ctrl.position = pos;
 
+                // } else if (type === "led") {
+                //     ctrl.colors = [
+                //         $(this).find(".ctrl-color0").val(),
+                //         $(this).find(".ctrl-color1").val()
+                //     ];
+                //     ctrl.value = parseInt($(this).find(".ctrl-value").val());
+                //     ctrl.showlabel = $(this).find(".ctrl-showlabel").is(":checked") ? "yes" : "no";
+                //     const pos = getPosition($(this));
+                //     if (pos) ctrl.position = pos;
+
                 } else if (type === "led") {
-                    ctrl.colors = [
-                        $(this).find(".ctrl-color0").val(),
-                        $(this).find(".ctrl-color1").val()
-                    ];
-                    ctrl.value = parseInt($(this).find(".ctrl-value").val());
+                    // Collect all colors dynamically from .ctrl-color inputs
+                    ctrl.colors = $(this).find(".ctrl-color").map(function() {
+                        return $(this).val();
+                    }).get();
+
+                    // Selected index from the dropdown
+                    ctrl.value = parseInt($(this).find(".ctrl-value").val()) || 0;
+
+                    // Show label yes/no
                     ctrl.showlabel = $(this).find(".ctrl-showlabel").is(":checked") ? "yes" : "no";
+
+                    // Position
                     const pos = getPosition($(this));
                     if (pos) ctrl.position = pos;
 
