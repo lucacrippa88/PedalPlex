@@ -2,444 +2,53 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Pedal Builder</title>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<link rel="stylesheet" href="https://unpkg.com/carbon-components/css/carbon-components.min.css" />
-<style>
-/* Keep your original builder styles intact */
-.pedal-catalog { padding:10px; text-align:center; margin-bottom:10px; display:inline-block; vertical-align:top; }
-.pedal-name { margin-top:5px; font-weight:bold; }
-.control { border:1px solid #ccc; padding:5px; border-radius:5px; }
-.row { margin-bottom:15px; }
-#builder { display:flex; gap:20px; width:100%; height:80vh; overflow-y:auto; }
-#editor { flex:1; min-width:350px; }
-#preview { flex:1; min-width:300px; }
-</style>
-</head>
-<body>
 
-<button id="open-builder" class="bx--btn bx--btn--primary">Open Pedal Builder</button>
+<title>Pedal Builder</title>
 
+
+
+<button id="openCreate">Open Pedal Builder</button>
 <script>
-$("#open-builder").on("click", function(){
-  Swal.fire({
-    title: 'Pedal Builder',
-    width: '95%',
-    showConfirmButton: false,
-    showCloseButton: true,
-    html: `
+document.getElementById('openCreate').addEventListener('click', async () => {
+    // Fetch the HTML content of create.html
+    const response = await fetch('create.html');
+    let html = await response.text();
 
-<div id="builder">
-  <div id="editor">
-    <h2>Gear Quick Creation</h2><br><br>
-    <div class="pedal-info">
-        <label>ID <input type="text" id="pedal-id" placeholder="Insert unique gear ID..."></label>
-        <label>Name <input type="text" id="pedal-name" placeholder="Insert gear name..."></label>
-        <label>Logo style <input type="text" id="pedal-logo" placeholder="Set valid CSS..."></label>
-    </div>
-    <br>
-    <label>Type <select id="pedal-type">
-      <option value="pedal">Pedal</option>
-      <option value="pedal-inverted">Pedal Inverted</option>
-      <option value="expression">Expression</option>
-      <option value="combo">Combo</option>
-      <option value="head">Head</option>
-      <option value="round">Round</option>
-    </select></label>
-    <label>Width <select id="pedal-width"></select></label>
-    <label>Height <select id="pedal-height"></select></label>
-    <br><br>
-    <label>Color <input type="color" id="pedal-color" value="#264985"></label>&ensp;&ensp;
-    <label>Font Color <input type="color" id="font-color" value="#ffffff"></label>&ensp;&ensp;
-    <label> Inside Color (Full <input type="checkbox" id="pedal-inside-full-check">)</label>
-    <input type="color" id="pedal-inside-color" value="#0d0d0d">&ensp;&ensp;
-    <label id="inside-border-label" style="display:none;"> Inside Border <input type="checkbox" id="pedal-inside-border-check"><input type="color" id="pedal-inside-border" value="#ffffff"></label>
-    <hr>
-    <button class="bx--btn bx--btn--sm bx--btn--primary" id="add-row">+ Add Control Row</button>
-    <div id="controls"></div>
-  </div>
-  
-  <div id="preview">
-    <h2>Gear Preview</h2><br><br>
-    <div id="pedal-box"></div>
-  </div>
-</div>
+    // Remove <html>, <head>, <body> tags to avoid nesting issues
+    html = html.replace(/<!DOCTYPE html>/gi, '')
+               .replace(/<html[^>]*>/gi, '')
+               .replace(/<\/html>/gi, '')
+               .replace(/<head[^>]*>[\s\S]*<\/head>/gi, '')
+               .replace(/<body[^>]*>/gi, '')
+               .replace(/<\/body>/gi, '');
 
-<br><br>
-<h2>Generated JSON</h2><br><br>
-<pre id="json-output"></pre>
+    // Open SweetAlert2 modal
+    Swal.fire({
+        title: 'Pedal Builder',
+        html: `<div id="swal-builder-container" style="text-align:left; overflow:auto; max-height:80vh;">${html}</div>`,
+        width: '90%',
+        showCloseButton: true,
+        showConfirmButton: false,
+        didOpen: () => {
+            // Load scripts dynamically after modal opens
+            const loadScript = (src) => {
+                const s = document.createElement('script');
+                s.src = src;
+                document.body.appendChild(s);
+            };
+            loadScript('utils.js');
+            loadScript('create.js');
 
-<!-- Templates (knob, led, slider, lcd, multi) -->
-<script type="text/template" id="knob-template">
-<div class="control" data-type="knob">
-  <h4>Knob</h4>
-  <label>Label <input type="text" class="ctrl-label"></label>
-  <label>Size <select class="ctrl-size">
-      <option value="knob" selected>Regular</option>
-      <option value="smallknob">Small</option>
-      <option value="largeknob">Large</option>
-      <option value="xlargeknob">XLarge</option>
-    </select>
-  </label>
-  <label>Position <select class="ctrl-position"><option>highest</option><option>higher</option><option>high</option><option selected></option><option>low</option><option>lower</option><option>lowest</option></select></label>
-  <label>Knob <input type="color" class="ctrl-knob-color" value="#cccccc"></label>
-  <label>Border <input type="color" class="ctrl-knob-border" value="#000000"></label>
-  <label>Indicator <input type="color" class="ctrl-knob-indicator" value="#ff0000"></label>
-  <label>Min <input type="number" class="ctrl-num ctrl-min" value="7"></label>
-  <label>Max <input type="number" class="ctrl-num ctrl-max" value="17"></label>
-  <label>Val <input type="number" class="ctrl-num ctrl-value" value="12"></label>
-  <br>
-  <div class="ctrl-actions">
-    <button class="bx--btn bx--btn--sm bx--btn--secondary move-up">↑</button>
-    <button class="bx--btn bx--btn--sm bx--btn--secondary move-down">↓</button>
-    <button class="bx--btn bx--btn--sm bx--btn--danger remove">✕</button>
-  </div>
-</div>
-</script>
-
-<script type="text/template" id="led-template">
-<div class="control" data-type="led">
-  <h4>LED</h4>
-  <label>Label <input type="text" class="ctrl-label"></label>
-  <label>Position <select class="ctrl-position"><option>highest</option><option>higher</option><option>high</option><option selected></option><option>low</option><option>lower</option><option>lowest</option><option>xlow</option><option>right</option><option>under-top</option><option>align-top</option></select></label>
-  <label>Color OFF <input type="color" class="ctrl-color0" value="#000000"></label>
-  <label>Color ON <input type="color" class="ctrl-color1" value="#f70000"></label>
-  <label>Value <select class="ctrl-value"><option value="0">Off</option><option value="1">On</option></select></label>
-  <br>
-  <div class="ctrl-actions">
-    <button class="bx--btn bx--btn--sm bx--btn--secondary move-up">↑</button>
-    <button class="bx--btn bx--btn--sm bx--btn--secondary move-down">↓</button>
-    <button class="bx--btn bx--btn--sm bx--btn--danger remove">✕</button>
-  </div>
-</div>
-</script>
-
-<script type="text/template" id="slider-template">
-<div class="control" data-type="slider">
-  <h4>Slider</h4>
-  <label>Label <input type="text" class="ctrl-label"></label>
-  <label>Orientation <select class="ctrl-orientation"><option selected>vertical</option><option>vertical small</option><option>horizontal</option></select></label>
-  <label>Min <input type="number" class="ctrl-num ctrl-min" value="-15"></label>
-  <label>Max <input type="number" class="ctrl-num ctrl-max" value="15"></label>
-  <label>Value <input type="number" class="ctrl-num ctrl-value" value="0"></label>
-  <br>
-  <div class="ctrl-actions">
-    <button class="bx--btn bx--btn--sm bx--btn--secondary move-up">↑</button>
-    <button class="bx--btn bx--btn--sm bx--btn--secondary move-down">↓</button>
-    <button class="bx--btn bx--btn--sm bx--btn--danger remove">✕</button>
-  </div>
-</div>
-</script>
-
-<script type="text/template" id="lcd-template">
-<div class="control" data-type="lcd">
-  <h4>LCD</h4>
-  <label>Label <input type="text" class="ctrl-label"></label>
-  <label>Position <select class="ctrl-position"><option>higher</option><option>high</option><option selected></option><option>lower</option></select></label>
-  <label>Round? <input type="checkbox" class="ctrl-round"></label>
-  <label>Text <input type="text" class="ctrl-text" value="LCD"></label>
-  <br>
-  <div class="ctrl-actions">
-    <button class="bx--btn bx--btn--sm bx--btn--secondary move-up">↑</button>
-    <button class="bx--btn bx--btn--sm bx--btn--secondary move-down">↓</button>
-    <button class="bx--btn bx--btn--sm bx--btn--danger remove">✕</button>
-  </div>
-</div>
-</script>
-
-<script type="text/template" id="multi-template">
-<div class="control" data-type="multi">
-  <h4>Multi Select</h4>
-  <label>Label <input type="text" class="ctrl-label"></label>
-  <label>Alignment <select class="ctrl-position"><option>left</option><option>right</option><option>lower</option><option selected></option><option>higher</option><option>highest</option><option>align-top</option></select></label>
-  <label>Values <input type="text" class="ctrl-values" value="A,B,C"></label>
-  <label>Selected <input type="text" class="ctrl-num ctrl-value" value="A"></label>
-  <br>
-  <div class="ctrl-actions">
-    <button class="bx--btn bx--btn--sm bx--btn--secondary move-up">↑</button>
-    <button class="bx--btn bx--btn--sm bx--btn--secondary move-down">↓</button>
-    <button class="bx--btn bx--btn--sm bx--btn--danger remove">✕</button>
-  </div>
-</div>
-</script>
-
-<script>
-const widths = ["xsmall","smaller","small","medium","standard","large","+large","larger","xlarge","xlarger","largest","wide","wider","widest","xwidest"];
-const heights = ["xsmall","smaller","small","medium","standard","large","+large","larger","xlarge","xlarger","largest","tall"];
-
-// Helper: render catalog-style pedal
-// Render a pedal in the builder preview (catalog style)
-function renderBuilderPedal(pedal, container, userRole = 'admin') {
-  // Get inside color and full flag
-  const insideColorRaw = pedal["inside-color"] || "";
-  let inside = "";
-  let colorOnly = insideColorRaw;
-
-  // Check if inside-color is an image URL
-  const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
-
-  if (isImage) {
-    inside = "full"; // Force full if image
-  } else {
-    // Match color and optional "full" string
-    const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s*(full))?/);
-    if (match) {
-      colorOnly = match[1];
-      inside = match[2] || "";
-    }
-  }
-
-  // Base CSS for the pedal
-  const baseCss = {
-    border: `5px solid ${pedal.color}`,
-    borderRadius: '10px',
-    color: pedal["font-color"],
-    width: getPedalWidth(pedal.width),
-    height: getPedalHeight(pedal.height),
-    transform: `rotate(0deg)`,
-    marginBottom: '10px',
-    display: 'inline-block',
-    ...(pedal["inside-border"] ? { boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` } : {}),
-    ...(isImage ? {
-      backgroundImage: `url("${insideColorRaw}")`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center'
-    } : {
-      background: colorOnly
-    })
-  };
-
-  // Create pedal div
-  let $pedalDiv;
-
-
-if (pedal.type === "pedal") {
-          if (inside === "full") {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-              ...baseCss,
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` +
-                (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-          } else {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-              ...baseCss,
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-          }
-        } else if (pedal.type === "expression") {
-          if (inside === "full") {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-              ...baseCss,
-              borderRadius: '25px',
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` +
-                (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-          } else {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-              ...baseCss,
-              borderRadius: '25px',
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-          }
-        } else if (pedal.type === "combo") {
-          if (inside === "full") {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css(baseCss).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-          } else {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-              ...baseCss,
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -80px 0 0 ${pedal["color"]}`
-            }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-          }
-        } else if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-          if (inside === "full") {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-                ...baseCss,
-                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3)` +
-                  (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "")
-              }).attr("data-pedal-name", pedal.name)
-              .attr("data-pedal-id", pedal._id);
-          } else {
-            $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-                ...baseCss,
-                boxShadow: `0 4px 8px rgba(0, 0, 0, 0.3), inset 0 80px 0 0 ${pedal["color"]}`
-              }).attr("data-pedal-name", pedal.name)
-              .attr("data-pedal-id", pedal._id);
-          }
-        } else if (pedal.type === "round") {
-          $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-            ...baseCss,
-            borderRadius: "50%",
-            width: getPedalWidth(pedal.width), // Same width and height for round pedals
-            height: getPedalWidth(pedal.width), // Same width and height for round pedals
-            boxShadow: `0 4px 8px rgba(0,0,0,0.3), inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
-          }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+            // Optional: adjust styles inside modal
+            const preview = document.querySelector('#preview');
+            if (preview) preview.style.position = 'relative';
         }
-
-
-
-  // Pedal attributes
-  $pedalDiv.attr("data-pedal-id", pedal.name).attr("data-pedal-id", pedal._id);
-
-  // Render controls inside the pedal
-  renderPedalControls(pedal, $pedalDiv);
-
-  // Pedal name
-    const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name);
-    if (pedal.logo) {
-        $nameDiv.attr("style", pedal.logo);
-    }
-    $pedalDiv.append($nameDiv);
-
-
-
-  // Append to container
-  $(container).empty().append($pedalDiv);
-}
-
-
-// Builder logic
-function buildJSON() {
-  const pedal = {
-    _id: $("#pedal-id").val(),
-    name: $("#pedal-name").val(),
-    logo: $("#pedal-logo").val(),
-    type: $("#pedal-type").val(),
-    width: $("#pedal-width").val(),
-    height: $("#pedal-height").val(),
-    color: $("#pedal-color").val(),
-    "font-color": $("#font-color").val(),
-    "inside-color": $("#pedal-inside-color").val() + ($("#pedal-inside-full-check").is(":checked") ? " full" : ""),
-    "knobs-color": "#cccccc",
-    "knobs-border": "#000000",
-    "knobs-indicator": "#ff0000",
-    controls:[]
-  };
-
-    const logoVal = $("#pedal-logo").val();
-    const el = document.createElement("div");
-    el.style.cssText = logoVal;
-
-    if (el.getAttribute("style")) {
-        console.log("Valid CSS detected");
-    } else {
-        console.log("Not valid CSS");
-    }
-
-    // Add inside-border only if "Full" is checked
-    if ($("#pedal-inside-border-check").is(":checked")) {
-        pedal["inside-border"] = $("#pedal-inside-border").val();
-    } else {
-        delete pedal["inside-border"]; // Ensure it's not left behind
-    }
-
-  $("#controls .row").each(function(){
-    const rowObj={row:[]};
-    $(this).find(".controls-row .control").each(function(){
-      const type=$(this).data("type");
-      const ctrl={label:$(this).find(".ctrl-label").val(),type:type};
-      if(type.includes("knob")){
-        ctrl.min=parseInt($(this).find(".ctrl-min").val());
-        ctrl.max=parseInt($(this).find(".ctrl-max").val());
-        ctrl.value=parseInt($(this).find(".ctrl-value").val());
-        ctrl["knob-color"]=$(this).find(".ctrl-knob-color").val();
-        ctrl["knob-border"]=$(this).find(".ctrl-knob-border").val();
-        ctrl["knob-indicator"]=$(this).find(".ctrl-knob-indicator").val();
-        const sizeVal=$(this).find(".ctrl-size").val();
-        ctrl.type=sizeVal==="regular"?"knob":sizeVal;
-        const posVal=$(this).find(".ctrl-position").val();
-        if(posVal && posVal.trim()!=="") ctrl.position=posVal;
-      } else if(type==="led"){
-        ctrl.colors=[ $(this).find(".ctrl-color0").val(), $(this).find(".ctrl-color1").val() ];
-        ctrl.value=parseInt($(this).find(".ctrl-value").val());
-        const posVal=$(this).find(".ctrl-position").val();
-        if(posVal && posVal.trim()!=="") ctrl.position=posVal;
-      } else if(type==="slider"){
-        ctrl.orientation=$(this).find(".ctrl-orientation").val();
-        ctrl.value=parseInt($(this).find(".ctrl-value").val());
-        const posVal=$(this).find(".ctrl-position").val();
-        if(posVal && posVal.trim()!=="") ctrl.position=posVal;
-      } else if(type==="lcd"){
-        ctrl.value=$(this).find(".ctrl-text").val();
-        ctrl.shape=$(this).find(".ctrl-round").is(":checked")?"round":"square";
-        ctrl.width=6; ctrl.height=2;
-        const posVal=$(this).find(".ctrl-position").val();
-        if(posVal && posVal.trim()!=="") ctrl.position=posVal;
-      } else if(type==="multi"){
-        ctrl.values=$(this).find(".ctrl-values").val().split(",");
-        ctrl.value=$(this).find(".ctrl-value").val();
-        const posVal=$(this).find(".ctrl-position").val();
-        if(posVal && posVal.trim()!=="") ctrl.position=posVal;
-      }
-      rowObj.row.push(ctrl);
     });
-    pedal.controls.push(rowObj);
-  });
-
-  $("#json-output").text(JSON.stringify(pedal,null,2));
-  const $pedalDiv=$("#pedal-box");
-  renderBuilderPedal(pedal,$pedalDiv);
-}
-
-$(function(){
-  widths.forEach(w=>$("#pedal-width").append(`<option>${w}</option>`));
-  heights.forEach(h=>$("#pedal-height").append(`<option>${h}</option>`));
-  $("#pedal-width").val("standard"); $("#pedal-height").val("standard");
-
-  // Add control row
-  $("#add-row").on("click",function(){
-    const row=$(`
-      <div class="row" style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
-        <div class="row-buttons" style="display:flex; gap:10px;">
-          <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-knob">+ Knob</button>
-          <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-led">+ LED</button>
-          <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-slider">+ Slider</button>
-          <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-lcd">+ LCD</button>
-          <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-multi">+ Multi</button>
-        </div>
-        <div class="controls-row" style="display:flex; gap:10px; flex-wrap:nowrap;"></div>
-        <div class="row-actions">
-          <button class="bx--btn bx--btn--sm bx--btn--secondary row-up">↑ Row</button><br>
-          <button class="bx--btn bx--btn--sm bx--btn--secondary row-down">↓ Row</button><br>
-          <button class="bx--btn bx--btn--sm bx--btn--danger row-remove">✕ Remove Row</button>
-        </div>
-      </div>
-    `);
-    $("#controls").append(row);
-    buildJSON();
-  });
-
-  function addControl(buttonClass, templateId){
-    $("#controls").on("click", buttonClass, function(){
-      const controlsRow=$(this).closest(".row").find(".controls-row");
-      controlsRow.append($(templateId).html());
-      buildJSON();
-    });
-  }
-  addControl(".add-knob","#knob-template");
-  addControl(".add-led","#led-template");
-  addControl(".add-slider","#slider-template");
-  addControl(".add-lcd","#lcd-template");
-  addControl(".add-multi","#multi-template");
-
-  // Move/remove controls
-  $("#controls").on("click",".remove",function(){ $(this).closest(".control").remove(); buildJSON(); });
-  $("#controls").on("click",".move-up",function(){ const c=$(this).closest(".control"); c.prev(".control").before(c); buildJSON(); });
-  $("#controls").on("click",".move-down",function(){ const c=$(this).closest(".control"); c.next(".control").after(c); buildJSON(); });
-
-  // Row actions
-  $("#controls").on("click",".row-remove",function(){ $(this).closest(".row").remove(); buildJSON(); });
-  $("#controls").on("click",".row-up",function(){ const r=$(this).closest(".row"); r.prev(".row").before(r); buildJSON(); });
-  $("#controls").on("click",".row-down",function(){ const r=$(this).closest(".row"); r.next(".row").after(r); buildJSON(); });
-
-  $("#editor, #controls").on("input change keyup","input, select, textarea", buildJSON);
-  buildJSON();
 });
 </script>
-    `
-  });
-});
-</script>
+
 
 </body>
 </html>
