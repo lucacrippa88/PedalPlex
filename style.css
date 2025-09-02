@@ -764,7 +764,10 @@ justify-content: center;
   font-family: MIB;
   src: url("fonts/MIB.ttf");
 }
-
+@font-face {
+  font-family: thorema;
+  src: url("fonts/thorema-demo.regular.ttf");
+}
 
 
 
