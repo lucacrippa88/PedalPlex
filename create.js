@@ -493,6 +493,10 @@ function syncUIFromJSON(pedal) {
         $("#pedal-inside-border, #pedal-inside-border-check").toggle(isFull);
     });
 
+    // Get author name (read-only)
+    $("#pedal-author").val(pedal.author || "unknown");
+
+
     // Re-render pedal
     $("#pedal-box").empty().append(renderPedal(pedal));
 
