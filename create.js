@@ -467,7 +467,7 @@ function syncUIFromJSON(pedal) {
                 } else if (ctrl.type === "multi") {
                     $ctrl.find(".ctrl-values").val(ctrl.values?.join(",") || "");
                     $ctrl.find(".ctrl-value").val(ctrl.value);
-                    $ctrl.find(".ctrl-showlabel").prop("checked", ctrl.showlabel === "yes");
+                    $ctrl.find(".ctrl-showlabel").prop("checked", ctrl.showlabel !== "no");
 
                     applyPosition($ctrl, ctrl);
                 }
