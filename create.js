@@ -110,7 +110,9 @@ function buildJSON() {
                 if ($(this).find(".ctrl-knob-thick").is(":checked")) ctrl.border = "thick";
                 const sizeVal = $(this).find(".ctrl-size").val();
                 ctrl.type = sizeVal === "regular" ? "knob" : sizeVal;
-                const pos = getPosition($(this));
+                // const pos = getPosition($(this));
+                // if (pos) ctrl.position = pos;
+                const pos = getKnobPosition($(this));
                 if (pos) ctrl.position = pos;
             } else if (type === "led") {
                 ctrl.colors = $(this).find(".ctrl-color").map((_, el) => $(el).val()).get();
@@ -182,6 +184,24 @@ window.getPedalValidation = function() {
 
 
 
+// --- Helper: get knob position (keyword + margin) ---
+function getKnobPosition($ctrl) {
+    const keyword = $ctrl.find(".ctrl-position-keyword").val().trim();
+    const margin = $ctrl.find(".ctrl-position-margin").val();
+    const px = parseInt($ctrl.find(".ctrl-position-margin-value").val(), 10) || 0;
+
+    let pos = keyword || "";
+    if (margin && px > 0) {
+        pos += (pos ? " " : "") + `${margin}:${px}px`;
+    } else if (margin && !keyword) {
+        pos = `${margin}:${px}px`;
+    }
+    return pos || undefined;
+}
+
+
+
+
 
 
 
@@ -238,10 +258,58 @@ function syncUIFromJSON(pedal) {
 
     isSyncing = true; // Disable buildJSON()
 
+    // function applyPosition($ctrl, ctrl) {
+    //     if ($ctrl.find(".ctrl-position").length === 0) return; // skip sliders
+
+    //     const $dropdown = $ctrl.find(".ctrl-position");
+    //     const $posInput = $ctrl.find(".ctrl-position-value");
+
+    //     if (ctrl.position) {
+    //         if (ctrl.position.startsWith("margin-left:") || ctrl.position.startsWith("margin-right:")) {
+    //             const [side, pxVal] = ctrl.position.split(":");
+    //             $dropdown.val(side);
+    //             $posInput.val(parseInt(pxVal)).show();
+    //         } else {
+    //             $dropdown.val(ctrl.position);
+    //             $posInput.val("").hide();
+    //         }
+    //     } else {
+    //         $dropdown.val("");   // <-- show dropdown with empty value
+    //         $posInput.val("").hide();
+    //         $dropdown.show();    // <-- make sure it's visible
+    //     }
+    // }
+
     // --- Helper: restore position (dropdown + numeric px) ---
     function applyPosition($ctrl, ctrl) {
-        if ($ctrl.find(".ctrl-position").length === 0) return; // skip sliders
+    // KNOBS
+    if ($ctrl.find(".ctrl-position-keyword").length) {
+        const $keyword = $ctrl.find(".ctrl-position-keyword");
+        const $margin = $ctrl.find(".ctrl-position-margin");
+        const $marginValue = $ctrl.find(".ctrl-position-margin-value");
 
+        if (ctrl.position) {
+            const parts = ctrl.position.split(" ");
+            // Keyword (high, higher, etc)
+            $keyword.val(parts[0] || "");
+            
+            // Margin (optional)
+            if (parts[1] && (parts[1].startsWith("margin-left:") || parts[1].startsWith("margin-right:"))) {
+                const [side, pxVal] = parts[1].split(":");
+                $margin.val(side);
+                $marginValue.val(parseInt(pxVal) || 0).show();
+            } else {
+                $margin.val("");
+                $marginValue.val("").hide();
+            }
+        } else {
+            $keyword.val("");
+            $margin.val("");
+            $marginValue.val("").hide();
+        }
+
+    // OTHER CONTROLS
+    } else if ($ctrl.find(".ctrl-position").length) {
         const $dropdown = $ctrl.find(".ctrl-position");
         const $posInput = $ctrl.find(".ctrl-position-value");
 
@@ -249,17 +317,18 @@ function syncUIFromJSON(pedal) {
             if (ctrl.position.startsWith("margin-left:") || ctrl.position.startsWith("margin-right:")) {
                 const [side, pxVal] = ctrl.position.split(":");
                 $dropdown.val(side);
-                $posInput.val(parseInt(pxVal)).show();
+                $posInput.val(parseInt(pxVal) || 0).show();
             } else {
                 $dropdown.val(ctrl.position);
                 $posInput.val("").hide();
             }
         } else {
-            $dropdown.val("");   // <-- show dropdown with empty value
+            $dropdown.val("");
             $posInput.val("").hide();
-            $dropdown.show();    // <-- make sure it's visible
         }
     }
+}
+
 
 
     // --- Basic pedal info ---
