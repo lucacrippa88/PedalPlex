@@ -331,6 +331,7 @@ function syncUIFromJSON(pedal) {
 
 
 
+
     // --- Basic pedal info ---
     $("#pedal-id").val(pedal._id || "");
     $("#pedal-name").val(pedal.name || "");
