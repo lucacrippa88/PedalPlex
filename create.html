@@ -249,7 +249,7 @@
     <script type="text/template" id="led-template">
         <div class="control" data-type="led">
   <h4>LED</h4>
-  <label>Label <input type="text" class="ctrl-label"></label><input type="checkbox" class="ctrl-showlabel">
+  <label>Label <input type="text" class="ctrl-label"><input type="checkbox" class="ctrl-showlabel"></label>
         <label>Position 
             <select class="ctrl-position">
             <option></option>
@@ -415,7 +415,7 @@ $("#add-led").on("click", addLedControl);
             <option value="margin-right">Margin Right</option>
             </select>
         </label>
-        <input type="number" class="ctrl-position-value" placeholder="px" min="0" style="display:none; width:50px;">  <label>Color OFF <input type="color" class="ctrl-color0" value="#000000"></label>
+        <input type="number" class="ctrl-position-value" placeholder="px" min="0" style="display:none; width:50px;">
     <label>Values <input type="text" class="ctrl-values" value="A,B,C"></label>
   <label>Selected <input type="text" class="ctrl-num ctrl-value" value="A"></label>
   <br>
