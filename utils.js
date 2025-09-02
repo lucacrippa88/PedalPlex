@@ -553,7 +553,7 @@ function renderPedalControls(pedal, $pedalDiv) {
         });
 
         $pedalDiv.append($row);
-    });
+    }); 
 }
 
 
