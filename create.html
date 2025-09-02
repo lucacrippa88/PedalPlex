@@ -52,21 +52,19 @@
         <div id="editor">
             <div class="pedal-info">
 
-<div class="form-group">
-  <label for="pedal-author">Author</label>
-  <input type="text" id="pedal-author" readonly disabled class="form-control" />
-  <input type="hidden" id="pedal-author-id" />
-</div>
+<label for="pedal-author">Author</label>
+<input type="text" id="pedal-author" readonly />
 
-<div class="form-group">
-  <label for="pedal-published">Status</label>
-  <select id="pedal-published" class="form-control">
-    <option value="draft">Draft</option>
-    <option value="private">Private</option>
-    <option value="reviewing">Reviewing</option>
-    <option value="public">Public</option>
-  </select>
-</div>
+<input type="hidden" id="pedal-author-id" />
+
+<label for="pedal-published">Published</label>
+<select id="pedal-published">
+  <option value="draft">Draft</option>
+  <option value="private">Private</option>
+  <option value="reviewing">Reviewing</option>
+  <option value="public">Public</option>
+</select>
+
 
 
                 <label>ID <input type="text" class="create-gear-input" id="pedal-id" placeholder="Insert unique gear ID..."></label>
