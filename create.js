@@ -157,22 +157,23 @@ function buildJSON() {
 
 // --- Metadata (author, authorId, published) ---
 
-// Keep existing values if present in JSON
-if (!pedal.author) {
-  pedal.author = window.currentUser ? window.currentUser.username : "unknown";
-}
-if (!pedal.authorId) {
-  pedal.authorId = window.currentUser ? window.currentUser.userid : "";
-}
+// Author (read-only, comes from hidden field)
+const authorVal = $("#pedal-author").val();
+pedal.author = authorVal && authorVal.trim() !== ""
+  ? authorVal
+  : (window.currentUser ? window.currentUser.username : "unknown");
+
+// AuthorId (read-only, comes from hidden field)
+const authorIdVal = $("#pedal-author-id").val();
+pedal.authorId = authorIdVal && authorIdVal.trim() !== ""
+  ? authorIdVal
+  : (window.currentUser ? window.currentUser.userid : "");
 
 // Published: editable via select (defaults to draft if not set)
 const statusVal = $("#pedal-published").val();
 const validStatuses = ["draft", "private", "reviewing", "public"];
-if (statusVal) {
-  pedal.published = validStatuses.includes(statusVal) ? statusVal : "draft";
-} else if (!pedal.published) {
-  pedal.published = "draft";
-}
+pedal.published = validStatuses.includes(statusVal) ? statusVal : "draft";
+
 
 
     // --- Populate JSON output ---
