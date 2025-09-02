@@ -156,6 +156,7 @@ function getPedalsInPreset(songPresetArray) {
       case "xlarge": return "255px";
       case "xlarger": return "265px";
       case "largest": return "350px";
+      case "xlargest": return "400px";
       case "tall": return "450px";
       default: return "500px";
     }
