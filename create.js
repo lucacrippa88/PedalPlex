@@ -240,21 +240,27 @@ function syncUIFromJSON(pedal) {
 
     // --- Helper: restore position (dropdown + numeric px) ---
     function applyPosition($ctrl, ctrl) {
+        if ($ctrl.find(".ctrl-position").length === 0) return; // skip sliders
+
+        const $dropdown = $ctrl.find(".ctrl-position");
+        const $posInput = $ctrl.find(".ctrl-position-value");
+
         if (ctrl.position) {
             if (ctrl.position.startsWith("margin-left:") || ctrl.position.startsWith("margin-right:")) {
                 const [side, pxVal] = ctrl.position.split(":");
-                $ctrl.find(".ctrl-position").val(side);
-                $ctrl.find(".ctrl-position-value")
-                    .val(parseInt(pxVal)) // strip "px"
-                    .show();
+                $dropdown.val(side);
+                $posInput.val(parseInt(pxVal)).show();
             } else {
-                $ctrl.find(".ctrl-position").val(ctrl.position);
-                $ctrl.find(".ctrl-position-value").val("").hide();
+                $dropdown.val(ctrl.position);
+                $posInput.val("").hide();
             }
         } else {
-            $ctrl.find(".ctrl-position").val("").hide();
+            $dropdown.val("");   // <-- show dropdown with empty value
+            $posInput.val("").hide();
+            $dropdown.show();    // <-- make sure it's visible
         }
     }
+
 
     // --- Basic pedal info ---
     $("#pedal-id").val(pedal._id || "");
