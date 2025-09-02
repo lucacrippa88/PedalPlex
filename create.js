@@ -517,6 +517,9 @@ function syncUIFromJSON(pedal) {
     if ($("#pedal-author").length) {
         $("#pedal-author").val(pedal.author || "unknown");
     }
+    if ($("#pedal-author-id").length) {
+        $("#pedal-author-id").val(pedal.authorId || "");
+    }
 
     // Published (dropdown)
     if ($("#pedal-published").length) {
@@ -524,6 +527,7 @@ function syncUIFromJSON(pedal) {
         const status = validStatuses.includes(pedal.published) ? pedal.published : "draft";
         $("#pedal-published").val(status);
     }
+
 
 
 
