@@ -287,7 +287,6 @@ function syncUIFromJSON(pedal) {
             $("#inside-image-label").show();
             $("#pedal-inside-image").val(insideVal);
 
-            // Hide border inputs for images
             $("#pedal-inside-border, #pedal-inside-border-check").hide();
 
         } else {
@@ -306,13 +305,16 @@ function syncUIFromJSON(pedal) {
             // Set border value if exists (or empty)
             $("#pedal-inside-border").val(pedal["inside-border"] || "");
 
-            // Attach change handler
-            $("#pedal-inside-full-check").off("change").on("change", function() {
-                const checked = $(this).is(":checked");
-                $("#pedal-inside-border, #pedal-inside-border-check").toggle(checked);
-            });
+            // 🔹 Attach change handler **after everything exists**
+            setTimeout(() => {
+                $("#pedal-inside-full-check").off("change").on("change", function() {
+                    const checked = $(this).is(":checked");
+                    $("#pedal-inside-border, #pedal-inside-border-check").toggle(checked);
+                });
+            }, 0);
         }
     }
+
 
 
 
