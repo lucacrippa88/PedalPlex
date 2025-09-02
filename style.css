@@ -760,6 +760,13 @@ justify-content: center;
   font-family: bolton;
   src: url("fonts/Bolton.ttf");
 }
+@font-face {
+  font-family: MIB;
+  src: url("fonts/MIB.ttf");
+}
+
+
+
 
 
 
