@@ -289,17 +289,22 @@ function syncUIFromJSON(pedal) {
 
             // Hide border inputs for images
             $("#pedal-inside-border, #pedal-inside-border-check").hide();
+
         } else {
             $("#inside-type-select").val("color");
             $("#inside-color-label").show();
             $("#pedal-inside-full-check-label").show();
             $("#inside-image-label").hide();
             $("#pedal-inside-color").val(insideVal.replace(" full", ""));
+
             const isFull = insideVal.includes("full");
             $("#pedal-inside-full-check").prop("checked", isFull);
 
             // Show/hide border inputs based on full flag
             $("#pedal-inside-border, #pedal-inside-border-check").toggle(isFull);
+
+            // Set border value if exists (or empty)
+            $("#pedal-inside-border").val(pedal["inside-border"] || "");
 
             // Attach change handler
             $("#pedal-inside-full-check").off("change").on("change", function() {
@@ -311,15 +316,6 @@ function syncUIFromJSON(pedal) {
 
 
 
-
-
-    // --- Inside border ---
-    if (pedal["inside-border"]) {
-        $("#pedal-inside-border-check").prop("checked", true);
-        $("#pedal-inside-border").val(pedal["inside-border"]);
-    } else {
-        $("#pedal-inside-border-check").prop("checked", false);
-    }
 
     // --- Clear & rebuild controls ---
     $("#controls").empty();
