@@ -350,10 +350,16 @@ function syncUIFromJSON(pedal) {
     }
 
     // Always restore inside-border if it exists in DB
-    if (pedal["inside-border"] !== undefined) {
+    if (pedal["inside-border"] !== undefined && pedal["inside-border"] !== "") {
         $("#pedal-inside-border").val(pedal["inside-border"]);
+        $("#pedal-inside-border-check").prop("checked", true);   // ✅ important!
         $("#pedal-inside-border, #pedal-inside-border-check").show();
+    } else {
+        $("#pedal-inside-border").val("");
+        $("#pedal-inside-border-check").prop("checked", false);
+        $("#pedal-inside-border, #pedal-inside-border-check").hide();
     }
+
 
 
 
