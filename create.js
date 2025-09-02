@@ -258,28 +258,6 @@ function syncUIFromJSON(pedal) {
 
     isSyncing = true; // Disable buildJSON()
 
-    // function applyPosition($ctrl, ctrl) {
-    //     if ($ctrl.find(".ctrl-position").length === 0) return; // skip sliders
-
-    //     const $dropdown = $ctrl.find(".ctrl-position");
-    //     const $posInput = $ctrl.find(".ctrl-position-value");
-
-    //     if (ctrl.position) {
-    //         if (ctrl.position.startsWith("margin-left:") || ctrl.position.startsWith("margin-right:")) {
-    //             const [side, pxVal] = ctrl.position.split(":");
-    //             $dropdown.val(side);
-    //             $posInput.val(parseInt(pxVal)).show();
-    //         } else {
-    //             $dropdown.val(ctrl.position);
-    //             $posInput.val("").hide();
-    //         }
-    //     } else {
-    //         $dropdown.val("");   // <-- show dropdown with empty value
-    //         $posInput.val("").hide();
-    //         $dropdown.show();    // <-- make sure it's visible
-    //     }
-    // }
-
     // --- Helper: restore position (dropdown + numeric px) ---
     function applyPosition($ctrl, ctrl) {
     const $keyword = $ctrl.find(".ctrl-position-keyword");
@@ -332,8 +310,8 @@ function syncUIFromJSON(pedal) {
     $("#pedal-name").val(pedal.name || "");
     $("#pedal-logo").val(pedal.logo || "");
     $("#pedal-type").val(pedal.type || "pedal");
-    $("#pedal-width").val(pedal.width || "standard");
-    $("#pedal-height").val(pedal.height || "standard");
+    $("#pedal-width").val(pedal.width !== undefined ? pedal.width : "standard");
+    $("#pedal-height").val(pedal.height !== undefined ? pedal.height : "standard");
     $("#pedal-color").val(pedal.color || "#264985");
     $("#font-color").val(pedal["font-color"] || "#ffffff");
     $("#knobs-color").val(pedal["knobs-color"] || "#191919");
