@@ -51,6 +51,23 @@
 
         <div id="editor">
             <div class="pedal-info">
+
+<div class="form-group">
+  <label for="pedal-author">Author</label>
+  <input type="text" id="pedal-author" readonly class="form-control" />
+</div>
+
+<div class="form-group">
+  <label for="pedal-published">Status</label>
+  <select id="pedal-published" class="form-control">
+    <option value="draft">Draft</option>
+    <option value="private">Private</option>
+    <option value="reviewing">Reviewing</option>
+    <option value="public">Public</option>
+  </select>
+</div>
+
+
                 <label>ID <input type="text" class="create-gear-input" id="pedal-id" placeholder="Insert unique gear ID..."></label>
                 <label>Name <input type="text" class="create-gear-input" id="pedal-name" placeholder="Insert gear name..."></label>
                 <label>Logo style <input type="text" class="create-gear-input" id="pedal-logo" placeholder="Set valid CSS..."></label>
