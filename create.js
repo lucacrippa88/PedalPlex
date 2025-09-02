@@ -282,38 +282,25 @@ function syncUIFromJSON(pedal) {
 
     // --- Helper: restore position (dropdown + numeric px) ---
     function applyPosition($ctrl, ctrl) {
-    // KNOBS
-    if ($ctrl.find(".ctrl-position-keyword").length) {
-        const $keyword = $ctrl.find(".ctrl-position-keyword");
-        const $margin = $ctrl.find(".ctrl-position-margin");
-        const $marginValue = $ctrl.find(".ctrl-position-margin-value");
+    const $keyword = $ctrl.find(".ctrl-position-keyword");
+    const $margin = $ctrl.find(".ctrl-position-margin");
+    const $marginValue = $ctrl.find(".ctrl-position-margin-value");
+    const $dropdown = $ctrl.find(".ctrl-position");
+    const $posInput = $ctrl.find(".ctrl-position-value");
 
-        if (ctrl.position) {
-            const parts = ctrl.position.split(" ");
-            // Keyword (high, higher, etc)
+    if (ctrl.position) {
+        if ($keyword.length) { // knobs
+            const parts = ctrl.position.split(" "); // split "keyword margin-right:20px"
             $keyword.val(parts[0] || "");
-            
-            // Margin (optional)
             if (parts[1] && (parts[1].startsWith("margin-left:") || parts[1].startsWith("margin-right:"))) {
-                const [side, pxVal] = parts[1].split(":");
+                const [side, px] = parts[1].split(":");
                 $margin.val(side);
-                $marginValue.val(parseInt(pxVal) || 0).show();
+                $marginValue.val(parseInt(px) || 0).show();
             } else {
                 $margin.val("");
                 $marginValue.val("").hide();
             }
-        } else {
-            $keyword.val("");
-            $margin.val("");
-            $marginValue.val("").hide();
-        }
-
-    // OTHER CONTROLS
-    } else if ($ctrl.find(".ctrl-position").length) {
-        const $dropdown = $ctrl.find(".ctrl-position");
-        const $posInput = $ctrl.find(".ctrl-position-value");
-
-        if (ctrl.position) {
+        } else if ($dropdown.length) { // other controls
             if (ctrl.position.startsWith("margin-left:") || ctrl.position.startsWith("margin-right:")) {
                 const [side, pxVal] = ctrl.position.split(":");
                 $dropdown.val(side);
@@ -322,12 +309,20 @@ function syncUIFromJSON(pedal) {
                 $dropdown.val(ctrl.position);
                 $posInput.val("").hide();
             }
-        } else {
+        }
+    } else {
+        if ($keyword.length) {
+            $keyword.val("");
+            $margin.val("");
+            $marginValue.val("").hide();
+        }
+        if ($dropdown.length) {
             $dropdown.val("");
             $posInput.val("").hide();
         }
     }
 }
+
 
 
 
