@@ -834,18 +834,18 @@ function renderPedal(pedal, userRole) {
   }
 
 
-  // After you append pedal name/logo, add:
-    if (pedal.author) {
-        const $authorDiv = $("<div>")
-            .addClass("pedal-author")
-            .text("Author: " + pedal.author)
-            .css({
-                fontSize: "0.8em",
-                color: "#ccc",
-                marginTop: "2px"
-            });
-        $pedalDiv.append($authorDiv);
-    }
+  // Add author on top
+  if (pedal.author) {
+    const $authorDiv = $("<div>")
+      .addClass("pedal-author")
+      .text("by: " + pedal.author)
+      .css({
+        fontSize: "0.8em",
+        color: "#ccc",
+        marginBottom: "2px"
+      });
+    $pedalDiv.append($authorDiv);
+  }
 
 
 // Add edit button if admin OR current user is the author
