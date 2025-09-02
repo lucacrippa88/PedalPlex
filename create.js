@@ -329,9 +329,6 @@ function syncUIFromJSON(pedal) {
             $("#pedal-inside-full-check-label").hide();
             $("#inside-image-label").show();
             $("#pedal-inside-image").val(insideVal);
-
-            $("#pedal-inside-border, #pedal-inside-border-check").hide();
-
         } else {
             $("#inside-type-select").val("color");
             $("#inside-color-label").show();
@@ -342,15 +339,22 @@ function syncUIFromJSON(pedal) {
             // Set the "full" checkbox as usual
             const isFull = insideVal.includes("full");
             $("#pedal-inside-full-check").prop("checked", isFull);
-
-            // Always show the inside-border input and checkbox
-            $("#pedal-inside-border, #pedal-inside-border-check").show();
-
-            // Set the border value if it exists
-            $("#pedal-inside-border").val(pedal["inside-border"] || "");
-
         }
+    } else {
+        // default if inside-color is missing
+        $("#inside-type-select").val("color");
+        $("#inside-color-label").show();
+        $("#inside-image-label").hide();
+        $("#pedal-inside-color").val("");
+        $("#pedal-inside-full-check").prop("checked", false);
     }
+
+    // Always restore inside-border if it exists in DB
+    if (pedal["inside-border"] !== undefined) {
+        $("#pedal-inside-border").val(pedal["inside-border"]);
+        $("#pedal-inside-border, #pedal-inside-border-check").show();
+    }
+
 
 
 
@@ -413,7 +417,7 @@ function syncUIFromJSON(pedal) {
                         $ctrl.find(".ctrl-value").val(ctrl.value ?? "");
                         $ctrl.find(".ctrl-values-list").val("");
                         $ctrl.find(".ctrl-value-select").empty();
-                        $ctrl.find(".ctrl-span").val(ctrl.span || "");
+                        $ctrl.find(".ctrl-span").val(ctrl.span || ""); 
                     }
 
                     if (ctrl["knob-color"]) {
