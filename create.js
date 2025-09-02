@@ -299,19 +299,18 @@ function syncUIFromJSON(pedal) {
             const isFull = insideVal.includes("full");
             $("#pedal-inside-full-check").prop("checked", isFull);
 
-            // Show/hide border inputs based on full flag
+            // Always show the inside-border input if full is checked
             $("#pedal-inside-border, #pedal-inside-border-check").toggle(isFull);
 
             // Set border value if exists (or empty)
             $("#pedal-inside-border").val(pedal["inside-border"] || "");
 
-            // 🔹 Attach change handler **after everything exists**
-            setTimeout(() => {
-                $("#pedal-inside-full-check").off("change").on("change", function() {
-                    const checked = $(this).is(":checked");
-                    $("#pedal-inside-border, #pedal-inside-border-check").toggle(checked);
-                });
-            }, 0);
+            // ✅ Attach change handler immediately (no setTimeout needed)
+            $("#pedal-inside-full-check").off("change").on("change", function() {
+                const checked = $(this).is(":checked");
+                $("#pedal-inside-border, #pedal-inside-border-check").toggle(checked);
+            });
+
         }
     }
 
