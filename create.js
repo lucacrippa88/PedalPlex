@@ -276,34 +276,39 @@ function syncUIFromJSON(pedal) {
     $("#knobs-indicator").val(pedal["knobs-indicator"] || "#ffffff");
 
 
-if (pedal["inside-color"]) {
-    const insideVal = pedal["inside-color"].trim();
-    const isImage = /^(https?:\/\/|data:image\/|images\/)/i.test(insideVal);
+    if (pedal["inside-color"]) {
+        const insideVal = pedal["inside-color"].trim();
+        const isImage = /^(https?:\/\/|data:image\/|images\/)/i.test(insideVal);
 
-    if (isImage) {
-        $("#inside-type-select").val("image");
-        $("#inside-color-label").hide();
-        $("#pedal-inside-full-check-label").hide();
-        $("#inside-image-label").show();
-        $("#pedal-inside-image").val(insideVal);
-    } else {
-        $("#inside-type-select").val("color");
-        $("#inside-color-label").show();
-        $("#pedal-inside-full-check-label").show();
-        $("#inside-image-label").hide();
-        $("#pedal-inside-color").val(insideVal.replace(" full", ""));
-        $("#pedal-inside-full-check").prop("checked", insideVal.includes("full"));
+        if (isImage) {
+            $("#inside-type-select").val("image");
+            $("#inside-color-label").hide();
+            $("#pedal-inside-full-check-label").hide();
+            $("#inside-image-label").show();
+            $("#pedal-inside-image").val(insideVal);
 
-        // --- Attach change handler if not already attached ---
-        $("#pedal-inside-full-check").off("change").on("change", function() {
-            const isFull = $(this).is(":checked");
+            // Hide border inputs for images
+            $("#pedal-inside-border, #pedal-inside-border-check").hide();
+        } else {
+            $("#inside-type-select").val("color");
+            $("#inside-color-label").show();
+            $("#pedal-inside-full-check-label").show();
+            $("#inside-image-label").hide();
+            $("#pedal-inside-color").val(insideVal.replace(" full", ""));
+            const isFull = insideVal.includes("full");
+            $("#pedal-inside-full-check").prop("checked", isFull);
+
+            // Show/hide border inputs based on full flag
             $("#pedal-inside-border, #pedal-inside-border-check").toggle(isFull);
-        });
 
-        // --- Trigger the handler to show/hide input based on loaded pedal ---
-        $("#pedal-inside-full-check").trigger("change");
+            // Attach change handler
+            $("#pedal-inside-full-check").off("change").on("change", function() {
+                const checked = $(this).is(":checked");
+                $("#pedal-inside-border, #pedal-inside-border-check").toggle(checked);
+            });
+        }
     }
-}
+
 
 
 
