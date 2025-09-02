@@ -293,6 +293,7 @@ if (pedal["inside-color"]) {
         $("#inside-image-label").hide();
         $("#pedal-inside-color").val(insideVal.replace(" full", ""));
         $("#pedal-inside-full-check").prop("checked", insideVal.includes("full"));
+        $("#pedal-inside-border, #pedal-inside-border-check").toggle(insideVal.includes("full")); // Show/hide inside-border input based on full flag
     }
 }
 
@@ -426,6 +427,12 @@ if (pedal["inside-color"]) {
             });
         });
     }
+
+    // --- Setup dynamic handlers for new controls ---
+    $("#pedal-inside-full-check").on("change", function() {
+        const isFull = $(this).is(":checked");
+        $("#pedal-inside-border, #pedal-inside-border-check").toggle(isFull);
+    });
 
     // Re-render pedal
     $("#pedal-box").empty().append(renderPedal(pedal));
