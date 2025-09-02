@@ -831,7 +831,7 @@ function renderPedal(pedal, userRole) {
   if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
     const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name).attr("style", pedal.logo || "");
     $pedalDiv.append($nameDiv);
-  }
+  } 
 
 
   // Add author on top
