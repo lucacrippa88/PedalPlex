@@ -113,10 +113,13 @@ function createNewPedal() {
           newPedal.authorId = window.currentUser.userid || null;
         }
 
+        const token = localStorage.getItem('authToken');
+
         fetch('https://www.cineteatrosanluigi.it/plex/CREATE_GEAR.php', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
             },
             body: JSON.stringify(newPedal)
           })

@@ -82,7 +82,7 @@ function initNavCatalog(userRole) {
               class="bx--btn__icon">
               <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
-            Request gear
+            Add Your Own Gear
           </button>
         ` : ''}
 
