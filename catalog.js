@@ -107,6 +107,12 @@ function createNewPedal() {
       if (result.isConfirmed) {
         const newPedal = result.value;
 
+        // Attach author info
+        if (window.currentUser) {
+          newPedal.author = window.currentUser.username || "unknown";
+          newPedal.authorId = window.currentUser.userid || null;
+        }
+
         fetch('https://www.cineteatrosanluigi.it/plex/CREATE_GEAR.php', {
             method: 'POST',
             headers: {

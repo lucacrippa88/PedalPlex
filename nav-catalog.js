@@ -98,9 +98,10 @@ function initNavCatalog(userRole) {
 
   // Prepend the navigation HTML to the body
   $("body").prepend(navHtml);
-  if (isAdmin) {
-    $(document).on('click', '#createPedalBtn', createNewPedal);
-  }
+
+  // Allow all users to create pedals
+  $(document).on('click', '#createPedalBtn', createNewPedal);
+
   
   // Add fullscreen menu HTML from external file
   $("body").append(window.fullscreenMenuHtml);

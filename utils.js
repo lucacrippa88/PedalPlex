@@ -848,8 +848,8 @@ function renderPedal(pedal, userRole) {
     }
 
 
-  // Add edit button if admin
-  if (userRole === 'admin') {
+// Add edit button if admin OR current user is the author
+if (window.currentUser && (userRole === 'admin' || window.currentUser.username === pedal.author)) {
     const $editBtn = $("<button>")
       .addClass("edit-btn")
       .attr("title", "Edit pedal JSON")
@@ -860,7 +860,8 @@ function renderPedal(pedal, userRole) {
         </svg>
       `);
     $pedalDiv.append($editBtn);
-  }
+}
+
 
   return $pedalDiv;
 }
