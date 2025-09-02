@@ -66,10 +66,10 @@ function initNavCatalog(userRole) {
 
         ${!isAdmin ? `
           <button
-            id="requestPedalBtn"
+            id="createOwnPedalBtn"
             class="bx--btn bx--btn--primary bx--btn--sm"
             type="button"
-            aria-label="Request New Gear"
+            aria-label="Add Your Own Gear"
             style="display: flex; align-items: center; gap: 0.5rem;">
             <svg
               focusable="false"
@@ -79,14 +79,9 @@ function initNavCatalog(userRole) {
               height="16"
               viewBox="0 0 32 32"
               aria-hidden="true"
-              class="bx--btn__icon"
-              >
-              <!-- Arrow markers -->
-              <polygon points="8.59 20.41 12.17 24 12.17 24 8.58 27.59 10 29 15 24 10 19 8.59 20.41"/>
-              <polygon points="15.59 20.41 19.17 24 19.17 24 15.58 27.59 17 29 22 24 17 19 15.59 20.41"/>
-              <!-- Envelope shape -->
-              <path d="M14,23H4V7.91l11.43,7.91a1,1,0,0,0,1.14,0L28,7.91V17h2V7a2,2,0,0,0-2-2H4A2,2,0,0,0,2,7V23a2,2,0,0,0,2,2H14ZM25.8,7,16,13.78,6.2,7Z"/>
-            </svg>
+              class="bx--btn__icon">
+              <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
             Request gear
           </button>
         ` : ''}
@@ -101,6 +96,7 @@ function initNavCatalog(userRole) {
 
   // Allow all users to create pedals
   $(document).on('click', '#createPedalBtn', createNewPedal);
+  $(document).on('click', '#createOwnPedalBtn', createNewPedal);
 
   
   // Add fullscreen menu HTML from external file
