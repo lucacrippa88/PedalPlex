@@ -155,6 +155,13 @@ function buildJSON() {
         });
     }
 
+    // --- Metadata (author, authorId, published) ---
+    pedal.author = pedal.author || (window.currentUser ? window.currentUser.username : "unknown");
+    pedal.authorId = pedal.authorId || (window.currentUser ? window.currentUser.userid : "");
+    const statusVal = $("#pedal-published").val();
+    const validStatuses = ["draft", "private", "reviewing", "public"];
+    pedal.published = validStatuses.includes(statusVal) ? statusVal : "draft";
+
     // --- Populate JSON output ---
     const jsonString = JSON.stringify(pedal, null, 2);
     $("#json-output").val(jsonString);
@@ -493,8 +500,18 @@ function syncUIFromJSON(pedal) {
         $("#pedal-inside-border, #pedal-inside-border-check").toggle(isFull);
     });
 
-    // Get author name (read-only)
-    $("#pedal-author").val(pedal.author || "unknown");
+    // Author (read-only)
+    if ($("#pedal-author").length) {
+        $("#pedal-author").val(pedal.author || "unknown");
+    }
+
+    // Published (dropdown)
+    if ($("#pedal-published").length) {
+        const validStatuses = ["draft", "private", "reviewing", "public"];
+        const status = validStatuses.includes(pedal.published) ? pedal.published : "draft";
+        $("#pedal-published").val(status);
+    }
+
 
 
     // Re-render pedal
