@@ -82,7 +82,7 @@
                 <label id="pedal-inside-full-check-label"><input type="checkbox" id="pedal-inside-full-check"> Full (only for colors)</label>
 
                 
-                <label id="inside-border-label" style="display:none;"> Inside Border <input type="checkbox" id="pedal-inside-border-check"><input type="color" id="pedal-inside-border" value="#ffffff"></label>
+                <label id="inside-border-label" style="display:none;"> Inside Border <input type="checkbox" id="pedal-inside-border-check"><input type="color" id="pedal-inside-border" value="#000000"></label>
                 <br><br>
                 <label>Knobs Color <input type="color" id="knobs-color" value="#191919"></label>&ensp;&ensp;
                 <label>Knobs Border <input type="color" id="knobs-border" value="#424242"></label>&ensp;&ensp;
@@ -181,7 +181,7 @@
             <option value="xlargeknob">XLarge</option>
             </select>
         </label>
-        <label>Position 
+        <!-- <label>Position 
             <select class="ctrl-position">
             <option></option>
             <option>highest</option>
@@ -198,7 +198,36 @@
             <option value="margin-right">Margin Right</option>
             </select>
         </label>
-        <input type="number" class="ctrl-position-value" placeholder="px" min="0" style="display:none; width:50px;">
+        <input type="number" class="ctrl-position-value" placeholder="px" min="0" style="display:none; width:50px;"> -->
+
+
+        <label>Position
+        <select class="ctrl-position-keyword">
+            <option></option>
+            <option>highest</option>
+            <option>higher</option>
+            <option>high</option>
+            <option>low</option>
+            <option>lower</option>
+            <option>lowest</option>
+            <option>under-top</option>
+            <option>align-top</option>
+            <option>align-top-clear</option>
+            <option>align-top-clearer</option>
+        </select>
+        </label>
+
+        <label>Margin
+        <select class="ctrl-position-margin">
+            <option value="">None</option>
+            <option value="margin-left">Margin Left</option>
+            <option value="margin-right">Margin Right</option>
+        </select>
+        </label>
+        <input type="number" class="ctrl-position-margin-value" placeholder="px" min="0" style="display:none; width:50px;">
+
+
+
         <label>
             <input type="checkbox" class="ctrl-knob-color-enable"> Knob
             <input type="color" class="ctrl-knob-color" disabled>
@@ -443,6 +472,14 @@ $("#add-led").on("click", addLedControl);
             $ctrl.find(".ctrl-height").prop("disabled", isRound);
         });
 
+        // Show/hide margin input
+        // Only for knobs
+        $("#controls").on("change", ".ctrl-position-margin", function() {
+            const $ctrl = $(this).closest(".control");
+            const val = $(this).val();
+            $ctrl.find(".ctrl-position-margin-value").toggle(val !== "");
+        });
+
 
         // Show numeric input only for margin-left / margin-right
         $("#controls").on("change", ".ctrl-position", function () {
@@ -504,6 +541,7 @@ $("#add-led").on("click", addLedControl);
 
 
         let isSyncing = false;
+
 
 
         $(function () {
