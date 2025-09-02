@@ -427,9 +427,13 @@ if (pedal["inside-color"]) {
         });
     }
 
-    isSyncing = false; // Re-enable buildJSON
-    buildJSON(); // Rebuild once
-
     // Re-render pedal
     $("#pedal-box").empty().append(renderPedal(pedal));
+
+    // Delay re-enabling buildJSON to prevent width/height reset on click
+    setTimeout(() => {
+        isSyncing = false;
+        buildJSON(); // rebuild once
+    }, 0);
+
 }
