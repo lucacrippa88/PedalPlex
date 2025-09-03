@@ -15,7 +15,7 @@ function initCatalog(userRole) {
         </div>     
       </div>`;
 
-  fetch("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php")
+  fetch("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${userRole}")
     .then(response => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
