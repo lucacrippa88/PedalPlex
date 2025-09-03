@@ -166,9 +166,13 @@ function buildJSON() {
     pedal.authorId = authorIdVal && authorIdVal.trim() !== "" ? authorIdVal : (window.currentUser ? window.currentUser.userid : "");
 
     // Published: editable via select (defaults to draft if not set)
-    const statusVal = $("#pedal-published").val();
+    // Get the selected text from dropdown and lowercase it
+    const selectedText = $("#pedal-published option:selected").text().trim().toLowerCase();
+    // Define allowed statuses
     const validStatuses = ["draft", "private", "reviewing", "public"];
-    pedal.published = validStatuses.includes(statusVal) ? statusVal : "draft";
+    // Use selectedText if valid, otherwise fallback to draft
+    pedal.published = validStatuses.includes(selectedText) ? selectedText : "draft";
+
 
 
     // Rebuild JSON whenever publication status changes
@@ -528,13 +532,21 @@ function syncUIFromJSON(pedal) {
     if ($("#pedal-published").length) {
         const validStatuses = ["draft", "private", "reviewing", "public"];
         const status = validStatuses.includes(pedal.published) ? pedal.published : "draft";
-        $("#pedal-published").val(status);
+
+        // Set the selected option by matching text (case-insensitive)
+        $("#pedal-published option").each(function() {
+            const textLower = $(this).text().trim().toLowerCase();
+            if (textLower === status.toLowerCase()) {
+                $(this).prop("selected", true);
+            }
+        });
 
         // Optional: rebuild JSON when changed
         $("#pedal-published").off("change.syncPublished").on("change.syncPublished", function() {
             buildJSON();
         });
     }
+
 
 
 
