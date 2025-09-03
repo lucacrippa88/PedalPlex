@@ -192,25 +192,6 @@
             <option value="xlargeknob">XLarge</option>
             </select>
         </label>
-        <!-- <label>Position 
-            <select class="ctrl-position">
-            <option></option>
-            <option>highest</option>
-            <option>higher</option>
-            <option>high</option>
-            <option>low</option>
-            <option>lower</option>
-            <option>lowest</option>
-            <option>under-top</option>
-            <option>align-top</option>
-            <option>align-top-clear</option>
-            <option>align-top-clearer</option>
-            <option value="margin-left">Margin Left</option>
-            <option value="margin-right">Margin Right</option>
-            </select>
-        </label>
-        <input type="number" class="ctrl-position-value" placeholder="px" min="0" style="display:none; width:50px;"> -->
-
 
         <label>Position
         <select class="ctrl-position-keyword">
@@ -674,34 +655,28 @@ $("#editor, #controls").on("input change keyup", "input, select, textarea", func
 </script>
 
 
-
-
 <script>
 // Handle moderation flow
 $(function () {
-    // Example: replace with real logged-in role
     const userRole = "user"; // or "admin"
 
     if (userRole !== "admin") {
-        // keep select visible but disabled
-        $("#pedal-published").prop("disabled", true);
+        // Disable only the options not allowed for regular users
+        $("#pedal-published option").each(function() {
+            const val = $(this).val();
+            if (val !== "draft" && val !== "private") {
+                $(this).prop("disabled", true);
+            }
+        });
 
-        // add buttons on the right
+        // Optionally, force default selection to 'draft' if a disabled option is selected
+        const selected = $("#pedal-published").val();
+        if (selected !== "draft" && selected !== "private") {
+            $("#pedal-published").val("draft");
+        }
+
+        // Add status buttons for requesting publication
         $("#status-buttons").append(`
-          <button class="bx--btn bx--btn--sm bx--btn--secondary" id="save-private">
-            <svg
-              focusable="false"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="white"
-              width="16"
-              height="16"
-              viewBox="0 0 32 32"
-              aria-hidden="true"
-              class="bx--btn__icon">
-              <path d="M24,14H22V8A6,6,0,0,0,10,8v6H8a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V16A2,2,0,0,0,24,14ZM12,8a4,4,0,0,1,8,0v6H12ZM24,28H8V16H24Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Approve privately
-          </button>
           <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
             <svg
               focusable="false"
@@ -718,18 +693,13 @@ $(function () {
           </button>
         `);
 
-        // button actions
-        $("#save-private").on("click", function () {
-            console.log("Saving to private catalog...");
-            // TODO: call your backend API
-        });
-
         $("#request-publication").on("click", function () {
             console.log("Requesting publication...");
-            // TODO: call your backend API
+            // TODO: call backend API
         });
     }
 });
+
 </script>
 
 
