@@ -656,6 +656,7 @@ $("#editor, #controls").on("input change keyup", "input, select, textarea", func
 
 
 <script>
+// Handle moderation flow
 $(function () {
     // Get current user from parent
     let userFromParent = { role: "user" }; // fallback
@@ -670,41 +671,42 @@ $(function () {
     const allowedForUser = ["draft", "private"];
 
     if (userRole !== "admin") {
-        // Hide or visually disable options not allowed
+        // Disable options not allowed
         $select.find("option").each(function () {
             const val = $(this).val();
             if (!allowedForUser.includes(val)) {
-                $(this).hide(); // keeps value in DOM for JSON but not selectable
+                $(this).prop("disabled", true);
             } else {
-                $(this).show();
+                $(this).prop("disabled", false);
             }
         });
 
-        // Ensure a valid selection
-        const selected = $select.val();
-        if (!allowedForUser.includes(selected)) {
+        // Ensure current selection is valid
+        if (!allowedForUser.includes($select.val())) {
             $select.val("draft");
         }
 
         // Add status button for requesting publication
-        $("#status-buttons").append(`
-          <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
-            Ask publication
-          </button>
-        `);
+        if ($("#status-buttons").length && !$("#request-publication").length) {
+            $("#status-buttons").append(`
+                <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
+                    Ask publication
+                </button>
+            `);
 
-        $("#request-publication").on("click", function () {
-            console.log("Requesting publication...");
-            // TODO: call backend API
-        });
+            $("#request-publication").on("click", function () {
+                console.log("Requesting publication...");
+                // TODO: call backend API
+            });
+        }
 
     } else {
-        // Admin sees all options
-        $select.find("option").show();
+        // Admin sees all options enabled
+        $select.find("option").prop("disabled", false);
     }
 });
-</script>
 
+</script>
 
 
 
