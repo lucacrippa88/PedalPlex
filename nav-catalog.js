@@ -141,6 +141,7 @@ function initNavCatalog(userRole) {
 
 // Updates pedal counts including draft/private/reviewing/public-by-me
 // Updates pedal counts including draft/private/reviewing/public-by-me
+// Updates pedal counts including draft/private/reviewing/public-by-me
 function updatePedalCounts(activeFilter = "all") {
   const pedals = $(".pedal-catalog:visible");
   const totalCount = pedals.length;
@@ -172,10 +173,8 @@ function updatePedalCounts(activeFilter = "all") {
     : `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">${statusCounts.reviewing}</span>`;
 
   $("#pedalCount").html(
-    `<span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">
-       ${totalCount} gear${totalCount === 1 ? "" : "s"} available
-     </span>
-     (Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
+    `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalCount}</span>, 
+      Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
       Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${statusCounts.private}</span>, 
       Reviewing: ${reviewingBadge}, 
       Published by me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>)`
@@ -224,6 +223,7 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
 
 
 // Filtering function
