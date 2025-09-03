@@ -129,13 +129,17 @@
         <!-- Pedal preview -->
         <div id="preview">
 
-            <label>Status <select id="pedal-published">
-                    <option value="draft">Draft</option>
-                    <option value="private">Private</option>
-                    <option value="reviewing">Reviewing</option>
-                    <option value="public">Public</option>
-                </select>
-                <span id="status-buttons" style="margin-left:10px;"></span>
+            <label>Status 
+<div id="pedal-status">
+  <button class="status-btn" data-value="draft">Draft</button>
+  <button class="status-btn" data-value="private">Private</button>
+  <button class="status-btn" data-value="reviewing">Reviewing</button>
+  <button class="status-btn" data-value="public">Public</button>
+</div>
+<input type="hidden" id="pedal-published" value="draft">
+
+<div id="status-buttons"></div>
+
             </label><br><br>
             <button class="bx--btn bx--btn--sm bx--btn--secondary" id="toggle-preview" style="color:white;">
                 <svg fill="white" class="icon-eye" xmlns="http://www.w3.org/2000/svg" 
@@ -713,57 +717,74 @@ $("#editor, #controls").on("input change keyup", "input, select, textarea", func
 // });
 
 
-$(function () {
-    let userFromParent = { role: "user" };
-    if (parent && parent.window && parent.window.currentUser) {
-        userFromParent = parent.window.currentUser;
+$(function() {
+    let userRole = "user"; // fallback
+    if (parent?.window?.currentUser?.role) {
+        userRole = parent.window.currentUser.role;
     }
-    const userRole = userFromParent.role;
 
-    const $select = $("#pedal-published");
-    const currentVal = $select.val();
+    const allowedForUser = ["draft", "private"];
+    const currentVal = $("#pedal-published").val();
 
-    if (userRole !== "admin") {
-        const allowedForUser = ["draft", "private"];
+    // Show/hide buttons based on role
+    $("#pedal-status .status-btn").each(function() {
+        const val = $(this).data("value");
+        if (userRole !== "admin" && !allowedForUser.includes(val)) {
+            $(this).hide(); // hide disallowed for users
+        }
+    });
 
-        $select.find("option").each(function () {
-            const val = $(this).val();
-            // Keep current selected value enabled, disable others not allowed
-            if (val !== currentVal && !allowedForUser.includes(val)) {
-                $(this).prop("disabled", true);
-            } else {
-                $(this).prop("disabled", false);
-            }
+    // Highlight current status
+    $("#pedal-status .status-btn").removeClass("selected");
+    $(`#pedal-status .status-btn[data-value="${currentVal}"]`).addClass("selected");
+
+    // Click handler for status buttons
+    $("#pedal-status .status-btn").on("click", function() {
+        const val = $(this).data("value");
+        $("#pedal-published").val(val); // hidden input holds true value
+        $("#pedal-status .status-btn").removeClass("selected");
+        $(this).addClass("selected");
+        buildJSON(); // update JSON whenever status changes
+    });
+
+    // Add "Ask Publication" button for users when status is draft or private
+    if (userRole !== "admin" && !$("#request-publication").length) {
+        const $btn = $(`
+          <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
+            <svg
+              focusable="false"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="white"
+              width="16"
+              height="16"
+              viewBox="0 0 32 32"
+              aria-hidden="true"
+              class="bx--btn__icon">
+              <path d="M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L7,16,4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Zm-20.9,10L8.76,17H18V15H8.76L6.55,6.89,24.76,16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Ask publication
+          </button>
+        `);
+        $("#status-buttons").append($btn);
+
+        $btn.on("click", function() {
+            console.log("Requesting publication...");
+            // TODO: call backend API
+            // e.g., mark pedal as "reviewing" in backend
         });
 
-        // Status button for requesting publication
-        if ($("#status-buttons").length && !$("#request-publication").length) {
-            $("#status-buttons").append(`
-            <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
-                <svg
-                focusable="false"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="white"
-                width="16"
-                height="16"
-                viewBox="0 0 32 32"
-                aria-hidden="true"
-                class="bx--btn__icon">
-                <path d="M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L7,16,4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Zm-20.9,10L8.76,17H18V15H8.76L6.55,6.89,24.76,16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                Ask publication
-            </button>
-            `);
-
-            $("#request-publication").on("click", function () {
-                console.log("Requesting publication...");
-                // TODO: call backend API
-            });
+        // Optionally hide the button if status is already "reviewing" or "public"
+        function updateRequestButtonVisibility() {
+            const val = $("#pedal-published").val();
+            $btn.toggle(val === "draft" || val === "private");
         }
-    } else {
-        $select.find("option").prop("disabled", false);
+
+        updateRequestButtonVisibility();
+        $("#pedal-status .status-btn").on("click", updateRequestButtonVisibility);
     }
 });
+
+
 
 </script>
 
