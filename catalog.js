@@ -107,6 +107,8 @@ function createNewPedal() {
       if (result.isConfirmed) {
         const newPedal = result.value;
 
+        console.log(window.currentUser)
+
         // Attach author info
         if (window.currentUser) {
           newPedal.author = window.currentUser.username || "unknown";
