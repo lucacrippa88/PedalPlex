@@ -705,7 +705,12 @@ $(function () {
             console.log("Requesting publication...");
             // TODO: call backend API
         });
+
+    } else {
+        $("#pedal-published option").prop("disabled", false);
     }
+
+
 });
 </script>
 
