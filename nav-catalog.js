@@ -1,19 +1,4 @@
 function initNavCatalog(userRole) {
-
-  // Count pedals by status without removing anything else
-  const pedals = $(".pedal-catalog");
-  const totalCount = pedals.length;
-  const statusCounts = { draft: 0, private: 0, reviewing: 0 };
-
-  pedals.each(function() {
-    const status = ($(this).data("published") || "").toLowerCase();
-    if (status in statusCounts) statusCounts[status]++;
-  });
-
-  // Update pedalCount with breakdown
-  $("#pedalCount").text(`${totalCount} gear${totalCount === 1 ? "" : "s"} available (Draft: ${statusCounts.draft}, Private: ${statusCounts.private}, Reviewing: ${statusCounts.reviewing})`);
-
-
   const isAdmin = (userRole === "admin");
   const subtitleText = `Gears Catalog${isAdmin ? " Manager" : ""}`;
 
@@ -33,7 +18,6 @@ function initNavCatalog(userRole) {
 
       <!-- Right: search toggle, input, create button -->
       <div style="display: flex; align-items: center; gap: 1rem;">
-
         <span id="pedalCount" style="font-size: 0.75rem; opacity: 0.7;"></span>
 
         <button id="toggleFilterBtn" aria-label="Toggle search" style="background:none; border:none; cursor:pointer; padding:4px;">
@@ -91,7 +75,7 @@ function initNavCatalog(userRole) {
               aria-hidden="true"
               class="bx--btn__icon">
               <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
+            </svg>
             Add Your Own Gear
           </button>
         ` : ''}
@@ -104,15 +88,28 @@ function initNavCatalog(userRole) {
   // Prepend the navigation HTML to the body
   $("body").prepend(navHtml);
 
+  // Compute pedal counts after nav HTML exists
+  const pedals = $(".pedal-catalog");
+  const totalCount = pedals.length;
+  const statusCounts = { draft: 0, private: 0, reviewing: 0 };
+
+  pedals.each(function() {
+    const status = ($(this).data("published") || "").toLowerCase();
+    if (status in statusCounts) statusCounts[status]++;
+  });
+
+  $("#pedalCount").text(
+    `${totalCount} gear${totalCount === 1 ? "" : "s"} available (Draft: ${statusCounts.draft}, Private: ${statusCounts.private}, Reviewing: ${statusCounts.reviewing})`
+  );
+
   // Allow all users to create pedals
   $(document).on('click', '#createPedalBtn', createNewPedal);
   $(document).on('click', '#createOwnPedalBtn', createNewPedal);
 
-  
   // Add fullscreen menu HTML from external file
   $("body").append(window.fullscreenMenuHtml);
 
-  // Fullscreen menu toggle with quote
+  // Fullscreen menu toggle with random quote
   $("#menuToggle").on("click", function () {
     const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
     $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
@@ -133,6 +130,7 @@ function initNavCatalog(userRole) {
     }
   });
 
+  // Filter pedals dynamically
   $("#pedalFilterInput").on("input", function () {
     const filterValue = $(this).val().toLowerCase();
     let visibleCount = 0;
