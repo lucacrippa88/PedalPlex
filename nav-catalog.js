@@ -20,7 +20,7 @@ function initNavCatalog(userRole) {
       </div>
 
       <div style="display: flex; align-items: center; gap: 1rem;">
-        <span id="pedalCount" style="font-size: 0.75rem; opacity: 0.7;"></span>
+        <span id="pedalCount" style="font-size: 0.75rem; color:#aaa"></span>
 
         <button id="toggleFilterBtn" aria-label="Toggle search" style="background:none; border:none; cursor:pointer; padding:4px;">
           <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -115,7 +115,7 @@ function updatePedalCounts() {
   // Build badge for reviewing
   const reviewingBadge = statusCounts.reviewing > 0
     ? `<span style="
-        background:#f70000;
+        background:#ff0000;
         color:white;
         border-radius:50%;
         padding:1px 5px;
