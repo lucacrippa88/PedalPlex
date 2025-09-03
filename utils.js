@@ -834,19 +834,24 @@ function renderPedal(pedal, userRole) {
   } 
 
 
-  // Add author label inside pedal (top corner)
-  if (pedal.author && pedal.author.toLowerCase() !== "admin") {
-    const $authorDiv = $("<div>")
-      .addClass("pedal-author")
-      .text("by: " + pedal.author + ", " + pedal.published);
-    $pedalDiv.prepend($authorDiv);
+  // Add author label below pedal based on userRole
+  if (window.currentUser && pedal.author) {
+    const isAdmin = userRole === 'admin';
+    const isAuthor = window.currentUser.username === pedal.author;
+
+    if (isAdmin || isAuthor) {
+      const authorText = isAdmin
+        ? `by: ${pedal.author}, ${pedal.published}` // admin sees all
+        : `by: ${pedal.author}, ${pedal.published}`; // regular user sees their own
+
+      const $authorDiv = $("<div>")
+        .addClass("pedal-author")
+        .text(authorText);
+
+      $pedalDiv.prepend($authorDiv);
+    }
   }
-  if (pedal.author && pedal.author.toLowerCase() === "admin") {
-    const $authorDiv = $("<div>")
-      .addClass("pedal-author")
-      .text(pedal.published);
-    $pedalDiv.prepend($authorDiv);
-  }
+
 
 
 
