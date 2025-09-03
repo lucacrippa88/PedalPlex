@@ -140,7 +140,8 @@ function initNavCatalog(userRole) {
 // }
 
 // Updates pedal counts including draft/private/reviewing/public-by-me
-function updatePedalCounts() {
+// Updates pedal counts including draft/private/reviewing/public-by-me
+function updatePedalCounts(activeFilter = "all") {
   const pedals = $(".pedal-catalog:visible");
   const totalCount = pedals.length;
   const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0 };
@@ -151,7 +152,6 @@ function updatePedalCounts() {
 
     if (status in statusCounts) statusCounts[status]++;
 
-    // Count "public by me"
     if (status === "public" && author === window.currentUser.username.toLowerCase()) {
       statusCounts.publicByMe++;
     }
@@ -159,7 +159,7 @@ function updatePedalCounts() {
 
   // Badge for reviewing
   const reviewingBadge = statusCounts.reviewing > 0
-    ? `<span class="status-filter" data-filter="reviewing" style="
+    ? `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing" style="
         background:#ff0000;
         color:white;
         border-radius:50%;
@@ -168,19 +168,17 @@ function updatePedalCounts() {
         font-weight:bold;
         min-width:18px;
         text-align:center;
-        cursor:pointer;
       ">${statusCounts.reviewing}</span>`
-    : `<span class="status-filter" data-filter="reviewing">${statusCounts.reviewing}</span>`;
+    : `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">${statusCounts.reviewing}</span>`;
 
-  // Build clickable counts
   $("#pedalCount").html(
-    `<span class="status-filter" data-filter="all" style="cursor:pointer;">
+    `<span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">
        ${totalCount} gear${totalCount === 1 ? "" : "s"} available
      </span>
-     (Draft: <span class="status-filter" data-filter="draft" style="cursor:pointer;">${statusCounts.draft}</span>, 
-      Private: <span class="status-filter" data-filter="private" style="cursor:pointer;">${statusCounts.private}</span>, 
+     (Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
+      Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${statusCounts.private}</span>, 
       Reviewing: ${reviewingBadge}, 
-      Published by me: <span class="status-filter" data-filter="publicByMe" style="cursor:pointer;">${statusCounts.publicByMe}</span>)`
+      Published by me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>)`
   );
 
   // Attach click handler
@@ -189,6 +187,44 @@ function updatePedalCounts() {
     filterPedalsByStatus(filter);
   });
 }
+
+// Filtering function
+function filterPedalsByStatus(filter) {
+  $(".pedal-catalog").each(function() {
+    const status = ($(this).data("published") || "").toLowerCase();
+    const author = ($(this).data("author") || "").toLowerCase();
+    const isMine = (status === "public" && author === window.currentUser.username.toLowerCase());
+
+    if (filter === "all") {
+      $(this).show();
+    } else if (filter === "publicByMe") {
+      $(this).toggle(isMine);
+    } else {
+      $(this).toggle(status === filter);
+    }
+  });
+
+  // Update counts after filtering, keep track of active filter
+  updatePedalCounts(filter);
+}
+
+// CSS for link look + active highlight
+const style = document.createElement("style");
+style.textContent = `
+  .status-filter {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #ddd;
+  }
+  .status-filter.active-filter {
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 2px solid #fff;
+  }
+`;
+document.head.appendChild(style);
+
 
 // Filtering function
 function filterPedalsByStatus(filter) {
