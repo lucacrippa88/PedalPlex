@@ -654,7 +654,6 @@ $("#editor, #controls").on("input change keyup", "input, select, textarea", func
 });
 </script>
 
-
 <script>
 // Handle moderation flow
 $(function () {
@@ -670,40 +669,40 @@ $(function () {
     const $select = $("#pedal-published");
     const userAllowed = ["draft", "private"]; // only these for regular users
 
-    // Build dropdown for users
     if (userRole !== "admin") {
+        // Hide options not allowed
         $select.find("option").each(function () {
             const textLower = $(this).text().trim().toLowerCase();
             if (!userAllowed.includes(textLower)) {
-                $(this).hide(); // hide options instead of disabling
+                $(this).hide();
             } else {
                 $(this).show();
             }
         });
 
-        // Ensure valid selection
+        // Ensure visible option is selected
         const currentText = $select.find("option:selected").text().trim().toLowerCase();
         if (!userAllowed.includes(currentText)) {
             $select.val($select.find("option:visible").first().val());
         }
 
-        // Add "Ask publication" button if not already added
+        // Add "Ask publication" button with full styling
         if ($("#status-buttons").length && !$("#request-publication").length) {
             $("#status-buttons").append(`
-          <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
-            <svg
-              focusable="false"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="white"
-              width="16"
-              height="16"
-              viewBox="0 0 32 32"
-              aria-hidden="true"
-              class="bx--btn__icon">
-              <path d="M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L7,16,4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Zm-20.9,10L8.76,17H18V15H8.76L6.55,6.89,24.76,16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Ask publication
-          </button>
+              <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
+                <svg
+                  focusable="false"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="white"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 32 32"
+                  aria-hidden="true"
+                  class="bx--btn__icon">
+                  <path d="M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L7,16,4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Zm-20.9,10L8.76,17H18V15H8.76L6.55,6.89,24.76,16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Ask publication
+              </button>
             `);
 
             $("#request-publication").on("click", function () {
@@ -711,12 +710,14 @@ $(function () {
                 // TODO: call backend API
             });
         }
+
     } else {
         // Admin sees all options
         $select.find("option").show();
     }
 });
 </script>
+
 
 
 
