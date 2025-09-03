@@ -834,18 +834,22 @@ function renderPedal(pedal, userRole) {
   } 
 
 
-  // Add author on top
+  // Add author above the pedal (but not wrapping it)
   if (pedal.author) {
     const $authorDiv = $("<div>")
       .addClass("pedal-author")
       .text("by: " + pedal.author)
       .css({
-        fontSize: "0.8em",
-        color: "#ccc",
-        marginBottom: "2px"
+        fontSize: "0.75em",
+        color: "#aaa",
+        marginBottom: "2px",
+        textAlign: "center"
       });
-    $pedalDiv.append($authorDiv);
+
+    // Insert before the pedal in the DOM
+    $pedalDiv.before($authorDiv);
   }
+
 
 
 // Add edit button if admin OR current user is the author
