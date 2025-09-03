@@ -813,7 +813,8 @@ function renderPedal(pedal, userRole) {
         .addClass("pedal-catalog")
         .css(getPedalTypeCss(pedal, baseCss, inside))
         .attr("data-pedal-name", pedalName)
-        .attr("data-pedal-id", pedalId);
+        .attr("data-pedal-id", pedalId)
+        .attr("data-published", (pedal.published || "draft").toLowerCase());
       break;
   }
 
