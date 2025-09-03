@@ -103,7 +103,7 @@ function initNavCatalog(userRole) {
 
 // Updates pedal counts including draft/private/reviewing
 function updatePedalCounts() {
-  const pedals = $(".pedal-catalog:visible"); // only visible pedals if filtering
+  const pedals = $(".pedal-catalog:visible");
   const totalCount = pedals.length;
   const statusCounts = { draft: 0, private: 0, reviewing: 0 };
 
@@ -112,11 +112,28 @@ function updatePedalCounts() {
     if (status in statusCounts) statusCounts[status]++;
   });
 
-  $("#pedalCount").text(
+  // Build badge for reviewing
+  const reviewingBadge = statusCounts.reviewing > 0
+    ? `<span style="
+        background:#e63946;
+        color:white;
+        border-radius:50%;
+        padding:2px 6px;
+        font-size:0.75rem;
+        font-weight:bold;
+        margin-left:4px;
+        display:inline-block;
+        min-width:18px;
+        text-align:center;
+      ">${statusCounts.reviewing}</span>`
+    : statusCounts.reviewing;
+
+  $("#pedalCount").html(
     `${totalCount} gear${totalCount === 1 ? "" : "s"} available ` +
-    `(Draft: ${statusCounts.draft}, Private: ${statusCounts.private}, Reviewing: ${statusCounts.reviewing})`
+    `(Draft: ${statusCounts.draft}, Private: ${statusCounts.private}, Reviewing: ${reviewingBadge})`
   );
 }
+
 
 // Initialize catalog after pedals are loaded
 function initCatalog(userRole) {
