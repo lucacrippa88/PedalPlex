@@ -140,19 +140,19 @@ function initNavCatalog(userRole) {
 // }
 
 // Updates pedal counts including draft/private/reviewing/public-by-me
-// Updates pedal counts including draft/private/reviewing/public-by-me
-// Updates pedal counts including draft/private/reviewing/public-by-me
-function updatePedalCounts(activeFilter = "all") {
-  const pedals = $(".pedal-catalog:visible");
-  const totalCount = pedals.length;
+function updatePedalCounts(activeFilter = null) {
+  const visiblePedals = $(".pedal-catalog:visible");
+  const allPedals = $(".pedal-catalog");
+  const totalVisible = visiblePedals.length;
+  const totalAbsolute = allPedals.length;
+
   const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0 };
 
-  pedals.each(function() {
+  allPedals.each(function() {
     const status = ($(this).data("published") || "").toLowerCase();
     const author = ($(this).data("author") || "").toLowerCase();
 
     if (status in statusCounts) statusCounts[status]++;
-
     if (status === "public" && author === window.currentUser.username.toLowerCase()) {
       statusCounts.publicByMe++;
     }
@@ -170,14 +170,17 @@ function updatePedalCounts(activeFilter = "all") {
         min-width:18px;
         text-align:center;
       ">${statusCounts.reviewing}</span>`
-    : `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">${statusCounts.reviewing}</span>`;
+    : `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">0</span>`;
 
+  // Outside counter (visible count like before)
+  // Parentheses counters (absolute totals)
   $("#pedalCount").html(
-    `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalCount}</span>, 
-      Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
-      Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${statusCounts.private}</span>, 
-      Reviewing: ${reviewingBadge}, 
-      Published by me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>)`
+    `${totalVisible} gear${totalVisible === 1 ? "" : "s"} available ` +
+    `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalAbsolute}</span>, 
+     Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
+     Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${statusCounts.private}</span>, 
+     Reviewing: ${reviewingBadge}, 
+     Published by me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>)`
   );
 
   // Attach click handler
@@ -203,7 +206,6 @@ function filterPedalsByStatus(filter) {
     }
   });
 
-  // Update counts after filtering, keep track of active filter
   updatePedalCounts(filter);
 }
 
@@ -223,6 +225,7 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
 
 
 
