@@ -122,6 +122,8 @@ function buildJSON() {
                 if (pos) ctrl.position = pos;
             } else if (type === "slider") {
                 ctrl.orientation = $(this).find(".ctrl-orientation").val();
+                ctrl.min = parseInt($(this).find(".ctrl-min").val());
+                ctrl.max = parseInt($(this).find(".ctrl-max").val())
                 ctrl.value = parseInt($(this).find(".ctrl-value").val());
                 const pos = getPosition($(this));
                 if (pos) ctrl.position = pos;
@@ -481,9 +483,9 @@ function syncUIFromJSON(pedal) {
                 // --- SLIDER ---
                 } else if (ctrl.type === "slider") {
                     $ctrl.find(".ctrl-orientation").val(ctrl.orientation || "vertical");
-                    $ctrl.find(".ctrl-min").val(ctrl.min);
-                    $ctrl.find(".ctrl-max").val(ctrl.max);
-                    $ctrl.find(".ctrl-value").val(ctrl.value);
+                    $ctrl.find(".ctrl-min").val(ctrl.min ?? -15);
+                    $ctrl.find(".ctrl-max").val(ctrl.max ?? 15);
+                    $ctrl.find(".ctrl-value").val(ctrl.value ?? 0);
 
                     applyPosition($ctrl, ctrl);
 
