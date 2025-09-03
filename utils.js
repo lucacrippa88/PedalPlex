@@ -834,21 +834,15 @@ function renderPedal(pedal, userRole) {
   } 
 
 
-  // Add author above the pedal (but not wrapping it)
+  // Add author label inside pedal (top corner)
   if (pedal.author) {
     const $authorDiv = $("<div>")
       .addClass("pedal-author")
-      .text("by: " + pedal.author)
-      .css({
-        fontSize: "0.75em",
-        color: "#aaa",
-        marginBottom: "2px",
-        textAlign: "center"
-      });
+      .text("by: " + pedal.author);
 
-    // Insert before the pedal in the DOM
-    $pedalDiv.before($authorDiv);
+    $pedalDiv.prepend($authorDiv);
   }
+
 
 
 
