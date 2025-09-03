@@ -737,12 +737,16 @@ $(function() {
     // SweetAlert2 confirmation
     $("#request-publication").on("click", function() {
       Swal.fire({
-        title: 'Request Publication?',
-        text: "Do you want to submit this pedal for review?",
-        icon: 'question',
+        title: 'ASk for publication?',
+        text: "Do you want to submit this gear for review to be publicly available in the catalog?",
         showCancelButton: true,
         confirmButtonText: 'Yes, submit',
-        cancelButtonText: 'Cancel'
+        cancelButtonText: 'Cancel',
+        showCancelButton: true,
+        customClass: {
+            confirmButton: 'bx--btn bx--btn--primary',
+            cancelButton: 'bx--btn bx--btn--secondary'
+        }
       }).then((result) => {
         if (result.isConfirmed) {
           // Update published status
@@ -750,8 +754,8 @@ $(function() {
           buildJSON(); // update JSON with new status
 
           Swal.fire({
-            title: 'Submitted!',
-            text: 'Your pedal is now under review.',
+            title: 'Done!',
+            text: 'Click Save to finalize your submission.',
             icon: 'success',
             timer: 2000,
             showConfirmButton: false
