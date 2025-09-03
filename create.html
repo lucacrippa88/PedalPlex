@@ -658,10 +658,17 @@ $("#editor, #controls").on("input change keyup", "input, select, textarea", func
 <script>
 // Handle moderation flow
 $(function () {
-    const userRole = "user"; // or "admin"
+    // Ensure window.currentUser exists
+    if (!window.currentUser || !window.currentUser.role) {
+        console.warn("User data not available. Defaulting to 'user'.");
+        window.currentUser = { role: "user" };
+    }
+
+    const userRole = window.currentUser.role;
+    console.log("Current user role:", userRole);
 
     if (userRole !== "admin") {
-        // Disable only the options not allowed for regular users
+        // Disable options not allowed for regular users
         $("#pedal-published option").each(function() {
             const val = $(this).val();
             if (val !== "draft" && val !== "private") {
@@ -669,7 +676,7 @@ $(function () {
             }
         });
 
-        // Optionally, force default selection to 'draft' if a disabled option is selected
+        // Ensure a valid default selection
         const selected = $("#pedal-published").val();
         if (selected !== "draft" && selected !== "private") {
             $("#pedal-published").val("draft");
@@ -693,14 +700,15 @@ $(function () {
           </button>
         `);
 
+        // Button click handler
         $("#request-publication").on("click", function () {
             console.log("Requesting publication...");
             // TODO: call backend API
         });
     }
 });
-
 </script>
+
 
 
 
