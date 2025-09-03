@@ -516,7 +516,7 @@ function syncUIFromJSON(pedal) {
 
     // Author (read-only)
     if ($("#pedal-author").length) {
-        $("#pedal-author").val(pedal.author || "unknown");
+        $("#pedal-author").text(pedal.author || "unknown");
     }
     if ($("#pedal-author-id").length) {
         $("#pedal-author-id").val(pedal.authorId || "");
