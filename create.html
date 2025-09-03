@@ -55,15 +55,6 @@
                 <input type="hidden" id="pedal-author" />
                 <input type="hidden" id="pedal-author-id" />
 
-                <label>Status <select id="pedal-published">
-                        <option value="draft">Draft</option>
-                        <option value="private">Private</option>
-                        <option value="reviewing">Reviewing</option>
-                        <option value="public">Public</option>
-                    </select>
-                    <span id="status-buttons" style="margin-left:10px;"></span>
-                </label>
-
                 <label>ID <input type="text" class="create-gear-input" id="pedal-id" placeholder="Insert unique gear ID..."></label>
                 <label>Name <input type="text" class="create-gear-input" id="pedal-name" placeholder="Insert gear name..."></label>
                 <label>Logo style <input type="text" class="create-gear-input" id="pedal-logo" placeholder="Set valid CSS..."></label>
@@ -137,6 +128,16 @@
 
         <!-- Pedal preview -->
         <div id="preview">
+
+            <label>Status <select id="pedal-published">
+                    <option value="draft">Draft</option>
+                    <option value="private">Private</option>
+                    <option value="reviewing">Reviewing</option>
+                    <option value="public">Public</option>
+                </select>
+                <span id="status-buttons" style="margin-left:10px;"></span>
+            </label>
+            <br><br>
 
             <button class="bx--btn bx--btn--sm bx--btn--secondary" id="toggle-preview" style="color:white;">
                 <svg fill="white" class="icon-eye" xmlns="http://www.w3.org/2000/svg" 
@@ -679,6 +680,7 @@ $("#editor, #controls").on("input change keyup", "input, select, textarea", func
 
 
 <script>
+// Handle moderation flow
 $(function () {
     // Example: replace with real logged-in role
     const userRole = "user"; // or "admin"
@@ -690,9 +692,31 @@ $(function () {
         // add buttons on the right
         $("#status-buttons").append(`
           <button class="bx--btn bx--btn--sm bx--btn--secondary" id="save-private">
-            Save to Private Catalog
+            <svg
+              focusable="false"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="white"
+              width="16"
+              height="16"
+              viewBox="0 0 32 32"
+              aria-hidden="true"
+              class="bx--btn__icon">
+              <path d="M24,14H22V8A6,6,0,0,0,10,8v6H8a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V16A2,2,0,0,0,24,14ZM12,8a4,4,0,0,1,8,0v6H12ZM24,28H8V16H24Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Publish draft privately
           </button>
           <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
+            <svg
+              focusable="false"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="white"
+              width="16"
+              height="16"
+              viewBox="0 0 32 32"
+              aria-hidden="true"
+              class="bx--btn__icon">
+              <path d="M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L7,16,4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Zm-20.9,10L8.76,17H18V15H8.76L6.55,6.89,24.76,16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
             Request Publication
           </button>
         `);
