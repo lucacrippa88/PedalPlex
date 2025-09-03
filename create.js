@@ -158,16 +158,12 @@ function buildJSON() {
     // --- Metadata (author, authorId, published) ---
 
     // Author (read-only, comes from hidden field)
-    const authorVal = $("#pedal-author").text();
-    pedal.author = authorVal && authorVal.trim() !== ""
-    ? authorVal
-    : (window.currentUser ? window.currentUser.username : "unknown");
+    const authorVal = $("#pedal-author").val();
+    pedal.author = authorVal && authorVal.trim() !== "" ? authorVal : (window.currentUser ? window.currentUser.username : "unknown");
 
     // AuthorId (read-only, comes from hidden field)
     const authorIdVal = $("#pedal-author-id").val();
-    pedal.authorId = authorIdVal && authorIdVal.trim() !== ""
-    ? authorIdVal
-    : (window.currentUser ? window.currentUser.userid : "");
+    pedal.authorId = authorIdVal && authorIdVal.trim() !== "" ? authorIdVal : (window.currentUser ? window.currentUser.userid : "");
 
     // Published: editable via select (defaults to draft if not set)
     const statusVal = $("#pedal-published").val();
@@ -516,7 +512,7 @@ function syncUIFromJSON(pedal) {
 
     // Author (read-only)
     if ($("#pedal-author").length) {
-        $("#pedal-author").text(pedal.author || "unknown");
+        $("#pedal-author").val(pedal.author || "unknown");
     }
     if ($("#pedal-author-id").length) {
         $("#pedal-author-id").val(pedal.authorId || "");
