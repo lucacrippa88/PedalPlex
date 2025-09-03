@@ -524,12 +524,18 @@ function syncUIFromJSON(pedal) {
         $("#pedal-author-id").val(pedal.authorId || "");
     }
 
-    // Published (dropdown)
+    // --- Published (dropdown) ---
     if ($("#pedal-published").length) {
         const validStatuses = ["draft", "private", "reviewing", "public"];
         const status = validStatuses.includes(pedal.published) ? pedal.published : "draft";
         $("#pedal-published").val(status);
+
+        // Optional: rebuild JSON when changed
+        $("#pedal-published").off("change.syncPublished").on("change.syncPublished", function() {
+            buildJSON();
+        });
     }
+
 
 
 
