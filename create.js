@@ -155,24 +155,24 @@ function buildJSON() {
         });
     }
 
-// --- Metadata (author, authorId, published) ---
+    // --- Metadata (author, authorId, published) ---
 
-// Author (read-only, comes from hidden field)
-const authorVal = $("#pedal-author").val();
-pedal.author = authorVal && authorVal.trim() !== ""
-  ? authorVal
-  : (window.currentUser ? window.currentUser.username : "unknown");
+    // Author (read-only, comes from hidden field)
+    const authorVal = $("#pedal-author").text();
+    pedal.author = authorVal && authorVal.trim() !== ""
+    ? authorVal
+    : (window.currentUser ? window.currentUser.username : "unknown");
 
-// AuthorId (read-only, comes from hidden field)
-const authorIdVal = $("#pedal-author-id").val();
-pedal.authorId = authorIdVal && authorIdVal.trim() !== ""
-  ? authorIdVal
-  : (window.currentUser ? window.currentUser.userid : "");
+    // AuthorId (read-only, comes from hidden field)
+    const authorIdVal = $("#pedal-author-id").val();
+    pedal.authorId = authorIdVal && authorIdVal.trim() !== ""
+    ? authorIdVal
+    : (window.currentUser ? window.currentUser.userid : "");
 
-// Published: editable via select (defaults to draft if not set)
-const statusVal = $("#pedal-published").val();
-const validStatuses = ["draft", "private", "reviewing", "public"];
-pedal.published = validStatuses.includes(statusVal) ? statusVal : "draft";
+    // Published: editable via select (defaults to draft if not set)
+    const statusVal = $("#pedal-published").val();
+    const validStatuses = ["draft", "private", "reviewing", "public"];
+    pedal.published = validStatuses.includes(statusVal) ? statusVal : "draft";
 
 
 
