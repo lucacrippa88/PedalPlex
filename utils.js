@@ -846,19 +846,28 @@ function renderPedal(pedal, userRole) {
 
 
 
-// Add edit button if admin OR current user is the author
-if (window.currentUser && (userRole === 'admin' || window.currentUser.username === pedal.author)) {
-    const $editBtn = $("<button>")
-      .addClass("edit-btn")
-      .attr("title", "Edit pedal JSON")
-      .data("pedal", pedal)
-      .html(`
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
-          <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
-        </svg>
-      `);
-    $pedalDiv.append($editBtn);
-}
+  // Add edit button if admin OR current user is the author. Disable for author if status is reviewing or public
+  if (window.currentUser) {
+    const isAdmin = userRole === 'admin';
+    const isAuthor = window.currentUser.username === pedal.author;
+    const isLockedStatus = ["reviewing", "public"].includes(
+      (pedal.published || "").toLowerCase()
+    );
+
+    if (isAdmin || (isAuthor && !isLockedStatus)) {
+      const $editBtn = $("<button>")
+        .addClass("edit-btn")
+        .attr("title", "Edit pedal JSON")
+        .data("pedal", pedal)
+        .html(`
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
+            <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
+          </svg>
+        `);
+      $pedalDiv.append($editBtn);
+    }
+  }
+
 
 
   return $pedalDiv;
