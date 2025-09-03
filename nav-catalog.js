@@ -1,10 +1,13 @@
+// nav-catalog.js
+
+// Initialize navigation catalog
 function initNavCatalog(userRole) {
   const isAdmin = (userRole === "admin");
   const subtitleText = `Gears Catalog${isAdmin ? " Manager" : ""}`;
 
+  // Nav HTML
   const navHtml = `
     <header style="display: flex; align-items: center; justify-content: space-between;">
-      <!-- Left: menu toggle + title -->
       <div style="display: flex; align-items: center; gap: 1rem;">
         <button class="menu-toggle" id="menuToggle" aria-label="Open menu" style="background:none; border:none; cursor:pointer;">
           <svg class="menu-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
@@ -16,7 +19,6 @@ function initNavCatalog(userRole) {
         <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">${subtitleText}</span>
       </div>
 
-      <!-- Right: search toggle, input, create button -->
       <div style="display: flex; align-items: center; gap: 1rem;">
         <span id="pedalCount" style="font-size: 0.75rem; opacity: 0.7;"></span>
 
@@ -36,71 +38,25 @@ function initNavCatalog(userRole) {
           aria-label="Filter pedals"/>
 
         ${isAdmin ? `
-          <button
-            id="createPedalBtn"
-            class="bx--btn bx--btn--primary bx--btn--sm"
-            type="button"
-            aria-label="Create New Gear"
-            style="display: flex; align-items: center; gap: 0.5rem;">
-            <svg
-              focusable="false"
-              preserveAspectRatio="xMidYMid meet"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              width="16"
-              height="16"
-              viewBox="0 0 32 32"
-              aria-hidden="true"
-              class="bx--btn__icon">
+          <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
               <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
             Add gear
-          </button>
-        ` : ''}
+          </button>` : ''}
 
         ${!isAdmin ? `
-          <button
-            id="createOwnPedalBtn"
-            class="bx--btn bx--btn--primary bx--btn--sm"
-            type="button"
-            aria-label="Add Your Own Gear"
-            style="display: flex; align-items: center; gap: 0.5rem;">
-            <svg
-              focusable="false"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              width="16"
-              height="16"
-              viewBox="0 0 32 32"
-              aria-hidden="true"
-              class="bx--btn__icon">
+          <button id="createOwnPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Add Your Own Gear" style="display: flex; align-items: center; gap: 0.5rem;">
+            <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
               <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
             Add Your Own Gear
-          </button>
-        ` : ''}
-
+          </button>` : ''}
       </div>
-
     </header>
   `;
 
-  // Prepend the navigation HTML to the body
   $("body").prepend(navHtml);
-
-  // Compute pedal counts after nav HTML exists
-  const pedals = $(".pedal-catalog");
-  const totalCount = pedals.length;
-  const statusCounts = { draft: 0, private: 0, reviewing: 0 };
-
-  pedals.each(function() {
-    const status = ($(this).data("published") || "").toLowerCase();
-    if (status in statusCounts) statusCounts[status]++;
-  });
-
-  $("#pedalCount").text(
-    `${totalCount} gear${totalCount === 1 ? "" : "s"} available (Draft: ${statusCounts.draft}, Private: ${statusCounts.private}, Reviewing: ${statusCounts.reviewing})`
-  );
 
   // Allow all users to create pedals
   $(document).on('click', '#createPedalBtn', createNewPedal);
@@ -133,20 +89,73 @@ function initNavCatalog(userRole) {
   // Filter pedals dynamically
   $("#pedalFilterInput").on("input", function () {
     const filterValue = $(this).val().toLowerCase();
-    let visibleCount = 0;
 
     $(".pedal-catalog").each(function () {
       const $pedal = $(this);
       const name = $pedal.data("pedal-id")?.toLowerCase() || "";
-
-      if (name.includes(filterValue)) {
-        $pedal.show();
-        visibleCount++;
-      } else {
-        $pedal.hide();
-      }
+      $pedal.toggle(name.includes(filterValue));
     });
 
-    $("#pedalCount").text(`${visibleCount} gear${visibleCount === 1 ? "" : "s"} found`);
+    // Update counts after filtering
+    updatePedalCounts();
   });
+}
+
+// Updates pedal counts including draft/private/reviewing
+function updatePedalCounts() {
+  const pedals = $(".pedal-catalog:visible"); // only visible pedals if filtering
+  const totalCount = pedals.length;
+  const statusCounts = { draft: 0, private: 0, reviewing: 0 };
+
+  pedals.each(function() {
+    const status = ($(this).data("published") || "").toLowerCase();
+    if (status in statusCounts) statusCounts[status]++;
+  });
+
+  $("#pedalCount").text(
+    `${totalCount} gear${totalCount === 1 ? "" : "s"} available ` +
+    `(Draft: ${statusCounts.draft}, Private: ${statusCounts.private}, Reviewing: ${statusCounts.reviewing})`
+  );
+}
+
+// Initialize catalog after pedals are loaded
+function initCatalog(userRole) {
+  const resultsDiv = document.getElementById("catalog");
+
+  resultsDiv.innerHTML = `
+      <div class="bx--loading-overlay">
+        <div class="bx--loading" role="status">
+          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+          </svg>
+        </div>     
+      </div>`;
+
+  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${userRole}&username=${window.currentUser.username}`)
+    .then(response => {
+      if (!response.ok) throw new Error("Network response was not ok");
+      return response.json();
+    })
+    .then(pedals => {
+      resultsDiv.innerHTML = ""; // Clear loader
+      $("#pedalCount").text(`${pedals.length} gears`); // temporary before full update
+
+      pedals.sort((a, b) => a._id - b._id);
+
+      pedals.forEach(pedal => {
+        const $pedalDiv = renderPedal(pedal, userRole);
+        $(resultsDiv).append($pedalDiv);
+      });
+
+      // Update counts including statuses after pedals are rendered
+      updatePedalCounts();
+
+      // Setup edit button handlers
+      setupEditPedalHandler(pedals);
+    })
+    .catch(error => {
+      console.error("Error fetching pedals:", error);
+      resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${error.message}</p>`;
+    });
 }
