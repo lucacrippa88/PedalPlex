@@ -1,7 +1,17 @@
 function initNavCatalog(userRole) {
 
-  const initialCount = $(".pedal-catalog").length;
-  $("#pedalCount").text(`${initialCount} gear${initialCount === 1 ? "" : "s"} available`);
+  // Count pedals by status without removing anything else
+  const pedals = $(".pedal-catalog");
+  const totalCount = pedals.length;
+  const statusCounts = { draft: 0, private: 0, reviewing: 0 };
+
+  pedals.each(function() {
+    const status = ($(this).data("published") || "").toLowerCase();
+    if (status in statusCounts) statusCounts[status]++;
+  });
+
+  // Update pedalCount with breakdown
+  $("#pedalCount").text(`${totalCount} gear${totalCount === 1 ? "" : "s"} available (Draft: ${statusCounts.draft}, Private: ${statusCounts.private}, Reviewing: ${statusCounts.reviewing})`);
 
 
   const isAdmin = (userRole === "admin");
@@ -141,6 +151,4 @@ function initNavCatalog(userRole) {
 
     $("#pedalCount").text(`${visibleCount} gear${visibleCount === 1 ? "" : "s"} found`);
   });
-
-
 }
