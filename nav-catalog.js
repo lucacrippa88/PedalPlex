@@ -115,14 +115,12 @@ function updatePedalCounts() {
   // Build badge for reviewing
   const reviewingBadge = statusCounts.reviewing > 0
     ? `<span style="
-        background:#e63946;
+        background:#f70000;
         color:white;
         border-radius:50%;
-        padding:2px 6px;
+        padding:1px 5px;
         font-size:0.75rem;
         font-weight:bold;
-        margin-left:4px;
-        display:inline-block;
         min-width:18px;
         text-align:center;
       ">${statusCounts.reviewing}</span>`
