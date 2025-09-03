@@ -102,6 +102,44 @@ function initNavCatalog(userRole) {
 }
 
 // Updates pedal counts including draft/private/reviewing/public-by-me
+// function updatePedalCounts() {
+//   const pedals = $(".pedal-catalog:visible");
+//   const totalCount = pedals.length;
+//   const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0 };
+
+//   pedals.each(function() {
+//     const status = ($(this).data("published") || "").toLowerCase();
+//     const author = ($(this).data("author") || "").toLowerCase();
+
+//     if (status in statusCounts) statusCounts[status]++;
+
+//     // Count "public by me"
+//     if (status === "public" && author === window.currentUser.username.toLowerCase()) {
+//       statusCounts.publicByMe++;
+//     }
+//   });
+
+//   // Badge for reviewing
+//   const reviewingBadge = statusCounts.reviewing > 0
+//     ? `<span style="
+//         background:#ff0000;
+//         color:white;
+//         border-radius:50%;
+//         padding:1px 5px;
+//         font-size:0.75rem;
+//         font-weight:bold;
+//         min-width:18px;
+//         text-align:center;
+//       ">${statusCounts.reviewing}</span>`
+//     : statusCounts.reviewing;
+
+//   $("#pedalCount").html(
+//     `${totalCount} gear${totalCount === 1 ? "" : "s"} available ` +
+//     `(Draft: ${statusCounts.draft}, Private: ${statusCounts.private}, Reviewing: ${reviewingBadge}, Published by me: ${statusCounts.publicByMe})`
+//   );
+// }
+
+// Updates pedal counts including draft/private/reviewing/public-by-me
 function updatePedalCounts() {
   const pedals = $(".pedal-catalog:visible");
   const totalCount = pedals.length;
@@ -121,7 +159,7 @@ function updatePedalCounts() {
 
   // Badge for reviewing
   const reviewingBadge = statusCounts.reviewing > 0
-    ? `<span style="
+    ? `<span class="status-filter" data-filter="reviewing" style="
         background:#ff0000;
         color:white;
         border-radius:50%;
@@ -130,14 +168,48 @@ function updatePedalCounts() {
         font-weight:bold;
         min-width:18px;
         text-align:center;
+        cursor:pointer;
       ">${statusCounts.reviewing}</span>`
-    : statusCounts.reviewing;
+    : `<span class="status-filter" data-filter="reviewing">${statusCounts.reviewing}</span>`;
 
+  // Build clickable counts
   $("#pedalCount").html(
-    `${totalCount} gear${totalCount === 1 ? "" : "s"} available ` +
-    `(Draft: ${statusCounts.draft}, Private: ${statusCounts.private}, Reviewing: ${reviewingBadge}, Published by me: ${statusCounts.publicByMe})`
+    `<span class="status-filter" data-filter="all" style="cursor:pointer;">
+       ${totalCount} gear${totalCount === 1 ? "" : "s"} available
+     </span>
+     (Draft: <span class="status-filter" data-filter="draft" style="cursor:pointer;">${statusCounts.draft}</span>, 
+      Private: <span class="status-filter" data-filter="private" style="cursor:pointer;">${statusCounts.private}</span>, 
+      Reviewing: ${reviewingBadge}, 
+      Published by me: <span class="status-filter" data-filter="publicByMe" style="cursor:pointer;">${statusCounts.publicByMe}</span>)`
   );
+
+  // Attach click handler
+  $(".status-filter").off("click").on("click", function() {
+    const filter = $(this).data("filter");
+    filterPedalsByStatus(filter);
+  });
 }
+
+// Filtering function
+function filterPedalsByStatus(filter) {
+  $(".pedal-catalog").each(function() {
+    const status = ($(this).data("published") || "").toLowerCase();
+    const author = ($(this).data("author") || "").toLowerCase();
+    const isMine = (status === "public" && author === window.currentUser.username.toLowerCase());
+
+    if (filter === "all") {
+      $(this).show();
+    } else if (filter === "publicByMe") {
+      $(this).toggle(isMine);
+    } else {
+      $(this).toggle(status === filter);
+    }
+  });
+
+  // Update counts after filtering
+  updatePedalCounts();
+}
+
 
 // Initialize catalog after pedals are loaded
 function initCatalog(userRole) {
