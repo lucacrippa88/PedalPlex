@@ -61,6 +61,7 @@
                         <option value="reviewing">Reviewing</option>
                         <option value="public">Public</option>
                     </select>
+                    <span id="status-buttons" style="margin-left:10px;"></span>
                 </label>
 
                 <label>ID <input type="text" class="create-gear-input" id="pedal-id" placeholder="Insert unique gear ID..."></label>
@@ -673,6 +674,43 @@ $("#editor, #controls").on("input change keyup", "input, select, textarea", func
     buildJSON(); // triggers safe stringify and sends to parent
 });
 </script>
+
+
+
+
+<script>
+$(function () {
+    // Example: replace with real logged-in role
+    const userRole = "user"; // or "admin"
+
+    if (userRole !== "admin") {
+        // keep select visible but disabled
+        $("#pedal-published").prop("disabled", true);
+
+        // add buttons on the right
+        $("#status-buttons").append(`
+          <button class="bx--btn bx--btn--sm bx--btn--secondary" id="save-private">
+            Save to Private Catalog
+          </button>
+          <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
+            Request Publication
+          </button>
+        `);
+
+        // button actions
+        $("#save-private").on("click", function () {
+            console.log("Saving to private catalog...");
+            // TODO: call your backend API
+        });
+
+        $("#request-publication").on("click", function () {
+            console.log("Requesting publication...");
+            // TODO: call your backend API
+        });
+    }
+});
+</script>
+
 
 
 </body>
