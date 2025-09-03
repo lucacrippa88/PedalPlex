@@ -601,8 +601,8 @@ justify-content: center;
   position: absolute;
   pointer-events: none; /* doesn’t block knobs */
   user-select: none;
-  top: -6px;
-  left: -5px;
+  bottom: -14px;
+  left: -3px;
 }
 
 
