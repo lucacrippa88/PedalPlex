@@ -594,7 +594,14 @@ justify-content: center;
 
 
 
-
+.pedal-author {
+  font-size: 0.7em;
+  color: #aaa;
+  text-align: right;
+  position: absolute;
+  pointer-events: none; /* doesn’t block knobs */
+  user-select: none;
+}
 
 
 

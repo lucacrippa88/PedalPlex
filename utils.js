@@ -759,7 +759,6 @@ window.setupEditPedalHandler = setupEditPedalHandler;
 
 
 // Reusable function to render a pedal
-// Reusable function to render a pedal
 function renderPedal(pedal, userRole) {
   const pedalId = pedal._id || pedal.id;
   const pedalName = pedal.name || pedal.id;
@@ -767,6 +766,7 @@ function renderPedal(pedal, userRole) {
   let inside = "";
   let colorOnly = insideColorRaw;
 
+  // Detect if inside-color is an image
   const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
   if (isImage) {
     inside = "full";
@@ -778,29 +778,30 @@ function renderPedal(pedal, userRole) {
     }
   }
 
+  // Base CSS
   const baseCss = {
     border: `5px solid ${pedal["color"]}`,
-    borderRadius: "10px",
+    borderRadius: '10px',
     color: pedal["font-color"],
     width: getPedalWidth(pedal.width),
     height: getPedalHeight(pedal.height),
-    marginBottom: "4px",
-    display: "inline-block",
+    marginBottom: '10px',
+    display: 'inline-block',
     ...(pedal["inside-border"] && {
       boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}`
     }),
-    ...(isImage
-      ? {
-          backgroundImage: `url("${insideColorRaw}")`,
-          backgroundSize: "cover",
-          backgroundPosition: "center"
-        }
-      : {
-          background: colorOnly
-        })
+    ...(isImage ? {
+      backgroundImage: `url("${insideColorRaw}")`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'
+    } : {
+      background: colorOnly
+    })
   };
 
   let $pedalDiv;
+
+  // Different rendering per pedal type
   switch (pedal.type) {
     case "pedal":
     case "expression":
@@ -816,37 +817,37 @@ function renderPedal(pedal, userRole) {
       break;
   }
 
-  if (pedal.type === "head" || pedal.type === "pedal-inverted") {
+  // Head and inverted pedals → add name/logo
+  if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
     const $nameDiv = $("<div>").addClass("head-name").html(pedal.name).attr("style", pedal.logo || "");
     $pedalDiv.append($nameDiv);
   }
 
+
+  // Render pedal controls
   renderPedalControls(pedal, $pedalDiv);
 
+  // Add name/logo for others
   if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
     const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name).attr("style", pedal.logo || "");
     $pedalDiv.append($nameDiv);
-  }
+  } 
 
-  // --- Author outside the pedal ---
-  const $wrapper = $("<div>").css({ display: "inline-block", margin: "6px", textAlign: "center" });
 
+  // Add author label inside pedal (top corner)
   if (pedal.author) {
-    $("<div>")
+    const $authorDiv = $("<div>")
       .addClass("pedal-author")
-      .text("by: " + pedal.author)
-      .css({
-        fontSize: "0.75em",
-        color: "#999",
-        marginBottom: "2px"
-      })
-      .appendTo($wrapper);
+      .text("by: " + pedal.author);
+
+    $pedalDiv.prepend($authorDiv);
   }
 
-  $wrapper.append($pedalDiv);
 
-  // --- Edit button ---
-  if (window.currentUser && (userRole === "admin" || window.currentUser.username === pedal.author)) {
+
+
+// Add edit button if admin OR current user is the author
+if (window.currentUser && (userRole === 'admin' || window.currentUser.username === pedal.author)) {
     const $editBtn = $("<button>")
       .addClass("edit-btn")
       .attr("title", "Edit pedal JSON")
@@ -856,12 +857,12 @@ function renderPedal(pedal, userRole) {
           <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
         </svg>
       `);
-    $wrapper.append($editBtn);
-  }
-
-  return $wrapper;
+    $pedalDiv.append($editBtn);
 }
 
+
+  return $pedalDiv;
+}
 
 
 
