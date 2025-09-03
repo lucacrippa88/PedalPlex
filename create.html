@@ -129,14 +129,28 @@
         <!-- Pedal preview -->
         <div id="preview">
 
-            <label>Status <select id="pedal-published">
+            <!-- <label>Status <select id="pedal-published">
                     <option value="draft">Draft</option>
                     <option value="private">Private</option>
                     <option value="reviewing">Reviewing</option>
                     <option value="public">Public</option>
                 </select>
                 <span id="status-buttons" style="margin-left:10px;"></span>
-            </label><br><br>
+            </label><br><br> -->
+
+            <label>Status</label>
+            <div id="pedal-published-wrapper" class="custom-dropdown">
+            <button id="pedal-published-button">Draft</button>
+            <ul id="pedal-published-options" class="dropdown-options">
+                <li data-value="draft">Draft</li>
+                <li data-value="private">Private</li>
+                <li data-value="reviewing">Reviewing</li>
+                <li data-value="public">Public</li>
+            </ul>
+            </div>
+            <span id="status-buttons" style="margin-left:10px;"></span>
+
+
             <button class="bx--btn bx--btn--sm bx--btn--secondary" id="toggle-preview" style="color:white;">
                 <svg fill="white" class="icon-eye" xmlns="http://www.w3.org/2000/svg" 
                     viewBox="0 0 32 32" width="16" height="16" aria-hidden="true" focusable="false" 
@@ -654,68 +668,36 @@ $("#editor, #controls").on("input change keyup", "input, select, textarea", func
 });
 </script>
 
+
+
 <script>
 // Handle moderation flow
-$(function () {
-    // Get current user from parent
-    let userFromParent = { role: "user" }; // fallback
-    if (parent && parent.window && parent.window.currentUser) {
-        userFromParent = parent.window.currentUser;
-    }
+$(function() {
+  let userRole = parent?.window?.currentUser?.role || "user";
+  const allowedForUser = userRole === "admin" ? ["draft","private","reviewing","public"] : ["draft","private"];
 
-    const userRole = userFromParent.role;
-    console.log("Current user role (from parent):", userRole);
+  $("#pedal-published-options li").each(function() {
+    if (!allowedForUser.includes($(this).data("value"))) $(this).hide();
+  });
 
-    const $select = $("#pedal-published");
-    const userAllowed = ["draft", "private"]; // only these for regular users
+  $("#pedal-published-options li").on("click", function() {
+    $("#pedal-published-button").text($(this).text());
+    buildJSON(); // always use .text().toLowerCase() for JSON
+  });
 
-    if (userRole !== "admin") {
-        // Hide options not allowed
-        $select.find("option").each(function () {
-            const textLower = $(this).text().trim().toLowerCase();
-            if (!userAllowed.includes(textLower)) {
-                $(this).hide();
-            } else {
-                $(this).show();
-            }
-        });
-
-        // Ensure visible option is selected
-        const currentText = $select.find("option:selected").text().trim().toLowerCase();
-        if (!userAllowed.includes(currentText)) {
-            $select.val($select.find("option:visible").first().val());
-        }
-
-        // Add "Ask publication" button with full styling
-        if ($("#status-buttons").length && !$("#request-publication").length) {
-            $("#status-buttons").append(`
-              <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
-                <svg
-                  focusable="false"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="white"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 32 32"
-                  aria-hidden="true"
-                  class="bx--btn__icon">
-                  <path d="M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L7,16,4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Zm-20.9,10L8.76,17H18V15H8.76L6.55,6.89,24.76,16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                Ask publication
-              </button>
-            `);
-
-            $("#request-publication").on("click", function () {
-                console.log("Requesting publication...");
-                // TODO: call backend API
-            });
-        }
-
-    } else {
-        // Admin sees all options
-        $select.find("option").show();
-    }
+  // Ask publication button
+  if (userRole !== "admin" && !$("#request-publication").length) {
+    $("#status-buttons").append(`
+      <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
+        <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="white" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L7,16,4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Zm-20.9,10L8.76,17H18V15H8.76L6.55,6.89,24.76,16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Ask publication
+      </button>
+    `);
+  }
 });
+
 </script>
 
 

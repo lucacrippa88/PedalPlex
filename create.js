@@ -165,13 +165,11 @@ function buildJSON() {
     const authorIdVal = $("#pedal-author-id").val();
     pedal.authorId = authorIdVal && authorIdVal.trim() !== "" ? authorIdVal : (window.currentUser ? window.currentUser.userid : "");
 
-    // Published: editable via select (defaults to draft if not set)
-    // Get the selected text from dropdown and lowercase it
-    const selectedText = $("#pedal-published option:selected").text().trim().toLowerCase();
-    // Define allowed statuses
+    // Published: editable via custom select (defaults to draft if not set)
+    const selectedText = $("#pedal-published-button").text().trim().toLowerCase();
     const validStatuses = ["draft", "private", "reviewing", "public"];
-    // Use selectedText if valid, otherwise fallback to draft
     pedal.published = validStatuses.includes(selectedText) ? selectedText : "draft";
+
 
 
 
@@ -528,24 +526,25 @@ function syncUIFromJSON(pedal) {
         $("#pedal-author-id").val(pedal.authorId || "");
     }
 
-    // --- Published (dropdown) ---
-    if ($("#pedal-published").length) {
+// --- Published (custom dropdown) ---
+if ($("#pedal-published-button").length) {
+    const validStatuses = ["draft", "private", "reviewing", "public"];
+    const status = validStatuses.includes(pedal.published) ? pedal.published : "draft";
+
+    // Set the button text to reflect the current status
+    $("#pedal-published-button").text(status.charAt(0).toUpperCase() + status.slice(1));
+
+    // Optional: rebuild JSON when user selects a new status
+    $("#pedal-published-menu li").off("click.syncPublished").on("click.syncPublished", function() {
+        const selectedText = $(this).text().trim().toLowerCase();
         const validStatuses = ["draft", "private", "reviewing", "public"];
-        const status = validStatuses.includes(pedal.published) ? pedal.published : "draft";
+        if (validStatuses.includes(selectedText)) {
+            $("#pedal-published-button").text($(this).text().trim()); // update display
+            buildJSON(); // rebuild JSON with new status
+        }
+    });
+}
 
-        // Set the selected option by matching text (case-insensitive)
-        $("#pedal-published option").each(function() {
-            const textLower = $(this).text().trim().toLowerCase();
-            if (textLower === status.toLowerCase()) {
-                $(this).prop("selected", true);
-            }
-        });
-
-        // Optional: rebuild JSON when changed
-        $("#pedal-published").off("change.syncPublished").on("change.syncPublished", function() {
-            buildJSON();
-        });
-    }
 
 
 
