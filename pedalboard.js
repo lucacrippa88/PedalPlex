@@ -30,7 +30,7 @@ function initPedalboard() {
 
 
   // Load catalog
-  fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
+  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${userRole}&username=${window.currentUser.username}`)
     .then(response => {
       if (!response.ok) throw new Error(`Catalog fetch failed: ${response.status}`);
       return response.json();
