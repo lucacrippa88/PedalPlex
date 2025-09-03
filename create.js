@@ -171,6 +171,12 @@ function buildJSON() {
     pedal.published = validStatuses.includes(statusVal) ? statusVal : "draft";
 
 
+    // Rebuild JSON whenever publication status changes
+    $(function() {
+        $("#pedal-published").on("change", function() {
+            buildJSON();
+        });
+    });
 
     // --- Populate JSON output ---
     const jsonString = JSON.stringify(pedal, null, 2);
