@@ -594,6 +594,11 @@ justify-content: center;
 
 
 
+.pedal-author {
+  pointer-events: none; /* so clicks go through to pedal controls */
+  user-select: none;    /* prevent text selection while dragging pedals */
+  line-height: 1.2;
+}
 
 
  

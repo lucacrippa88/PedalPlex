@@ -55,32 +55,27 @@
                 <input type="hidden" id="pedal-author" />
                 <input type="hidden" id="pedal-author-id" />
 
-                <label for="pedal-published">Status</label>
-                <select id="pedal-published">
-                    <option value="draft">Draft</option>
-                    <option value="private">Private</option>
-                    <option value="reviewing">Reviewing</option>
-                    <option value="public">Public</option>
-                </select>
+                <label>Status <select id="pedal-published">
+                        <option value="draft">Draft</option>
+                        <option value="private">Private</option>
+                        <option value="reviewing">Reviewing</option>
+                        <option value="public">Public</option>
+                    </select>
+                </label>
 
                 <label>ID <input type="text" class="create-gear-input" id="pedal-id" placeholder="Insert unique gear ID..."></label>
                 <label>Name <input type="text" class="create-gear-input" id="pedal-name" placeholder="Insert gear name..."></label>
                 <label>Logo style <input type="text" class="create-gear-input" id="pedal-logo" placeholder="Set valid CSS..."></label>
-            </div>
-            <br>
-            <div class="form-group">
-                <label for="pedal-author">Author</label>
-                <input type="text" id="pedal-author" class="form-control" readonly>
-            </div>
-            <br>
-            <label>Type <select id="pedal-type">
-                    <option value="pedal">Pedal</option>
-                    <option value="pedal-inverted">Pedal Inverted</option>
-                    <option value="expression">Expression</option>
-                    <option value="combo">Combo</option>
-                    <option value="head">Head</option>
-                    <option value="round">Round</option>
-                </select>
+                </div>
+                <br><br>
+                <label>Type <select id="pedal-type">
+                        <option value="pedal">Pedal</option>
+                        <option value="pedal-inverted">Pedal Inverted</option>
+                        <option value="expression">Expression</option>
+                        <option value="combo">Combo</option>
+                        <option value="head">Head</option>
+                        <option value="round">Round</option>
+                    </select>
                 </label>
                 <label>Width <select id="pedal-width"></select></label>
                 <label>Height <select id="pedal-height"></select></label>
