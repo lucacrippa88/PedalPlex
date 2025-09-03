@@ -838,8 +838,7 @@ function renderPedal(pedal, userRole) {
   if (pedal.author && pedal.author.toLowerCase() !== "admin") {
     const $authorDiv = $("<div>")
       .addClass("pedal-author")
-      .text("by: " + pedal.author);
-
+      .text("by: " + pedal.author + "<br>status: " + pedal.published);
     $pedalDiv.prepend($authorDiv);
   }
 
