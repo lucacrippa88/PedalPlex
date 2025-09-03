@@ -835,7 +835,7 @@ function renderPedal(pedal, userRole) {
 
 
   // Add author label inside pedal (top corner)
-  if (pedal.author) {
+  if (pedal.author && pedal.author.toLowerCase() !== "admin") {
     const $authorDiv = $("<div>")
       .addClass("pedal-author")
       .text("by: " + pedal.author);
