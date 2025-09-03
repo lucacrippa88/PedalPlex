@@ -100,7 +100,7 @@
         window.currentUser = userFromServer;
 
         if (typeof initNavPedalboard === 'function') initNavPedalboard();
-        if (typeof initPedalboard === 'function') initPedalboard();
+        if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
       },
       error: function(xhr) {
         console.error('Auth check failed:', xhr.status, xhr.responseText);

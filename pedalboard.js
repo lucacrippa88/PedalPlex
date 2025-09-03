@@ -2,7 +2,7 @@ let selectedBoardIndex = 0;
 window.allPedalboards = []; // store all pedalboards here
 
 
-function initPedalboard() {
+function initPedalboard(userRole) {
   const userId = window.currentUser?.userid;
 
   if (!userId) {
