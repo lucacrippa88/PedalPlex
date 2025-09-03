@@ -657,37 +657,102 @@ $("#editor, #controls").on("input change keyup", "input, select, textarea", func
 
 <script>
 // Handle moderation flow
+// $(function () {
+//     // Get the user from parent window
+//     let userFromParent = { role: "user" }; // fallback
+//     if (parent && parent.window && parent.window.currentUser) {
+//         userFromParent = parent.window.currentUser;
+//     }
+
+//     const userRole = userFromParent.role;
+//     console.log("Current user role (from parent):", userRole);
+
+//     if (userRole !== "admin") {
+//         // Disable options not allowed for regular users
+//         $("#pedal-published option").each(function() {
+//             const val = $(this).val();
+//             if (val !== "draft" && val !== "private") {
+//                 $(this).prop("disabled", true);
+//             }
+//         });
+
+//         // Ensure a valid default selection
+//         const selected = $("#pedal-published").val();
+//         if (selected !== "draft" && selected !== "private") {
+//             $("#pedal-published").val("draft");
+//         }
+
+//         // Add status buttons for requesting publication
+//         $("#status-buttons").append(`
+//           <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
+//             <svg
+//               focusable="false"
+//               xmlns="http://www.w3.org/2000/svg"
+//               fill="white"
+//               width="16"
+//               height="16"
+//               viewBox="0 0 32 32"
+//               aria-hidden="true"
+//               class="bx--btn__icon">
+//               <path d="M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L7,16,4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Zm-20.9,10L8.76,17H18V15H8.76L6.55,6.89,24.76,16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+//             </svg>
+//             Ask publication
+//           </button>
+//         `);
+
+//         // Button click handler
+//         $("#request-publication").on("click", function () {
+//             console.log("Requesting publication...");
+//             // TODO: call backend API
+//         });
+
+//     } else {
+//         $("#pedal-published option").prop("disabled", false);
+//     }
+
+// });
+
+
 $(function () {
-    // Get current user from parent
-    let userFromParent = { role: "user" }; // fallback
+    let userFromParent = { role: "user" };
     if (parent && parent.window && parent.window.currentUser) {
         userFromParent = parent.window.currentUser;
     }
-
     const userRole = userFromParent.role;
-    console.log("Current user role (from parent):", userRole);
 
     const $select = $("#pedal-published");
-    const allowedForUser = ["draft", "private"];
+    const currentVal = $select.val();
 
     if (userRole !== "admin") {
-        // Disable options not allowed for regular users
+        const allowedForUser = ["draft", "private"];
+
         $select.find("option").each(function () {
             const val = $(this).val();
-            // If option is not allowed, disable it
-            $(this).prop("disabled", !allowedForUser.includes(val));
+            // Keep current selected value enabled, disable others not allowed
+            if (val !== currentVal && !allowedForUser.includes(val)) {
+                $(this).prop("disabled", true);
+            } else {
+                $(this).prop("disabled", false);
+            }
         });
 
-        // Keep current value even if it's "reviewing" or "public"
-        // Do not override the selected value
-        // Users simply can't change it to a forbidden value
-
-        // Add status button for requesting publication
+        // Status button for requesting publication
         if ($("#status-buttons").length && !$("#request-publication").length) {
             $("#status-buttons").append(`
-                <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
-                    Ask publication
-                </button>
+            <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
+                <svg
+                focusable="false"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="white"
+                width="16"
+                height="16"
+                viewBox="0 0 32 32"
+                aria-hidden="true"
+                class="bx--btn__icon">
+                <path d="M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L7,16,4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Zm-20.9,10L8.76,17H18V15H8.76L6.55,6.89,24.76,16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Ask publication
+            </button>
             `);
 
             $("#request-publication").on("click", function () {
@@ -695,13 +760,10 @@ $(function () {
                 // TODO: call backend API
             });
         }
-
     } else {
-        // Admin sees all options enabled
         $select.find("option").prop("disabled", false);
     }
 });
-
 
 </script>
 
