@@ -671,20 +671,16 @@ $(function () {
     const allowedForUser = ["draft", "private"];
 
     if (userRole !== "admin") {
-        // Disable options not allowed
+        // Disable options not allowed for regular users
         $select.find("option").each(function () {
             const val = $(this).val();
-            if (!allowedForUser.includes(val)) {
-                $(this).prop("disabled", true);
-            } else {
-                $(this).prop("disabled", false);
-            }
+            // If option is not allowed, disable it
+            $(this).prop("disabled", !allowedForUser.includes(val));
         });
 
-        // Ensure current selection is valid
-        if (!allowedForUser.includes($select.val())) {
-            $select.val("draft");
-        }
+        // Keep current value even if it's "reviewing" or "public"
+        // Do not override the selected value
+        // Users simply can't change it to a forbidden value
 
         // Add status button for requesting publication
         if ($("#status-buttons").length && !$("#request-publication").length) {
@@ -705,6 +701,7 @@ $(function () {
         $select.find("option").prop("disabled", false);
     }
 });
+
 
 </script>
 
