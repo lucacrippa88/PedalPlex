@@ -101,18 +101,25 @@ function initNavCatalog(userRole) {
   });
 }
 
-// Updates pedal counts including draft/private/reviewing
+// Updates pedal counts including draft/private/reviewing/public-by-me
 function updatePedalCounts() {
   const pedals = $(".pedal-catalog:visible");
   const totalCount = pedals.length;
-  const statusCounts = { draft: 0, private: 0, reviewing: 0 };
+  const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0 };
 
   pedals.each(function() {
     const status = ($(this).data("published") || "").toLowerCase();
+    const author = ($(this).data("author") || "").toLowerCase();
+
     if (status in statusCounts) statusCounts[status]++;
+
+    // Count "public by me"
+    if (status === "public" && author === window.currentUser.username.toLowerCase()) {
+      statusCounts.publicByMe++;
+    }
   });
 
-  // Build badge for reviewing
+  // Badge for reviewing
   const reviewingBadge = statusCounts.reviewing > 0
     ? `<span style="
         background:#ff0000;
@@ -128,10 +135,9 @@ function updatePedalCounts() {
 
   $("#pedalCount").html(
     `${totalCount} gear${totalCount === 1 ? "" : "s"} available ` +
-    `(Draft: ${statusCounts.draft}, Private: ${statusCounts.private}, Reviewing: ${reviewingBadge})`
+    `(Draft: ${statusCounts.draft}, Private: ${statusCounts.private}, Reviewing: ${reviewingBadge}, Published by me: ${statusCounts.publicByMe})`
   );
 }
-
 
 // Initialize catalog after pedals are loaded
 function initCatalog(userRole) {
@@ -160,6 +166,9 @@ function initCatalog(userRole) {
 
       pedals.forEach(pedal => {
         const $pedalDiv = renderPedal(pedal, userRole);
+        // Add author + published to data attributes so counts work
+        $pedalDiv.attr("data-author", pedal.author || "");
+        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
         $(resultsDiv).append($pedalDiv);
       });
 
