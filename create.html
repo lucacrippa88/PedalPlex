@@ -703,14 +703,6 @@ $(function() {
     buildJSON(); // always use .text().toLowerCase() for JSON
   });
 
-  // If button text is not in allowed list for non-admins → hide dropdown + skip Ask publication
-  const currentStatus = $("#pedal-published-button").text().trim().toLowerCase();
-  console.log(currentStatus)
-  if (userRole !== "admin" && !allowedForUser.includes(currentStatus)) {
-    $("#pedal-published-options").hide();
-    return; // stop before creating Ask publication button
-  }
-
   // Ask publication button
   if (userRole !== "admin" && !$("#request-publication").length) {
     $("#status-buttons").append(`

@@ -555,6 +555,12 @@ if ($("#pedal-published-button").length) {
     // Set the button text to reflect the current status
     $("#pedal-published-button").text(status.charAt(0).toUpperCase() + status.slice(1));
 
+    // Remove li elements entirely for regular users if status is reviewing or public
+    const userRole = parent?.window?.currentUser?.role || "user";
+    if (userRole !== "admin" && (status === "reviewing" || status === "public")) {
+        $("#pedal-published-menu li").remove();
+    }
+
     // Optional: rebuild JSON when user selects a new status
     $("#pedal-published-menu li").off("click.syncPublished").on("click.syncPublished", function() {
         const selectedText = $(this).text().trim().toLowerCase();
@@ -564,6 +570,7 @@ if ($("#pedal-published-button").length) {
             buildJSON(); // rebuild JSON with new status
         }
     });
+
 }
 
 
