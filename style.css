@@ -595,7 +595,14 @@ justify-content: center;
   left: -3px;
 }
 
-
+.modal-footer {
+  display: block;
+  width: 80%;
+  margin: auto;
+  position: relative;
+  top: 20px;
+  padding-bottom: 40px;
+}
 
  
 
