@@ -688,21 +688,90 @@ $("#editor, #controls").on("input change keyup", "input, select, textarea", func
 
 
 <script>
+//// Handle moderation flow
+// $(function() {
+//   let userRole = parent?.window?.currentUser?.role || "user";
+//   const allowedForUser = userRole === "admin" ? ["draft","private","reviewing","public"] : ["draft","private"];
+
+
+//   $("#pedal-published-options li").each(function() {
+//     if (!allowedForUser.includes($(this).data("value"))) $(this).hide();
+//   });
+
+//   $("#pedal-published-options li").on("click", function() {
+//     $("#pedal-published-button").text($(this).text());
+//     buildJSON(); // always use .text().toLowerCase() for JSON
+//   });
+
+//   // Ask publication button
+//   if (userRole !== "admin" && allowedForUser && !$("#request-publication").length) {
+//     $("#status-buttons").append(`
+//       <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
+//         <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="white" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+//           <path d="M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L7,16,4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Zm-20.9,10L8.76,17H18V15H8.76L6.55,6.89,24.76,16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+//         </svg>
+//         Ask publication
+//       </button>
+//     `);
+
+//     // SweetAlert2 confirmation
+//     $("#request-publication").on("click", function() {
+//       Swal.fire({
+//         title: 'Ask for publication?',
+//         text: "Do you want to submit this gear for review to be publicly available in the catalog?",
+//         showCancelButton: true,
+//         confirmButtonText: 'Yes, submit',
+//         cancelButtonText: 'Cancel',
+//         showCancelButton: true,
+//         customClass: {
+//             confirmButton: 'bx--btn bx--btn--primary',
+//             cancelButton: 'bx--btn bx--btn--secondary'
+//         }
+//       }).then((result) => {
+//         if (result.isConfirmed) {
+//           // Update published status
+//           $("#pedal-published-button").text("Reviewing");
+//           buildJSON(); // update JSON with new status
+
+//           Swal.fire({
+//             title: 'Done!',
+//             text: 'Click Save to finalize your submission.',
+//             timer: 2000,
+//             showConfirmButton: false
+//           });
+//         }
+//       });
+//     });
+//   }
+// });
+
+
 // Handle moderation flow
 $(function() {
   let userRole = parent?.window?.currentUser?.role || "user";
-  const allowedForUser = userRole === "admin" ? ["draft","private","reviewing","public"] : ["draft","private"];
+  const allowedForUser = userRole === "admin" 
+    ? ["draft","private","reviewing","public"] 
+    : ["draft","private"];
 
+  // Hide unavailable options for this role
   $("#pedal-published-options li").each(function() {
     if (!allowedForUser.includes($(this).data("value"))) $(this).hide();
   });
 
+  // Dropdown selection
   $("#pedal-published-options li").on("click", function() {
     $("#pedal-published-button").text($(this).text());
     buildJSON(); // always use .text().toLowerCase() for JSON
   });
 
-  // Ask publication button
+  // 🚫 If button text is not in allowed list for non-admins → hide dropdown + skip Ask publication
+  const currentStatus = $("#pedal-published-button").text().trim().toLowerCase();
+  if (userRole !== "admin" && !allowedForUser.includes(currentStatus)) {
+    $("#pedal-published-options").hide();
+    return; // stop before creating Ask publication button
+  }
+
+  // Ask publication button (only for non-admins with allowed statuses)
   if (userRole !== "admin" && allowedForUser && !$("#request-publication").length) {
     $("#status-buttons").append(`
       <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
@@ -718,13 +787,12 @@ $(function() {
       Swal.fire({
         title: 'Ask for publication?',
         text: "Do you want to submit this gear for review to be publicly available in the catalog?",
-        showCancelButton: true,
         confirmButtonText: 'Yes, submit',
         cancelButtonText: 'Cancel',
         showCancelButton: true,
         customClass: {
-            confirmButton: 'bx--btn bx--btn--primary',
-            cancelButton: 'bx--btn bx--btn--secondary'
+          confirmButton: 'bx--btn bx--btn--primary',
+          cancelButton: 'bx--btn bx--btn--secondary'
         }
       }).then((result) => {
         if (result.isConfirmed) {
@@ -743,6 +811,7 @@ $(function() {
     });
   }
 });
+
 
 </script>
 

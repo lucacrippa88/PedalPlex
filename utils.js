@@ -693,10 +693,26 @@ function setupEditPedalHandler(pedals) {
                 .then(res => res.json())
                 .then(data => {
                   if (data.success) {
-                    Swal.fire('Duplicated!', 'Your gear has been copied.', 'success')
-                      .then(() => location.reload());
+                    Swal.fire({
+                      title: 'Duplicated!',
+                      text: 'Your gear has been copied.',
+                      icon: 'success',
+                      confirmButtonText: 'OK',
+                      customClass: {
+                        confirmButton: 'bx--btn bx--btn--primary bx--btn--sm'
+                      }
+                    })
+                    .then(() => location.reload());
                   } else {
-                    Swal.fire('Error', data.error || 'Failed to save duplicate', 'error');
+                    Swal.fire({
+                      title: 'Error',
+                      text: data.error || 'Failed to save duplicate',
+                      icon: 'error',
+                      confirmButtonText: 'OK',
+                      customClass: {
+                        confirmButton: 'bx--btn bx--btn--primary bx--btn--sm'
+                      }
+                    });
                   }
                 });
               }
