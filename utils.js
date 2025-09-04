@@ -702,7 +702,7 @@ function setupEditPedalHandler(pedals) {
                       icon: 'success',
                       confirmButtonText: 'OK',
                       customClass: {
-                        confirmButton: 'bx--btn bx--btn--primary bx--btn--sm'
+                        confirmButton: 'bx--btn bx--btn--primary'
                       }
                     })
                     .then(() => location.reload());
@@ -713,7 +713,7 @@ function setupEditPedalHandler(pedals) {
                       icon: 'error',
                       confirmButtonText: 'OK',
                       customClass: {
-                        confirmButton: 'bx--btn bx--btn--primary bx--btn--sm'
+                        confirmButton: 'bx--btn bx--btn--primary'
                       }
                     });
                   }
