@@ -1,10 +1,577 @@
+// let lastValidation = null;
+
+// // Builder logic
+// function buildJSON() {
+//     if (isSyncing) return lastValidation; // Skip rebuild during JSON sync
+
+//     // --- Base pedal object ---
+//     const pedal = {
+//         _id: $("#pedal-id").val(),
+//         name: $("#pedal-name").val(),
+//         logo: $("#pedal-logo").val(),
+//         type: $("#pedal-type").val(),
+//         width: $("#pedal-width").val(),
+//         height: $("#pedal-height").val(),
+//         color: $("#pedal-color").val(),
+//         "font-color": $("#font-color").val(),
+//         "knobs-color": $("#knobs-color").val(),
+//         "knobs-border": $("#knobs-border").val(),
+//         "knobs-indicator": $("#knobs-indicator").val(),
+//         controls: []
+//     };
+
+//     // --- Inside color logic ---
+//     const insideType = $("#inside-type-select").val();
+//     if (insideType === "color") {
+//         pedal["inside-color"] = $("#pedal-inside-color").val() + ($("#pedal-inside-full-check").is(":checked") ? " full" : "");
+//     } else {
+//         pedal["inside-color"] = $("#pedal-inside-image").val(); // URL
+//     }
+
+//     // --- CSS validation ---
+//     let cssError = "";
+//     const invalidCssProps = { position: "relative" };
+
+//     const logoEl = document.createElement("div");
+//     logoEl.style.cssText = $("#pedal-logo").val();
+//     for (const prop in invalidCssProps) {
+//         if (logoEl.style[prop] === invalidCssProps[prop]) {
+//             cssError += `Logo CSS cannot include "${prop}:${invalidCssProps[prop]}". `;
+//         }
+//     }
+
+//     const nameEl = document.createElement("div");
+//     nameEl.style.cssText = $("#pedal-name").val();
+//     for (const prop in invalidCssProps) {
+//         if (nameEl.style[prop] === invalidCssProps[prop]) {
+//             cssError += `Name CSS cannot include "${prop}:${invalidCssProps[prop]}". `;
+//         }
+//     }
+
+//     // --- Inside border ---
+//     if ($("#pedal-inside-border-check").is(":checked")) {
+//         pedal["inside-border"] = $("#pedal-inside-border").val();
+//     } else {
+//         delete pedal["inside-border"];
+//     }
+
+//     // --- Helper: get position ---
+//     function getPosition($ctrl) {
+//         const posVal = $ctrl.find(".ctrl-position").val();
+//         const $posInput = $ctrl.find(".ctrl-position-value");
+//         if (posVal === "margin-left" || posVal === "margin-right") {
+//             const px = parseInt($posInput.val(), 10) || 0;
+//             return `${posVal}:${px}px`;
+//         } else if (posVal && posVal.trim() !== "") {
+//             return posVal;
+//         }
+//         return undefined;
+//     }
+
+//     // --- Controls processing ---
+//     const allLabels = {};
+//     let duplicateFound = false;
+
+//     $("#controls .control").css("border", "").css("background-color", ""); // reset highlights
+
+//     $("#controls .row").each(function () {
+//         const rowObj = { row: [] };
+//         $(this).find(".controls-row .control").each(function () {
+//             const type = $(this).data("type");
+//             const ctrl = { label: $(this).find(".ctrl-label").val(), type };
+
+//             const label = ctrl.label?.trim();
+//             if (label) {
+//                 if (allLabels[label]) {
+//                     allLabels[label].push($(this));
+//                     duplicateFound = true;
+//                 } else {
+//                     allLabels[label] = [$(this)];
+//                 }
+//             }
+
+//             // --- Knobs, LEDs, Sliders, LCDs, Multi ---
+//             if (type.includes("knob")) {
+//                 const knobType = $(this).find(".ctrl-knob-type").val();
+//                 if (knobType === "discrete") {
+//                     const valuesArray = $(this).find(".ctrl-values-list").val().trim().split(",").map(v => v.trim());
+//                     ctrl.values = valuesArray;
+//                     ctrl.value = $(this).find(".ctrl-value-select").val() || valuesArray[0];
+//                 } else {
+//                     ctrl.min = parseInt($(this).find(".ctrl-min").val());
+//                     ctrl.max = parseInt($(this).find(".ctrl-max").val());
+//                     ctrl.value = parseInt($(this).find(".ctrl-value").val());
+//                 }
+//                 const spanVal = $(this).find(".ctrl-span").val();
+//                 if (spanVal) ctrl.span = spanVal;
+//                 if ($(this).find(".ctrl-knob-color-enable").is(":checked")) ctrl["knob-color"] = $(this).find(".ctrl-knob-color").val();
+//                 if ($(this).find(".ctrl-knob-border-enable").is(":checked")) ctrl["knob-border"] = $(this).find(".ctrl-knob-border").val();
+//                 if ($(this).find(".ctrl-knob-indicator-enable").is(":checked")) ctrl["knob-indicator"] = $(this).find(".ctrl-knob-indicator").val();
+//                 if ($(this).find(".ctrl-knob-thick").is(":checked")) ctrl.border = "thick";
+//                 const sizeVal = $(this).find(".ctrl-size").val();
+//                 ctrl.type = sizeVal === "regular" ? "knob" : sizeVal;
+//                 // const pos = getPosition($(this));
+//                 // if (pos) ctrl.position = pos;
+//                 const pos = getKnobPosition($(this));
+//                 if (pos) ctrl.position = pos;
+//             } else if (type === "led") {
+//                 ctrl.colors = $(this).find(".ctrl-color").map((_, el) => $(el).val()).get();
+//                 ctrl.value = parseInt($(this).find(".ctrl-value").val()) || 0;
+//                 ctrl.showlabel = $(this).find(".ctrl-showlabel").is(":checked") ? "yes" : "no";
+//                 const pos = getPosition($(this));
+//                 if (pos) ctrl.position = pos;
+//             } else if (type === "slider") {
+//                 ctrl.orientation = $(this).find(".ctrl-orientation").val();
+//                 ctrl.min = parseInt($(this).find(".ctrl-min").val());
+//                 ctrl.max = parseInt($(this).find(".ctrl-max").val())
+//                 ctrl.value = parseInt($(this).find(".ctrl-value").val());
+//                 const pos = getPosition($(this));
+//                 if (pos) ctrl.position = pos;
+//             } else if (type === "lcd") {
+//                 ctrl.value = $(this).find(".ctrl-text").val();
+//                 ctrl.shape = $(this).find(".ctrl-round").is(":checked") ? "round" : "";
+//                 ctrl.width = parseFloat($(this).find(".ctrl-width").val());
+//                 ctrl.height = parseFloat($(this).find(".ctrl-height").val());
+//                 ctrl["screen-color"] = $(this).find(".ctrl-screen1").val();
+//                 ctrl["text-color"] = $(this).find(".ctrl-screen2").val();
+//                 const pos = getPosition($(this));
+//                 if (pos) ctrl.position = pos;
+//             } else if (type === "multi") {
+//                 ctrl.values = $(this).find(".ctrl-values").val().split(",");
+//                 ctrl.value = $(this).find(".ctrl-value").val();
+//                 ctrl.showlabel = $(this).find(".ctrl-showlabel").is(":checked") ? "yes" : "no";
+//                 const pos = getPosition($(this));
+//                 if (pos) ctrl.position = pos;
+//             }
+
+//             rowObj.row.push(ctrl);
+//         });
+//         pedal.controls.push(rowObj);
+//     });
+
+//     // --- Highlight duplicates ---
+//     if (duplicateFound) {
+//         $("#json-error").text("Error: Duplicate control labels detected!");
+//         Object.values(allLabels).forEach(arr => {
+//             if (arr.length > 1) arr.forEach($ctrl => $ctrl.css("border", "2px solid red"));
+//         });
+//     }
+
+//     // --- Metadata (author, authorId, published) ---
+
+//     // Author (read-only, comes from hidden field)
+//     const authorVal = $("#pedal-author").val();
+//     pedal.author = authorVal && authorVal.trim() !== "" ? authorVal : (window.currentUser ? window.currentUser.username : "unknown");
+
+//     // AuthorId (read-only, comes from hidden field)
+//     const authorIdVal = $("#pedal-author-id").val();
+//     pedal.authorId = authorIdVal && authorIdVal.trim() !== "" ? authorIdVal : (window.currentUser ? window.currentUser.userid : "");
+
+//     // Published: editable via custom select (defaults to draft if not set)
+//     const selectedText = $("#pedal-published-button").text().trim().toLowerCase();
+//     const validStatuses = ["draft", "private", "reviewing", "public"];
+//     pedal.published = validStatuses.includes(selectedText) ? selectedText : "draft";
+
+
+
+
+//     // Rebuild JSON whenever publication status changes
+//     $(function() {
+//         $("#pedal-published").on("change", function() {
+//             buildJSON();
+//         });
+//     });
+
+//     // --- Populate JSON output ---
+//     const jsonString = JSON.stringify(pedal, null, 2);
+//     $("#json-output").val(jsonString);
+//     const $pedalDiv = $("#pedal-box");
+//     $pedalDiv.empty().append(renderPedal(pedal));
+
+//     const hasMissingFields = !highlightRequiredFields();
+
+//     // --- Update parent ---
+//     if (window.parent && typeof window.parent.setPedalJSON === "function") {
+//         window.parent.setPedalJSON(jsonString);
+//     }
+
+//     // --- Store validation object ---
+//     lastValidation = { pedal, cssError: cssError.trim(), hasMissingFields, duplicateFound };
+
+//     return lastValidation;
+// }
+
+// // --- Expose getter to parent ---
+// window.getPedalValidation = function() {
+//     return lastValidation || buildJSON();
+// };
+
+
+
+
+
+
+// // --- Helper: get knob position (keyword + margin) ---
+// function getKnobPosition($ctrl) {
+//     const keyword = $ctrl.find(".ctrl-position-keyword").val().trim();
+//     const margin = $ctrl.find(".ctrl-position-margin").val();
+//     const px = parseInt($ctrl.find(".ctrl-position-margin-value").val(), 10) || 0;
+
+//     let pos = keyword || "";
+//     if (margin && px > 0) {
+//         pos += (pos ? " " : "") + `${margin}:${px}px`;
+//     } else if (margin && !keyword) {
+//         pos = `${margin}:${px}px`;
+//     }
+//     return pos || undefined;
+// }
+
+
+
+
+
+
+
+
+// function highlightRequiredFields() {
+//     // Clear previous highlights
+//     $("#pedal-id, #controls .ctrl-label, #controls .ctrl-values-list").css("border", "");
+
+//     let hasError = false;
+
+//     // Check Pedal ID
+//     const pedalId = $("#pedal-id").val().trim();
+//     if (!pedalId) {
+//         $("#pedal-id").css("border", "2px solid red");
+//         hasError = true;
+//     }
+
+//     // Check all control labels
+//     $("#controls .ctrl-label").each(function() {
+//         const labelVal = $(this).val().trim();
+//         if (!labelVal) {
+//             $(this).css("border", "2px solid red");
+//             hasError = true;
+//         }
+//     });
+
+//     // Check values for Multi controls or discrete knobs
+//     $("#controls .control").each(function() {
+//         const type = $(this).data("type");
+
+//         if (type === "multi") {
+//             const values = $(this).find(".ctrl-values").val().trim();
+//             if (!values) {
+//                 $(this).find(".ctrl-values").css("border", "2px solid red");
+//                 hasError = true;
+//             }
+//         } else if (type.includes("knob") && $(this).find(".ctrl-knob-type").val() === "discrete") {
+//             const values = $(this).find(".ctrl-values-list").val().trim();
+//             if (!values) {
+//                 $(this).find(".ctrl-values-list").css("border", "2px solid red");
+//                 hasError = true;
+//             }
+//         }
+//     });
+
+//     return !hasError; // true if all required fields are filled
+// }
+
+
+
+
+
+// function syncUIFromJSON(pedal) {
+
+//     isSyncing = true; // Disable buildJSON()
+
+//     // --- Helper: restore position (dropdown + numeric px) ---
+//     function applyPosition($ctrl, ctrl) {
+//     const $keyword = $ctrl.find(".ctrl-position-keyword");
+//     const $margin = $ctrl.find(".ctrl-position-margin");
+//     const $marginValue = $ctrl.find(".ctrl-position-margin-value");
+//     const $dropdown = $ctrl.find(".ctrl-position");
+//     const $posInput = $ctrl.find(".ctrl-position-value");
+
+//     if (ctrl.position) {
+//         if ($keyword.length) { // knobs
+//             const parts = ctrl.position.split(" "); // split "keyword margin-right:20px"
+//             $keyword.val(parts[0] || "");
+//             if (parts[1] && (parts[1].startsWith("margin-left:") || parts[1].startsWith("margin-right:"))) {
+//                 const [side, px] = parts[1].split(":");
+//                 $margin.val(side);
+//                 $marginValue.val(parseInt(px) || 0).show();
+//             } else {
+//                 $margin.val("");
+//                 $marginValue.val("").hide();
+//             }
+//         } else if ($dropdown.length) { // other controls
+//             if (ctrl.position.startsWith("margin-left:") || ctrl.position.startsWith("margin-right:")) {
+//                 const [side, pxVal] = ctrl.position.split(":");
+//                 $dropdown.val(side);
+//                 $posInput.val(parseInt(pxVal) || 0).show();
+//             } else {
+//                 $dropdown.val(ctrl.position);
+//                 $posInput.val("").hide();
+//             }
+//         }
+//     } else {
+//         if ($keyword.length) {
+//             $keyword.val("");
+//             $margin.val("");
+//             $marginValue.val("").hide();
+//         }
+//         if ($dropdown.length) {
+//             $dropdown.val("");
+//             $posInput.val("").hide();
+//         }
+//     }
+// }
+
+
+
+
+
+//     // --- Basic pedal info ---
+//     $("#pedal-id").val(pedal._id || "");
+//     $("#pedal-name").val(pedal.name || "");
+//     $("#pedal-logo").val(pedal.logo || "");
+//     $("#pedal-type").val(pedal.type || "pedal");
+//     $("#pedal-width").val(pedal.width !== undefined ? pedal.width : "standard");
+//     $("#pedal-height").val(pedal.height !== undefined ? pedal.height : "standard");
+//     $("#pedal-color").val(pedal.color || "#264985");
+//     $("#font-color").val(pedal["font-color"] || "#ffffff");
+//     $("#knobs-color").val(pedal["knobs-color"] || "#191919");
+//     $("#knobs-border").val(pedal["knobs-border"] || "#424242");
+//     $("#knobs-indicator").val(pedal["knobs-indicator"] || "#ffffff");
+
+
+//     if (pedal["inside-color"]) {
+//         const insideVal = pedal["inside-color"].trim();
+//         const isImage = /^(https?:\/\/|data:image\/|images\/)/i.test(insideVal);
+
+//         if (isImage) {
+//             $("#inside-type-select").val("image");
+//             $("#inside-color-label").hide();
+//             $("#pedal-inside-full-check-label").hide();
+//             $("#inside-image-label").show();
+//             $("#pedal-inside-image").val(insideVal);
+//         } else {
+//             $("#inside-type-select").val("color");
+//             $("#inside-color-label").show();
+//             $("#pedal-inside-full-check-label").show();
+//             $("#inside-image-label").hide();
+//             $("#pedal-inside-color").val(insideVal.replace(" full", ""));
+
+//             // Set the "full" checkbox as usual
+//             const isFull = insideVal.includes("full");
+//             $("#pedal-inside-full-check").prop("checked", isFull);
+//         }
+//     } else {
+//         // default if inside-color is missing
+//         $("#inside-type-select").val("color");
+//         $("#inside-color-label").show();
+//         $("#inside-image-label").hide();
+//         $("#pedal-inside-color").val("");
+//         $("#pedal-inside-full-check").prop("checked", false);
+//     }
+
+//     // Always restore inside-border if it exists in DB
+//     if (pedal["inside-border"] !== undefined && pedal["inside-border"] !== "") {
+//         $("#pedal-inside-border").val(pedal["inside-border"]);
+//         $("#pedal-inside-border-check").prop("checked", true);   // ✅ important!
+//         $("#pedal-inside-border, #pedal-inside-border-check").show();
+//     } else {
+//         $("#pedal-inside-border").val("");
+//         $("#pedal-inside-border-check").prop("checked", false);
+//         $("#pedal-inside-border, #pedal-inside-border-check").hide();
+//     }
+
+
+
+
+
+
+
+//     // --- Clear & rebuild controls ---
+//     $("#controls").empty();
+//     if (Array.isArray(pedal.controls)) {
+//         pedal.controls.forEach(rowObj => {
+//             $("#add-row").trigger("click"); // add empty row
+//             const $lastRow = $("#controls .row").last();
+//             const $controlsRow = $lastRow.find(".controls-row");
+
+//             rowObj.row.forEach(ctrl => {
+//                 // --- Pick template ---
+//                 let templateId;
+//                 switch (ctrl.type) {
+//                     case "knob":
+//                     case "smallknob":
+//                     case "largeknob":
+//                     case "xlargeknob":
+//                         templateId = "#knob-template";
+//                         break;
+//                     case "led":
+//                         templateId = "#led-template";
+//                         break;
+//                     case "slider":
+//                         templateId = "#slider-template";
+//                         break;
+//                     case "lcd":
+//                         templateId = "#lcd-template";
+//                         break;
+//                     case "multi":
+//                         templateId = "#multi-template";
+//                         break;
+//                 }
+//                 if (!templateId) return;
+
+//                 const $ctrl = $($(templateId).html());
+//                 $ctrl.find(".ctrl-label").val(ctrl.label || "");
+
+//                 // --- KNOB ---
+//                 if (ctrl.type.includes("knob")) {
+//                     $ctrl.find(".ctrl-size").val(ctrl.type);
+
+//                     if (Array.isArray(ctrl.values) && ctrl.values.length > 0) {
+//                         // DISCRETE
+//                         $ctrl.find(".ctrl-knob-type").val("discrete").trigger("change");
+//                         $ctrl.find(".ctrl-values-list").val(ctrl.values.join(","));
+//                         const $select = $ctrl.find(".ctrl-value-select");
+//                         $select.empty();
+//                         ctrl.values.forEach(v => $select.append(`<option>${v}</option>`));
+//                         $select.val(ctrl.value || ctrl.values[0]);
+//                         $ctrl.find(".ctrl-span").val(ctrl.span || "");
+//                     } else {
+//                         // NUMERIC
+//                         $ctrl.find(".ctrl-knob-type").val("numeric").trigger("change");
+//                         $ctrl.find(".ctrl-min").val(ctrl.min ?? "");
+//                         $ctrl.find(".ctrl-max").val(ctrl.max ?? "");
+//                         $ctrl.find(".ctrl-value").val(ctrl.value ?? "");
+//                         $ctrl.find(".ctrl-values-list").val("");
+//                         $ctrl.find(".ctrl-value-select").empty();
+//                         $ctrl.find(".ctrl-span").val(ctrl.span || ""); 
+//                     }
+
+//                     if (ctrl["knob-color"]) {
+//                         $ctrl.find(".ctrl-knob-color-enable").prop("checked", true);
+//                         $ctrl.find(".ctrl-knob-color").prop("disabled", false).val(ctrl["knob-color"]);
+//                     }
+//                     if (ctrl["knob-border"]) {
+//                         $ctrl.find(".ctrl-knob-border-enable").prop("checked", true);
+//                         $ctrl.find(".ctrl-knob-border").prop("disabled", false).val(ctrl["knob-border"]);
+//                     }
+//                     if (ctrl["knob-indicator"]) {
+//                         $ctrl.find(".ctrl-knob-indicator-enable").prop("checked", true);
+//                         $ctrl.find(".ctrl-knob-indicator").prop("disabled", false).val(ctrl["knob-indicator"]);
+//                     }
+//                     if (ctrl.border === "thick") {
+//                         $ctrl.find(".ctrl-knob-thick").prop("checked", true);
+//                     }
+
+//                     applyPosition($ctrl, ctrl);
+
+//                 // --- LED ---
+//                 } else if (ctrl.type === "led") {
+//                     $ctrl.find(".ctrl-color0").val(ctrl.colors?.[0] || "#000000");
+//                     $ctrl.find(".ctrl-color1").val(ctrl.colors?.[1] || "#ff0000");
+//                     $ctrl.find(".ctrl-value").val(ctrl.value);
+//                     $ctrl.find(".ctrl-showlabel").prop("checked", ctrl.showlabel === "yes");
+
+//                     applyPosition($ctrl, ctrl);
+
+//                 // --- SLIDER ---
+//                 } else if (ctrl.type === "slider") {
+//                     $ctrl.find(".ctrl-orientation").val(ctrl.orientation || "vertical");
+//                     $ctrl.find(".ctrl-min").val(ctrl.min ?? -15);
+//                     $ctrl.find(".ctrl-max").val(ctrl.max ?? 15);
+//                     $ctrl.find(".ctrl-value").val(ctrl.value ?? 0);
+
+//                     applyPosition($ctrl, ctrl);
+
+//                 // --- LCD ---
+//                 } else if (ctrl.type === "lcd") {
+//                     $ctrl.find(".ctrl-text").val(ctrl.value || "LCD");
+//                     $ctrl.find(".ctrl-round").prop("checked", ctrl.shape === "round");
+//                     $ctrl.find(".ctrl-width").val(ctrl.width || "");
+//                     $ctrl.find(".ctrl-height").val(ctrl.height || "");
+//                     $ctrl.find(".ctrl-screen1").val(ctrl["screen-color"] || "#111111");
+//                     $ctrl.find(".ctrl-screen2").val(ctrl["text-color"] || "#ff0000");
+
+//                     applyPosition($ctrl, ctrl);
+
+//                 // --- MULTI ---
+//                 } else if (ctrl.type === "multi") {
+//                     $ctrl.find(".ctrl-values").val(ctrl.values?.join(",") || "");
+//                     $ctrl.find(".ctrl-value").val(ctrl.value);
+//                     $ctrl.find(".ctrl-showlabel").prop("checked", ctrl.showlabel !== "no");
+
+//                     applyPosition($ctrl, ctrl);
+//                 }
+
+//                 $controlsRow.append($ctrl);
+//             });
+//         });
+//     }
+
+//     // --- Setup dynamic handlers for new controls ---
+//     $("#pedal-inside-full-check").on("change", function() {
+//         const isFull = $(this).is(":checked");
+//         $("#pedal-inside-border, #pedal-inside-border-check").toggle(isFull);
+//     });
+
+//     // Author (read-only)
+//     if ($("#pedal-author").length) {
+//         $("#pedal-author").val(pedal.author || "unknown");
+//     }
+//     if ($("#pedal-author-id").length) {
+//         $("#pedal-author-id").val(pedal.authorId || "");
+//     }
+
+// // --- Published (custom dropdown) ---
+// if ($("#pedal-published-button").length) {
+//     const validStatuses = ["draft", "private", "reviewing", "public"];
+//     const status = validStatuses.includes(pedal.published) ? pedal.published : "draft";
+
+//     // Set the button text to reflect the current status
+//     $("#pedal-published-button").text(status.charAt(0).toUpperCase() + status.slice(1));
+
+//     // Optional: rebuild JSON when user selects a new status
+//     $("#pedal-published-menu li").off("click.syncPublished").on("click.syncPublished", function() {
+//         const selectedText = $(this).text().trim().toLowerCase();
+//         const validStatuses = ["draft", "private", "reviewing", "public"];
+//         if (validStatuses.includes(selectedText)) {
+//             $("#pedal-published-button").text($(this).text().trim()); // update display
+//             buildJSON(); // rebuild JSON with new status
+//         }
+//     });
+// }
+
+
+
+
+
+
+
+//     // Re-render pedal
+//     $("#pedal-box").empty().append(renderPedal(pedal));
+
+//     // Delay re-enabling buildJSON to prevent width/height reset on click
+//     setTimeout(() => {
+//         isSyncing = false;
+//         buildJSON(); // rebuild once
+//     }, 0);
+
+// }
+
+
 let lastValidation = null;
+let isSyncing = false;
 
-// Builder logic
+// --- Build JSON from UI ---
 function buildJSON() {
-    if (isSyncing) return lastValidation; // Skip rebuild during JSON sync
+    if (isSyncing) return lastValidation;
 
-    // --- Base pedal object ---
     const pedal = {
         _id: $("#pedal-id").val(),
         name: $("#pedal-name").val(),
@@ -20,42 +587,37 @@ function buildJSON() {
         controls: []
     };
 
-    // --- Inside color logic ---
+    // --- Inside color / image ---
     const insideType = $("#inside-type-select").val();
     if (insideType === "color") {
         pedal["inside-color"] = $("#pedal-inside-color").val() + ($("#pedal-inside-full-check").is(":checked") ? " full" : "");
     } else {
-        pedal["inside-color"] = $("#pedal-inside-image").val(); // URL
+        pedal["inside-color"] = $("#pedal-inside-image").val();
     }
 
-    // --- CSS validation ---
-    let cssError = "";
-    const invalidCssProps = { position: "relative" };
-
-    const logoEl = document.createElement("div");
-    logoEl.style.cssText = $("#pedal-logo").val();
-    for (const prop in invalidCssProps) {
-        if (logoEl.style[prop] === invalidCssProps[prop]) {
-            cssError += `Logo CSS cannot include "${prop}:${invalidCssProps[prop]}". `;
-        }
-    }
-
-    const nameEl = document.createElement("div");
-    nameEl.style.cssText = $("#pedal-name").val();
-    for (const prop in invalidCssProps) {
-        if (nameEl.style[prop] === invalidCssProps[prop]) {
-            cssError += `Name CSS cannot include "${prop}:${invalidCssProps[prop]}". `;
-        }
-    }
-
-    // --- Inside border ---
     if ($("#pedal-inside-border-check").is(":checked")) {
         pedal["inside-border"] = $("#pedal-inside-border").val();
     } else {
         delete pedal["inside-border"];
     }
 
-    // --- Helper: get position ---
+    // --- CSS validation ---
+    let cssError = "";
+    const invalidCssProps = { position: "relative" };
+    const logoEl = document.createElement("div");
+    logoEl.style.cssText = $("#pedal-logo").val();
+    const nameEl = document.createElement("div");
+    nameEl.style.cssText = $("#pedal-name").val();
+    for (const prop in invalidCssProps) {
+        if (logoEl.style[prop] === invalidCssProps[prop]) {
+            cssError += `Logo CSS cannot include "${prop}:${invalidCssProps[prop]}". `;
+        }
+        if (nameEl.style[prop] === invalidCssProps[prop]) {
+            cssError += `Name CSS cannot include "${prop}:${invalidCssProps[prop]}". `;
+        }
+    }
+
+    // --- Helper: positions ---
     function getPosition($ctrl) {
         const posVal = $ctrl.find(".ctrl-position").val();
         const $posInput = $ctrl.find(".ctrl-position-value");
@@ -67,30 +629,36 @@ function buildJSON() {
         }
         return undefined;
     }
+    function getKnobPosition($ctrl) {
+        const keyword = $ctrl.find(".ctrl-position-keyword").val().trim();
+        const margin = $ctrl.find(".ctrl-position-margin").val();
+        const px = parseInt($ctrl.find(".ctrl-position-margin-value").val(), 10) || 0;
+        let pos = keyword || "";
+        if (margin && px > 0) {
+            pos += (pos ? " " : "") + `${margin}:${px}px`;
+        } else if (margin && !keyword) {
+            pos = `${margin}:${px}px`;
+        }
+        return pos || undefined;
+    }
 
-    // --- Controls processing ---
+    // --- Controls ---
     const allLabels = {};
     let duplicateFound = false;
-
-    $("#controls .control").css("border", "").css("background-color", ""); // reset highlights
-
+    $("#controls .control").css("border", "");
     $("#controls .row").each(function () {
         const rowObj = { row: [] };
         $(this).find(".controls-row .control").each(function () {
             const type = $(this).data("type");
             const ctrl = { label: $(this).find(".ctrl-label").val(), type };
-
             const label = ctrl.label?.trim();
             if (label) {
                 if (allLabels[label]) {
                     allLabels[label].push($(this));
                     duplicateFound = true;
-                } else {
-                    allLabels[label] = [$(this)];
-                }
+                } else allLabels[label] = [$(this)];
             }
 
-            // --- Knobs, LEDs, Sliders, LCDs, Multi ---
             if (type.includes("knob")) {
                 const knobType = $(this).find(".ctrl-knob-type").val();
                 if (knobType === "discrete") {
@@ -102,16 +670,13 @@ function buildJSON() {
                     ctrl.max = parseInt($(this).find(".ctrl-max").val());
                     ctrl.value = parseInt($(this).find(".ctrl-value").val());
                 }
-                const spanVal = $(this).find(".ctrl-span").val();
-                if (spanVal) ctrl.span = spanVal;
+                if ($(this).find(".ctrl-span").val()) ctrl.span = $(this).find(".ctrl-span").val();
                 if ($(this).find(".ctrl-knob-color-enable").is(":checked")) ctrl["knob-color"] = $(this).find(".ctrl-knob-color").val();
                 if ($(this).find(".ctrl-knob-border-enable").is(":checked")) ctrl["knob-border"] = $(this).find(".ctrl-knob-border").val();
                 if ($(this).find(".ctrl-knob-indicator-enable").is(":checked")) ctrl["knob-indicator"] = $(this).find(".ctrl-knob-indicator").val();
                 if ($(this).find(".ctrl-knob-thick").is(":checked")) ctrl.border = "thick";
                 const sizeVal = $(this).find(".ctrl-size").val();
                 ctrl.type = sizeVal === "regular" ? "knob" : sizeVal;
-                // const pos = getPosition($(this));
-                // if (pos) ctrl.position = pos;
                 const pos = getKnobPosition($(this));
                 if (pos) ctrl.position = pos;
             } else if (type === "led") {
@@ -123,7 +688,7 @@ function buildJSON() {
             } else if (type === "slider") {
                 ctrl.orientation = $(this).find(".ctrl-orientation").val();
                 ctrl.min = parseInt($(this).find(".ctrl-min").val());
-                ctrl.max = parseInt($(this).find(".ctrl-max").val())
+                ctrl.max = parseInt($(this).find(".ctrl-max").val());
                 ctrl.value = parseInt($(this).find(".ctrl-value").val());
                 const pos = getPosition($(this));
                 if (pos) ctrl.position = pos;
@@ -149,188 +714,56 @@ function buildJSON() {
         pedal.controls.push(rowObj);
     });
 
-    // --- Highlight duplicates ---
-    if (duplicateFound) {
-        $("#json-error").text("Error: Duplicate control labels detected!");
-        Object.values(allLabels).forEach(arr => {
-            if (arr.length > 1) arr.forEach($ctrl => $ctrl.css("border", "2px solid red"));
-        });
-    }
-
-    // --- Metadata (author, authorId, published) ---
-
-    // Author (read-only, comes from hidden field)
+    // --- Metadata ---
     const authorVal = $("#pedal-author").val();
     pedal.author = authorVal && authorVal.trim() !== "" ? authorVal : (window.currentUser ? window.currentUser.username : "unknown");
-
-    // AuthorId (read-only, comes from hidden field)
     const authorIdVal = $("#pedal-author-id").val();
     pedal.authorId = authorIdVal && authorIdVal.trim() !== "" ? authorIdVal : (window.currentUser ? window.currentUser.userid : "");
-
-    // Published: editable via custom select (defaults to draft if not set)
     const selectedText = $("#pedal-published-button").text().trim().toLowerCase();
     const validStatuses = ["draft", "private", "reviewing", "public"];
     pedal.published = validStatuses.includes(selectedText) ? selectedText : "draft";
 
-
-
-
-    // Rebuild JSON whenever publication status changes
-    $(function() {
-        $("#pedal-published").on("change", function() {
-            buildJSON();
-        });
-    });
-
-    // --- Populate JSON output ---
+    // --- JSON output & render ---
     const jsonString = JSON.stringify(pedal, null, 2);
     $("#json-output").val(jsonString);
-    const $pedalDiv = $("#pedal-box");
-    $pedalDiv.empty().append(renderPedal(pedal));
+    $("#pedal-box").empty().append(renderPedal(pedal));
 
     const hasMissingFields = !highlightRequiredFields();
 
-    // --- Update parent ---
+    // --- Unified error handling ---
+    if (duplicateFound) {
+        Object.values(allLabels).forEach(arr => {
+            if (arr.length > 1) arr.forEach($ctrl => $ctrl.css("border", "2px solid red"));
+        });
+        $("#json-error").text("Error: Duplicate control labels detected!");
+    } else if (cssError) {
+        $("#json-error").text(cssError);
+    } else if (hasMissingFields) {
+        $("#json-error").text("Error: Missing required fields.");
+    } else {
+        $("#json-error").text("");
+        $("#controls .control").css("border", "");
+    }
+
     if (window.parent && typeof window.parent.setPedalJSON === "function") {
         window.parent.setPedalJSON(jsonString);
     }
 
-    // --- Store validation object ---
     lastValidation = { pedal, cssError: cssError.trim(), hasMissingFields, duplicateFound };
-
     return lastValidation;
 }
 
-// --- Expose getter to parent ---
+// --- Getter ---
 window.getPedalValidation = function() {
     return lastValidation || buildJSON();
 };
 
+// --- Live validation ---
+$(document).on("input change", "#pedal-id, #controls .ctrl-label, #controls .ctrl-values-list, #controls .ctrl-values", buildJSON);
 
-
-
-
-
-// --- Helper: get knob position (keyword + margin) ---
-function getKnobPosition($ctrl) {
-    const keyword = $ctrl.find(".ctrl-position-keyword").val().trim();
-    const margin = $ctrl.find(".ctrl-position-margin").val();
-    const px = parseInt($ctrl.find(".ctrl-position-margin-value").val(), 10) || 0;
-
-    let pos = keyword || "";
-    if (margin && px > 0) {
-        pos += (pos ? " " : "") + `${margin}:${px}px`;
-    } else if (margin && !keyword) {
-        pos = `${margin}:${px}px`;
-    }
-    return pos || undefined;
-}
-
-
-
-
-
-
-
-
-function highlightRequiredFields() {
-    // Clear previous highlights
-    $("#pedal-id, #controls .ctrl-label, #controls .ctrl-values-list").css("border", "");
-
-    let hasError = false;
-
-    // Check Pedal ID
-    const pedalId = $("#pedal-id").val().trim();
-    if (!pedalId) {
-        $("#pedal-id").css("border", "2px solid red");
-        hasError = true;
-    }
-
-    // Check all control labels
-    $("#controls .ctrl-label").each(function() {
-        const labelVal = $(this).val().trim();
-        if (!labelVal) {
-            $(this).css("border", "2px solid red");
-            hasError = true;
-        }
-    });
-
-    // Check values for Multi controls or discrete knobs
-    $("#controls .control").each(function() {
-        const type = $(this).data("type");
-
-        if (type === "multi") {
-            const values = $(this).find(".ctrl-values").val().trim();
-            if (!values) {
-                $(this).find(".ctrl-values").css("border", "2px solid red");
-                hasError = true;
-            }
-        } else if (type.includes("knob") && $(this).find(".ctrl-knob-type").val() === "discrete") {
-            const values = $(this).find(".ctrl-values-list").val().trim();
-            if (!values) {
-                $(this).find(".ctrl-values-list").css("border", "2px solid red");
-                hasError = true;
-            }
-        }
-    });
-
-    return !hasError; // true if all required fields are filled
-}
-
-
-
-
-
+// --- Sync UI from JSON ---
 function syncUIFromJSON(pedal) {
-
-    isSyncing = true; // Disable buildJSON()
-
-    // --- Helper: restore position (dropdown + numeric px) ---
-    function applyPosition($ctrl, ctrl) {
-    const $keyword = $ctrl.find(".ctrl-position-keyword");
-    const $margin = $ctrl.find(".ctrl-position-margin");
-    const $marginValue = $ctrl.find(".ctrl-position-margin-value");
-    const $dropdown = $ctrl.find(".ctrl-position");
-    const $posInput = $ctrl.find(".ctrl-position-value");
-
-    if (ctrl.position) {
-        if ($keyword.length) { // knobs
-            const parts = ctrl.position.split(" "); // split "keyword margin-right:20px"
-            $keyword.val(parts[0] || "");
-            if (parts[1] && (parts[1].startsWith("margin-left:") || parts[1].startsWith("margin-right:"))) {
-                const [side, px] = parts[1].split(":");
-                $margin.val(side);
-                $marginValue.val(parseInt(px) || 0).show();
-            } else {
-                $margin.val("");
-                $marginValue.val("").hide();
-            }
-        } else if ($dropdown.length) { // other controls
-            if (ctrl.position.startsWith("margin-left:") || ctrl.position.startsWith("margin-right:")) {
-                const [side, pxVal] = ctrl.position.split(":");
-                $dropdown.val(side);
-                $posInput.val(parseInt(pxVal) || 0).show();
-            } else {
-                $dropdown.val(ctrl.position);
-                $posInput.val("").hide();
-            }
-        }
-    } else {
-        if ($keyword.length) {
-            $keyword.val("");
-            $margin.val("");
-            $marginValue.val("").hide();
-        }
-        if ($dropdown.length) {
-            $dropdown.val("");
-            $posInput.val("").hide();
-        }
-    }
-}
-
-
-
-
+    isSyncing = true;
 
     // --- Basic pedal info ---
     $("#pedal-id").val(pedal._id || "");
@@ -345,30 +778,23 @@ function syncUIFromJSON(pedal) {
     $("#knobs-border").val(pedal["knobs-border"] || "#424242");
     $("#knobs-indicator").val(pedal["knobs-indicator"] || "#ffffff");
 
-
+    // --- Inside color / image ---
     if (pedal["inside-color"]) {
         const insideVal = pedal["inside-color"].trim();
         const isImage = /^(https?:\/\/|data:image\/|images\/)/i.test(insideVal);
-
         if (isImage) {
             $("#inside-type-select").val("image");
-            $("#inside-color-label").hide();
-            $("#pedal-inside-full-check-label").hide();
+            $("#inside-color-label, #pedal-inside-full-check-label").hide();
             $("#inside-image-label").show();
             $("#pedal-inside-image").val(insideVal);
         } else {
             $("#inside-type-select").val("color");
-            $("#inside-color-label").show();
-            $("#pedal-inside-full-check-label").show();
+            $("#inside-color-label, #pedal-inside-full-check-label").show();
             $("#inside-image-label").hide();
             $("#pedal-inside-color").val(insideVal.replace(" full", ""));
-
-            // Set the "full" checkbox as usual
-            const isFull = insideVal.includes("full");
-            $("#pedal-inside-full-check").prop("checked", isFull);
+            $("#pedal-inside-full-check").prop("checked", insideVal.includes("full"));
         }
     } else {
-        // default if inside-color is missing
         $("#inside-type-select").val("color");
         $("#inside-color-label").show();
         $("#inside-image-label").hide();
@@ -376,65 +802,40 @@ function syncUIFromJSON(pedal) {
         $("#pedal-inside-full-check").prop("checked", false);
     }
 
-    // Always restore inside-border if it exists in DB
-    if (pedal["inside-border"] !== undefined && pedal["inside-border"] !== "") {
+    // --- Inside border ---
+    if (pedal["inside-border"]) {
         $("#pedal-inside-border").val(pedal["inside-border"]);
-        $("#pedal-inside-border-check").prop("checked", true);   // ✅ important!
-        $("#pedal-inside-border, #pedal-inside-border-check").show();
+        $("#pedal-inside-border-check").prop("checked", true).show();
+        $("#pedal-inside-border").show();
     } else {
-        $("#pedal-inside-border").val("");
-        $("#pedal-inside-border-check").prop("checked", false);
-        $("#pedal-inside-border, #pedal-inside-border-check").hide();
+        $("#pedal-inside-border, #pedal-inside-border-check").val("").prop("checked", false).hide();
     }
-
-
-
-
-
-
 
     // --- Clear & rebuild controls ---
     $("#controls").empty();
     if (Array.isArray(pedal.controls)) {
         pedal.controls.forEach(rowObj => {
-            $("#add-row").trigger("click"); // add empty row
+            $("#add-row").trigger("click");
             const $lastRow = $("#controls .row").last();
             const $controlsRow = $lastRow.find(".controls-row");
 
             rowObj.row.forEach(ctrl => {
-                // --- Pick template ---
                 let templateId;
                 switch (ctrl.type) {
-                    case "knob":
-                    case "smallknob":
-                    case "largeknob":
-                    case "xlargeknob":
-                        templateId = "#knob-template";
-                        break;
-                    case "led":
-                        templateId = "#led-template";
-                        break;
-                    case "slider":
-                        templateId = "#slider-template";
-                        break;
-                    case "lcd":
-                        templateId = "#lcd-template";
-                        break;
-                    case "multi":
-                        templateId = "#multi-template";
-                        break;
+                    case "knob": case "smallknob": case "largeknob": case "xlargeknob": templateId = "#knob-template"; break;
+                    case "led": templateId = "#led-template"; break;
+                    case "slider": templateId = "#slider-template"; break;
+                    case "lcd": templateId = "#lcd-template"; break;
+                    case "multi": templateId = "#multi-template"; break;
                 }
                 if (!templateId) return;
-
                 const $ctrl = $($(templateId).html());
                 $ctrl.find(".ctrl-label").val(ctrl.label || "");
 
                 // --- KNOB ---
                 if (ctrl.type.includes("knob")) {
                     $ctrl.find(".ctrl-size").val(ctrl.type);
-
                     if (Array.isArray(ctrl.values) && ctrl.values.length > 0) {
-                        // DISCRETE
                         $ctrl.find(".ctrl-knob-type").val("discrete").trigger("change");
                         $ctrl.find(".ctrl-values-list").val(ctrl.values.join(","));
                         const $select = $ctrl.find(".ctrl-value-select");
@@ -443,16 +844,14 @@ function syncUIFromJSON(pedal) {
                         $select.val(ctrl.value || ctrl.values[0]);
                         $ctrl.find(".ctrl-span").val(ctrl.span || "");
                     } else {
-                        // NUMERIC
                         $ctrl.find(".ctrl-knob-type").val("numeric").trigger("change");
                         $ctrl.find(".ctrl-min").val(ctrl.min ?? "");
                         $ctrl.find(".ctrl-max").val(ctrl.max ?? "");
                         $ctrl.find(".ctrl-value").val(ctrl.value ?? "");
                         $ctrl.find(".ctrl-values-list").val("");
                         $ctrl.find(".ctrl-value-select").empty();
-                        $ctrl.find(".ctrl-span").val(ctrl.span || ""); 
+                        $ctrl.find(".ctrl-span").val(ctrl.span || "");
                     }
-
                     if (ctrl["knob-color"]) {
                         $ctrl.find(".ctrl-knob-color-enable").prop("checked", true);
                         $ctrl.find(".ctrl-knob-color").prop("disabled", false).val(ctrl["knob-color"]);
@@ -465,47 +864,44 @@ function syncUIFromJSON(pedal) {
                         $ctrl.find(".ctrl-knob-indicator-enable").prop("checked", true);
                         $ctrl.find(".ctrl-knob-indicator").prop("disabled", false).val(ctrl["knob-indicator"]);
                     }
-                    if (ctrl.border === "thick") {
-                        $ctrl.find(".ctrl-knob-thick").prop("checked", true);
-                    }
-
+                    if (ctrl.border === "thick") $ctrl.find(".ctrl-knob-thick").prop("checked", true);
                     applyPosition($ctrl, ctrl);
+                }
 
                 // --- LED ---
-                } else if (ctrl.type === "led") {
+                else if (ctrl.type === "led") {
                     $ctrl.find(".ctrl-color0").val(ctrl.colors?.[0] || "#000000");
                     $ctrl.find(".ctrl-color1").val(ctrl.colors?.[1] || "#ff0000");
                     $ctrl.find(".ctrl-value").val(ctrl.value);
                     $ctrl.find(".ctrl-showlabel").prop("checked", ctrl.showlabel === "yes");
-
                     applyPosition($ctrl, ctrl);
+                }
 
                 // --- SLIDER ---
-                } else if (ctrl.type === "slider") {
+                else if (ctrl.type === "slider") {
                     $ctrl.find(".ctrl-orientation").val(ctrl.orientation || "vertical");
                     $ctrl.find(".ctrl-min").val(ctrl.min ?? -15);
                     $ctrl.find(".ctrl-max").val(ctrl.max ?? 15);
                     $ctrl.find(".ctrl-value").val(ctrl.value ?? 0);
-
                     applyPosition($ctrl, ctrl);
+                }
 
                 // --- LCD ---
-                } else if (ctrl.type === "lcd") {
+                else if (ctrl.type === "lcd") {
                     $ctrl.find(".ctrl-text").val(ctrl.value || "LCD");
                     $ctrl.find(".ctrl-round").prop("checked", ctrl.shape === "round");
                     $ctrl.find(".ctrl-width").val(ctrl.width || "");
                     $ctrl.find(".ctrl-height").val(ctrl.height || "");
                     $ctrl.find(".ctrl-screen1").val(ctrl["screen-color"] || "#111111");
                     $ctrl.find(".ctrl-screen2").val(ctrl["text-color"] || "#ff0000");
-
                     applyPosition($ctrl, ctrl);
+                }
 
                 // --- MULTI ---
-                } else if (ctrl.type === "multi") {
+                else if (ctrl.type === "multi") {
                     $ctrl.find(".ctrl-values").val(ctrl.values?.join(",") || "");
                     $ctrl.find(".ctrl-value").val(ctrl.value);
                     $ctrl.find(".ctrl-showlabel").prop("checked", ctrl.showlabel !== "no");
-
                     applyPosition($ctrl, ctrl);
                 }
 
@@ -514,52 +910,69 @@ function syncUIFromJSON(pedal) {
         });
     }
 
-    // --- Setup dynamic handlers for new controls ---
-    $("#pedal-inside-full-check").on("change", function() {
-        const isFull = $(this).is(":checked");
-        $("#pedal-inside-border, #pedal-inside-border-check").toggle(isFull);
-    });
-
-    // Author (read-only)
-    if ($("#pedal-author").length) {
-        $("#pedal-author").val(pedal.author || "unknown");
-    }
-    if ($("#pedal-author-id").length) {
-        $("#pedal-author-id").val(pedal.authorId || "");
-    }
-
-// --- Published (custom dropdown) ---
-if ($("#pedal-published-button").length) {
-    const validStatuses = ["draft", "private", "reviewing", "public"];
-    const status = validStatuses.includes(pedal.published) ? pedal.published : "draft";
-
-    // Set the button text to reflect the current status
-    $("#pedal-published-button").text(status.charAt(0).toUpperCase() + status.slice(1));
-
-    // Optional: rebuild JSON when user selects a new status
-    $("#pedal-published-menu li").off("click.syncPublished").on("click.syncPublished", function() {
-        const selectedText = $(this).text().trim().toLowerCase();
-        const validStatuses = ["draft", "private", "reviewing", "public"];
-        if (validStatuses.includes(selectedText)) {
-            $("#pedal-published-button").text($(this).text().trim()); // update display
-            buildJSON(); // rebuild JSON with new status
-        }
-    });
+    isSyncing = false;
+    buildJSON(); // Validate and render errors immediately after sync
 }
 
+// --- Helper: apply positions ---
+function applyPosition($ctrl, ctrl) {
+    const $keyword = $ctrl.find(".ctrl-position-keyword");
+    const $margin = $ctrl.find(".ctrl-position-margin");
+    const $marginValue = $ctrl.find(".ctrl-position-margin-value");
+    const $dropdown = $ctrl.find(".ctrl-position");
+    const $posInput = $ctrl.find(".ctrl-position-value");
 
+    if (!ctrl.position) {
+        $keyword.val(""); $margin.val(""); $marginValue.val("").hide();
+        $dropdown.val(""); $posInput.val("").hide();
+        return;
+    }
 
+    if ($keyword.length) {
+        const parts = ctrl.position.split(" ");
+        $keyword.val(parts[0] || "");
+        if (parts[1] && (parts[1].startsWith("margin-left:") || parts[1].startsWith("margin-right:"))) {
+            const [side, px] = parts[1].split(":");
+            $margin.val(side);
+            $marginValue.val(parseInt(px) || 0).show();
+        } else {
+            $margin.val(""); $marginValue.val("").hide();
+        }
+    } else if ($dropdown.length) {
+        if (ctrl.position.startsWith("margin-left:") || ctrl.position.startsWith("margin-right:")) {
+            const [side, pxVal] = ctrl.position.split(":");
+            $dropdown.val(side);
+            $posInput.val(parseInt(pxVal) || 0).show();
+        } else {
+            $dropdown.val(ctrl.position);
+            $posInput.val("").hide();
+        }
+    }
+}
 
+// --- Highlight required fields ---
+function highlightRequiredFields() {
+    $("#pedal-id, #controls .ctrl-label, #controls .ctrl-values-list").css("border", "");
+    let hasError = false;
 
+    if (!$("#pedal-id").val().trim()) {
+        $("#pedal-id").css("border", "2px solid red"); hasError = true;
+    }
 
+    $("#controls .ctrl-label").each(function () {
+        if (!$(this).val().trim()) { $(this).css("border", "2px solid red"); hasError = true; }
+    });
 
-    // Re-render pedal
-    $("#pedal-box").empty().append(renderPedal(pedal));
+    $("#controls .control").each(function () {
+        const type = $(this).data("type");
+        if (type === "multi" && !$(this).find(".ctrl-values").val().trim()) {
+            $(this).find(".ctrl-values").css("border", "2px solid red"); hasError = true;
+        } else if (type.includes("knob") && $(this).find(".ctrl-knob-type").val() === "discrete") {
+            if (!$(this).find(".ctrl-values-list").val().trim()) {
+                $(this).find(".ctrl-values-list").css("border", "2px solid red"); hasError = true;
+            }
+        }
+    });
 
-    // Delay re-enabling buildJSON to prevent width/height reset on click
-    setTimeout(() => {
-        isSyncing = false;
-        buildJSON(); // rebuild once
-    }, 0);
-
+    return !hasError;
 }
