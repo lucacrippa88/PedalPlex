@@ -558,11 +558,29 @@ function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
 
     console.log(window.currentUser)
+    const isAdmin = userRole === 'admin';
+    const isAuthor = window.currentUser.username === pedal.author;
 
     const pedal = $(this).data("pedal");
     if (!pedal) {
       console.error("Pedal data not found!");
       return;
+    }
+
+    const isLockedStatus = ["reviewing", "public"].includes(
+      (pedal.published || "").toLowerCase()
+    );
+
+    // Decide which buttons to show
+    let boolConfirmBtn = true;
+    let boolDenyBtn = true;
+    let boolCancelBtn = true;
+
+    // Restriction: user is not admin, is author, and pedal is reviewing/public
+    if (!isAdmin && isAuthor && isLockedStatus) {
+      boolConfirmBtn = false; // remove Save
+      boolDenyBtn = false;    // remove Delete
+      boolCancelBtn = true;   // keep Cancel
     }
 
     const pedalCopy = JSON.parse(JSON.stringify(pedal));
@@ -587,9 +605,9 @@ function setupEditPedalHandler(pedals) {
       width: '90%',
       allowOutsideClick: false,
       allowEscapeKey: false,
-      showConfirmButton: true,
-      showDenyButton: true,
-      showCancelButton: true,
+      showConfirmButton: boolConfirmBtn,
+      showDenyButton: boolDenyBtn,
+      showCancelButton: boolCancelBtn,
       confirmButtonText: 'Save',
       denyButtonText: 'Delete',
       cancelButtonText: 'Cancel',
@@ -902,9 +920,9 @@ function renderPedal(pedal, userRole) {
   if (window.currentUser) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
-    const isLockedStatus = ["reviewing", "public"].includes(
-      (pedal.published || "").toLowerCase()
-    );
+    // const isLockedStatus = ["reviewing", "public"].includes(
+    //   (pedal.published || "").toLowerCase()
+    // );
 
     // if (isAdmin || (isAuthor && !isLockedStatus)) {
     if (isAdmin || isAuthor) {
