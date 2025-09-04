@@ -61,8 +61,6 @@
 
         window.currentUser = userFromServer;
 
-        console.log(userFromServer.role)
-
         if (typeof initNavCatalog === 'function') initNavCatalog(userFromServer.role);
         if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
       },

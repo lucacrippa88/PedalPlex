@@ -557,7 +557,7 @@ function renderPedalControls(pedal, $pedalDiv) {
 function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
 
-    comsole.log(window.currentUser)
+    console.log(window.currentUser)
 
     const pedal = $(this).data("pedal");
     if (!pedal) {
