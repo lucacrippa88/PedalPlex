@@ -577,7 +577,7 @@ $("#add-led").on("click", addLedControl);
             $("#add-row").on("click", function () {
                 const row = $(`
                     <div class="row" style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
-                        <div class="row-buttons" style="display:flex; gap:10px;">
+                        <div class="row-buttons" style="display:flex;">
                         <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-knob">+ Knob</button>
                         <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-led">+ LED</button>
                         <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-slider">+ Slider</button>
@@ -585,7 +585,7 @@ $("#add-led").on("click", addLedControl);
                         <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-multi">+ Multi</button>
                         </div>
                         <div class="controls-row" style="display:flex; gap:10px; flex-wrap:nowrap;"></div>
-                        <div class="row-actions" style="display:flex; gap:6px; flex-wrap:nowrap;">
+                        <div class="row-actions" style="display:flex; flex-wrap:nowrap;">
                         <button class="bx--btn bx--btn--sm bx--btn--secondary row-up">↑ Row</button><br>
                         <button class="bx--btn bx--btn--sm bx--btn--secondary row-down">↓ Row</button><br>
                         <button class="bx--btn bx--btn--sm bx--btn--danger row-remove">✕ Remove Row</button>
