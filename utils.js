@@ -558,7 +558,7 @@ function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
 
     console.log(window.currentUser)
-    const isAdmin = role === 'admin';
+    const isAdmin = window.currentUser.role === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
 
     const pedal = $(this).data("pedal");
