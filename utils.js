@@ -591,7 +591,7 @@ function setupEditPedalHandler(pedals) {
       confirmButtonText: 'Save',
       denyButtonText: 'Delete',
       cancelButtonText: 'Cancel',
-      footer: `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`,
+      footer: `<span class="modal-footer"><button class="duplicate-btn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`,
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary',
         denyButton: 'bx--btn bx--btn--danger',
@@ -619,7 +619,7 @@ function setupEditPedalHandler(pedals) {
         });
 
         // Handle Duplicate button
-        $("#duplicateBtn").on("click", () => {
+        $(".duplicate-btn").on("click", () => {
           const newPedal = JSON.parse(JSON.stringify(pedal));
           delete newPedal._id;
           delete newPedal._rev;
@@ -900,12 +900,11 @@ function renderPedal(pedal, userRole) {
   if (window.currentUser) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
-    // const isLockedStatus = ["reviewing", "public"].includes(
-    //   (pedal.published || "").toLowerCase()
-    // );
+    const isLockedStatus = ["reviewing", "public"].includes(
+      (pedal.published || "").toLowerCase()
+    );
 
-    // if (isAdmin || (isAuthor && !isLockedStatus)) {
-    if (isAdmin || (isAuthor)) {
+    if (isAdmin || (isAuthor && !isLockedStatus)) {
       const $editBtn = $("<button>")
         .addClass("edit-btn")
         .attr("title", "Edit pedal JSON")
@@ -916,6 +915,17 @@ function renderPedal(pedal, userRole) {
           </svg>
         `);
       $pedalDiv.append($editBtn);
+    } else if (isAuthor && isLockedStatus) {
+      const $duplicateBtn = $("<button>")
+        .addClass("duplicate-btn")
+        .attr("title", "Duplicate pedal JSON")
+        .data("pedal", pedal)
+        .html(`
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
+            <path d="M28 8h2V4a2.0021 2.0021 0 00-2-2H24V4h4zM17 2H21V4H17zM28 11H30V15H28zM28 18v4H24V10a2.0023 2.0023 0 00-2-2H10V4h4V2H10A2.0023 2.0023 0 008 4V8H4a2.0023 2.0023 0 00-2 2V28a2.0023 2.0023 0 002 2H22a2.0023 2.0023 0 002-2V24h4a2.0023 2.0023 0 002-2V18zM22 28H4V10H22z"/>
+          </svg>
+        `);
+      $pedalDiv.append($duplicateBtn);
     }
   }
 
