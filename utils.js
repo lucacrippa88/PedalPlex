@@ -555,7 +555,6 @@ function renderPedalControls(pedal, $pedalDiv) {
 
 
 
-
 function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
     const pedal = $(this).data("pedal");
@@ -566,31 +565,6 @@ function setupEditPedalHandler(pedals) {
 
     const pedalCopy = JSON.parse(JSON.stringify(pedal));
     delete pedalCopy._rev;
-
-    const isAdmin = window.currentUser?.isAdmin;
-    const isOwner = pedal.authorId && window.currentUser && pedal.authorId === window.currentUser.userid;
-    const restrictedStatus = ["reviewing", "public"].includes(pedal.published);
-
-    // Default buttons (for admins and unrestricted cases)
-    let showConfirmButton = true;
-    let showDenyButton = true;
-    let showCancelButton = true;
-    let footerHtml = `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`;
-
-    // Restrict case: regular user, not admin, reviewing/public, but only if they own the pedal
-    if (!isAdmin && restrictedStatus) {
-      if (isOwner) {
-        // Only Duplicate is allowed
-        showConfirmButton = false;
-        showDenyButton = false;
-        showCancelButton = true;
-        footerHtml = `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`;
-      } else {
-        // Not owner: block entirely
-        Swal.fire("Access Denied", "You cannot edit this pedal.", "error");
-        return;
-      }
-    }
 
     Swal.fire({
       title: `Edit ${pedal._id}`,
@@ -611,13 +585,13 @@ function setupEditPedalHandler(pedals) {
       width: '90%',
       allowOutsideClick: false,
       allowEscapeKey: false,
-      showConfirmButton,
-      showDenyButton,
-      showCancelButton,
+      showConfirmButton: true,
+      showDenyButton: true,
+      showCancelButton: true,
       confirmButtonText: 'Save',
       denyButtonText: 'Delete',
       cancelButtonText: 'Cancel',
-      footer: footerHtml,
+      footer: `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`,
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary',
         denyButton: 'bx--btn bx--btn--danger',
