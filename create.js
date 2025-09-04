@@ -557,6 +557,9 @@ if ($("#pedal-published-button").length) {
 
     // Remove li elements entirely for regular users if status is reviewing or public
     const userRole = parent?.window?.currentUser?.role || "user";
+
+    console.log(userRole, status)
+
     if (userRole !== "admin" && (status === "reviewing" || status === "public")) {
         $("#pedal-published-menu li").remove();
     }
