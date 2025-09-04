@@ -591,7 +591,7 @@ function setupEditPedalHandler(pedals) {
       confirmButtonText: 'Save',
       denyButtonText: 'Delete',
       cancelButtonText: 'Cancel',
-      footer: `<span class="modal-footer"><button class="duplicate-btn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`,
+      footer: `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`,
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary',
         denyButton: 'bx--btn bx--btn--danger',
@@ -619,7 +619,7 @@ function setupEditPedalHandler(pedals) {
         });
 
         // Handle Duplicate button
-        $(".duplicate-btn").on("click", () => {
+        $("#duplicateBtn").on("click", () => {
           const newPedal = JSON.parse(JSON.stringify(pedal));
           delete newPedal._id;
           delete newPedal._rev;
