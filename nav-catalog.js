@@ -111,6 +111,7 @@ function updatePedalCounts(activeFilter = null) {
   const totalAbsolute = allPedals.length;
 
   const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0 };
+  let userPedalsCount = 0;
 
   allPedals.each(function() {
     const status = ($(this).data("published") || "").toLowerCase();
@@ -119,6 +120,11 @@ function updatePedalCounts(activeFilter = null) {
     if (status in statusCounts) statusCounts[status]++;
     if (status === "public" && author === window.currentUser.username.toLowerCase()) {
       statusCounts.publicByMe++;
+    }
+
+    // Count pedals created by non-admin users
+    if (author && author !== "admin") {
+      userPedalsCount++;
     }
   });
 
@@ -136,16 +142,23 @@ function updatePedalCounts(activeFilter = null) {
       ">${statusCounts.reviewing}</span>`
     : `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">0</span>`;
 
-  // Outside counter (visible count like before)
-  // Parentheses counters (absolute totals)
-  $("#pedalCount").html(
+  // Build counters
+  let countsHtml =
     `${totalVisible} gear${totalVisible === 1 ? "" : "s"} available ` +
     `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalAbsolute}</span>, 
      Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
      Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${statusCounts.private}</span>, 
      Reviewing: ${reviewingBadge}, 
-     Published by me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>)`
-  );
+     Published by me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>`;
+
+  // Add user pedal counter only for admins (inside parentheses)
+  if (window.currentUser?.role === "admin") {
+    countsHtml += `, User pedals: <span class="status-filter" data-filter="user">${userPedalsCount}</span>`;
+  }
+
+  countsHtml += `)`;
+
+  $("#pedalCount").html(countsHtml);
 
   // Attach click handler
   $(".status-filter").off("click").on("click", function() {
@@ -153,6 +166,7 @@ function updatePedalCounts(activeFilter = null) {
     filterPedalsByStatus(filter);
   });
 }
+
 
 
 
