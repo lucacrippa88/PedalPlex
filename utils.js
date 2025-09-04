@@ -554,7 +554,6 @@ function renderPedalControls(pedal, $pedalDiv) {
 
 
 
-
 function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
     const pedal = $(this).data("pedal");
@@ -565,6 +564,27 @@ function setupEditPedalHandler(pedals) {
 
     const pedalCopy = JSON.parse(JSON.stringify(pedal));
     delete pedalCopy._rev;
+
+    const isAdmin = window.currentUser?.isAdmin;
+    const isOwner = pedal.authorId && window.currentUser && pedal.authorId === window.currentUser.userid;
+    const restrictedStatus = ["reviewing", "public"].includes(pedal.published);
+
+    // Decide which buttons to show
+    let showConfirmButton = true;
+    let showDenyButton = true;
+    let showCancelButton = true;
+    let confirmButtonText = "Save";
+    let denyButtonText = "Delete";
+    let cancelButtonText = "Cancel";
+    let footerHtml = `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`;
+
+    // Restriction: user is not admin, is author, and pedal is reviewing/public
+    if (!isAdmin && isOwner && restrictedStatus) {
+      showConfirmButton = false; // no Save
+      showDenyButton = false;    // no Delete
+      showCancelButton = true;   // keep Cancel
+      footerHtml = `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`;
+    }
 
     Swal.fire({
       title: `Edit ${pedal._id}`,
@@ -585,13 +605,13 @@ function setupEditPedalHandler(pedals) {
       width: '90%',
       allowOutsideClick: false,
       allowEscapeKey: false,
-      showConfirmButton: true,
-      showDenyButton: true,
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      denyButtonText: 'Delete',
-      cancelButtonText: 'Cancel',
-      footer: `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`,
+      showConfirmButton,
+      showDenyButton,
+      showCancelButton,
+      confirmButtonText,
+      denyButtonText,
+      cancelButtonText,
+      footer: footerHtml,
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary',
         denyButton: 'bx--btn bx--btn--danger',
@@ -618,7 +638,7 @@ function setupEditPedalHandler(pedals) {
           }, 100);
         });
 
-        // Handle Duplicate button
+        // ✅ Duplicate button works the same
         $("#duplicateBtn").on("click", () => {
           const newPedal = JSON.parse(JSON.stringify(pedal));
           delete newPedal._id;
@@ -686,13 +706,15 @@ function setupEditPedalHandler(pedals) {
         });
       },
       preConfirm: () => {
+        // Only runs if Save is available (admins or unrestricted owners)
+        if (!showConfirmButton) return false;
+
         const iframe = document.getElementById('swal-builder-iframe');
         if (!iframe || !iframe.contentWindow || !iframe.contentWindow.getPedalValidation) {
           Swal.showValidationMessage('Builder not ready');
           return false;
         }
 
-        // Force rebuild so errors clear when corrected
         const validation = iframe.contentWindow.buildJSON
           ? iframe.contentWindow.buildJSON()
           : iframe.contentWindow.getPedalValidation();
@@ -710,7 +732,8 @@ function setupEditPedalHandler(pedals) {
         return validation.pedal;
       }
     }).then((result) => {
-      if (result.isConfirmed) {
+      // Only relevant for Save/Delete (not duplicate-only mode)
+      if (result.isConfirmed && showConfirmButton) {
         const updated = result.value;
         updated._rev = pedal._rev;
 
@@ -738,7 +761,7 @@ function setupEditPedalHandler(pedals) {
             Swal.fire('Error', data.error || 'Failed to save', 'error');
           }
         });
-      } else if (result.isDenied) {
+      } else if (result.isDenied && showDenyButton) {
          Swal.fire({
                     title: 'Are you sure?',
                     text: `This will permanently delete "${pedal._id}"`,
@@ -900,11 +923,12 @@ function renderPedal(pedal, userRole) {
   if (window.currentUser) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
-    const isLockedStatus = ["reviewing", "public"].includes(
-      (pedal.published || "").toLowerCase()
-    );
+    // const isLockedStatus = ["reviewing", "public"].includes(
+    //   (pedal.published || "").toLowerCase()
+    // );
 
-    if (isAdmin || (isAuthor && !isLockedStatus)) {
+    // if (isAdmin || (isAuthor && !isLockedStatus)) {
+    if (isAdmin || isAuthor) {
       const $editBtn = $("<button>")
         .addClass("edit-btn")
         .attr("title", "Edit pedal JSON")
@@ -915,17 +939,6 @@ function renderPedal(pedal, userRole) {
           </svg>
         `);
       $pedalDiv.append($editBtn);
-    } else if (isAuthor && isLockedStatus) {
-      const $duplicateBtn = $("<button>")
-        .addClass("duplicate-btn")
-        .attr("title", "Duplicate pedal JSON")
-        .data("pedal", pedal)
-        .html(`
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
-            <path d="M28 8h2V4a2.0021 2.0021 0 00-2-2H24V4h4zM17 2H21V4H17zM28 11H30V15H28zM28 18v4H24V10a2.0023 2.0023 0 00-2-2H10V4h4V2H10A2.0023 2.0023 0 008 4V8H4a2.0023 2.0023 0 00-2 2V28a2.0023 2.0023 0 002 2H22a2.0023 2.0023 0 002-2V24h4a2.0023 2.0023 0 002-2V18zM22 28H4V10H22z"/>
-          </svg>
-        `);
-      $pedalDiv.append($duplicateBtn);
     }
   }
 
