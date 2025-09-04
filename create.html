@@ -703,7 +703,7 @@ $(function() {
   });
 
   // Ask publication button
-  if (userRole !== "admin" && !$("#request-publication").length) {
+  if (userRole !== "admin" && allowedForUser && !$("#request-publication").length) {
     $("#status-buttons").append(`
       <button class="bx--btn bx--btn--sm bx--btn--primary" id="request-publication">
         <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="white" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
