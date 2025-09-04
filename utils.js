@@ -664,9 +664,12 @@ function setupEditPedalHandler(pedals) {
               didOpen: () => {
                 const dupIframe = document.getElementById('swal-duplicate-iframe');
                 dupIframe.addEventListener('load', () => {
-                  if (dupIframe.contentWindow && typeof dupIframe.contentWindow.syncUIFromJSON === 'function') {
-                    dupIframe.contentWindow.syncUIFromJSON(newPedal);
-                  }
+                  const checkReady = setInterval(() => {
+                    if (dupIframe.contentWindow && typeof dupIframe.contentWindow.syncUIFromJSON === 'function') {
+                      clearInterval(checkReady);
+                      dupIframe.contentWindow.syncUIFromJSON(newPedal);
+                    }
+                  }, 100);
                 });
               },
               preConfirm: () => {
