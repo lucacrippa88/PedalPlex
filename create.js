@@ -557,24 +557,21 @@ if ($("#pedal-published-button").length) {
 
     // Remove li elements entirely for regular users if status is reviewing or public
     const userRole = parent?.window?.currentUser?.role || "user";
-
-    console.log(userRole, status)
-
     if (userRole !== "admin" && (status === "reviewing" || status === "public")) {
-        $("#pedal-published-menu li").remove();
+        $("#pedal-published-options li").remove(); // ← use the correct UL ID
+        $("#request-publication").remove(); // also hide the Ask Publication button
     }
 
     // Optional: rebuild JSON when user selects a new status
-    $("#pedal-published-menu li").off("click.syncPublished").on("click.syncPublished", function() {
+    $("#pedal-published-options li").off("click.syncPublished").on("click.syncPublished", function() {
         const selectedText = $(this).text().trim().toLowerCase();
-        const validStatuses = ["draft", "private", "reviewing", "public"];
         if (validStatuses.includes(selectedText)) {
             $("#pedal-published-button").text($(this).text().trim()); // update display
             buildJSON(); // rebuild JSON with new status
         }
     });
-
 }
+
 
 
 
