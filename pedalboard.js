@@ -4,12 +4,6 @@ window.allPedalboards = []; // store all pedalboards here
 
 function initPedalboard(userRole) {
   const userId = window.currentUser?.userid;
-
-  if (!userId) {
-    console.error("User ID not found. Make sure window.currentUser is set before calling initPedalboard.");
-    return;
-  }
-
   const resultsDiv = document.getElementById("pedalboard");
 
   window.catalog = [];
@@ -141,10 +135,10 @@ function setupFilterUI(pedals) {
   const input = document.getElementById('pedalFilterInput');
   const dropdownContainer = document.getElementById('pedalAddDropdownContainer');
 
-  if (!input || !dropdownContainer) {
-    console.warn('Missing input or dropdown container');
-    return;
-  }
+  // if (!input || !dropdownContainer) {
+  //   console.warn('Missing input or dropdown container');
+  //   return;
+  // }
 
   dropdownContainer.style.position = 'absolute'; // For absolute positioning
   dropdownContainer.style.background = 'white';
@@ -345,10 +339,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderPedalboard() {
   const container = document.getElementById('pedalboard');
-  if (!container) {
-    console.warn('No #pedalboard container found');
-    return;
-  }
+  // if (!container) {
+  //   console.warn('No #pedalboard container found');
+  //   return;
+  // }
   container.innerHTML = '';
 
   if (!window.pedalboard.pedals || window.pedalboard.pedals.length === 0) {
@@ -746,8 +740,6 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
       const userId = currentUser.userid;
       const boardId = currentBoard._id;
 
-      console.log("board_id: ", boardId)
-
       // Check if there are related presets first
       fetch('https://www.cineteatrosanluigi.it/plex/CHECK_PRESETS_FOR_BOARD.php', {
         method: 'POST',
@@ -760,7 +752,6 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
       })
       .then(res => res.json())
       .then(check => {
-        console.log("check: ", check)
         if (check.has_presets) {
           Swal.fire({
             title: 'Cannot delete',
