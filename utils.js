@@ -1,7 +1,3 @@
-
-
-
-
 function rgbToHex(rgb) {
   const result = rgb.match(/\d+/g);
   if (!result || result.length < 3) return '#000000';
@@ -696,17 +692,18 @@ function setupEditPedalHandler(pedals) {
           return false;
         }
 
-        const validation = iframe.contentWindow.getPedalValidation();
-        if (validation.cssError) {
-          Swal.showValidationMessage(`CSS Error: ${validation.cssError}`);
-          return false;
-        }
-        if (validation.hasMissingFields) {
-          Swal.showValidationMessage("Please fill all required fields!");
-          return false;
-        }
-        if (validation.duplicateFound) {
-          Swal.showValidationMessage("Duplicate control labels detected!");
+        // ✅ Force rebuild so errors clear when corrected
+        const validation = iframe.contentWindow.buildJSON
+          ? iframe.contentWindow.buildJSON()
+          : iframe.contentWindow.getPedalValidation();
+
+        const errors = [];
+        if (validation.cssError) errors.push(`CSS Error: ${validation.cssError}`);
+        if (validation.hasMissingFields) errors.push("Please fill all required fields!");
+        if (validation.duplicateFound) errors.push("Duplicate control labels detected!");
+
+        if (errors.length > 0) {
+          Swal.showValidationMessage(errors.join("<br>"));
           return false;
         }
 
