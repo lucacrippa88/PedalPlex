@@ -563,10 +563,6 @@ justify-content: center;
 
 
 
-
-
-
-
 .bx--loading-overlay {
   position: fixed;
   top: 50%;
@@ -576,23 +572,17 @@ justify-content: center;
   background: none;
 }
 
-
-
-
 .bx--text-input {
   border-radius: 8px;
 }
 
 .bx--btn {
-  margin-left: 8px;
+  margin-left: 8px!important;
   min-height: 0.5rem;
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 8px 16px;
   max-width: 8rem!important;
 }
-
-
-
 
 .pedal-author {
   font-size: 0.7em;
