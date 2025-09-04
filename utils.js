@@ -565,27 +565,6 @@ function setupEditPedalHandler(pedals) {
     const pedalCopy = JSON.parse(JSON.stringify(pedal));
     delete pedalCopy._rev;
 
-    const isAdmin = window.currentUser?.isAdmin;
-    const isOwner = pedal.authorId && window.currentUser && pedal.authorId === window.currentUser.userid;
-    const restrictedStatus = ["reviewing", "public"].includes(pedal.published);
-
-    // Decide which buttons to show
-    let showConfirmButton = true;
-    let showDenyButton = true;
-    let showCancelButton = true;
-    let confirmButtonText = "Save";
-    let denyButtonText = "Delete";
-    let cancelButtonText = "Cancel";
-    let footerHtml = `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`;
-
-    // Restriction: user is not admin, is author, and pedal is reviewing/public
-    if (!isAdmin && isOwner && restrictedStatus) {
-      showConfirmButton = false; // no Save
-      showDenyButton = false;    // no Delete
-      showCancelButton = true;   // keep Cancel
-      footerHtml = `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`;
-    }
-
     Swal.fire({
       title: `Edit ${pedal._id}`,
       html: `
@@ -605,13 +584,13 @@ function setupEditPedalHandler(pedals) {
       width: '90%',
       allowOutsideClick: false,
       allowEscapeKey: false,
-      showConfirmButton,
-      showDenyButton,
-      showCancelButton,
-      confirmButtonText,
-      denyButtonText,
-      cancelButtonText,
-      footer: footerHtml,
+      showConfirmButton: true,
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      denyButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      footer: `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`,
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary',
         denyButton: 'bx--btn bx--btn--danger',
@@ -638,7 +617,7 @@ function setupEditPedalHandler(pedals) {
           }, 100);
         });
 
-        // ✅ Duplicate button works the same
+        // Handle Duplicate button
         $("#duplicateBtn").on("click", () => {
           const newPedal = JSON.parse(JSON.stringify(pedal));
           delete newPedal._id;
@@ -706,15 +685,13 @@ function setupEditPedalHandler(pedals) {
         });
       },
       preConfirm: () => {
-        // Only runs if Save is available (admins or unrestricted owners)
-        if (!showConfirmButton) return false;
-
         const iframe = document.getElementById('swal-builder-iframe');
         if (!iframe || !iframe.contentWindow || !iframe.contentWindow.getPedalValidation) {
           Swal.showValidationMessage('Builder not ready');
           return false;
         }
 
+        // Force rebuild so errors clear when corrected
         const validation = iframe.contentWindow.buildJSON
           ? iframe.contentWindow.buildJSON()
           : iframe.contentWindow.getPedalValidation();
@@ -732,8 +709,7 @@ function setupEditPedalHandler(pedals) {
         return validation.pedal;
       }
     }).then((result) => {
-      // Only relevant for Save/Delete (not duplicate-only mode)
-      if (result.isConfirmed && showConfirmButton) {
+      if (result.isConfirmed) {
         const updated = result.value;
         updated._rev = pedal._rev;
 
@@ -761,7 +737,7 @@ function setupEditPedalHandler(pedals) {
             Swal.fire('Error', data.error || 'Failed to save', 'error');
           }
         });
-      } else if (result.isDenied && showDenyButton) {
+      } else if (result.isDenied) {
          Swal.fire({
                     title: 'Are you sure?',
                     text: `This will permanently delete "${pedal._id}"`,
