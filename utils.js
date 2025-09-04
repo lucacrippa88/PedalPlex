@@ -905,7 +905,7 @@ function renderPedal(pedal, userRole) {
     // );
 
     // if (isAdmin || (isAuthor && !isLockedStatus)) {
-    if (isAdmin || (isAuthor && !isLockedStatus)) {
+    if (isAdmin || (isAuthor)) {
       const $editBtn = $("<button>")
         .addClass("edit-btn")
         .attr("title", "Edit pedal JSON")
