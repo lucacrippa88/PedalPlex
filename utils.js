@@ -557,15 +557,14 @@ function renderPedalControls(pedal, $pedalDiv) {
 function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
 
-    console.log(window.currentUser)
-    const isAdmin = window.currentUser.role === 'admin';
-    const isAuthor = window.currentUser.username === pedal.author;
-
     const pedal = $(this).data("pedal");
     if (!pedal) {
       console.error("Pedal data not found!");
       return;
     }
+
+    const isAdmin = window.currentUser.role === 'admin';
+    const isAuthor = window.currentUser.username === pedal.author;
 
     const isLockedStatus = ["reviewing", "public"].includes(
       (pedal.published || "").toLowerCase()
