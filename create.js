@@ -198,6 +198,25 @@ function buildJSON() {
     // --- Store validation object ---
     lastValidation = { pedal, cssError: cssError.trim(), hasMissingFields, duplicateFound };
 
+
+    // --- Error handling ---
+    $("#json-error").text(""); // clear any old error text
+
+    if (cssError.trim()) {
+        $("#json-error").append(cssError + " ");
+    }
+
+    if (duplicateFound) {
+        $("#json-error").append("Error: Duplicate control labels detected!");
+        Object.values(allLabels).forEach(arr => {
+            if (arr.length > 1) arr.forEach($ctrl => $ctrl.css("border", "2px solid red"));
+        });
+    }
+
+    if (hasMissingFields) {
+        $("#json-error").append(" Error: Required fields are missing!");
+    }
+
     return lastValidation;
 }
 
