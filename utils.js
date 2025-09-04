@@ -900,10 +900,11 @@ function renderPedal(pedal, userRole) {
   if (window.currentUser) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
-    const isLockedStatus = ["reviewing", "public"].includes(
-      (pedal.published || "").toLowerCase()
-    );
+    // const isLockedStatus = ["reviewing", "public"].includes(
+    //   (pedal.published || "").toLowerCase()
+    // );
 
+    // if (isAdmin || (isAuthor && !isLockedStatus)) {
     if (isAdmin || (isAuthor && !isLockedStatus)) {
       const $editBtn = $("<button>")
         .addClass("edit-btn")
