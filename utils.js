@@ -931,7 +931,53 @@ function setupEditPedalHandler(pedals) {
           }
         });
       } else if (result.isDenied) {
-        // Delete flow unchanged...
+         Swal.fire({
+                    title: 'Are you sure?',
+                    text: `This will permanently delete "${pedal._id}"`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, cancel!',
+                    customClass: {
+                        confirmButton: 'bx--btn bx--btn--danger',
+                        cancelButton: 'bx--btn bx--btn--secondary'
+                    }
+                }).then((deleteConfirm) => {
+                    if (deleteConfirm.isConfirmed) {
+                        Swal.showLoading();
+                        fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FROM_CATALOG.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                _id: pedal._id,
+                                _rev: pedal._rev
+                            })
+                        })
+                        .then(res => res.text())
+                        .then(text => {
+                            let data;
+                            try { data = JSON.parse(text); } 
+                            catch (err) { throw new Error("Invalid JSON response from server."); }
+
+                            Swal.hideLoading();
+                            if (data.success) {
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: 'The gear has been removed.',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK',
+                                    customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+                                }).then(() => location.reload());
+                            } else {
+                                Swal.fire({ title: 'Error', text: data.error || 'Failed to delete', icon: 'error', confirmButtonText: 'OK', customClass: { confirmButton: 'bx--btn bx--btn--primary' }});
+                            }
+                        })
+                        .catch(err => {
+                            Swal.hideLoading();
+                            Swal.fire('Error', err.message || 'Failed to delete', 'error');
+                        });
+                    }
+                });
       }
     });
   });
