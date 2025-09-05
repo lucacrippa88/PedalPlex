@@ -12,40 +12,53 @@
     <script src="create.js"></script>
     <style>
 
-        /* Builder is flex */
+/* Make the builder container a flex layout */
 #builder {
   display: flex;
   align-items: flex-start;
-  overflow-x: auto; /* allow horizontal scroll inside builder */
 }
 
-/* Editor takes the left side and can scroll horizontally */
+/* Editor takes the left side */
 #editor {
-  flex-shrink: 0;       /* prevent shrinking into preview */
-  min-width: 800px;     /* base width */
-  width: max-content;   /* grow if content is wide */
+  flex: 1;
   padding: 20px;
-  overflow-x: auto;     /* enable horizontal scroll */
-  white-space: nowrap;  /* keep content inline for horizontal scroll */
+  max-width: 60%;
 }
 
-/* Preview fixed on the right */
+/* Preview stays fixed on the right */
 #preview {
   position: fixed;
   right: 20px;
   top: 20px;
   bottom: 20px;
-  width: 35%;           /* lock preview width */
+  /* width: 55%; */
   overflow: auto;
   padding: 15px;
   border-radius: 8px;
 }
 
-/* Reserve space for preview */
-body {
+body { /* reserve space for preview */
   margin: 0;
   padding-right: 40%;
 }
+
+/* ✅ Controls rows can scroll horizontally */
+.control {
+  display: flex;          /* put inputs side by side */
+  gap: 10px;              /* spacing between elements */
+  overflow-x: auto;       /* enable horizontal scroll */
+  white-space: nowrap;    /* prevent wrapping */
+  padding-bottom: 5px;    /* space for scrollbar */
+}
+
+/* Prevent shrinking of inputs/selects inside controls */
+.control input,
+.control select,
+.control button,
+.control label {
+  flex-shrink: 0;
+}
+
 
 
 
