@@ -172,6 +172,10 @@ html {
   position: relative;
 }
 
+.pedal-catalog[style*="display: none"] {
+  display: none !important;
+}
+
 
 .pedal-name {
   position: absolute;
