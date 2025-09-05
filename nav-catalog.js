@@ -113,16 +113,18 @@ function updatePedalCounts(activeFilter = null) {
   const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0 };
   let userPedalsCount = 0;
 
+  const currentUsername = (window.currentUser?.username || "").toLowerCase();
+
   allPedals.each(function() {
     const status = ($(this).data("published") || "").toLowerCase();
     const author = ($(this).data("author") || "").toLowerCase();
 
     if (status in statusCounts) statusCounts[status]++;
-    if (status === "public" && author === window.currentUser.username.toLowerCase()) {
+    if (status === "public" && author === currentUsername) {
       statusCounts.publicByMe++;
     }
 
-    // Count pedals created by non-admin users
+    // Count pedals created by non-admin users (author literal not "admin")
     if (author && author !== "admin") {
       userPedalsCount++;
     }
@@ -151,9 +153,9 @@ function updatePedalCounts(activeFilter = null) {
      Reviewing: ${reviewingBadge}, 
      Published by me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>`;
 
-  // Add user pedal counter only for admins (inside parentheses)
+  // Add user pedal counter only for admins (inside parentheses), and make it clickable/filterable
   if (window.currentUser?.role === "admin") {
-    countsHtml += `, Published by Users: <span class="status-filter" data-filter="user">${userPedalsCount}</span>`;
+    countsHtml += `, Published by Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${userPedalsCount}</span>`;
   }
 
   countsHtml += `)`;
@@ -169,8 +171,7 @@ function updatePedalCounts(activeFilter = null) {
 
 
 
-
-// Filtering function
+// Unified filtering function (single definition — replaces duplicates)
 function filterPedalsByStatus(filter) {
   const currentUsername = (window.currentUser?.username || "").toLowerCase();
 
@@ -179,7 +180,7 @@ function filterPedalsByStatus(filter) {
     const author = ($(this).data("author") || "").toLowerCase();
 
     const isMine = (status === "public" && author === currentUsername);
-    const isUserCreated = author && author !== "admin"; // keeps same semantics you used for counting
+    const isUserCreated = author && author !== "admin"; // non-admin authors
 
     if (filter === "all") {
       $(this).show();
@@ -216,28 +217,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-
-
-
-// Filtering function
-function filterPedalsByStatus(filter) {
-  $(".pedal-catalog").each(function() {
-    const status = ($(this).data("published") || "").toLowerCase();
-    const author = ($(this).data("author") || "").toLowerCase();
-    const isMine = (status === "public" && author === window.currentUser.username.toLowerCase());
-
-    if (filter === "all") {
-      $(this).show();
-    } else if (filter === "publicByMe") {
-      $(this).toggle(isMine);
-    } else {
-      $(this).toggle(status === filter);
-    }
-  });
-
-  // Update counts after filtering
-  updatePedalCounts();
-}
 
 
 // Initialize catalog after pedals are loaded
