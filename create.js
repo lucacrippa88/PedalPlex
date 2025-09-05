@@ -492,8 +492,20 @@ function syncUIFromJSON(pedal) {
 
                 // --- LED ---
                 } else if (ctrl.type === "led") {
-                    $ctrl.find(".ctrl-color0").val(ctrl.colors?.[0] || "#000000");
-                    $ctrl.find(".ctrl-color1").val(ctrl.colors?.[1] || "#ff0000");
+                    const colors = Array.isArray(ctrl.colors) && ctrl.colors.length > 0
+                        ? ctrl.colors
+                        : ["#000000", "#ff0000"]; // default 2
+
+                    const colorsContainer = $ctrl.find(".ctrl-colors");
+                    colorsContainer.empty(); // clear any defaults
+
+                    colors.forEach((color, idx) => {
+                        const $input = $(`<input type="color" class="ctrl-color">`)
+                            .val(color)
+                            .attr("data-index", idx);
+                        colorsContainer.append($input);
+                    });
+
                     $ctrl.find(".ctrl-value").val(ctrl.value);
                     $ctrl.find(".ctrl-showlabel").prop("checked", ctrl.showlabel === "yes");
 
@@ -571,12 +583,6 @@ if ($("#pedal-published-button").length) {
         }
     });
 }
-
-
-
-
-
-
 
 
     // Re-render pedal
