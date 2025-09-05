@@ -35,35 +35,30 @@
   overflow: auto;
   padding: 15px;
   border-radius: 8px;
-  background: #fff;    /* optional visual separation */
+  background: #fff;    /* optional for clarity */
   z-index: 10;
 }
 
-/* Controls stack vertically */
+/* Controls container stacks rows */
 #controls {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* spacing between rows */
+  gap: 15px; /* space between rows */
 }
 
-/* Each control = one row with horizontal scroll */
-.control {
-  display: flex;         /* children inline */
-  gap: 10px;             /* spacing between inputs/buttons */
-  overflow-x: auto;      /* horizontal scroll if needed */
-  white-space: nowrap;   /* prevent wrapping */
-  padding-bottom: 5px;   /* room for scrollbar */
+/* ✅ Each row scrolls horizontally */
+.controls-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;      /* horizontal scroll per row */
+  white-space: nowrap;   /* keep row on one line */
+  padding-bottom: 5px;   /* space for scrollbar */
 }
 
-/* Inputs inside controls don’t shrink */
-.control input,
-.control select,
-.control button,
-.control label {
+/* Controls inside row don’t shrink */
+.controls-row .control {
   flex-shrink: 0;
 }
-
-
 
 
 
