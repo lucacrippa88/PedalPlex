@@ -58,7 +58,7 @@ function createNewPedal() {
   Swal.fire({
       title: 'Gear Builder',
       html: `<iframe src="create.html" style="width:100%; height:80vh; border:none;" id="swal-builder-iframe"></iframe>`,
-      width: '90%',
+      width: '100%',
       allowOutsideClick: false,
       allowEscapeKey: false,
       showCloseButton: false,
