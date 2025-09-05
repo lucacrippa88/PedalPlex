@@ -12,55 +12,57 @@
     <script src="create.js"></script>
     <style>
 
-/* Make the builder container a flex layout */
+/* Layout: left editor + fixed right preview */
 #builder {
   display: flex;
   align-items: flex-start;
 }
 
-/* Editor takes the left side */
+/* Editor (left side) */
 #editor {
   flex: 1;
   padding: 20px;
-  max-width: 60%;
+  margin-right: 40%; /* reserve space so it never overlaps preview */
 }
 
-/* Preview stays fixed on the right */
+/* Preview (fixed right side) */
 #preview {
   position: fixed;
-  right: 20px;
   top: 20px;
+  right: 20px;
   bottom: 20px;
-  /* width: 55%; */
+  width: 35%;          /* fixed width */
   overflow: auto;
   padding: 15px;
   border-radius: 8px;
+  background: #fff;    /* optional visual separation */
+  z-index: 10;
 }
 
-body { /* reserve space for preview */
-  margin: 0;
-  padding-right: 40%;
-}
-
-/* ✅ Controls container has one horizontal scroll per row */
+/* Controls stack vertically */
 #controls {
   display: flex;
-  flex-direction: column;   /* stack rows vertically */
-  gap: 15px;                /* space between rows */
+  flex-direction: column;
+  gap: 15px; /* spacing between rows */
 }
 
-#controls > .controls-row {
-  display: flex;            /* controls side by side */
-  gap: 10px;                /* spacing between controls */
-  overflow-x: auto;         /* enable horizontal scroll */
-  white-space: nowrap;      /* keep them in one line */
-  padding-bottom: 5px;      /* room for scrollbar */
+/* Each control = one row with horizontal scroll */
+.control {
+  display: flex;         /* children inline */
+  gap: 10px;             /* spacing between inputs/buttons */
+  overflow-x: auto;      /* horizontal scroll if needed */
+  white-space: nowrap;   /* prevent wrapping */
+  padding-bottom: 5px;   /* room for scrollbar */
 }
 
-/* Controls inside row shouldn’t shrink */
-.controls-row .control {
+/* Inputs inside controls don’t shrink */
+.control input,
+.control select,
+.control button,
+.control label {
   flex-shrink: 0;
 }
+
 
 
 
