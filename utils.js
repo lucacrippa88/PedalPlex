@@ -601,7 +601,7 @@ function setupEditPedalHandler(pedals) {
           <iframe src="create.html" style="width:100%; height:100%; border:none; display:none;" id="swal-builder-iframe"></iframe>
         </div>
       `,
-      width: '90%',
+      width: '100%',
       allowOutsideClick: false,
       allowEscapeKey: false,
       showConfirmButton: boolConfirmBtn,
@@ -653,7 +653,7 @@ function setupEditPedalHandler(pedals) {
             Swal.fire({
               title: `Duplicate of ${pedal._id}`,
               html: `<iframe src="create.html" style="width:100%; height:80vh; border:none;" id="swal-duplicate-iframe"></iframe>`,
-              width: '90%',
+              width: '100%',
               showConfirmButton: true,
               showCancelButton: true,
               confirmButtonText: 'Save duplicate',
