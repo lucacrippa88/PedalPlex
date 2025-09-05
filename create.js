@@ -300,6 +300,60 @@ function highlightRequiredFields() {
 
 
 
+
+// Put this once in create.html (initialization area)
+(function initLedHelpers() {
+  if (window.__ledHelpersInit) return;
+  window.__ledHelpersInit = true;
+
+  // Update the numeric options in the .ctrl-value select based on color inputs
+  function updateLedValueSelect($ctrl) {
+    const $select = $ctrl.find(".ctrl-value");
+    $select.empty();
+    $ctrl.find(".led-colors-container .ctrl-color").each(function(i) {
+      $select.append($(`<option value="${i}">${i}</option>`));
+    });
+    const prev = parseInt($select.data("prev"), 10);
+    const maxIdx = $ctrl.find(".ctrl-color").length - 1;
+    const newVal = (!isNaN(prev) && prev <= maxIdx) ? prev : 0;
+    $select.val(newVal);
+    $select.data("prev", newVal);
+  }
+
+  // Expose for syncUIFromJSON to call
+  window.updateLedValueSelect = updateLedValueSelect;
+
+  // Delegated: add a new color input (pressing + Color)
+  $(document).on("click", ".add-led-color", function(e) {
+    const $ctrl = $(this).closest(".control");
+    const nextIndex = $ctrl.find(".led-colors-container .ctrl-color").length;
+    const $label = $(`<label>Color ${nextIndex} </label>`);
+    const $inp = $(`<input type="color" class="ctrl-color">`).val("#ffffff");
+    $label.append($inp);
+    $ctrl.find(".led-colors-container").append($label);
+    updateLedValueSelect($ctrl);
+    buildJSON(); // reflect change immediately
+  });
+
+  // Delegated: when a color input changes, refresh the select and JSON
+  $(document).on("input", ".led-colors-container .ctrl-color", function() {
+    const $ctrl = $(this).closest(".control");
+    updateLedValueSelect($ctrl);
+    buildJSON();
+  });
+
+  // Keep track of previous selection for ctrl-value so restoring works
+  $(document).on("change", ".ctrl-value", function() {
+    $(this).data("prev", $(this).val());
+  });
+})();
+
+
+
+
+
+
+
 function syncUIFromJSON(pedal) {
 
     isSyncing = true; // Disable buildJSON()
@@ -492,24 +546,35 @@ function syncUIFromJSON(pedal) {
 
                 // --- LED ---
                 } else if (ctrl.type === "led") {
+                    // Ensure colors array (fallback to default two)
                     const colors = Array.isArray(ctrl.colors) && ctrl.colors.length > 0
-                        ? ctrl.colors
-                        : ["#000000", "#ff0000"]; // default 2
+                    ? ctrl.colors
+                    : ["#000000", "#ff0000"];
 
-                    const colorsContainer = $ctrl.find(".ctrl-colors");
-                    colorsContainer.empty(); // clear any defaults
-
+                    // Fill led-colors-container dynamically
+                    const $container = $ctrl.find(".led-colors-container");
+                    $container.empty();
                     colors.forEach((color, idx) => {
-                        const $input = $(`<input type="color" class="ctrl-color">`)
-                            .val(color)
-                            .attr("data-index", idx);
-                        colorsContainer.append($input);
+                    const $label = $(`<label>Color ${idx} </label>`);
+                    const $input = $(`<input type="color" class="ctrl-color">`).val(color);
+                    $label.append($input);
+                    $container.append($label);
                     });
 
-                    $ctrl.find(".ctrl-value").val(ctrl.value);
+                    // showlabel
                     $ctrl.find(".ctrl-showlabel").prop("checked", ctrl.showlabel === "yes");
 
+                    // Populate/refresh the numeric dropdown with indices and preserve selection
+                    if (typeof window.updateLedValueSelect === "function") {
+                    window.updateLedValueSelect($ctrl);
+                    const v = parseInt(ctrl.value, 10);
+                    if (!isNaN(v)) {
+                        $ctrl.find(".ctrl-value").data("prev", v).val(v);
+                    }
+                    }
+
                     applyPosition($ctrl, ctrl);
+
 
                 // --- SLIDER ---
                 } else if (ctrl.type === "slider") {
