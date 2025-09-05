@@ -42,22 +42,26 @@ body { /* reserve space for preview */
   padding-right: 40%;
 }
 
-/* ✅ Controls rows can scroll horizontally */
-.control {
-  display: flex;          /* put inputs side by side */
-  gap: 10px;              /* spacing between elements */
-  overflow-x: auto;       /* enable horizontal scroll */
-  white-space: nowrap;    /* prevent wrapping */
-  padding-bottom: 5px;    /* space for scrollbar */
+/* ✅ Controls container has one horizontal scroll per row */
+#controls {
+  display: flex;
+  flex-direction: column;   /* stack rows vertically */
+  gap: 15px;                /* space between rows */
 }
 
-/* Prevent shrinking of inputs/selects inside controls */
-.control input,
-.control select,
-.control button,
-.control label {
+#controls > .controls-row {
+  display: flex;            /* controls side by side */
+  gap: 10px;                /* spacing between controls */
+  overflow-x: auto;         /* enable horizontal scroll */
+  white-space: nowrap;      /* keep them in one line */
+  padding-bottom: 5px;      /* room for scrollbar */
+}
+
+/* Controls inside row shouldn’t shrink */
+.controls-row .control {
   flex-shrink: 0;
 }
+
 
 
 
