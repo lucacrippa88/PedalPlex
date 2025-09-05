@@ -895,7 +895,8 @@ function renderPedal(pedal, userRole) {
         .css(getPedalTypeCss(pedal, baseCss, inside))
         .attr("data-pedal-name", pedalName)
         .attr("data-pedal-id", pedalId)
-        .attr("data-published", (pedal.published || "draft").toLowerCase());
+        .attr("data-published", (pedal.published || "draft").toLowerCase())
+        .attr("data-author", pedal.author || "");
       break;
   }
 

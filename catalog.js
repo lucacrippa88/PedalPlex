@@ -29,6 +29,8 @@ function initCatalog(userRole) {
 
       pedals.forEach(pedal => {
         const $pedalDiv = renderPedal(pedal, userRole);
+        $pedalDiv.attr("data-author", pedal.author || "");
+        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase()); // optional, if not already set
         $(resultsDiv).append($pedalDiv);
       });
 
