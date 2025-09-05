@@ -153,7 +153,7 @@ function updatePedalCounts(activeFilter = null) {
 
   // Add user pedal counter only for admins (inside parentheses)
   if (window.currentUser?.role === "admin") {
-    countsHtml += `, User pedals: <span class="status-filter" data-filter="user">${userPedalsCount}</span>`;
+    countsHtml += `, Published by Users: <span class="status-filter" data-filter="user">${userPedalsCount}</span>`;
   }
 
   countsHtml += `)`;
@@ -172,22 +172,32 @@ function updatePedalCounts(activeFilter = null) {
 
 // Filtering function
 function filterPedalsByStatus(filter) {
+  const currentUsername = (window.currentUser?.username || "").toLowerCase();
+
   $(".pedal-catalog").each(function() {
     const status = ($(this).data("published") || "").toLowerCase();
     const author = ($(this).data("author") || "").toLowerCase();
-    const isMine = (status === "public" && author === window.currentUser.username.toLowerCase());
+
+    const isMine = (status === "public" && author === currentUsername);
+    const isUserCreated = author && author !== "admin"; // keeps same semantics you used for counting
 
     if (filter === "all") {
       $(this).show();
     } else if (filter === "publicByMe") {
       $(this).toggle(isMine);
+    } else if (filter === "user") {
+      // Show pedals created by regular users (non-admin authors)
+      $(this).toggle(isUserCreated);
     } else {
+      // filter is one of: "draft", "private", "reviewing", "public"
       $(this).toggle(status === filter);
     }
   });
 
+  // Update counts after filtering (keeps UI in sync)
   updatePedalCounts(filter);
 }
+
 
 // CSS for link look + active highlight
 const style = document.createElement("style");
