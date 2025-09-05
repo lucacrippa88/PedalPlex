@@ -12,35 +12,41 @@
     <script src="create.js"></script>
     <style>
 
-        /* Make the builder container a flex layout */
-        #builder {
-        display: flex;
-        align-items: flex-start;
-        }
+        /* Builder is flex */
+#builder {
+  display: flex;
+  align-items: flex-start;
+  overflow-x: auto; /* allow horizontal scroll inside builder */
+}
 
-        /* Editor takes the left side and can scroll */
-        #editor {
-        flex: 1;
-        padding: 20px;
-        max-width: 60%;
-        }
+/* Editor takes the left side and can scroll horizontally */
+#editor {
+  flex-shrink: 0;       /* prevent shrinking into preview */
+  min-width: 800px;     /* base width */
+  width: max-content;   /* grow if content is wide */
+  padding: 20px;
+  overflow-x: auto;     /* enable horizontal scroll */
+  white-space: nowrap;  /* keep content inline for horizontal scroll */
+}
 
-        /* Preview stays fixed on the right */
-        #preview {
-        position: fixed;
-        right: 20px;
-        top: 20px;
-        bottom: 20px;
-        /* width: 55%; */
-        overflow: auto;
-        padding: 15px;
-        border-radius: 8px;
-        }
+/* Preview fixed on the right */
+#preview {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  bottom: 20px;
+  width: 35%;           /* lock preview width */
+  overflow: auto;
+  padding: 15px;
+  border-radius: 8px;
+}
 
-        body { /* Da capire come integrare nelle altre pagine */
-            margin: 0;
-            padding-right: 40%; /* reserve space for preview */
-        }
+/* Reserve space for preview */
+body {
+  margin: 0;
+  padding-right: 40%;
+}
+
 
 
     </style>
