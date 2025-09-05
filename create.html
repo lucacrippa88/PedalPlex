@@ -372,27 +372,27 @@ function addLedControl() {
     updateLedValueSelect($ctrl);
 }
 
-// Add a new color to existing LED
-$("#controls").on("click", ".add-led-color", function() {
-    const $ctrl = $(this).closest(".control");
+// // Add a new color to existing LED
+// $("#controls").on("click", ".add-led-color", function() {
+//     const $ctrl = $(this).closest(".control");
 
-    // Next color index
-    const nextIndex = $ctrl.find(".led-colors-container .ctrl-color").length;
+//     // Next color index
+//     const nextIndex = $ctrl.find(".led-colors-container .ctrl-color").length;
 
-    // Add new color input
-    const $newColor = $(`
-        <label>Color ${nextIndex} 
-            <input type="color" class="ctrl-color" value="#ffffff">
-        </label>
-    `);
-    $ctrl.find(".led-colors-container").append($newColor);
+//     // Add new color input
+//     const $newColor = $(`
+//         <label>Color ${nextIndex} 
+//             <input type="color" class="ctrl-color" value="#ffffff">
+//         </label>
+//     `);
+//     $ctrl.find(".led-colors-container").append($newColor);
 
-    // Update dropdown
-    updateLedValueSelect($ctrl);
+//     // Update dropdown
+//     updateLedValueSelect($ctrl);
 
-    // Immediately update JSON
-    buildJSON();
-});
+//     // Immediately update JSON
+//     buildJSON();
+// });
 
 // Populate the value dropdown based on current colors
 function updateLedValueSelect($ctrl) {
