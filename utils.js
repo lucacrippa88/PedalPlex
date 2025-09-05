@@ -643,6 +643,9 @@ function setupEditPedalHandler(pedals) {
           delete newPedal._id;
           delete newPedal._rev;
 
+          // IMPORTANT: force duplicated pedal to default to draft (do not inherit)
+          newPedal.published = "draft";
+
           Swal.close();
 
           // reopen editor with duplicated pedal
