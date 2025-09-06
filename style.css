@@ -141,7 +141,7 @@ html {
   flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
-  overflow-x: hidden; /* hides horizontal scrollbar */
+  /* overflow-x: hidden; /* hides horizontal scrollbar */
   max-width: 100vw;   /* constrain max width to viewport */
   white-space: normal; /* allow wrapping if inline-block used */
 }
