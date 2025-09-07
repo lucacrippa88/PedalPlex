@@ -221,140 +221,250 @@ function renderPedalControls(pedal, $pedalDiv) {
         controlRow.row.forEach(control => {
 
             // Knobs (small, large, xlarge)
-            if (["knob", "smallknob", "largeknob", "xlargeknob"].includes(control.type)) {
-                const isSmall = control.type === "smallknob";
-                const isLarge = control.type === "largeknob";
-                const isXLarge = control.type === "xlargeknob";
+            // if (["knob", "smallknob", "largeknob", "xlargeknob"].includes(control.type)) {
+            //     const isSmall = control.type === "smallknob";
+            //     const isLarge = control.type === "largeknob";
+            //     const isXLarge = control.type === "xlargeknob";
 
-                // Determine knob color and border based on control-specific override or pedal defaults
-                const knobColor = control["knob-color"] ?? pedal["knobs-color"];
-                const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
-                const knobIndicator = control["knob-indicator"] ?? pedal["knobs-indicator"];
+            //     // Determine knob color and border based on control-specific override or pedal defaults
+            //     const knobColor = control["knob-color"] ?? pedal["knobs-color"];
+            //     const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
+            //     const knobIndicator = control["knob-indicator"] ?? pedal["knobs-indicator"];
 
-                const knob = $("<div>")
-                    .addClass(isSmall ? "smallknob" : "knob")
-                    .addClass(isLarge ? "largeknob" : "knob")
-                    .addClass(isXLarge ? "xlargeknob" : "knob")
-                    .css({
-                        background: knobColor,
-                        border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}`
-                    })
-                    .css("--indicator-color", knobIndicator)
-                    .attr("data-control-label", control.label);
+            //     const knob = $("<div>")
+            //         .addClass(isSmall ? "smallknob" : "knob")
+            //         .addClass(isLarge ? "largeknob" : "knob")
+            //         .addClass(isXLarge ? "xlargeknob" : "knob")
+            //         .css({
+            //             background: knobColor,
+            //             border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}`
+            //         })
+            //         .css("--indicator-color", knobIndicator)
+            //         .attr("data-control-label", control.label);
 
-                const rotation = getRotationFromValue(control, control.value);
-                knob.data("rotation", rotation);
-                knob.css("transform", `rotate(${rotation}deg)`);
+            //     const rotation = getRotationFromValue(control, control.value);
+            //     knob.data("rotation", rotation);
+            //     knob.css("transform", `rotate(${rotation}deg)`);
 
-                let $valueLabel = null;
-                if (control.values && Array.isArray(control.values)) {
-                    $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
-                }
+            //     let $valueLabel = null;
+            //     if (control.values && Array.isArray(control.values)) {
+            //         $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
+            //     }
 
-                knob.on("mousedown", function (e) {
-                    const startY = e.pageY;
-                    const startValue = control.value;
+            //     knob.on("mousedown", function (e) {
+            //         const startY = e.pageY;
+            //         const startValue = control.value;
 
-                    $(document).on("mousemove.knob", function (e2) {
-                        const delta = startY - e2.pageY;
-                        const steps = Math.round(delta / 5);
+            //         $(document).on("mousemove.knob", function (e2) {
+            //             const delta = startY - e2.pageY;
+            //             const steps = Math.round(delta / 5);
 
-                        if (control.values && Array.isArray(control.values)) {
-                            let currentIndex = control.values.indexOf(startValue);
-                            if (currentIndex === -1) currentIndex = 0;
-                            let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
-                            control.value = control.values[newIndex];
-                        } else {
-                            const min = control.min ?? 0;
-                            const max = control.max ?? 100;
-                            let newValue = startValue + steps;
-                            newValue = Math.min(Math.max(newValue, min), max);
-                            control.value = newValue;
-                        }
+            //             if (control.values && Array.isArray(control.values)) {
+            //                 let currentIndex = control.values.indexOf(startValue);
+            //                 if (currentIndex === -1) currentIndex = 0;
+            //                 let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
+            //                 control.value = control.values[newIndex];
+            //             } else {
+            //                 const min = control.min ?? 0;
+            //                 const max = control.max ?? 100;
+            //                 let newValue = startValue + steps;
+            //                 newValue = Math.min(Math.max(newValue, min), max);
+            //                 control.value = newValue;
+            //             }
 
-                        const newRotation = getRotationFromValue(control, control.value);
-                        knob.data("rotation", newRotation);
-                        knob.css("transform", `rotate(${newRotation}deg)`);
-                        if ($valueLabel) {
-                            $valueLabel.text(control.value);
-                        }
-                    });
+            //             const newRotation = getRotationFromValue(control, control.value);
+            //             knob.data("rotation", newRotation);
+            //             knob.css("transform", `rotate(${newRotation}deg)`);
+            //             if ($valueLabel) {
+            //                 $valueLabel.text(control.value);
+            //             }
+            //         });
 
-                    $(document).on("mouseup.knob", function () {
-                        $(document).off(".knob");
-                    });
-                });
+            //         $(document).on("mouseup.knob", function () {
+            //             $(document).off(".knob");
+            //         });
+            //     });
 
-                let $label;
-                if (control.position === "under-top" && control.type === "smallknob") {
-                    $label = $("<div>").css({
-                        position: "absolute",
-                        "margin-left": "4px",
-                        top: "105px",
-                        transform: "translateY(-50%)",
-                        "white-space": "nowrap",
-                        "font-size": "10px"
-                    }).text(control.label);
-                } 
-                else {
-                    $label = $("<div>").addClass("label-top").text(control.label);
-                }
+            //     let $label;
+            //     if (control.position === "under-top" && control.type === "smallknob") {
+            //         $label = $("<div>").css({
+            //             position: "absolute",
+            //             "margin-left": "4px",
+            //             top: "105px",
+            //             transform: "translateY(-50%)",
+            //             "white-space": "nowrap",
+            //             "font-size": "10px"
+            //         }).text(control.label);
+            //     } 
+            //     else {
+            //         $label = $("<div>").addClass("label-top").text(control.label);
+            //     }
 
-                const $container = $("<div>").addClass("knob-container").append(knob).css({ position: "relative" });
-                $container.append($label);
-                if ($valueLabel) $container.append($valueLabel);
-                const $knobWrapper = $("<div>").append($label, $container);
+            //     const $container = $("<div>").addClass("knob-container").append(knob).css({ position: "relative" });
+            //     $container.append($label);
+            //     if ($valueLabel) $container.append($valueLabel);
+            //     const $knobWrapper = $("<div>").append($label, $container);
 
-                if (typeof control.position === "string") {
-                    const pos = control.position;
+            //     if (typeof control.position === "string") {
+            //         const pos = control.position;
 
-                    // under-top logic
-                    if (pos.includes("under-top") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append($("<div>").css("margin-top", "-53px").append($label, $container));
-                        return;
-                    }
+            //         // under-top logic
+            //         if (pos.includes("under-top") && $row.children().length > 0) {
+            //             const $prev = $row.children().last();
+            //             $prev.append($("<div>").css("margin-top", "-53px").append($label, $container));
+            //             return;
+            //         }
 
-                    // align-top logic
-                    if (pos.includes("align-top-clearer") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append($("<div>").css("margin-top", "0px").append($label, $container));
-                        return;
-                    }
-                    if (pos.includes("align-top-clear") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append($("<div>").css("margin-top", "-14px").append($label, $container));
-                        return;
-                    }
-                    if (pos.includes("align-top") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append($("<div>").css("margin-top", "-23px").append($label, $container));
-                        return;
-                    }
-
-
-                    // Vertical adjustments
-                    if (pos.includes("highest")) { $knobWrapper.css("margin-top", "-25px"); }
-                    else if (pos.includes("higher")) { $knobWrapper.css("margin-top", "-10px"); }
-                    else if (pos.includes("high")) { $knobWrapper.css("margin-top", "-3px"); }
-                    else if (pos.includes("lowest")) { $knobWrapper.css("margin-top", "45px"); }
-                    else if (pos.includes("lower")) { $knobWrapper.css("margin-top", "25px"); }
-                    else if (pos.includes("low")) { $knobWrapper.css("margin-top", "9px"); }
-
-                    // Margin-right
-                    const rightMatch = pos.match(/margin-right:\s*(\d+)px/);
-                    if (rightMatch) { $knobWrapper.css("margin-right", rightMatch[1] + "px"); }
-
-                    // Margin-left
-                    const leftMatch = pos.match(/margin-left:\s*(\d+)px/);
-                    if (leftMatch) { $knobWrapper.css("margin-left", leftMatch[1] + "px"); }
-
-                    $row.append($knobWrapper);
-
-                } else { $row.append($knobWrapper); }
+            //         // align-top logic
+            //         if (pos.includes("align-top-clearer") && $row.children().length > 0) {
+            //             const $prev = $row.children().last();
+            //             $prev.append($("<div>").css("margin-top", "0px").append($label, $container));
+            //             return;
+            //         }
+            //         if (pos.includes("align-top-clear") && $row.children().length > 0) {
+            //             const $prev = $row.children().last();
+            //             $prev.append($("<div>").css("margin-top", "-14px").append($label, $container));
+            //             return;
+            //         }
+            //         if (pos.includes("align-top") && $row.children().length > 0) {
+            //             const $prev = $row.children().last();
+            //             $prev.append($("<div>").css("margin-top", "-23px").append($label, $container));
+            //             return;
+            //         }
 
 
+            //         // Vertical adjustments
+            //         if (pos.includes("highest")) { $knobWrapper.css("margin-top", "-25px"); }
+            //         else if (pos.includes("higher")) { $knobWrapper.css("margin-top", "-10px"); }
+            //         else if (pos.includes("high")) { $knobWrapper.css("margin-top", "-3px"); }
+            //         else if (pos.includes("lowest")) { $knobWrapper.css("margin-top", "45px"); }
+            //         else if (pos.includes("lower")) { $knobWrapper.css("margin-top", "25px"); }
+            //         else if (pos.includes("low")) { $knobWrapper.css("margin-top", "9px"); }
+
+            //         // Margin-right
+            //         const rightMatch = pos.match(/margin-right:\s*(\d+)px/);
+            //         if (rightMatch) { $knobWrapper.css("margin-right", rightMatch[1] + "px"); }
+
+            //         // Margin-left
+            //         const leftMatch = pos.match(/margin-left:\s*(\d+)px/);
+            //         if (leftMatch) { $knobWrapper.css("margin-left", leftMatch[1] + "px"); }
+
+            //         $row.append($knobWrapper);
+
+            //     } else { $row.append($knobWrapper); }
+
+
+            // }
+
+
+            // Knobs (small, large, xlarge)
+if (["knob", "smallknob", "largeknob", "xlargeknob"].includes(control.type)) {
+    const isSmall = control.type === "smallknob";
+    const isLarge = control.type === "largeknob";
+    const isXLarge = control.type === "xlargeknob";
+
+    const knobColor = control["knob-color"] ?? pedal["knobs-color"];
+    const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
+    const knobIndicator = control["knobs-indicator"] ?? pedal["knobs-indicator"];
+
+    const knob = $("<div>")
+        .addClass(isSmall ? "smallknob" : "knob")
+        .addClass(isLarge ? "largeknob" : "")
+        .addClass(isXLarge ? "xlargeknob" : "")
+        .css({
+            background: knobColor,
+            border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}`
+        })
+        .css("--indicator-color", knobIndicator)
+        .attr("data-control-label", control.label);
+
+    const rotation = getRotationFromValue(control, control.value);
+    knob.data("rotation", rotation);
+    knob.css("transform", `rotate(${rotation}deg)`);
+
+    let $valueLabel = null;
+    if (control.values && Array.isArray(control.values)) {
+        $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
+    }
+
+    knob.on("mousedown", function (e) {
+        const startY = e.pageY;
+        const startValue = control.value;
+
+        $(document).on("mousemove.knob", function (e2) {
+            const delta = startY - e2.pageY;
+            const steps = Math.round(delta / 5);
+
+            if (control.values && Array.isArray(control.values)) {
+                let currentIndex = control.values.indexOf(startValue);
+                if (currentIndex === -1) currentIndex = 0;
+                let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
+                control.value = control.values[newIndex];
+            } else {
+                const min = control.min ?? 0;
+                const max = control.max ?? 100;
+                let newValue = startValue + steps;
+                newValue = Math.min(Math.max(newValue, min), max);
+                control.value = newValue;
             }
+
+            const newRotation = getRotationFromValue(control, control.value);
+            knob.data("rotation", newRotation);
+            knob.css("transform", `rotate(${newRotation}deg)`);
+            if ($valueLabel) $valueLabel.text(control.value);
+        });
+
+        $(document).on("mouseup.knob", function () {
+            $(document).off(".knob");
+        });
+    });
+
+    // --- Label & container ---
+    const $container = $("<div>").addClass("knob-container").css({ position: "relative" });
+    let $label;
+
+    if (isSmall && control.position === "under-top") {
+        // Position label below knob, ignore span
+        $label = $("<div>").css({
+            position: "absolute",
+            top: "100%",           // below knob
+            left: "50%",
+            transform: "translate(-50%, 5px)", // vertical offset
+            "white-space": "nowrap",
+            "font-size": "10px"
+        }).text(control.label);
+
+        control.span = null; // disable span for under-top smallknob
+    } else {
+        $label = $("<div>").addClass("label-top").text(control.label);
+    }
+
+    $container.append(knob).append($label);
+    if ($valueLabel) $container.append($valueLabel);
+
+    const $knobWrapper = $("<div>").append($container);
+
+    // --- Position adjustments for other cases ---
+    if (typeof control.position === "string" && control.position !== "under-top") {
+        const pos = control.position;
+
+        if (pos.includes("highest")) { $knobWrapper.css("margin-top", "-25px"); }
+        else if (pos.includes("higher")) { $knobWrapper.css("margin-top", "-10px"); }
+        else if (pos.includes("high")) { $knobWrapper.css("margin-top", "-3px"); }
+        else if (pos.includes("lowest")) { $knobWrapper.css("margin-top", "45px"); }
+        else if (pos.includes("lower")) { $knobWrapper.css("margin-top", "25px"); }
+        else if (pos.includes("low")) { $knobWrapper.css("margin-top", "9px"); }
+
+        const rightMatch = pos.match(/margin-right:\s*(-?\d+)px/);
+        if (rightMatch) $knobWrapper.css("margin-right", rightMatch[1] + "px");
+
+        const leftMatch = pos.match(/margin-left:\s*(-?\d+)px/);
+        if (leftMatch) $knobWrapper.css("margin-left", leftMatch[1] + "px");
+    }
+
+    $row.append($knobWrapper);
+}
+
 
             // LEDs
             if (control.type === "led") {
