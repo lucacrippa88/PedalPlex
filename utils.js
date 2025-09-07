@@ -286,16 +286,29 @@ function renderPedalControls(pedal, $pedalDiv) {
                 });
 
                 let $label;
+                // if (control.position === "under-top" && control.type === "smallknob") {
+                //     $label = $("<div>").css({
+                //         position: "absolute",
+                //         "margin-left": "4px",
+                //         top: "105px",
+                //         transform: "translateY(-50%)",
+                //         "white-space": "nowrap",
+                //         "font-size": "10px"
+                //     }).text(control.label);
+                // } 
                 if (control.position === "under-top" && control.type === "smallknob") {
-                    $label = $("<div>").css({
-                        position: "absolute",
-                        "margin-left": "4px",
-                        top: "105px",
-                        transform: "translateY(-50%)",
-                        "white-space": "nowrap",
-                        "font-size": "10px"
-                    }).text(control.label);
-                } 
+    const $label = $("<div>")
+        .css({
+            position: "absolute",
+            top: "100%",         // place below the knob
+            left: "50%",
+            transform: "translate(-50%, 5px)", // 5px gap below knob
+            "white-space": "nowrap",
+            "font-size": "10px"
+        })
+        .text(control.label);
+    $container.append($label);
+}
                 else {
                     $label = $("<div>").addClass("label-top").text(control.label);
                 }
