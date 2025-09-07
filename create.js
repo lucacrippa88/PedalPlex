@@ -114,6 +114,8 @@ function buildJSON() {
                 // if (pos) ctrl.position = pos;
                 const pos = getKnobPosition($(this));
                 if (pos) ctrl.position = pos;
+                // --- Force span null for smallknob under-top ---
+                if (ctrl.type === "smallknob" && ctrl.position === "under-top") { ctrl.span = null; }
             } else if (type === "led") {
                 ctrl.colors = $(this).find(".ctrl-color").map((_, el) => $(el).val()).get();
                 ctrl.value = parseInt($(this).find(".ctrl-value").val()) || 0;
@@ -543,6 +545,14 @@ function syncUIFromJSON(pedal) {
                     }
 
                     applyPosition($ctrl, ctrl);
+
+                    // --- Disable span for smallknob under-top ---
+                    if (ctrl.type === "smallknob" && ctrl.position === "under-top") {
+                        $ctrl.find(".ctrl-span").val("");
+                        $ctrl.find(".ctrl-span").prop("disabled", true);
+                    } else {
+                        $ctrl.find(".ctrl-span").prop("disabled", false);
+                    }
 
                 // --- LED ---
                 } else if (ctrl.type === "led") {
