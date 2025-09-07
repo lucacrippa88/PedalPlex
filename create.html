@@ -742,6 +742,24 @@ $(function() {
     });
   }
 });
+
+
+
+// --- UI helper: disable span for smallknob under-top ---
+$(document).on("change", ".ctrl-size, .ctrl-position-keyword", function () {
+    const $ctrl = $(this).closest(".control");
+    const sizeVal = $ctrl.find(".ctrl-size").val();
+    const posVal = $ctrl.find(".ctrl-position-keyword").val();
+    const $spanSelect = $ctrl.find(".ctrl-span");
+
+    if (sizeVal === "smallknob" && posVal === "under-top") {
+        $spanSelect.val("");          // clear any chosen value
+        $spanSelect.prop("disabled", true);
+    } else {
+        $spanSelect.prop("disabled", false);
+    }
+});
+
 </script>
 
 
