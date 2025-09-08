@@ -59,8 +59,42 @@ function initNavCatalog(userRole) {
   $("body").prepend(navHtml);
 
   // Allow all users to create pedals
-  $(document).on('click', '#createPedalBtn', createNewPedal);
-  $(document).on('click', '#createOwnPedalBtn', createNewPedal);
+  function isTokenValid(token) {
+    if (!token) return false;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (!payload.exp) return false;
+      const now = Math.floor(Date.now() / 1000);
+      return payload.exp > now;
+    } catch {
+      return false;
+    }
+  }
+
+  function handleCreatePedalClick() {
+    if (!isTokenValid()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Login Required',
+        text: 'Please log in to create a pedal.',
+        confirmButtonText: 'Login',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary'
+        }
+      }).then(() => {
+        window.location.href = "/login";
+      });
+      return;
+    }
+
+    // Valid token: proceed
+    createNewPedal();
+  }
+
+  $(document).on('click', '#createPedalBtn', handleCreatePedalClick);
+  $(document).on('click', '#createOwnPedalBtn', handleCreatePedalClick);
+
+
 
   // Add fullscreen menu HTML from external file
   $("body").append(window.fullscreenMenuHtml);
