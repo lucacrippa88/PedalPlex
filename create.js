@@ -533,100 +533,64 @@ function syncUIFromJSON(pedal) {
                 $ctrl.find(".ctrl-label").val(ctrl.label || "");
 
                 // --- KNOB ---
-                if (ctrl.type.includes("knob")) {
-                    $ctrl.find(".ctrl-size").val(ctrl.type);
+                // --- KNOB ---
+if (ctrl.type.includes("knob")) {
+    $ctrl.find(".ctrl-size").val(ctrl.type);
 
-                    // if (Array.isArray(ctrl.values) && ctrl.values.length > 0) {
-                    //     // DISCRETE
-                    //     $ctrl.find(".ctrl-knob-type").val("discrete").trigger("change");
-                    //     $ctrl.find(".ctrl-values-list").val(ctrl.values.join(","));
-                    //     const $select = $ctrl.find(".ctrl-value-select");
-                    //     $select.empty();
-                    //     ctrl.values.forEach(v => $select.append(`<option>${v}</option>`));
-                    //     $select.val(ctrl.value || ctrl.values[0]);
-                    //     $ctrl.find(".ctrl-span").val(ctrl.span || "");
-                    // } 
-                    // if (Array.isArray(ctrl.values) && ctrl.values.length > 0) {
-                    //     // DISCRETE
-                    //     $ctrl.find(".ctrl-knob-type").val("discrete");
+    // Append to DOM first so change handlers work
+    $controlsRow.append($ctrl);
 
-                    //     // populate inputs
-                    //     $ctrl.find(".ctrl-values-list")
-                    //         .val(ctrl.values.join(","))
-                    //         .show(); // force visible
+    if (Array.isArray(ctrl.values) && ctrl.values.length > 0) {
+        // DISCRETE
+        $ctrl.find(".ctrl-knob-type").val("discrete");
 
-                    //     const $select = $ctrl.find(".ctrl-value-select");
-                    //     $select.empty().show(); // force visible
-                    //     ctrl.values.forEach(v => $select.append(`<option>${v}</option>`));
-                    //     $select.val(ctrl.value || ctrl.values[0]).show();  // force show
+        // populate values dropdown and show it
+        const $select = $ctrl.find(".ctrl-value-select");
+        $select.empty().show();
+        ctrl.values.forEach(v => $select.append(`<option>${v}</option>`));
+        $select.val(ctrl.value || ctrl.values[0]);
 
-                    //     $ctrl.find(".ctrl-span").val(ctrl.span || "");
+        $ctrl.find(".ctrl-values-list")
+            .val(ctrl.values.join(","))
+            .show(); // show values list
 
-                    //     // run the change handler afterwards so any extra UI logic applies
-                    //     $ctrl.find(".ctrl-knob-type").trigger("change");
-                    // }
+        $ctrl.find(".ctrl-span").val(ctrl.span || "");
 
-                    // else {
-                    //     // NUMERIC
-                    //     $ctrl.find(".ctrl-knob-type").val("numeric").trigger("change");
-                    //     $ctrl.find(".ctrl-min").val(ctrl.min ?? "");
-                    //     $ctrl.find(".ctrl-max").val(ctrl.max ?? "");
-                    //     $ctrl.find(".ctrl-value").val(ctrl.value ?? "");
-                    //     $ctrl.find(".ctrl-values-list").val("");
-                    //     $ctrl.find(".ctrl-value-select").empty();
-                    //     $ctrl.find(".ctrl-span").val(ctrl.span || ""); 
-                    // }
+        // hide numeric fields
+        $ctrl.find(".ctrl-min, .ctrl-max, .ctrl-value").hide();
 
-if (Array.isArray(ctrl.values) && ctrl.values.length > 0) {
-    // DISCRETE
-    $ctrl.find(".ctrl-knob-type").val("discrete");
+        // trigger change to apply any extra UI logic
+        $ctrl.find(".ctrl-knob-type").trigger("change");
+    } else {
+        // NUMERIC
+        $ctrl.find(".ctrl-knob-type").val("numeric").trigger("change");
+        $ctrl.find(".ctrl-min").val(ctrl.min ?? "").show();
+        $ctrl.find(".ctrl-max").val(ctrl.max ?? "").show();
+        $ctrl.find(".ctrl-value").val(ctrl.value ?? "").show();
+        $ctrl.find(".ctrl-values-list").val("").hide();
+        $ctrl.find(".ctrl-value-select").empty().hide();
+        $ctrl.find(".ctrl-span").val(ctrl.span || ""); 
+    }
 
-    // show discrete controls
-    $ctrl.find(".ctrl-discrete-section").show();   // container with values + dropdown
-    $ctrl.find(".ctrl-values-list").val(ctrl.values.join(","));
-    const $select = $ctrl.find(".ctrl-value-select");
-    $select.empty();
-    ctrl.values.forEach(v => $select.append(`<option>${v}</option>`));
-    $select.val(ctrl.value || ctrl.values[0]);
+    if (ctrl["knob-color"]) {
+        $ctrl.find(".ctrl-knob-color-enable").prop("checked", true);
+        $ctrl.find(".ctrl-knob-color").prop("disabled", false).val(ctrl["knob-color"]);
+    }
+    if (ctrl["knob-border"]) {
+        $ctrl.find(".ctrl-knob-border-enable").prop("checked", true);
+        $ctrl.find(".ctrl-knob-border").prop("disabled", false).val(ctrl["knob-border"]);
+    }
+    if (ctrl["knob-indicator"]) {
+        $ctrl.find(".ctrl-knob-indicator-enable").prop("checked", true);
+        $ctrl.find(".ctrl-knob-indicator").prop("disabled", false).val(ctrl["knob-indicator"]);
+    }
+    if (ctrl.border === "thick") {
+        $ctrl.find(".ctrl-knob-thick").prop("checked", true);
+    }
 
-    // hide numeric controls
-    $ctrl.find(".ctrl-numeric-section").hide();
-
-    $ctrl.find(".ctrl-span").val(ctrl.span || "");
-} else {
-    // NUMERIC
-    $ctrl.find(".ctrl-knob-type").val("numeric");
-
-    // show numeric controls
-    $ctrl.find(".ctrl-numeric-section").show();
-    $ctrl.find(".ctrl-min").val(ctrl.min ?? "");
-    $ctrl.find(".ctrl-max").val(ctrl.max ?? "");
-    $ctrl.find(".ctrl-value").val(ctrl.value ?? "");
-
-    // hide discrete controls
-    $ctrl.find(".ctrl-discrete-section").hide();
-
-    $ctrl.find(".ctrl-span").val(ctrl.span || ""); 
-}
+    applyPosition($ctrl, ctrl);
 
 
-                    if (ctrl["knob-color"]) {
-                        $ctrl.find(".ctrl-knob-color-enable").prop("checked", true);
-                        $ctrl.find(".ctrl-knob-color").prop("disabled", false).val(ctrl["knob-color"]);
-                    }
-                    if (ctrl["knob-border"]) {
-                        $ctrl.find(".ctrl-knob-border-enable").prop("checked", true);
-                        $ctrl.find(".ctrl-knob-border").prop("disabled", false).val(ctrl["knob-border"]);
-                    }
-                    if (ctrl["knob-indicator"]) {
-                        $ctrl.find(".ctrl-knob-indicator-enable").prop("checked", true);
-                        $ctrl.find(".ctrl-knob-indicator").prop("disabled", false).val(ctrl["knob-indicator"]);
-                    }
-                    if (ctrl.border === "thick") {
-                        $ctrl.find(".ctrl-knob-thick").prop("checked", true);
-                    }
-
-                    applyPosition($ctrl, ctrl);
 
                 // --- LED ---
                 } else if (ctrl.type === "led") {
