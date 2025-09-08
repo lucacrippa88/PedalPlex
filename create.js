@@ -553,12 +553,12 @@ function syncUIFromJSON(pedal) {
     // populate inputs
     $ctrl.find(".ctrl-values-list")
         .val(ctrl.values.join(","))
-        .show(); // ✅ force visible
+        .show(); // force visible
 
     const $select = $ctrl.find(".ctrl-value-select");
-    $select.empty().show(); // ✅ force visible
+    $select.empty().show(); // force visible
     ctrl.values.forEach(v => $select.append(`<option>${v}</option>`));
-    $select.val(ctrl.value || ctrl.values[0]);
+    $select.val(ctrl.value || ctrl.values[0]).show();  // force show
 
     $ctrl.find(".ctrl-span").val(ctrl.span || "");
 
