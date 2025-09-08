@@ -426,20 +426,20 @@ function syncUIFromJSON(pedal) {
         if (isImage) {
             $("#inside-type-select").val("image");
             $("#inside-color-label").hide();
-            $("#pedal-inside-full-check-label").hide();
             $("#inside-image-label").show();
             $("#pedal-inside-image").val(insideVal);
         } else {
             $("#inside-type-select").val("color");
             $("#inside-color-label").show();
-            $("#pedal-inside-full-check-label").show();
             $("#inside-image-label").hide();
             $("#pedal-inside-color").val(insideVal.replace(" full", ""));
-
-            // Set the "full" checkbox as usual
-            const isFull = insideVal.includes("full");
-            $("#pedal-inside-full-check").prop("checked", isFull);
         }
+
+        // Always restore "Full" checkbox state
+        const isFull = insideVal.includes("full");
+        $("#pedal-inside-full-check").prop("checked", isFull);
+        $("#pedal-inside-full-check-label").show();
+
     } else {
         // default if inside-color is missing
         $("#inside-type-select").val("color");
