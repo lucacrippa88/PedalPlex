@@ -290,7 +290,6 @@ function renderPedalControls(pedal, $pedalDiv) {
                     $label = $("<div>").css({
                         position: "absolute",
                         "margin-left": "4px",
-                        // top: "105px",
                         "margin-top": "45px",
                         transform: "translateY(-50%)",
                         "white-space": "nowrap",
