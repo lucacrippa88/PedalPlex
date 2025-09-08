@@ -112,27 +112,27 @@
                 <label>Knobs Border <input type="color" id="knobs-border" value="#424242"></label>&ensp;&ensp;
                 <label>Knobs Indicator <input type="color" id="knobs-indicator" value="#ffffff"></label>&ensp;&ensp;
                 <script>
-                // $("#pedal-inside-full-check").on("change", function () {
-                //     const isImage = $("#inside-type-select").val() === "image";
-                //     $("#inside-border-label").toggle(this.checked || isImage);
-                // });
+                $("#pedal-inside-full-check").on("change", function () {
+                    const isImage = $("#inside-type-select").val() === "image";
+                    $("#inside-border-label").toggle(this.checked || isImage);
+                });
 
-                // // Also update border visibility when inside type changes
-                // $("#inside-type-select").on("change", function () {
-                //     const isImage = $(this).val() === "image";
-                //     const isFull = $("#pedal-inside-full-check").is(":checked");
-                //     $("#inside-border-label").toggle(isFull || isImage);
+                // Also update border visibility when inside type changes
+                $("#inside-type-select").on("change", function () {
+                    const isImage = $(this).val() === "image";
+                    const isFull = $("#pedal-inside-full-check").is(":checked");
+                    $("#inside-border-label").toggle(isFull || isImage);
 
-                //     if ($(this).val() === "color") {
-                //         $("#inside-color-label").show();
-                //         $("#inside-image-label").hide();
-                //         $("#pedal-inside-full-check-label").show();
-                //     } else {
-                //         $("#inside-color-label").hide();
-                //         $("#inside-image-label").show();
-                //         $("#pedal-inside-full-check-label").hide();
-                //     }
-                // });
+                    if ($(this).val() === "color") {
+                        $("#inside-color-label").show();
+                        $("#inside-image-label").hide();
+                        $("#pedal-inside-full-check-label").show();
+                    } else {
+                        $("#inside-color-label").hide();
+                        $("#inside-image-label").show();
+                        $("#pedal-inside-full-check-label").hide();
+                    }
+                });
                 </script>
 
                 <br><br>
