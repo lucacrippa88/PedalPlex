@@ -368,17 +368,47 @@ function syncUIFromJSON(pedal) {
 
     if (ctrl.position) {
         if ($keyword.length) { // knobs
-            const parts = ctrl.position.split(" "); // split "keyword margin-right:20px"
-            $keyword.val(parts[0] || "");
-            if (parts[1] && (parts[1].startsWith("margin-left:") || parts[1].startsWith("margin-right:"))) {
-                const [side, px] = parts[1].split(":");
+            // const parts = ctrl.position.split(" "); // split "keyword margin-right:20px"
+            // $keyword.val(parts[0] || "");
+            // if (parts[1] && (parts[1].startsWith("margin-left:") || parts[1].startsWith("margin-right:"))) {
+            //     const [side, px] = parts[1].split(":");
+            //     $margin.val(side);
+            //     $marginValue.val(parseInt(px) || 0).show();
+            // } else {
+            //     $margin.val("");
+            //     $marginValue.val("").hide();
+            // }
+
+            const parts = ctrl.position.trim().split(" ");
+
+            // Case 1: keyword + margin
+            if (parts.length > 1) {
+                $keyword.val(parts[0] || "");
+                if (parts[1].startsWith("margin-")) {
+                    const [side, px] = parts[1].split(":");
+                    $margin.val(side);
+                    $marginValue.val(parseInt(px) || 0).show();
+                } else {
+                    $margin.val("");
+                    $marginValue.val("").hide();
+                }
+
+            // Case 2: margin-only
+            } else if (parts[0].startsWith("margin-")) {
+                $keyword.val(""); // no keyword
+                const [side, px] = parts[0].split(":");
                 $margin.val(side);
                 $marginValue.val(parseInt(px) || 0).show();
+
+            // Case 3: keyword-only
             } else {
+                $keyword.val(parts[0] || "");
                 $margin.val("");
                 $marginValue.val("").hide();
             }
-        } else if ($dropdown.length) { // other controls
+
+        } 
+        else if ($dropdown.length) { // other controls
             if (ctrl.position.startsWith("margin-left:") || ctrl.position.startsWith("margin-right:")) {
                 const [side, pxVal] = ctrl.position.split(":");
                 $dropdown.val(side);
