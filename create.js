@@ -506,16 +506,37 @@ function syncUIFromJSON(pedal) {
                 if (ctrl.type.includes("knob")) {
                     $ctrl.find(".ctrl-size").val(ctrl.type);
 
+                    // if (Array.isArray(ctrl.values) && ctrl.values.length > 0) {
+                    //     // DISCRETE
+                    //     $ctrl.find(".ctrl-knob-type").val("discrete").trigger("change");
+                    //     $ctrl.find(".ctrl-values-list").val(ctrl.values.join(","));
+                    //     const $select = $ctrl.find(".ctrl-value-select");
+                    //     $select.empty();
+                    //     ctrl.values.forEach(v => $select.append(`<option>${v}</option>`));
+                    //     $select.val(ctrl.value || ctrl.values[0]);
+                    //     $ctrl.find(".ctrl-span").val(ctrl.span || "");
+                    // } 
                     if (Array.isArray(ctrl.values) && ctrl.values.length > 0) {
-                        // DISCRETE
-                        $ctrl.find(".ctrl-knob-type").val("discrete").trigger("change");
-                        $ctrl.find(".ctrl-values-list").val(ctrl.values.join(","));
-                        const $select = $ctrl.find(".ctrl-value-select");
-                        $select.empty();
-                        ctrl.values.forEach(v => $select.append(`<option>${v}</option>`));
-                        $select.val(ctrl.value || ctrl.values[0]);
-                        $ctrl.find(".ctrl-span").val(ctrl.span || "");
-                    } else {
+    // DISCRETE
+    $ctrl.find(".ctrl-knob-type").val("discrete");
+
+    // populate inputs
+    $ctrl.find(".ctrl-values-list")
+        .val(ctrl.values.join(","))
+        .show(); // ✅ force visible
+
+    const $select = $ctrl.find(".ctrl-value-select");
+    $select.empty().show(); // ✅ force visible
+    ctrl.values.forEach(v => $select.append(`<option>${v}</option>`));
+    $select.val(ctrl.value || ctrl.values[0]);
+
+    $ctrl.find(".ctrl-span").val(ctrl.span || "");
+
+    // run the change handler afterwards so any extra UI logic applies
+    $ctrl.find(".ctrl-knob-type").trigger("change");
+}
+
+                    else {
                         // NUMERIC
                         $ctrl.find(".ctrl-knob-type").val("numeric").trigger("change");
                         $ctrl.find(".ctrl-min").val(ctrl.min ?? "");
