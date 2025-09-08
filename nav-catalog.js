@@ -59,17 +59,25 @@ function initNavCatalog(userRole) {
   $("body").prepend(navHtml);
 
   // Allow all users to create pedals
-  function isTokenValid(token) {
+  function isTokenValid() {
+    const token = localStorage.getItem("authToken");
     if (!token) return false;
+
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      if (!payload.exp) return false;
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // handle URL-safe JWTs
+      const payload = JSON.parse(atob(base64));
+
+      console.log("Decoded JWT payload:", payload); // 👈 for debugging
+
       const now = Math.floor(Date.now() / 1000);
-      return payload.exp > now;
-    } catch {
+      return payload.exp && payload.exp > now;
+    } catch (err) {
+      console.error("Invalid JWT:", err);
       return false;
     }
   }
+
 
   function handleCreatePedalClick() {
     if (!isTokenValid()) {
