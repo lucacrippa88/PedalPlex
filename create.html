@@ -96,43 +96,53 @@
                 <label>Color <input type="color" id="pedal-color" value="#264985"></label>&ensp;&ensp;
                 <label>Font Color <input type="color" id="font-color" value="#ffffff"></label>&ensp;&ensp;
                 <br><br>
-                <label>Inside color type <select id="inside-type-select">
-                    <option value="color">Color</option>
-                    <option value="image">Image</option>
-                </select>
-                </label>&ensp;&ensp;
-                
-                <label id="inside-color-label">Inside Color<input type="color" id="pedal-inside-color" value="#0d0d0d"></label>&ensp;&ensp;
-                <label id="inside-image-label" style="display:none">Image URL<input type="text" id="pedal-inside-image" placeholder="https://example.com/image.png"></label>&ensp;&ensp;
-                <label id="pedal-inside-full-check-label"><input type="checkbox" id="pedal-inside-full-check"> Full</label>&ensp;&ensp;
-                <label id="inside-border-label"> Inside Border <input type="checkbox" id="pedal-inside-border-check"><input type="color" id="pedal-inside-border" value="#000000"></label>
-                <br><br>
-                <label>Knobs Color <input type="color" id="knobs-color" value="#191919"></label>&ensp;&ensp;
-                <label>Knobs Border <input type="color" id="knobs-border" value="#424242"></label>&ensp;&ensp;
-                <label>Knobs Indicator <input type="color" id="knobs-indicator" value="#ffffff"></label>&ensp;&ensp;
-                <script>
-                $("#pedal-inside-full-check").on("change", function () {
-                    const isImage = $("#inside-type-select").val() === "image";
-                    $("#inside-border-label").toggle(this.checked || isImage);
-                });
+                <label>Inside color type 
+                    <select id="inside-type-select">
+                        <option value="color">Color</option>
+                        <option value="image">Image</option>
+                    </select>
+                    </label>&ensp;&ensp;
 
-                // Also update border visibility when inside type changes
-                $("#inside-type-select").on("change", function () {
-                    const isImage = $(this).val() === "image";
-                    const isFull = $("#pedal-inside-full-check").is(":checked");
-                    $("#inside-border-label").toggle(isFull || isImage);
+                    <label id="inside-color-label">
+                    Inside Color <input type="color" id="pedal-inside-color" value="#0d0d0d">
+                    </label>&ensp;&ensp;
 
-                    if ($(this).val() === "color") {
+                    <label id="inside-image-label" style="display:none">
+                    Image URL <input type="text" id="pedal-inside-image" placeholder="https://example.com/image.png">
+                    </label>&ensp;&ensp;
+
+                    <label id="pedal-inside-full-check-label">
+                    <input type="checkbox" id="pedal-inside-full-check"> Full
+                    </label>&ensp;&ensp;
+
+                    <label id="inside-border-label">
+                    Inside Border 
+                    <input type="checkbox" id="pedal-inside-border-check">
+                    <input type="color" id="pedal-inside-border" value="#000000">
+                    </label>
+
+                    <script>
+                    $(document).ready(function () {
+                    function updateInsideType() {
+                        const type = $("#inside-type-select").val();
+
+                        if (type === "color") {
                         $("#inside-color-label").show();
                         $("#inside-image-label").hide();
-                        $("#pedal-inside-full-check-label").show();
-                    } else {
+                        } else {
                         $("#inside-color-label").hide();
                         $("#inside-image-label").show();
-                        $("#pedal-inside-full-check-label").hide();
+                        }
                     }
-                });
-                </script>
+
+                    // Run once at page load
+                    updateInsideType();
+
+                    // Run whenever the select changes
+                    $("#inside-type-select").on("change", updateInsideType);
+                    });
+                    </script>
+
 
                 <br><br>
                 
