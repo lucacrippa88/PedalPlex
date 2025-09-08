@@ -291,7 +291,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                         position: "absolute",
                         "margin-left": "4px",
                         // top: "105px",
-                        "mrgin-top": "45px",
+                        "margin-top": "45px",
                         transform: "translateY(-50%)",
                         "white-space": "nowrap",
                         "font-size": "10px"
