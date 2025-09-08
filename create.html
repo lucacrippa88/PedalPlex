@@ -123,23 +123,23 @@
 
                     <script>
                     $(document).ready(function () {
-                    function updateInsideType() {
-                        const type = $("#inside-type-select").val();
+                        function updateInsideType() {
+                            const type = $("#inside-type-select").val();
 
-                        if (type === "color") {
-                        $("#inside-color-label").show();
-                        $("#inside-image-label").hide();
-                        } else {
-                        $("#inside-color-label").hide();
-                        $("#inside-image-label").show();
+                            if (type === "color") {
+                                $("#inside-color-label").show();
+                                $("#inside-image-label").hide();
+                            } else {
+                                $("#inside-color-label").hide();
+                                $("#inside-image-label").show();
+                            }
                         }
-                    }
 
-                    // Run once at page load
-                    updateInsideType();
+                        // Run once at page load
+                        updateInsideType();
 
-                    // Run whenever the select changes
-                    $("#inside-type-select").on("change", updateInsideType);
+                        // Run whenever the select changes
+                        $("#inside-type-select").on("change", updateInsideType);
                     });
                     </script>
 
