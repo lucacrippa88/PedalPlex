@@ -148,41 +148,63 @@
 
 
 
-
 <script>
-  let zoomLevel = 1.05;
-  const minZoom = 0.75;
-  const maxZoom = 1.0;
-  const step = 0.05;
+const zoomTarget = document.getElementById("preset");
+const pedalboardSelect = document.getElementById("pedalboardSelect");
 
-  const zoomTarget = document.getElementById("preset");
+const minZoom = 0.7;
+const maxZoom = 1.0;
+const step = 0.05;
+let zoomLevel = 1.0;
 
-  function applyZoom() {
-    zoomTarget.style.transform = `scale(${zoomLevel})`;
-    zoomTarget.style.transformOrigin = "top left";
-  }
+function getPedalboardId() {
+  return pedalboardSelect.value; // use dropdown text as ID
+}
 
-  function zoomIn() {
-    if (zoomLevel < maxZoom) {
-      zoomLevel = Math.min(zoomLevel + step, maxZoom);
-      applyZoom();
-    }
-  }
+function saveZoom() {
+  const id = getPedalboardId();
+  localStorage.setItem(`zoom_${id}`, zoomLevel);
+}
 
-  function zoomOut() {
-    if (zoomLevel > minZoom) {
-      zoomLevel = Math.max(zoomLevel - step, minZoom);
-      applyZoom();
-    }
-  }
+function loadZoom() {
+  const id = getPedalboardId();
+  const saved = localStorage.getItem(`zoom_${id}`);
+  zoomLevel = saved ? parseFloat(saved) : 1.0;
+}
 
-  function resetZoom() {
-    zoomLevel = 1.0;
+function applyZoom() {
+  zoomTarget.style.transform = `scale(${zoomLevel})`;
+  zoomTarget.style.transformOrigin = "top left";
+  saveZoom();
+}
+
+function zoomIn() {
+  if (zoomLevel < maxZoom) {
+    zoomLevel = Math.min(zoomLevel + step, maxZoom);
     applyZoom();
   }
+}
 
-  // Initialize
+function zoomOut() {
+  if (zoomLevel > minZoom) {
+    zoomLevel = Math.max(zoomLevel - step, minZoom);
+    applyZoom();
+  }
+}
+
+function resetZoom() {
+  zoomLevel = 1.0;
   applyZoom();
+}
+
+function onPedalboardChange() {
+  loadZoom();
+  applyZoom();
+}
+
+// Initialize
+loadZoom();
+applyZoom();
 </script>
 
 </body>
