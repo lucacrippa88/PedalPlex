@@ -127,18 +127,14 @@
     zoomTarget.style.transform = `scale(${zoomLevel})`;
     zoomTarget.style.transformOrigin = "top left";
 
-    // Apply custom disabled class
+    // Apply "disabled" visually and prevent clicks
     toggleDisabled(zoomInBtn, zoomLevel >= maxZoom);
     toggleDisabled(zoomOutBtn, zoomLevel <= minZoom);
     toggleDisabled(resetBtn, zoomLevel === 1.0);
   }
 
   function toggleDisabled(button, isDisabled) {
-    if (isDisabled) {
-      button.classList.add("btn-disabled");
-    } else {
-      button.classList.remove("btn-disabled");
-    }
+    button.classList.toggle("btn-disabled", isDisabled);
   }
 
   function zoomIn() {
@@ -162,7 +158,7 @@
     }
   }
 
-  // Initialize state
+  // Initialize
   applyZoom();
 </script>
 
