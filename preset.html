@@ -104,7 +104,6 @@
 
 
 
-
 <script>
   let zoomLevel = 1.0;
   const minZoom = 0.7;
@@ -114,14 +113,16 @@
 
   const zoomInBtn = document.getElementById("zoomInBtn");
   const zoomOutBtn = document.getElementById("zoomOutBtn");
+  const resetBtn = document.getElementById("resetBtn");
 
   function applyZoom() {
     zoomTarget.style.transform = `scale(${zoomLevel})`;
     zoomTarget.style.transformOrigin = "top left";
 
-    // Update button states
+    // Update disabled states
     zoomInBtn.disabled = zoomLevel >= maxZoom;
     zoomOutBtn.disabled = zoomLevel <= minZoom;
+    resetBtn.disabled = zoomLevel === 1.0;
   }
 
   function zoomIn() {
