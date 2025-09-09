@@ -704,7 +704,7 @@ async function savePreset(presetId, updateData) {
 
 // Update the dropdown option text for the renamed preset
 function updatePresetDropdownName(id, newName) {
-  const dropdown = document.getElementById("presetDropdown");
+  const dropdown = document.getElementById("presetSelect");
   if (!dropdown) return;
 
   const option = [...dropdown.options].find(opt => opt.value === id);
