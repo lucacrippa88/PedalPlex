@@ -119,22 +119,10 @@
   const step = 0.05;
 
   const zoomTarget = document.getElementById("preset");
-  const zoomInBtn = document.getElementById("zoomInBtn");
-  const zoomOutBtn = document.getElementById("zoomOutBtn");
-  const resetBtn = document.getElementById("resetBtn");
 
   function applyZoom() {
     zoomTarget.style.transform = `scale(${zoomLevel})`;
     zoomTarget.style.transformOrigin = "top left";
-
-    // Apply "disabled" visually and prevent clicks
-    toggleDisabled(zoomInBtn, zoomLevel >= maxZoom);
-    toggleDisabled(zoomOutBtn, zoomLevel <= minZoom);
-    toggleDisabled(resetBtn, zoomLevel === 1.0);
-  }
-
-  function toggleDisabled(button, isDisabled) {
-    button.classList.toggle("btn-disabled", isDisabled);
   }
 
   function zoomIn() {
@@ -152,10 +140,8 @@
   }
 
   function resetZoom() {
-    if (zoomLevel !== 1.0) {
-      zoomLevel = 1.0;
-      applyZoom();
-    }
+    zoomLevel = 1.0;
+    applyZoom();
   }
 
   // Initialize
