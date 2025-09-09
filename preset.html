@@ -23,19 +23,17 @@
   <!-- Main content area -->
   <div id="page-content">
     <div id="preset-controls" style="display: none; align-items: center; gap: 8px;">
-      <div class="left-controls" style="display: flex; align-items: center; gap: 8px;">
-        <select id="pedalboardSelect"></select>
-        <select id="presetSelect" style="margin-left: 16px;"></select>
-        <button id="renamePresetBtn" class="bx--btn bx--btn--secondary" type="button">Edit</button>
-      </div>
-
-      <div class="zoom-controls" style="display: flex; gap: 6px;">
-        <button class="bx--btn bx--btn--tertiary" onclick="zoomIn()">Zoom In</button>
-        <button class="bx--btn bx--btn--tertiary" onclick="zoomOut()">Zoom Out</button>
-        <button class="bx--btn bx--btn--tertiary" onclick="resetZoom()">Reset</button>
-      </div>
-
+      <select id="pedalboardSelect"></select>
+      <select id="presetSelect" style="margin-left: 16px;"></select>
+      <button id="renamePresetBtn" class="bx--btn bx--btn--secondary" type="button">Edit</button>
     </div>
+
+    <div class="zoom-controls" style="position: fixed; bottom: 20px; right: 20px; display: flex; gap: 8px; z-index: 9999;">
+      <button class="bx--btn bx--btn--tertiary bx--btn--sm" onclick="zoomIn()">Zoom In</button>
+      <button class="bx--btn bx--btn--tertiary bx--btn--sm" onclick="zoomOut()">Zoom Out</button>
+      <button class="bx--btn bx--btn--tertiary bx--btn--sm" onclick="resetZoom()">Reset</button>
+    </div>
+
 
     <br><br><br><br>
 
