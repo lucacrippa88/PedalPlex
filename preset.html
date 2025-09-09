@@ -149,27 +149,27 @@
 
 
 <script>
-const pedalboardSelect = document.getElementById("pedalboardSelect");
 const minZoom = 0.7;
 const maxZoom = 1.0;
 const step = 0.05;
-let zoomLevel = 1.0; // current pedalboard zoom
+let zoomLevel = 1.0;
 
-// Get the selected pedalboard text (not the value)
+// Get currently selected pedalboard text
 function getPedalboardId() {
-  const idx = pedalboardSelect.selectedIndex;
+  const select = document.getElementById("pedalboardSelect");
+  const idx = select.selectedIndex;
   if (idx < 0) return null;
-  return pedalboardSelect.options[idx].text.trim();
+  return select.options[idx].text.trim();
 }
 
-// Save zoom for current pedalboard
+// Save zoom for the current pedalboard
 function saveZoom() {
   const id = getPedalboardId();
   if (!id) return;
   localStorage.setItem(`zoom_${id}`, zoomLevel);
 }
 
-// Load zoom for current pedalboard
+// Load zoom for the current pedalboard
 function loadZoom() {
   const id = getPedalboardId();
   if (!id) return;
@@ -186,46 +186,37 @@ function applyZoom() {
   saveZoom();
 }
 
-// Zoom functions
+// Zoom buttons
 function zoomIn() {
   if (zoomLevel < maxZoom) {
     zoomLevel = Math.min(zoomLevel + step, maxZoom);
     applyZoom();
   }
 }
-
 function zoomOut() {
   if (zoomLevel > minZoom) {
     zoomLevel = Math.max(zoomLevel - step, minZoom);
     applyZoom();
   }
 }
-
 function resetZoom() {
   zoomLevel = 1.0;
   applyZoom();
 }
 
-// Called when pedalboard is changed
-function onPedalboardChange() {
-  // Wait until the new preset content is rendered
-  setTimeout(() => {
-    loadZoom();
-    applyZoom();
-  }, 50); // small delay to allow rendering
-}
-
-// Initialize zoom system
-function initPedalboardZoom() {
-  if (!pedalboardSelect.options.length) return;
+// Call this function **after a pedalboard has finished loading**
+function onPedalboardLoaded() {
   loadZoom();
   applyZoom();
-  pedalboardSelect.addEventListener('change', onPedalboardChange);
 }
 
-// Call this after your pedalboard dropdown is populated
-// For example, at the end of initNavPreset() or initPreset()
-initPedalboardZoom();
+// Hook up dropdown changes
+document.getElementById("pedalboardSelect").addEventListener("change", () => {
+  // After loading new pedalboard, apply its zoom
+  // If initPreset is async, call onPedalboardLoaded() in its callback
+  setTimeout(onPedalboardLoaded, 50); // short delay to ensure content exists
+});
+
 </script>
 
 
