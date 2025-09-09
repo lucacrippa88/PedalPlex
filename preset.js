@@ -666,6 +666,15 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
 
 
+// Update the dropdown option text for the renamed preset
+function updatePresetDropdownName(presetId, newName) {
+  const option = document.querySelector(
+    `#presetSelect option[value="${presetId}"]`
+  );
+  if (option) {
+    option.textContent = newName;
+  }
+}
 
 
 
