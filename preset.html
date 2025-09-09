@@ -29,9 +29,9 @@
     </div>
 
     <div class="zoom-controls" style="position: fixed; bottom: 20px; right: 20px; display: flex; gap: 8px; z-index: 9999;">
-      <button class="bx--btn bx--btn--tertiary bx--btn--sm" onclick="zoomIn()">Zoom In</button>
-      <button class="bx--btn bx--btn--tertiary bx--btn--sm" onclick="zoomOut()">Zoom Out</button>
-      <button class="bx--btn bx--btn--tertiary bx--btn--sm" onclick="resetZoom()">Reset</button>
+      <button class="bx--btn bx--btn--tertiary bx--btn--sm" onclick="zoomIn()">+</button>
+      <button class="bx--btn bx--btn--tertiary bx--btn--sm" onclick="zoomOut()">-</button>
+      <button class="bx--btn bx--btn--tertiary bx--btn--sm" onclick="resetZoom()">=</button>
     </div>
 
 
@@ -104,6 +104,15 @@
 
 
 
+
+<style>
+  .bx--btn--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+</style>
+
+
 <script>
   let zoomLevel = 1.0;
   const minZoom = 0.7;
@@ -119,10 +128,18 @@
     zoomTarget.style.transform = `scale(${zoomLevel})`;
     zoomTarget.style.transformOrigin = "top left";
 
-    // Apply disabled attribute so Carbon CSS kicks in
-    zoomInBtn.setAttribute("disabled", zoomLevel >= maxZoom);
-    zoomOutBtn.setAttribute("disabled", zoomLevel <= minZoom);
-    resetBtn.setAttribute("disabled", zoomLevel === 1.0);
+    // Apply Carbon-style disabled classes
+    toggleDisabled(zoomInBtn, zoomLevel >= maxZoom);
+    toggleDisabled(zoomOutBtn, zoomLevel <= minZoom);
+    toggleDisabled(resetBtn, zoomLevel === 1.0);
+  }
+
+  function toggleDisabled(button, isDisabled) {
+    if (isDisabled) {
+      button.classList.add("bx--btn--disabled");
+    } else {
+      button.classList.remove("bx--btn--disabled");
+    }
   }
 
   function zoomIn() {
@@ -140,11 +157,13 @@
   }
 
   function resetZoom() {
-    zoomLevel = 1.0;
-    applyZoom();
+    if (zoomLevel !== 1.0) {
+      zoomLevel = 1.0;
+      applyZoom();
+    }
   }
 
-  // Initialize
+  // Initialize state
   applyZoom();
 </script>
 
