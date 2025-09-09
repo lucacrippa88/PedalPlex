@@ -157,21 +157,24 @@ const maxZoom = 1.0;
 const step = 0.05;
 let zoomLevel = 1.0;
 
+// Return the selected pedalboard text (inside the option)
 function getPedalboardId() {
-  return pedalboardSelect.value; // use dropdown text as ID
+  const selectedOption = pedalboardSelect.options[pedalboardSelect.selectedIndex];
+  return selectedOption.text.trim();
 }
 
+// Save zoom for current pedalboard
 function saveZoom() {
-  const id = getPedalboardId();
-  localStorage.setItem(`zoom_${id}`, zoomLevel);
+  localStorage.setItem(`zoom_${getPedalboardId()}`, zoomLevel);
 }
 
+// Load zoom for current pedalboard
 function loadZoom() {
-  const id = getPedalboardId();
-  const saved = localStorage.getItem(`zoom_${id}`);
+  const saved = localStorage.getItem(`zoom_${getPedalboardId()}`);
   zoomLevel = saved ? parseFloat(saved) : 1.0;
 }
 
+// Apply zoom
 function applyZoom() {
   zoomTarget.style.transform = `scale(${zoomLevel})`;
   zoomTarget.style.transformOrigin = "top left";
@@ -197,6 +200,7 @@ function resetZoom() {
   applyZoom();
 }
 
+// Handle pedalboard change
 function onPedalboardChange() {
   loadZoom();
   applyZoom();
