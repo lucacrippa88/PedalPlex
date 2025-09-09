@@ -23,14 +23,16 @@
   <!-- Main content area -->
   <div id="page-content">
     <div id="preset-controls" style="display: none; align-items: center; gap: 8px;">
-      <select id="pedalboardSelect"></select>
-      <select id="presetSelect" style="margin-left: 16px;"></select>
-      <button id="renamePresetBtn" class="bx--btn bx--btn--secondary" type="button">Edit</button>
+      <div class="left-controls" style="display: flex; align-items: center; gap: 8px;">
+        <select id="pedalboardSelect"></select>
+        <select id="presetSelect" style="margin-left: 16px;"></select>
+        <button id="renamePresetBtn" class="bx--btn bx--btn--secondary" type="button">Edit</button>
+      </div>
 
-      <div class="zoom-controls">
-        <button onclick="zoomIn()">Zoom In</button>
-        <button onclick="zoomOut()">Zoom Out</button>
-        <button onclick="resetZoom()">Reset</button>
+      <div class="zoom-controls" style="display: flex; gap: 6px;">
+        <button class="bx--btn bx--btn--tertiary" onclick="zoomIn()">Zoom In</button>
+        <button class="bx--btn bx--btn--tertiary" onclick="zoomOut()">Zoom Out</button>
+        <button class="bx--btn bx--btn--tertiary" onclick="resetZoom()">Reset</button>
       </div>
 
     </div>
