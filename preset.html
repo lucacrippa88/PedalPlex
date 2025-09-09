@@ -102,27 +102,50 @@
   </script>
 
 
-  <script>
-    let zoomLevel = 1;
-    const box = document.getElementById("preset");
 
-    function zoomIn() {
-      zoomLevel += 0.1;
-      box.style.transform = `scale(${zoomLevel})`;
-    }
 
-    function zoomOut() {
-      if (zoomLevel > 0.2) {
-        zoomLevel -= 0.1;
-        box.style.transform = `scale(${zoomLevel})`;
-      }
-    }
 
-    function resetZoom() {
-      zoomLevel = 1;
-      box.style.transform = `scale(${zoomLevel})`;
+<script>
+  let zoomLevel = 1.0;
+  const minZoom = 0.7;
+  const maxZoom = 1.0;
+  const step = 0.05;
+  const zoomTarget = document.getElementById("preset");
+
+  const zoomInBtn = document.getElementById("zoomInBtn");
+  const zoomOutBtn = document.getElementById("zoomOutBtn");
+
+  function applyZoom() {
+    zoomTarget.style.transform = `scale(${zoomLevel})`;
+    zoomTarget.style.transformOrigin = "top left";
+
+    // Update button states
+    zoomInBtn.disabled = zoomLevel >= maxZoom;
+    zoomOutBtn.disabled = zoomLevel <= minZoom;
+  }
+
+  function zoomIn() {
+    if (zoomLevel < maxZoom) {
+      zoomLevel = Math.min(zoomLevel + step, maxZoom);
+      applyZoom();
     }
-  </script>
+  }
+
+  function zoomOut() {
+    if (zoomLevel > minZoom) {
+      zoomLevel = Math.max(zoomLevel - step, minZoom);
+      applyZoom();
+    }
+  }
+
+  function resetZoom() {
+    zoomLevel = 1.0;
+    applyZoom();
+  }
+
+  // Initialize state
+  applyZoom();
+</script>
 
 </body>
 </html>
