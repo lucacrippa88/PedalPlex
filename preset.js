@@ -230,23 +230,7 @@ async function renderFullPedalboard() {
 
         const widthValue = parseFloat(getPedalWidth(pedal.width));
 
-        // Base CSS
-        // const baseCss = {
-        //   background: colorOnly,
-        //   border: `5px solid ${pedal["color"]}`, // Outer border
-        //   borderRadius: '10px',
-        //   color: pedal["font-color"],
-        //   width: getPedalWidth(pedal.width),
-        //   height: getPedalHeight(pedal.height),
-        //   transform: `rotate(${angle}deg)`,
-        //   display: 'inline-block',
-        //   transformOrigin: 'center center',
-        //   ...(pedal["inside-border"] && {
-        //     boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
-        //   })
-        // };
-
-                const baseCss = {
+        const baseCss = {
           border: `5px solid ${pedal["color"]}`, // Outer border
           borderRadius: '10px',
           color: pedal["font-color"],
@@ -586,16 +570,40 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       const data = await response.json();
       Swal.close();
 
+      // if (data.success) {
+      //   Swal.fire({
+      //     icon: "success",
+      //     title: "Preset Deleted",
+      //     timer: 2000,
+      //     showConfirmButton: false
+      //   }).then(() => {
+      //     location.reload();
+      //   });
+      // }
       if (data.success) {
+        // Remove from presetMap
+        delete window.presetMap[currentPresetId];
+
+        // Remove option from dropdown
+        const option = document.querySelector(
+          `#presetSelect option[value="${currentPresetId}"]`
+        );
+        if (option) option.remove();
+
+        // Reset selection
+        currentPresetId = null;
+        currentPresetName = null;
+        currentPresetRev = null;
+        document.getElementById("preset").innerHTML = "";
+
         Swal.fire({
           icon: "success",
           title: "Preset Deleted",
           timer: 2000,
           showConfirmButton: false
-        }).then(() => {
-          location.reload();
         });
-      } else {
+      }
+      else {
         Swal.fire("Error", data.error || "Failed to delete preset", "error");
       }
     }
@@ -618,19 +626,39 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
     Swal.close();
 
+    // if (success) {
+    //   Swal.fire({
+    //     icon: "success",
+    //     title: "Preset Renamed",
+    //     text: `Preset has been renamed to "${newName}"`,
+    //     timer: 2000,
+    //     showConfirmButton: false
+    //   }).then(() => {
+    //     currentPresetName = newName;
+    //     updatePresetDropdownName(currentPresetId, newName);
+    //     location.reload();
+    //   });
+    // } 
+
     if (success) {
+      // Update state
+      currentPresetName = newName;
+      if (window.presetMap[currentPresetId]) {
+        window.presetMap[currentPresetId].preset_name = newName;
+      }
+
+      // Update dropdown text
+      updatePresetDropdownName(currentPresetId, newName);
+
       Swal.fire({
         icon: "success",
         title: "Preset Renamed",
         text: `Preset has been renamed to "${newName}"`,
         timer: 2000,
         showConfirmButton: false
-      }).then(() => {
-        currentPresetName = newName;
-        updatePresetDropdownName(currentPresetId, newName);
-        location.reload();
       });
-    } else {
+    }
+    else {
       Swal.fire("Error", "Failed to rename preset", "error");
     }
   }
