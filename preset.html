@@ -147,7 +147,9 @@
   </script>
 
 
+
 <script>
+
 const zoomTarget = document.getElementById("preset");
 const pedalboardSelect = document.getElementById("pedalboardSelect");
 
@@ -157,30 +159,31 @@ const step = 0.05;
 
 let zoomLevel = 1.0; // current pedalboard zoom
 
-// Get the selected pedalboard text
 function getPedalboardId() {
-  return pedalboardSelect.options[pedalboardSelect.selectedIndex].text.trim();
+  const idx = pedalboardSelect.selectedIndex;
+  if (idx < 0) return null;
+  return pedalboardSelect.options[idx].text.trim();
 }
 
-// Save zoom for current pedalboard in localStorage
 function saveZoom() {
-  localStorage.setItem(`zoom_${getPedalboardId()}`, zoomLevel);
+  const id = getPedalboardId();
+  if (!id) return;
+  localStorage.setItem(`zoom_${id}`, zoomLevel);
 }
 
-// Load zoom for current pedalboard from localStorage
 function loadZoom() {
-  const saved = localStorage.getItem(`zoom_${getPedalboardId()}`);
+  const id = getPedalboardId();
+  if (!id) return;
+  const saved = localStorage.getItem(`zoom_${id}`);
   zoomLevel = saved ? parseFloat(saved) : 1.0;
 }
 
-// Apply zoom to the element
 function applyZoom() {
   zoomTarget.style.transform = `scale(${zoomLevel})`;
   zoomTarget.style.transformOrigin = "top left";
   saveZoom();
 }
 
-// Zoom functions
 function zoomIn() {
   if (zoomLevel < maxZoom) {
     zoomLevel = Math.min(zoomLevel + step, maxZoom);
@@ -200,16 +203,26 @@ function resetZoom() {
   applyZoom();
 }
 
-// Called when switching pedalboards
 function onPedalboardChange() {
   loadZoom();
   applyZoom();
 }
 
-// Initialize zoom for the initially selected pedalboard
-loadZoom();
-applyZoom();
+// Initialize zoom only after dropdown is populated
+function initPedalboardZoom() {
+  if (!pedalboardSelect.options.length) return;
+  loadZoom();
+  applyZoom();
+  pedalboardSelect.addEventListener('change', onPedalboardChange);
+}
+
+// Call this after your dropdown is filled
+// For example, at the end of initNavPreset() or initPreset():
+initPedalboardZoom();
+
+
 </script>
+
 
 </body>
 </html>
