@@ -26,6 +26,13 @@
       <select id="pedalboardSelect"></select>
       <select id="presetSelect" style="margin-left: 16px;"></select>
       <button id="renamePresetBtn" class="bx--btn bx--btn--secondary" type="button">Edit</button>
+
+      <div class="zoom-controls">
+        <button onclick="zoomIn()">Zoom In</button>
+        <button onclick="zoomOut()">Zoom Out</button>
+        <button onclick="resetZoom()">Reset</button>
+      </div>
+
     </div>
 
     <br><br><br><br>
@@ -92,6 +99,29 @@
       }
     });
   });
+  </script>
+
+
+  <script>
+    let zoomLevel = 1;
+    const box = document.getElementById("preset");
+
+    function zoomIn() {
+      zoomLevel += 0.1;
+      box.style.transform = `scale(${zoomLevel})`;
+    }
+
+    function zoomOut() {
+      if (zoomLevel > 0.2) {
+        zoomLevel -= 0.1;
+        box.style.transform = `scale(${zoomLevel})`;
+      }
+    }
+
+    function resetZoom() {
+      zoomLevel = 1;
+      box.style.transform = `scale(${zoomLevel})`;
+    }
   </script>
 
 </body>

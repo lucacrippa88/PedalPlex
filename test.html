@@ -1,42 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>IBM Code Engine Function Test</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zoom Div Example</title>
+  <style>
+    .controls {
+      margin-bottom: 10px;
+    }
+    #zoomBox {
+      width: 400px;
+      height: 200px;
+      border: 2px solid #333;
+      padding: 20px;
+      overflow: auto;
+      transition: transform 0.3s ease;
+      transform-origin: top left; /* prevents shifting */
+    }
+  </style>
 </head>
 <body>
-  <h1>Say Hello</h1>
+  <div class="controls">
+    <button onclick="zoomIn()">Zoom In</button>
+    <button onclick="zoomOut()">Zoom Out</button>
+    <button onclick="resetZoom()">Reset</button>
+  </div>
 
-  <input type="text" id="nameInput" placeholder="Enter your name">
-  <button onclick="callFunction()">Send</button>
-
-  <p id="response"></p>
+  <div id="zoomBox">
+    <h2>Zoom Me!</h2>
+    <p>This is the content inside the zoomable div. You can scale this area without affecting the rest of the page.</p>
+  </div>
 
   <script>
-    async function callFunction() {
-      const name = document.getElementById("nameInput").value;
-      const url = "https://hello-world.1xxvwrb607ps.eu-de.codeengine.appdomain.cloud";
+    let zoomLevel = 1;
+    const box = document.getElementById("zoomBox");
 
-      try {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ name })
-        });
+    function zoomIn() {
+      zoomLevel += 0.1;
+      box.style.transform = `scale(${zoomLevel})`;
+    }
 
-        const raw = await response.text();
-        console.log("Status:", response.status);
-        console.log("Raw response:", raw);
-
-        if (!response.ok) throw new Error("Non-200 response");
-
-        const result = JSON.parse(raw);
-        document.getElementById("response").innerText = result.body;
-      } catch (error) {
-        console.error("Error calling function:", error);
-        document.getElementById("response").innerText = "Function call failed.";
+    function zoomOut() {
+      if (zoomLevel > 0.2) {
+        zoomLevel -= 0.1;
+        box.style.transform = `scale(${zoomLevel})`;
       }
+    }
+
+    function resetZoom() {
+      zoomLevel = 1;
+      box.style.transform = `scale(${zoomLevel})`;
     }
   </script>
 </body>
