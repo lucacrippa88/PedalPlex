@@ -90,7 +90,7 @@ function initNavCatalog(userRole) {
           confirmButton: 'bx--btn bx--btn--primary'
         }
       }).then(() => {
-        window.location.href = "login";
+        window.location.href = "/PedalPlex/";
       });
       return;
     }
