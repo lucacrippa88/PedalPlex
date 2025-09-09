@@ -8,9 +8,10 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <style>
-  .bx--btn--disabled {
+  .btn-disabled {
     opacity: 0.5;
     pointer-events: none;
+    cursor: not-allowed;
   }
 </style>
 
@@ -126,7 +127,7 @@
     zoomTarget.style.transform = `scale(${zoomLevel})`;
     zoomTarget.style.transformOrigin = "top left";
 
-    // Apply Carbon-style disabled classes
+    // Apply custom disabled class
     toggleDisabled(zoomInBtn, zoomLevel >= maxZoom);
     toggleDisabled(zoomOutBtn, zoomLevel <= minZoom);
     toggleDisabled(resetBtn, zoomLevel === 1.0);
@@ -134,9 +135,9 @@
 
   function toggleDisabled(button, isDisabled) {
     if (isDisabled) {
-      button.classList.add("bx--btn--disabled");
+      button.classList.add("btn-disabled");
     } else {
-      button.classList.remove("bx--btn--disabled");
+      button.classList.remove("btn-disabled");
     }
   }
 
