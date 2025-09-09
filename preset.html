@@ -109,8 +109,8 @@
   const minZoom = 0.7;
   const maxZoom = 1.0;
   const step = 0.05;
-  const zoomTarget = document.getElementById("preset");
 
+  const zoomTarget = document.getElementById("preset");
   const zoomInBtn = document.getElementById("zoomInBtn");
   const zoomOutBtn = document.getElementById("zoomOutBtn");
   const resetBtn = document.getElementById("resetBtn");
@@ -119,10 +119,10 @@
     zoomTarget.style.transform = `scale(${zoomLevel})`;
     zoomTarget.style.transformOrigin = "top left";
 
-    // Update disabled states
-    zoomInBtn.disabled = zoomLevel >= maxZoom;
-    zoomOutBtn.disabled = zoomLevel <= minZoom;
-    resetBtn.disabled = zoomLevel === 1.0;
+    // Apply disabled attribute so Carbon CSS kicks in
+    zoomInBtn.setAttribute("disabled", zoomLevel >= maxZoom);
+    zoomOutBtn.setAttribute("disabled", zoomLevel <= minZoom);
+    resetBtn.setAttribute("disabled", zoomLevel === 1.0);
   }
 
   function zoomIn() {
@@ -144,7 +144,7 @@
     applyZoom();
   }
 
-  // Initialize state
+  // Initialize
   applyZoom();
 </script>
 
