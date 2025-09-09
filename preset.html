@@ -149,29 +149,27 @@
 
 
 <script>
-const zoomTarget = document.getElementById("preset");
 const pedalboardSelect = document.getElementById("pedalboardSelect");
-
 const minZoom = 0.7;
 const maxZoom = 1.0;
 const step = 0.05;
 let zoomLevel = 1.0; // current pedalboard zoom
 
-// Get the selected pedalboard text
+// Get the selected pedalboard text (not the value)
 function getPedalboardId() {
   const idx = pedalboardSelect.selectedIndex;
   if (idx < 0) return null;
   return pedalboardSelect.options[idx].text.trim();
 }
 
-// Save zoom for the current pedalboard
+// Save zoom for current pedalboard
 function saveZoom() {
   const id = getPedalboardId();
   if (!id) return;
   localStorage.setItem(`zoom_${id}`, zoomLevel);
 }
 
-// Load zoom for the current pedalboard
+// Load zoom for current pedalboard
 function loadZoom() {
   const id = getPedalboardId();
   if (!id) return;
@@ -179,8 +177,10 @@ function loadZoom() {
   zoomLevel = saved ? parseFloat(saved) : 1.0;
 }
 
-// Apply zoom to the element
+// Apply zoom to the current #preset element
 function applyZoom() {
+  const zoomTarget = document.getElementById("preset"); // always get fresh element
+  if (!zoomTarget) return;
   zoomTarget.style.transform = `scale(${zoomLevel})`;
   zoomTarget.style.transformOrigin = "top left";
   saveZoom();
@@ -206,28 +206,28 @@ function resetZoom() {
   applyZoom();
 }
 
-// Called when changing pedalboards
+// Called when pedalboard is changed
 function onPedalboardChange() {
-  loadZoom();
-  applyZoom();
+  // Wait until the new preset content is rendered
+  setTimeout(() => {
+    loadZoom();
+    applyZoom();
+  }, 50); // small delay to allow rendering
 }
 
-// Initialize zoom only after the dropdown is populated
+// Initialize zoom system
 function initPedalboardZoom() {
   if (!pedalboardSelect.options.length) return;
-
-  // Apply zoom for initially selected pedalboard
   loadZoom();
   applyZoom();
-
-  // Attach change listener
   pedalboardSelect.addEventListener('change', onPedalboardChange);
 }
 
-// Example: call this at the end of initNavPreset() or initPreset() 
-// after the pedalboardSelect is filled
+// Call this after your pedalboard dropdown is populated
+// For example, at the end of initNavPreset() or initPreset()
 initPedalboardZoom();
 </script>
+
 
 
 
