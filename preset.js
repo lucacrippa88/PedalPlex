@@ -9,11 +9,9 @@ window.allPedalboards = [];
 
 function initPreset() {
 
-  console.log("Start")
-
 
   const userId = window.currentUser?.userid;
-  resultsDiv = document.getElementById("preset");
+  resultsDiv = document.getElementById("page-content");
 
   window.catalog = [];
   window.pedalboard = {
@@ -447,7 +445,7 @@ function fetchPresetsByBoardId(user_id, board_id) {
     .then(data => {
 
       hidePresetLoader();
-      
+
       if (data.error) {
         console.error('Error fetching presets:', data.error);
         return;
