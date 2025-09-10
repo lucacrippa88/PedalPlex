@@ -69,7 +69,9 @@ function initNavPedalboard() {
             viewBox="0 0 32 32"
             aria-hidden="true"
             class="bx--btn__icon">
-            <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <g transform="rotate(90 16 16)">
+            <path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"></path><path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
+            </g>
           </svg>
           Create pedalboard
         </button>
