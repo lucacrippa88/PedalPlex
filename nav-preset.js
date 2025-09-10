@@ -122,17 +122,6 @@ function initNavPreset() {
 
 
 
-  $('#createFldBtn').on('click', async () => {
-    const saved = await saveFolderToDB(newFolder);
-    if (saved) {
-      folders.push(newFolder);
-      populateFolderDropdown();
-      document.getElementById('folderSelect').value = newFolder.id;
-    }
-  });
-
-
-
 
   $('#savePstBtn').on('click', async () => {
     const presetName = $('#presetSelect').val() || "Untitled Preset";
