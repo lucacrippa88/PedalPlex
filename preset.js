@@ -351,6 +351,9 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       }
     });
 
+    // if user clicked Cancel, just stop here
+    if (result.isDismissed) { return; }
+
     if (confirmDelete.isConfirmed) {
       Swal.fire({
         title: "Deleting...",
@@ -425,7 +428,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
   // Once server confirms edit is done:
   saveCurrentSelectionToStorage();
-  location.reload();
+  // location.reload();
 
 });
 
