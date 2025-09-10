@@ -520,6 +520,11 @@ function applyPresetToPedalboard(presetDoc) {
     }
 
   });
+
+
+  savePedalboard(); // Save full pedalboard state after applying preset
+
+
 }
 
 
@@ -604,25 +609,27 @@ async function createPreset() {
     console.error("Caught exception:", error);
     Swal.fire('Error', error.message || 'Network or server error.', 'error');
   }
+
+  savePedalboard();
+
 }
 
 
 
+// Save the full pedalboard state to localStorage
+function savePedalboard() {
+  if (!window.pedalboard) return;
+
+  try {
+    const boardId = window.pedalboard._id || 'unsaved_board';
+    // Save pedalboard state keyed by board ID
+    localStorage.setItem(`pedalboard_state_${boardId}`, JSON.stringify(window.pedalboard));
+
+    console.log(`Pedalboard saved: ${boardId}`);
+  } catch (err) {
+    console.error("Failed to save pedalboard:", err);
+  }
+}
 
 
-// Spinners management
 
-function showZoomSpinner() {
-  document.getElementById("zoomSpinner").style.display = "block";
-}
-function hideZoomSpinner() {
-  document.getElementById("zoomSpinner").style.display = "none";
-}
-function showPresetLoader() {
-  document.getElementById("presetSelect").style.display = "none";
-  document.getElementById("presetSelectLoader").style.display = "flex";
-}
-function hidePresetLoader() {
-  document.getElementById("presetSelect").style.display = "inline-block";
-  document.getElementById("presetSelectLoader").style.display = "none";
-}

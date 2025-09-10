@@ -89,3 +89,16 @@ document.getElementById("pedalboardSelect").addEventListener("change", () => {
   // If initPreset is async, call onPedalboardLoaded() in its callback
   setTimeout(onPedalboardLoaded, 50); // short delay to ensure content exists
 });
+
+
+
+
+
+// Spinners management
+
+function showZoomSpinner() {
+  document.getElementById("zoomSpinner").style.display = "block";
+}
+function hideZoomSpinner() {
+  document.getElementById("zoomSpinner").style.display = "none";
+}

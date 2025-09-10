@@ -226,6 +226,20 @@
 
   // Call on page load
   window.addEventListener('load', hookSaveAfterPopulation);
+
+
+
+
+
+function showPresetLoader() {
+  document.getElementById("presetSelect").style.display = "none";
+  document.getElementById("presetSelectLoader").style.display = "flex";
+}
+function hidePresetLoader() {
+  document.getElementById("presetSelect").style.display = "inline-block";
+  document.getElementById("presetSelectLoader").style.display = "none";
+}
+
 </script>
 
 
