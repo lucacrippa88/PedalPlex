@@ -31,6 +31,18 @@
         </svg>
       </div>
     </div>
+
+
+
+  <!-- Zoom spinner -->
+  <div id="zoomSpinner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; background: rgba(255,255,255,0.7); padding: 1rem; border-radius: 8px;">
+    <div class="bx--loading bx--loading--small" role="alert" aria-live="assertive" aria-label="Loading">
+      <svg class="bx--loading__svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+        <circle class="bx--loading__background" cx="50" cy="50" r="44" stroke-width="8"></circle>
+        <circle class="bx--loading__stroke" cx="50" cy="50" r="44" stroke-width="8"></circle>
+      </svg>
+    </div>
+  </div>
   
   <!-- Main content area -->
   <div id="page-content">
@@ -116,6 +128,7 @@
   <script src="preset.js"></script>
   <script src="fullscreen-menu.js"></script>
   <script src="nav-preset.js"></script>
+  <script src="zoom-preset.js"></script>
 
   <script>
   // Check user authentication
@@ -167,142 +180,35 @@
 
 
 
+
 <script>
-const minZoom = 0.7;
-const maxZoom = 1.0;
-const step = 0.05;
-let zoomLevel = 1.0;
+  // Save selection by visible text
+  function saveCurrentSelectionToStorage() {
+    const pedalboardSelect = document.getElementById('pedalboardSelect');
+    const presetSelect = document.getElementById('presetSelect');
 
-// Get currently selected pedalboard text
-function getSelectedPedalboard() {
-  const select = document.getElementById("pedalboardSelect");
-  const idx = select.selectedIndex;
-  if (idx < 0) return null;
-  return select.options[idx].text.trim();
-}
-// Get currently selected preset text
-function getSelectedPreset() {
-  const select = document.getElementById("presetSelect");
-  const idx = select.selectedIndex;
-  if (idx < 0) return null;
-  return select.options[idx].text.trim();
-}
+    if (pedalboardSelect && pedalboardSelect.selectedIndex >= 0) {
+      const selectedText = pedalboardSelect.options[pedalboardSelect.selectedIndex].text.trim();
+      localStorage.setItem('lastPedalboardText', selectedText);
+    }
 
-
-
-
-// Save zoom for the current pedalboard to localstorage
-function saveZoom() {
-  const id = getSelectedPedalboard();
-  if (!id) return;
-  localStorage.setItem(`zoom_${id}`, zoomLevel);
-}
-// Save selected pedalboard to localstorage
-function savePedalboard() {
-  const id = getSelectedPedalboard();
-  if (!id) return;
-  localStorage.setItem(`selectedPedalboard`, id);
-}
-// Save selected preset to localstorage
-function savePreset() {
-  const id = getSelectedPreset();
-  if (!id) return;
-  localStorage.setItem(`selectedPreset`, id);
-}
-
-
-
-
-
-// Load zoom for the current pedalboard
-function loadZoom() {
-  const id = getSelectedPedalboard();
-  if (!id) return;
-  const saved = localStorage.getItem(`zoom_${id}`);
-  zoomLevel = saved ? parseFloat(saved) : 1.0;
-}
-
-// Apply zoom to the current #preset element
-function applyZoom() {
-  const zoomTarget = document.getElementById("preset");
-  if (!zoomTarget) return;
-
-  showZoomSpinner();
-
-  // Apply zoom immediately (transition handles smoothness)
-  zoomTarget.style.transform = `scale(${zoomLevel})`;
-
-  saveZoom();
-
-  // Hide spinner after short delay
-  setTimeout(() => {
-    hideZoomSpinner();
-  }, 300); // match transition duration
-}
-
-
-
-// Zoom buttons
-function zoomIn() {
-  if (zoomLevel < maxZoom) {
-    zoomLevel = Math.min(zoomLevel + step, maxZoom);
-    applyZoom();
+    if (presetSelect && presetSelect.selectedIndex >= 0) {
+      const selectedText = presetSelect.options[presetSelect.selectedIndex].text.trim();
+      localStorage.setItem('lastPresetText', selectedText);
+    }
   }
-}
-function zoomOut() {
-  if (zoomLevel > minZoom) {
-    zoomLevel = Math.max(zoomLevel - step, minZoom);
-    applyZoom();
-  }
-}
-function resetZoom() {
-  zoomLevel = 1.0;
-  applyZoom();
-}
 
-// Call this function **after a pedalboard has finished loading**
-function onPedalboardLoaded() {
-  savePedalboard();
-  savePreset();
-  loadZoom();
-  applyZoom();
-}
+  // Save whenever user changes a dropdown
+  document.getElementById('pedalboardSelect').addEventListener('change', saveCurrentSelectionToStorage);
+  document.getElementById('presetSelect').addEventListener('change', saveCurrentSelectionToStorage);
 
-// Hook up dropdown changes
-document.getElementById("pedalboardSelect").addEventListener("change", () => {
-  // After loading new pedalboard, apply its zoom
-  // If initPreset is async, call onPedalboardLoaded() in its callback
-  setTimeout(onPedalboardLoaded, 50); // short delay to ensure content exists
-});
-
+  // Also save after page load / programmatic selection
+  window.addEventListener('load', () => {
+    saveCurrentSelectionToStorage();
+  });
 </script>
 
 
-
-
-
-<!-- Zoom spinner -->
-<div id="zoomSpinner" style="
-  display: none; 
-  position: fixed; 
-  top: 50%; 
-  left: 50%; 
-  transform: translate(-50%, -50%); 
-  z-index: 10000; 
-  background: rgba(255,255,255,0.7); 
-  padding: 1rem; 
-  border-radius: 8px;">
-  <div class="bx--loading bx--loading--small" role="alert" aria-live="assertive" aria-label="Loading">
-    <svg class="bx--loading__svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-      <circle class="bx--loading__background" cx="50" cy="50" r="44" stroke-width="8"></circle>
-      <circle class="bx--loading__stroke" cx="50" cy="50" r="44" stroke-width="8"></circle>
-    </svg>
-  </div>
-</div>
-
-<script>
-
-</script>
 
 
 
