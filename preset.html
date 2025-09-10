@@ -174,19 +174,45 @@ const step = 0.05;
 let zoomLevel = 1.0;
 
 // Get currently selected pedalboard text
-function getPedalboardId() {
+function getSelectedPedalboard() {
   const select = document.getElementById("pedalboardSelect");
   const idx = select.selectedIndex;
   if (idx < 0) return null;
   return select.options[idx].text.trim();
 }
+// Get currently selected preset text
+function getSelectedPreset() {
+  const select = document.getElementById("presetSelect");
+  const idx = select.selectedIndex;
+  if (idx < 0) return null;
+  return select.options[idx].text.trim();
+}
 
-// Save zoom for the current pedalboard
+
+
+
+// Save zoom for the current pedalboard to localstorage
 function saveZoom() {
-  const id = getPedalboardId();
+  const id = getSelectedPedalboard();
   if (!id) return;
   localStorage.setItem(`zoom_${id}`, zoomLevel);
 }
+// Save selected pedalboard to localstorage
+function savePedalboard() {
+  const id = getSelectedPedalboard();
+  if (!id) return;
+  localStorage.setItem(`selectedPedalboard`, id);
+}
+// Save selected preset to localstorage
+function savePreset() {
+  const id = getSelectedPreset();
+  if (!id) return;
+  localStorage.setItem(`selectedPreset`, id);
+}
+
+
+
+
 
 // Load zoom for the current pedalboard
 function loadZoom() {
@@ -273,29 +299,10 @@ document.getElementById("pedalboardSelect").addEventListener("change", () => {
 </div>
 
 <script>
-function showZoomSpinner() {
-  document.getElementById("zoomSpinner").style.display = "block";
-}
-
-function hideZoomSpinner() {
-  document.getElementById("zoomSpinner").style.display = "none";
-}
-
-function showPresetLoader() {
-  document.getElementById("presetSelect").style.display = "none";
-  document.getElementById("presetSelectLoader").style.display = "flex";
-}
-
-function hidePresetLoader() {
-  document.getElementById("presetSelect").style.display = "inline-block";
-  document.getElementById("presetSelectLoader").style.display = "none";
-}
-</script>
-
-<script>
-
 
 </script>
+
+
 
 </body>
 </html>
