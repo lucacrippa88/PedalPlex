@@ -71,16 +71,17 @@ function resetZoom() {
   applyZoom();
 }
 
-// Save currently selected pedalboard and preset on page load
-$(document).ready(function() {
-  savePedalboard();
-  savePreset();
-});
 
 // Call this function **after a pedalboard has finished loading**
 function onPedalboardLoaded() {
   loadZoom();
   applyZoom();
+}
+
+// Call this after a preset has been applied
+function restoreZoomForCurrentBoard() {
+  loadZoom();      // load zoom level for selected pedalboard
+  applyZoom();     // apply it
 }
 
 // Hook up dropdown changes
@@ -92,10 +93,7 @@ document.getElementById("pedalboardSelect").addEventListener("change", () => {
 
 
 
-
-
 // Spinners management
-
 function showZoomSpinner() {
   document.getElementById("zoomSpinner").style.display = "block";
 }
