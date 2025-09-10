@@ -43,6 +43,7 @@ async function saveFolderToDB(folder) {
 // Handle adding a new folder
 document.addEventListener('DOMContentLoaded', () => {
   const addFolderBtn = document.getElementById('addFolderBtn');
+  console.log('addFolderBtn:', addFolderBtn);
   if (!addFolderBtn) return;
 
   addFolderBtn.addEventListener('click', async () => {
