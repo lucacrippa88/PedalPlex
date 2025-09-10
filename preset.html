@@ -292,58 +292,5 @@ function hidePresetLoader() {
 }
 </script>
 
-<script>
-function saveCurrentSelectionToStorage() {
-  const pedalboardSelect = document.getElementById('pedalboardSelect');
-  const presetSelect = document.getElementById('presetSelect');
-
-  // Save the TEXT of the selected pedalboard, not the value
-  const currentBoardText = pedalboardSelect && pedalboardSelect.selectedIndex >= 0
-    ? pedalboardSelect.options[pedalboardSelect.selectedIndex].textContent
-    : null;
-
-  const currentPresetText = presetSelect && presetSelect.selectedIndex >= 0
-    ? presetSelect.options[presetSelect.selectedIndex].textContent
-    : null;
-
-  if (currentBoardText) {
-    localStorage.setItem('lastPedalboardText', currentBoardText);
-  }
-  if (currentPresetText) {
-    localStorage.setItem('lastPresetText', currentPresetText);
-  }
-}
-
-
-function restoreSelectionFromStorage() {
-  const lastBoardText = localStorage.getItem('lastPedalboardText');
-  const lastPresetText = localStorage.getItem('lastPresetText');
-
-  const pedalboardSelect = document.getElementById('pedalboardSelect');
-  const presetSelect = document.getElementById('presetSelect');
-
-  // Restore pedalboard by TEXT
-  if (lastBoardText && pedalboardSelect) {
-    const boardOption = [...pedalboardSelect.options]
-      .find(opt => opt.textContent.trim() === lastBoardText.trim());
-    if (boardOption) {
-      pedalboardSelect.value = boardOption.value; // match value after finding by text
-      pedalboardSelect.dispatchEvent(new Event('change')); // trigger reload
-    }
-  }
-
-  // Restore preset by TEXT
-  if (lastPresetText && presetSelect) {
-    const presetOption = [...presetSelect.options]
-      .find(opt => opt.textContent.trim() === lastPresetText.trim());
-    if (presetOption) {
-      presetSelect.value = presetOption.value;
-      presetSelect.dispatchEvent(new Event('change'));
-    }
-  }
-}
-
-</script>
-
 </body>
 </html>
