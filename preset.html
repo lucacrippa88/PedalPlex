@@ -14,8 +14,10 @@
     cursor: not-allowed;
   }
   #preset {
-    visibility: hidden; /* hide until zoom is applied */
+    transition: transform 0.3s ease-in-out; /* smooth zoom */
+    transform-origin: top left;
   }
+
 </style>
 
 </head>
@@ -186,17 +188,16 @@ function applyZoom() {
   if (!zoomTarget) return;
 
   showZoomSpinner();
-  zoomTarget.style.visibility = "hidden"; // hide during resize
 
-  // Small delay so spinner is visible while applying zoom
+  // Apply zoom immediately (transition handles smoothness)
+  zoomTarget.style.transform = `scale(${zoomLevel})`;
+
+  saveZoom();
+
+  // Hide spinner after short delay
   setTimeout(() => {
-    zoomTarget.style.transform = `scale(${zoomLevel})`;
-    zoomTarget.style.transformOrigin = "top left";
-    saveZoom();
-
-    zoomTarget.style.visibility = "visible"; // show only after zoom applied
     hideZoomSpinner();
-  }, 150); // tweak delay if needed
+  }, 300); // match transition duration
 }
 
 
