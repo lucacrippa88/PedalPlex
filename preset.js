@@ -20,16 +20,8 @@ function initPreset() {
 
   window.presetMap = {};
 
-  // Show loading spinner
-  resultsDiv.innerHTML = `
-    <div class="bx--loading-overlay">
-      <div class="bx--loading" role="status">
-        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-        </svg>
-      </div>
-    </div>`;
+  // Show loader overlay
+  document.getElementById("pageLoader").style.display = "flex";
 
   // Load catalog
   fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
@@ -45,6 +37,9 @@ function initPreset() {
       catalog.forEach(pedal => {
         window.catalogMap[pedal._id] = pedal;
       });
+
+      // Hide loader overlay once data is ready
+      document.getElementById("pageLoader").style.display = "none";
 
       // Fetch pedalboard data
       return fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
