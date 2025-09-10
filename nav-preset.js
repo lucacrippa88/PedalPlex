@@ -58,6 +58,27 @@ function initNavPreset() {
       Add preset
     </button>
 
+    <button
+      id="createFldBtn"
+      class="bx--btn bx--btn--secondary bx--btn--sm"
+      type="button"
+      aria-label="Create New Folder"
+      style="display: flex; align-items: center; gap: 0.5rem;">
+      <svg
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="currentColor"
+        width="16"
+        height="16"
+        viewBox="0 0 32 32"
+        aria-hidden="true"
+        class="bx--btn__icon">
+        <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Add folder
+    </button>
+
   </div>
 
 </header>
