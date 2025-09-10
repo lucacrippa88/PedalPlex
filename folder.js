@@ -29,6 +29,24 @@ document.getElementById('addFolderBtn').addEventListener('click', async () => {
       preset_ids: [],
     };
 
+
+
+    
+
+  $('#createFldBtn').on('click', async () => {
+    const saved = await saveFolderToDB(newFolder);
+    if (saved) {
+      folders.push(newFolder);
+      populateFolderDropdown();
+      document.getElementById('folderSelect').value = newFolder.id;
+    }
+  });
+
+
+
+
+
+
     // Save folder to DB here (pseudo-code)
     async function saveFolderToDB(folder) {
   try {
