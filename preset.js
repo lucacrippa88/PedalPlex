@@ -30,7 +30,7 @@ function initPreset() {
       return response.json();
     })
     .then(catalog => {
-      resultsDiv.innerHTML = ""; // Clear loader
+      // resultsDiv.innerHTML = ""; // Clear loader
       window.catalog = catalog;
 
       window.catalogMap = {};
