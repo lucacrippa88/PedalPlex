@@ -59,7 +59,7 @@ function initNavPreset() {
     </button>
 
     <button
-      id="createFldBtn"
+      id="addFolderBtn"
       class="bx--btn bx--btn--secondary bx--btn--sm"
       type="button"
       aria-label="Create New Folder"
