@@ -216,7 +216,7 @@ function savePreset() {
 
 // Load zoom for the current pedalboard
 function loadZoom() {
-  const id = getPedalboardId();
+  const id = getSelectedPedalboard();
   if (!id) return;
   const saved = localStorage.getItem(`zoom_${id}`);
   zoomLevel = saved ? parseFloat(saved) : 1.0;
@@ -262,6 +262,8 @@ function resetZoom() {
 
 // Call this function **after a pedalboard has finished loading**
 function onPedalboardLoaded() {
+  savePedalboard();
+  savePreset();
   loadZoom();
   applyZoom();
 }
