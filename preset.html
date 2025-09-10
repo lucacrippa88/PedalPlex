@@ -182,31 +182,52 @@
 
 
 <script>
-  // Save selection by visible text
+  // Save current selections by visible text
   function saveCurrentSelectionToStorage() {
     const pedalboardSelect = document.getElementById('pedalboardSelect');
     const presetSelect = document.getElementById('presetSelect');
 
     if (pedalboardSelect && pedalboardSelect.selectedIndex >= 0) {
-      const selectedText = pedalboardSelect.options[pedalboardSelect.selectedIndex].text.trim();
-      localStorage.setItem('lastPedalboardText', selectedText);
+      const pedalboardText = pedalboardSelect.options[pedalboardSelect.selectedIndex].text.trim();
+      localStorage.setItem('lastPedalboardText', pedalboardText);
     }
 
     if (presetSelect && presetSelect.selectedIndex >= 0) {
-      const selectedText = presetSelect.options[presetSelect.selectedIndex].text.trim();
-      localStorage.setItem('lastPresetText', selectedText);
+      const presetText = presetSelect.options[presetSelect.selectedIndex].text.trim();
+      localStorage.setItem('lastPresetText', presetText);
     }
   }
 
-  // Save whenever user changes a dropdown
-  document.getElementById('pedalboardSelect').addEventListener('change', saveCurrentSelectionToStorage);
-  document.getElementById('presetSelect').addEventListener('change', saveCurrentSelectionToStorage);
+  // Listen for user changes
+  const pedalboardSelect = document.getElementById('pedalboardSelect');
+  const presetSelect = document.getElementById('presetSelect');
 
-  // Also save after page load / programmatic selection
-  window.addEventListener('load', () => {
-    saveCurrentSelectionToStorage();
-  });
+  if (pedalboardSelect) pedalboardSelect.addEventListener('change', saveCurrentSelectionToStorage);
+  if (presetSelect) presetSelect.addEventListener('change', saveCurrentSelectionToStorage);
+
+  // Hook into async population: save selection after programmatic restore
+  function hookSaveAfterPopulation() {
+    // Pedalboard: save after restoring selection
+    if (pedalboardSelect && pedalboardSelect.selectedIndex >= 0) {
+      saveCurrentSelectionToStorage();
+    }
+
+    // Preset: save after async presets populate
+    if (presetSelect) {
+      // Poll until at least one option exists
+      const checkPresetInterval = setInterval(() => {
+        if (presetSelect.options.length > 0 && presetSelect.selectedIndex >= 0) {
+          saveCurrentSelectionToStorage();
+          clearInterval(checkPresetInterval);
+        }
+      }, 50);
+    }
+  }
+
+  // Call on page load
+  window.addEventListener('load', hookSaveAfterPopulation);
 </script>
+
 
 
 
