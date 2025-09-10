@@ -428,6 +428,8 @@ function fetchPresetsByBoardId(user_id, board_id) {
     }
   });
 
+  showPresetLoader();
+
   fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESET.php', {
       method: 'POST',
       headers: {
@@ -443,6 +445,9 @@ function fetchPresetsByBoardId(user_id, board_id) {
       return response.json();
     })
     .then(data => {
+
+      hidePresetLoader();
+      
       if (data.error) {
         console.error('Error fetching presets:', data.error);
         return;
@@ -580,30 +585,6 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
           location.reload();
         });
       }
-
-      // if (data.success) {
-      //   // Remove from presetMap
-      //   delete window.presetMap[currentPresetId];
-
-      //   // Remove option from dropdown
-      //   const option = document.querySelector(
-      //     `#presetSelect option[value="${currentPresetId}"]`
-      //   );
-      //   if (option) option.remove();
-
-      //   // Reset selection
-      //   currentPresetId = null;
-      //   currentPresetName = null;
-      //   currentPresetRev = null;
-      //   document.getElementById("preset").innerHTML = "";
-
-      //   Swal.fire({
-      //     icon: "success",
-      //     title: "Preset Deleted",
-      //     timer: 2000,
-      //     showConfirmButton: false
-      //   });
-      // }
       else {
         Swal.fire("Error", data.error || "Failed to delete preset", "error");
       }
@@ -640,25 +621,6 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
         location.reload();
       });
     } 
-
-    // if (success) {
-    //   // Update state
-    //   currentPresetName = newName;
-    //   if (window.presetMap[currentPresetId]) {
-    //     window.presetMap[currentPresetId].preset_name = newName;
-    //   }
-
-    //   // Update dropdown text
-    //   updatePresetDropdownName(currentPresetId, newName);
-
-    //   Swal.fire({
-    //     icon: "success",
-    //     title: "Preset Renamed",
-    //     text: `Preset has been renamed to "${newName}"`,
-    //     timer: 2000,
-    //     showConfirmButton: false
-    //   });
-    // }
     else {
       Swal.fire("Error", "Failed to rename preset", "error");
     }
@@ -700,18 +662,6 @@ async function savePreset(presetId, updateData) {
     return false;
   }
 }
-
-
-
-// // Update the dropdown option text for the renamed preset
-// function updatePresetDropdownName(id, newName) {
-//   const dropdown = document.getElementById("presetSelect");
-//   if (!dropdown) return;
-
-//   const option = [...dropdown.options].find(opt => opt.value === id);
-//   if (option) option.textContent = newName;
-// }
-
 
 
 
