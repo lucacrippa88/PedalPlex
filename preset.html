@@ -179,12 +179,21 @@ function loadZoom() {
 
 // Apply zoom to the current #preset element
 function applyZoom() {
-  const zoomTarget = document.getElementById("preset"); // always get fresh element
+  const zoomTarget = document.getElementById("preset");
   if (!zoomTarget) return;
-  zoomTarget.style.transform = `scale(${zoomLevel})`;
-  zoomTarget.style.transformOrigin = "top left";
-  saveZoom();
+
+  showZoomSpinner();
+
+  // Apply zoom with a tiny delay so spinner appears
+  setTimeout(() => {
+    zoomTarget.style.transform = `scale(${zoomLevel})`;
+    zoomTarget.style.transformOrigin = "top left";
+    saveZoom();
+
+    hideZoomSpinner();
+  }, 200); // 200ms spinner, tweak as needed
 }
+
 
 // Zoom buttons
 function zoomIn() {
@@ -219,6 +228,38 @@ document.getElementById("pedalboardSelect").addEventListener("change", () => {
 
 </script>
 
+
+
+
+
+<!-- Zoom spinner -->
+<div id="zoomSpinner" style="
+  display: none; 
+  position: fixed; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+  z-index: 10000; 
+  background: rgba(255,255,255,0.7); 
+  padding: 1rem; 
+  border-radius: 8px;">
+  <div class="bx--loading bx--loading--small" role="alert" aria-live="assertive" aria-label="Loading">
+    <svg class="bx--loading__svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+      <circle class="bx--loading__background" cx="50" cy="50" r="44" stroke-width="8"></circle>
+      <circle class="bx--loading__stroke" cx="50" cy="50" r="44" stroke-width="8"></circle>
+    </svg>
+  </div>
+</div>
+
+<script>
+function showZoomSpinner() {
+  document.getElementById("zoomSpinner").style.display = "block";
+}
+
+function hideZoomSpinner() {
+  document.getElementById("zoomSpinner").style.display = "none";
+}
+</script>
 
 
 
