@@ -134,6 +134,11 @@ function initPreset() {
                 currentPresetRev = preset._rev;
                 applyPresetToPedalboard(preset);
                 restoredPreset = true;
+
+                // Make Save button active
+                if (typeof updateSavePresetButtonState === 'function') {
+                  updateSavePresetButtonState();
+                }
               }
               break;
             }
@@ -523,6 +528,11 @@ function applyPresetToPedalboard(presetDoc) {
 
 
   savePedalboard(); // Save full pedalboard state after applying preset
+
+  // Enable save button after applying preset
+  if (typeof updateSavePresetButtonState === 'function') {
+    updateSavePresetButtonState();
+  }
 
 
 }
