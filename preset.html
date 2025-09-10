@@ -292,7 +292,21 @@ function hidePresetLoader() {
 }
 </script>
 
+<script>
+  function saveCurrentSelectionToStorage() {
+  const pedalboardSelect = document.getElementById('pedalboardSelect');
+  const presetSelect = document.getElementById('presetSelect');
 
+  if (pedalboardSelect) {
+    localStorage.setItem('lastPedalboardIndex', pedalboardSelect.selectedIndex);
+  }
+
+  if (presetSelect) {
+    localStorage.setItem('lastPresetName', presetSelect.value); // save by name
+  }
+}
+
+</script>
 
 </body>
 </html>
