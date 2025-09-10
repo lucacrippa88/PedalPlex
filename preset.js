@@ -119,38 +119,45 @@ function initPreset() {
         // fetchPresetsByBoardId(userId, window.pedalboard._id);
         fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
         // Restore preset selection by visible text
-        const savedPresetText = localStorage.getItem('lastPresetText');
-        if (savedPresetText) {
-          const presetSelect = document.getElementById('presetSelect');
-          let restoredPreset = false;
+// Restore preset selection by visible text
+const savedPresetText = localStorage.getItem('lastPresetText');
+if (savedPresetText) {
+  const presetSelect = document.getElementById('presetSelect');
+  let restoredPreset = false;
 
-          for (let i = 0; i < presetSelect.options.length; i++) {
-            if (presetSelect.options[i].text.trim() === savedPresetText) {
-              presetSelect.selectedIndex = i;
-              const preset = window.presetMap[presetSelect.options[i].value];
-              if (preset) {
-                currentPresetId = preset._id;
-                currentPresetName = preset.preset_name;
-                currentPresetRev = preset._rev;
-                applyPresetToPedalboard(preset);
-                restoredPreset = true;
+  for (let i = 0; i < presetSelect.options.length; i++) {
+    if (presetSelect.options[i].text.trim() === savedPresetText) {
+      presetSelect.selectedIndex = i;
+      const preset = window.presetMap[presetSelect.options[i].value];
+      if (preset) {
+        currentPresetId = preset._id;
+        currentPresetName = preset.preset_name;
+        currentPresetRev = preset._rev;
+        applyPresetToPedalboard(preset);
+        restoredPreset = true;
 
-                // Make Save button active
-                if (typeof updateSavePresetButtonState === 'function') {
-                  updateSavePresetButtonState();
-                }
-              }
-              break;
-            }
-          }
+        // ✅ Trigger change event so Save button is enabled
+        const event = new Event('change', { bubbles: true });
+        presetSelect.dispatchEvent(event);
+      }
+      break;
+    }
+  }
 
-          // fallback: select first real preset (skip placeholder)
-          if (!restoredPreset && presetSelect.options.length > 1) {
-            presetSelect.selectedIndex = 1;
-            const preset = window.presetMap[presetSelect.options[1].value];
-            if (preset) applyPresetToPedalboard(preset);
-          }
-        }
+  // fallback: select first real preset (skip placeholder)
+  if (!restoredPreset && presetSelect.options.length > 1) {
+    presetSelect.selectedIndex = 1;
+    const preset = window.presetMap[presetSelect.options[1].value];
+    if (preset) {
+      applyPresetToPedalboard(preset);
+
+      // ✅ Trigger change event
+      const event = new Event('change', { bubbles: true });
+      presetSelect.dispatchEvent(event);
+    }
+  }
+}
+
 
       });
       } else {
