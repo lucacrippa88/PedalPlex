@@ -1,6 +1,7 @@
-// Example: folders for current pedalboard
-let folders = []; // will store objects {id, name, preset_ids}
+// folders array
+let folders = []; // {id, name, preset_ids}
 
+// Populate folder dropdown
 function populateFolderDropdown() {
   const folderSelect = document.getElementById('folderSelect');
   folderSelect.innerHTML = '<option value="">-- Select Folder --</option>';
@@ -12,122 +13,102 @@ function populateFolderDropdown() {
   });
 }
 
-// Handle adding a new folder
-document.getElementById('addFolderBtn').addEventListener('click', async () => {
-  const folderName = await Swal.fire({
-    title: 'New Folder',
-    input: 'text',
-    inputLabel: 'Folder Name',
-    inputPlaceholder: 'Enter folder name',
-    showCancelButton: true,
-  });
+// Save folder to DB
+async function saveFolderToDB(folder) {
+  const pedalboardSelect = document.getElementById('pedalboardSelect');
+  const selectedIndex = parseInt(pedalboardSelect.value);
+  if (isNaN(selectedIndex) || !pedalboards[selectedIndex]) {
+    Swal.fire('Error', 'Please select a valid pedalboard', 'error');
+    return null;
+  }
+  const board_id = pedalboards[selectedIndex]._id;
 
-  if (folderName.isConfirmed && folderName.value.trim()) {
-    const newFolder = {
-      id: 'folder_' + Date.now(), // simple unique ID
-      name: folderName.value.trim(),
-      preset_ids: [],
-    };
-
-
-
-    
-
-  $('#createFldBtn').on('click', async () => {
-    const saved = await saveFolderToDB(newFolder);
-    if (saved) {
-      folders.push(newFolder);
-      populateFolderDropdown();
-      document.getElementById('folderSelect').value = newFolder.id;
-    }
-  });
-
-
-
-
-
-
-    // Save folder to DB here (pseudo-code)
-    async function saveFolderToDB(folder) {
   try {
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_FOLDER.php', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        _id: folder.id,
-        user_id: window.currentUser.user_id, // from your auth check
-        board_id: document.getElementById('pedalboardSelect').value,
-        name: folder.name
-      })
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `user_id=${encodeURIComponent(window.currentUser.user_id)}&board_id=${encodeURIComponent(board_id)}&name=${encodeURIComponent(folder.name)}`
     });
-
-    if (!res.ok) throw new Error('Failed to save folder');
-    return await res.json();
+    const result = await res.json();
+    if (result.ok) return result;
+    Swal.fire('Error', 'Could not save folder: ' + result.error, 'error');
+    return null;
   } catch (err) {
     console.error(err);
-    Swal.fire('Error', 'Could not save folder', 'error');
+    Swal.fire('Error', 'Network or server error', 'error');
     return null;
   }
 }
 
+// Handle adding a new folder
+document.addEventListener('DOMContentLoaded', () => {
+  const addFolderBtn = document.getElementById('addFolderBtn');
+  if (!addFolderBtn) return;
 
-    folders.push(newFolder);
-    populateFolderDropdown();
+  addFolderBtn.addEventListener('click', async () => {
+    const { value: folderName, isConfirmed } = await Swal.fire({
+      title: 'New Folder',
+      input: 'text',
+      inputLabel: 'Folder Name',
+      inputPlaceholder: 'Enter folder name',
+      showCancelButton: true,
+    });
 
-    // Auto-select the newly created folder
-    document.getElementById('folderSelect').value = newFolder.id;
-  }
-});
+    if (isConfirmed && folderName.trim()) {
+      const newFolder = {
+        id: 'folder_' + Date.now(),
+        name: folderName.trim(),
+        preset_ids: []
+      };
 
-
-
-
-// Handle renaming a folder
-document.getElementById('renameFolderBtn').addEventListener('click', async () => {
-  const folderSelect = document.getElementById('folderSelect');
-  const folderId = folderSelect.value;
-
-  if (!folderId) {
-    Swal.fire('Select Folder', 'Please select a folder to rename', 'info');
-    return;
-  }
-
-  const currentFolder = folders.find(f => f.id === folderId);
-  if (!currentFolder) return;
-
-  // SweetAlert prompt
-  const { value: newName, isConfirmed } = await Swal.fire({
-    title: 'Rename Folder',
-    input: 'text',
-    inputLabel: 'New folder name',
-    inputValue: currentFolder.name,
-    showCancelButton: true
+      const saved = await saveFolderToDB(newFolder);
+      if (saved) {
+        folders.push(newFolder);
+        populateFolderDropdown();
+        document.getElementById('folderSelect').value = newFolder.id;
+      }
+    }
   });
 
-  if (isConfirmed && newName.trim()) {
-    // Call API to rename folder
-    fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(newName.trim())}`
-    })
-    .then(res => res.json())
-    .then(result => {
+  // Handle renaming a folder
+  const renameFolderBtn = document.getElementById('renameFolderBtn');
+  if (!renameFolderBtn) return;
+
+  renameFolderBtn.addEventListener('click', async () => {
+    const folderSelect = document.getElementById('folderSelect');
+    const folderId = folderSelect.value;
+
+    if (!folderId) {
+      Swal.fire('Select Folder', 'Please select a folder to rename', 'info');
+      return;
+    }
+
+    const currentFolder = folders.find(f => f.id === folderId);
+    if (!currentFolder) return;
+
+    const { value: newName, isConfirmed } = await Swal.fire({
+      title: 'Rename Folder',
+      input: 'text',
+      inputLabel: 'New folder name',
+      inputValue: currentFolder.name,
+      showCancelButton: true
+    });
+
+    if (isConfirmed && newName.trim()) {
+      const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(newName.trim())}`
+      });
+      const result = await res.json();
       if (result.ok) {
-        // Update local folder array and dropdown
         currentFolder.name = newName.trim();
         populateFolderDropdown();
         folderSelect.value = folderId;
-
         Swal.fire('Success', 'Folder renamed successfully', 'success');
       } else {
         Swal.fire('Error', 'Could not rename folder: ' + result.error, 'error');
       }
-    })
-    .catch(err => {
-      console.error(err);
-      Swal.fire('Error', 'Network or server error', 'error');
-    });
-  }
+    }
+  });
 });
-
