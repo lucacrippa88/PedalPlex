@@ -89,10 +89,6 @@ function initPreset() {
       });
 
       if (data.docs.length > 0) {
-        // selectedBoardIndex = 0;
-        // dropdown.value = '0';
-
-        // window.pedalboard = window.allPedalboards[0];
         
         // Restore pedalboard selection if saved
         const savedBoardIndex = localStorage.getItem('lastPedalboardIndex');
@@ -584,4 +580,25 @@ async function createPreset() {
     console.error("Caught exception:", error);
     Swal.fire('Error', error.message || 'Network or server error.', 'error');
   }
+}
+
+
+
+
+
+// Spinners management
+
+function showZoomSpinner() {
+  document.getElementById("zoomSpinner").style.display = "block";
+}
+function hideZoomSpinner() {
+  document.getElementById("zoomSpinner").style.display = "none";
+}
+function showPresetLoader() {
+  document.getElementById("presetSelect").style.display = "none";
+  document.getElementById("presetSelectLoader").style.display = "flex";
+}
+function hidePresetLoader() {
+  document.getElementById("presetSelect").style.display = "inline-block";
+  document.getElementById("presetSelectLoader").style.display = "none";
 }
