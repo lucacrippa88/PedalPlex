@@ -90,39 +90,63 @@ function initPreset() {
 
       if (data.docs.length > 0) {
         
-        // Restore pedalboard selection if saved
-        const savedBoardIndex = localStorage.getItem('lastPedalboardIndex');
-        if (savedBoardIndex !== null && savedBoardIndex < data.docs.length) {
-          selectedBoardIndex = parseInt(savedBoardIndex, 10);
-          dropdown.value = savedBoardIndex;
-          window.pedalboard = window.allPedalboards[selectedBoardIndex];
-        } else {
+        // Restore pedalboard selection by saved text
+        const savedBoardText = localStorage.getItem('lastPedalboardText');
+        let restored = false;
+
+        if (savedBoardText) {
+          for (let i = 0; i < dropdown.options.length; i++) {
+            if (dropdown.options[i].text.trim() === savedBoardText) {
+              dropdown.selectedIndex = i;
+              selectedBoardIndex = parseInt(dropdown.options[i].value, 10);
+              window.pedalboard = window.allPedalboards[selectedBoardIndex];
+              restored = true;
+              break;
+            }
+          }
+        }
+        if (!restored) {
+          // fallback to first pedalboard
           selectedBoardIndex = 0;
-          dropdown.value = '0';
+          dropdown.selectedIndex = 1; // skip placeholder at index 0
           window.pedalboard = window.allPedalboards[0];
         }
+
 
         renderFullPedalboard();
 
         const userId = currentUser.userid;
         // fetchPresetsByBoardId(userId, window.pedalboard._id);
         fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
-        // After presets are loaded, restore preset selection
-        const savedPresetName = localStorage.getItem('lastPresetName');
-        if (savedPresetName) {
+        // Restore preset selection by visible text
+        const savedPresetText = localStorage.getItem('lastPresetText');
+        if (savedPresetText) {
           const presetSelect = document.getElementById('presetSelect');
-          const optionExists = Array.from(presetSelect.options).some(opt => opt.value === savedPresetName);
-          if (optionExists) {
-            presetSelect.value = savedPresetName;
-            const preset = window.presetMap[savedPresetName];
-            if (preset) {
-              currentPresetId = preset._id;
-              currentPresetName = preset.preset_name;
-              currentPresetRev = preset._rev;
-              applyPresetToPedalboard(preset);
+          let restoredPreset = false;
+
+          for (let i = 0; i < presetSelect.options.length; i++) {
+            if (presetSelect.options[i].text.trim() === savedPresetText) {
+              presetSelect.selectedIndex = i;
+              const preset = window.presetMap[presetSelect.options[i].value];
+              if (preset) {
+                currentPresetId = preset._id;
+                currentPresetName = preset.preset_name;
+                currentPresetRev = preset._rev;
+                applyPresetToPedalboard(preset);
+                restoredPreset = true;
+              }
+              break;
             }
           }
+
+          // fallback: select first real preset (skip placeholder)
+          if (!restoredPreset && presetSelect.options.length > 1) {
+            presetSelect.selectedIndex = 1;
+            const preset = window.presetMap[presetSelect.options[1].value];
+            if (preset) applyPresetToPedalboard(preset);
+          }
         }
+
       });
       } else {
         selectedBoardIndex = null;
