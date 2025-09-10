@@ -7,155 +7,17 @@ let currentPresetName = null;
 
 window.allPedalboards = [];
 
-// function initPreset() {
-
-
-//   const userId = window.currentUser?.userid;
-//   resultsDiv = document.getElementById("page-content");
-
-//   window.catalog = [];
-//   window.pedalboard = {
-//     pedals: []
-//   };
-
-//   window.presetMap = {};
-
-//   // Show loader overlay
-//   document.getElementById("pageLoader").style.display = "flex";
-
-//   // Load catalog
-//   fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
-//     .then(response => {
-//       if (!response.ok) throw new Error(`Catalog fetch failed: ${response.status}`);
-//       return response.json();
-//     })
-//     .then(catalog => {
-//       // resultsDiv.innerHTML = ""; // Clear loader
-//       window.catalog = catalog;
-
-//       window.catalogMap = {};
-//       catalog.forEach(pedal => {
-//         window.catalogMap[pedal._id] = pedal;
-//       });
-
-//       // Hide loader overlay once data is ready
-//       document.getElementById("pageLoader").style.display = "none";
-
-//       // Fetch pedalboard data
-//       return fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//           user_id: userId
-//         })
-//       });
-//     })
-//     .then(response => {
-//       if (!response.ok) throw new Error(`Pedalboard fetch failed: ${response.status}`);
-//       return response.json();
-//     })
-//     .then(data => {
-//       if (!data.docs || !Array.isArray(data.docs) || data.docs.length === 0) {
-//         renderFullPedalboard(); // Render empty if no boards
-//         return;
-//       }
-
-//       // Sort pedalboards alphabetically by board_name, case-insensitive
-//       data.docs.sort((a, b) => {
-//         const nameA = (a.board_name || '').toLowerCase();
-//         const nameB = (b.board_name || '').toLowerCase();
-//         return nameA.localeCompare(nameB);
-//       });
-
-//       window.allPedalboards = data.docs; // Store all pedalboards here
-
-//       const dropdown = document.getElementById('pedalboardSelect');
-//       dropdown.innerHTML = '';
-
-//       // Add placeholder
-//       const placeholderOption = document.createElement('option');
-//       placeholderOption.value = '';
-//       placeholderOption.textContent = 'Select a pedalboard...';
-//       placeholderOption.disabled = true;
-//       dropdown.appendChild(placeholderOption);
-
-//       data.docs.forEach((board, index) => {
-//         const option = document.createElement('option');
-//         option.value = index;
-//         option.textContent = board.board_name || `Pedalboard ${index + 1}`;
-//         dropdown.appendChild(option);
-//       });
-
-//       if (data.docs.length > 0) {
-//         // selectedBoardIndex = 0;
-//         // dropdown.value = '0';
-
-//         // window.pedalboard = window.allPedalboards[0];
-        
-//         // Restore pedalboard selection if saved
-//         const savedBoardIndex = localStorage.getItem('lastPedalboardIndex');
-//         if (savedBoardIndex !== null && savedBoardIndex < data.docs.length) {
-//           selectedBoardIndex = parseInt(savedBoardIndex, 10);
-//           dropdown.value = savedBoardIndex;
-//           window.pedalboard = window.allPedalboards[selectedBoardIndex];
-//         } else {
-//           selectedBoardIndex = 0;
-//           dropdown.value = '0';
-//           window.pedalboard = window.allPedalboards[0];
-//         }
-
-//         renderFullPedalboard();
-
-//         const userId = currentUser.userid;
-//         // fetchPresetsByBoardId(userId, window.pedalboard._id);
-//         fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
-//         // After presets are loaded, restore preset selection
-//         const savedPresetName = localStorage.getItem('lastPresetName');
-//         if (savedPresetName) {
-//           const presetSelect = document.getElementById('presetSelect');
-//           const optionExists = Array.from(presetSelect.options).some(opt => opt.value === savedPresetName);
-//           if (optionExists) {
-//             presetSelect.value = savedPresetName;
-//             const preset = window.presetMap[savedPresetName];
-//             if (preset) {
-//               currentPresetId = preset._id;
-//               currentPresetName = preset.preset_name;
-//               currentPresetRev = preset._rev;
-//               applyPresetToPedalboard(preset);
-//             }
-//           }
-//         }
-//       });
-//       } else {
-//         selectedBoardIndex = null;
-//         window.pedalboard = {
-//           pedals: []
-//         };
-//         renderFullPedalboard();
-//       }
-
-//       dropdown.addEventListener('change', (e) => {
-//         selectedBoardIndex = parseInt(e.target.value, 10);
-//         window.pedalboard = window.allPedalboards[selectedBoardIndex];
-//         renderFullPedalboard();
-
-//         const userId = currentUser.userid;
-//         fetchPresetsByBoardId(userId, window.pedalboard._id);
-//       });
-//     })
-//     .catch(error => {
-//       console.error('Error:', error.message || error);
-//     });
-// }
-
 function initPreset() {
+
+
   const userId = window.currentUser?.userid;
   resultsDiv = document.getElementById("page-content");
 
   window.catalog = [];
-  window.pedalboard = { pedals: [] };
+  window.pedalboard = {
+    pedals: []
+  };
+
   window.presetMap = {};
 
   // Show loader overlay
@@ -168,20 +30,26 @@ function initPreset() {
       return response.json();
     })
     .then(catalog => {
+      // resultsDiv.innerHTML = ""; // Clear loader
       window.catalog = catalog;
+
       window.catalogMap = {};
       catalog.forEach(pedal => {
         window.catalogMap[pedal._id] = pedal;
       });
 
-      // Hide loader
+      // Hide loader overlay once data is ready
       document.getElementById("pageLoader").style.display = "none";
 
-      // Fetch pedalboards
+      // Fetch pedalboard data
       return fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId })
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: userId
+        })
       });
     })
     .then(response => {
@@ -189,20 +57,22 @@ function initPreset() {
       return response.json();
     })
     .then(data => {
-      const dropdown = document.getElementById('pedalboardSelect');
-      dropdown.innerHTML = '';
-
       if (!data.docs || !Array.isArray(data.docs) || data.docs.length === 0) {
-        renderFullPedalboard(); // Empty if no boards
+        renderFullPedalboard(); // Render empty if no boards
         return;
       }
 
-      // Sort alphabetically
-      data.docs.sort((a, b) =>
-        (a.board_name || '').toLowerCase().localeCompare((b.board_name || '').toLowerCase())
-      );
+      // Sort pedalboards alphabetically by board_name, case-insensitive
+      data.docs.sort((a, b) => {
+        const nameA = (a.board_name || '').toLowerCase();
+        const nameB = (b.board_name || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
 
-      window.allPedalboards = data.docs;
+      window.allPedalboards = data.docs; // Store all pedalboards here
+
+      const dropdown = document.getElementById('pedalboardSelect');
+      dropdown.innerHTML = '';
 
       // Add placeholder
       const placeholderOption = document.createElement('option');
@@ -211,7 +81,6 @@ function initPreset() {
       placeholderOption.disabled = true;
       dropdown.appendChild(placeholderOption);
 
-      // Populate
       data.docs.forEach((board, index) => {
         const option = document.createElement('option');
         option.value = index;
@@ -219,37 +88,34 @@ function initPreset() {
         dropdown.appendChild(option);
       });
 
-      // ✅ Restore pedalboard by saved name
-      const savedBoardName = localStorage.getItem('lastPedalboardName');
-      let selectedBoard = null;
+      if (data.docs.length > 0) {
+        // selectedBoardIndex = 0;
+        // dropdown.value = '0';
 
-      if (savedBoardName) {
-        const foundIndex = data.docs.findIndex(b => b.board_name === savedBoardName);
-        if (foundIndex !== -1) {
-          selectedBoardIndex = foundIndex;
-          dropdown.value = foundIndex;
-          selectedBoard = data.docs[foundIndex];
+        // window.pedalboard = window.allPedalboards[0];
+        
+        // Restore pedalboard selection if saved
+        const savedBoardIndex = localStorage.getItem('lastPedalboardIndex');
+        if (savedBoardIndex !== null && savedBoardIndex < data.docs.length) {
+          selectedBoardIndex = parseInt(savedBoardIndex, 10);
+          dropdown.value = savedBoardIndex;
+          window.pedalboard = window.allPedalboards[selectedBoardIndex];
+        } else {
+          selectedBoardIndex = 0;
+          dropdown.value = '0';
+          window.pedalboard = window.allPedalboards[0];
         }
-      }
 
-      // Default to first if nothing saved
-      if (!selectedBoard) {
-        selectedBoardIndex = 0;
-        dropdown.value = '0';
-        selectedBoard = data.docs[0];
-      }
+        renderFullPedalboard();
 
-      window.pedalboard = selectedBoard;
-      renderFullPedalboard();
-
-      // Load presets for this board
-      fetchPresetsByBoardId(userId, selectedBoard._id, () => {
-        // ✅ Restore preset by name
+        const userId = currentUser.userid;
+        // fetchPresetsByBoardId(userId, window.pedalboard._id);
+        fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
+        // After presets are loaded, restore preset selection
         const savedPresetName = localStorage.getItem('lastPresetName');
         if (savedPresetName) {
           const presetSelect = document.getElementById('presetSelect');
           const optionExists = Array.from(presetSelect.options).some(opt => opt.value === savedPresetName);
-
           if (optionExists) {
             presetSelect.value = savedPresetName;
             const preset = window.presetMap[savedPresetName];
@@ -262,28 +128,27 @@ function initPreset() {
           }
         }
       });
+      } else {
+        selectedBoardIndex = null;
+        window.pedalboard = {
+          pedals: []
+        };
+        renderFullPedalboard();
+      }
 
-      // Handle manual pedalboard changes
       dropdown.addEventListener('change', (e) => {
         selectedBoardIndex = parseInt(e.target.value, 10);
-        const newBoard = window.allPedalboards[selectedBoardIndex];
-        window.pedalboard = newBoard;
+        window.pedalboard = window.allPedalboards[selectedBoardIndex];
         renderFullPedalboard();
 
-        // Save selection by text
-        const selectedText = dropdown.options[dropdown.selectedIndex].textContent;
-        localStorage.setItem('lastPedalboardName', selectedText);
-
-        fetchPresetsByBoardId(userId, newBoard._id, () => {
-          localStorage.removeItem('lastPresetName'); // reset preset if board changes
-        });
+        const userId = currentUser.userid;
+        fetchPresetsByBoardId(userId, window.pedalboard._id);
       });
     })
     .catch(error => {
       console.error('Error:', error.message || error);
     });
 }
-
 
 
 
