@@ -169,7 +169,6 @@ function initNavPreset() {
   $('#createPstBtn').on('click', async () => {
     await createPreset();
   });
-}
 
 
 
@@ -248,3 +247,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+
+}
+
+
+
+
