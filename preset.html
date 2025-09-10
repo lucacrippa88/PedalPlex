@@ -50,12 +50,21 @@
       <!-- Pedalboard selection -->
       <select id="pedalboardSelect"></select>
       <!-- Folder selection -->
-      <div id="folderSelectContainer" style="margin-left: 16px; display: flex; align-items: center; gap: 4px;">
-        <select id="folderSelect">
-          <option value="">-- Select Folder --</option>
-        </select>
-        <button id="addFolderBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button">+ Folder</button>
+      <div id="folderSelectContainer" style="margin-left: 16px;">
+        <select id="folderSelect"></select>
+        <div id="folderSelectLoader" class="bx--inline-loading" style="display:none;" aria-live="assertive" role="alert">
+          <div class="bx--inline-loading__animation">
+            <div data-inline-loading-spinner class="bx--loading bx--loading--small">
+              <svg class="bx--loading__svg" viewBox="0 0 100 100">
+                <circle class="bx--loading__background" cx="50" cy="50" r="44"></circle>
+                <circle class="bx--loading__stroke" cx="50" cy="50" r="44"></circle>
+              </svg>
+            </div>
+          </div>
+          <p data-inline-loading-text-active class="bx--inline-loading__text">Loading folders...</p>
+        </div>
       </div>
+      <button id="renameFolderBtn" class="bx--btn bx--btn--secondary" type="button">Edit</button>
       <!-- Preset selection -->
       <div id="presetSelectContainer" style="margin-left: 16px;">
         <select id="presetSelect"></select>
@@ -71,7 +80,6 @@
           <p data-inline-loading-text-active class="bx--inline-loading__text">Loading presets...</p>
         </div>
       </div>
-
       <button id="renamePresetBtn" class="bx--btn bx--btn--secondary" type="button">Edit</button>
     </div>
 
