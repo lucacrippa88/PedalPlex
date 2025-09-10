@@ -134,9 +134,14 @@ if (savedPresetText) {
         currentPresetName = preset.preset_name;
         currentPresetRev = preset._rev;
         applyPresetToPedalboard(preset);
+
+        // Restore zoom now that preset is applied
+        if (typeof restoreZoomForCurrentBoard === "function") {
+          restoreZoomForCurrentBoard();
+        }
         restoredPreset = true;
 
-        // ✅ Trigger change event so Save button is enabled
+        // Trigger change event so Save button is enabled
         const event = new Event('change', { bubbles: true });
         presetSelect.dispatchEvent(event);
       }
@@ -151,7 +156,12 @@ if (savedPresetText) {
     if (preset) {
       applyPresetToPedalboard(preset);
 
-      // ✅ Trigger change event
+      // Restore zoom now that preset is applied
+      if (typeof restoreZoomForCurrentBoard === "function") {
+        restoreZoomForCurrentBoard();
+      }
+
+      // Trigger change event
       const event = new Event('change', { bubbles: true });
       presetSelect.dispatchEvent(event);
     }
