@@ -16,21 +16,29 @@ function populateFolderDropdown() {
 // Save folder to DB
 async function saveFolderToDB(folder) {
   const pedalboardSelect = document.getElementById('pedalboardSelect');
-  const selectedIndex = parseInt(pedalboardSelect.value);
-  if (isNaN(selectedIndex) || !pedalboards[selectedIndex]) {
+  const selectedIndex = parseInt(pedalboardSelect.value, 10);
+
+  if (
+    isNaN(selectedIndex) ||
+    !window.allPedalboards ||
+    !window.allPedalboards[selectedIndex]
+  ) {
     Swal.fire('Error', 'Please select a valid pedalboard', 'error');
     return null;
   }
-  const board_id = pedalboards[selectedIndex]._id;
+
+  const board_id = window.allPedalboards[selectedIndex]._id;
 
   try {
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_FOLDER.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `user_id=${encodeURIComponent(window.currentUser.user_id)}&board_id=${encodeURIComponent(board_id)}&name=${encodeURIComponent(folder.name)}`
+      body: `user_id=${encodeURIComponent(window.currentUser.userid)}&board_id=${encodeURIComponent(board_id)}&name=${encodeURIComponent(folder.name)}`
     });
+
     const result = await res.json();
     if (result.ok) return result;
+
     Swal.fire('Error', 'Could not save folder: ' + result.error, 'error');
     return null;
   } catch (err) {
@@ -39,5 +47,6 @@ async function saveFolderToDB(folder) {
     return null;
   }
 }
+
 
 
