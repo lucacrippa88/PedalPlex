@@ -824,8 +824,8 @@ function applyPresetToPedalboard(presetDoc) {
 
 
 
+// Create preset logic (folder-aware)
 async function createPreset() {
-  // 1️⃣ Prompt for preset name
   const { value: presetName } = await Swal.fire({
     title: 'Enter new preset name',
     input: 'text',
@@ -841,7 +841,7 @@ async function createPreset() {
     }
   });
 
-  if (!presetName) return; // cancelled or empty
+  if (!presetName) return; // Cancelled or empty
 
   const userId = currentUser.userid;
   const selectedBoardId = $('#pedalboardSelect').val();
@@ -852,29 +852,6 @@ async function createPreset() {
     return;
   }
 
-  // 2️⃣ Prompt for folder assignment (optional)
-  await window.loadFoldersForCurrentPedalboard(true); // ensure folders are loaded for Swal
-  const folderOptions = window.folders.map(f => {
-    return `<option value="${f.id}">${f.name}</option>`;
-  }).join("");
-
-  const { value: folderId } = await Swal.fire({
-    title: 'Assign to folder (optional)',
-    html: `
-      <select id="presetFolderSelect" class="swal2-select">
-        <option value="">-- No folder --</option>
-        ${folderOptions}
-      </select>
-    `,
-    showCancelButton: true,
-    showConfirmButton: true,
-    confirmButtonText: 'Create',
-    preConfirm: () => {
-      return document.getElementById('presetFolderSelect').value;
-    }
-  });
-
-  // 3️⃣ Create preset object
   const bodyData = {
     user_id: userId,
     board_name: selectedBoard.board_name,
@@ -884,7 +861,6 @@ async function createPreset() {
   };
 
   try {
-    // 4️⃣ Send create request to server
     const response = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -902,53 +878,28 @@ async function createPreset() {
       return;
     }
 
-    const newPresetId = data.preset_id || data._id; // ensure we have the preset ID
+    const newPresetId = data._id || data.preset_id;
 
-    // 5️⃣ If user selected a folder, update its preset_ids
-    if (folderId) {
-      const folder = window.folders.find(f => f.id === folderId);
-      if (folder) {
-        folder.preset_ids = folder.preset_ids || [];
-        folder.preset_ids.push(newPresetId);
-
-        const formData = new URLSearchParams();
-        formData.append('folder_id', folder.id);
-        formData.append('preset_ids', JSON.stringify(folder.preset_ids));
-
-        try {
-          const updateRes = await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: formData.toString()
-          });
-
-          const updateData = await updateRes.json();
-          if (!updateData.ok) {
-            console.warn("Failed to assign preset to folder:", updateData.error);
-          } else {
-            folder.preset_ids = folder.preset_ids; // keep in memory
-          }
-        } catch (err) {
-          console.error("Error updating folder:", err);
-        }
-      }
+    // --- FOLDER ASSIGNMENT ---
+    const selectedFolderId = $('#folderSelect').val(); // folder user selected
+    if (selectedFolderId) {
+      await assignPresetToFolder(newPresetId, selectedFolderId);
     }
 
-    // 6️⃣ Show success and reload
     Swal.fire({
       title: 'Success',
       text: `Preset "${presetName}" created.`,
       icon: 'success',
       timer: 2000,
       showConfirmButton: false
-    }).then(() => location.reload());
+    }).then(() => window.location.reload());
 
   } catch (error) {
     console.error("Caught exception:", error);
     Swal.fire('Error', error.message || 'Network or server error.', 'error');
   }
 
-  savePedalboard(); // optional: save current board state
+  savePedalboard();
 }
 
 
@@ -967,5 +918,36 @@ function savePedalboard() {
       console.log(`Pedalboard saved: ${boardId}`);
     } catch (err) {
       console.error("Failed to save pedalboard:", err);
+  }
+}
+
+
+
+
+
+async function assignPresetToFolder(presetId, folderId) {
+  if (!folderId) return; // nothing to do
+  const folder = window.folders.find(f => f.id === folderId || f._id === folderId);
+  if (!folder) return;
+
+  folder.preset_ids = folder.preset_ids || [];
+  if (!folder.preset_ids.includes(presetId)) {
+    folder.preset_ids.push(presetId);
+  }
+
+  const formData = new URLSearchParams();
+  formData.append('folder_id', folder.id || folder._id);
+  formData.append('preset_ids', JSON.stringify(folder.preset_ids));
+
+  try {
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString()
+    });
+    const result = await res.json();
+    if (!result.ok) console.error('Failed to update folder:', result.error);
+  } catch (err) {
+    console.error('Error updating folder:', err);
   }
 }
