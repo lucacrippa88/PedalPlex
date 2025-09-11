@@ -914,6 +914,9 @@ async function createPreset() {
     .then(() => window.location.reload());
 
   savePedalboard();
+
+  console.log('CREATE_PRESET response:', data);
+
 }
 
 
