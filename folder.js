@@ -156,25 +156,31 @@ function attachRenameFolderListener() {
 }
 
 // ---------------------------
-// Fetch folders for the current pedalboard (robust with logging)
+// Fetch folders for the current pedalboard
+// Supports both main page dropdown and Swal usage
 // ---------------------------
-async function loadFoldersForCurrentPedalboard() {
+async function loadFoldersForCurrentPedalboard(forSwal = false) {
   console.log('[folders] loadFoldersForCurrentPedalboard called', {
     currentUser: window.currentUser,
-    pedalboard: window.pedalboard
+    pedalboard: window.pedalboard,
+    forSwal
   });
 
   if (!window.currentUser || !window.pedalboard || !window.pedalboard._id) {
     console.warn('[folders] Missing currentUser or pedalboard/_id — aborting loadFoldersForCurrentPedalboard');
-    folders = [];
-    populateFolderDropdown();
+    window.folders = [];
+    if (!forSwal) populateFolderDropdown();
     return;
   }
 
-  const loader = document.getElementById('folderSelectLoader');
-  const folderSelect = document.getElementById('folderSelect');
-  if (loader) loader.style.display = 'flex';
-  if (folderSelect) folderSelect.style.display = 'none';
+  // Only manipulate DOM loader & main dropdown if NOT for Swal
+  let loader, folderSelect;
+  if (!forSwal) {
+    loader = document.getElementById('folderSelectLoader');
+    folderSelect = document.getElementById('folderSelect');
+    if (loader) loader.style.display = 'flex';
+    if (folderSelect) folderSelect.style.display = 'none';
+  }
 
   try {
     const payload = {
@@ -201,32 +207,26 @@ async function loadFoldersForCurrentPedalboard() {
       data = null;
     }
 
-    // Normalize response into `folders` array, handling multiple possible server shapes
+    // Normalize response into `folders` array
     if (!data) {
-      folders = [];
+      window.folders = [];
     } else if (Array.isArray(data.folders)) {
-      folders = data.folders;
+      window.folders = data.folders;
     } else if (Array.isArray(data.docs)) {
-      // older code returned docs => adapt
-      folders = data.docs;
+      window.folders = data.docs;
     } else if (Array.isArray(data)) {
-      // server might return plain array
-      folders = data;
+      window.folders = data;
     } else if (data.error) {
       console.error('[folders] Server returned error:', data.error);
-      folders = [];
+      window.folders = [];
     } else {
-      // unknown shape — make best attempt to extract any array-valued fields
       const possible = data.folders || data.docs || Object.values(data).find(v => Array.isArray(v));
-      if (Array.isArray(possible)) folders = possible;
-      else folders = [];
+      window.folders = Array.isArray(possible) ? possible : [];
     }
 
     // Ensure each folder has { id, name, preset_ids }
-    folders = folders.map(f => {
-      // if the item is a string, treat it as name
+    window.folders = window.folders.map(f => {
       if (typeof f === 'string') return { id: '', name: f, preset_ids: [] };
-
       return {
         id: (f.id || f._id || f['_id'] || ''),
         name: (f.name || f.folder_name || f.title || ''),
@@ -234,18 +234,24 @@ async function loadFoldersForCurrentPedalboard() {
       };
     });
 
-    console.log('[folders] normalized folders:', folders);
+    console.log('[folders] normalized folders:', window.folders);
 
-    populateFolderDropdown();
+    // Only update main page dropdown if NOT for Swal
+    if (!forSwal) populateFolderDropdown();
   } catch (err) {
     console.error('[folders] Error fetching folders:', err);
-    folders = [];
-    populateFolderDropdown();
+    window.folders = [];
+    if (!forSwal) populateFolderDropdown();
   } finally {
-    if (loader) loader.style.display = 'none';
-    if (folderSelect) folderSelect.style.display = 'inline-block';
+    if (!forSwal) {
+      if (loader) loader.style.display = 'none';
+      if (folderSelect) folderSelect.style.display = 'inline-block';
+    }
   }
 }
+
+
+
 
 // Expose globally (keep your existing API)
 window.attachAddFolderListener = attachAddFolderListener;
