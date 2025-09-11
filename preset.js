@@ -824,7 +824,6 @@ function applyPresetToPedalboard(presetDoc) {
 
 
 
-
 async function createPreset() {
   // 1️⃣ Prompt for preset name
   const { value: presetName } = await Swal.fire({
@@ -892,6 +891,7 @@ async function createPreset() {
       folder.preset_ids = folder.preset_ids || [];
       if (!folder.preset_ids.includes(newPresetId)) folder.preset_ids.push(newPresetId);
 
+      // Send preset_ids as JSON string — PHP will decode it
       const formData = new URLSearchParams();
       formData.append('folder_id', folder.id || folder._id);
       formData.append('preset_ids', JSON.stringify(folder.preset_ids));
@@ -903,33 +903,18 @@ async function createPreset() {
           body: formData.toString()
         });
         const result = await res2.json();
-        if (!result.ok) {
-          console.error('Failed to update folder:', result.error);
-          Swal.fire('Warning', 'Preset created but folder update failed.', 'warning');
-        }
+        if (!result.ok) console.error('Failed to update folder:', result.error);
       } catch (err) {
         console.error('Error updating folder:', err);
-        Swal.fire('Warning', 'Preset created but folder update failed.', 'warning');
       }
     }
   }
 
-  // 5️⃣ Add preset to pedalboard object
-  window.pedalboard.presets = window.pedalboard.presets || [];
-  if (!window.pedalboard.presets.includes(newPresetId)) {
-    window.pedalboard.presets.push(newPresetId);
-  }
-
-  // 6️⃣ Persist pedalboard
-  if (typeof savePedalboard === 'function') {
-    await savePedalboard();
-  }
-
-  // 7️⃣ Update UI / reload
-  Swal.fire('Success', `Preset "${presetName}" created${selectedFolderId ? ' and added to folder.' : '.'}`, 'success')
+  Swal.fire('Success', `Preset "${presetName}" created${selectedFolderId ? ` and added to folder.` : '.'}`, 'success')
     .then(() => window.location.reload());
-}
 
+  savePedalboard();
+}
 
 
 
