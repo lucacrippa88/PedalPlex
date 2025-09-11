@@ -823,6 +823,18 @@ function populatePresetDropdownByFolder(folderId) {
         presetSelect.appendChild(opt);
     });
 
+    // Auto-select the first preset if available, so rename/delete works immediately
+    if (filteredPresets.length > 0) {
+      const firstPreset = filteredPresets[0];
+      currentPresetId = firstPreset._id;
+      currentPresetName = firstPreset.preset_name;
+      currentPresetRev = firstPreset._rev;
+
+      // update dropdown selection to match
+      document.getElementById('presetSelect').value = firstPreset._id;
+    }
+
+
     // Enable/disable Save button
     const saveBtn = document.getElementById('savePstBtn');
     if (saveBtn) saveBtn.disabled = filteredPresets.length === 0;

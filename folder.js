@@ -69,6 +69,13 @@ function populateFolderDropdown() {
     const ev = new Event('change', { bubbles: true });
     folderSelect.dispatchEvent(ev);
   };
+
+    // Always add a synthetic "Default" entry at the top
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "default";
+    defaultOption.textContent = "Default (unassigned)";
+    folderSelect.insertBefore(defaultOption, folderSelect.firstChild);
+
 }
 
 // ---------------------------
