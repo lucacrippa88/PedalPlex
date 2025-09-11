@@ -5,9 +5,7 @@
 // Store folders locally
 let folders = []; // {id, name, preset_ids}
 
-// ---------------------------
 // Populate folder dropdown
-// ---------------------------
 function populateFolderDropdown() {
   const folderSelect = document.getElementById('folderSelect');
   if (!folderSelect) return;
@@ -15,7 +13,7 @@ function populateFolderDropdown() {
   folderSelect.innerHTML = '<option value="">-- Select Folder --</option>';
   folders.forEach(f => {
     const opt = document.createElement('option');
-    opt.value = f._id || f.id; // support Cloudant _id
+    opt.value = f.id;
     opt.textContent = f.name;
     folderSelect.appendChild(opt);
   });
@@ -155,30 +153,35 @@ function attachRenameFolderListener() {
 async function loadFoldersForCurrentPedalboard() {
   if (!window.currentUser || !window.pedalboard || !window.pedalboard._id) return;
 
+  const loader = document.getElementById('folderSelectLoader');
+  if (loader) loader.style.display = 'flex';
+
   try {
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_FOLDERS.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         user_id: window.currentUser.userid,
-        board_id: window.pedalboard._id 
+        board_id: window.pedalboard._id
       })
     });
 
     const data = await res.json();
+
     if (data.error) {
       console.error('Failed to load folders:', data.error);
       folders = [];
-      populateFolderDropdown();
-      return;
+    } else {
+      folders = data.folders || [];
     }
 
-    folders = data.docs || [];
     populateFolderDropdown();
   } catch (err) {
     console.error('Error fetching folders:', err);
     folders = [];
     populateFolderDropdown();
+  } finally {
+    if (loader) loader.style.display = 'none';
   }
 }
 
