@@ -308,6 +308,9 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     return;
   }
 
+  // Ensure we use the actual preset name for the Swal input
+  currentPresetName = preset.preset_name || '';
+
   // Load folders only if not already loaded
   if (!window.folders || window.folders.length === 0) {
     await window.loadFoldersForCurrentPedalboard(true); // true = don't touch main dropdown
