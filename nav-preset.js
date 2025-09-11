@@ -9,12 +9,12 @@ function initNavPreset() {
       </svg>
     </button>
 
-    <div class="title">PedalPlex</div><span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Presets</span>
+    <div class="title">PedalPlex</div>
+    <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Presets</span>
   </div>
 
-  <!-- Right: search toggle, input, create button -->
+  <!-- Right: buttons -->
   <div style="display: flex; align-items: center; gap: 1rem;">
-
     <button
       id="savePstBtn"
       class="bx--btn bx--btn--primary bx--btn--sm"
@@ -76,19 +76,17 @@ function initNavPreset() {
         class="bx--btn__icon">
         <path d="M26 20L24 20 24 24 20 24 20 26 24 26 24 30 26 30 26 26 30 26 30 24 26 24z" stroke="currentColor"/>
         <path d="M28,8H16l-3.4-3.4C12.2,4.2,11.7,4,11.2,4H4C2.9,4,2,4.9,2,6v20c0,1.1,0.9,2,2,2h14v-2H4V6h7.2l3.4,3.4l0.6,0.6H28v8h2v-8 C30,8.9,29.1,8,28,8z" stroke="currentColor"/>
-        </svg>
+      </svg>
       Add folder
     </button>
-
   </div>
-
 </header>
 `;
 
   $("body").prepend(navHtml);
   $("body").append(window.fullscreenMenuHtml);
 
-  // Fullscreen menu toggle with quote
+  // Fullscreen menu toggle
   $("#menuToggle").on("click", function () {
     const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
     $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
@@ -99,6 +97,7 @@ function initNavPreset() {
     $("#fullscreenMenu").removeClass("active");
   });
 
+  // Preset filter toggle
   $("#toggleFilterBtn").on("click", function () {
     const input = $("#pedalFilterInput");
     input.is(":visible") ? input.hide().val("") : input.show().focus();
@@ -114,35 +113,27 @@ function initNavPreset() {
     $('#savePstBtn').prop('disabled', !selected || selected.trim() === '');
   }
 
-  // Listen for changes to the preset dropdown and update Save button state
   $(document).ready(() => {
     updateSavePresetButtonState();
     $('#presetSelect').on('change input', updateSavePresetButtonState);
   });
 
-
-
-
+  // Save preset
   $('#savePstBtn').on('click', async () => {
     const presetName = $('#presetSelect').val() || "Untitled Preset";
     const result = collectPedalControlValues(presetName);
     const pedalArray = result[presetName];
 
-    if (!pedalArray || pedalArray.length === 0) {
-      console.warn("Pedals data missing in result:", result);
-      return;
-    }
+    if (!pedalArray || pedalArray.length === 0) return;
 
     const pedalsObject = {};
     for (const pedal of pedalArray) {
       if (!pedal.id) continue;
-
       const flatControls = {};
       for (const ctrl of pedal.controls) {
         const key = Object.keys(ctrl)[0];
         flatControls[key] = ctrl[key];
       }
-
       pedalsObject[pedal.id] = { controls: flatControls };
     }
 
@@ -152,57 +143,33 @@ function initNavPreset() {
     });
 
     if (success) {
-      Swal.fire({
-        icon: "success",
-        title: "Preset Saved",
-        text: `Preset "${presetName}" was successfully updated.`,
-        timer: 2000,
-        showConfirmButton: false
-      }).then(() => {
-        location.reload();
-      });
+      Swal.fire({ icon: "success", title: "Preset Saved", text: `Preset "${presetName}" was successfully updated.`, timer: 2000, showConfirmButton: false })
+      .then(() => location.reload());
     } else {
       Swal.fire("Error", "Failed to save preset", "error");
     }
   });
 
+  // Create preset
   $('#createPstBtn').on('click', async () => {
     await createPreset();
   });
 
+  // Folder listeners
+  if (window.attachAddFolderListener) window.attachAddFolderListener();
+  if (window.attachRenameFolderListener) window.attachRenameFolderListener();
 
+  // Pedalboard change
+  $('#pedalboardSelect').on('change', (e) => {
+    selectedBoardIndex = parseInt(e.target.value, 10);
+    window.pedalboard = window.allPedalboards[selectedBoardIndex];
+    renderFullPedalboard();
 
+    const userId = currentUser.userid;
+    fetchPresetsByBoardId(userId, window.pedalboard._id);
 
-  // Call folder.js hook to attach event listener
-  if (window.attachAddFolderListener) {
-    window.attachAddFolderListener();
-  }
-
-  // Attach folder rename listener
-if (window.attachRenameFolderListener) {
-  window.attachRenameFolderListener();
+    if (window.loadFoldersForCurrentPedalboard) {
+      window.loadFoldersForCurrentPedalboard();
+    }
+  });
 }
-
-
-$('#pedalboardSelect').on('change', (e) => {
-  selectedBoardIndex = parseInt(e.target.value, 10);
-  window.pedalboard = window.allPedalboards[selectedBoardIndex];
-  renderFullPedalboard();
-
-  const userId = currentUser.userid;
-  fetchPresetsByBoardId(userId, window.pedalboard._id);
-
-  // Fetch folders for the newly selected pedalboard
-  if (window.loadFoldersForCurrentPedalboard) {
-    window.loadFoldersForCurrentPedalboard();
-  }
-});
-
-
-
-
-}
-
-
-
-

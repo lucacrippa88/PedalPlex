@@ -15,7 +15,7 @@ function populateFolderDropdown() {
   folderSelect.innerHTML = '<option value="">-- Select Folder --</option>';
   folders.forEach(f => {
     const opt = document.createElement('option');
-    opt.value = f.id;
+    opt.value = f._id || f.id; // support Cloudant _id
     opt.textContent = f.name;
     folderSelect.appendChild(opt);
   });
@@ -76,17 +76,16 @@ function attachAddFolderListener() {
 
     if (isConfirmed && folderName.trim()) {
       const newFolder = {
-        id: 'folder_' + Date.now(),
         name: folderName.trim(),
         preset_ids: []
       };
 
       const saved = await saveFolderToDB(newFolder, board._id);
       if (saved) {
-        folders.push(newFolder);
+        folders.push(saved); // use Cloudant response
         populateFolderDropdown();
         const folderSelect = document.getElementById('folderSelect');
-        if (folderSelect) folderSelect.value = newFolder.id;
+        if (folderSelect) folderSelect.value = saved.id || saved._id;
 
         Swal.fire('Success', `Folder "${newFolder.name}" created for "${boardName}"`, 'success');
       }
@@ -109,14 +108,13 @@ function attachRenameFolderListener() {
     }
 
     const folderId = folderSelect.value;
-    const folder = folders.find(f => f.id === folderId);
+    const folder = folders.find(f => (f._id || f.id) === folderId);
     if (!folder) {
       Swal.fire('Error', 'Selected folder not found.', 'error');
       return;
     }
 
     const boardName = window.pedalboard?.board_name || 'Unnamed Pedalboard';
-
     const { value: newName, isConfirmed } = await Swal.fire({
       title: `Rename folder for "${boardName}"`,
       input: 'text',
@@ -175,7 +173,7 @@ async function loadFoldersForCurrentPedalboard() {
       return;
     }
 
-    folders = data.docs || []; // Use Cloudant's docs array
+    folders = data.docs || [];
     populateFolderDropdown();
   } catch (err) {
     console.error('Error fetching folders:', err);
@@ -184,8 +182,9 @@ async function loadFoldersForCurrentPedalboard() {
   }
 }
 
-// Expose globally so nav-preset.js can call
+// ---------------------------
+// Expose globally
+// ---------------------------
 window.attachAddFolderListener = attachAddFolderListener;
 window.attachRenameFolderListener = attachRenameFolderListener;
 window.loadFoldersForCurrentPedalboard = loadFoldersForCurrentPedalboard;
-
