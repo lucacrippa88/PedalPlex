@@ -832,6 +832,12 @@ function populatePresetDropdownByFolder(folderId) {
 
       // update dropdown selection to match
       document.getElementById('presetSelect').value = firstPreset._id;
+
+      // Immediately apply to pedalboard
+      setTimeout(() => applyPresetToPedalboard(firstPreset), 0);
+
+      // (optional) Save selection to storage
+      saveCurrentSelectionToStorage();
     }
 
 
