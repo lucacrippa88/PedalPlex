@@ -457,13 +457,18 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     return;
   }
 
-  // Ensure folders are loaded
-  if (!window.folders || window.folders.length === 0) {
-    await window.loadFoldersForCurrentPedalboard();
+  // 1️⃣ Ensure folders are loaded
+  try {
+    if (!window.folders || window.folders.length === 0) {
+      await window.loadFoldersForCurrentPedalboard();
+    }
+  } catch (err) {
+    console.error("Failed to load folders:", err);
+    window.folders = []; // fallback to empty array
   }
 
-  // Build folder dropdown HTML
-  const folderOptions = window.folders.map(f => {
+  // 2️⃣ Build folder dropdown HTML safely
+  const folderOptions = (window.folders || []).map(f => {
     const selected = preset.folder_id && preset.folder_id === (f._id || f.id) ? "selected" : "";
     return `<option value="${f._id || f.id}" ${selected}>${f.name}</option>`;
   }).join("");
@@ -476,6 +481,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     </select>
   `;
 
+  // 3️⃣ Show Swal modal
   const result = await Swal.fire({
     title: "Edit Preset",
     html: htmlContent,
@@ -501,7 +507,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     }
   });
 
-  // Delete preset
+  // 4️⃣ Handle Delete
   if (result.isDenied) {
     const confirmDelete = await Swal.fire({
       title: `Delete "${currentPresetName}"?`,
@@ -515,7 +521,6 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
         cancelButton: "bx--btn bx--btn--secondary"
       }
     });
-
     if (!confirmDelete.isConfirmed) return;
 
     Swal.fire({ title: "Deleting...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
@@ -533,40 +538,51 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     return;
   }
 
-  // Save preset updates
+  // 5️⃣ Handle Save (rename + folder assignment)
   if (result.value) {
     const { newName, folderId } = result.value;
 
     Swal.fire({ title: "Saving...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
 
-    // 1️⃣ Update preset name
-    const success = await savePreset(currentPresetId, { preset_name: newName });
-    if (!success) {
+    // Rename preset
+    const renameSuccess = await savePreset(currentPresetId, { preset_name: newName });
+    if (!renameSuccess) {
       Swal.close();
       Swal.fire("Error", "Failed to rename preset", "error");
       return;
     }
 
-    // 2️⃣ Update folder assignment
+    // Assign to folder
     if (folderId) {
-      const folder = window.folders.find(f => (f._id || f.id) === folderId);
+      const folder = (window.folders || []).find(f => (f._id || f.id) === folderId);
       if (folder) {
-        // Add preset to folder if not already present
         folder.preset_ids = folder.preset_ids || [];
         if (!folder.preset_ids.includes(currentPresetId)) folder.preset_ids.push(currentPresetId);
 
-        await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `folder_id=${encodeURIComponent(folder._id || folder.id)}&preset_ids=${encodeURIComponent(JSON.stringify(folder.preset_ids))}`
-        });
+        try {
+          await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `folder_id=${encodeURIComponent(folder._id || folder.id)}&preset_ids=${encodeURIComponent(JSON.stringify(folder.preset_ids))}`
+          });
+        } catch (err) {
+          console.error("Failed to assign preset to folder:", err);
+          Swal.close();
+          Swal.fire("Warning", "Preset renamed but folder assignment failed.", "warning");
+        }
       }
     }
 
-    // Persist the selection
-    saveCurrentSelectionToStorage();
-
     Swal.close();
+
+    // Update UI and storage
+    currentPresetName = newName;
+    updatePresetDropdownName(currentPresetId, newName);
+
+    if (typeof saveCurrentSelectionToStorage === "function") {
+      saveCurrentSelectionToStorage();
+    }
+
     Swal.fire({
       icon: "success",
       title: "Preset Updated",
@@ -576,7 +592,6 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     }).then(() => location.reload());
   }
 });
-
 
 
 
