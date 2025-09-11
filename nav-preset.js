@@ -150,26 +150,42 @@ function initNavPreset() {
     }
   });
 
+
+
+
   // Create preset
   $('#createPstBtn').on('click', async () => {
     await createPreset();
   });
 
-  // Folder listeners
+
+
+
+  // Attach folder add/rename listeners (from folder.js)
   if (window.attachAddFolderListener) window.attachAddFolderListener();
   if (window.attachRenameFolderListener) window.attachRenameFolderListener();
 
   // Pedalboard change
   $('#pedalboardSelect').on('change', (e) => {
-    selectedBoardIndex = parseInt(e.target.value, 10);
-    window.pedalboard = window.allPedalboards[selectedBoardIndex];
-    renderFullPedalboard();
+    const idx = parseInt(e.target.value, 10);
+    window.pedalboard = window.allPedalboards[idx];
 
-    const userId = currentUser.userid;
-    fetchPresetsByBoardId(userId, window.pedalboard._id);
-
+    // Load folders for selected pedalboard
     if (window.loadFoldersForCurrentPedalboard) {
       window.loadFoldersForCurrentPedalboard();
     }
+
+    // Load presets for this board
+    if (typeof fetchPresetsByBoardId === 'function') {
+      fetchPresetsByBoardId(window.currentUser.userid, window.pedalboard._id);
+    }
   });
+
+  // --- Page load: populate folders for the initially selected pedalboard ---
+  if (window.pedalboard && window.loadFoldersForCurrentPedalboard) {
+    window.loadFoldersForCurrentPedalboard();
+  }
+
+
+  
 }
