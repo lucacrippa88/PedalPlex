@@ -194,4 +194,87 @@ function initNavPreset() {
 
 
 
+
+
+
+// --- Populate folder and preset dropdowns ---
+function populateFolderDropdownWithDefault() {
+  const folderSelect = document.getElementById('folderSelect');
+  if (!folderSelect) return;
+
+  folderSelect.innerHTML = '';
+
+  // Placeholder
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '-- Select Folder --';
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  folderSelect.appendChild(placeholder);
+
+  // Add real folders
+  window.folders.forEach(f => {
+    const opt = document.createElement('option');
+    opt.value = f.id || f._id;
+    opt.textContent = f.name;
+    folderSelect.appendChild(opt);
+  });
+
+  // Compute presets not in any folder
+  const folderPresetIds = new Set();
+  window.folders.forEach(f => {
+    if (Array.isArray(f.preset_ids)) f.preset_ids.forEach(id => folderPresetIds.add(id));
+  });
+
+  const unassignedPresets = window.presets.filter(p => !folderPresetIds.has(p._id));
+  if (unassignedPresets.length > 0) {
+    const defaultOpt = document.createElement('option');
+    defaultOpt.value = 'default';
+    defaultOpt.textContent = 'Default';
+    folderSelect.appendChild(defaultOpt);
+  }
+}
+
+function populatePresetDropdownByFolder(folderId) {
+  const presetSelect = document.getElementById('presetSelect');
+  if (!presetSelect) return;
+  presetSelect.innerHTML = '';
+
+  let filteredPresets = [];
+
+  if (folderId === 'default') {
+    // Show presets not in any folder
+    const folderPresetIds = new Set();
+    window.folders.forEach(f => {
+      if (Array.isArray(f.preset_ids)) f.preset_ids.forEach(id => folderPresetIds.add(id));
+    });
+    filteredPresets = window.presets.filter(p => !folderPresetIds.has(p._id));
+  } else {
+    const folder = window.folders.find(f => (f.id || f._id) === folderId);
+    if (folder && Array.isArray(folder.preset_ids)) {
+      filteredPresets = window.presets.filter(p => folder.preset_ids.includes(p._id));
+    }
+  }
+
+  filteredPresets.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p._id;
+    opt.textContent = p.preset_name || 'Untitled Preset';
+    presetSelect.appendChild(opt);
+  });
+}
+
+// Event listener for folder select
+document.getElementById('folderSelect')?.addEventListener('change', e => {
+  populatePresetDropdownByFolder(e.target.value);
+});
+
+// Call this once after folders & presets are fetched
+populateFolderDropdownWithDefault();
+
+
+
+
+
+
 }
