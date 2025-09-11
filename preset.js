@@ -116,7 +116,6 @@ function initPreset() {
         renderFullPedalboard();
 
         const userId = currentUser.userid;
-        // fetchPresetsByBoardId(userId, window.pedalboard._id);
         fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
           // Restore preset selection by visible text
           // Restore preset selection by visible text
@@ -199,6 +198,15 @@ function initPreset() {
     .catch(error => {
       console.error('Error:', error.message || error);
     });
+
+
+const folderSelect = document.getElementById('folderSelect');
+folderSelect?.addEventListener('change', (e) => {
+    const folderId = e.target.value;
+    populatePresetDropdownByFolder(folderId);
+});
+
+
 }
 
 
@@ -256,36 +264,52 @@ function fetchPresetsByBoardId(user_id, board_id, callback) {
       }
 
       // Use data.presets to populate your dropdown
-      presetSelect.innerHTML = ''; // clear
+      // presetSelect.innerHTML = ''; // clear
 
-      if (!data.presets || data.presets.length === 0) {
-        const option = document.createElement('option');
-        option.value = '';
-        option.textContent = 'No presets available';
-        presetSelect.appendChild(option);
-        if (callback) callback();
-        return;
-      }
+      // if (!data.presets || data.presets.length === 0) {
+      //   const option = document.createElement('option');
+      //   option.value = '';
+      //   option.textContent = 'No presets available';
+      //   presetSelect.appendChild(option);
+      //   if (callback) callback();
+      //   return;
+      // }
 
-      window.presetMap = {}; // reset for this board
+      // window.presetMap = {}; // reset for this board
 
-      // Add placeholder option to presets dropdown
-      const placeholderPresetOption = document.createElement('option');
-      placeholderPresetOption.value = '';
-      placeholderPresetOption.textContent = 'Select a preset...';
-      placeholderPresetOption.selected = true;
-      placeholderPresetOption.disabled = true;
-      presetSelect.appendChild(placeholderPresetOption);
+      // // Add placeholder option to presets dropdown
+      // const placeholderPresetOption = document.createElement('option');
+      // placeholderPresetOption.value = '';
+      // placeholderPresetOption.textContent = 'Select a preset...';
+      // placeholderPresetOption.selected = true;
+      // placeholderPresetOption.disabled = true;
+      // presetSelect.appendChild(placeholderPresetOption);
 
-      data.presets.forEach((preset, index) => {
-        const presetName = preset.preset_name || `Preset ${index + 1}`;
-        window.presetMap[presetName] = preset;
+      // data.presets.forEach((preset, index) => {
+      //   const presetName = preset.preset_name || `Preset ${index + 1}`;
+      //   window.presetMap[presetName] = preset;
 
-        const option = document.createElement('option');
-        option.value = presetName;
-        option.textContent = presetName;
-        presetSelect.appendChild(option);
+      //   const option = document.createElement('option');
+      //   option.value = presetName;
+      //   option.textContent = presetName;
+      //   presetSelect.appendChild(option);
+      // });
+
+      window.presets = data.presets || [];   // store all presets globally
+      window.presetMap = {};                 // reset preset map for this board
+
+      data.presets.forEach(p => {
+          window.presetMap[p._id] = p;      // map by _id
       });
+
+      // Filter dropdown based on current folder selection
+      const folderSelect = document.getElementById('folderSelect');
+      let selectedFolderId = folderSelect?.value || 'default';
+      populatePresetDropdownByFolder(selectedFolderId);
+
+      // Call callback after presets are populated
+      if (callback) callback();
+
 
       // Call callback after presets are populated
       if (callback) callback();
@@ -295,151 +319,6 @@ function fetchPresetsByBoardId(user_id, board_id, callback) {
       console.error('Fetch error:', error);
     });
 }
-
-
-
-
-
-// Edit preset logic
-// document.getElementById("renamePresetBtn").addEventListener("click", async () => {
-//   if (!currentPresetId) {
-//     Swal.fire({
-//       icon: "warning",
-//       title: "No Preset Selected",
-//       text: "Please select a preset to rename or delete.",
-//       confirmButtonText: "Ok",
-//       customClass: {
-//         confirmButton: "bx--btn bx--btn--primary"
-//       }
-//     });
-//     return;
-//   }
-
-//   const preset = Object.values(window.presetMap).find(p => p._id === currentPresetId);
-
-//   if (!preset || !currentPresetRev) {
-//     Swal.fire("Error", "Missing revision (_rev) info for the preset.", "error");
-//     return;
-//   }
-
-//   // Edit
-//   const result = await Swal.fire({
-//     title: "Edit Preset",
-//     input: "text",
-//     inputLabel: "Preset Name",
-//     inputValue: currentPresetName,
-//     showCancelButton: true,
-//     showDenyButton: true,
-//     confirmButtonText: "Save",
-//     cancelButtonText: "Cancel",
-//     denyButtonText: "Delete Preset",
-//     customClass: {
-//       confirmButton: "bx--btn bx--btn--primary",
-//       cancelButton: "bx--btn bx--btn--secondary",
-//       denyButton: "bx--btn bx--btn--danger"
-//     },
-//     inputValidator: (value) => {
-//       if (!value.trim()) {
-//         return "Name cannot be empty";
-//       }
-//     }
-//   });
-
-//   // Delete
-//   if (result.isDenied) {
-//     const confirmDelete = await Swal.fire({
-//       title: `Delete "${currentPresetName}"?`,
-//       text: "This action cannot be undone.",
-//       icon: "warning",
-//       showCancelButton: true,
-//       confirmButtonText: "Yes, delete it",
-//       cancelButtonText: "Cancel",
-//       customClass: {
-//         confirmButton: "bx--btn bx--btn--danger",
-//         cancelButton: "bx--btn bx--btn--secondary"
-//       }
-//     });
-
-//     // if user clicked Cancel, just stop here
-//     if (result.isDismissed) {
-//       return;
-//     }
-
-//     if (confirmDelete.isConfirmed) {
-//       Swal.fire({
-//         title: "Deleting...",
-//         didOpen: () => Swal.showLoading(),
-//         allowOutsideClick: false
-//       });
-
-//       const response = await fetch("https://www.cineteatrosanluigi.it/plex/DELETE_PRESET.php", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify({
-//           preset_id: currentPresetId,
-//           preset_rev: currentPresetRev
-//         })
-//       });
-
-//       const data = await response.json();
-//       Swal.close();
-
-//       if (data.success) {
-//         Swal.fire({
-//           icon: "success",
-//           title: "Preset Deleted",
-//           timer: 2000,
-//           showConfirmButton: false
-//         }).then(() => {
-//           location.reload();
-//         });
-//       } else {
-//         Swal.fire("Error", data.error || "Failed to delete preset", "error");
-//       }
-//     }
-
-//     return;
-//   }
-
-//   // Rename
-//   const newName = result.value?.trim();
-//   if (newName && newName !== currentPresetName) {
-//     Swal.fire({
-//       title: "Saving...",
-//       didOpen: () => Swal.showLoading(),
-//       allowOutsideClick: false
-//     });
-
-//     const success = await savePreset(currentPresetId, {
-//       preset_name: newName
-//     });
-
-//     Swal.close();
-
-//     if (success) {
-//       Swal.fire({
-//         icon: "success",
-//         title: "Preset Renamed",
-//         text: `Preset has been renamed to "${newName}"`,
-//         timer: 2000,
-//         showConfirmButton: false
-//       }).then(() => {
-//         currentPresetName = newName;
-//         updatePresetDropdownName(currentPresetId, newName);
-//         location.reload();
-//       });
-//     } else {
-//       Swal.fire("Error", "Failed to rename preset", "error");
-//     }
-//   }
-
-//   // Once server confirms edit is done:
-//   saveCurrentSelectionToStorage();
-
-// });
-
 
 
 
@@ -739,91 +618,6 @@ function applyPresetToPedalboard(presetDoc) {
 
 
 
-
-// Create preset logic
-// async function createPreset() {
-//   const {
-//     value: presetName
-//   } = await Swal.fire({
-//     title: 'Enter new preset name',
-//     input: 'text',
-//     inputLabel: 'Preset Name',
-//     inputPlaceholder: 'Type your new preset name here',
-//     showCancelButton: true,
-//     customClass: {
-//       confirmButton: 'bx--btn bx--btn--primary',
-//       cancelButton: 'bx--btn bx--btn--secondary'
-//     },
-//     inputValidator: value => {
-//       if (!value) {
-//         return 'You need to enter a preset name!';
-//       }
-//     }
-//   });
-
-//   if (!presetName) return; // Cancelled or empty
-
-//   const userId = currentUser.userid;
-//   const selectedBoardId = $('#pedalboardSelect').val();
-//   const selectedBoard = window.allPedalboards.find(pb => pb._id === selectedBoardId);
-
-//   if (!selectedBoard) {
-//     Swal.fire('Error', 'Selected pedalboard is invalid.', 'error');
-//     return;
-//   }
-
-//   const bodyData = {
-//     user_id: userId,
-//     board_name: selectedBoard.board_name,
-//     board_id: selectedBoard._id, // <-- safe direct ID
-//     preset_name: presetName,
-//     pedals: {}
-//   };
-
-//   try {
-//     const response = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json'
-//       },
-//       body: JSON.stringify(bodyData)
-//     });
-
-//     const data = await response.json();
-
-//     if (!response.ok || !data.success) {
-//       const message = data.message || 'Failed to create preset.';
-//       const cloudantDetails = data.cloudant_response ?
-//         JSON.stringify(data.cloudant_response, null, 2) :
-//         'No Cloudant response.';
-
-//       Swal.fire('Error', `${message}\n\nCloudant says:\n${cloudantDetails}`, 'error');
-//       return;
-//     }
-
-//     Swal.fire({
-//       title: 'Success',
-//       text: `Preset "${presetName}" created.`,
-//       icon: 'success',
-//       timer: 2000,
-//       showConfirmButton: false
-//     }).then(() => {
-//       window.location.reload();
-//     });
-
-//   } catch (error) {
-//     console.error("Caught exception:", error);
-//     Swal.fire('Error', error.message || 'Network or server error.', 'error');
-//   }
-
-//   savePedalboard();
-
-// }
-
-
-
-
-
 async function createPreset() {
   // 1️⃣ Prompt for preset name
   const { value: presetName } = await Swal.fire({
@@ -968,3 +762,46 @@ async function assignPresetToFolder(presetId, folderId) {
     console.error('Error updating folder:', err);
   }
 }
+
+
+
+
+// ---------------------------
+// Filter and populate presets based on selected folder
+// ---------------------------
+function populatePresetDropdownByFolder(folderId) {
+    const presetSelect = document.getElementById('presetSelect');
+    if (!presetSelect || !window.presets) return;
+
+    presetSelect.innerHTML = '';
+
+    let filteredPresets = [];
+
+    if (folderId === 'default') {
+        // Show only presets not assigned to any folder
+        const folderPresetIds = new Set();
+        (window.folders || []).forEach(f => {
+            if (Array.isArray(f.preset_ids)) f.preset_ids.forEach(id => folderPresetIds.add(id));
+        });
+        filteredPresets = window.presets.filter(p => !folderPresetIds.has(p._id));
+    } else {
+        // Show only presets assigned to the selected folder
+        const folder = (window.folders || []).find(f => (f.id || f._id) === folderId);
+        if (folder && Array.isArray(folder.preset_ids)) {
+            filteredPresets = window.presets.filter(p => folder.preset_ids.includes(p._id));
+        }
+    }
+
+    // Populate the dropdown
+    filteredPresets.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p._id;
+        opt.textContent = p.preset_name || 'Untitled Preset';
+        presetSelect.appendChild(opt);
+    });
+
+    // Enable/disable Save button
+    const saveBtn = document.getElementById('savePstBtn');
+    if (saveBtn) saveBtn.disabled = filteredPresets.length === 0;
+}
+
