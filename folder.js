@@ -93,3 +93,70 @@ function attachAddFolderListener() {
 
 // Expose to global so nav-preset.js can call it
 window.attachAddFolderListener = attachAddFolderListener;
+
+
+
+
+// ---------------------------
+// Rename selected folder
+// ---------------------------
+function attachRenameFolderListener() {
+  const renameFolderBtn = document.getElementById('renameFolderBtn');
+  if (!renameFolderBtn) {
+    console.warn('attachRenameFolderListener: renameFolderBtn not found');
+    return;
+  }
+
+  renameFolderBtn.addEventListener('click', async () => {
+    const folderSelect = document.getElementById('folderSelect');
+    if (!folderSelect || !folderSelect.value) {
+      Swal.fire('Select Folder', 'Please select a folder to rename.', 'info');
+      return;
+    }
+
+    const folderId = folderSelect.value;
+    const folder = folders.find(f => f.id === folderId);
+    if (!folder) {
+      Swal.fire('Error', 'Selected folder not found.', 'error');
+      return;
+    }
+
+    const boardName = window.pedalboard?.board_name || 'Unnamed Pedalboard';
+
+    // SweetAlert prompt
+    const { value: newName, isConfirmed } = await Swal.fire({
+      title: `Rename folder for "${boardName}"`,
+      input: 'text',
+      inputLabel: 'New folder name',
+      inputValue: folder.name,
+      showCancelButton: true,
+      inputValidator: v => !v.trim() && 'Folder name cannot be empty'
+    });
+
+    if (!isConfirmed) return;
+
+    try {
+      const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(newName.trim())}`
+      });
+      const result = await res.json();
+
+      if (result.ok) {
+        folder.name = newName.trim();
+        populateFolderDropdown();
+        folderSelect.value = folderId;
+        Swal.fire('Success', `Folder renamed to "${newName}"`, 'success');
+      } else {
+        Swal.fire('Error', 'Could not rename folder: ' + (result.error || 'Unknown error'), 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire('Error', 'Network or server error', 'error');
+    }
+  });
+}
+
+// Expose globally so nav-preset.js can call it
+window.attachRenameFolderListener = attachRenameFolderListener;

@@ -178,6 +178,12 @@ function initNavPreset() {
     window.attachAddFolderListener();
   }
 
+  // Attach folder rename listener
+if (window.attachRenameFolderListener) {
+  window.attachRenameFolderListener();
+}
+
+
 
 
 }
