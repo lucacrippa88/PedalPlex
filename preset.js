@@ -329,9 +329,9 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
   }).join("");
 
   const htmlContent = `
-    <input id="presetNameInput" class="swal2-input" placeholder="Preset Name" value="${currentPresetName}">
+    <input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="Preset Name" value="${currentPresetName}">
     <select id="folderSelectInput" class="swal2-select" style="margin-top:10px">
-      <option value="">-- No folder --</option>
+      <option value="">Default (unassigned)</option>
       ${folderOptions}
     </select>
   `;
