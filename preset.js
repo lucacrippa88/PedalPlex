@@ -439,9 +439,6 @@ function fetchPresetsByBoardId(user_id, board_id, callback) {
 //   saveCurrentSelectionToStorage();
 
 // });
-
-
-
 document.getElementById("renamePresetBtn").addEventListener("click", async () => {
   if (!currentPresetId) {
     Swal.fire({
@@ -460,45 +457,52 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     return;
   }
 
-  // Get current folders
-  const foldersForDropdown = window.folders || [];
-
-  function presetFolderAssigned(folder, presetId) {
-    return folder.preset_ids && folder.preset_ids.includes(presetId);
+  // Ensure folders are loaded
+  if (!window.folders || window.folders.length === 0) {
+    await window.loadFoldersForCurrentPedalboard();
   }
 
   // Build folder dropdown HTML
-  const folderOptionsHtml = foldersForDropdown.map(f => 
-    `<option value="${f.id}" ${presetFolderAssigned(f, currentPresetId) ? 'selected' : ''}>${f.name}</option>`
-  ).join('');
+  const folderOptions = window.folders.map(f => {
+    const selected = preset.folder_id && preset.folder_id === (f._id || f.id) ? "selected" : "";
+    return `<option value="${f._id || f.id}" ${selected}>${f.name}</option>`;
+  }).join("");
 
-  const swalHtml = `
+  const htmlContent = `
     <input id="presetNameInput" class="swal2-input" placeholder="Preset Name" value="${currentPresetName}">
-    <label for="folderSelectInput" style="margin-top:0.5rem; display:block;">Folder</label>
-    <select id="folderSelectInput" class="swal2-select" style="width:100%; padding:0.5rem;">
+    <select id="folderSelectInput" class="swal2-select" style="margin-top:10px">
       <option value="">-- No folder --</option>
-      ${folderOptionsHtml}
+      ${folderOptions}
     </select>
   `;
 
-  const { value: result, isDenied } = await Swal.fire({
+  const result = await Swal.fire({
     title: "Edit Preset",
-    html: swalHtml,
+    html: htmlContent,
     showCancelButton: true,
     showDenyButton: true,
     confirmButtonText: "Save",
     cancelButtonText: "Cancel",
     denyButtonText: "Delete Preset",
+    focusConfirm: false,
     preConfirm: () => {
-      const newName = document.getElementById('presetNameInput').value.trim();
-      const selectedFolderId = document.getElementById('folderSelectInput').value;
-      if (!newName) Swal.showValidationMessage('Preset name cannot be empty');
-      return { newName, selectedFolderId };
+      const newName = document.getElementById("presetNameInput").value.trim();
+      const folderId = document.getElementById("folderSelectInput").value;
+      if (!newName) {
+        Swal.showValidationMessage("Preset name cannot be empty");
+        return false;
+      }
+      return { newName, folderId };
+    },
+    customClass: {
+      confirmButton: "bx--btn bx--btn--primary",
+      cancelButton: "bx--btn bx--btn--secondary",
+      denyButton: "bx--btn bx--btn--danger"
     }
   });
 
-  // Handle Delete
-  if (isDenied) {
+  // Delete preset
+  if (result.isDenied) {
     const confirmDelete = await Swal.fire({
       title: `Delete "${currentPresetName}"?`,
       text: "This action cannot be undone.",
@@ -506,8 +510,12 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       showCancelButton: true,
       confirmButtonText: "Yes, delete it",
       cancelButtonText: "Cancel",
-      customClass: { confirmButton: "bx--btn bx--btn--danger", cancelButton: "bx--btn bx--btn--secondary" }
+      customClass: {
+        confirmButton: "bx--btn bx--btn--danger",
+        cancelButton: "bx--btn bx--btn--secondary"
+      }
     });
+
     if (!confirmDelete.isConfirmed) return;
 
     Swal.fire({ title: "Deleting...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
@@ -518,63 +526,55 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     });
     const data = await response.json();
     Swal.close();
+
     if (data.success) Swal.fire({ icon: "success", title: "Preset Deleted", timer: 2000, showConfirmButton: false }).then(() => location.reload());
     else Swal.fire("Error", data.error || "Failed to delete preset", "error");
+
     return;
   }
 
-  // Handle Rename + Folder Assignment
-  if (result && result.newName) {
-    const { newName, selectedFolderId } = result;
+  // Save preset updates
+  if (result.value) {
+    const { newName, folderId } = result.value;
 
     Swal.fire({ title: "Saving...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
 
-    // 1️⃣ Rename preset
-    const renameSuccess = await savePreset(currentPresetId, { preset_name: newName });
-    if (!renameSuccess) {
+    // 1️⃣ Update preset name
+    const success = await savePreset(currentPresetId, { preset_name: newName });
+    if (!success) {
+      Swal.close();
       Swal.fire("Error", "Failed to rename preset", "error");
       return;
     }
 
-    // 2️⃣ Remove preset from all folders first
-    for (const folder of foldersForDropdown) {
-      if (folder.preset_ids?.includes(currentPresetId)) {
-        folder.preset_ids = folder.preset_ids.filter(pid => pid !== currentPresetId);
-        // Update Cloudant folder
-        await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `folder_id=${encodeURIComponent(folder.id)}&preset_ids=${encodeURIComponent(JSON.stringify(folder.preset_ids))}`
+    // 2️⃣ Update folder assignment
+    if (folderId) {
+      const folder = window.folders.find(f => (f._id || f.id) === folderId);
+      if (folder) {
+        // Add preset to folder if not already present
+        folder.preset_ids = folder.preset_ids || [];
+        if (!folder.preset_ids.includes(currentPresetId)) folder.preset_ids.push(currentPresetId);
+
+        await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `folder_id=${encodeURIComponent(folder._id || folder.id)}&preset_ids=${encodeURIComponent(JSON.stringify(folder.preset_ids))}`
         });
       }
     }
 
-    // 3️⃣ Assign preset to the selected folder
-    if (selectedFolderId) {
-      const folder = foldersForDropdown.find(f => f.id === selectedFolderId);
-      if (folder) {
-        if (!folder.preset_ids) folder.preset_ids = [];
-        if (!folder.preset_ids.includes(currentPresetId)) folder.preset_ids.push(currentPresetId);
-        // Update Cloudant
-        await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `folder_id=${encodeURIComponent(folder.id)}&preset_ids=${encodeURIComponent(JSON.stringify(folder.preset_ids))}`
-        });
-      }
-    }
+    // Persist the selection
+    saveCurrentSelectionToStorage();
 
     Swal.close();
     Swal.fire({
       icon: "success",
       title: "Preset Updated",
-      text: `"${newName}" saved and assigned to folder.`,
+      text: `Preset "${newName}" saved and assigned to folder.`,
       timer: 2000,
       showConfirmButton: false
     }).then(() => location.reload());
   }
-
-  saveCurrentSelectionToStorage();
 });
 
 
