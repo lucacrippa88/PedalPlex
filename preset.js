@@ -879,7 +879,7 @@ async function createPreset() {
       Swal.fire('Error', 'Failed to create preset: ' + (data.message || 'Unknown error'), 'error');
       return;
     }
-    newPresetId = data._id || data.preset_id;
+    newPresetId = data.id;
   } catch (err) {
     Swal.fire('Error', 'Network or server error: ' + err.message, 'error');
     return;
@@ -892,7 +892,6 @@ async function createPreset() {
       folder.preset_ids = folder.preset_ids || [];
       if (!folder.preset_ids.includes(newPresetId)) folder.preset_ids.push(newPresetId);
 
-      // Send preset_ids as JSON string — PHP will decode it
       const formData = new URLSearchParams();
       formData.append('folder_id', folder.id || folder._id);
       formData.append('preset_ids', JSON.stringify(folder.preset_ids));
@@ -909,6 +908,7 @@ async function createPreset() {
         console.error('Error updating folder:', err);
       }
     }
+
   }
 
   Swal.fire('Success', `Preset "${presetName}" created${selectedFolderId ? ` and added to folder.` : '.'}`, 'success')
