@@ -173,45 +173,10 @@ function initNavPreset() {
 
 
 
-// Wait until button exists, then attach listener
-const addFolderBtn = document.getElementById('addFolderBtn');
-if (addFolderBtn) {
-  addFolderBtn.addEventListener('click', async () => {
-    const pedalboardSelect = document.getElementById('pedalboardSelect');
-    const selectedIndex = parseInt(pedalboardSelect.value, 10);
-
-    if (isNaN(selectedIndex) || !window.allPedalboards || !window.allPedalboards[selectedIndex]) {
-      Swal.fire('Error', 'Please select a pedalboard first', 'error');
-      return;
-    }
-
-    const selectedBoard = window.allPedalboards[selectedIndex];
-    const boardName = selectedBoard.board_name || "Unnamed Pedalboard";
-
-    const { value: folderName, isConfirmed } = await Swal.fire({
-      title: `New Folder for "${boardName}"`,
-      input: 'text',
-      inputLabel: 'Folder Name',
-      inputPlaceholder: `Enter folder name for ${boardName}`,
-      showCancelButton: true,
-    });
-
-    if (isConfirmed && folderName.trim()) {
-      const newFolder = {
-        id: 'folder_' + Date.now(),
-        name: folderName.trim(),
-        preset_ids: []
-      };
-
-      const saved = await saveFolderToDB(newFolder);
-      if (saved) {
-        folders.push(newFolder);
-        populateFolderDropdown();
-        document.getElementById('folderSelect').value = newFolder.id;
-      }
-    }
-  });
-}
+  // Call folder.js hook to attach event listener
+  if (window.attachAddFolderListener) {
+    window.attachAddFolderListener();
+  }
 
 
 
