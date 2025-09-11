@@ -213,16 +213,16 @@ folderSelect?.addEventListener('change', (e) => {
 
 
 
-function fetchPresetsByBoardId(user_id, board_id, callback) {
+// Replace your fetchPresetsByBoardId function with this async version
+async function fetchPresetsByBoardId(user_id, board_id, callback) {
   const presetSelect = document.getElementById('presetSelect');
   if (!presetSelect) return;
 
-  // Remove previous listener if exists (optional)
-  presetSelect.onchange = null;
-
-  presetSelect.addEventListener('change', (e) => {
-    const selectedPresetName = e.target.value;
-    const preset = window.presetMap[selectedPresetName];
+  // Use onchange assignment (replaces any previous handler)
+  presetSelect.onchange = (e) => {
+    const selectedPresetId = e.target.value;
+    // presetMap keyed by _id
+    const preset = window.presetMap && window.presetMap[selectedPresetId] ? window.presetMap[selectedPresetId] : (window.presets || []).find(p => p._id === selectedPresetId);
     if (preset) {
       currentPresetId = preset._id;
       currentPresetName = preset.preset_name;
@@ -236,57 +236,63 @@ function fetchPresetsByBoardId(user_id, board_id, callback) {
       currentPresetName = null;
       currentPresetRev = null;
     }
-  });
+  };
 
   showPresetLoader();
 
-  fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESET.php', {
+  try {
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESET.php', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        user_id: user_id,
-        board_id: board_id
-      })
-    })
-    .then(response => {
-      if (!response.ok) throw new Error('Failed to fetch presets');
-      return response.json();
-    })
-    .then(data => {
-
-      hidePresetLoader();
-
-      if (data.error) {
-        console.error('Error fetching presets:', data.error);
-        return;
-      }
-
-      window.presets = data.presets || [];   // store all presets globally
-      window.presetMap = {};                 // reset preset map for this board
-
-      data.presets.forEach(p => {
-          window.presetMap[p._id] = p;      // map by _id
-      });
-
-      // Filter dropdown based on current folder selection
-      const folderSelect = document.getElementById('folderSelect');
-      let selectedFolderId = folderSelect?.value || 'default';
-      populatePresetDropdownByFolder(selectedFolderId);
-
-      // Call callback after presets are populated
-      if (callback) callback();
-
-
-      // Call callback after presets are populated
-      if (callback) callback();
-
-    })
-    .catch(error => {
-      console.error('Fetch error:', error);
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: user_id, board_id: board_id })
     });
+
+    if (!res.ok) throw new Error('Failed to fetch presets');
+
+    const data = await res.json();
+    hidePresetLoader();
+
+    if (data.error) {
+      console.error('Error fetching presets:', data.error);
+      if (callback) callback();
+      return;
+    }
+
+    // Store all presets globally
+    window.presets = data.presets || [];
+    // Build presetMap keyed by _id for easy lookup
+    window.presetMap = {};
+    window.presets.forEach(p => {
+      if (p && p._id) window.presetMap[p._id] = p;
+    });
+
+    // Ensure folders are loaded before we populate folder/preset selects
+    if (!window.folders || window.folders.length === 0) {
+      if (typeof window.loadFoldersForCurrentPedalboard === 'function') {
+        await window.loadFoldersForCurrentPedalboard();
+      }
+    }
+
+    // Make sure the folder dropdown is populated (folder.js exposes populateFolderDropdown)
+    if (typeof window.populateFolderDropdown === 'function') {
+      window.populateFolderDropdown();
+    }
+
+    // Decide which folder is currently selected (default -> 'default' means unassigned)
+    const folderSelect = document.getElementById('folderSelect');
+    const selectedFolderId = folderSelect?.value || 'default';
+
+    // Populate presetSelect based on the currently selected folder
+    populatePresetDropdownByFolder(selectedFolderId);
+
+    if (callback) callback();
+  } catch (err) {
+    hidePresetLoader();
+    console.error('Fetch error:', err);
+    if (callback) callback();
+  }
 }
+
 
 
 
@@ -400,51 +406,17 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       return;
     }
 
-    // 2️⃣ Update folder assignment
-      if (folderId) {
-        // Remove preset from all folders first
-        window.folders.forEach(f => {
-          f.preset_ids = f.preset_ids || [];
-          const index = f.preset_ids.indexOf(currentPresetId);
-          if (index !== -1) f.preset_ids.splice(index, 1);
-        });
-
-        // Add preset to the selected folder
-        const folder = window.folders.find(f => f.id === folderId || f._id === folderId);
-        if (folder) {
-          folder.preset_ids.push(currentPresetId);
-
-          // Call server to save changes
-          const formData = new URLSearchParams();
-          formData.append('folder_id', folder.id || folder._id);
-          formData.append('preset_ids', JSON.stringify(folder.preset_ids));
-
-          try {
-            const updateRes = await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php", {
-              method: "POST",
-              headers: { "Content-Type": "application/x-www-form-urlencoded" },
-              body: formData.toString()
-            });
-
-            const updateData = await updateRes.json();
-
-            if (!updateData.ok) {
-              console.error("Failed to update folder:", updateData.error);
-              Swal.fire("Error", "Failed to save preset to folder.", "error");
-              return;
-            }
-
-            // Update preset in memory
-            preset.folder_id = folder.id;
-
-          } catch (err) {
-            console.error("Error updating folder:", err);
-            Swal.fire("Error", "Failed to save preset to folder.", "error");
-            return;
-          }
-        }
-
+    // 2️⃣ Update folder assignment (atomic move)
+    {
+      const moveResult = await movePresetToFolder(currentPresetId, folderId || null);
+      if (!moveResult || moveResult.ok !== true) {
+        Swal.close();
+        Swal.fire("Error", "Failed to update folder assignment for preset.", "error");
+        console.error('movePresetToFolder result:', moveResult);
+        return;
+      }
     }
+
 
 
     Swal.close();
@@ -653,31 +625,15 @@ async function createPreset() {
     return;
   }
 
-  // 4️⃣ Assign preset to folder if one is selected
+  // Assign newly created preset to selected folder (atomic move)
   if (selectedFolderId) {
-    const folder = window.folders.find(f => f.id === selectedFolderId || f._id === selectedFolderId);
-    if (folder) {
-      folder.preset_ids = folder.preset_ids || [];
-      if (!folder.preset_ids.includes(newPresetId)) folder.preset_ids.push(newPresetId);
-
-      const formData = new URLSearchParams();
-      formData.append('folder_id', folder.id || folder._id);
-      formData.append('preset_ids', JSON.stringify(folder.preset_ids));
-
-      try {
-        const res2 = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: formData.toString()
-        });
-        const result = await res2.json();
-        if (!result.ok) console.error('Failed to update folder:', result.error);
-      } catch (err) {
-        console.error('Error updating folder:', err);
-      }
+    const moveResult = await movePresetToFolder(newPresetId, selectedFolderId || null);
+    if (!moveResult || moveResult.ok !== true) {
+      console.error('Failed to assign newly created preset to folder', moveResult);
+      // optional: Swal.fire to inform the user, but don't block creation success
     }
-
   }
+
 
   Swal.fire('Success', `Preset "${presetName}" created${selectedFolderId ? ` and added to folder.` : '.'}`, 'success')
     .then(() => window.location.reload());
@@ -686,6 +642,99 @@ async function createPreset() {
 
   console.log('CREATE_PRESET response:', data);
 
+}
+
+
+
+
+// Move preset to single target folder (removes from all others first).
+// targetFolderId: string|null  — if null or empty, removes from all folders (unassigned)
+async function movePresetToFolder(presetId, targetFolderId) {
+  if (!presetId) return { ok: false, error: 'Missing presetId' };
+
+  // ensure folders loaded
+  window.folders = window.folders || [];
+
+  // track folders we changed (objects)
+  const changedFolders = new Map();
+
+  // 1) Remove from any folder that has the preset (if it's not the target)
+  window.folders.forEach(f => {
+    f.preset_ids = f.preset_ids || [];
+    const fid = f.id || f._id;
+    if (f.preset_ids.includes(presetId) && fid !== targetFolderId) {
+      f.preset_ids = f.preset_ids.filter(id => id !== presetId);
+      changedFolders.set(fid, f);
+    }
+  });
+
+  // 2) If target specified, ensure it now contains the preset
+  if (targetFolderId) {
+    const target = window.folders.find(f => (f.id || f._id) === targetFolderId);
+    if (target) {
+      target.preset_ids = target.preset_ids || [];
+      if (!target.preset_ids.includes(presetId)) {
+        target.preset_ids.push(presetId);
+        changedFolders.set(targetFolderId, target);
+      }
+    } else {
+      console.warn('movePresetToFolder: target folder not found locally:', targetFolderId);
+    }
+  }
+
+  // 3) Push changes to server for each changed folder (use window.updateFolderOnServer exposed by folder.js)
+  const updatePromises = [];
+  for (const [fid, folderObj] of changedFolders.entries()) {
+    if (typeof window.updateFolderOnServer === 'function') {
+      updatePromises.push(window.updateFolderOnServer(folderObj));
+    } else {
+      // Fallback: make same request directly
+      const formData = new URLSearchParams();
+      formData.append('folder_id', folderObj.id || folderObj._id);
+      formData.append('preset_ids', JSON.stringify(folderObj.preset_ids || []));
+      updatePromises.push(
+        fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        }).then(r => r.json()).catch(err => ({ ok: false, error: String(err) }))
+      );
+    }
+  }
+
+  let results = [];
+  try {
+    results = await Promise.all(updatePromises);
+  } catch (err) {
+    console.error('movePresetToFolder: error updating folders:', err);
+    return { ok: false, error: String(err), details: err };
+  }
+
+  // check results for success
+  const failed = results.filter(r => !(r && (r.ok === true || r.id)));
+  if (failed.length > 0) {
+    console.error('movePresetToFolder: some updates failed', failed, results);
+    return { ok: false, error: 'Some folder updates failed', details: failed };
+  }
+
+  // Update in-memory preset.folder_id if possible
+  if (window.presetMap && window.presetMap[presetId]) {
+    const presetObj = window.presetMap[presetId];
+    presetObj.folder_id = targetFolderId || null;
+  }
+  // Also update window.presets entry
+  if (Array.isArray(window.presets)) {
+    const p = window.presets.find(x => x._id === presetId);
+    if (p) p.folder_id = targetFolderId || null;
+  }
+
+  // 4) Refresh UI: folder dropdown and preset dropdown for selected folder
+  if (typeof window.populateFolderDropdown === 'function') window.populateFolderDropdown();
+  const folderSelect = document.getElementById('folderSelect');
+  const effectiveFolder = folderSelect?.value || (targetFolderId || 'default');
+  populatePresetDropdownByFolder(effectiveFolder);
+
+  return { ok: true };
 }
 
 

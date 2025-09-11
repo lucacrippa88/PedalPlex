@@ -1,20 +1,51 @@
-// ---------------------------
-// folder.js
-// ---------------------------
-
-// Store folders locally
-window.folders = []; // objects with {id, name, preset_ids}
+// folder.js (replace your existing file with this)
 
 // ---------------------------
-// Populate main page #folderSelect dropdown (with "Default" option for unassigned presets)
+// folder.js (robust)
+// ---------------------------
+
+// Store folders locally (synchronised with window.folders)
+let folders = []; // kept for backwards compatibility but use window.folders as source-of-truth
+window.folders = window.folders || [];
+
+// ---------------------------
+// Update folder on server helper
+// ---------------------------
+async function updateFolderOnServer(folder) {
+  try {
+    const folderId = folder.id || folder._id;
+    if (!folderId) throw new Error('Missing folder id for updateFolderOnServer');
+
+    const formData = new URLSearchParams();
+    formData.append('folder_id', folderId);
+    // ensure it's a JSON string
+    formData.append('preset_ids', JSON.stringify(folder.preset_ids || []));
+
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString()
+    });
+    const json = await res.json();
+    return json;
+  } catch (err) {
+    console.error('[folders] updateFolderOnServer error:', err);
+    return { ok: false, error: err.message || String(err) };
+  }
+}
+
+// Expose to global so preset.js can call it
+window.updateFolderOnServer = updateFolderOnServer;
+
+// ---------------------------
+// Populate main page #folderSelect dropdown
 // ---------------------------
 function populateFolderDropdown() {
   const folderSelect = document.getElementById('folderSelect');
-  if (!folderSelect || !window.folders || !window.presets) return;
+  if (!folderSelect) return;
 
   folderSelect.innerHTML = '';
 
-  // Placeholder
   const placeholder = document.createElement('option');
   placeholder.value = '';
   placeholder.textContent = '-- Select Folder --';
@@ -22,68 +53,22 @@ function populateFolderDropdown() {
   placeholder.selected = true;
   folderSelect.appendChild(placeholder);
 
-  // Add real folders
-  window.folders.forEach(f => {
+  (window.folders || []).forEach(f => {
+    if (!f) return;
     const opt = document.createElement('option');
     opt.value = f.id || f._id;
-    opt.textContent = f.name;
+    opt.textContent = f.name || '(Untitled folder)';
     folderSelect.appendChild(opt);
   });
 
-  // Check for presets not in any folder
-  const folderPresetIds = new Set();
-  window.folders.forEach(f => {
-    if (Array.isArray(f.preset_ids)) f.preset_ids.forEach(id => folderPresetIds.add(id));
-  });
-
-  const unassignedPresets = window.presets.filter(p => !folderPresetIds.has(p._id));
-  if (unassignedPresets.length > 0) {
-    const defaultOpt = document.createElement('option');
-    defaultOpt.value = 'default';
-    defaultOpt.textContent = 'Default';
-    folderSelect.appendChild(defaultOpt);
-  }
-
-  // Populate presets for initially selected folder (if any)
-  if (folderSelect.value) populatePresetDropdownByFolder(folderSelect.value);
-
-  // Trigger population of presets when folder changes
-  folderSelect.addEventListener('change', (e) => {
-    populatePresetDropdownByFolder(e.target.value);
-  });
-}
-
-// ---------------------------
-// Populate #presetSelect based on folder
-// ---------------------------
-function populatePresetDropdownByFolder(folderId) {
-  const presetSelect = document.getElementById('presetSelect');
-  if (!presetSelect || !window.presets) return;
-
-  presetSelect.innerHTML = '';
-
-  let filteredPresets = [];
-
-  if (folderId === 'default') {
-    // Show presets not in any folder
-    const folderPresetIds = new Set();
-    window.folders.forEach(f => {
-      if (Array.isArray(f.preset_ids)) f.preset_ids.forEach(id => folderPresetIds.add(id));
-    });
-    filteredPresets = window.presets.filter(p => !folderPresetIds.has(p._id));
-  } else {
-    const folder = window.folders.find(f => (f.id || f._id) === folderId);
-    if (folder && Array.isArray(folder.preset_ids)) {
-      filteredPresets = window.presets.filter(p => folder.preset_ids.includes(p._id));
-    }
-  }
-
-  filteredPresets.forEach(p => {
-    const opt = document.createElement('option');
-    opt.value = p._id;
-    opt.textContent = p.preset_name || 'Untitled Preset';
-    presetSelect.appendChild(opt);
-  });
+  // Add a "Default" option when there are unassigned presets (handled elsewhere, but keep this safe)
+  // NOTE: don't add the 'Default' option here — that is handled by preset.js once window.presets exists
+  // Attach safe onchange handler (replaces previous listener if it exists)
+  folderSelect.onchange = (e) => {
+    // For backwards compatibility: trigger an event listeners might expect
+    const ev = new Event('change', { bubbles: true });
+    folderSelect.dispatchEvent(ev);
+  };
 }
 
 // ---------------------------
@@ -139,7 +124,7 @@ function attachAddFolderListener() {
       inputValidator: (v) => !v.trim() && 'Folder name cannot be empty'
     });
 
-    if (isConfirmed && folderName.trim()) {
+    if (isConfirmed && folderName && folderName.trim()) {
       const newFolder = {
         name: folderName.trim(),
         preset_ids: []
@@ -147,10 +132,18 @@ function attachAddFolderListener() {
 
       const saved = await saveFolderToDB(newFolder, board._id);
       if (saved) {
-        window.folders.push(saved); // use server response
+        // cloudant response may contain id/_id — normalize
+        const normalized = {
+          id: saved.id || saved._id || saved.id,
+          _id: saved.id || saved._id,
+          name: newFolder.name,
+          preset_ids: []
+        };
+        window.folders = window.folders || [];
+        window.folders.push(normalized);
         populateFolderDropdown();
         const folderSelect = document.getElementById('folderSelect');
-        if (folderSelect) folderSelect.value = saved.id || saved._id;
+        if (folderSelect) folderSelect.value = normalized.id || normalized._id;
 
         Swal.fire('Success', `Folder "${newFolder.name}" created for "${boardName}"`, 'success');
       }
@@ -173,7 +166,7 @@ function attachRenameFolderListener() {
     }
 
     const folderId = folderSelect.value;
-    const folder = window.folders.find(f => (f._id || f.id) === folderId);
+    const folder = (window.folders || []).find(f => (f._id || f.id) === folderId);
     if (!folder) {
       Swal.fire('Error', 'Selected folder not found.', 'error');
       return;
@@ -215,13 +208,21 @@ function attachRenameFolderListener() {
 }
 
 // ---------------------------
-// Fetch folders for current pedalboard
+// Fetch folders for the current pedalboard
+// Returns window.folders (promise resolves when done)
 // ---------------------------
 async function loadFoldersForCurrentPedalboard(forSwal = false) {
+  console.log('[folders] loadFoldersForCurrentPedalboard called', {
+    currentUser: window.currentUser,
+    pedalboard: window.pedalboard,
+    forSwal
+  });
+
   if (!window.currentUser || !window.pedalboard || !window.pedalboard._id) {
+    console.warn('[folders] Missing currentUser or pedalboard/_id — aborting loadFoldersForCurrentPedalboard');
     window.folders = [];
     if (!forSwal) populateFolderDropdown();
-    return;
+    return window.folders;
   }
 
   let loader, folderSelect;
@@ -233,38 +234,69 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
   }
 
   try {
+    const payload = {
+      user_id: window.currentUser.userid,
+      board_id: window.pedalboard._id
+    };
+    console.log('[folders] POST -> GET_FOLDERS.php payload:', payload);
+
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_FOLDERS.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        user_id: window.currentUser.userid,
-        board_id: window.pedalboard._id
-      })
+      body: JSON.stringify(payload)
     });
 
     const text = await res.text();
+    console.log('[folders] GET_FOLDERS response status:', res.status);
+    console.log('[folders] GET_FOLDERS raw response text:', text);
+
     let data;
-    try { data = text ? JSON.parse(text) : null; } catch { data = null; }
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch (parseErr) {
+      console.error('[folders] Failed to parse JSON from GET_FOLDERS:', parseErr);
+      data = null;
+    }
 
-    if (!data) window.folders = [];
-    else if (Array.isArray(data.folders)) window.folders = data.folders;
-    else if (Array.isArray(data.docs)) window.folders = data.docs;
-    else if (Array.isArray(data)) window.folders = data;
-    else window.folders = [];
+    // Normalize into window.folders array
+    if (!data) {
+      window.folders = [];
+    } else if (Array.isArray(data.folders)) {
+      window.folders = data.folders;
+    } else if (Array.isArray(data.docs)) {
+      window.folders = data.docs;
+    } else if (Array.isArray(data)) {
+      window.folders = data;
+    } else if (data.error) {
+      console.error('[folders] Server returned error:', data.error);
+      window.folders = [];
+    } else {
+      const possible = data.folders || data.docs || Object.values(data).find(v => Array.isArray(v));
+      window.folders = Array.isArray(possible) ? possible : [];
+    }
 
-    // Normalize folders
-    window.folders = window.folders.map((f, idx) => ({
-      id: f._id || f.id || `folder_${idx}`,
-      name: f.name || f.folder_name || f.title || `(Folder ${idx + 1})`,
-      preset_ids: f.preset_ids || f.presets || []
-    }));
+    // Ensure each folder has proper id, name, and preset_ids
+    window.folders = window.folders.map((f, idx) => {
+      if (typeof f === 'string') return { id: `folder_${idx}`, name: f, preset_ids: [] };
+      return {
+        id: f._id || f.id || f['_id'] || `folder_${idx}`,  // fallback ID
+        _id: f._id || f.id || f['_id'] || `folder_${idx}`,
+        name: f.name || f.folder_name || f.title || `(Folder ${idx + 1})`,
+        preset_ids: Array.isArray(f.preset_ids) ? f.preset_ids : (Array.isArray(f.presets) ? f.presets : [])
+      };
+    });
 
+    console.log('[folders] normalized folders:', window.folders);
+
+    // Update main page dropdown only if not for Swal
     if (!forSwal) populateFolderDropdown();
 
+    return window.folders;
   } catch (err) {
-    console.error(err);
+    console.error('[folders] Error fetching folders:', err);
     window.folders = [];
     if (!forSwal) populateFolderDropdown();
+    return window.folders;
   } finally {
     if (!forSwal) {
       if (loader) loader.style.display = 'none';
@@ -273,11 +305,8 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
   }
 }
 
-// ---------------------------
-// Expose globally
-// ---------------------------
+// Expose globally (keep your existing API)
 window.attachAddFolderListener = attachAddFolderListener;
 window.attachRenameFolderListener = attachRenameFolderListener;
 window.loadFoldersForCurrentPedalboard = loadFoldersForCurrentPedalboard;
-window.populatePresetDropdownByFolder = populatePresetDropdownByFolder;
 window.populateFolderDropdown = populateFolderDropdown;
