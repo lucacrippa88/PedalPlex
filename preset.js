@@ -550,20 +550,49 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       return;
     }
 
-    // 2️⃣ Assign preset to folder
+    // 2️⃣ Update folder assignment
     if (folderId) {
       const folder = window.folders.find(f => f.id === folderId);
       if (folder) {
         folder.preset_ids = folder.preset_ids || [];
-        if (!folder.preset_ids.includes(currentPresetId)) folder.preset_ids.push(currentPresetId);
 
-        await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `folder_id=${encodeURIComponent(folder.id)}&preset_ids=${encodeURIComponent(JSON.stringify(folder.preset_ids))}`
-        });
+        if (!folder.preset_ids.includes(currentPresetId)) {
+          folder.preset_ids.push(currentPresetId);
+        }
+
+        // Call server to save changes
+        const formData = new URLSearchParams();
+        formData.append('folder_id', folder.id);
+        formData.append('preset_ids', JSON.stringify(folder.preset_ids));
+
+        try {
+          const updateRes = await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: formData.toString()
+          });
+
+          const updateData = await updateRes.json();
+
+          if (!updateData.ok) {
+            console.error("Failed to update folder:", updateData.error);
+            Swal.fire("Error", "Failed to save preset to folder.", "error");
+            return;
+          }
+
+          // Also update preset.folder_id in memory for next time
+          preset.folder_id = folder.id;
+
+        } catch (err) {
+          console.error("Error updating folder:", err);
+          Swal.fire("Error", "Failed to save preset to folder.", "error");
+          return;
+        }
       }
     }
+
 
     Swal.close();
     Swal.fire({
