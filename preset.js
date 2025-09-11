@@ -224,6 +224,8 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
     // presetMap keyed by _id
     const preset = window.presetMap && window.presetMap[selectedPresetId] ? window.presetMap[selectedPresetId] : (window.presets || []).find(p => p._id === selectedPresetId);
     if (preset) {
+      // Guard: don’t re-apply the same preset
+      if (window.currentPresetId === preset._id) return;
       currentPresetId = preset._id;
       currentPresetName = preset.preset_name;
       currentPresetRev = preset._rev;
@@ -479,10 +481,9 @@ async function savePreset(presetId, updateData) {
 // Apply preset to linked pedalboard
 function applyPresetToPedalboard(presetDoc) {
   const pedalsFromPreset = presetDoc.pedals;
-  const pedalsOnBoard = getPedalList();
+  //const pedalsOnBoard = getPedalList();
 
   const pedalsOnBoardIds = Array.from(document.querySelectorAll('.pedal-catalog')).map(el => el.dataset.pedalId);
-  console.log(pedalsOnBoardIds)
 
   Object.keys(pedalsFromPreset).forEach(presetPedalId => {
     if (!pedalsOnBoardIds.includes(presetPedalId)) {
@@ -823,22 +824,23 @@ function populatePresetDropdownByFolder(folderId) {
         presetSelect.appendChild(opt);
     });
 
-    // Auto-select the first preset if available, so rename/delete works immediately
+    // Auto-select the first preset if available
     if (filteredPresets.length > 0) {
       const firstPreset = filteredPresets[0];
       currentPresetId = firstPreset._id;
       currentPresetName = firstPreset.preset_name;
       currentPresetRev = firstPreset._rev;
 
-      // update dropdown selection to match
+      // Update dropdown selection to match
       document.getElementById('presetSelect').value = firstPreset._id;
 
-      // Immediately apply to pedalboard
-      setTimeout(() => applyPresetToPedalboard(firstPreset), 0);
+      // Apply directly
+      applyPresetToPedalboard(firstPreset);
 
-      // (optional) Save selection to storage
+      // Save selection to storage
       saveCurrentSelectionToStorage();
     }
+
 
 
     // Enable/disable Save button
