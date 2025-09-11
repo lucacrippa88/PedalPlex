@@ -81,36 +81,61 @@ function initPreset() {
       placeholderOption.disabled = true;
       dropdown.appendChild(placeholderOption);
 
-      data.docs.forEach((board, index) => {
+      data.docs.forEach((board) => {
         const option = document.createElement('option');
-        option.value = index;
-        option.textContent = board.board_name || `Pedalboard ${index + 1}`;
+        option.value = board._id; // <-- store DB id
+        option.textContent = board.board_name || 'Untitled Pedalboard';
         dropdown.appendChild(option);
       });
 
       if (data.docs.length > 0) {
         
         // Restore pedalboard selection by saved text
-        const savedBoardText = localStorage.getItem('lastPedalboardText');
+        // const savedBoardText = localStorage.getItem('lastPedalboardText');
+        // let restored = false;
+
+        // if (savedBoardText) {
+        //   for (let i = 0; i < dropdown.options.length; i++) {
+        //     if (dropdown.options[i].text.trim() === savedBoardText) {
+        //       dropdown.selectedIndex = i;
+        //       selectedBoardIndex = parseInt(dropdown.options[i].value, 10);
+        //       window.pedalboard = window.allPedalboards[selectedBoardIndex];
+        //       restored = true;
+        //       break;
+        //     }
+        //   }
+        // }
+        // if (!restored) {
+        //   // fallback to first pedalboard
+        //   selectedBoardIndex = 0;
+        //   dropdown.selectedIndex = 1; // skip placeholder at index 0
+        //   window.pedalboard = window.allPedalboards[0];
+        // }
+        // Try restoring selection from localStorage by board_id
+
+        const savedBoardId = localStorage.getItem('lastPedalboardId');
         let restored = false;
 
-        if (savedBoardText) {
+        if (savedBoardId) {
           for (let i = 0; i < dropdown.options.length; i++) {
-            if (dropdown.options[i].text.trim() === savedBoardText) {
+            if (dropdown.options[i].value === savedBoardId) {
               dropdown.selectedIndex = i;
-              selectedBoardIndex = parseInt(dropdown.options[i].value, 10);
-              window.pedalboard = window.allPedalboards[selectedBoardIndex];
+              window.pedalboard = window.allPedalboards.find(pb => pb._id === savedBoardId);
               restored = true;
               break;
             }
           }
         }
+
         if (!restored) {
-          // fallback to first pedalboard
-          selectedBoardIndex = 0;
-          dropdown.selectedIndex = 1; // skip placeholder at index 0
+          // fallback: select first real pedalboard
+          dropdown.selectedIndex = 1; // skip placeholder
           window.pedalboard = window.allPedalboards[0];
+          
+          // Save fallback choice
+          localStorage.setItem('lastPedalboardId', window.pedalboard._id);
         }
+
 
 
         renderFullPedalboard();
@@ -179,13 +204,18 @@ if (savedPresetText) {
       }
 
       dropdown.addEventListener('change', (e) => {
-        selectedBoardIndex = parseInt(e.target.value, 10);
-        window.pedalboard = window.allPedalboards[selectedBoardIndex];
+        const selectedBoardId = e.target.value;
+        window.pedalboard = window.allPedalboards.find(pb => pb._id === selectedBoardId);
+
         renderFullPedalboard();
 
         const userId = currentUser.userid;
-        fetchPresetsByBoardId(userId, window.pedalboard._id);
+        fetchPresetsByBoardId(userId, selectedBoardId);
+
+        // Save selection
+        localStorage.setItem('lastPedalboardId', selectedBoardId);
       });
+
     })
     .catch(error => {
       console.error('Error:', error.message || error);
@@ -585,24 +615,22 @@ async function createPreset() {
 
   const userId = currentUser.userid;
 
-  const selectedIndex = parseInt($('#pedalboardSelect').val(), 10);
-  const selectedBoard = window.allPedalboards[selectedIndex];
+  const selectedBoardId = $('#pedalboardSelect').val();
+  const selectedBoard = window.allPedalboards.find(pb => pb._id === selectedBoardId);
 
-  if (isNaN(selectedIndex) || !selectedBoard) {
+  if (!selectedBoard) {
     Swal.fire('Error', 'Selected pedalboard is invalid.', 'error');
     return;
   }
 
-  const selectedBoardName = selectedBoard.board_name;
-  const boardId = selectedBoard._id;
-
   const bodyData = {
     user_id: userId,
-    board_name: selectedBoardName,
-    board_id: boardId,
+    board_name: selectedBoard.board_name,
+    board_id: selectedBoard._id, // <-- safe direct ID
     preset_name: presetName,
-    pedals: {} // Start with empty pedals
+    pedals: {}
   };
+
 
   try {
     const response = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
