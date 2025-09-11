@@ -184,6 +184,21 @@ if (window.attachRenameFolderListener) {
 }
 
 
+$('#pedalboardSelect').on('change', (e) => {
+  selectedBoardIndex = parseInt(e.target.value, 10);
+  window.pedalboard = window.allPedalboards[selectedBoardIndex];
+  renderFullPedalboard();
+
+  const userId = currentUser.userid;
+  fetchPresetsByBoardId(userId, window.pedalboard._id);
+
+  // Fetch folders for the newly selected pedalboard
+  if (window.loadFoldersForCurrentPedalboard) {
+    window.loadFoldersForCurrentPedalboard();
+  }
+});
+
+
 
 
 }

@@ -5,7 +5,9 @@
 // Store folders locally
 let folders = []; // {id, name, preset_ids}
 
+// ---------------------------
 // Populate folder dropdown
+// ---------------------------
 function populateFolderDropdown() {
   const folderSelect = document.getElementById('folderSelect');
   if (!folderSelect) return;
@@ -19,7 +21,9 @@ function populateFolderDropdown() {
   });
 }
 
+// ---------------------------
 // Save folder to DB
+// ---------------------------
 async function saveFolderToDB(folder, explicitBoardId) {
   try {
     const boardId = explicitBoardId || (window.pedalboard && window.pedalboard._id);
@@ -46,13 +50,12 @@ async function saveFolderToDB(folder, explicitBoardId) {
   }
 }
 
-// Attach event listener to Add Folder button
+// ---------------------------
+// Add Folder
+// ---------------------------
 function attachAddFolderListener() {
   const addFolderBtn = document.getElementById('addFolderBtn');
-  if (!addFolderBtn) {
-    console.warn('attachAddFolderListener: addFolderBtn not found yet');
-    return;
-  }
+  if (!addFolderBtn) return;
 
   addFolderBtn.addEventListener('click', async () => {
     const board = window.pedalboard;
@@ -91,21 +94,12 @@ function attachAddFolderListener() {
   });
 }
 
-// Expose to global so nav-preset.js can call it
-window.attachAddFolderListener = attachAddFolderListener;
-
-
-
-
 // ---------------------------
-// Rename selected folder
+// Rename Folder
 // ---------------------------
 function attachRenameFolderListener() {
   const renameFolderBtn = document.getElementById('renameFolderBtn');
-  if (!renameFolderBtn) {
-    console.warn('attachRenameFolderListener: renameFolderBtn not found');
-    return;
-  }
+  if (!renameFolderBtn) return;
 
   renameFolderBtn.addEventListener('click', async () => {
     const folderSelect = document.getElementById('folderSelect');
@@ -123,7 +117,6 @@ function attachRenameFolderListener() {
 
     const boardName = window.pedalboard?.board_name || 'Unnamed Pedalboard';
 
-    // SweetAlert prompt
     const { value: newName, isConfirmed } = await Swal.fire({
       title: `Rename folder for "${boardName}"`,
       input: 'text',
@@ -158,5 +151,41 @@ function attachRenameFolderListener() {
   });
 }
 
-// Expose globally so nav-preset.js can call it
+// ---------------------------
+// Fetch folders for the current pedalboard
+// ---------------------------
+async function loadFoldersForCurrentPedalboard() {
+  if (!window.currentUser || !window.pedalboard || !window.pedalboard._id) return;
+
+  try {
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_FOLDERS.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        user_id: window.currentUser.userid,
+        board_id: window.pedalboard._id 
+      })
+    });
+
+    const data = await res.json();
+    if (data.error) {
+      console.error('Failed to load folders:', data.error);
+      folders = [];
+      populateFolderDropdown();
+      return;
+    }
+
+    folders = data.docs || []; // Use Cloudant's docs array
+    populateFolderDropdown();
+  } catch (err) {
+    console.error('Error fetching folders:', err);
+    folders = [];
+    populateFolderDropdown();
+  }
+}
+
+// Expose globally so nav-preset.js can call
+window.attachAddFolderListener = attachAddFolderListener;
 window.attachRenameFolderListener = attachRenameFolderListener;
+window.loadFoldersForCurrentPedalboard = loadFoldersForCurrentPedalboard;
+
