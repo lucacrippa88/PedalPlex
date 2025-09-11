@@ -461,13 +461,15 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     return;
   }
 
-  // Ensure folders array exists
-  const folders = window.folders || [];
+  // Load folders only if not already loaded
+  if (!window.folders || window.folders.length === 0) {
+    await window.loadFoldersForCurrentPedalboard(true); // true = don't touch main dropdown
+  }
 
-  // Build folder dropdown HTML
-  const folderOptions = folders.map(f => {
-    const selected = preset.folder_id && preset.folder_id === (f._id || f.id) ? "selected" : "";
-    return `<option value="${f._id || f.id}" ${selected}>${f.name}</option>`;
+  // Build folder dropdown options for Swal
+  const folderOptions = window.folders.map(f => {
+    const selected = preset.folder_id === f.id ? "selected" : "";
+    return `<option value="${f.id}" ${selected}>${f.name}</option>`;
   }).join("");
 
   const htmlContent = `
@@ -503,7 +505,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     }
   });
 
-  // Delete preset
+  // Handle delete
   if (result.isDenied) {
     const confirmDelete = await Swal.fire({
       title: `Delete "${currentPresetName}"?`,
@@ -512,12 +514,8 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       showCancelButton: true,
       confirmButtonText: "Yes, delete it",
       cancelButtonText: "Cancel",
-      customClass: {
-        confirmButton: "bx--btn bx--btn--danger",
-        cancelButton: "bx--btn bx--btn--secondary"
-      }
+      customClass: { confirmButton: "bx--btn bx--btn--danger", cancelButton: "bx--btn bx--btn--secondary" }
     });
-
     if (!confirmDelete.isConfirmed) return;
 
     Swal.fire({ title: "Deleting...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
@@ -529,19 +527,22 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     const data = await response.json();
     Swal.close();
 
-    if (data.success) Swal.fire({ icon: "success", title: "Preset Deleted", timer: 2000, showConfirmButton: false }).then(() => location.reload());
-    else Swal.fire("Error", data.error || "Failed to delete preset", "error");
-
+    if (data.success) {
+      Swal.fire({ icon: "success", title: "Preset Deleted", timer: 2000, showConfirmButton: false })
+        .then(() => location.reload());
+    } else {
+      Swal.fire("Error", data.error || "Failed to delete preset", "error");
+    }
     return;
   }
 
-  // Save preset updates
+  // Handle save
   if (result.value) {
     const { newName, folderId } = result.value;
 
     Swal.fire({ title: "Saving...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
 
-    // 1️⃣ Update preset name
+    // 1️⃣ Rename preset
     const success = await savePreset(currentPresetId, { preset_name: newName });
     if (!success) {
       Swal.close();
@@ -549,25 +550,17 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       return;
     }
 
-    // 2️⃣ Update folder assignment
-    // Remove preset from all other folders first
-    folders.forEach(f => {
-      if (f.preset_ids && f.preset_ids.includes(currentPresetId)) {
-        f.preset_ids = f.preset_ids.filter(id => id !== currentPresetId);
-      }
-    });
-
+    // 2️⃣ Assign preset to folder
     if (folderId) {
-      const folder = folders.find(f => (f._id || f.id) === folderId);
+      const folder = window.folders.find(f => f.id === folderId);
       if (folder) {
         folder.preset_ids = folder.preset_ids || [];
         if (!folder.preset_ids.includes(currentPresetId)) folder.preset_ids.push(currentPresetId);
 
-        // Update folder on server
         await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `folder_id=${encodeURIComponent(folder._id || folder.id)}&preset_ids=${encodeURIComponent(JSON.stringify(folder.preset_ids))}`
+          body: `folder_id=${encodeURIComponent(folder.id)}&preset_ids=${encodeURIComponent(JSON.stringify(folder.preset_ids))}`
         });
       }
     }
@@ -579,11 +572,10 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       text: `Preset "${newName}" saved and assigned to folder.`,
       timer: 2000,
       showConfirmButton: false
-    }).then(() => {
-      currentPresetName = newName;
-      saveCurrentSelectionToStorage(); // ✅ Save selection after changes
-      location.reload();
-    });
+    }).then(() => location.reload());
+
+    // Save current selection locally
+    saveCurrentSelectionToStorage();
   }
 });
 
