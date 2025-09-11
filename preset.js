@@ -741,10 +741,92 @@ function applyPresetToPedalboard(presetDoc) {
 
 
 // Create preset logic
+// async function createPreset() {
+//   const {
+//     value: presetName
+//   } = await Swal.fire({
+//     title: 'Enter new preset name',
+//     input: 'text',
+//     inputLabel: 'Preset Name',
+//     inputPlaceholder: 'Type your new preset name here',
+//     showCancelButton: true,
+//     customClass: {
+//       confirmButton: 'bx--btn bx--btn--primary',
+//       cancelButton: 'bx--btn bx--btn--secondary'
+//     },
+//     inputValidator: value => {
+//       if (!value) {
+//         return 'You need to enter a preset name!';
+//       }
+//     }
+//   });
+
+//   if (!presetName) return; // Cancelled or empty
+
+//   const userId = currentUser.userid;
+//   const selectedBoardId = $('#pedalboardSelect').val();
+//   const selectedBoard = window.allPedalboards.find(pb => pb._id === selectedBoardId);
+
+//   if (!selectedBoard) {
+//     Swal.fire('Error', 'Selected pedalboard is invalid.', 'error');
+//     return;
+//   }
+
+//   const bodyData = {
+//     user_id: userId,
+//     board_name: selectedBoard.board_name,
+//     board_id: selectedBoard._id, // <-- safe direct ID
+//     preset_name: presetName,
+//     pedals: {}
+//   };
+
+//   try {
+//     const response = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json'
+//       },
+//       body: JSON.stringify(bodyData)
+//     });
+
+//     const data = await response.json();
+
+//     if (!response.ok || !data.success) {
+//       const message = data.message || 'Failed to create preset.';
+//       const cloudantDetails = data.cloudant_response ?
+//         JSON.stringify(data.cloudant_response, null, 2) :
+//         'No Cloudant response.';
+
+//       Swal.fire('Error', `${message}\n\nCloudant says:\n${cloudantDetails}`, 'error');
+//       return;
+//     }
+
+//     Swal.fire({
+//       title: 'Success',
+//       text: `Preset "${presetName}" created.`,
+//       icon: 'success',
+//       timer: 2000,
+//       showConfirmButton: false
+//     }).then(() => {
+//       window.location.reload();
+//     });
+
+//   } catch (error) {
+//     console.error("Caught exception:", error);
+//     Swal.fire('Error', error.message || 'Network or server error.', 'error');
+//   }
+
+//   savePedalboard();
+
+// }
+
+
+
+
+
 async function createPreset() {
-  const {
-    value: presetName
-  } = await Swal.fire({
+  // 1️⃣ Prompt for preset name
+  const { value: presetName } = await Swal.fire({
     title: 'Enter new preset name',
     input: 'text',
     inputLabel: 'Preset Name',
@@ -755,13 +837,11 @@ async function createPreset() {
       cancelButton: 'bx--btn bx--btn--secondary'
     },
     inputValidator: value => {
-      if (!value) {
-        return 'You need to enter a preset name!';
-      }
+      if (!value) return 'You need to enter a preset name!';
     }
   });
 
-  if (!presetName) return; // Cancelled or empty
+  if (!presetName) return; // cancelled or empty
 
   const userId = currentUser.userid;
   const selectedBoardId = $('#pedalboardSelect').val();
@@ -772,20 +852,42 @@ async function createPreset() {
     return;
   }
 
+  // 2️⃣ Prompt for folder assignment (optional)
+  await window.loadFoldersForCurrentPedalboard(true); // ensure folders are loaded for Swal
+  const folderOptions = window.folders.map(f => {
+    return `<option value="${f.id}">${f.name}</option>`;
+  }).join("");
+
+  const { value: folderId } = await Swal.fire({
+    title: 'Assign to folder (optional)',
+    html: `
+      <select id="presetFolderSelect" class="swal2-select">
+        <option value="">-- No folder --</option>
+        ${folderOptions}
+      </select>
+    `,
+    showCancelButton: true,
+    showConfirmButton: true,
+    confirmButtonText: 'Create',
+    preConfirm: () => {
+      return document.getElementById('presetFolderSelect').value;
+    }
+  });
+
+  // 3️⃣ Create preset object
   const bodyData = {
     user_id: userId,
     board_name: selectedBoard.board_name,
-    board_id: selectedBoard._id, // <-- safe direct ID
+    board_id: selectedBoard._id,
     preset_name: presetName,
     pedals: {}
   };
 
   try {
+    // 4️⃣ Send create request to server
     const response = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(bodyData)
     });
 
@@ -796,29 +898,61 @@ async function createPreset() {
       const cloudantDetails = data.cloudant_response ?
         JSON.stringify(data.cloudant_response, null, 2) :
         'No Cloudant response.';
-
       Swal.fire('Error', `${message}\n\nCloudant says:\n${cloudantDetails}`, 'error');
       return;
     }
 
+    const newPresetId = data.preset_id || data._id; // ensure we have the preset ID
+
+    // 5️⃣ If user selected a folder, update its preset_ids
+    if (folderId) {
+      const folder = window.folders.find(f => f.id === folderId);
+      if (folder) {
+        folder.preset_ids = folder.preset_ids || [];
+        folder.preset_ids.push(newPresetId);
+
+        const formData = new URLSearchParams();
+        formData.append('folder_id', folder.id);
+        formData.append('preset_ids', JSON.stringify(folder.preset_ids));
+
+        try {
+          const updateRes = await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: formData.toString()
+          });
+
+          const updateData = await updateRes.json();
+          if (!updateData.ok) {
+            console.warn("Failed to assign preset to folder:", updateData.error);
+          } else {
+            folder.preset_ids = folder.preset_ids; // keep in memory
+          }
+        } catch (err) {
+          console.error("Error updating folder:", err);
+        }
+      }
+    }
+
+    // 6️⃣ Show success and reload
     Swal.fire({
       title: 'Success',
       text: `Preset "${presetName}" created.`,
       icon: 'success',
       timer: 2000,
       showConfirmButton: false
-    }).then(() => {
-      window.location.reload();
-    });
+    }).then(() => location.reload());
 
   } catch (error) {
     console.error("Caught exception:", error);
     Swal.fire('Error', error.message || 'Network or server error.', 'error');
   }
 
-  savePedalboard();
-
+  savePedalboard(); // optional: save current board state
 }
+
+
+
 
 
 
