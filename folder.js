@@ -5,26 +5,29 @@
 // Store folders locally
 let folders = []; // objects with {id, name, preset_ids}
 
-// Populate folder dropdown (robust + auto-select option)
+// ---------------------------
+// Populate main page #folderSelect dropdown
+// ---------------------------
 function populateFolderDropdown() {
   const folderSelect = document.getElementById('folderSelect');
   if (!folderSelect) return;
 
-  folderSelect.innerHTML = '<option value="">-- Select Folder --</option>';
+  folderSelect.innerHTML = '';
 
-  folders.forEach(f => {
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '-- Select Folder --';
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  folderSelect.appendChild(placeholder);
+
+  window.folders.forEach(f => {
+    if (!f.id) return; // skip invalid
     const opt = document.createElement('option');
-    opt.value = f.id || '';
-    opt.textContent = f.name || (f.id || 'Unnamed Folder');
+    opt.value = f.id;
+    opt.textContent = f.name;
     folderSelect.appendChild(opt);
   });
-
-  // OPTIONAL: if you want auto-select the first folder and fire change handlers,
-  // uncomment the block below. Useful if you want presets to load immediately.
-  if (folders.length > 0) {
-    folderSelect.value = folders[0].id;
-    folderSelect.dispatchEvent(new Event('change'));
-  }
 }
 
 // ---------------------------
@@ -173,7 +176,6 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
     return;
   }
 
-  // Only manipulate DOM loader & main dropdown if NOT for Swal
   let loader, folderSelect;
   if (!forSwal) {
     loader = document.getElementById('folderSelectLoader');
@@ -207,7 +209,7 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
       data = null;
     }
 
-    // Normalize response into `folders` array
+    // Normalize into window.folders array
     if (!data) {
       window.folders = [];
     } else if (Array.isArray(data.folders)) {
@@ -224,20 +226,21 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
       window.folders = Array.isArray(possible) ? possible : [];
     }
 
-    // Ensure each folder has { id, name, preset_ids }
-    window.folders = window.folders.map(f => {
-      if (typeof f === 'string') return { id: '', name: f, preset_ids: [] };
+    // Ensure each folder has proper id, name, and preset_ids
+    window.folders = window.folders.map((f, idx) => {
+      if (typeof f === 'string') return { id: `folder_${idx}`, name: f, preset_ids: [] };
       return {
-        id: (f.id || f._id || f['_id'] || ''),
-        name: (f.name || f.folder_name || f.title || ''),
-        preset_ids: (f.preset_ids || f.presets || [])
+        id: f._id || f.id || f['_id'] || `folder_${idx}`,  // fallback ID
+        name: f.name || f.folder_name || f.title || `(Folder ${idx + 1})`,
+        preset_ids: f.preset_ids || f.presets || []
       };
     });
 
     console.log('[folders] normalized folders:', window.folders);
 
-    // Only update main page dropdown if NOT for Swal
+    // Update main page dropdown only if not for Swal
     if (!forSwal) populateFolderDropdown();
+
   } catch (err) {
     console.error('[folders] Error fetching folders:', err);
     window.folders = [];
