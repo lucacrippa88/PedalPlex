@@ -442,7 +442,6 @@ function fetchPresetsByBoardId(user_id, board_id, callback) {
 
 
 
-
 document.getElementById("renamePresetBtn").addEventListener("click", async () => {
   if (!currentPresetId) {
     Swal.fire({
@@ -482,7 +481,6 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     </select>
   `;
 
-  // Open Swal modal
   const { value: result, isDenied } = await Swal.fire({
     title: "Edit Preset",
     html: swalHtml,
@@ -494,10 +492,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     preConfirm: () => {
       const newName = document.getElementById('presetNameInput').value.trim();
       const selectedFolderId = document.getElementById('folderSelectInput').value;
-      if (!newName) {
-        Swal.showValidationMessage('Preset name cannot be empty');
-        return false;
-      }
+      if (!newName) Swal.showValidationMessage('Preset name cannot be empty');
       return { newName, selectedFolderId };
     }
   });
@@ -511,16 +506,11 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       showCancelButton: true,
       confirmButtonText: "Yes, delete it",
       cancelButtonText: "Cancel",
-      customClass: {
-        confirmButton: "bx--btn bx--btn--danger",
-        cancelButton: "bx--btn bx--btn--secondary"
-      }
+      customClass: { confirmButton: "bx--btn bx--btn--danger", cancelButton: "bx--btn bx--btn--secondary" }
     });
-
     if (!confirmDelete.isConfirmed) return;
 
     Swal.fire({ title: "Deleting...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
-
     const response = await fetch("https://www.cineteatrosanluigi.it/plex/DELETE_PRESET.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -528,12 +518,8 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     });
     const data = await response.json();
     Swal.close();
-
-    if (data.success) {
-      Swal.fire({ icon: "success", title: "Preset Deleted", timer: 2000, showConfirmButton: false }).then(() => location.reload());
-    } else {
-      Swal.fire("Error", data.error || "Failed to delete preset", "error");
-    }
+    if (data.success) Swal.fire({ icon: "success", title: "Preset Deleted", timer: 2000, showConfirmButton: false }).then(() => location.reload());
+    else Swal.fire("Error", data.error || "Failed to delete preset", "error");
     return;
   }
 
@@ -550,25 +536,35 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       return;
     }
 
-    // 2️⃣ Assign preset to folder
+    // 2️⃣ Remove preset from all folders first
+    for (const folder of foldersForDropdown) {
+      if (folder.preset_ids?.includes(currentPresetId)) {
+        folder.preset_ids = folder.preset_ids.filter(pid => pid !== currentPresetId);
+        // Update Cloudant folder
+        await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `folder_id=${encodeURIComponent(folder.id)}&preset_ids=${encodeURIComponent(JSON.stringify(folder.preset_ids))}`
+        });
+      }
+    }
+
+    // 3️⃣ Assign preset to the selected folder
     if (selectedFolderId) {
       const folder = foldersForDropdown.find(f => f.id === selectedFolderId);
       if (folder) {
         if (!folder.preset_ids) folder.preset_ids = [];
-        if (!folder.preset_ids.includes(currentPresetId)) {
-          folder.preset_ids.push(currentPresetId);
-
-          await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `folder_id=${encodeURIComponent(folder.id)}&preset_ids=${encodeURIComponent(JSON.stringify(folder.preset_ids))}`
-          });
-        }
+        if (!folder.preset_ids.includes(currentPresetId)) folder.preset_ids.push(currentPresetId);
+        // Update Cloudant
+        await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `folder_id=${encodeURIComponent(folder.id)}&preset_ids=${encodeURIComponent(JSON.stringify(folder.preset_ids))}`
+        });
       }
     }
 
     Swal.close();
-
     Swal.fire({
       icon: "success",
       title: "Preset Updated",
@@ -578,9 +574,12 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     }).then(() => location.reload());
   }
 
-  // Save selection locally
   saveCurrentSelectionToStorage();
 });
+
+
+
+
 
 
 
