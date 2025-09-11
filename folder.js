@@ -3,20 +3,28 @@
 // ---------------------------
 
 // Store folders locally
-let folders = []; // {id, name, preset_ids}
+let folders = []; // objects with {id, name, preset_ids}
 
-// Populate folder dropdown
+// Populate folder dropdown (robust + auto-select option)
 function populateFolderDropdown() {
   const folderSelect = document.getElementById('folderSelect');
   if (!folderSelect) return;
 
   folderSelect.innerHTML = '<option value="">-- Select Folder --</option>';
+
   folders.forEach(f => {
     const opt = document.createElement('option');
-    opt.value = f.id;
-    opt.textContent = f.name;
+    opt.value = f.id || '';
+    opt.textContent = f.name || (f.id || 'Unnamed Folder');
     folderSelect.appendChild(opt);
   });
+
+  // OPTIONAL: if you want auto-select the first folder and fire change handlers,
+  // uncomment the block below. Useful if you want presets to load immediately.
+  if (folders.length > 0) {
+    folderSelect.value = folders[0].id;
+    folderSelect.dispatchEvent(new Event('change'));
+  }
 }
 
 // ---------------------------
@@ -148,10 +156,20 @@ function attachRenameFolderListener() {
 }
 
 // ---------------------------
-// Fetch folders for the current pedalboard
+// Fetch folders for the current pedalboard (robust with logging)
 // ---------------------------
 async function loadFoldersForCurrentPedalboard() {
-  if (!window.currentUser || !window.pedalboard || !window.pedalboard._id) return;
+  console.log('[folders] loadFoldersForCurrentPedalboard called', {
+    currentUser: window.currentUser,
+    pedalboard: window.pedalboard
+  });
+
+  if (!window.currentUser || !window.pedalboard || !window.pedalboard._id) {
+    console.warn('[folders] Missing currentUser or pedalboard/_id — aborting loadFoldersForCurrentPedalboard');
+    folders = [];
+    populateFolderDropdown();
+    return;
+  }
 
   const loader = document.getElementById('folderSelectLoader');
   const folderSelect = document.getElementById('folderSelect');
@@ -159,27 +177,68 @@ async function loadFoldersForCurrentPedalboard() {
   if (folderSelect) folderSelect.style.display = 'none';
 
   try {
+    const payload = {
+      user_id: window.currentUser.userid,
+      board_id: window.pedalboard._id
+    };
+    console.log('[folders] POST -> GET_FOLDERS.php payload:', payload);
+
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_FOLDERS.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        user_id: window.currentUser.userid,
-        board_id: window.pedalboard._id
-      })
+      body: JSON.stringify(payload)
     });
 
-    const data = await res.json();
+    const text = await res.text();
+    console.log('[folders] GET_FOLDERS response status:', res.status);
+    console.log('[folders] GET_FOLDERS raw response text:', text);
 
-    if (data.error) {
-      console.error('Failed to load folders:', data.error);
+    let data;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch (parseErr) {
+      console.error('[folders] Failed to parse JSON from GET_FOLDERS:', parseErr);
+      data = null;
+    }
+
+    // Normalize response into `folders` array, handling multiple possible server shapes
+    if (!data) {
+      folders = [];
+    } else if (Array.isArray(data.folders)) {
+      folders = data.folders;
+    } else if (Array.isArray(data.docs)) {
+      // older code returned docs => adapt
+      folders = data.docs;
+    } else if (Array.isArray(data)) {
+      // server might return plain array
+      folders = data;
+    } else if (data.error) {
+      console.error('[folders] Server returned error:', data.error);
       folders = [];
     } else {
-      folders = data.folders || [];
+      // unknown shape — make best attempt to extract any array-valued fields
+      const possible = data.folders || data.docs || Object.values(data).find(v => Array.isArray(v));
+      if (Array.isArray(possible)) folders = possible;
+      else folders = [];
     }
+
+    // Ensure each folder has { id, name, preset_ids }
+    folders = folders.map(f => {
+      // if the item is a string, treat it as name
+      if (typeof f === 'string') return { id: '', name: f, preset_ids: [] };
+
+      return {
+        id: (f.id || f._id || f['_id'] || ''),
+        name: (f.name || f.folder_name || f.title || ''),
+        preset_ids: (f.preset_ids || f.presets || [])
+      };
+    });
+
+    console.log('[folders] normalized folders:', folders);
 
     populateFolderDropdown();
   } catch (err) {
-    console.error('Error fetching folders:', err);
+    console.error('[folders] Error fetching folders:', err);
     folders = [];
     populateFolderDropdown();
   } finally {
@@ -188,10 +247,7 @@ async function loadFoldersForCurrentPedalboard() {
   }
 }
 
-
-// ---------------------------
-// Expose globally
-// ---------------------------
+// Expose globally (keep your existing API)
 window.attachAddFolderListener = attachAddFolderListener;
 window.attachRenameFolderListener = attachRenameFolderListener;
 window.loadFoldersForCurrentPedalboard = loadFoldersForCurrentPedalboard;
