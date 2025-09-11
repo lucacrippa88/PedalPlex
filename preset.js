@@ -823,81 +823,93 @@ function applyPresetToPedalboard(presetDoc) {
 
 
 
-
-// Create preset logic (folder-aware)
 async function createPreset() {
+  // 1️⃣ Prompt for preset name
   const { value: presetName } = await Swal.fire({
     title: 'Enter new preset name',
     input: 'text',
     inputLabel: 'Preset Name',
     inputPlaceholder: 'Type your new preset name here',
     showCancelButton: true,
-    customClass: {
-      confirmButton: 'bx--btn bx--btn--primary',
-      cancelButton: 'bx--btn bx--btn--secondary'
-    },
-    inputValidator: value => {
-      if (!value) return 'You need to enter a preset name!';
-    }
+    inputValidator: value => !value && 'You must enter a preset name!'
   });
 
-  if (!presetName) return; // Cancelled or empty
+  if (!presetName) return; // Cancelled
 
+  // 2️⃣ Prompt for folder selection
+  const folderOptions = [{ id: '', name: 'No Folder' }, ...window.folders.map(f => ({ id: f.id || f._id, name: f.name }))];
+  const folderHtml = `<select id="selectFolder" class="swal2-select" style="width:100%;padding:0.5em;">
+    ${folderOptions.map(f => `<option value="${f.id}">${f.name}</option>`).join('')}
+  </select>`;
+
+  const { value: selectedFolderId } = await Swal.fire({
+    title: 'Select folder for this preset',
+    html: folderHtml,
+    showCancelButton: true,
+    preConfirm: () => document.getElementById('selectFolder').value
+  });
+
+  // 3️⃣ Create preset in Cloudant
   const userId = currentUser.userid;
-  const selectedBoardId = $('#pedalboardSelect').val();
-  const selectedBoard = window.allPedalboards.find(pb => pb._id === selectedBoardId);
-
-  if (!selectedBoard) {
-    Swal.fire('Error', 'Selected pedalboard is invalid.', 'error');
+  const boardId = window.pedalboard?._id;
+  if (!boardId) {
+    Swal.fire('Error', 'No pedalboard selected', 'error');
     return;
   }
 
   const bodyData = {
     user_id: userId,
-    board_name: selectedBoard.board_name,
-    board_id: selectedBoard._id,
+    board_name: window.pedalboard.board_name,
+    board_id: boardId,
     preset_name: presetName,
     pedals: {}
   };
 
+  let newPresetId;
   try {
-    const response = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(bodyData)
     });
-
-    const data = await response.json();
-
-    if (!response.ok || !data.success) {
-      const message = data.message || 'Failed to create preset.';
-      const cloudantDetails = data.cloudant_response ?
-        JSON.stringify(data.cloudant_response, null, 2) :
-        'No Cloudant response.';
-      Swal.fire('Error', `${message}\n\nCloudant says:\n${cloudantDetails}`, 'error');
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      Swal.fire('Error', 'Failed to create preset: ' + (data.message || 'Unknown error'), 'error');
       return;
     }
-
-    const newPresetId = data._id || data.preset_id;
-
-    // --- FOLDER ASSIGNMENT ---
-    const selectedFolderId = $('#folderSelect').val(); // folder user selected
-    if (selectedFolderId) {
-      await assignPresetToFolder(newPresetId, selectedFolderId);
-    }
-
-    Swal.fire({
-      title: 'Success',
-      text: `Preset "${presetName}" created.`,
-      icon: 'success',
-      timer: 2000,
-      showConfirmButton: false
-    }).then(() => window.location.reload());
-
-  } catch (error) {
-    console.error("Caught exception:", error);
-    Swal.fire('Error', error.message || 'Network or server error.', 'error');
+    newPresetId = data._id || data.preset_id;
+  } catch (err) {
+    Swal.fire('Error', 'Network or server error: ' + err.message, 'error');
+    return;
   }
+
+  // 4️⃣ Assign preset to folder if one is selected
+  if (selectedFolderId) {
+    const folder = window.folders.find(f => f.id === selectedFolderId || f._id === selectedFolderId);
+    if (folder) {
+      folder.preset_ids = folder.preset_ids || [];
+      if (!folder.preset_ids.includes(newPresetId)) folder.preset_ids.push(newPresetId);
+
+      const formData = new URLSearchParams();
+      formData.append('folder_id', folder.id || folder._id);
+      formData.append('preset_ids', JSON.stringify(folder.preset_ids));
+
+      try {
+        const res2 = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        });
+        const result = await res2.json();
+        if (!result.ok) console.error('Failed to update folder:', result.error);
+      } catch (err) {
+        console.error('Error updating folder:', err);
+      }
+    }
+  }
+
+  Swal.fire('Success', `Preset "${presetName}" created${selectedFolderId ? ` and added to folder.` : '.'}`, 'success')
+    .then(() => window.location.reload());
 
   savePedalboard();
 }
