@@ -161,31 +161,37 @@ function initNavPreset() {
 
 
 
-  // Attach folder add/rename listeners (from folder.js)
+  // Attach folder add/rename listeners
   if (window.attachAddFolderListener) window.attachAddFolderListener();
   if (window.attachRenameFolderListener) window.attachRenameFolderListener();
 
-  // Pedalboard change
+  // Pedalboard change event
   $('#pedalboardSelect').on('change', (e) => {
     const idx = parseInt(e.target.value, 10);
     window.pedalboard = window.allPedalboards[idx];
 
-    // Load folders for selected pedalboard
+    // Fetch folders for this pedalboard
     if (window.loadFoldersForCurrentPedalboard) {
       window.loadFoldersForCurrentPedalboard();
     }
 
-    // Load presets for this board
+    // Fetch presets for this board
     if (typeof fetchPresetsByBoardId === 'function') {
       fetchPresetsByBoardId(window.currentUser.userid, window.pedalboard._id);
     }
   });
 
-  // --- Page load: populate folders for the initially selected pedalboard ---
-  if (window.pedalboard && window.loadFoldersForCurrentPedalboard) {
-    window.loadFoldersForCurrentPedalboard();
-  }
+  // --- Page load: wait for currentUser and pedalboard ---
+  const waitForReady = setInterval(() => {
+    if (window.currentUser && window.allPedalboards && window.allPedalboards.length > 0) {
+      clearInterval(waitForReady);
+      window.pedalboard = window.allPedalboards[0]; // pick first pedalboard initially
+      if (window.loadFoldersForCurrentPedalboard) {
+        window.loadFoldersForCurrentPedalboard();
+      }
+    }
+  }, 50);
 
 
-  
+
 }

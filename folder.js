@@ -154,7 +154,9 @@ async function loadFoldersForCurrentPedalboard() {
   if (!window.currentUser || !window.pedalboard || !window.pedalboard._id) return;
 
   const loader = document.getElementById('folderSelectLoader');
+  const folderSelect = document.getElementById('folderSelect');
   if (loader) loader.style.display = 'flex';
+  if (folderSelect) folderSelect.style.display = 'none';
 
   try {
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_FOLDERS.php', {
@@ -182,8 +184,10 @@ async function loadFoldersForCurrentPedalboard() {
     populateFolderDropdown();
   } finally {
     if (loader) loader.style.display = 'none';
+    if (folderSelect) folderSelect.style.display = 'inline-block';
   }
 }
+
 
 // ---------------------------
 // Expose globally
