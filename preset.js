@@ -263,38 +263,6 @@ function fetchPresetsByBoardId(user_id, board_id, callback) {
         return;
       }
 
-      // Use data.presets to populate your dropdown
-      // presetSelect.innerHTML = ''; // clear
-
-      // if (!data.presets || data.presets.length === 0) {
-      //   const option = document.createElement('option');
-      //   option.value = '';
-      //   option.textContent = 'No presets available';
-      //   presetSelect.appendChild(option);
-      //   if (callback) callback();
-      //   return;
-      // }
-
-      // window.presetMap = {}; // reset for this board
-
-      // // Add placeholder option to presets dropdown
-      // const placeholderPresetOption = document.createElement('option');
-      // placeholderPresetOption.value = '';
-      // placeholderPresetOption.textContent = 'Select a preset...';
-      // placeholderPresetOption.selected = true;
-      // placeholderPresetOption.disabled = true;
-      // presetSelect.appendChild(placeholderPresetOption);
-
-      // data.presets.forEach((preset, index) => {
-      //   const presetName = preset.preset_name || `Preset ${index + 1}`;
-      //   window.presetMap[presetName] = preset;
-
-      //   const option = document.createElement('option');
-      //   option.value = presetName;
-      //   option.textContent = presetName;
-      //   presetSelect.appendChild(option);
-      // });
-
       window.presets = data.presets || [];   // store all presets globally
       window.presetMap = {};                 // reset preset map for this board
 
@@ -430,46 +398,49 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     }
 
     // 2️⃣ Update folder assignment
-    if (folderId) {
-      const folder = window.folders.find(f => f.id === folderId);
-      if (folder) {
-        folder.preset_ids = folder.preset_ids || [];
+      if (folderId) {
+        // Remove preset from all folders first
+        window.folders.forEach(f => {
+          f.preset_ids = f.preset_ids || [];
+          const index = f.preset_ids.indexOf(currentPresetId);
+          if (index !== -1) f.preset_ids.splice(index, 1);
+        });
 
-        if (!folder.preset_ids.includes(currentPresetId)) {
+        // Add preset to the selected folder
+        const folder = window.folders.find(f => f.id === folderId || f._id === folderId);
+        if (folder) {
           folder.preset_ids.push(currentPresetId);
-        }
 
-        // Call server to save changes
-        const formData = new URLSearchParams();
-        formData.append('folder_id', folder.id);
-        formData.append('preset_ids', JSON.stringify(folder.preset_ids));
+          // Call server to save changes
+          const formData = new URLSearchParams();
+          formData.append('folder_id', folder.id || folder._id);
+          formData.append('preset_ids', JSON.stringify(folder.preset_ids));
 
-        try {
-          const updateRes = await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: formData.toString()
-          });
+          try {
+            const updateRes = await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php", {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: formData.toString()
+            });
 
-          const updateData = await updateRes.json();
+            const updateData = await updateRes.json();
 
-          if (!updateData.ok) {
-            console.error("Failed to update folder:", updateData.error);
+            if (!updateData.ok) {
+              console.error("Failed to update folder:", updateData.error);
+              Swal.fire("Error", "Failed to save preset to folder.", "error");
+              return;
+            }
+
+            // Update preset in memory
+            preset.folder_id = folder.id;
+
+          } catch (err) {
+            console.error("Error updating folder:", err);
             Swal.fire("Error", "Failed to save preset to folder.", "error");
             return;
           }
-
-          // Also update preset.folder_id in memory for next time
-          preset.folder_id = folder.id;
-
-        } catch (err) {
-          console.error("Error updating folder:", err);
-          Swal.fire("Error", "Failed to save preset to folder.", "error");
-          return;
         }
-      }
+
     }
 
 
