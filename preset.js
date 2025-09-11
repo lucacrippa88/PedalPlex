@@ -867,6 +867,7 @@ async function createPreset() {
   };
 
   let newPresetId;
+  let data;
   try {
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
       method: 'POST',
