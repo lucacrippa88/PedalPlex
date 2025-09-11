@@ -215,7 +215,7 @@ html {
   margin-bottom: 10px;
 }
 
-#pedalboardSelect, #presetSelect, #folderSelect {
+#pedalboardSelect, #presetSelect, #folderSelect, #swal2-select {
   height: 40px;
   font-size: initial;
 }
