@@ -30,7 +30,6 @@ function initPreset() {
       return response.json();
     })
     .then(catalog => {
-      // resultsDiv.innerHTML = ""; // Clear loader
       window.catalog = catalog;
 
       window.catalogMap = {};
@@ -89,30 +88,8 @@ function initPreset() {
       });
 
       if (data.docs.length > 0) {
-        
+
         // Restore pedalboard selection by saved text
-        // const savedBoardText = localStorage.getItem('lastPedalboardText');
-        // let restored = false;
-
-        // if (savedBoardText) {
-        //   for (let i = 0; i < dropdown.options.length; i++) {
-        //     if (dropdown.options[i].text.trim() === savedBoardText) {
-        //       dropdown.selectedIndex = i;
-        //       selectedBoardIndex = parseInt(dropdown.options[i].value, 10);
-        //       window.pedalboard = window.allPedalboards[selectedBoardIndex];
-        //       restored = true;
-        //       break;
-        //     }
-        //   }
-        // }
-        // if (!restored) {
-        //   // fallback to first pedalboard
-        //   selectedBoardIndex = 0;
-        //   dropdown.selectedIndex = 1; // skip placeholder at index 0
-        //   window.pedalboard = window.allPedalboards[0];
-        // }
-        // Try restoring selection from localStorage by board_id
-
         const savedBoardId = localStorage.getItem('lastPedalboardId');
         let restored = false;
 
@@ -131,70 +108,72 @@ function initPreset() {
           // fallback: select first real pedalboard
           dropdown.selectedIndex = 1; // skip placeholder
           window.pedalboard = window.allPedalboards[0];
-          
+
           // Save fallback choice
           localStorage.setItem('lastPedalboardId', window.pedalboard._id);
         }
-
-
 
         renderFullPedalboard();
 
         const userId = currentUser.userid;
         // fetchPresetsByBoardId(userId, window.pedalboard._id);
         fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
-        // Restore preset selection by visible text
-// Restore preset selection by visible text
-const savedPresetText = localStorage.getItem('lastPresetText');
-if (savedPresetText) {
-  const presetSelect = document.getElementById('presetSelect');
-  let restoredPreset = false;
+          // Restore preset selection by visible text
+          // Restore preset selection by visible text
+          const savedPresetText = localStorage.getItem('lastPresetText');
+          if (savedPresetText) {
+            const presetSelect = document.getElementById('presetSelect');
+            let restoredPreset = false;
 
-  for (let i = 0; i < presetSelect.options.length; i++) {
-    if (presetSelect.options[i].text.trim() === savedPresetText) {
-      presetSelect.selectedIndex = i;
-      const preset = window.presetMap[presetSelect.options[i].value];
-      if (preset) {
-        currentPresetId = preset._id;
-        currentPresetName = preset.preset_name;
-        currentPresetRev = preset._rev;
-        applyPresetToPedalboard(preset);
+            for (let i = 0; i < presetSelect.options.length; i++) {
+              if (presetSelect.options[i].text.trim() === savedPresetText) {
+                presetSelect.selectedIndex = i;
+                const preset = window.presetMap[presetSelect.options[i].value];
+                if (preset) {
+                  currentPresetId = preset._id;
+                  currentPresetName = preset.preset_name;
+                  currentPresetRev = preset._rev;
+                  applyPresetToPedalboard(preset);
 
-        // Restore zoom now that preset is applied
-        if (typeof restoreZoomForCurrentBoard === "function") {
-          restoreZoomForCurrentBoard();
-        }
-        restoredPreset = true;
+                  // Restore zoom now that preset is applied
+                  if (typeof restoreZoomForCurrentBoard === "function") {
+                    restoreZoomForCurrentBoard();
+                  }
+                  restoredPreset = true;
 
-        // Trigger change event so Save button is enabled
-        const event = new Event('change', { bubbles: true });
-        presetSelect.dispatchEvent(event);
-      }
-      break;
-    }
-  }
+                  // Trigger change event so Save button is enabled
+                  const event = new Event('change', {
+                    bubbles: true
+                  });
+                  presetSelect.dispatchEvent(event);
+                }
+                break;
+              }
+            }
 
-  // fallback: select first real preset (skip placeholder)
-  if (!restoredPreset && presetSelect.options.length > 1) {
-    presetSelect.selectedIndex = 1;
-    const preset = window.presetMap[presetSelect.options[1].value];
-    if (preset) {
-      applyPresetToPedalboard(preset);
+            // fallback: select first real preset (skip placeholder)
+            if (!restoredPreset && presetSelect.options.length > 1) {
+              presetSelect.selectedIndex = 1;
+              const preset = window.presetMap[presetSelect.options[1].value];
+              if (preset) {
+                applyPresetToPedalboard(preset);
 
-      // Restore zoom now that preset is applied
-      if (typeof restoreZoomForCurrentBoard === "function") {
-        restoreZoomForCurrentBoard();
-      }
+                // Restore zoom now that preset is applied
+                if (typeof restoreZoomForCurrentBoard === "function") {
+                  restoreZoomForCurrentBoard();
+                }
 
-      // Trigger change event
-      const event = new Event('change', { bubbles: true });
-      presetSelect.dispatchEvent(event);
-    }
-  }
-}
+                // Trigger change event
+                const event = new Event('change', {
+                  bubbles: true
+                });
+                presetSelect.dispatchEvent(event);
+              }
+            }
+          }
 
 
-      });
+        });
       } else {
         selectedBoardIndex = null;
         window.pedalboard = {
@@ -322,52 +301,209 @@ function fetchPresetsByBoardId(user_id, board_id, callback) {
 
 
 // Edit preset logic
+// document.getElementById("renamePresetBtn").addEventListener("click", async () => {
+//   if (!currentPresetId) {
+//     Swal.fire({
+//       icon: "warning",
+//       title: "No Preset Selected",
+//       text: "Please select a preset to rename or delete.",
+//       confirmButtonText: "Ok",
+//       customClass: {
+//         confirmButton: "bx--btn bx--btn--primary"
+//       }
+//     });
+//     return;
+//   }
+
+//   const preset = Object.values(window.presetMap).find(p => p._id === currentPresetId);
+
+//   if (!preset || !currentPresetRev) {
+//     Swal.fire("Error", "Missing revision (_rev) info for the preset.", "error");
+//     return;
+//   }
+
+//   // Edit
+//   const result = await Swal.fire({
+//     title: "Edit Preset",
+//     input: "text",
+//     inputLabel: "Preset Name",
+//     inputValue: currentPresetName,
+//     showCancelButton: true,
+//     showDenyButton: true,
+//     confirmButtonText: "Save",
+//     cancelButtonText: "Cancel",
+//     denyButtonText: "Delete Preset",
+//     customClass: {
+//       confirmButton: "bx--btn bx--btn--primary",
+//       cancelButton: "bx--btn bx--btn--secondary",
+//       denyButton: "bx--btn bx--btn--danger"
+//     },
+//     inputValidator: (value) => {
+//       if (!value.trim()) {
+//         return "Name cannot be empty";
+//       }
+//     }
+//   });
+
+//   // Delete
+//   if (result.isDenied) {
+//     const confirmDelete = await Swal.fire({
+//       title: `Delete "${currentPresetName}"?`,
+//       text: "This action cannot be undone.",
+//       icon: "warning",
+//       showCancelButton: true,
+//       confirmButtonText: "Yes, delete it",
+//       cancelButtonText: "Cancel",
+//       customClass: {
+//         confirmButton: "bx--btn bx--btn--danger",
+//         cancelButton: "bx--btn bx--btn--secondary"
+//       }
+//     });
+
+//     // if user clicked Cancel, just stop here
+//     if (result.isDismissed) {
+//       return;
+//     }
+
+//     if (confirmDelete.isConfirmed) {
+//       Swal.fire({
+//         title: "Deleting...",
+//         didOpen: () => Swal.showLoading(),
+//         allowOutsideClick: false
+//       });
+
+//       const response = await fetch("https://www.cineteatrosanluigi.it/plex/DELETE_PRESET.php", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json"
+//         },
+//         body: JSON.stringify({
+//           preset_id: currentPresetId,
+//           preset_rev: currentPresetRev
+//         })
+//       });
+
+//       const data = await response.json();
+//       Swal.close();
+
+//       if (data.success) {
+//         Swal.fire({
+//           icon: "success",
+//           title: "Preset Deleted",
+//           timer: 2000,
+//           showConfirmButton: false
+//         }).then(() => {
+//           location.reload();
+//         });
+//       } else {
+//         Swal.fire("Error", data.error || "Failed to delete preset", "error");
+//       }
+//     }
+
+//     return;
+//   }
+
+//   // Rename
+//   const newName = result.value?.trim();
+//   if (newName && newName !== currentPresetName) {
+//     Swal.fire({
+//       title: "Saving...",
+//       didOpen: () => Swal.showLoading(),
+//       allowOutsideClick: false
+//     });
+
+//     const success = await savePreset(currentPresetId, {
+//       preset_name: newName
+//     });
+
+//     Swal.close();
+
+//     if (success) {
+//       Swal.fire({
+//         icon: "success",
+//         title: "Preset Renamed",
+//         text: `Preset has been renamed to "${newName}"`,
+//         timer: 2000,
+//         showConfirmButton: false
+//       }).then(() => {
+//         currentPresetName = newName;
+//         updatePresetDropdownName(currentPresetId, newName);
+//         location.reload();
+//       });
+//     } else {
+//       Swal.fire("Error", "Failed to rename preset", "error");
+//     }
+//   }
+
+//   // Once server confirms edit is done:
+//   saveCurrentSelectionToStorage();
+
+// });
+
+
+
+
 document.getElementById("renamePresetBtn").addEventListener("click", async () => {
   if (!currentPresetId) {
     Swal.fire({
       icon: "warning",
       title: "No Preset Selected",
-      text: "Please select a preset to rename or delete.",
+      text: "Please select a preset to rename or assign to a folder.",
       confirmButtonText: "Ok",
-      customClass: {
-        confirmButton: "bx--btn bx--btn--primary"
-      }
+      customClass: { confirmButton: "bx--btn bx--btn--primary" }
     });
     return;
   }
 
   const preset = Object.values(window.presetMap).find(p => p._id === currentPresetId);
-
   if (!preset || !currentPresetRev) {
     Swal.fire("Error", "Missing revision (_rev) info for the preset.", "error");
     return;
   }
 
-  // Edit
-  const result = await Swal.fire({
+  // Get current folders
+  const foldersForDropdown = window.folders || [];
+
+  function presetFolderAssigned(folder, presetId) {
+    return folder.preset_ids && folder.preset_ids.includes(presetId);
+  }
+
+  // Build folder dropdown HTML
+  const folderOptionsHtml = foldersForDropdown.map(f => 
+    `<option value="${f.id}" ${presetFolderAssigned(f, currentPresetId) ? 'selected' : ''}>${f.name}</option>`
+  ).join('');
+
+  const swalHtml = `
+    <input id="presetNameInput" class="swal2-input" placeholder="Preset Name" value="${currentPresetName}">
+    <label for="folderSelectInput" style="margin-top:0.5rem; display:block;">Folder</label>
+    <select id="folderSelectInput" class="swal2-select" style="width:100%; padding:0.5rem;">
+      <option value="">-- No folder --</option>
+      ${folderOptionsHtml}
+    </select>
+  `;
+
+  // Open Swal modal
+  const { value: result, isDenied } = await Swal.fire({
     title: "Edit Preset",
-    input: "text",
-    inputLabel: "Preset Name",
-    inputValue: currentPresetName,
+    html: swalHtml,
     showCancelButton: true,
     showDenyButton: true,
     confirmButtonText: "Save",
     cancelButtonText: "Cancel",
     denyButtonText: "Delete Preset",
-    customClass: {
-      confirmButton: "bx--btn bx--btn--primary",
-      cancelButton: "bx--btn bx--btn--secondary",
-      denyButton: "bx--btn bx--btn--danger"
-    },
-    inputValidator: (value) => {
-      if (!value.trim()) {
-        return "Name cannot be empty";
+    preConfirm: () => {
+      const newName = document.getElementById('presetNameInput').value.trim();
+      const selectedFolderId = document.getElementById('folderSelectInput').value;
+      if (!newName) {
+        Swal.showValidationMessage('Preset name cannot be empty');
+        return false;
       }
+      return { newName, selectedFolderId };
     }
   });
 
-  // Delete
-  if (result.isDenied) {
+  // Handle Delete
+  if (isDenied) {
     const confirmDelete = await Swal.fire({
       title: `Delete "${currentPresetName}"?`,
       text: "This action cannot be undone.",
@@ -381,86 +517,71 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       }
     });
 
-    // if user clicked Cancel, just stop here
-    if (result.isDismissed) { return; }
+    if (!confirmDelete.isConfirmed) return;
 
-    if (confirmDelete.isConfirmed) {
-      Swal.fire({
-        title: "Deleting...",
-        didOpen: () => Swal.showLoading(),
-        allowOutsideClick: false
-      });
+    Swal.fire({ title: "Deleting...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
 
-      const response = await fetch("https://www.cineteatrosanluigi.it/plex/DELETE_PRESET.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          preset_id: currentPresetId,
-          preset_rev: currentPresetRev
-        })
-      });
+    const response = await fetch("https://www.cineteatrosanluigi.it/plex/DELETE_PRESET.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ preset_id: currentPresetId, preset_rev: currentPresetRev })
+    });
+    const data = await response.json();
+    Swal.close();
 
-      const data = await response.json();
-      Swal.close();
-
-      if (data.success) {
-        Swal.fire({
-          icon: "success",
-          title: "Preset Deleted",
-          timer: 2000,
-          showConfirmButton: false
-        }).then(() => {
-          location.reload();
-        });
-      }
-      else {
-        Swal.fire("Error", data.error || "Failed to delete preset", "error");
-      }
+    if (data.success) {
+      Swal.fire({ icon: "success", title: "Preset Deleted", timer: 2000, showConfirmButton: false }).then(() => location.reload());
+    } else {
+      Swal.fire("Error", data.error || "Failed to delete preset", "error");
     }
-
     return;
   }
 
-  // Rename
-  const newName = result.value?.trim();
-  if (newName && newName !== currentPresetName) {
-    Swal.fire({
-      title: "Saving...",
-      didOpen: () => Swal.showLoading(),
-      allowOutsideClick: false
-    });
+  // Handle Rename + Folder Assignment
+  if (result && result.newName) {
+    const { newName, selectedFolderId } = result;
 
-    const success = await savePreset(currentPresetId, {
-      preset_name: newName
-    });
+    Swal.fire({ title: "Saving...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+
+    // 1️⃣ Rename preset
+    const renameSuccess = await savePreset(currentPresetId, { preset_name: newName });
+    if (!renameSuccess) {
+      Swal.fire("Error", "Failed to rename preset", "error");
+      return;
+    }
+
+    // 2️⃣ Assign preset to folder
+    if (selectedFolderId) {
+      const folder = foldersForDropdown.find(f => f.id === selectedFolderId);
+      if (folder) {
+        if (!folder.preset_ids) folder.preset_ids = [];
+        if (!folder.preset_ids.includes(currentPresetId)) {
+          folder.preset_ids.push(currentPresetId);
+
+          await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `folder_id=${encodeURIComponent(folder.id)}&preset_ids=${encodeURIComponent(JSON.stringify(folder.preset_ids))}`
+          });
+        }
+      }
+    }
 
     Swal.close();
 
-    if (success) {
-      Swal.fire({
-        icon: "success",
-        title: "Preset Renamed",
-        text: `Preset has been renamed to "${newName}"`,
-        timer: 2000,
-        showConfirmButton: false
-      }).then(() => {
-        currentPresetName = newName;
-        updatePresetDropdownName(currentPresetId, newName);
-        location.reload();
-      });
-    } 
-    else {
-      Swal.fire("Error", "Failed to rename preset", "error");
-    }
+    Swal.fire({
+      icon: "success",
+      title: "Preset Updated",
+      text: `"${newName}" saved and assigned to folder.`,
+      timer: 2000,
+      showConfirmButton: false
+    }).then(() => location.reload());
   }
 
-  // Once server confirms edit is done:
+  // Save selection locally
   saveCurrentSelectionToStorage();
-  // location.reload();
-
 });
+
 
 
 
@@ -576,7 +697,6 @@ function applyPresetToPedalboard(presetDoc) {
 
   });
 
-
   savePedalboard(); // Save full pedalboard state after applying preset
 
   // Enable save button after applying preset
@@ -614,7 +734,6 @@ async function createPreset() {
   if (!presetName) return; // Cancelled or empty
 
   const userId = currentUser.userid;
-
   const selectedBoardId = $('#pedalboardSelect').val();
   const selectedBoard = window.allPedalboards.find(pb => pb._id === selectedBoardId);
 
@@ -630,7 +749,6 @@ async function createPreset() {
     preset_name: presetName,
     pedals: {}
   };
-
 
   try {
     const response = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
@@ -677,17 +795,13 @@ async function createPreset() {
 // Save the full pedalboard state to localStorage
 function savePedalboard() {
   if (!window.pedalboard) return;
+    try {
+      const boardId = window.pedalboard._id || 'unsaved_board';
+      // Save pedalboard state keyed by board ID
+      localStorage.setItem(`pedalboard_state_${boardId}`, JSON.stringify(window.pedalboard));
 
-  try {
-    const boardId = window.pedalboard._id || 'unsaved_board';
-    // Save pedalboard state keyed by board ID
-    localStorage.setItem(`pedalboard_state_${boardId}`, JSON.stringify(window.pedalboard));
-
-    console.log(`Pedalboard saved: ${boardId}`);
-  } catch (err) {
-    console.error("Failed to save pedalboard:", err);
+      console.log(`Pedalboard saved: ${boardId}`);
+    } catch (err) {
+      console.error("Failed to save pedalboard:", err);
   }
 }
-
-
-
