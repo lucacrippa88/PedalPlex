@@ -138,6 +138,11 @@ function attachAddFolderListener() {
       confirmButtonText: "Rename",
       inputPlaceholder: 'Enter folder name',
       showCancelButton: true,
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: "bx--btn bx--btn--primary",
+        cancelButton: "bx--btn bx--btn--secondary"
+      },
       inputValidator: (v) => !v.trim() && 'Folder name cannot be empty'
     });
 
