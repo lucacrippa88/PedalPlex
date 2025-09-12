@@ -90,42 +90,54 @@ function initPreset() {
 
             // Fetch presets for selected pedalboard
             await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
-                // Step 1b: Restore preset from localStorage
-                const presetSelect = document.getElementById('presetSelect');
-                const savedPresetId = localStorage.getItem('lastPresetId');
-                let restoredPreset = false;
+              const presetSelect = document.getElementById('presetSelect');
 
-                if (savedPresetId && window.presetMap[savedPresetId]) {
-                    presetSelect.value = savedPresetId;
-                    currentPresetId = savedPresetId;
-                    currentPresetName = window.presetMap[savedPresetId].preset_name;
-                    currentPresetRev = window.presetMap[savedPresetId]._rev;
-                    applyPresetToPedalboard(window.presetMap[savedPresetId]);
-                    restoredPreset = true;
-                }
+              // 1️⃣ Restore folder first
+              const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
+              const folderSelect = document.getElementById('folderSelect');
+              if (folderSelect) {
+                  const folderOptionExists = Array.from(folderSelect.options).some(o => o.value === savedFolderId);
+                  folderSelect.value = folderOptionExists ? savedFolderId : 'default';
+              }
 
-                // fallback: first preset
-                if (!restoredPreset && presetSelect.options.length > 1) {
-                    const firstPreset = window.presetMap[presetSelect.options[1].value];
-                    if (firstPreset) {
-                        presetSelect.selectedIndex = 1;
-                        currentPresetId = firstPreset._id;
-                        currentPresetName = firstPreset.preset_name;
-                        currentPresetRev = firstPreset._rev;
-                        applyPresetToPedalboard(firstPreset);
-                    }
-                }
+              // 2️⃣ Populate preset dropdown based on restored folder
+              populatePresetDropdownByFolder(folderSelect?.value || savedFolderId);
 
-                // -------------------------
-                // Step 2: Restore zoom for current pedalboard
-                // -------------------------
-                if (typeof restoreZoomForCurrentBoard === "function") {
-                    restoreZoomForCurrentBoard();
-                }
+              // 3️⃣ Restore preset selection
+              const savedPresetId = localStorage.getItem('lastPresetId');
+              let restoredPreset = false;
 
-                // Trigger change event to enable Save button
-                presetSelect.dispatchEvent(new Event('change', { bubbles: true }));
-            });
+              if (savedPresetId && window.presetMap[savedPresetId]) {
+                  presetSelect.value = savedPresetId;
+                  const preset = window.presetMap[savedPresetId];
+                  currentPresetId = preset._id;
+                  currentPresetName = preset.preset_name;
+                  currentPresetRev = preset._rev;
+                  applyPresetToPedalboard(preset);
+                  restoredPreset = true;
+              }
+
+              // 4️⃣ Fallback: first preset in the dropdown
+              if (!restoredPreset && presetSelect.options.length > 1) {
+                  const firstPreset = window.presetMap[presetSelect.options[1].value];
+                  if (firstPreset) {
+                      presetSelect.selectedIndex = 1;
+                      currentPresetId = firstPreset._id;
+                      currentPresetName = firstPreset.preset_name;
+                      currentPresetRev = firstPreset._rev;
+                      applyPresetToPedalboard(firstPreset);
+                  }
+              }
+
+              // 5️⃣ Restore zoom for current pedalboard
+              if (typeof restoreZoomForCurrentBoard === "function") {
+                  restoreZoomForCurrentBoard();
+              }
+
+              // 6️⃣ Trigger change event for Save button state
+              presetSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          });
+
 
             // Pedalboard change listener
             dropdown.addEventListener('change', async (e) => {

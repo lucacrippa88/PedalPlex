@@ -211,6 +211,7 @@
   function saveCurrentSelectionToStorage() {
       const pedalboardSelect = document.getElementById('pedalboardSelect');
       const presetSelect = document.getElementById('presetSelect');
+      const folderSelect = document.getElementById('folderSelect');
 
       if (pedalboardSelect && pedalboardSelect.selectedIndex >= 0) {
           const boardOption = pedalboardSelect.options[pedalboardSelect.selectedIndex];
@@ -222,8 +223,13 @@
           const presetOption = presetSelect.options[presetSelect.selectedIndex];
           localStorage.setItem('lastPresetId', presetOption.value);
           localStorage.setItem('lastPresetText', presetOption.text.trim());
+
+          // Save folder ID of this preset
+          const folderId = window.presetMap?.[presetOption.value]?.folder_id || folderSelect?.value || 'default';
+          localStorage.setItem('lastPresetFolderId', folderId);
       }
   }
+
 
 
 
