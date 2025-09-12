@@ -242,24 +242,25 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
   if (!window.folders || window.folders.length === 0) {
       await window.loadFoldersForCurrentPedalboard(true);
   }
+  console.log('Folders loaded:', window.folders);
 
   // Normalize folder ID
   const presetFolderId = String(window.presetMap[currentPresetId]?.folder_id || "");
 
   // Build folder options
-  const folderOptions = window.folders.map(f => {
+  const folderOptions = (window.folders || []).map(f => {
       const folderId = String(f.id || f._id);
       const selected = folderId === presetFolderId ? "selected" : "";
       return `<option value="${folderId}" ${selected}>${f.name}</option>`;
   }).join("");
 
-  // Add Default option
   const folderSelectHtml = `
   <select id="folderSelectInput" class="swal2-select" style="margin-top:10px">
     <option value="" ${presetFolderId === "" ? "selected" : ""}>Default (unassigned)</option>
     ${folderOptions}
   </select>
   `;
+
 
 
   const htmlContent = `
