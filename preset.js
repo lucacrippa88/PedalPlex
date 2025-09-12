@@ -1,6 +1,5 @@
 let resultsDiv;
 let selectedBoardIndex = null;
-
 let currentPresetId = null;
 let currentPresetRev = null;
 let currentPresetName = null;
@@ -8,7 +7,6 @@ let currentPresetName = null;
 window.allPedalboards = [];
 
 function initPreset() {
-
 
   const userId = window.currentUser?.userid;
   resultsDiv = document.getElementById("page-content");
@@ -91,26 +89,26 @@ function initPreset() {
 
         // Restore pedalboard selection by saved text
         const savedBoardId = localStorage.getItem('lastPedalboardId');
+        const savedBoardText = localStorage.getItem('lastPedalboardText');
         let restored = false;
 
-        if (savedBoardId) {
+        if (savedBoardId || savedBoardText) {
           for (let i = 0; i < dropdown.options.length; i++) {
-            if (dropdown.options[i].value === savedBoardId) {
+            const opt = dropdown.options[i];
+            if (opt.value === savedBoardId || opt.text.trim() === savedBoardText) {
               dropdown.selectedIndex = i;
-              window.pedalboard = window.allPedalboards.find(pb => pb._id === savedBoardId);
+              window.pedalboard = window.allPedalboards.find(pb => pb._id === opt.value);
               restored = true;
               break;
             }
           }
         }
 
-        if (!restored) {
-          // fallback: select first real pedalboard
+        if (!restored && dropdown.options.length > 1) {
           dropdown.selectedIndex = 1; // skip placeholder
           window.pedalboard = window.allPedalboards[0];
-
-          // Save fallback choice
           localStorage.setItem('lastPedalboardId', window.pedalboard._id);
+          localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
         }
 
         renderFullPedalboard();
@@ -170,7 +168,6 @@ function initPreset() {
             }
           }
 
-
         });
       } else {
         selectedBoardIndex = null;
@@ -199,16 +196,13 @@ function initPreset() {
     });
 
 
-const folderSelect = document.getElementById('folderSelect');
-folderSelect?.addEventListener('change', (e) => {
-    const folderId = e.target.value;
-    populatePresetDropdownByFolder(folderId);
-});
-
+  const folderSelect = document.getElementById('folderSelect');
+  folderSelect?.addEventListener('change', (e) => {
+      const folderId = e.target.value;
+      populatePresetDropdownByFolder(folderId);
+  });
 
 }
-
-
 
 
 
@@ -292,8 +286,6 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
     if (callback) callback();
   }
 }
-
-
 
 
 document.getElementById("renamePresetBtn").addEventListener("click", async () => {
@@ -398,7 +390,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
     Swal.fire({ title: "Saving...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
 
-    // 1️⃣ Rename preset
+    // 1. Rename preset
     const success = await savePreset(currentPresetId, { preset_name: newName });
     if (!success) {
       Swal.close();
@@ -406,7 +398,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       return;
     }
 
-    // 2️⃣ Update folder assignment (atomic move)
+    // 2. Update folder assignment (atomic move)
     {
       const moveResult = await movePresetToFolder(currentPresetId, folderId || null);
       if (!moveResult || moveResult.ok !== true) {
@@ -416,7 +408,6 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
         return;
       }
     }
-
 
 
     Swal.close();
@@ -639,8 +630,6 @@ async function createPreset() {
 
   savePedalboard();
 
-  console.log('CREATE_PRESET response:', data);
-
 }
 
 
@@ -747,8 +736,6 @@ function savePedalboard() {
       const boardId = window.pedalboard._id || 'unsaved_board';
       // Save pedalboard state keyed by board ID
       localStorage.setItem(`pedalboard_state_${boardId}`, JSON.stringify(window.pedalboard));
-
-      console.log(`Pedalboard saved: ${boardId}`);
     } catch (err) {
       console.error("Failed to save pedalboard:", err);
   }
@@ -784,8 +771,6 @@ async function assignPresetToFolder(presetId, folderId) {
     console.error('Error updating folder:', err);
   }
 }
-
-
 
 
 // ---------------------------
@@ -838,8 +823,6 @@ function populatePresetDropdownByFolder(folderId) {
       // Save selection to storage
       saveCurrentSelectionToStorage();
     }
-
-
 
     // Enable/disable Save button
     const saveBtn = document.getElementById('savePstBtn');
