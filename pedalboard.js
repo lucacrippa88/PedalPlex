@@ -631,7 +631,7 @@ $(document).ready(function () {
     Swal.fire({
       title: 'Enter new pedalboard name',
       input: 'text',
-      inputPlaceholder: 'Board name',
+      inputPlaceholder: 'Pedalboard name...',
       showCancelButton: true,
       confirmButtonText: 'Create',
       cancelButtonText: 'Cancel',
@@ -705,12 +705,12 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
   const currentName = currentBoard.board_name || `Pedalboard ${selectedBoardIndex + 1}`;
 
   Swal.fire({
-    title: 'Edit pedalboard',
+    title: 'Rename pedalboard',
     input: 'text',
     inputValue: currentName,
     showCancelButton: true,
     showDenyButton: true,
-    confirmButtonText: 'Save',
+    confirmButtonText: 'Rename',
     cancelButtonText: 'Cancel',
     denyButtonText: 'Delete',
     customClass: {
