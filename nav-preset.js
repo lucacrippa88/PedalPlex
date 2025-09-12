@@ -105,7 +105,6 @@ function initNavPreset() {
 
   $("#pedalFilterInput").on("input", function () {
     const filterValue = $(this).val().toLowerCase();
-    console.log("Filtering pedals by:", filterValue);
   });
 
   function updateSavePresetButtonState() {

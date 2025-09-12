@@ -228,11 +228,6 @@ function attachRenameFolderListener() {
 // Returns window.folders (promise resolves when done)
 // ---------------------------
 async function loadFoldersForCurrentPedalboard(forSwal = false) {
-  console.log('[folders] loadFoldersForCurrentPedalboard called', {
-    currentUser: window.currentUser,
-    pedalboard: window.pedalboard,
-    forSwal
-  });
 
   if (!window.currentUser || !window.pedalboard || !window.pedalboard._id) {
     console.warn('[folders] Missing currentUser or pedalboard/_id — aborting loadFoldersForCurrentPedalboard');
@@ -254,7 +249,6 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
       user_id: window.currentUser.userid,
       board_id: window.pedalboard._id
     };
-    console.log('[folders] POST -> GET_FOLDERS.php payload:', payload);
 
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_FOLDERS.php', {
       method: 'POST',
@@ -263,8 +257,6 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
     });
 
     const text = await res.text();
-    console.log('[folders] GET_FOLDERS response status:', res.status);
-    console.log('[folders] GET_FOLDERS raw response text:', text);
 
     let data;
     try {
@@ -275,14 +267,10 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
     }
 
     // Normalize into window.folders array
-    if (!data) {
-      window.folders = [];
-    } else if (Array.isArray(data.folders)) {
-      window.folders = data.folders;
-    } else if (Array.isArray(data.docs)) {
-      window.folders = data.docs;
-    } else if (Array.isArray(data)) {
-      window.folders = data;
+    if (!data) { window.folders = [];
+    } else if (Array.isArray(data.folders)) { window.folders = data.folders;
+    } else if (Array.isArray(data.docs)) { window.folders = data.docs;
+    } else if (Array.isArray(data)) { window.folders = data;
     } else if (data.error) {
       console.error('[folders] Server returned error:', data.error);
       window.folders = [];
@@ -301,8 +289,6 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
         preset_ids: Array.isArray(f.preset_ids) ? f.preset_ids : (Array.isArray(f.presets) ? f.presets : [])
       };
     });
-
-    console.log('[folders] normalized folders:', window.folders);
 
     // Update main page dropdown only if not for Swal
     if (!forSwal) populateFolderDropdown();

@@ -209,19 +209,19 @@
 <script>
   // Save current selections by visible text
   function saveCurrentSelectionToStorage() {
-    const pedalboardSelect = document.getElementById('pedalboardSelect');
-    const presetSelect = document.getElementById('presetSelect');
+    const boardSelect = document.getElementById("pedalboardSelect");
+    const presetSelect = document.getElementById("presetSelect");
 
-    if (pedalboardSelect && pedalboardSelect.selectedIndex >= 0) {
-      const pedalboardText = pedalboardSelect.options[pedalboardSelect.selectedIndex].text.trim();
-      localStorage.setItem('lastPedalboardText', pedalboardText);
+    if (boardSelect && boardSelect.selectedIndex > 0) {
+      localStorage.setItem("lastPedalboardId", boardSelect.value);
+      localStorage.setItem("lastPedalboardText", boardSelect.options[boardSelect.selectedIndex].text.trim());
     }
 
-    if (presetSelect && presetSelect.selectedIndex >= 0) {
-      const presetText = presetSelect.options[presetSelect.selectedIndex].text.trim();
-      localStorage.setItem('lastPresetText', presetText);
+    if (presetSelect && presetSelect.selectedIndex > 0) {
+      localStorage.setItem("lastPresetText", presetSelect.options[presetSelect.selectedIndex].text.trim());
     }
   }
+
 
   // Listen for user changes
   const pedalboardSelect = document.getElementById('pedalboardSelect');
