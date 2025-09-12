@@ -283,6 +283,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     cancelButtonText: "Cancel",
     denyButtonText: "Delete",
     focusConfirm: false,
+    footer: '<button id="duplicatePresetBtn" class="bx--btn bx--btn--tertiary">Duplicate</button>',
     preConfirm: () => {
       const newName = document.getElementById("presetNameInput").value.trim();
       const folderId = document.getElementById("folderSelectInput").value;
@@ -297,17 +298,19 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       cancelButton: "bx--btn bx--btn--secondary",
       denyButton: "bx--btn bx--btn--danger"
     },
-    footer: '<button id="duplicatePresetBtn" class="bx--btn bx--btn--tertiary">Duplicate</button>'
+    didOpen: () => {
+      document.getElementById("duplicatePresetBtn")
+        ?.addEventListener("click", async () => {
+          const newName = document.getElementById("presetNameInput").value.trim();
+          const folderId = document.getElementById("folderSelectInput").value;
+
+          await duplicatePreset(window.currentPresetId, newName, folderId);
+          Swal.close();
+        });
+      }
   });
 
-  // Attach event listener to the footer button
-  document.getElementById("duplicatePresetBtn")?.addEventListener("click", async () => {
-    const newName = document.getElementById("presetNameInput").value.trim();
-    const folderId = document.getElementById("folderSelectInput").value;
 
-    await duplicatePreset(currentPresetId, newName, folderId);
-    Swal.close(); // close the edit modal after duplication
-  });
 
 
   // Handle delete
