@@ -247,17 +247,23 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
   const presetNameForInput = preset.preset_name || '';
 
   const folderOptions = window.folders.map(f => {
-    const selected = preset.folder_id === (f.id || f._id) ? "selected" : "";
-    return `<option value="${f.id || f._id}" ${selected}>${f.name}</option>`;
+      const folderId = f.id || f._id;
+      const selected = preset.folder_id === folderId ? "selected" : "";
+      return `<option value="${folderId}" ${selected}>${f.name}</option>`;
   }).join("");
 
+  // Add the "No Folder" option first, selected if preset.folder_id is null/undefined
+  const folderSelectHtml = `<select id="folderSelectInput" class="swal2-select" style="margin-top:10px">
+    <option value="" ${!preset.folder_id ? "selected" : ""}>Default (unassigned)</option>
+    ${folderOptions}
+  </select>`;
+
+
   const htmlContent = `
-    <input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="Preset Name" value="${presetNameForInput}">
-    <select id="folderSelectInput" class="swal2-select" style="margin-top:10px">
-      <option value="">Default (unassigned)</option>
-      ${folderOptions}
-    </select>
-  `;
+  <input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="Preset Name" value="${presetNameForInput}">
+  ${folderSelectHtml}
+`;
+
 
   const result = await Swal.fire({
     title: "Edit Preset",
