@@ -440,31 +440,37 @@ async function duplicatePreset(presetId, newName, folderId) {
       return;
     }
 
-    // Build duplicate
+    // Build duplicate payload
     const duplicated = {
-      ...original,
-      _id: undefined,          // let backend assign new id
-      _rev: undefined,         // reset revision
-      preset_name: `${newName} Copy`,
-      folder_id: folderId || original.folder_id || "default",
+      user_id: window.currentUser.userid,
       board_id: window.pedalboard._id,
-      user_id: window.currentUser.userid
+      board_name: window.pedalboard.board_name,
+      preset_name: `${newName} Copy`,
+      pedals: JSON.parse(JSON.stringify(original.pedals || {})), // deep clone pedals
     };
 
-    // Call your existing save/create function
-    const newId = await createPreset(duplicated);
+    // Save duplicate
+    const newId = await createPresetOnServer(duplicated);
 
-    if (newId) {
-      Swal.fire("Success", "Preset duplicated successfully", "success")
-        .then(() => location.reload());
-    } else {
+    if (!newId) {
       Swal.fire("Error", "Could not duplicate preset", "error");
+      return;
     }
+
+    // Assign to folder if provided
+    if (folderId) {
+      await movePresetToFolder(newId, folderId);
+    }
+
+    Swal.fire("Success", "Preset duplicated successfully", "success")
+      .then(() => location.reload());
+
   } catch (err) {
     console.error("duplicatePreset error:", err);
     Swal.fire("Error", "Unexpected error duplicating preset", "error");
   }
 }
+
 
 
 
@@ -853,3 +859,22 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
 }
 
 
+
+async function createPresetOnServer(presetData) {
+  try {
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(presetData),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      console.error("Failed to create preset:", data);
+      return null;
+    }
+    return data.id; // new preset ID from backend
+  } catch (err) {
+    console.error("createPresetOnServer error:", err);
+    return null;
+  }
+}
