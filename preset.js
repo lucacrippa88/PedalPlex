@@ -456,27 +456,28 @@ async function savePreset(presetId, updateData) {
 
 
 // Duplicate preset
+// Duplicate preset robustly
 async function duplicatePreset(presetId, newName, folderId) {
   try {
+    // Use the preset object directly from presetMap
     const original = window.presetMap[presetId];
     if (!original) {
       Swal.fire("Error", "Preset not found", "error");
       return;
     }
 
-    // Deep clone all fields except _id/_rev
-    const duplicated = JSON.parse(JSON.stringify(original));
+    // Build duplicate payload
+    const duplicated = {
+      user_id: window.currentUser.userid,
+      board_id: window.pedalboard._id,
+      board_name: window.pedalboard.board_name,
+      preset_name: `${newName}- copy`, // Add "- copy" suffix
+      pedals: JSON.parse(JSON.stringify(original.pedals || {})), // deep clone pedals
+    };
 
-    // Override properties for the new preset
-    duplicated.user_id = window.currentUser.userid;
-    duplicated.board_id = window.pedalboard._id;
-    duplicated.board_name = window.pedalboard.board_name;
-    duplicated.preset_name = newName; // use the name from input
-    delete duplicated._id;
-    delete duplicated._rev;
-
-    // Save duplicate on server
+    // Save duplicate to server
     const newId = await createPresetOnServer(duplicated);
+
     if (!newId) {
       Swal.fire("Error", "Could not duplicate preset", "error");
       return;
@@ -487,7 +488,7 @@ async function duplicatePreset(presetId, newName, folderId) {
       await movePresetToFolder(newId, folderId);
     }
 
-    Swal.fire("Success", "Preset duplicated successfully", "success")
+    Swal.fire("Success", `Preset duplicated as "${duplicated.preset_name}"`, "success")
       .then(() => location.reload());
 
   } catch (err) {
