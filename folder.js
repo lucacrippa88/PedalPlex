@@ -46,13 +46,13 @@ function populateFolderDropdown() {
 
   folderSelect.innerHTML = '';
 
-  const placeholder = document.createElement('option');
-  placeholder.value = '';
-  placeholder.textContent = '-- Select Folder --';
-  placeholder.disabled = true;
-  placeholder.selected = true;
-  folderSelect.appendChild(placeholder);
+  // Always add a synthetic "Default" entry at the top
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "default";
+  defaultOption.textContent = "Default (unassigned)";
+  folderSelect.appendChild(defaultOption);
 
+  // Add folders from server
   (window.folders || []).forEach(f => {
     if (!f) return;
     const opt = document.createElement('option');
@@ -61,22 +61,31 @@ function populateFolderDropdown() {
     folderSelect.appendChild(opt);
   });
 
-  // Add a "Default" option when there are unassigned presets (handled elsewhere, but keep this safe)
-  // NOTE: don't add the 'Default' option here — that is handled by preset.js once window.presets exists
-  // Attach safe onchange handler (replaces previous listener if it exists)
+  // Placeholder option at the end (optional, you can remove if confusing)
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '-- Select Folder --';
+  placeholder.disabled = true;
+  folderSelect.appendChild(placeholder);
+
+  // ✅ Auto-apply first preset when folder changes
   folderSelect.onchange = (e) => {
-    // For backwards compatibility: trigger an event listeners might expect
-    const ev = new Event('change', { bubbles: true });
-    folderSelect.dispatchEvent(ev);
+    const folderId = e.target.value;
+    populatePresetDropdownByFolder(folderId);
+
+    const presetSelect = document.getElementById('presetSelect');
+    if (presetSelect && presetSelect.options.length > 0) {
+      // take first preset
+      const firstPresetId = presetSelect.options[0].value;
+      const firstPreset = window.presetMap[firstPresetId];
+      if (firstPreset && window.currentPresetId !== firstPreset._id) {
+        applyPresetToPedalboard(firstPreset);
+        saveCurrentSelectionToStorage();
+      }
+    }
   };
-
-    // Always add a synthetic "Default" entry at the top
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "default";
-    defaultOption.textContent = "Default (unassigned)";
-    folderSelect.insertBefore(defaultOption, folderSelect.firstChild);
-
 }
+
 
 // ---------------------------
 // Save folder to DB
