@@ -118,7 +118,6 @@ function initPreset() {
         const userId = currentUser.userid;
         fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
           // Restore preset selection by visible text
-          // Restore preset selection by visible text
           const savedPresetText = localStorage.getItem('lastPresetText');
           if (savedPresetText) {
             const presetSelect = document.getElementById('presetSelect');
@@ -229,8 +228,7 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
       currentPresetId = preset._id;
       currentPresetName = preset.preset_name;
       currentPresetRev = preset._rev;
-      // Wait a tick to ensure pedalboard DOM is updated/rendered
-      setTimeout(() => applyPresetToPedalboard(preset), 0);
+      applyPresetToPedalboard(preset);
       // Save selection to storage
       saveCurrentSelectionToStorage();
     } else {
