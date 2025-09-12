@@ -456,7 +456,6 @@ async function savePreset(presetId, updateData) {
 
 
 // Duplicate preset
-// Duplicate preset robustly
 async function duplicatePreset(presetId, newName, folderId) {
   try {
     // Use the preset object directly from presetMap
@@ -471,7 +470,7 @@ async function duplicatePreset(presetId, newName, folderId) {
       user_id: window.currentUser.userid,
       board_id: window.pedalboard._id,
       board_name: window.pedalboard.board_name,
-      preset_name: `${newName}- copy`, // Add "- copy" suffix
+      preset_name: `${newName} - Copy`, // Add " - Copy" suffix
       pedals: JSON.parse(JSON.stringify(original.pedals || {})), // deep clone pedals
     };
 
