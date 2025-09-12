@@ -455,26 +455,23 @@ async function savePreset(presetId, updateData) {
 
 
 
-// Duplicate preset
+// Duplicate preset with proper confirmation
 async function duplicatePreset(presetId, newName, folderId) {
   try {
-    // Use the preset object directly from presetMap
     const original = window.presetMap[presetId];
     if (!original) {
       Swal.fire("Error", "Preset not found", "error");
       return;
     }
 
-    // Build duplicate payload
     const duplicated = {
       user_id: window.currentUser.userid,
       board_id: window.pedalboard._id,
       board_name: window.pedalboard.board_name,
       preset_name: `${newName} - Copy`, // Add " - Copy" suffix
-      pedals: JSON.parse(JSON.stringify(original.pedals || {})), // deep clone pedals
+      pedals: JSON.parse(JSON.stringify(original.pedals || {})),
     };
 
-    // Save duplicate to server
     const newId = await createPresetOnServer(duplicated);
 
     if (!newId) {
@@ -482,19 +479,28 @@ async function duplicatePreset(presetId, newName, folderId) {
       return;
     }
 
-    // Assign to folder if provided
     if (folderId) {
       await movePresetToFolder(newId, folderId);
     }
 
-    Swal.fire("Success", `Preset duplicated as "${duplicated.preset_name}"`, "success")
-      .then(() => location.reload());
+    // ✅ Show SweetAlert confirmation with a short timer before reload
+    await Swal.fire({
+      icon: "success",
+      title: "Preset Duplicated",
+      text: `Preset duplicated as "${duplicated.preset_name}"`,
+      timer: 1500,
+      showConfirmButton: false,
+      didClose: () => {
+        location.reload();
+      }
+    });
 
   } catch (err) {
     console.error("duplicatePreset error:", err);
     Swal.fire("Error", "Unexpected error duplicating preset", "error");
   }
 }
+
 
 
 
