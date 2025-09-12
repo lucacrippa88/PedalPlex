@@ -311,17 +311,19 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
   // Load folders only if not already loaded
   if (!window.folders || window.folders.length === 0) {
-    await window.loadFoldersForCurrentPedalboard(true); // true = don't touch main dropdown
+      await window.loadFoldersForCurrentPedalboard(true);
   }
 
-  // Build folder dropdown options for Swal
+  // Use the actual preset_name for the Swal input
+  const presetNameForInput = preset.preset_name || '';
+
   const folderOptions = window.folders.map(f => {
-    const selected = preset.folder_id === f.id ? "selected" : "";
-    return `<option value="${f.id}" ${selected}>${f.name}</option>`;
+    const selected = preset.folder_id === (f.id || f._id) ? "selected" : "";
+    return `<option value="${f.id || f._id}" ${selected}>${f.name}</option>`;
   }).join("");
 
   const htmlContent = `
-    <input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="Preset Name" value="${currentPresetName}">
+    <input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="Preset Name" value="${presetNameForInput}">
     <select id="folderSelectInput" class="swal2-select" style="margin-top:10px">
       <option value="">Default (unassigned)</option>
       ${folderOptions}
