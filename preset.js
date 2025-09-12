@@ -279,7 +279,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     html: htmlContent,
     showCancelButton: true,
     showDenyButton: true,
-    confirmButtonText: "Save",
+    confirmButtonText: "Rename",
     cancelButtonText: "Cancel",
     denyButtonText: "Delete",
     focusConfirm: false,

@@ -135,6 +135,7 @@ function attachAddFolderListener() {
       title: `New Folder for "${boardName}"`,
       input: 'text',
       inputLabel: 'Folder Name',
+      confirmButtonText: "Rename",
       inputPlaceholder: 'Enter folder name',
       showCancelButton: true,
       inputValidator: (v) => !v.trim() && 'Folder name cannot be empty'
