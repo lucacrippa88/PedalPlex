@@ -283,7 +283,6 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     cancelButtonText: "Cancel",
     denyButtonText: "Delete",
     focusConfirm: false,
-    footer: '<button id="duplicatePresetBtn" class="bx--btn bx--btn--tertiary">Duplicate</button>',
     preConfirm: () => {
       const newName = document.getElementById("presetNameInput").value.trim();
       const folderId = document.getElementById("folderSelectInput").value;
@@ -298,16 +297,26 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       cancelButton: "bx--btn bx--btn--secondary",
       denyButton: "bx--btn bx--btn--danger"
     },
+    footer: `
+      <button id="duplicatePresetBtn" type="button" class="bx--btn bx--btn--tertiary">
+        Duplicate
+      </button>
+    `,
     didOpen: () => {
-      document.getElementById("duplicatePresetBtn")
-        ?.addEventListener("click", async () => {
+      const btn = document.getElementById("duplicatePresetBtn");
+      if (btn) {
+        btn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          e.stopPropagation(); // 🛑 stop SweetAlert from auto-closing
+
           const newName = document.getElementById("presetNameInput").value.trim();
           const folderId = document.getElementById("folderSelectInput").value;
 
           await duplicatePreset(window.currentPresetId, newName, folderId);
-          Swal.close();
+          Swal.close(); // manually close only after duplicate succeeds
         });
       }
+    }
   });
 
 
@@ -443,18 +452,19 @@ async function duplicatePreset(presetId, newName, folderId) {
       return;
     }
 
-    // Build duplicate payload
-    const duplicated = {
-      user_id: window.currentUser.userid,
-      board_id: window.pedalboard._id,
-      board_name: window.pedalboard.board_name,
-      preset_name: `${newName} Copy`,
-      pedals: JSON.parse(JSON.stringify(original.pedals || {})), // deep clone pedals
-    };
+    // Deep clone all fields except _id/_rev
+    const duplicated = JSON.parse(JSON.stringify(original));
 
-    // Save duplicate
+    // Override properties for the new preset
+    duplicated.user_id = window.currentUser.userid;
+    duplicated.board_id = window.pedalboard._id;
+    duplicated.board_name = window.pedalboard.board_name;
+    duplicated.preset_name = newName; // use the name from input
+    delete duplicated._id;
+    delete duplicated._rev;
+
+    // Save duplicate on server
     const newId = await createPresetOnServer(duplicated);
-
     if (!newId) {
       Swal.fire("Error", "Could not duplicate preset", "error");
       return;
@@ -473,6 +483,7 @@ async function duplicatePreset(presetId, newName, folderId) {
     Swal.fire("Error", "Unexpected error duplicating preset", "error");
   }
 }
+
 
 
 
