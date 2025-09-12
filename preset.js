@@ -728,7 +728,7 @@ async function assignPresetToFolder(presetId, folderId) {
 // ---------------------------
 // Filter and populate presets based on selected folder
 // ---------------------------
-function populatePresetDropdownByFolder(folderId) {
+function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
     const presetSelect = document.getElementById('presetSelect');
     if (!presetSelect || !window.presets) return;
 
@@ -759,25 +759,30 @@ function populatePresetDropdownByFolder(folderId) {
         presetSelect.appendChild(opt);
     });
 
-    // Auto-select the first preset if available
-    if (filteredPresets.length > 0) {
-      const firstPreset = filteredPresets[0];
-      currentPresetId = firstPreset._id;
-      currentPresetName = firstPreset.preset_name;
-      currentPresetRev = firstPreset._rev;
+    // Determine which preset to select
+    let selectedPreset = null;
+    if (preferredPresetId) {
+        selectedPreset = filteredPresets.find(p => p._id === preferredPresetId) || filteredPresets[0];
+    } else {
+        selectedPreset = filteredPresets[0] || null;
+    }
 
-      // Update dropdown selection to match
-      document.getElementById('presetSelect').value = firstPreset._id;
+    if (selectedPreset) {
+        currentPresetId = selectedPreset._id;
+        currentPresetName = selectedPreset.preset_name;
+        currentPresetRev = selectedPreset._rev;
+        presetSelect.value = selectedPreset._id;
 
-      // Apply directly
-      applyPresetToPedalboard(firstPreset);
+        // Apply preset
+        applyPresetToPedalboard(selectedPreset);
 
-      // Save selection to storage
-      saveCurrentSelectionToStorage();
+        // Save selection
+        saveCurrentSelectionToStorage();
     }
 
     // Enable/disable Save button
     const saveBtn = document.getElementById('savePstBtn');
     if (saveBtn) saveBtn.disabled = filteredPresets.length === 0;
 }
+
 
