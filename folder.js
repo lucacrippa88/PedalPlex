@@ -161,7 +161,15 @@ function attachAddFolderListener() {
         const folderSelect = document.getElementById('folderSelect');
         if (folderSelect) folderSelect.value = normalized.id || normalized._id;
 
-        Swal.fire('Success', `Folder "${newFolder.name}" created for "${boardName}"`, 'success');
+        Swal.fire({
+          title: 'Success',
+          text: `Folder "${newFolder.name}" created for "${boardName}"`,
+          icon: 'success',
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+          },
+          buttonsStyling: false,
+        });
       }
     }
   });

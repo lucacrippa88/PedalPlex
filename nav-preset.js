@@ -119,7 +119,7 @@ function initNavPreset() {
 
   // Save preset
   $('#savePstBtn').on('click', async () => {
-    const presetName = $('#presetSelect').val() || "Untitled Preset";
+    const presetName = $('#presetSelect option:selected').text().trim() || "Untitled Preset";
     const result = collectPedalControlValues(presetName);
     const pedalArray = result[presetName];
 
