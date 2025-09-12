@@ -184,7 +184,15 @@ function attachRenameFolderListener() {
     const folderId = folderSelect.value;
     const folder = (window.folders || []).find(f => (f._id || f.id) === folderId);
     if (!folder) {
-      Swal.fire('Error', 'Selected folder not found.', 'error');
+      Swal.fire({
+        title: 'Error',
+        text: 'Selected folder not found.',
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        },
+        buttonsStyling: false,
+      });
       return;
     }
 
@@ -195,8 +203,14 @@ function attachRenameFolderListener() {
       inputLabel: 'New folder name',
       inputValue: folder.name,
       showCancelButton: true,
-      inputValidator: v => !v.trim() && 'Folder name cannot be empty'
+      inputValidator: v => !v.trim() && 'Folder name cannot be empty',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary',   // Carbon primary button
+        cancelButton: 'bx--btn bx--btn--secondary', // Carbon secondary button
+      },
+      buttonsStyling: false,
     });
+
 
     if (!isConfirmed) return;
 
