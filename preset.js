@@ -302,27 +302,33 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
         Duplicate
       </button>
     `,
-      didOpen: () => {
-        const duplicateBtn = document.getElementById("duplicatePresetBtn");
-        if (duplicateBtn) {
-          duplicateBtn.addEventListener("click", async (e) => {
-            e.stopPropagation();      // Prevent modal from closing
-            e.preventDefault();       // Prevent default behavior
+    didOpen: () => {
+      const duplicateBtn = document.getElementById("duplicatePresetBtn");
+      if (duplicateBtn) {
+        duplicateBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          e.preventDefault();
 
-            const newName = document.getElementById("presetNameInput").value.trim();
-            const folderId = document.getElementById("folderSelectInput").value;
+          const newName = document.getElementById("presetNameInput").value.trim();
+          const folderId = document.getElementById("folderSelectInput").value;
 
-            if (!newName) {
-              Swal.showValidationMessage("Preset name cannot be empty");
-              return;
-            }
+          if (!newName) {
+            Swal.showValidationMessage("Preset name cannot be empty");
+            return;
+          }
 
-            await duplicatePreset(window.currentPresetId, newName, folderId);
-            // We can close modal manually after duplication, if desired
-            // Swal.close();
-          });
-        }
+          // Get the preset object at modal open time
+          const presetObj = window.presetMap[currentPresetId]; // use the modal's current preset
+          if (!presetObj) {
+            Swal.fire("Error", "Preset not found", "error");
+            return;
+          }
+
+          await duplicatePreset(presetObj._id, newName, folderId);
+          Swal.close();
+        });
       }
+    }
   });
 
 
