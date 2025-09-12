@@ -281,7 +281,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     showDenyButton: true,
     confirmButtonText: "Save",
     cancelButtonText: "Cancel",
-    denyButtonText: "Delete Preset",
+    denyButtonText: "Delete",
     focusConfirm: false,
     preConfirm: () => {
       const newName = document.getElementById("presetNameInput").value.trim();
@@ -296,7 +296,8 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       confirmButton: "bx--btn bx--btn--primary",
       cancelButton: "bx--btn bx--btn--secondary",
       denyButton: "bx--btn bx--btn--danger"
-    }
+    },
+    footer: '<button id="duplicatePresetBtn" class="bx--btn bx--btn--tertiary">Duplicate</button>'
   });
 
   // Handle delete
@@ -515,6 +516,10 @@ async function createPreset() {
     inputLabel: 'Preset Name',
     inputPlaceholder: 'Type your new preset name here',
     showCancelButton: true,
+    customClass: {
+      confirmButton: "bx--btn bx--btn--primary",
+      cancelButton: "bx--btn bx--btn--secondary"
+    },
     inputValidator: value => !value && 'You must enter a preset name!'
   });
 
@@ -530,6 +535,10 @@ async function createPreset() {
     title: 'Select folder for this preset',
     html: folderHtml,
     showCancelButton: true,
+    customClass: {
+      confirmButton: "bx--btn bx--btn--primary",
+      cancelButton: "bx--btn bx--btn--secondary"
+    },
     preConfirm: () => document.getElementById('selectFolder').value
   });
 
@@ -573,13 +582,22 @@ async function createPreset() {
     const moveResult = await movePresetToFolder(newPresetId, selectedFolderId || null);
     if (!moveResult || moveResult.ok !== true) {
       console.error('Failed to assign newly created preset to folder', moveResult);
-      // optional: Swal.fire to inform the user, but don't block creation success
     }
   }
 
+  Swal.fire({
+    title: 'Success',
+    text: `Preset "${presetName}" created${selectedFolderId ? ` and added to folder.` : '.'}`,
+    icon: 'success',
+    customClass: {
+      confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+      cancelButton: 'bx--btn bx--btn--secondary', // If you add cancel
+    },
+    buttonsStyling: false, // Disable default SweetAlert2 styles
+  }).then(() => {
+    window.location.reload();
+  });
 
-  Swal.fire('Success', `Preset "${presetName}" created${selectedFolderId ? ` and added to folder.` : '.'}`, 'success')
-    .then(() => window.location.reload());
 
   savePedalboard();
 
