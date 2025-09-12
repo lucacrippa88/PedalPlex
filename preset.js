@@ -300,6 +300,16 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     footer: '<button id="duplicatePresetBtn" class="bx--btn bx--btn--tertiary">Duplicate</button>'
   });
 
+  // Attach event listener to the footer button
+  document.getElementById("duplicatePresetBtn")?.addEventListener("click", async () => {
+    const newName = document.getElementById("presetNameInput").value.trim();
+    const folderId = document.getElementById("folderSelectInput").value;
+
+    await duplicatePreset(currentPresetId, newName, folderId);
+    Swal.close(); // close the edit modal after duplication
+  });
+
+
   // Handle delete
   if (result.isDenied) {
     const confirmDelete = await Swal.fire({
@@ -421,6 +431,44 @@ async function savePreset(presetId, updateData) {
 
 
 
+// Duplicate preset
+async function duplicatePreset(presetId, newName, folderId) {
+  try {
+    const original = window.presetMap[presetId];
+    if (!original) {
+      Swal.fire("Error", "Preset not found", "error");
+      return;
+    }
+
+    // Build duplicate
+    const duplicated = {
+      ...original,
+      _id: undefined,          // let backend assign new id
+      _rev: undefined,         // reset revision
+      preset_name: `${newName} Copy`,
+      folder_id: folderId || original.folder_id || "default",
+      board_id: window.pedalboard._id,
+      user_id: window.currentUser.userid
+    };
+
+    // Call your existing save/create function
+    const newId = await createPreset(duplicated);
+
+    if (newId) {
+      Swal.fire("Success", "Preset duplicated successfully", "success")
+        .then(() => location.reload());
+    } else {
+      Swal.fire("Error", "Could not duplicate preset", "error");
+    }
+  } catch (err) {
+    console.error("duplicatePreset error:", err);
+    Swal.fire("Error", "Unexpected error duplicating preset", "error");
+  }
+}
+
+
+
+
 // Apply preset to linked pedalboard
 function applyPresetToPedalboard(presetDoc) {
   const pedalsFromPreset = presetDoc.pedals;
@@ -509,7 +557,7 @@ function applyPresetToPedalboard(presetDoc) {
 
 
 async function createPreset() {
-  // 1️⃣ Prompt for preset name
+  // 1. Prompt for preset name
   const { value: presetName } = await Swal.fire({
     title: 'Enter new preset name',
     input: 'text',
@@ -525,9 +573,9 @@ async function createPreset() {
 
   if (!presetName) return; // Cancelled
 
-  // 2️⃣ Prompt for folder selection
+  // 2. Prompt for folder selection
   const folderOptions = [{ id: '', name: 'No Folder' }, ...window.folders.map(f => ({ id: f.id || f._id, name: f.name }))];
-  const folderHtml = `<select id="selectFolder" class="swal2-select" style="width:100%;padding:0.5em;">
+  const folderHtml = `<select id="selectFolder" class="swal2-select"">
     ${folderOptions.map(f => `<option value="${f.id}">${f.name}</option>`).join('')}
   </select>`;
 
@@ -542,7 +590,7 @@ async function createPreset() {
     preConfirm: () => document.getElementById('selectFolder').value
   });
 
-  // 3️⃣ Create preset in Cloudant
+  // 3. Create preset in Cloudant
   const userId = currentUser.userid;
   const boardId = window.pedalboard?._id;
   if (!boardId) {
