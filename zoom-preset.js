@@ -4,11 +4,11 @@ const step = 0.05;
 let zoomLevel = 1.0;
 
 // Get currently selected pedalboard text
-function getSelectedPedalboard() {
+function getSelectedPedalboardId() {
   const select = document.getElementById("pedalboardSelect");
   const idx = select.selectedIndex;
   if (idx < 0) return null;
-  return select.options[idx].text.trim();
+  return select.options[idx].value; // use ID, not text
 }
 // Get currently selected preset text
 function getSelectedPreset() {
@@ -21,14 +21,14 @@ function getSelectedPreset() {
 
 // Save zoom for the current pedalboard to localstorage
 function saveZoom() {
-  const id = getSelectedPedalboard();
+  const id = getSelectedPedalboardId();
   if (!id) return;
   localStorage.setItem(`zoom_${id}`, zoomLevel);
 }
 
 // Load zoom for the current pedalboard
 function loadZoom() {
-  const id = getSelectedPedalboard();
+  const id = getSelectedPedalboardId();
   if (!id) return;
   const saved = localStorage.getItem(`zoom_${id}`);
   zoomLevel = saved ? parseFloat(saved) : 1.0;
