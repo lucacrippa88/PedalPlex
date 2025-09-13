@@ -229,30 +229,7 @@ function attachRenameFolderListener() {
       buttonsStyling: false,
     });
 
-
-    if (!isConfirmed) return;
-
-    try {
-      const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(newName.trim())}`
-      });
-      const result = await res.json();
-
-      if (result.ok) {
-        folder.name = newName.trim();
-        populateFolderDropdown();
-        folderSelect.value = folderId;
-        Swal.fire('Success', `Folder renamed to "${newName}"`, 'success');
-      } else {
-        Swal.fire('Error', 'Could not rename folder: ' + (result.error || 'Unknown error'), 'error');
-      }
-    } catch (err) {
-      console.error(err);
-      Swal.fire('Error', 'Network or server error', 'error');
-    }
-
+    // Handle delete folder first    
     if (isDenied) {
       const confirmDelete = await Swal.fire({
         title: 'Are you sure?',
@@ -301,8 +278,32 @@ function attachRenameFolderListener() {
           Swal.fire('Error', 'Network or server error while deleting.', 'error');
         }
       }
+      return; // Stop here after delete
     }
 
+    // Handle rename separately
+    if (isConfirmed) {
+      try {
+        const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(newName.trim())}`
+        });
+        const result = await res.json();
+
+        if (result.ok) {
+          folder.name = newName.trim();
+          populateFolderDropdown();
+          folderSelect.value = folderId;
+          Swal.fire('Success', `Folder renamed to "${newName}"`, 'success');
+        } else {
+          Swal.fire('Error', 'Could not rename folder: ' + (result.error || 'Unknown error'), 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        Swal.fire('Error', 'Network or server error', 'error');
+      }
+    }
 
   });
 }
