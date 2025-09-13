@@ -52,8 +52,17 @@ function populateFolderDropdown() {
   defaultOption.textContent = "Default (unassigned)";
   folderSelect.appendChild(defaultOption);
 
-  // Add folders from server
-  (window.folders || []).forEach(f => {
+  // Sort folders alphabetically by name (case-insensitive)
+  const sortedFolders = (window.folders || []).slice().sort(function(a, b) {
+    const nameA = (a.name || '').toLowerCase();
+    const nameB = (b.name || '').toLowerCase();
+    if (nameA < nameB) return -1;
+    if (nameA > nameB) return 1;
+    return 0;
+  });
+
+  // Add folders to dropdown
+  sortedFolders.forEach(f => {
     if (!f) return;
     const opt = document.createElement('option');
     opt.value = f.id || f._id;
@@ -61,7 +70,7 @@ function populateFolderDropdown() {
     folderSelect.appendChild(opt);
   });
 
-  // Placeholder option at the end (optional, you can remove if confusing)
+  // Placeholder option at the end (optional)
   const placeholder = document.createElement('option');
   placeholder.value = '';
   placeholder.textContent = '-- Select Folder --';
@@ -75,7 +84,6 @@ function populateFolderDropdown() {
 
     const presetSelect = document.getElementById('presetSelect');
     if (presetSelect && presetSelect.options.length > 0) {
-      // take first preset
       const firstPresetId = presetSelect.options[0].value;
       const firstPreset = window.presetMap[firstPresetId];
       if (firstPreset && window.currentPresetId !== firstPreset._id) {
@@ -87,6 +95,7 @@ function populateFolderDropdown() {
 }
 
 
+
 // ---------------------------
 // Save folder to DB
 // ---------------------------
@@ -94,7 +103,15 @@ async function saveFolderToDB(folder, explicitBoardId) {
   try {
     const boardId = explicitBoardId || (window.pedalboard && window.pedalboard._id);
     if (!boardId) {
-      Swal.fire('Error', 'No pedalboard selected. Please select one before creating a folder.', 'error');
+      Swal.fire({
+        title: 'Error',
+        text: 'No pedalboard selected. Please select one before creating a folder.',
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        },
+        buttonsStyling: false,
+      });
       return null;
     }
 
@@ -107,11 +124,27 @@ async function saveFolderToDB(folder, explicitBoardId) {
     const result = await res.json();
     if (result.ok) return result;
 
-    Swal.fire('Error', 'Could not save folder: ' + (result.error || 'Unknown error'), 'error');
-    return null;
+      Swal.fire({
+        title: 'Error',
+        text: 'Could not save folder: ' + (result.error || 'Unknown error'),
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        },
+        buttonsStyling: false,
+      });
+      return null;
   } catch (err) {
     console.error(err);
-    Swal.fire('Error', 'Network or server error', 'error');
+    Swal.fire({
+      title: 'Error',
+      text: 'Network or server error',
+      icon: 'error',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+      },
+      buttonsStyling: false,
+    });
     return null;
   }
 }
@@ -126,7 +159,15 @@ function attachAddFolderListener() {
   addFolderBtn.addEventListener('click', async () => {
     const board = window.pedalboard;
     if (!board || !board._id) {
-      Swal.fire('Select Board', 'Please select a pedalboard before creating a folder.', 'info');
+      Swal.fire({
+        title: 'Select Board',
+        text: 'Please select a pedalboard before creating a folder.',
+        icon: 'info',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        },
+        buttonsStyling: false,
+      });
       return;
     }
 
@@ -191,7 +232,15 @@ function attachRenameFolderListener() {
   renameFolderBtn.addEventListener('click', async () => {
     const folderSelect = document.getElementById('folderSelect');
     if (!folderSelect || !folderSelect.value) {
-      Swal.fire('Select Folder', 'Please select a folder to rename.', 'info');
+      Swal.fire({
+        title: 'Select Folder',
+        text: 'Please select a folder to rename.',
+        icon: 'info',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        },
+        buttonsStyling: false,
+      });
       return;
     }
 
@@ -276,11 +325,27 @@ function attachRenameFolderListener() {
               buttonsStyling: false,
             });
           } else {
-            Swal.fire('Error', result.error || 'Could not delete folder.', 'error');
+            Swal.fire({
+              title: 'Error',
+              text: result.error || 'Could not delete folder.',
+              icon: 'error',
+              customClass: {
+                confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+              },
+              buttonsStyling: false,
+            });
           }
         } catch (err) {
           console.error('[folders] delete error:', err);
-          Swal.fire('Error', 'Network or server error while deleting.', 'error');
+          Swal.fire({
+            title: 'Error',
+            text: 'Network or server error while deleting.',
+            icon: 'error',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+            },
+            buttonsStyling: false,
+          });
         }
       }
 
@@ -301,13 +366,37 @@ function attachRenameFolderListener() {
           folder.name = newName.trim();
           populateFolderDropdown();
           folderSelect.value = folderId;
-          Swal.fire('Success', `Folder renamed to "${newName}"`, 'success');
+          Swal.fire({
+            title: 'Success',
+            text: `Folder renamed to "${newName}"`,
+            icon: 'success',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+            },
+            buttonsStyling: false,
+          });
         } else {
-          Swal.fire('Error', 'Could not rename folder: ' + (result.error || 'Unknown error'), 'error');
+          Swal.fire({
+            title: 'Error',
+            text: 'Could not rename folder: ' + (result.error || 'Unknown error'),
+            icon: 'error',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+            },
+            buttonsStyling: false,
+          });
         }
       } catch (err) {
         console.error(err);
-        Swal.fire('Error', 'Network or server error', 'error');
+        Swal.fire({
+          title: 'Error',
+          text: 'Network or server error',
+          icon: 'error',
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+          },
+          buttonsStyling: false,
+        });
       }
     }
 

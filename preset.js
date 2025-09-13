@@ -375,7 +375,15 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     const success = await savePreset(currentPresetId, { preset_name: newName });
     if (!success) {
       Swal.close();
-      Swal.fire("Error", "Failed to rename preset", "error");
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to rename preset',
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        },
+        buttonsStyling: false,
+      });
       return;
     }
 
@@ -384,7 +392,15 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       const moveResult = await movePresetToFolder(currentPresetId, folderId || null);
       if (!moveResult || moveResult.ok !== true) {
         Swal.close();
-        Swal.fire("Error", "Failed to update folder assignment for preset.", "error");
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to update folder assignment for preset.',
+          icon: 'error',
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+          },
+          buttonsStyling: false,
+        });
         console.error('movePresetToFolder result:', moveResult);
         return;
       }
@@ -460,7 +476,15 @@ async function duplicatePreset(presetId, newName, folderId) {
   try {
     const original = window.presetMap[presetId];
     if (!original) {
-      Swal.fire("Error", "Preset not found", "error");
+      Swal.fire({
+        title: 'Error',
+        text: 'Preset not found',
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        },
+        buttonsStyling: false,
+      });
       return;
     }
 
@@ -475,7 +499,15 @@ async function duplicatePreset(presetId, newName, folderId) {
     const newId = await createPresetOnServer(duplicated);
 
     if (!newId) {
-      Swal.fire("Error", "Could not duplicate preset", "error");
+      Swal.fire({
+        title: 'Error',
+        text: 'Could not duplicate preset',
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        },
+        buttonsStyling: false,
+      });
       return;
     }
 
@@ -497,7 +529,15 @@ async function duplicatePreset(presetId, newName, folderId) {
 
   } catch (err) {
     console.error("duplicatePreset error:", err);
-    Swal.fire("Error", "Unexpected error duplicating preset", "error");
+    Swal.fire({
+      title: 'Error',
+      text: 'Unexpected error duplicating preset',
+      icon: 'error',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+      },
+      buttonsStyling: false,
+    });
   }
 }
 
@@ -632,7 +672,15 @@ async function createPreset() {
   const userId = currentUser.userid;
   const boardId = window.pedalboard?._id;
   if (!boardId) {
-    Swal.fire('Error', 'No pedalboard selected', 'error');
+    Swal.fire({
+      title: 'Error',
+      text: 'No pedalboard selected',
+      icon: 'error',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+      },
+      buttonsStyling: false,
+    });
     return;
   }
 
@@ -654,12 +702,28 @@ async function createPreset() {
     });
     const data = await res.json();
     if (!res.ok || !data.success) {
-      Swal.fire('Error', 'Failed to create preset: ' + (data.message || 'Unknown error'), 'error');
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to create preset: ' + (data.message || 'Unknown error'),
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        },
+        buttonsStyling: false,
+      });
       return;
     }
     newPresetId = data.id;
   } catch (err) {
-    Swal.fire('Error', 'Network or server error: ' + err.message, 'error');
+    Swal.fire({
+      title: 'Error',
+      text: 'Network or server error: ' + err.message,
+      icon: 'error',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+      },
+      buttonsStyling: false,
+    });
     return;
   }
 
@@ -856,6 +920,15 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
         }
     }
 
+    // ✅ Sort presets alphabetically by preset_name (case-insensitive)
+    filteredPresets.sort((a, b) => {
+        const nameA = (a.preset_name || '').toLowerCase();
+        const nameB = (b.preset_name || '').toLowerCase();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+    });
+
     // Populate the dropdown
     filteredPresets.forEach(p => {
         const opt = document.createElement('option');
@@ -889,6 +962,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
     const saveBtn = document.getElementById('savePstBtn');
     if (saveBtn) saveBtn.disabled = filteredPresets.length === 0;
 }
+
 
 
 
