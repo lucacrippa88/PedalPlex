@@ -251,6 +251,11 @@ function attachRenameFolderListener() {
           formData.append('folder_id', folderId);
           formData.append('folder_rev', folder._rev || ''); // fallback if missing
 
+          console.log('Deleting folder with:', {
+            folder_id: folderId,
+            folder_rev: folder._rev
+          });
+
           const res = await fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FOLDER.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
