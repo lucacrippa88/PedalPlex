@@ -252,6 +252,45 @@ function attachRenameFolderListener() {
       console.error(err);
       Swal.fire('Error', 'Network or server error', 'error');
     }
+
+    if (isDenied) {
+      const confirmDelete = await Swal.fire({
+        title: 'Are you sure?',
+        text: `This will permanently delete "${folder.name}".`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'Cancel',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--danger',
+          cancelButton: 'bx--btn bx--btn--secondary',
+        },
+        buttonsStyling: false,
+      });
+
+      if (confirmDelete.isConfirmed) {
+        try {
+          const res = await fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FOLDER.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `folder_id=${encodeURIComponent(folderId)}`
+          });
+          const result = await res.json();
+
+          if (result.ok) {
+            // Remove from local state
+            window.folders = window.folders.filter(f => (f._id || f.id) !== folderId);
+            populateFolderDropdown();
+            Swal.fire('Deleted!', `"${folder.name}" has been removed.`, 'success');
+          } else {
+            Swal.fire('Error', result.error || 'Could not delete folder.', 'error');
+          }
+        } catch (err) {
+          Swal.fire('Error', 'Network or server error while deleting.', 'error');
+        }
+      }
+    }
+
   });
 }
 
