@@ -135,7 +135,7 @@ function attachAddFolderListener() {
       title: `New Folder for "${boardName}"`,
       input: 'text',
       inputLabel: 'Folder Name',
-      confirmButtonText: "Rename",
+      confirmButtonText: "Create",
       inputPlaceholder: 'Enter folder name',
       showCancelButton: true,
       buttonsStyling: false,
@@ -211,16 +211,20 @@ function attachRenameFolderListener() {
     }
 
     const boardName = window.pedalboard?.board_name || 'Unnamed Pedalboard';
-    const { value: newName, isConfirmed } = await Swal.fire({
-      title: `Rename folder for "${boardName}"`,
+    const { value: newName, isConfirmed, isDenied } = await Swal.fire({
+      title: `Edit folder for "${boardName}"`,
       input: 'text',
       inputLabel: 'New folder name',
+      confirmButtonText: "Rename",
+      denyButtonText: "Delete",
       inputValue: folder.name,
       showCancelButton: true,
+      showDenyButton: true,
       inputValidator: v => !v.trim() && 'Folder name cannot be empty',
       customClass: {
-        confirmButton: 'bx--btn bx--btn--primary',   // Carbon primary button
-        cancelButton: 'bx--btn bx--btn--secondary', // Carbon secondary button
+        confirmButton: 'bx--btn bx--btn--primary',
+        cancelButton: 'bx--btn bx--btn--secondary',
+        denyButton: 'bx--btn bx--btn--danger',
       },
       buttonsStyling: false,
     });
