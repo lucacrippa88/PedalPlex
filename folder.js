@@ -247,19 +247,19 @@ function attachRenameFolderListener() {
 
       if (confirmDelete.isConfirmed) {
         try {
+          const formData = new URLSearchParams();
+          formData.append('folder_id', folderId);
+          formData.append('folder_rev', folder._rev || ''); // fallback if missing
+
           const res = await fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FOLDER.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              folder_id: folderId,
-              folder_rev: folder._rev
-            })
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData.toString()
           });
 
           const result = await res.json();
 
           if (result.success) {
-            // Remove deleted folder from local state
             window.folders = (window.folders || []).filter(f => (f._id || f.id) !== folderId);
             populateFolderDropdown();
 
@@ -278,6 +278,7 @@ function attachRenameFolderListener() {
           Swal.fire('Error', 'Network or server error while deleting.', 'error');
         }
       }
+
       return; // Stop here after delete
     }
 
