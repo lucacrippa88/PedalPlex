@@ -272,24 +272,37 @@ function attachRenameFolderListener() {
         try {
           const res = await fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FOLDER.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `folder_id=${encodeURIComponent(folderId)}`
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              folder_id: folderId,
+              folder_rev: folder._rev
+            })
           });
+
           const result = await res.json();
 
-          if (result.ok) {
-            // Remove from local state
-            window.folders = window.folders.filter(f => (f._id || f.id) !== folderId);
+          if (result.success) {
+            // Remove deleted folder from local state
+            window.folders = (window.folders || []).filter(f => (f._id || f.id) !== folderId);
             populateFolderDropdown();
-            Swal.fire('Deleted!', `"${folder.name}" has been removed.`, 'success');
+
+            Swal.fire({
+              title: 'Deleted!',
+              text: `"${folder.name}" has been removed.`,
+              icon: 'success',
+              customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+              buttonsStyling: false,
+            });
           } else {
             Swal.fire('Error', result.error || 'Could not delete folder.', 'error');
           }
         } catch (err) {
+          console.error('[folders] delete error:', err);
           Swal.fire('Error', 'Network or server error while deleting.', 'error');
         }
       }
     }
+
 
   });
 }
@@ -350,16 +363,20 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
       window.folders = Array.isArray(possible) ? possible : [];
     }
 
-    // Ensure each folder has proper id, name, and preset_ids
+    // Ensure each folder has proper id, name, preset_ids, and _rev
     window.folders = window.folders.map((f, idx) => {
-      if (typeof f === 'string') return { id: `folder_${idx}`, name: f, preset_ids: [] };
+      if (typeof f === 'string') return { id: `folder_${idx}`, name: f, preset_ids: [], _rev: null };
       return {
-        id: f._id || f.id || f['_id'] || `folder_${idx}`,  // fallback ID
+        id: f._id || f.id || f['_id'] || `folder_${idx}`,   // fallback ID
         _id: f._id || f.id || f['_id'] || `folder_${idx}`,
+        _rev: f._rev || f.rev || null,                      // keep revision
         name: f.name || f.folder_name || f.title || `(Folder ${idx + 1})`,
-        preset_ids: Array.isArray(f.preset_ids) ? f.preset_ids : (Array.isArray(f.presets) ? f.presets : [])
+        preset_ids: Array.isArray(f.preset_ids)
+          ? f.preset_ids
+          : (Array.isArray(f.presets) ? f.presets : [])
       };
     });
+
 
     // Update main page dropdown only if not for Swal
     if (!forSwal) populateFolderDropdown();
