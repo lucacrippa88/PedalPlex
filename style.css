@@ -17,13 +17,12 @@
     .bx--btn--primary {
       cursor: pointer;
       background: linear-gradient(90deg, #462964, #9C54D5, #5EE2F0);
-      background-size: 200% 200%;
+      background-size: 100% 100%;
       transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .bx--btn--primary:hover {
       background-position: 100% 50%; /* shift gradient */
-      transform: translateY(-2px);
     }
 
     #username, #password, #email, #newPassword, #oldPassword {
