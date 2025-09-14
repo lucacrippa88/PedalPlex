@@ -635,7 +635,7 @@ function applyPresetToPedalboard(presetDoc) {
 
 
 async function createPreset() {
-  // 1️⃣ Prompt for preset name
+  // 1. Prompt for preset name
   const { value: presetName } = await Swal.fire({
     title: 'Enter new preset name',
     input: 'text',
@@ -651,9 +651,9 @@ async function createPreset() {
 
   if (!presetName) return; // Cancelled
 
-  // 2️⃣ Prompt for folder selection
+  // 2. Prompt for folder selection
   const folderOptions = [{ id: '', name: 'No Folder' }, ...window.folders.map(f => ({ id: f.id || f._id, name: f.name }))];
-  const folderHtml = `<select id="selectFolder" class="swal2-select">
+  const folderHtml = `<select id="selectFolder" class="swal2-select"">
     ${folderOptions.map(f => `<option value="${f.id}">${f.name}</option>`).join('')}
   </select>`;
 
@@ -668,11 +668,19 @@ async function createPreset() {
     preConfirm: () => document.getElementById('selectFolder').value
   });
 
-  // 3️⃣ Create preset on server
-  const userId = window.currentUser.userid;
+  // 3. Create preset in Cloudant
+  const userId = currentUser.userid;
   const boardId = window.pedalboard?._id;
   if (!boardId) {
-    Swal.fire({ title: 'Error', text: 'No pedalboard selected', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
+    Swal.fire({
+      title: 'Error',
+      text: 'No pedalboard selected',
+      icon: 'error',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+      },
+      buttonsStyling: false,
+    });
     return;
   }
 
@@ -685,6 +693,7 @@ async function createPreset() {
   };
 
   let newPresetId;
+  let data;
   try {
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
       method: 'POST',
@@ -693,16 +702,32 @@ async function createPreset() {
     });
     const data = await res.json();
     if (!res.ok || !data.success) {
-      Swal.fire({ title: 'Error', text: 'Failed to create preset: ' + (data.message || 'Unknown error'), icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to create preset: ' + (data.message || 'Unknown error'),
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        },
+        buttonsStyling: false,
+      });
       return;
     }
     newPresetId = data.id;
   } catch (err) {
-    Swal.fire({ title: 'Error', text: 'Network or server error: ' + err.message, icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
+    Swal.fire({
+      title: 'Error',
+      text: 'Network or server error: ' + err.message,
+      icon: 'error',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+      },
+      buttonsStyling: false,
+    });
     return;
   }
 
-  // 4️⃣ Assign preset to folder
+  // Assign newly created preset to selected folder (atomic move)
   if (selectedFolderId) {
     const moveResult = await movePresetToFolder(newPresetId, selectedFolderId || null);
     if (!moveResult || moveResult.ok !== true) {
@@ -710,28 +735,36 @@ async function createPreset() {
     }
   }
 
-  // 5️⃣ REFRESH UI DYNAMICALLY (no reload)
+  // -------------------------------
+  // REFRESH FOLDER & PRESET DROPDOWNS
+  // -------------------------------
   if (typeof window.populateFolderDropdown === 'function') {
-    window.populateFolderDropdown(); // refresh folder dropdown
+      window.populateFolderDropdown(); // refresh folder dropdown options
   }
+
   const folderSelect = document.getElementById('folderSelect');
   if (folderSelect) {
-    populatePresetDropdownByFolder(folderSelect.value, newPresetId); // refresh preset dropdown, select new preset
+      populatePresetDropdownByFolder(folderSelect.value); // refresh presets for selected folder
   }
 
-  // 6️⃣ Show success message
+
   Swal.fire({
     title: 'Success',
-    text: `Preset "${presetName}" created${selectedFolderId ? ' and added to folder.' : '.'}`,
+    text: `Preset "${presetName}" created${selectedFolderId ? ` and added to folder.` : '.'}`,
     icon: 'success',
-    timer: 2000,
-    showConfirmButton: false
+    customClass: {
+      confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+      cancelButton: 'bx--btn bx--btn--secondary', // If you add cancel
+    },
+    buttonsStyling: false, // Disable default SweetAlert2 styles
+  }).then(() => {
+    window.location.reload();
   });
 
-  // 7️⃣ Save pedalboard state
-  savePedalboard();
-}
 
+  savePedalboard();
+
+}
 
 
 
