@@ -54,8 +54,9 @@ const songQuotes = [
   "I'd trade all my tomorrows for a single yesterday!",
   "We learned more from a three-minute record than we ever learned in school!",
   "You may say I'm a dreamer, but I'm not the only one!",
-  "The answer, my friend, is blowing in the Wind!",
-  "Mama, I'm Coming Home..."
+  "The answer, my friend, is blowing in the wind!",
+  "Mama, I'm coming home...",
+  "Back in business again!"
 ];
 
 // DOM ready
