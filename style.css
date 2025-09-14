@@ -23,8 +23,33 @@
       background-size: 150% 150%;
       background-position: 0% 50%;
     }
-
     .bx--btn--primary:hover {
+      background-position: 100% 50%; /* shift gradient */
+    }
+
+    .bx--btn--secondary {
+      cursor: pointer;
+      background: linear-gradient(45deg, #4c4c4c, #686868);
+      background-size: 100% 100%;
+      transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      border: none;
+      background-size: 150% 150%;
+      background-position: 0% 50%;
+    }
+    .bx--btn--secondary:hover {
+      background-position: 100% 50%; /* shift gradient */
+    }
+
+    .bx--btn--danger {
+      cursor: pointer;
+      background: linear-gradient(45deg, #9C54D5, #5EE2F0);
+      background-size: 100% 100%;
+      transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      border: none;
+      background-size: 150% 150%;
+      background-position: 0% 50%;
+    }
+    .bx--btn--danger:hover {
       background-position: 100% 50%; /* shift gradient */
     }
 
