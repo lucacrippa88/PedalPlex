@@ -334,46 +334,65 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
 
 
-  // Handle delete
-  if (result.isDenied) {
-    const confirmDelete = await Swal.fire({
-      title: `Delete "${currentPresetName}"?`,
-      text: "This action cannot be undone.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it",
-      cancelButtonText: "Cancel",
-      customClass: { confirmButton: "bx--btn bx--btn--danger", cancelButton: "bx--btn bx--btn--secondary" }
-    });
-    if (!confirmDelete.isConfirmed) return;
+// Handle delete
+if (result.isDenied) {
+  const confirmDelete = await Swal.fire({
+    title: `Delete "${currentPresetName}"?`,
+    text: "This action cannot be undone.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, delete it",
+    cancelButtonText: "Cancel",
+    customClass: { confirmButton: "bx--btn bx--btn--danger", cancelButton: "bx--btn bx--btn--secondary" }
+  });
+  if (!confirmDelete.isConfirmed) return;
 
-    Swal.fire({ title: "Deleting...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
-    const response = await fetch("https://www.cineteatrosanluigi.it/plex/DELETE_PRESET.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ preset_id: currentPresetId, preset_rev: currentPresetRev })
-    });
-    const data = await response.json();
-    Swal.close();
+  Swal.fire({ title: "Deleting...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+  const response = await fetch("https://www.cineteatrosanluigi.it/plex/DELETE_PRESET.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ preset_id: currentPresetId, preset_rev: currentPresetRev })
+  });
+  const data = await response.json();
+  Swal.close();
 
-    if (data.success) {
-      // Remove from in-memory presets and dropdown
-      delete window.presetMap[currentPresetId];
-      window.presets = window.presets.filter(p => p._id !== currentPresetId);
-      const option = document.querySelector(`#presetSelect option[value="${currentPresetId}"]`);
-      if (option) option.remove();
+  if (data.success) {
+    // ✅ Remove deleted preset from dropdown & reset current preset
+    const presetSelect = document.getElementById('presetSelect');
+    if (presetSelect) {
+      const deletedOption = presetSelect.querySelector(`option[value="${currentPresetId}"]`);
+      if (deletedOption) deletedOption.remove();
 
-      currentPresetId = null;
-      currentPresetName = null;
-      currentPresetRev = null;
-
-      Swal.fire({ icon: "success", title: "Preset Deleted", timer: 1500, showConfirmButton: false });
-    } else {
-      Swal.fire("Error", data.error || "Failed to delete preset", "error");
+      // Select first preset in dropdown if available
+      if (presetSelect.options.length > 0) {
+        presetSelect.selectedIndex = 0;
+        const firstPresetId = presetSelect.value;
+        const firstPreset = window.presetMap[firstPresetId];
+        if (firstPreset) {
+          currentPresetId = firstPreset._id;
+          currentPresetName = firstPreset.preset_name;
+          currentPresetRev = firstPreset._rev || firstPreset.rev || null;
+          applyPresetToPedalboard(firstPreset);
+        } else {
+          currentPresetId = null;
+          currentPresetName = null;
+          currentPresetRev = null;
+        }
+      } else {
+        currentPresetId = null;
+        currentPresetName = null;
+        currentPresetRev = null;
+      }
     }
 
-    return;
+    Swal.fire({ icon: "success", title: "Preset Deleted", timer: 2000, showConfirmButton: false });
+  } else {
+    Swal.fire("Error", data.error || "Failed to delete preset", "error");
   }
+  return;
+}
+
+
 
   // Handle save
   if (result.value) {
