@@ -281,7 +281,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     html: htmlContent,
     showCancelButton: true,
     showDenyButton: true,
-    confirmButtonText: "Rename",
+    confirmButtonText: "Save",
     cancelButtonText: "Cancel",
     denyButtonText: "Delete",
     focusConfirm: false,
@@ -781,9 +781,15 @@ async function createPreset() {
     preset_name: presetName,
     pedals: {},
     folder_id: selectedFolderId || null,
+    _rev: data.rev || null
   };
   window.presets.push(newPreset);
   window.presetMap[newPresetId] = newPreset;
+
+  // Immediately select it
+  currentPresetId = newPresetId;
+  currentPresetName = presetName;
+  currentPresetRev = newPreset._rev;
 
   // Refresh dropdown for current folder
   const folderSelectValue = document.getElementById('folderSelect')?.value || 'default';
