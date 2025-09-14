@@ -16,7 +16,7 @@
 
     .bx--btn--primary {
       cursor: pointer;
-      background: linear-gradient(90deg, #462964, #9C54D5, #5EE2F0);
+      background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
       background-size: 100% 100%;
       transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
