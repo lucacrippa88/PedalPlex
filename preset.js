@@ -135,6 +135,7 @@ function initPreset() {
 
 
 
+// Replace your fetchPresetsByBoardId function with this async version
 async function fetchPresetsByBoardId(user_id, board_id, callback) {
   const presetSelect = document.getElementById('presetSelect');
   if (!presetSelect) return;
@@ -149,7 +150,7 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
       if (window.currentPresetId === preset._id) return;
       currentPresetId = preset._id;
       currentPresetName = preset.preset_name;
-      currentPresetRev = preset._rev || preset.rev || null; // ensure defined
+      currentPresetRev = preset._rev;
       applyPresetToPedalboard(preset);
       // Save selection to storage
       saveCurrentSelectionToStorage();
@@ -185,10 +186,7 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
     // Build presetMap keyed by _id for easy lookup
     window.presetMap = {};
     window.presets.forEach(p => {
-      if (p && p._id) {
-        window.presetMap[p._id] = p;
-        if (!p._rev && p.rev) p._rev = p.rev; // ensure _rev is present
-      }
+      if (p && p._id) window.presetMap[p._id] = p;
     });
 
     // Ensure folders are loaded before we populate folder/preset selects
@@ -281,7 +279,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     html: htmlContent,
     showCancelButton: true,
     showDenyButton: true,
-    confirmButtonText: "Save",
+    confirmButtonText: "Rename",
     cancelButtonText: "Cancel",
     denyButtonText: "Delete",
     focusConfirm: false,
@@ -336,65 +334,36 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
 
 
-// Handle delete
-if (result.isDenied) {
-  const confirmDelete = await Swal.fire({
-    title: `Delete "${currentPresetName}"?`,
-    text: "This action cannot be undone.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Yes, delete it",
-    cancelButtonText: "Cancel",
-    customClass: { confirmButton: "bx--btn bx--btn--danger", cancelButton: "bx--btn bx--btn--secondary" }
-  });
-  if (!confirmDelete.isConfirmed) return;
+  // Handle delete
+  if (result.isDenied) {
+    const confirmDelete = await Swal.fire({
+      title: `Delete "${currentPresetName}"?`,
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it",
+      cancelButtonText: "Cancel",
+      customClass: { confirmButton: "bx--btn bx--btn--danger", cancelButton: "bx--btn bx--btn--secondary" }
+    });
+    if (!confirmDelete.isConfirmed) return;
 
-  Swal.fire({ title: "Deleting...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
-  const response = await fetch("https://www.cineteatrosanluigi.it/plex/DELETE_PRESET.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ preset_id: currentPresetId, preset_rev: currentPresetRev })
-  });
-  const data = await response.json();
-  Swal.close();
+    Swal.fire({ title: "Deleting...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+    const response = await fetch("https://www.cineteatrosanluigi.it/plex/DELETE_PRESET.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ preset_id: currentPresetId, preset_rev: currentPresetRev })
+    });
+    const data = await response.json();
+    Swal.close();
 
-  if (data.success) {
-    // ✅ Remove deleted preset from dropdown & reset current preset
-    const presetSelect = document.getElementById('presetSelect');
-    if (presetSelect) {
-      const deletedOption = presetSelect.querySelector(`option[value="${currentPresetId}"]`);
-      if (deletedOption) deletedOption.remove();
-
-      // Select first preset in dropdown if available
-      if (presetSelect.options.length > 0) {
-        presetSelect.selectedIndex = 0;
-        const firstPresetId = presetSelect.value;
-        const firstPreset = window.presetMap[firstPresetId];
-        if (firstPreset) {
-          currentPresetId = firstPreset._id;
-          currentPresetName = firstPreset.preset_name;
-          currentPresetRev = firstPreset._rev || firstPreset.rev || null;
-          applyPresetToPedalboard(firstPreset);
-        } else {
-          currentPresetId = null;
-          currentPresetName = null;
-          currentPresetRev = null;
-        }
-      } else {
-        currentPresetId = null;
-        currentPresetName = null;
-        currentPresetRev = null;
-      }
+    if (data.success) {
+      Swal.fire({ icon: "success", title: "Preset Deleted", timer: 2000, showConfirmButton: false })
+        .then(() => location.reload());
+    } else {
+      Swal.fire("Error", data.error || "Failed to delete preset", "error");
     }
-
-    Swal.fire({ icon: "success", title: "Preset Deleted", timer: 2000, showConfirmButton: false });
-  } else {
-    Swal.fire("Error", data.error || "Failed to delete preset", "error");
+    return;
   }
-  return;
-}
-
-
 
   // Handle save
   if (result.value) {
@@ -450,9 +419,9 @@ if (result.isDenied) {
       icon: "success",
       title: "Preset Updated",
       text: `Preset "${newName}" saved and assigned to folder.`,
-      timer: 1500,
+      timer: 2000,
       showConfirmButton: false
-    });
+    }).then(() => location.reload());
 
     // Save current selection locally
     saveCurrentSelectionToStorage();
@@ -546,26 +515,17 @@ async function duplicatePreset(presetId, newName, folderId) {
       await movePresetToFolder(newId, folderId);
     }
 
-    // Update in-memory presets and dropdown
-    window.presets.push({
-      ...duplicated,
-      _id: newId,
-      _rev: null,
-    });
-    window.presetMap[newId] = duplicated;
-
-    // Update dropdown for current folder
-    const folderSelectValue = document.getElementById('folderSelect')?.value || 'default';
-    populatePresetDropdownByFolder(folderSelectValue, newId);
-
+    // ✅ Show SweetAlert confirmation with a short timer before reload
     await Swal.fire({
       icon: "success",
       title: "Preset Duplicated",
       text: `Preset duplicated as "${duplicated.preset_name}"`,
       timer: 1500,
-      showConfirmButton: false
+      showConfirmButton: false,
+      didClose: () => {
+        location.reload();
+      }
     });
-
 
   } catch (err) {
     console.error("duplicatePreset error:", err);
@@ -675,7 +635,7 @@ function applyPresetToPedalboard(presetDoc) {
 
 
 async function createPreset() {
-  // 1️⃣ Prompt for preset name
+  // 1. Prompt for preset name
   const { value: presetName } = await Swal.fire({
     title: 'Enter new preset name',
     input: 'text',
@@ -688,13 +648,15 @@ async function createPreset() {
     },
     inputValidator: value => !value && 'You must enter a preset name!'
   });
-  if (!presetName) return;
 
-  // 2️⃣ Prompt for folder selection
+  if (!presetName) return; // Cancelled
+
+  // 2. Prompt for folder selection
   const folderOptions = [{ id: '', name: 'No Folder' }, ...window.folders.map(f => ({ id: f.id || f._id, name: f.name }))];
-  const folderHtml = `<select id="selectFolder" class="swal2-select">
+  const folderHtml = `<select id="selectFolder" class="swal2-select"">
     ${folderOptions.map(f => `<option value="${f.id}">${f.name}</option>`).join('')}
   </select>`;
+
   const { value: selectedFolderId } = await Swal.fire({
     title: 'Select folder for this preset',
     html: folderHtml,
@@ -706,81 +668,90 @@ async function createPreset() {
     preConfirm: () => document.getElementById('selectFolder').value
   });
 
-  const userId = window.currentUser.userid;
+  // 3. Create preset in Cloudant
+  const userId = currentUser.userid;
   const boardId = window.pedalboard?._id;
   if (!boardId) {
-    Swal.fire({ title: 'Error', text: 'No pedalboard selected', icon: 'error' });
-    return;
-  }
-
-  Swal.fire({ title: 'Creating preset...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
-
-  // 3️⃣ Create preset on server
-  let newPresetId;
-  try {
-    newPresetId = await createPresetOnServer({
-      user_id: userId,
-      board_name: window.pedalboard.board_name,
-      board_id: boardId,
-      preset_name: presetName,
-      pedals: {}
+    Swal.fire({
+      title: 'Error',
+      text: 'No pedalboard selected',
+      icon: 'error',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+      },
+      buttonsStyling: false,
     });
-    if (!newPresetId) throw new Error('Failed to create preset');
-  } catch (err) {
-    Swal.close();
-    Swal.fire({ title: 'Error', text: 'Could not create preset: ' + err.message, icon: 'error' });
     return;
   }
 
-  // 4️⃣ Fetch the newly created preset to get _rev
-  let newPreset;
+  const bodyData = {
+    user_id: userId,
+    board_name: window.pedalboard.board_name,
+    board_id: boardId,
+    preset_name: presetName,
+    pedals: {}
+  };
+
+  let newPresetId;
+  let data;
   try {
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESET.php', {
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: userId, board_id: boardId })
+      body: JSON.stringify(bodyData)
     });
     const data = await res.json();
-    if (!data.presets) throw new Error('Failed to fetch presets');
-    newPreset = data.presets.find(p => p._id === newPresetId);
-    if (!newPreset) throw new Error('Preset not found after creation');
+    if (!res.ok || !data.success) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to create preset: ' + (data.message || 'Unknown error'),
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        },
+        buttonsStyling: false,
+      });
+      return;
+    }
+    newPresetId = data.id;
   } catch (err) {
-    Swal.close();
-    Swal.fire({ title: 'Error', text: 'Could not fetch new preset: ' + err.message, icon: 'error' });
+    Swal.fire({
+      title: 'Error',
+      text: 'Network or server error: ' + err.message,
+      icon: 'error',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+      },
+      buttonsStyling: false,
+    });
     return;
   }
 
-  // 5️⃣ Assign preset to folder
+  // Assign newly created preset to selected folder (atomic move)
   if (selectedFolderId) {
-    const moveResult = await movePresetToFolder(newPresetId, selectedFolderId);
-    if (!moveResult.ok) {
-      Swal.close();
-      Swal.fire({ title: 'Error', text: 'Failed to assign preset to folder', icon: 'error' });
-      return;
+    const moveResult = await movePresetToFolder(newPresetId, selectedFolderId || null);
+    if (!moveResult || moveResult.ok !== true) {
+      console.error('Failed to assign newly created preset to folder', moveResult);
     }
   }
 
-  // 6️⃣ Update in-memory presets
-  window.presets.push(newPreset);
-  window.presetMap[newPresetId] = newPreset;
-
-  // 7️⃣ Refresh UI dropdown for current folder
-  const folderSelectValue = document.getElementById('folderSelect')?.value || 'default';
-  populatePresetDropdownByFolder(folderSelectValue, newPresetId);
-
-  Swal.close();
   Swal.fire({
     title: 'Success',
-    text: `Preset "${presetName}" created${selectedFolderId ? ' and added to folder.' : '.'}`,
+    text: `Preset "${presetName}" created${selectedFolderId ? ` and added to folder.` : '.'}`,
     icon: 'success',
-    timer: 1500,
-    showConfirmButton: false
+    customClass: {
+      confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+      cancelButton: 'bx--btn bx--btn--secondary', // If you add cancel
+    },
+    buttonsStyling: false, // Disable default SweetAlert2 styles
+  }).then(() => {
+    window.location.reload();
   });
 
+
   savePedalboard();
+
 }
-
-
 
 
 
@@ -977,7 +948,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
     if (selectedPreset) {
         currentPresetId = selectedPreset._id;
         currentPresetName = selectedPreset.preset_name;
-        currentPresetRev = selectedPreset._rev || selectedPreset.rev || null; // ✅ use selectedPreset
+        currentPresetRev = selectedPreset._rev;
         presetSelect.value = selectedPreset._id;
 
         // Apply preset
@@ -986,7 +957,6 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
         // Save selection
         saveCurrentSelectionToStorage();
     }
-
 
     // Enable/disable Save button
     const saveBtn = document.getElementById('savePstBtn');
