@@ -357,11 +357,21 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     Swal.close();
 
     if (data.success) {
-      Swal.fire({ icon: "success", title: "Preset Deleted", timer: 2000, showConfirmButton: false })
-        .then(() => location.reload());
+      // Remove from in-memory presets and dropdown
+      delete window.presetMap[currentPresetId];
+      window.presets = window.presets.filter(p => p._id !== currentPresetId);
+      const option = document.querySelector(`#presetSelect option[value="${currentPresetId}"]`);
+      if (option) option.remove();
+
+      currentPresetId = null;
+      currentPresetName = null;
+      currentPresetRev = null;
+
+      Swal.fire({ icon: "success", title: "Preset Deleted", timer: 1500, showConfirmButton: false });
     } else {
       Swal.fire("Error", data.error || "Failed to delete preset", "error");
     }
+
     return;
   }
 
@@ -419,9 +429,9 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       icon: "success",
       title: "Preset Updated",
       text: `Preset "${newName}" saved and assigned to folder.`,
-      timer: 2000,
+      timer: 1500,
       showConfirmButton: false
-    }).then(() => location.reload());
+    });
 
     // Save current selection locally
     saveCurrentSelectionToStorage();
@@ -515,17 +525,26 @@ async function duplicatePreset(presetId, newName, folderId) {
       await movePresetToFolder(newId, folderId);
     }
 
-    // ✅ Show SweetAlert confirmation with a short timer before reload
+    // Update in-memory presets and dropdown
+    window.presets.push({
+      ...duplicated,
+      _id: newId,
+      _rev: null,
+    });
+    window.presetMap[newId] = duplicated;
+
+    // Update dropdown for current folder
+    const folderSelectValue = document.getElementById('folderSelect')?.value || 'default';
+    populatePresetDropdownByFolder(folderSelectValue, newId);
+
     await Swal.fire({
       icon: "success",
       title: "Preset Duplicated",
       text: `Preset duplicated as "${duplicated.preset_name}"`,
       timer: 1500,
-      showConfirmButton: false,
-      didClose: () => {
-        location.reload();
-      }
+      showConfirmButton: false
     });
+
 
   } catch (err) {
     console.error("duplicatePreset error:", err);
@@ -735,19 +754,27 @@ async function createPreset() {
     }
   }
 
+  // Add to in-memory presets
+  const newPreset = {
+    _id: newPresetId,
+    preset_name: presetName,
+    pedals: {},
+    folder_id: selectedFolderId || null,
+  };
+  window.presets.push(newPreset);
+  window.presetMap[newPresetId] = newPreset;
+
+  // Refresh dropdown for current folder
+  const folderSelectValue = document.getElementById('folderSelect')?.value || 'default';
+  populatePresetDropdownByFolder(folderSelectValue, newPresetId);
+
   Swal.fire({
     title: 'Success',
     text: `Preset "${presetName}" created${selectedFolderId ? ` and added to folder.` : '.'}`,
     icon: 'success',
-    customClass: {
-      confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-      cancelButton: 'bx--btn bx--btn--secondary', // If you add cancel
-    },
-    buttonsStyling: false, // Disable default SweetAlert2 styles
-  }).then(() => {
-    window.location.reload();
+    timer: 1500,
+    showConfirmButton: false
   });
-
 
   savePedalboard();
 
