@@ -29,7 +29,7 @@
 
     .bx--btn--secondary {
       cursor: pointer;
-      background: linear-gradient(45deg, #4c4c4c, #9e9e9e);
+      background: linear-gradient(45deg, #3b3b3b, #5e5e5e);
       background-size: 100% 100%;
       transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
       border: none;
@@ -42,7 +42,7 @@
 
     .bx--btn--danger {
       cursor: pointer;
-      background: linear-gradient(45deg, #462964, #5C3983);
+      background: linear-gradient(45deg, #3b3b3b, #5EE2F0);
       background-size: 100% 100%;
       transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
       border: none;
