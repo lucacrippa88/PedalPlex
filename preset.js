@@ -688,15 +688,13 @@ async function createPreset() {
     },
     inputValidator: value => !value && 'You must enter a preset name!'
   });
-
-  if (!presetName) return; // Cancelled
+  if (!presetName) return;
 
   // 2️⃣ Prompt for folder selection
   const folderOptions = [{ id: '', name: 'No Folder' }, ...window.folders.map(f => ({ id: f.id || f._id, name: f.name }))];
   const folderHtml = `<select id="selectFolder" class="swal2-select">
     ${folderOptions.map(f => `<option value="${f.id}">${f.name}</option>`).join('')}
   </select>`;
-
   const { value: selectedFolderId } = await Swal.fire({
     title: 'Select folder for this preset',
     html: folderHtml,
@@ -708,87 +706,72 @@ async function createPreset() {
     preConfirm: () => document.getElementById('selectFolder').value
   });
 
-  // 3️⃣ Create preset on server
-  const userId = currentUser.userid;
+  const userId = window.currentUser.userid;
   const boardId = window.pedalboard?._id;
   if (!boardId) {
-    Swal.fire({
-      title: 'Error',
-      text: 'No pedalboard selected',
-      icon: 'error',
-      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-      buttonsStyling: false
-    });
+    Swal.fire({ title: 'Error', text: 'No pedalboard selected', icon: 'error' });
     return;
   }
 
-  const bodyData = {
-    user_id: userId,
-    board_name: window.pedalboard.board_name,
-    board_id: boardId,
-    preset_name: presetName,
-    pedals: {}
-  };
+  Swal.fire({ title: 'Creating preset...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
 
+  // 3️⃣ Create preset on server
   let newPresetId;
   try {
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bodyData)
+    newPresetId = await createPresetOnServer({
+      user_id: userId,
+      board_name: window.pedalboard.board_name,
+      board_id: boardId,
+      preset_name: presetName,
+      pedals: {}
     });
-    const data = await res.json();
-    if (!res.ok || !data.success) {
-      Swal.fire({ title: 'Error', text: 'Failed to create preset: ' + (data.message || 'Unknown error'), icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
-      return;
-    }
-    newPresetId = data.id;
+    if (!newPresetId) throw new Error('Failed to create preset');
   } catch (err) {
-    Swal.fire({ title: 'Error', text: 'Network error: ' + err.message, icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
+    Swal.close();
+    Swal.fire({ title: 'Error', text: 'Could not create preset: ' + err.message, icon: 'error' });
     return;
   }
 
-  // 4️⃣ Fetch newly created preset to get _rev
-  let newPresetFromServer;
+  // 4️⃣ Fetch the newly created preset to get _rev
+  let newPreset;
   try {
-    const fetchRes = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESET.php', {
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESET.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: userId, board_id: boardId })
     });
-    const fetchData = await fetchRes.json();
-    newPresetFromServer = fetchData.presets.find(p => p._id === newPresetId);
-
-    if (!newPresetFromServer) throw new Error('Preset not found after creation');
+    const data = await res.json();
+    if (!data.presets) throw new Error('Failed to fetch presets');
+    newPreset = data.presets.find(p => p._id === newPresetId);
+    if (!newPreset) throw new Error('Preset not found after creation');
   } catch (err) {
-    console.error('Error fetching new preset:', err);
-    Swal.fire({ title: 'Error', text: 'Could not fetch newly created preset', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
+    Swal.close();
+    Swal.fire({ title: 'Error', text: 'Could not fetch new preset: ' + err.message, icon: 'error' });
     return;
   }
 
-  // 5️⃣ Assign to folder (atomic move)
+  // 5️⃣ Assign preset to folder
   if (selectedFolderId) {
     const moveResult = await movePresetToFolder(newPresetId, selectedFolderId);
-    if (!moveResult || moveResult.ok !== true) console.error('Failed to assign newly created preset to folder', moveResult);
+    if (!moveResult.ok) {
+      Swal.close();
+      Swal.fire({ title: 'Error', text: 'Failed to assign preset to folder', icon: 'error' });
+      return;
+    }
   }
 
-  // 6️⃣ Update in-memory structures
-  window.presets.push(newPresetFromServer);
-  window.presetMap[newPresetId] = newPresetFromServer;
+  // 6️⃣ Update in-memory presets
+  window.presets.push(newPreset);
+  window.presetMap[newPresetId] = newPreset;
 
-  // 7️⃣ Update current selection
-  currentPresetId = newPresetId;
-  currentPresetName = newPresetFromServer.preset_name;
-  currentPresetRev = newPresetFromServer._rev || null;
-
-  // 8️⃣ Refresh preset dropdown for current folder
+  // 7️⃣ Refresh UI dropdown for current folder
   const folderSelectValue = document.getElementById('folderSelect')?.value || 'default';
   populatePresetDropdownByFolder(folderSelectValue, newPresetId);
 
-  // 9️⃣ Feedback
+  Swal.close();
   Swal.fire({
     title: 'Success',
-    text: `Preset "${presetName}" created${selectedFolderId ? ' and added to folder' : ''}.`,
+    text: `Preset "${presetName}" created${selectedFolderId ? ' and added to folder.' : '.'}`,
     icon: 'success',
     timer: 1500,
     showConfirmButton: false
@@ -796,6 +779,7 @@ async function createPreset() {
 
   savePedalboard();
 }
+
 
 
 
