@@ -19,6 +19,9 @@
       background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
       background-size: 100% 100%;
       transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      border: none;
+      background-size: 150% 150%;
+      background-position: 0% 50%;
     }
 
     .bx--btn--primary:hover {
