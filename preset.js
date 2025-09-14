@@ -150,7 +150,7 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
       if (window.currentPresetId === preset._id) return;
       currentPresetId = preset._id;
       currentPresetName = preset.preset_name;
-      currentPresetRev = preset._rev;
+      currentPresetRev = preset._rev || preset.rev || null; // ensure defined
       applyPresetToPedalboard(preset);
       // Save selection to storage
       saveCurrentSelectionToStorage();
@@ -975,7 +975,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
     if (selectedPreset) {
         currentPresetId = selectedPreset._id;
         currentPresetName = selectedPreset.preset_name;
-        currentPresetRev = selectedPreset._rev;
+        currentPresetRev = preset._rev || preset.rev || null;
         presetSelect.value = selectedPreset._id;
 
         // Apply preset
