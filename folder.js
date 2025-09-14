@@ -223,7 +223,7 @@ function attachAddFolderListener() {
 }
 
 // ---------------------------
-// Rename Folder
+// Rename/Delete Folder (consistent UX)
 // ---------------------------
 function attachRenameFolderListener() {
   const renameFolderBtn = document.getElementById('renameFolderBtn');
@@ -234,11 +234,9 @@ function attachRenameFolderListener() {
     if (!folderSelect || !folderSelect.value) {
       Swal.fire({
         title: 'Select Folder',
-        text: 'Please select a folder to rename.',
+        text: 'Please select a folder to rename or delete.',
         icon: 'info',
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-        },
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false,
       });
       return;
@@ -251,9 +249,7 @@ function attachRenameFolderListener() {
         title: 'Error',
         text: 'Selected folder not found.',
         icon: 'error',
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-        },
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false,
       });
       return;
@@ -278,7 +274,7 @@ function attachRenameFolderListener() {
       buttonsStyling: false,
     });
 
-    // Handle delete folder first    
+    // ---- DELETE ----
     if (isDenied) {
       const confirmDelete = await Swal.fire({
         title: 'Are you sure?',
@@ -294,114 +290,112 @@ function attachRenameFolderListener() {
         buttonsStyling: false,
       });
 
-      if (confirmDelete.isConfirmed) {
-        try {
-          const formData = new URLSearchParams();
-          formData.append('folder_id', folderId);
-          formData.append('folder_rev', folder._rev || ''); // fallback if missing
+      if (!confirmDelete.isConfirmed) return;
 
-          console.log('Deleting folder with:', {
-            folder_id: folderId,
-            folder_rev: folder._rev
+      Swal.fire({
+        title: 'Deleting...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      try {
+        const formData = new URLSearchParams();
+        formData.append('folder_id', folderId);
+        formData.append('folder_rev', folder._rev || '');
+
+        const res = await fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FOLDER.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          window.folders = (window.folders || []).filter(f => (f._id || f.id) !== folderId);
+          populateFolderDropdown();
+
+          Swal.fire({
+            title: 'Deleted!',
+            text: `"${folder.name}" has been removed.`,
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false
           });
-
-          const res = await fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FOLDER.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formData.toString()
-          });
-
-          const result = await res.json();
-
-          if (result.success) {
-            window.folders = (window.folders || []).filter(f => (f._id || f.id) !== folderId);
-            populateFolderDropdown();
-
-            Swal.fire({
-              title: 'Deleted!',
-              text: `"${folder.name}" has been removed.`,
-              icon: 'success',
-              customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-              buttonsStyling: false,
-            });
-          } else {
-            Swal.fire({
-              title: 'Error',
-              text: result.error || 'Could not delete folder.',
-              icon: 'error',
-              customClass: {
-                confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-              },
-              buttonsStyling: false,
-            });
-          }
-        } catch (err) {
-          console.error('[folders] delete error:', err);
+        } else {
           Swal.fire({
             title: 'Error',
-            text: 'Network or server error while deleting.',
+            text: result.error || 'Could not delete folder.',
             icon: 'error',
-            customClass: {
-              confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-            },
+            customClass: { confirmButton: 'bx--btn bx--btn--primary' },
             buttonsStyling: false,
           });
         }
+      } catch (err) {
+        console.error('[folders] delete error:', err);
+        Swal.fire({
+          title: 'Error',
+          text: 'Network or server error while deleting.',
+          icon: 'error',
+          customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+          buttonsStyling: false,
+        });
       }
-
-      return; // Stop here after delete
+      return;
     }
 
-    // Handle rename separately
+    // ---- RENAME ----
     if (isConfirmed) {
+      Swal.fire({
+        title: 'Renaming...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
       try {
         const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(newName.trim())}`
         });
+
         const result = await res.json();
 
         if (result.ok) {
           folder.name = newName.trim();
           populateFolderDropdown();
           folderSelect.value = folderId;
+
           Swal.fire({
             title: 'Success',
             text: `Folder renamed to "${newName}"`,
             icon: 'success',
-            customClass: {
-              confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-            },
-            buttonsStyling: false,
+            timer: 1500,
+            showConfirmButton: false
           });
         } else {
           Swal.fire({
             title: 'Error',
-            text: 'Could not rename folder: ' + (result.error || 'Unknown error'),
+            text: result.error || 'Could not rename folder.',
             icon: 'error',
-            customClass: {
-              confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-            },
+            customClass: { confirmButton: 'bx--btn bx--btn--primary' },
             buttonsStyling: false,
           });
         }
       } catch (err) {
-        console.error(err);
+        console.error('[folders] rename error:', err);
         Swal.fire({
           title: 'Error',
-          text: 'Network or server error',
+          text: 'Network or server error while renaming.',
           icon: 'error',
-          customClass: {
-            confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-          },
+          customClass: { confirmButton: 'bx--btn bx--btn--primary' },
           buttonsStyling: false,
         });
       }
     }
-
   });
 }
+
 
 // ---------------------------
 // Fetch folders for the current pedalboard
