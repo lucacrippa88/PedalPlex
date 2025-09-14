@@ -202,11 +202,11 @@ function attachAddFolderListener() {
           name: newFolder.name,
           preset_ids: []
         };
-        window.folders = window.folders || [];
-        window.folders.push(normalized);
-        populateFolderDropdown();
+        // 🔄 Reload folders from server to ensure _rev and other fields are fresh
+        await loadFoldersForCurrentPedalboard();
         const folderSelect = document.getElementById('folderSelect');
-        if (folderSelect) folderSelect.value = normalized.id || normalized._id;
+        if (folderSelect) folderSelect.value = saved.id || saved._id;
+
 
         Swal.fire({
           title: 'Success',
@@ -362,9 +362,11 @@ function attachRenameFolderListener() {
         const result = await res.json();
 
         if (result.ok) {
-          folder.name = newName.trim();
-          populateFolderDropdown();
-          folderSelect.value = folderId;
+          // 🔄 Reload folders from server so we get updated _rev
+          await loadFoldersForCurrentPedalboard();
+          const folderSelect = document.getElementById('folderSelect');
+          if (folderSelect) folderSelect.value = folderId;
+
 
           Swal.fire({
             title: 'Success',

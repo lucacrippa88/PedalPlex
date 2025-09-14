@@ -1261,8 +1261,6 @@ async function renderFullPedalboard() {
           continue;
         }
 
-        console.log(pedalData)
-
         const pedal = pedalData;
         const angle = pbPedal.rotation || 0;
 
