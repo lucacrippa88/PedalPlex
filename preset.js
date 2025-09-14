@@ -135,7 +135,6 @@ function initPreset() {
 
 
 
-// Replace your fetchPresetsByBoardId function with this async version
 async function fetchPresetsByBoardId(user_id, board_id, callback) {
   const presetSelect = document.getElementById('presetSelect');
   if (!presetSelect) return;
@@ -186,7 +185,10 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
     // Build presetMap keyed by _id for easy lookup
     window.presetMap = {};
     window.presets.forEach(p => {
-      if (p && p._id) window.presetMap[p._id] = p;
+      if (p && p._id) {
+        window.presetMap[p._id] = p;
+        if (!p._rev && p.rev) p._rev = p.rev; // ensure _rev is present
+      }
     });
 
     // Ensure folders are loaded before we populate folder/preset selects
@@ -994,7 +996,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
     if (selectedPreset) {
         currentPresetId = selectedPreset._id;
         currentPresetName = selectedPreset.preset_name;
-        currentPresetRev = preset._rev || preset.rev || null;
+        currentPresetRev = selectedPreset._rev || selectedPreset.rev || null; // ✅ use selectedPreset
         presetSelect.value = selectedPreset._id;
 
         // Apply preset
@@ -1003,6 +1005,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
         // Save selection
         saveCurrentSelectionToStorage();
     }
+
 
     // Enable/disable Save button
     const saveBtn = document.getElementById('savePstBtn');
