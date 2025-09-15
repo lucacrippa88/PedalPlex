@@ -84,7 +84,6 @@
       -webkit-mask-size: contain;
       mask-position: center;
       -webkit-mask-position: center;
-
       background: white; /* fallback before hover */
       display: inline-block;
       transition: background 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
@@ -92,8 +91,6 @@
 
     .pedalplex-logo:hover {
       background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
-      transform: scale(1.05);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
 
