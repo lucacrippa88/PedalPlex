@@ -612,7 +612,7 @@ function setupEditPedalHandler(pedals) {
       confirmButtonText: 'Save',
       denyButtonText: 'Delete',
       cancelButtonText: 'Cancel',
-      footer: `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--secondary">Duplicate</button></span>`,
+      footer: `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--tertiary">Duplicate</button></span>`,
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary',
         denyButton: 'bx--btn bx--btn--danger',
