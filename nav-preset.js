@@ -11,18 +11,7 @@ function initNavPreset() {
 
     <div class="title">
     
-            <svg
-          focusable="false"
-          preserveAspectRatio="xMidYMid meet"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="currentColor"
-          width="16"
-          height="16"
-          viewBox="0 0 32 32"
-          aria-hidden="true"
-          class="bx--btn__icon">
-        <path d="M12 17.15C14.5681 17.15 16.65 15.0681 16.65 12.5C16.65 9.93188 14.5681 7.85001 12 7.85001C9.43188 7.85001 7.34998 9.93188 7.34998 12.5C7.34998 15.0681 9.43188 17.15 12 17.15Z" stroke="#0F0F0F" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M10.13 14.38L13.87 10.63" stroke="#0F0F0F" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M12.19 14.64L14.14 12.69" stroke="#0F0F0F" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9.85999 12.31L11.81 10.36" stroke="#0F0F0F" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
+    <img src='logos/pedalplex_logo_gradient.png' width="80px">
     
     PedalPlex</div>
     <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Presets</span>
