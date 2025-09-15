@@ -604,6 +604,7 @@ input[type="range"].horizontal {
   /* background: #0f62fe; */
   /* background: #9C54D5; */
   background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
+  transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
   background-position: 0% 50%;
   border-radius: 50%;
   border: none;
