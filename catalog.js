@@ -129,6 +129,8 @@ function createNewPedal() {
           })
           .then(res => res.json())
           .then(data => {
+            console.log("CREATE_GEAR.php response:", data);
+
             if (data.success) {
               Swal.fire({
                 title: 'Created!',
@@ -137,12 +139,16 @@ function createNewPedal() {
                 customClass: {
                   confirmButton: 'bx--btn bx--btn--primary'
                 }
-              // }).then(() => location.reload());
               }).then(() => {
                 const resultsDiv = document.getElementById("catalog");
 
-                // Use the pedal returned from backend (with _id, _rev, etc.)
-                const createdPedal = data.pedal || newPedal;  
+                // Build a proper pedal object with _id and _rev
+                const createdPedal = {
+                  ...newPedal,
+                  _id: data.id,    // Cloudant returns `id`, map to `_id`
+                  _rev: data.rev,  // Cloudant returns `rev`, map to `_rev`
+                  author: data.author || newPedal.author
+                };
 
                 // Add to global array
                 pedals.push(createdPedal);
@@ -158,13 +164,13 @@ function createNewPedal() {
 
                 // Re-wire edit handlers
                 setupEditPedalHandler(pedals);
-
               });
 
             } else {
               Swal.fire('Error', data.error || 'Failed to create', 'error');
             }
           })
+
           .catch(err => {
             Swal.fire('Error', err.message || 'Failed to create', 'error');
           });
