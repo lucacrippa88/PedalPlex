@@ -770,13 +770,38 @@ function setupEditPedalHandler(pedals) {
         .then(res => res.json())
         .then(data => {
           Swal.hideLoading();
+          // if (data.success) {
+          //   Swal.fire({
+          //     title: 'Gear saved!',
+          //     icon: 'success',
+          //     confirmButtonText: 'OK',
+          //     customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+          //   }).then(() => location.reload());
           if (data.success) {
+            // Update pedal in array
+            const idx = pedals.findIndex(p => p._id === updated._id);
+            if (idx !== -1) {
+              pedals[idx] = {
+                ...updated,
+                _id: data.id || updated._id,   // backend might send `id`
+                _rev: data.rev || updated._rev // backend should send `rev`
+              };
+            }
+
+            // Replace the DOM element
+            const $old = $(`[data-pedal-id="${updated._id}"]`);
+            if ($old.length) {
+              const $new = renderPedal(pedals[idx], window.currentUser.role || "user");
+              $old.replaceWith($new);
+            }
+
             Swal.fire({
               title: 'Gear saved!',
               icon: 'success',
               confirmButtonText: 'OK',
               customClass: { confirmButton: 'bx--btn bx--btn--primary' }
-            }).then(() => location.reload());
+            });
+
           } else {
             Swal.fire('Error', data.error || 'Failed to save', 'error');
           }
@@ -818,7 +843,19 @@ function setupEditPedalHandler(pedals) {
                                     icon: 'success',
                                     confirmButtonText: 'OK',
                                     customClass: { confirmButton: 'bx--btn bx--btn--primary' }
-                                }).then(() => location.reload());
+                                // }).then(() => location.reload());
+                                }).then(() => {
+                                // Remove from array
+                                const idx = pedals.findIndex(p => p._id === pedal._id);
+                                if (idx !== -1) pedals.splice(idx, 1);
+
+                                // Remove from DOM
+                                $(`[data-pedal-id="${pedal._id}"]`).remove();
+
+                                // Update counter
+                                $("#pedalCount").text(`${pedals.length} gears`);
+                              });
+
                             } else {
                                 Swal.fire({ title: 'Error', text: data.error || 'Failed to delete', icon: 'error', confirmButtonText: 'OK', customClass: { confirmButton: 'bx--btn bx--btn--primary' }});
                             }
