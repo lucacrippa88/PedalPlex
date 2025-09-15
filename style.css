@@ -605,6 +605,7 @@ input[type="range"].horizontal {
   /* background: #9C54D5; */
   background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
   transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  background-size: 150% 150%;
   background-position: 0% 50%;
   border-radius: 50%;
   border: none;
@@ -624,7 +625,7 @@ input[type="range"].horizontal {
   pointer-events: none;
 }
 
-.pedal-catalog .edit-btn:hover {
+.edit-btn:hover {
   background-position: 100% 50%; /* shift gradient */
 }
 
