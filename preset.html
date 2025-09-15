@@ -291,9 +291,7 @@
   window.addEventListener('load', hookSaveAfterPopulation);
 
 
-
-
-
+// Show loaders
 function showPresetLoader() {
   document.getElementById("presetSelect").style.display = "none";
   document.getElementById("presetSelectLoader").style.display = "flex";
@@ -307,35 +305,8 @@ function hidePresetLoader() {
 
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    CarbonComponents.watch(); // activate all Carbon UI widgets
-  });
-
-
-  const menuButton = document.getElementById('presetMenuButton');
-  const menu = menuButton.nextElementSibling;
-
-  menuButton.addEventListener('click', () => {
-    const isOpen = menu.style.display === 'block';
-    menu.style.display = isOpen ? 'none' : 'block';
-    menuButton.setAttribute('aria-expanded', !isOpen);
-  });
-
-  // Close when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!menu.contains(e.target) && !menuButton.contains(e.target)) {
-      menu.style.display = 'none';
-      menuButton.setAttribute('aria-expanded', 'false');
-    }
-  });
-
-
+  CarbonComponents.watch(); // initializes all Carbon components, including menu buttons
 </script>
-
-
-
-
-
 
 
 </body>
