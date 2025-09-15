@@ -202,10 +202,14 @@ function attachAddFolderListener() {
           name: newFolder.name,
           preset_ids: []
         };
-        // 🔄 Reload folders from server to ensure _rev and other fields are fresh
+        // Reload folders from server to ensure _rev and other fields are fresh
         await loadFoldersForCurrentPedalboard();
         const folderSelect = document.getElementById('folderSelect');
-        if (folderSelect) folderSelect.value = saved.id || saved._id;
+        if (folderSelect) {
+          folderSelect.value = saved.id || saved._id;
+          // Ensure presets are cleared for this new folder
+          populatePresetDropdownByFolder(folderSelect.value, null, true);
+        }
 
 
         Swal.fire({
