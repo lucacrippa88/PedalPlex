@@ -4,15 +4,13 @@ function initNavPreset() {
   <!-- Left: menu toggle + title -->
   <div style="display: flex; align-items: center; gap: 1rem;">
     <button class="menu-toggle" id="menuToggle" aria-label="Open menu" style="background:none; border:none; cursor:pointer;">
-      <svg class="menu-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-        <path d="M4 6h24v2H4zm0 9h24v2H4zm0 9h24v2H4"/>
-      </svg>
+      // <svg class="menu-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+      //   <path d="M4 6h24v2H4zm0 9h24v2H4zm0 9h24v2H4"/>
+      // </svg>
+      <img src='logos/pedalplex_logo_gradient.png' width="25px">
     </button>
 
     <div class="title">
-    
-    <img src='logos/pedalplex_logo_gradient.png' width="80px">
-    
     PedalPlex</div>
     <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Presets</span>
   </div>
