@@ -705,3 +705,21 @@ if ($("#pedal-published-button").length) {
     }, 0);
 
 }
+
+
+
+
+
+// Add once during initialization
+$(document).on("change", ".ctrl-knob-type", function() {
+    const $ctrl = $(this).closest(".control");
+    const type = $(this).val();
+
+    if (type === "discrete") {
+        $ctrl.find(".ctrl-min, .ctrl-max, .ctrl-value").hide();
+        $ctrl.find(".ctrl-values-list, .ctrl-value-select").show();
+    } else if (type === "numeric") {
+        $ctrl.find(".ctrl-min, .ctrl-max, .ctrl-value").show();
+        $ctrl.find(".ctrl-values-list, .ctrl-value-select").hide();
+    }
+});
