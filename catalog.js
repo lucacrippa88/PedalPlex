@@ -160,7 +160,7 @@ function createNewPedal() {
                 $(resultsDiv).append($pedalDiv);
 
                 // Update pedal count
-                $("#pedalCount").text(`${pedals.length} gears`);
+                updatePedalCounts(); // <-- replaces with full counters, includes all statuses
 
                 // Re-wire edit handlers
                 setupEditPedalHandler(pedals);
