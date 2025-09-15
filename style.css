@@ -537,10 +537,10 @@ input[type="range"].horizontal {
   #pedal-box { position:relative; }
   .row-actions { margin-top:6px; display:flex; flex-direction:row!important;}
   .row-buttons, .controls-row { display:flex; flex-direction:row!important; gap:6px; flex-wrap:nowrap; }
-  .row-buttons, .controls-row button { flex:0 0 auto; white-space:nowrap; }
+  .row-buttons, .controls-row button { flex:0 0 auto; white-space:nowrap; width:10px }
   .control { background:#222; padding:6px; margin:6px 0; border-radius:6px; z-index:200;}
   .control label { display:block; font-size:12px; margin:2px 0; }
-  .ctrl-actions { display:flex; gap:4px; flex-direction: column; }
+  .ctrl-actions { /*display:flex;*/ gap:4px; flex-direction: column; }
   .ctrl-label { width:70px; }
   .ctrl-num, .ctrl-text { width:50px; }
   button { cursor:pointer; margin-left:0px!important; }
