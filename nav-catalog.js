@@ -9,10 +9,8 @@ function initNavCatalog(userRole) {
   const navHtml = `
     <header style="display: flex; align-items: center; justify-content: space-between;">
       <div style="display: flex; align-items: center; gap: 1rem;">
-        <button class="menu-toggle" id="menuToggle" aria-label="Open menu" style="background:none; border:none; cursor:pointer;">
-          <svg class="menu-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-            <path d="M4 6h24v2H4zm0 9h24v2H4zm0 9h24v2H4"/>
-          </svg>
+        <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+          <div class="pedalplex-logo"></div>
         </button>
 
         <div class="title">PedalPlex</div>
