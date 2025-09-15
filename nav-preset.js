@@ -4,11 +4,8 @@ function initNavPreset() {
   <!-- Left: menu toggle + title -->
   <div style="display: flex; align-items: center; gap: 1rem;">
     <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
-      <div class="pedalplex-logo-wrapper">
-        <img src='logos/pedalplex_logo_white.png' width="25px" class="pedalplex-logo">
-      </div>
+      <div class="pedalplex-logo"></div>
     </button>
-
     <div class="title">
     PedalPlex</div>
     <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Presets</span>
