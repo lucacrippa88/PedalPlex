@@ -65,7 +65,7 @@
           <p data-inline-loading-text-active class="bx--inline-loading__text">Loading folders...</p>
         </div>
       </div>
-      <button id="renameFolderBtn" class="bx--btn bx--btn--secondary" type="button">Edit
+      <!-- <button id="renameFolderBtn" class="bx--btn bx--btn--secondary" type="button">Edit
         <svg
           focusable="false"
           preserveAspectRatio="xMidYMid meet"
@@ -78,7 +78,7 @@
           class="bx--btn__icon">
           <path d="M11.17,6l3.42,3.41.58.59H28V26H4V6h7.17m0-2H4A2,2,0,0,0,2,6V26a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2H16L12.59,4.59A2,2,0,0,0,11.17,4Z"/>
         </svg>
-      </button>
+      </button>-->
 
       <!-- Preset selection -->
       <div id="presetSelectContainer" style="margin-left: 16px;">
@@ -95,7 +95,7 @@
           <p data-inline-loading-text-active class="bx--inline-loading__text">Loading presets...</p>
         </div>
       </div>
-      <button id="renamePresetBtn" class="bx--btn bx--btn--secondary" type="button">Edit
+      <!-- <button id="renamePresetBtn" class="bx--btn bx--btn--secondary" type="button">Edit
         <svg
           focusable="false"
           preserveAspectRatio="xMidYMid meet"
@@ -108,7 +108,30 @@
           class="bx--btn__icon">
           <path d="M25,4H10A2.002,2.002,0,0,0,8,6V20.5563A3.9551,3.9551,0,0,0,6,20a4,4,0,1,0,4,4V12H25v8.5562A3.9545,3.9545,0,0,0,23,20a4,4,0,1,0,4,4V6A2.0023,2.0023,0,0,0,25,4ZM6,26a2,2,0,1,1,2-2A2.0023,2.0023,0,0,1,6,26Zm17,0a2,2,0,1,1,2-2A2.0027,2.0027,0,0,1,23,26ZM10,6H25v4H10Z"/>
         </svg>
-      </button>
+      </button>-->
+
+
+      <div class="bx--overflow-menu" tabindex="0" aria-label="Actions" id="presetActionsMenu" data-overflow-menu>
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+            xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+            class="bx--overflow-menu__icon" width="16" height="16"
+            viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="8" r="2"></circle>
+          <circle cx="16" cy="16" r="2"></circle>
+          <circle cx="16" cy="24" r="2"></circle>
+        </svg>
+        <ul class="bx--overflow-menu-options bx--overflow-menu--flip"
+            tabindex="-1" role="menu" aria-label="Preset/Folder actions">
+          <li class="bx--overflow-menu-options__option" role="menuitem">
+            <button id="renameFolderBtn" class="bx--overflow-menu-options__btn">Rename Folder</button>
+          </li>
+          <li class="bx--overflow-menu-options__option" role="menuitem">
+            <button id="renamePresetBtn" class="bx--overflow-menu-options__btn">Rename Preset</button>
+          </li>
+        </ul>
+      </div>
+
+
     </div>
 
     <br><br><br><br>
