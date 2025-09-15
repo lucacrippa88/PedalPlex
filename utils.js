@@ -701,16 +701,47 @@ function setupEditPedalHandler(pedals) {
                 .then(res => res.json())
                 .then(data => {
                   if (data.success) {
-                    Swal.fire({
-                      title: 'Duplicated!',
-                      text: 'Your gear has been copied.',
-                      icon: 'success',
-                      confirmButtonText: 'OK',
-                      customClass: {
-                        confirmButton: 'bx--btn bx--btn--primary'
-                      }
-                    })
-                    .then(() => location.reload());
+                    // Swal.fire({
+                    //   title: 'Duplicated!',
+                    //   text: 'Your gear has been copied.',
+                    //   icon: 'success',
+                    //   confirmButtonText: 'OK',
+                    //   customClass: {
+                    //     confirmButton: 'bx--btn bx--btn--primary'
+                    //   }
+                    // })
+                    // .then(() => location.reload());
+                    if (data.success) {
+                      const createdPedal = {
+                        ...newPedalData,
+                        _id: data.id,
+                        _rev: data.rev
+                      };
+
+                      // Add to global array
+                      pedals.push(createdPedal);
+
+                      // Render the new pedal
+                      const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
+                      $pedalDiv.attr("data-author", createdPedal.author || "");
+                      $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
+                      $("#catalog").append($pedalDiv);
+
+                      // Update pedal count
+                      updatePedalCounts(); // <-- replaces with full counters, includes all statuses
+
+                      // Re-bind edit handlers if needed
+                      setupEditPedalHandler(pedals);
+
+                      Swal.fire({
+                        title: 'Duplicated!',
+                        text: 'Your gear has been copied.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+                      });
+                    }
+
                   } else {
                     Swal.fire({
                       title: 'Error',
@@ -795,6 +826,9 @@ function setupEditPedalHandler(pedals) {
               $old.replaceWith($new);
             }
 
+            // Update pedal count
+            updatePedalCounts(); // <-- replaces with full counters, includes all statuses
+
             Swal.fire({
               title: 'Gear saved!',
               icon: 'success',
@@ -852,8 +886,8 @@ function setupEditPedalHandler(pedals) {
                                 // Remove from DOM
                                 $(`[data-pedal-id="${pedal._id}"]`).remove();
 
-                                // Update counter
-                                $("#pedalCount").text(`${pedals.length} gears`);
+                                // Update pedal count
+                                updatePedalCounts(); // <-- replaces with full counters, includes all statuses
                               });
 
                             } else {
