@@ -26,21 +26,19 @@ function initCatalog(userRole) {
     })
     // .then(pedals => {
     .then(data => {
-      pedals = data; // save to global state
-      resultsDiv.innerHTML = ""; // Clear loader
+      pedals = data; // save globally
+      resultsDiv.innerHTML = "";
       $("#pedalCount").text(`${pedals.length} gears`);
 
-      // Sort pedals alphabetically by _id
       pedals.sort((a, b) => a._id - b._id);
 
       pedals.forEach(pedal => {
         const $pedalDiv = renderPedal(pedal, userRole);
         $pedalDiv.attr("data-author", pedal.author || "");
-        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase()); // optional, if not already set
+        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
         $(resultsDiv).append($pedalDiv);
       });
 
-      // Setup the edit button handler
       setupEditPedalHandler(pedals);
     })
     .catch(error => {
@@ -142,6 +140,9 @@ function createNewPedal() {
               // }).then(() => location.reload());
               }).then(() => {
                 const resultsDiv = document.getElementById("catalog");
+
+                // Use the pedal returned from backend (with _id, _rev, etc.)
+                const createdPedal = data.pedal || newPedal; 
 
                 // Add to global array
                 pedals.push(newPedal);
