@@ -72,6 +72,34 @@
 
 
 
+    .pedalplex-logo-wrapper {
+      display: inline-block;
+      cursor: pointer;
+      border-radius: 4px; /* optional */
+      transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      padding: 2px;
+      /* fallback background */
+      background: transparent;
+    }
+
+    .pedalplex-logo-wrapper:hover {
+      background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Optional: if you want the image itself to "blend" with the gradient */
+    .pedalplex-logo {
+      display: block;
+      width: 100%;
+      height: auto;
+      mix-blend-mode: lighten; /* makes the white logo show gradient underneath */
+    }
+
+
+
+
+
     #username, #password, #email, #newPassword, #oldPassword {
       font-size: 0.875rem;
       padding: 6px 12px;

@@ -3,8 +3,10 @@ function initNavPreset() {
 <header style="display: flex; align-items: center; justify-content: space-between;">
   <!-- Left: menu toggle + title -->
   <div style="display: flex; align-items: center; gap: 1rem;">
-    <button class="menu-toggle" id="menuToggle" aria-label="Open menu" style="background:none; border:none; cursor:pointer;">
-      <img src='logos/pedalplex_logo_white.png' width="25px">
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+      <div class="pedalplex-logo-wrapper">
+        <img src='logos/pedalplex_logo_white.png' width="25px" class="pedalplex-logo">
+      </div>
     </button>
 
     <div class="title">
