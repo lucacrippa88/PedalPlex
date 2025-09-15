@@ -1,3 +1,7 @@
+
+let pedals = []; // global state
+
+
 function initCatalog(userRole) {
 
   const resultsDiv = document.getElementById("catalog");
@@ -20,7 +24,9 @@ function initCatalog(userRole) {
       }
       return response.json();
     })
-    .then(pedals => {
+    // .then(pedals => {
+    .then(data => {
+      pedals = data; // save to global state
       resultsDiv.innerHTML = ""; // Clear loader
       $("#pedalCount").text(`${pedals.length} gears`);
 
@@ -133,7 +139,26 @@ function createNewPedal() {
                 customClass: {
                   confirmButton: 'bx--btn bx--btn--primary'
                 }
-              }).then(() => location.reload());
+              // }).then(() => location.reload());
+              }).then(() => {
+                const resultsDiv = document.getElementById("catalog");
+
+                // Add to global array
+                pedals.push(newPedal);
+
+                // Render the new pedal
+                const $pedalDiv = renderPedal(newPedal, window.currentUser.role || "user");
+                $pedalDiv.attr("data-author", newPedal.author || "");
+                $pedalDiv.attr("data-published", (newPedal.published || "draft").toLowerCase());
+                $(resultsDiv).append($pedalDiv);
+
+                // Update pedal count
+                $("#pedalCount").text(`${pedals.length} gears`);
+
+                // Re-wire edit handlers
+                setupEditPedalHandler(pedals);
+              });
+
             } else {
               Swal.fire('Error', data.error || 'Failed to create', 'error');
             }
