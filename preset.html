@@ -112,25 +112,28 @@
       </button>-->
 
 
-      <div class="bx--overflow-menu" tabindex="0" aria-label="Actions" id="presetActionsMenu" data-overflow-menu>
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet"
-          xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-          class="bx--overflow-menu__icon" width="16" height="16"
-          viewBox="0 0 32 32" aria-hidden="true">
-          <circle cx="16" cy="8" r="2"></circle>
-          <circle cx="16" cy="16" r="2"></circle>
-          <circle cx="16" cy="24" r="2"></circle>
-        </svg>
-        <ul class="bx--overflow-menu-options bx--overflow-menu--flip"
-          tabindex="-1" role="menu" aria-label="Preset/Folder actions">
-          <li class="bx--overflow-menu-options__option" role="menuitem">
-            <button id="renameFolderBtn" class="bx--overflow-menu-options__btn">Rename Folder</button>
-          </li>
-          <li class="bx--overflow-menu-options__option" role="menuitem">
-            <button id="renamePresetBtn" class="bx--overflow-menu-options__btn">Rename Preset</button>
-          </li>
-        </ul>
-      </div>
+<div class="bx--btn-set">
+  <!-- Menu Button -->
+  <button class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--menu" type="button" id="presetMenuButton" aria-haspopup="true" aria-expanded="false">
+    Actions
+    <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+         xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+         width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+      <path d="M8 12 L16 20 L24 12 Z"></path> <!-- simple chevron down -->
+    </svg>
+  </button>
+
+  <!-- Menu items -->
+  <ul class="bx--menu bx--menu--sm" role="menu" aria-labelledby="presetMenuButton">
+    <li role="menuitem">
+      <button id="renameFolderBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button">Rename Folder</button>
+    </li>
+    <li role="menuitem">
+      <button id="renamePresetBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button">Rename Preset</button>
+    </li>
+  </ul>
+</div>
+
 
 
 
