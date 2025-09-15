@@ -112,27 +112,30 @@
       </button>-->
 
 
-<div class="bx--btn-set">
-  <!-- Menu Button -->
-  <button class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--menu" type="button" id="presetMenuButton" aria-haspopup="true" aria-expanded="false">
-    Actions
-    <svg focusable="false" preserveAspectRatio="xMidYMid meet"
-         xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-         width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-      <path d="M8 12 L16 20 L24 12 Z"></path> <!-- simple chevron down -->
-    </svg>
-  </button>
+      <div class="bx--btn-set">
+        <!-- Menu Button -->
+        <div class="bx--overflow-menu" data-overflow-menu>
+          <button class="bx--btn bx--btn--tertiary" type="button" aria-haspopup="true" aria-expanded="false">
+            Actions
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+                xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+              <path d="M8 12 L16 20 L24 12 Z"></path> <!-- chevron down -->
+            </svg>
+          </button>
 
-  <!-- Menu items -->
-  <ul class="bx--menu bx--menu--sm" role="menu" aria-labelledby="presetMenuButton">
-    <li role="menuitem">
-      <button id="renameFolderBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button">Rename Folder</button>
-    </li>
-    <li role="menuitem">
-      <button id="renamePresetBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button">Rename Preset</button>
-    </li>
-  </ul>
-</div>
+          <!-- Menu Items -->
+          <ul class="bx--overflow-menu-options" role="menu" aria-label="Preset/Folder actions">
+            <li class="bx--overflow-menu-options__option" role="menuitem">
+              <button id="renameFolderBtn" class="bx--btn bx--btn--ghost bx--btn--sm" type="button">Rename Folder</button>
+            </li>
+            <li class="bx--overflow-menu-options__option" role="menuitem">
+              <button id="renamePresetBtn" class="bx--btn bx--btn--ghost bx--btn--sm" type="button">Rename Preset</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
 
 
 
@@ -305,7 +308,9 @@ function hidePresetLoader() {
 
 
 <script>
-  CarbonComponents.watch(); // initializes all Carbon components, including menu buttons
+document.addEventListener('DOMContentLoaded', () => {
+  CarbonComponents.watch();
+});
 </script>
 
 
