@@ -142,15 +142,15 @@ function createNewPedal() {
                 const resultsDiv = document.getElementById("catalog");
 
                 // Use the pedal returned from backend (with _id, _rev, etc.)
-                const createdPedal = data.pedal || newPedal; 
+                const createdPedal = data.pedal || newPedal;  
 
                 // Add to global array
-                pedals.push(newPedal);
+                pedals.push(createdPedal);
 
                 // Render the new pedal
-                const $pedalDiv = renderPedal(newPedal, window.currentUser.role || "user");
-                $pedalDiv.attr("data-author", newPedal.author || "");
-                $pedalDiv.attr("data-published", (newPedal.published || "draft").toLowerCase());
+                const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
+                $pedalDiv.attr("data-author", createdPedal.author || "");
+                $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
                 $(resultsDiv).append($pedalDiv);
 
                 // Update pedal count
@@ -158,6 +158,7 @@ function createNewPedal() {
 
                 // Re-wire edit handlers
                 setupEditPedalHandler(pedals);
+
               });
 
             } else {
