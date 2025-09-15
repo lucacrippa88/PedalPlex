@@ -62,7 +62,7 @@
       cursor: pointer;
       background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
       transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
-      border: rgba(0,0,0,0);
+      border-color: #9C54D5;
       border-width: 1px;
       border-style: solid;
       background-size: 150% 150%;
