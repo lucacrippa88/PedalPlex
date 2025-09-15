@@ -601,7 +601,10 @@ input[type="range"].horizontal {
   position: absolute;
   top: -6px;
   right: -5px;
-  background: #0f62fe;
+  /* background: #0f62fe; */
+  /* background: #9C54D5; */
+  background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
+  background-position: 0% 50%;
   border-radius: 50%;
   border: none;
   cursor: pointer;
@@ -620,11 +623,15 @@ input[type="range"].horizontal {
   pointer-events: none;
 }
 
+.pedal-catalog .edit-btn:hover {
+  background-position: 100% 50%; /* shift gradient */
+}
+
 .pedal-catalog .duplicate-btn {
   position: absolute;
   top: -6px;
   right: -5px;
-  background: #0f62fe;
+  /* background: #0f62fe; */
   border-radius: 50%;
   border: none;
   cursor: pointer;
