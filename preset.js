@@ -910,7 +910,7 @@ async function assignPresetToFolder(presetId, folderId) {
 // ---------------------------
 // Filter and populate presets based on selected folder
 // ---------------------------
-function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
+function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNewFolder = false) {
     const presetSelect = document.getElementById('presetSelect');
     const editBtn = document.getElementById('renamePresetBtn');
     if (!presetSelect || !window.presets) return;
@@ -935,7 +935,9 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
     }
 
     // Sort alphabetically
-    filteredPresets.sort((a, b) => (a.preset_name || '').toLowerCase().localeCompare((b.preset_name || '').toLowerCase()));
+    filteredPresets.sort((a, b) =>
+        (a.preset_name || '').toLowerCase().localeCompare((b.preset_name || '').toLowerCase())
+    );
 
     // Populate dropdown
     filteredPresets.forEach(p => {
@@ -946,9 +948,19 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
     });
 
     // Hide or show dropdown & edit button
-    if (filteredPresets.length === 0) {
-        presetSelect.style.display = 'none';
+    if (filteredPresets.length === 0 || isNewFolder) {
+        // For new folders: show placeholder instead of auto-hiding
+        presetSelect.innerHTML = '';
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = '-- No presets --';
+        placeholder.disabled = true;
+        placeholder.selected = true;
+        presetSelect.appendChild(placeholder);
+
+        presetSelect.style.display = 'inline-block';
         if (editBtn) editBtn.style.display = 'none';
+
         currentPresetId = null;
         currentPresetName = null;
         currentPresetRev = null;
@@ -957,7 +969,9 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
         if (editBtn) editBtn.style.display = 'inline-block';
 
         // Select preset
-        let selectedPreset = preferredPresetId ? filteredPresets.find(p => p._id === preferredPresetId) || filteredPresets[0] : filteredPresets[0];
+        let selectedPreset = preferredPresetId
+            ? filteredPresets.find(p => p._id === preferredPresetId) || filteredPresets[0]
+            : filteredPresets[0];
 
         currentPresetId = selectedPreset._id;
         currentPresetName = selectedPreset.preset_name;
@@ -970,8 +984,9 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null) {
 
     // Enable/disable Save button
     const saveBtn = document.getElementById('savePstBtn');
-    if (saveBtn) saveBtn.disabled = filteredPresets.length === 0;
+    if (saveBtn) saveBtn.disabled = filteredPresets.length === 0 || isNewFolder;
 }
+
 
 
 
