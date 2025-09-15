@@ -68,6 +68,33 @@
     }
 
 
+    /* Target only your menu by its ID to avoid affecting others */
+    #presetActionsMenu {
+      color: white; /* icon color */
+    }
+
+    /* Make sure the icon itself is white */
+    #presetActionsMenu .bx--overflow-menu__icon {
+      fill: white !important;
+      color: white !important;
+    }
+
+    /* Remove Carbon's default hover/focus background */
+    #presetActionsMenu.bx--overflow-menu:hover,
+    #presetActionsMenu.bx--overflow-menu:focus,
+    #presetActionsMenu.bx--overflow-menu:active {
+      background: transparent !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Remove extra border or highlight Carbon might add */
+    #presetActionsMenu:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+
 
 
     #username, #password, #email, #newPassword, #oldPassword {
