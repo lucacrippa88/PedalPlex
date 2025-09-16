@@ -915,7 +915,7 @@ window.setupEditPedalHandler = setupEditPedalHandler;
   function sanitizeHtml(html) {
     if (typeof DOMPurify !== "undefined") {
         return DOMPurify.sanitize(html, {
-            ALLOWED_TAGS: ['span', 'br', 'hr'],
+            ALLOWED_TAGS: ['span', 'br', 'hr', 'div'],
             ALLOWED_ATTR: ['style']
         });
     } else {
