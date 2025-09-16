@@ -777,6 +777,7 @@ function setupEditPedalHandler(pedals) {
         if (validation.cssError) errors.push(`CSS Error: ${validation.cssError}`);
         if (validation.hasMissingFields) errors.push("Please fill all required fields!");
         if (validation.duplicateFound) errors.push("Duplicate control labels detected!");
+        if (!validation.ledFound) errors.push("At least one LED is required!");
 
         if (errors.length > 0) {
           Swal.showValidationMessage(errors.join("<br>"));
