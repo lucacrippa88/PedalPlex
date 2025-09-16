@@ -345,7 +345,7 @@ html {
   left: 50%;
   transform: translateX(-50%);
   width: 4px;
-  height: 12px;
+  height: 14px;
   border-radius: 2px;
   background-color: var(--indicator-color, #fff);
 }
@@ -362,12 +362,12 @@ html {
 .smallknob::after {
   content: '';
   position: absolute;
-  top: 5px;
+  top: 0px;
   left: 50%;
   transform: translateX(-50%);
   width: 3px;
   height: 8px;
-  border-radius: 1px;
+  border-radius: 2px;
   background-color: var(--indicator-color, #fff);
 }
 
@@ -388,7 +388,7 @@ html {
   transform: translateX(-50%);
   width: 3px;
   height: 16px;
-  border-radius: 1px;
+  border-radius: 2px;
   background-color: var(--indicator-color, #fff);
 }
 
@@ -409,7 +409,7 @@ html {
   transform: translateX(-50%);
   width: 3px;
   height: 20px;
-  border-radius: 1px;
+  border-radius: 2px;
   background-color: var(--indicator-color, #fff);
 }
 
