@@ -975,9 +975,32 @@ function renderPedal(pedal, userRole) {
       break;
   }
 
+  
+  // Assuming DOMPurify is loaded
+  const cleanName = DOMPurify.sanitize(pedal.name, {
+    ALLOWED_TAGS: ['span','br','hr'],
+    ALLOWED_ATTR: ['style']
+  });
+
+  function safeLogoStyle(inputStyle) {
+    if (!inputStyle) return "";
+    // Reject javascript or expression
+    if (/expression\s*\(|javascript:/i.test(inputStyle)) { return ""; }
+
+    // Optionally allow only certain props
+    const allowedProps = ["color", "font-size", "font-weight", "font-style", "font-family", "background-color", "padding", "position", "margin", "margin-bottom", "margin-top", "bottom", "top", "left", "right"];
+    const safeRules = inputStyle.split(";").filter(rule => {
+      const [prop] = rule.split(":");
+      return allowedProps.includes(prop.trim().toLowerCase());
+    });
+    return safeRules.join(";");
+  }
+
+
+
   // Head and inverted pedals → add name/logo
   if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-    const $nameDiv = $("<div>").addClass("head-name").html(pedal.name).attr("style", pedal.logo || "");
+    const $nameDiv = $("<div>").addClass("head-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
     $pedalDiv.append($nameDiv);
   }
 
@@ -987,7 +1010,7 @@ function renderPedal(pedal, userRole) {
 
   // Add name/logo for others
   if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
-    const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name).attr("style", pedal.logo || "");
+    const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
     $pedalDiv.append($nameDiv);
   } 
 
@@ -1443,7 +1466,7 @@ async function renderFullPedalboard() {
 
         // Head or inverted logo
         if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-          const $nameDiv = $("<div>").addClass("head-name").html(pedal.name).attr("style", pedal.logo || "");
+          const $nameDiv = $("<div>").addClass("head-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
           $pedalDiv.append($nameDiv);
         }
 
@@ -1452,7 +1475,7 @@ async function renderFullPedalboard() {
 
         // Pedal logo
         if ((pedal.type === "pedal") || (pedal.type === "combo") || (pedal.type === "round") || (pedal.type === "expression")) {
-          const $nameDiv = $("<div>").addClass("pedal-name").html(pedal.name).attr("style", pedal.logo || "");
+          const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
           $pedalDiv.append($nameDiv);
         }
 
