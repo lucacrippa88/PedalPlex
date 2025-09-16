@@ -362,7 +362,7 @@ html {
 .smallknob::after {
   content: '';
   position: absolute;
-  top: 2px;
+  top: px;
   left: 50%;
   transform: translateX(-50%);
   width: 3px;
@@ -566,6 +566,11 @@ input[type="range"].horizontal {
   .pedal-info input { width: 94%; box-sizing: border-box; }
 
 
+  #pedal-published-options {
+      list-style: none;  /* removes the bullets */
+      padding: 0;        /* optional: removes default padding */
+      margin: 0;         /* optional: removes default margin */
+  }
 
 
 
