@@ -975,11 +975,19 @@ function renderPedal(pedal, userRole) {
       break;
   }
 
-  // Assuming DOMPurify is loaded
-  const cleanName = DOMPurify.sanitize(pedal.name, {
-    ALLOWED_TAGS: ['span','br','hr'],
-    ALLOWED_ATTR: ['style']
-  });
+  function sanitizeHtml(html) {
+    if (typeof DOMPurify !== "undefined") {
+        return DOMPurify.sanitize(html, {
+            ALLOWED_TAGS: ['span', 'br', 'hr'],
+            ALLOWED_ATTR: ['style']
+        });
+    } else {
+        console.warn("DOMPurify not loaded, rendering without sanitization!");
+        return html;
+    }
+  }
+
+  const cleanName = sanitizeHtml(pedal.name);
 
   function safeLogoStyle(inputStyle) {
     if (!inputStyle) return "";
