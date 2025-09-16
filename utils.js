@@ -982,7 +982,6 @@ function renderPedal(pedal, userRole) {
             ALLOWED_ATTR: ['style']
         });
     } else {
-        console.warn("DOMPurify not loaded, rendering without sanitization!");
         return html;
     }
   }
@@ -995,7 +994,7 @@ function renderPedal(pedal, userRole) {
     if (/expression\s*\(|javascript:/i.test(inputStyle)) { return ""; }
 
     // Optionally allow only certain props
-    const allowedProps = ["color", "font-size", "font-weight", "font-style", "font-family", "background-color", "padding", "position", "margin", "margin-bottom", "margin-top", "bottom", "top", "left", "right"];
+    const allowedProps = ["color", "font-size", "font-weight", "font-style", "font-family", "background-color", "padding", "position", "margin", "margin-bottom", "margin-top", "bottom", "top", "left", "right", "letter-spacing", "word-spacing", "display","line-height"];
     const safeRules = inputStyle.split(";").filter(rule => {
       const [prop] = rule.split(":");
       return allowedProps.includes(prop.trim().toLowerCase());
