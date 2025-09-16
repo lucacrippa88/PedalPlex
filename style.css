@@ -417,7 +417,7 @@ html {
 /* Adjusted for thick border */
 .knob.thick::after {
   top: -9px;
-  height: 18px;
+  height: 20px;
 }
 .smallknob.thick::after {
   top: -9px;

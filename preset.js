@@ -481,30 +481,40 @@ async function duplicatePreset(presetId, newName, folderId) {
         text: 'Preset not found',
         icon: 'error',
         customClass: {
-          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+          confirmButton: 'bx--btn bx--btn--primary',
         },
         buttonsStyling: false,
       });
       return;
     }
 
+    // Show loading Swal while working
+    Swal.fire({
+      title: 'Duplicating preset...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     const duplicated = {
       user_id: window.currentUser.userid,
       board_id: window.pedalboard._id,
       board_name: window.pedalboard.board_name,
-      preset_name: `${newName} - Copy`, // Add " - Copy" suffix
+      preset_name: `${newName} - Copy`,
       pedals: JSON.parse(JSON.stringify(original.pedals || {})),
     };
 
     const newId = await createPresetOnServer(duplicated);
 
     if (!newId) {
+      Swal.close(); // close loader
       Swal.fire({
         title: 'Error',
         text: 'Could not duplicate preset',
         icon: 'error',
         customClass: {
-          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+          confirmButton: 'bx--btn bx--btn--primary',
         },
         buttonsStyling: false,
       });
@@ -515,7 +525,7 @@ async function duplicatePreset(presetId, newName, folderId) {
       await movePresetToFolder(newId, folderId);
     }
 
-    // ✅ Show SweetAlert confirmation with a short timer before reload
+    // Show SweetAlert confirmation with a short timer before reload
     await Swal.fire({
       icon: "success",
       title: "Preset Duplicated",
@@ -534,7 +544,7 @@ async function duplicatePreset(presetId, newName, folderId) {
       text: 'Unexpected error duplicating preset',
       icon: 'error',
       customClass: {
-        confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        confirmButton: 'bx--btn bx--btn--primary',
       },
       buttonsStyling: false,
     });
