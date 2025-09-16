@@ -419,7 +419,8 @@ html {
   top: -9px;   /* shift upward */
 }
 .smallknob.thick::after {
-  top: -2px;
+  top: -9px;
+  height: 16px;
 }
 .largeknob.thick::after {
   top: -8px;
