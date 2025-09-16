@@ -975,20 +975,10 @@ function renderPedal(pedal, userRole) {
       break;
   }
 
-
-  // Assure DOMPurify is loaded
-  document.addEventListener('DOMContentLoaded', () => {
-      if (typeof DOMPurify === 'undefined') {
-          console.error("DOMPurify not loaded");
-          return;
-      }
-
-    // DOMPurify is loaded
-    const cleanName = DOMPurify.sanitize(pedal.name, {
-      ALLOWED_TAGS: ['span','br','hr'],
-      ALLOWED_ATTR: ['style']
-    });
-
+  // Assuming DOMPurify is loaded
+  const cleanName = DOMPurify.sanitize(pedal.name, {
+    ALLOWED_TAGS: ['span','br','hr'],
+    ALLOWED_ATTR: ['style']
   });
 
   function safeLogoStyle(inputStyle) {
