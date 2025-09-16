@@ -196,7 +196,13 @@ function buildJSON() {
     }
 
     // --- Store validation object ---
-    lastValidation = { pedal, cssError: cssError.trim(), hasMissingFields, duplicateFound };
+    lastValidation = { 
+        pedal, 
+        cssError: cssError.trim(), 
+        hasMissingFields, 
+        duplicateFound, 
+        ledFound 
+    };
 
 
     // --- Error handling ---
@@ -216,6 +222,20 @@ function buildJSON() {
     if (hasMissingFields) {
         $("#json-error").append(" Error: Required fields are missing!");
     }
+
+
+    // --- At least one LED validation ---
+    let ledFound = false;
+    pedal.controls.forEach(row => {
+        row.row.forEach(ctrl => {
+            if (ctrl.type === "led") ledFound = true;
+        });
+    });
+
+    if (!ledFound) {
+        $("#json-error").append(" Error: At least one LED is required!");
+    }
+
 
     return lastValidation;
 }
