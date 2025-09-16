@@ -195,16 +195,6 @@ function buildJSON() {
         window.parent.setPedalJSON(jsonString);
     }
 
-    // --- Store validation object ---
-    lastValidation = { 
-        pedal, 
-        cssError: cssError.trim(), 
-        hasMissingFields, 
-        duplicateFound, 
-        ledFound 
-    };
-
-
     // --- Error handling ---
     $("#json-error").text(""); // clear any old error text
 
@@ -236,6 +226,14 @@ function buildJSON() {
         $("#json-error").append(" Error: At least one LED is required!");
     }
 
+    // --- Store validation object ---
+    lastValidation = { 
+        pedal, 
+        cssError: cssError.trim(), 
+        hasMissingFields, 
+        duplicateFound, 
+        ledFound 
+    };
 
     return lastValidation;
 }
