@@ -423,6 +423,7 @@ html {
 }
 .largeknob.thick::after {
   top: -8px;
+  height: 20px;
 }
 .xlargeknob.thick::after {
   top: -12px;
