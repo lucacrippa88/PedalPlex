@@ -912,6 +912,36 @@ window.setupEditPedalHandler = setupEditPedalHandler;
 
 
 
+  function sanitizeHtml(html) {
+    if (typeof DOMPurify !== "undefined") {
+        return DOMPurify.sanitize(html, {
+            ALLOWED_TAGS: ['span', 'br', 'hr'],
+            ALLOWED_ATTR: ['style']
+        });
+    } else {
+        return html;
+    }
+  }
+
+
+  function safeLogoStyle(inputStyle) {
+    if (!inputStyle) return "";
+    // Reject javascript or expression
+    if (/expression\s*\(|javascript:/i.test(inputStyle)) { return ""; }
+
+    // Optionally allow only certain props
+    const allowedProps = ["color", "font-size", "font-weight", "font-style", "font-family", 
+                          "background-color", "padding", "position", "margin", "margin-left", "margin-right", "margin-bottom", 
+                          "bottom", "top", "left", "right", "letter-spacing", "word-spacing", "display", "border", "margin-top", 
+                          "line-height", "transform", "height", "width", "border-radius", "box-shadow", "background-size",
+                          "background-image", "text-align", "background"];
+    const safeRules = inputStyle.split(";").filter(rule => {
+      const [prop] = rule.split(":");
+      return allowedProps.includes(prop.trim().toLowerCase());
+    });
+    return safeRules.join(";");
+  }
+
 
 
 // Render a gear in catalog and editor
@@ -975,37 +1005,7 @@ function renderPedal(pedal, userRole) {
       break;
   }
 
-  function sanitizeHtml(html) {
-    if (typeof DOMPurify !== "undefined") {
-        return DOMPurify.sanitize(html, {
-            ALLOWED_TAGS: ['span', 'br', 'hr'],
-            ALLOWED_ATTR: ['style']
-        });
-    } else {
-        return html;
-    }
-  }
-
   const cleanName = sanitizeHtml(pedal.name);
-
-  function safeLogoStyle(inputStyle) {
-    if (!inputStyle) return "";
-    // Reject javascript or expression
-    if (/expression\s*\(|javascript:/i.test(inputStyle)) { return ""; }
-
-    // Optionally allow only certain props
-    const allowedProps = ["color", "font-size", "font-weight", "font-style", "font-family", 
-                          "background-color", "padding", "position", "margin", "margin-left", "margin-right", "margin-bottom", 
-                          "bottom", "top", "left", "right", "letter-spacing", "word-spacing", "display", "border", "margin-top", 
-                          "line-height", "transform", "height", "width", "border-radius", "box-shadow", "background-size",
-                          "background-image", "text-align", "background"];
-    const safeRules = inputStyle.split(";").filter(rule => {
-      const [prop] = rule.split(":");
-      return allowedProps.includes(prop.trim().toLowerCase());
-    });
-    return safeRules.join(";");
-  }
-
 
 
   // Head and inverted pedals → add name/logo
@@ -1013,7 +1013,6 @@ function renderPedal(pedal, userRole) {
     const $nameDiv = $("<div>").addClass("head-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
     $pedalDiv.append($nameDiv);
   }
-
 
   // Render pedal controls
   renderPedalControls(pedal, $pedalDiv);
@@ -1473,6 +1472,8 @@ async function renderFullPedalboard() {
             boxShadow
           }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         }
+
+        const cleanName = sanitizeHtml(pedal.name);
 
         // Head or inverted logo
         if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
