@@ -365,8 +365,8 @@ html {
   top: px;
   left: 50%;
   transform: translateX(-50%);
-  width: 3px;
-  height: 8px;
+  width: 4px;
+  height: 9px;
   border-radius: 2px;
   background-color: var(--indicator-color, #fff);
 }
@@ -386,7 +386,7 @@ html {
   top: 5px;
   left: 50%;
   transform: translateX(-50%);
-  width: 3px;
+  width: 4px;
   height: 16px;
   border-radius: 2px;
   background-color: var(--indicator-color, #fff);
@@ -407,7 +407,7 @@ html {
   top: 5px;
   left: 50%;
   transform: translateX(-50%);
-  width: 3px;
+  width: 4px;
   height: 20px;
   border-radius: 2px;
   background-color: var(--indicator-color, #fff);
@@ -416,7 +416,7 @@ html {
 
 /* Adjusted for thick border */
 .knob.thick::after {
-  top: -4px;   /* shift upward */
+  top: -9px;   /* shift upward */
 }
 .smallknob.thick::after {
   top: -2px;
