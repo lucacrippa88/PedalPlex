@@ -231,11 +231,13 @@ function renderPedalControls(pedal, $pedalDiv) {
                 const knobColor = control["knob-color"] ?? pedal["knobs-color"];
                 const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
                 const knobIndicator = control["knob-indicator"] ?? pedal["knobs-indicator"];
+                const isThick = control.border === "thick";
 
                 const knob = $("<div>")
                     .addClass(isSmall ? "smallknob" : "knob")
                     .addClass(isLarge ? "largeknob" : "knob")
                     .addClass(isXLarge ? "xlargeknob" : "knob")
+                    .toggleClass("thick", isThick)
                     .css({
                         background: knobColor,
                         border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}`

@@ -413,6 +413,21 @@ html {
   background-color: var(--indicator-color, #fff);
 }
 
+
+/* Adjusted for thick border */
+.knob.thick::after {
+  top: -4px;   /* shift upward */
+}
+.smallknob.thick::after {
+  top: -2px;
+}
+.largeknob.thick::after {
+  top: -8px;
+}
+.xlargeknob.thick::after {
+  top: -12px;
+}
+
 .knob-value-label {
   font-size: 12px;
   font-weight: bold;

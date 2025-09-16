@@ -52,7 +52,7 @@ function initPreset() {
             // Placeholder
             const placeholderOption = document.createElement('option');
             placeholderOption.value = '';
-            placeholderOption.textContent = 'Select a pedalboard...';
+            placeholderOption.textContent = '-- Select a pedalboard --';
             placeholderOption.disabled = true;
             dropdown.appendChild(placeholderOption);
 
