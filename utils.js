@@ -997,7 +997,7 @@ function renderPedal(pedal, userRole) {
     const allowedProps = ["color", "font-size", "font-weight", "font-style", "font-family", 
                           "background-color", "padding", "position", "margin", "margin-bottom", "margin-top", 
                           "bottom", "top", "left", "right", "letter-spacing", "word-spacing", "display", 
-                          "line-height", "transform", "height", "width", "border-radius"];
+                          "line-height", "transform", "height", "width", "border-radius", "box-shadow"];
     const safeRules = inputStyle.split(";").filter(rule => {
       const [prop] = rule.split(":");
       return allowedProps.includes(prop.trim().toLowerCase());
