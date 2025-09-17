@@ -223,8 +223,10 @@ function buildJSON() {
     });
 
     if (!ledFound) {
-        $("#json-error").append(" Error: At least one LED is required!");
+        $("#json-error").append("Error: At least one LED is required!");
+        cssError += "Error: At least one LED is required!";
     }
+
 
     // --- Store validation object ---
     lastValidation = { 
