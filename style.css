@@ -285,7 +285,48 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 /* Fonts (all preserved) */
 @font-face { font-family: bigmuff; src: url("fonts/ITC\ Pioneer\ Regular.otf"); }
-/* ... (all other font-face rules remain exactly as in original CSS) ... */
+@font-face { font-family: boss; src: url("fonts/BossStyle-Bold.otf"); }
+@font-face { font-family: amped; src: url("fonts/BebasNeue-Regular.otf"); }
+@font-face { font-family: mxr; src: url("fonts/eurostile.TTF"); }
+@font-face { font-family: tsmini; src: url("fonts/Schluber.otf"); }
+@font-face { font-family: sp; src: url("fonts/Lobster-Regular.ttf"); }
+@font-face { font-family: orangeamps; src: url("fonts/AmpedOrange.ttf"); }
+@font-face { font-family: marshall; src: url("fonts/Amplify_PersonalUseOnly.ttf"); }
+@font-face { font-family: vox; src: url("fonts/PlayfairDisplay-Black.ttf"); }
+@font-face { font-family: bubbly; src: url("fonts/Talina.otf"); }
+@font-face { font-family: ibanez; src: url("fonts/SecretAgentPersonalUse-vPzE.ttf"); }
+@font-face { font-family: fender; src: url("fonts/StratoRegular-2d5o.ttf"); }
+@font-face { font-family: walrus; src: url("fonts/acumin-pro-condensed.otf"); }
+@font-face { font-family: yamaha; src: url("fonts/yamaha.ttf"); }
+@font-face { font-family: strymon1; src: url("fonts/dinot-regular.otf"); }
+@font-face { font-family: moonieeyes; src: url("fonts/MoonieEyes.otf"); }
+@font-face { font-family: goldenhills; src: url("fonts/GoldenHills.ttf"); }
+@font-face { font-family: cute; src: url("fonts/cute.ttf"); }
+@font-face { font-family: grapple; src: url("fonts/grapple.ttf"); }
+@font-face { font-family: funky; src: url("fonts/TF\ Funky\ Fusion\ Demo.ttf"); }
+@font-face { font-family: balloon; src: url("fonts/balloon.TTF"); }
+@font-face { font-family: fuzzface; src: url("fonts/staccato.TTF"); }
+@font-face { font-family: compacta; src: url("fonts/CompactaPlain.ttf"); }
+@font-face { font-family: mesa; src: url("fonts/Cowboys\ 2.0.otf"); }
+@font-face { font-family: dookie; src: url("fonts/Bad\ Dookie\ NF\ Regular.ttf"); }
+@font-face { font-family: script; src: url("fonts/Avenue\ de\ Madison.ttf"); }
+@font-face { font-family: cloister; src: url("fonts/CloisterBlack.ttf"); }
+@font-face { font-family: stencil; src: url("fonts/Stencilia-A.ttf"); }
+@font-face { font-family: broken; src: url("fonts/BROKEN74.TTF"); }
+@font-face { font-family: baliw; src: url("fonts/Baliw.ttf"); }
+@font-face { font-family: neonstar; src: url("fonts/Neonstar.ttf"); }
+@font-face { font-family: bubbleboddy; src: url("fonts/Bubbleboddy-FatTrial.ttf"); }
+@font-face { font-family: tallboy; src: url("fonts/TALLBOY.otf"); }
+@font-face { font-family: doublebubble; src: url("fonts/Double_Bubble_shadow.otf"); }
+@font-face { font-family: nightstalker; src: url("fonts/Night\ Stalker\ Free.ttf"); }
+@font-face { font-family: arista; src: url("fonts/Arista-Pro-Fat-trial.ttf"); }
+@font-face { font-family: monsters; src: url("fonts/MonstersHeart-Regular.ttf"); }
+@font-face { font-family: magneto; src: url("fonts/MAGNETOB.TTF"); }
+@font-face { font-family: mistress; src: url("fonts/knuckled.ttf"); }
+@font-face { font-family: bolton; src: url("fonts/Bolton.ttf"); }
+@font-face { font-family: MIB; src: url("fonts/MIB.ttf"); }
+@font-face { font-family: thorema; src: url("fonts/thorema-demo.regular.ttf"); }
+
 
 /* Diamond plate */
 .diamond-plate {
