@@ -3,7 +3,6 @@
 // Initialize navigation catalog
 function initNavCatalog(userRole) {
   const isAdmin = (userRole === "admin");
-  // const subtitleText = `Gears Catalog${isAdmin ? " Manager" : ""}`;
   const subtitleText = `Gears`;
 
   // Nav HTML
@@ -197,21 +196,11 @@ style.textContent = `
   }
 
   /* Mobile: hide all pedal counters except total (All) */
-  @media (max-width: 1024px) {
-    #pedalCount {
-      white-space: nowrap;
-    }
-    #pedalCount span.status-filter:not([data-filter="all"]),
-    #pedalCount text() {
+  @media (max-width: 768px) {
+    #pedalCount span.status-filter:not([data-filter="all"]) {
       display: none !important;
     }
-    /* Optional: hide commas and labels around removed spans */
-    #pedalCount {
-      display: flex;
-      align-items: center;
-    }
   }
-
 `;
 document.head.appendChild(style);
 
