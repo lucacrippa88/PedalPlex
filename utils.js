@@ -300,49 +300,103 @@ $tooltip.append($caret, $tooltipText);
                 //             control.value = newValue;
                 //         }
 
-                knob.on("mousedown", function (e) {
-                  const startY = e.pageY;
-                  const startValue = control.value;
+                // knob.on("mousedown", function (e) {
+                //   const startY = e.pageY;
+                //   const startValue = control.value;
 
-                  $(document).on("mousemove.knob", function (e2) {
-                      const delta = startY - e2.pageY;
+                //   $(document).on("mousemove.knob", function (e2) {
+                //       const delta = startY - e2.pageY;
 
-                      if (control.values && Array.isArray(control.values)) {
-                          // ✅ Discrete knobs: unchanged
-                          const steps = Math.round(delta / 5);
-                          let currentIndex = control.values.indexOf(startValue);
-                          if (currentIndex === -1) currentIndex = 0;
-                          let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
-                          control.value = control.values[newIndex];
-                      } else {
-                          // ✅ Numeric knobs: make positions 10× denser
-                          const min = control.min ?? 0;
-                          const max = control.max ?? 100;
-                          const steps = (delta / 5) / 2; 
-                          let newValue = startValue + steps;
-                          newValue = Math.min(Math.max(newValue, min), max);
-                          control.value = parseFloat(newValue.toFixed(2)); // keep decimals clean
-                      }
+                //       if (control.values && Array.isArray(control.values)) {
+                //           // ✅ Discrete knobs: unchanged
+                //           const steps = Math.round(delta / 5);
+                //           let currentIndex = control.values.indexOf(startValue);
+                //           if (currentIndex === -1) currentIndex = 0;
+                //           let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
+                //           control.value = control.values[newIndex];
+                //       } else {
+                //           // ✅ Numeric knobs: make positions 10× denser
+                //           const min = control.min ?? 0;
+                //           const max = control.max ?? 100;
+                //           const steps = (delta / 5) / 2; 
+                //           let newValue = startValue + steps;
+                //           newValue = Math.min(Math.max(newValue, min), max);
+                //           control.value = parseFloat(newValue.toFixed(2)); // keep decimals clean
+                //       }
 
+
+                //         const newRotation = getRotationFromValue(control, control.value);
+                //         knob.data("rotation", newRotation);
+                //         knob.css("transform", `rotate(${newRotation}deg)`);
+                //         if ($valueLabel) {
+                //             $valueLabel.text(control.value);
+                //         }
+                //         // 🔥 Show/update tooltip while dragging
+                //         $tooltipText.text(control.value);
+                //         $tooltip.show();
+
+                //     });
+
+                //     $(document).on("mouseup.knob", function () {
+                //         $(document).off(".knob");
+                //         $tooltip.hide(); // 🔥 Hide tooltip when released
+                //     });
+
+                // });
+
+                // Unified drag handler for mouse and touch
+                function startDrag(e) {
+                    e.preventDefault(); // prevent scrolling on mobile
+
+                    const startY = e.type.startsWith("touch") ? e.touches[0].pageY : e.pageY;
+                    const startValue = control.value;
+
+                    function onMove(e2) {
+                        const currentY = e2.type.startsWith("touch") ? e2.touches[0].pageY : e2.pageY;
+                        const delta = startY - currentY;
+
+                        if (control.values && Array.isArray(control.values)) {
+                            // Discrete knobs
+                            const steps = Math.round(delta / 5);
+                            let currentIndex = control.values.indexOf(startValue);
+                            if (currentIndex === -1) currentIndex = 0;
+                            let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
+                            control.value = control.values[newIndex];
+                        } else {
+                            // Numeric knobs (1 decimal, less dense)
+                            const min = control.min ?? 0;
+                            const max = control.max ?? 100;
+                            const steps = (delta / 5) / 2;
+                            let newValue = startValue + steps;
+                            newValue = Math.min(Math.max(newValue, min), max);
+                            control.value = parseFloat(newValue.toFixed(1));
+                        }
 
                         const newRotation = getRotationFromValue(control, control.value);
                         knob.data("rotation", newRotation);
                         knob.css("transform", `rotate(${newRotation}deg)`);
-                        if ($valueLabel) {
-                            $valueLabel.text(control.value);
+                        if ($valueLabel) $valueLabel.text(control.value);
+
+                        // Update tooltip if present
+                        if ($tooltipText) {
+                            $tooltipText.text(control.value);
+                            $tooltip.show();
                         }
-                        // 🔥 Show/update tooltip while dragging
-                        $tooltipText.text(control.value);
-                        $tooltip.show();
+                    }
 
-                    });
+                    function endDrag() {
+                        $(document).off("mousemove.knob touchmove.knob", onMove);
+                        $(document).off("mouseup.knob touchend.knob", endDrag);
+                        if ($tooltip) $tooltip.hide();
+                    }
 
-                    $(document).on("mouseup.knob", function () {
-                        $(document).off(".knob");
-                        $tooltip.hide(); // 🔥 Hide tooltip when released
-                    });
+                    $(document).on("mousemove.knob touchmove.knob", onMove);
+                    $(document).on("mouseup.knob touchend.knob", endDrag);
+                }
 
-                });
+                // Bind both mouse and touch start
+                knob.on("mousedown touchstart", startDrag);
+
 
                 let $label;
                 if (control.position === "under-top" && control.type === "smallknob") {
