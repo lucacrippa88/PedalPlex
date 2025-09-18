@@ -426,3 +426,34 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     flex-wrap: wrap; /* allow input + button to wrap nicely */
   }
 }
+
+
+
+@media (max-width: 768px) {
+  /* Collapse preset/folder buttons to icon-only on small screens */
+  #savePstBtn,
+  #createPstBtn,
+  #addFolderBtn {
+    width: 40px !important;       /* square buttons */
+    padding: 0 !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    flex-direction: row !important;
+    font-size: 0 !important;      /* hide text */
+    overflow: hidden;
+  }
+
+  #savePstBtn .bx--btn__icon,
+  #createPstBtn .bx--btn__icon,
+  #addFolderBtn .bx--btn__icon {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  /* Optionally hide text explicitly */
+  #savePstBtn > :not(.bx--btn__icon),
+  #createPstBtn > :not(.bx--btn__icon),
+  #addFolderBtn > :not(.bx--btn__icon) {
+    display: none !important;
+  }
+}
