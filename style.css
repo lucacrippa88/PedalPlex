@@ -434,3 +434,40 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     flex-wrap: wrap; /* allow input + button to wrap nicely */
   }
 }
+
+
+
+
+/* Default: horizontal layout for desktop */
+#preset-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+/* Mobile: stack vertically */
+@media (max-width: 768px) {
+  #preset-controls {
+    flex-direction: column;
+    align-items: stretch; /* full width for dropdowns/buttons */
+    gap: 4px;
+  }
+
+  #folderSelectContainer,
+  #presetSelectContainer,
+  #renameFolderBtn,
+  #renamePresetBtn {
+    margin-left: 0; /* remove horizontal spacing */
+    width: 100%;    /* make dropdowns full width */
+  }
+
+  select {
+    width: 100%; /* make selects full width */
+  }
+
+  .bx--btn {
+    width: 100%; /* full-width buttons if desired */
+    justify-content: center; /* keep icon centered if icon-only */
+  }
+}
