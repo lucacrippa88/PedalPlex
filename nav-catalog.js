@@ -3,7 +3,7 @@
 // Initialize navigation catalog
 function initNavCatalog(userRole) {
   const isAdmin = (userRole === "admin");
-  
+
   // Nav HTML
   const navHtml = `
     <header style="display: flex; align-items: center; justify-content: space-between;">
@@ -34,21 +34,12 @@ function initNavCatalog(userRole) {
           style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;" 
           aria-label="Filter pedals"/>
 
-        ${isAdmin ? `
           <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
             <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
               <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
             Add gear
-          </button>` : ''}
-
-        ${!isAdmin ? `
-          <button id="createOwnPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Add Your Own Gear" style="display: flex; align-items: center; gap: 0.5rem;">
-            <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-              <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Add Your Own Gear
-          </button>` : ''}
+          </button>
       </div>
     </header>
   `;
