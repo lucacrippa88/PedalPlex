@@ -55,6 +55,7 @@ function initNavPreset() {
        class="bx--btn__icon">
     <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
   </svg>
+  Save
 </button>
 
 <button
@@ -72,26 +73,8 @@ function initNavPreset() {
        class="bx--btn__icon">
     <path d="M30 6L26 6 26 2 24 2 24 6 20 6 20 8 24 8 24 12 26 12 26 8 30 8 30 6zM24 15v7.5562A3.9552 3.9552 0 0022 22a4 4 0 104 4V15zM22 28a2 2 0 112-2A2.0027 2.0027 0 0122 28zM17 6H10A2.002 2.002 0 008 8V22.5562A3.9557 3.9557 0 006 22a4 4 0 104 4V8h7zM6 28a2 2 0 112-2A2.0023 2.0023 0 016 28z" stroke="currentColor"/>
   </svg>
+  Add
 </button>
-
-<button
-  id="addFolderBtn"
-  class="showMobile bx--btn bx--btn--secondary bx--btn--sm"
-  type="button"
-  aria-label="Create New Folder">
-  <svg focusable="false" preserveAspectRatio="xMidYMid meet"
-       xmlns="http://www.w3.org/2000/svg"
-       fill="currentColor"
-       width="16"
-       height="16"
-       viewBox="0 0 32 32"
-       aria-hidden="true"
-       class="bx--btn__icon">
-    <path d="M26 20L24 20 24 24 20 24 20 26 24 26 24 30 26 30 26 26 30 26 30 24 26 24z" stroke="currentColor"/>
-    <path d="M28,8H16l-3.4-3.4C12.2,4.2,11.7,4,11.2,4H4C2.9,4,2,4.9,2,6v20c0,1.1,0.9,2,2,2h14v-2H4V6h7.2l3.4,3.4l0.6,0.6H28v8h2v-8C30,8.9,29.1,8,28,8z" stroke="currentColor"/>
-  </svg>
-</button>
-
 
 
   </div>
