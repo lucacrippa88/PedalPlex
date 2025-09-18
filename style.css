@@ -438,7 +438,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
-/* Default: horizontal layout for desktop */
+/* Desktop: keep everything in one line */
 #preset-controls {
   display: flex;
   align-items: center;
@@ -446,28 +446,47 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   flex-wrap: nowrap;
 }
 
-/* Mobile: stack vertically */
+/* Mobile: stack selects vertically, keep buttons on the right of their related select */
 @media (max-width: 768px) {
   #preset-controls {
+    display: flex;
     flex-direction: column;
-    align-items: stretch; /* full width for dropdowns/buttons */
-    gap: 4px;
+    align-items: stretch;
+    gap: 8px;
   }
 
-  #folderSelectContainer,
-  #presetSelectContainer,
-  #renameFolderBtn,
+  /* Pedalboard select can remain full-width, no button */
+  #pedalboardSelect {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  /* Folder select + button container */
+  #folderSelectContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+  #folderSelect {
+    flex: 1; /* take remaining space */
+  }
+  #renameFolderBtn {
+    flex: 0 0 auto; /* keep button size */
+  }
+
+  /* Preset select + button container */
+  #presetSelectContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+  #presetSelect {
+    flex: 1; /* take remaining space */
+  }
   #renamePresetBtn {
-    margin-left: 0; /* remove horizontal spacing */
-    width: 100%;    /* make dropdowns full width */
-  }
-
-  select {
-    width: 100%; /* make selects full width */
-  }
-
-  .bx--btn {
-    width: 100%; /* full-width buttons if desired */
-    justify-content: center; /* keep icon centered if icon-only */
+    flex: 0 0 auto; /* keep button size */
   }
 }
+
