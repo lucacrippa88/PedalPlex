@@ -89,7 +89,11 @@ function initNavCatalog(userRole) {
 
   $("#toggleFilterBtn").on("click", function () {
     const input = $("#pedalFilterInput");
-    input.is(":visible") ? input.hide().val("") : input.show().focus();
+    if (input.is(":visible")) {
+      input.hide().val("");
+    } else {
+      input.css("display", "flex").focus();
+    }
   });
   $("#pedalFilterInput").on("input", function () {
     const filterValue = $(this).val().toLowerCase();

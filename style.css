@@ -388,9 +388,14 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
    Mobile / Small screen adjustments
    ========================= */
 @media (max-width: 768px) {
-  /* Hide site title on small screens */
+  /* Hide title */
   header .title {
     display: none !important;
+  }
+  
+  /* Adjust subtitle positioning if needed */
+  header .subtitle {
+    font-size: 1rem;
   }
 
   /* Hide pedal counts */
@@ -398,13 +403,26 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     display: none !important;
   }
 
-  /* Adjust subtitle positioning if needed */
-  header .subtitle {
-    font-size: 1rem;
+  /* Search input takes remaining width and flows on the left */
+  #pedalFilterInput {
+    width: 100% !important;
+    max-width: 200px;
+    order: -1; /* move it before buttons in flex layout */
+    margin-right: 8px;
+    display: none;
+    transition: all 0.3s ease;
+  }
+
+  #toggleFilterBtn {
+    flex-shrink: 0;
   }
 
   /* Optionally adjust input width for filter */
   #pedalFilterInput {
     width: 80px !important;
+  }
+
+  header > div:last-child {
+    flex-wrap: wrap; /* allow input + button to wrap nicely */
   }
 }
