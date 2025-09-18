@@ -245,6 +245,30 @@ function renderPedalControls(pedal, $pedalDiv) {
                     .css("--indicator-color", knobIndicator)
                     .attr("data-control-label", control.label);
 
+
+// Tooltip (hidden initially)
+const $tooltip = $("<div>")
+  .addClass("bx--tooltip bx--tooltip--top") // Carbon Design style
+  .css({
+    display: "none",
+    position: "absolute",
+    top: "-35px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    padding: "4px 8px",
+    "font-size": "12px",
+    "white-space": "nowrap",
+    "z-index": "10"
+  });
+
+const $tooltipText = $("<span>")
+  .addClass("bx--tooltip__label")
+  .text(control.value);
+
+$tooltip.append($tooltipText);
+
+
+
                 const rotation = getRotationFromValue(control, control.value);
                 knob.data("rotation", rotation);
                 knob.css("transform", `rotate(${rotation}deg)`);
@@ -306,11 +330,17 @@ function renderPedalControls(pedal, $pedalDiv) {
                         if ($valueLabel) {
                             $valueLabel.text(control.value);
                         }
+                        // 🔥 Show/update tooltip while dragging
+                        $tooltipText.text(control.value);
+                        $tooltip.show();
+
                     });
 
                     $(document).on("mouseup.knob", function () {
                         $(document).off(".knob");
+                        $tooltip.hide(); // 🔥 Hide tooltip when released
                     });
+
                 });
 
                 let $label;
@@ -328,7 +358,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                     $label = $("<div>").addClass("label-top").text(control.label);
                 }
 
-                const $container = $("<div>").addClass("knob-container").append(knob).css({ position: "relative" });
+                const $container = $("<div>").addClass("knob-container").append(knob).css({ position: "relative" }).append(knob, $tooltip);;
                 $container.append($label);
                 if ($valueLabel) $container.append($valueLabel);
                 const $knobWrapper = $("<div>").append($label, $container);
