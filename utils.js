@@ -338,7 +338,7 @@ $tooltip.append($tooltipText);
 
                     $(document).on("mouseup.knob", function () {
                         $(document).off(".knob");
-                        $tooltip.hide(); // 🔥 Hide tooltip when released
+                        //$tooltip.hide(); // 🔥 Hide tooltip when released
                     });
 
                 });
