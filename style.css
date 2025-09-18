@@ -395,16 +395,6 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
    ========================= */
 @media (max-width: 768px) {
 
-
-  .bx--btn--icon-only {
-    display: inline-flex !important; /* remove flex-gap issues */
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    padding: 0; /* Carbon buttons already have internal padding */
-  }
-
   /* Generic hide/show mobile */
   .showDesktop { display: none !important; }
   .showMobile { display: block !important; }
@@ -500,3 +490,17 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   }
 }
 
+
+
+/* Mobile icons buttons */
+@media (max-width: 768px) {
+  .mobile-icon-btns {
+    justify-content: flex-start; /* horizontal layout on mobile */
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-icon-btns {
+    display: none; /* hide on desktop */
+  }
+}
