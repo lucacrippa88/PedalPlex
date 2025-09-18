@@ -254,26 +254,51 @@ function renderPedalControls(pedal, $pedalDiv) {
                     $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
                 }
 
+                // knob.on("mousedown", function (e) {
+                //     const startY = e.pageY;
+                //     const startValue = control.value;
+
+                //     $(document).on("mousemove.knob", function (e2) {
+                //         const delta = startY - e2.pageY;
+                //         const steps = Math.round(delta / 5);
+
+                //         if (control.values && Array.isArray(control.values)) {
+                //             let currentIndex = control.values.indexOf(startValue);
+                //             if (currentIndex === -1) currentIndex = 0;
+                //             let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
+                //             control.value = control.values[newIndex];
+                //         } else {
+                //             const min = control.min ?? 0;
+                //             const max = control.max ?? 100;
+                //             let newValue = startValue + steps;
+                //             newValue = Math.min(Math.max(newValue, min), max);
+                //             control.value = newValue;
+                //         }
+
                 knob.on("mousedown", function (e) {
-                    const startY = e.pageY;
-                    const startValue = control.value;
+                  const startY = e.pageY;
+                  const startValue = control.value;
 
-                    $(document).on("mousemove.knob", function (e2) {
-                        const delta = startY - e2.pageY;
-                        const steps = Math.round(delta / 5);
+                  $(document).on("mousemove.knob", function (e2) {
+                      const delta = startY - e2.pageY;
 
-                        if (control.values && Array.isArray(control.values)) {
-                            let currentIndex = control.values.indexOf(startValue);
-                            if (currentIndex === -1) currentIndex = 0;
-                            let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
-                            control.value = control.values[newIndex];
-                        } else {
-                            const min = control.min ?? 0;
-                            const max = control.max ?? 100;
-                            let newValue = startValue + steps;
-                            newValue = Math.min(Math.max(newValue, min), max);
-                            control.value = newValue;
-                        }
+                      if (control.values && Array.isArray(control.values)) {
+                          // ✅ Discrete knobs: unchanged
+                          const steps = Math.round(delta / 5);
+                          let currentIndex = control.values.indexOf(startValue);
+                          if (currentIndex === -1) currentIndex = 0;
+                          let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
+                          control.value = control.values[newIndex];
+                      } else {
+                          // ✅ Numeric knobs: increase resolution ×10
+                          const steps = Math.round(delta / 5) * 10;
+                          const min = control.min ?? 0;
+                          const max = control.max ?? 100;
+                          let newValue = startValue + steps;
+                          newValue = Math.min(Math.max(newValue, min), max);
+                          control.value = newValue;
+                      }
+
 
                         const newRotation = getRotationFromValue(control, control.value);
                         knob.data("rotation", newRotation);
