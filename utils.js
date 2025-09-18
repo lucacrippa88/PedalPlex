@@ -254,8 +254,8 @@ const $tooltip = $("<div>")
     position: "absolute",
     top: "38px",
     left: "50%",
-    transform: "translateX(-50%)",
-    "z-index": "10"
+    transform: "translateX(-50%)"
+    // "z-index": "10"
   });
 
 // caret (the arrow)
@@ -318,7 +318,7 @@ $tooltip.append($caret, $tooltipText);
                           // ✅ Numeric knobs: make positions 10× denser
                           const min = control.min ?? 0;
                           const max = control.max ?? 100;
-                          const steps = (delta / 5) / 10; 
+                          const steps = (delta / 5) / 2; 
                           let newValue = startValue + steps;
                           newValue = Math.min(Math.max(newValue, min), max);
                           control.value = parseFloat(newValue.toFixed(2)); // keep decimals clean
@@ -339,7 +339,7 @@ $tooltip.append($caret, $tooltipText);
 
                     $(document).on("mouseup.knob", function () {
                         $(document).off(".knob");
-                        //$tooltip.hide(); // 🔥 Hide tooltip when released
+                        $tooltip.hide(); // 🔥 Hide tooltip when released
                     });
 
                 });
