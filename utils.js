@@ -8,7 +8,7 @@ function rgbToHex(rgb) {
   return "#" + ((1 << 24) + (r << 16) + (g << 8) + b)
     .toString(16)
     .slice(1)
-    .toLowerCase(); // force lowercase to match JSON format
+    .toLowerCase();
 }
 
 // HELPER
@@ -78,37 +78,14 @@ function getRotationFromValue(control, value) {
   let angleRange, angleOffset;
 
   switch (control.span) {
-  case "all":
-      angleRange = 360;
-      angleOffset = 0;
-      break;
-  case "three-quarters":
-      angleRange = 270;
-      angleOffset = -135;
-      break;
-  case "half":
-      angleRange = 180;
-      angleOffset = 180;
-      break;
-  case "half-shift":
-      angleRange = -180;
-      angleOffset = 30;
-      break;
-  case "half-shift-inverted":
-      angleRange = 180;
-      angleOffset = 150;
-      break;
-  case "quarter":
-      angleRange = -90;
-      angleOffset = 30;
-      break;
-  case "tenToTwo":
-      angleRange = 120;
-      angleOffset = 300;
-      break;
-  default:
-      angleRange = 270;
-      angleOffset = -135;
+  case "all": angleRange = 360; angleOffset = 0; break;
+  case "three-quarters": angleRange = 270; angleOffset = -135; break;
+  case "half": angleRange = 180; angleOffset = 180; break;
+  case "half-shift": angleRange = -180; angleOffset = 30; break;
+  case "half-shift-inverted": angleRange = 180; angleOffset = 150; break;
+  case "quarter": angleRange = -90; angleOffset = 30; break;
+  case "tenToTwo": angleRange = 120; angleOffset = 300; break;
+  default: angleRange = 270; angleOffset = -135;
   }
 
   const ratio = (index - min) / range;
@@ -164,45 +141,45 @@ function getPedalHeight(height) {
 
 
 // TODO: Make knobs usable also on touch screen
-document.querySelectorAll('.knob, .smallknob, .largeknob, .xlargeknob').forEach(knob => {
-  let startAngle = 0;
-  let currentRotation = 0;
-  let center = { x: 0, y: 0 };
+// document.querySelectorAll('.knob, .smallknob, .largeknob, .xlargeknob').forEach(knob => {
+//   let startAngle = 0;
+//   let currentRotation = 0;
+//   let center = { x: 0, y: 0 };
 
-  const getAngle = (x, y) => {
-    return Math.atan2(y - center.y, x - center.x) * 180 / Math.PI;
-  };
+//   const getAngle = (x, y) => {
+//     return Math.atan2(y - center.y, x - center.x) * 180 / Math.PI;
+//   };
 
-  const startTouch = (e) => {
-    const rect = knob.getBoundingClientRect();
-    center = {
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2
-    };
-    const touch = e.touches[0];
-    startAngle = getAngle(touch.clientX, touch.clientY) - currentRotation;
-    e.preventDefault();
-  };
+//   const startTouch = (e) => {
+//     const rect = knob.getBoundingClientRect();
+//     center = {
+//       x: rect.left + rect.width / 2,
+//       y: rect.top + rect.height / 2
+//     };
+//     const touch = e.touches[0];
+//     startAngle = getAngle(touch.clientX, touch.clientY) - currentRotation;
+//     e.preventDefault();
+//   };
 
-  const moveTouch = (e) => {
-    if (e.touches.length > 0) {
-      const touch = e.touches[0];
-      const angle = getAngle(touch.clientX, touch.clientY);
-      const rotation = angle - startAngle;
-      currentRotation = rotation;
-      knob.style.transform = `rotate(${rotation}deg)`;
-      e.preventDefault();
-    }
-  };
+//   const moveTouch = (e) => {
+//     if (e.touches.length > 0) {
+//       const touch = e.touches[0];
+//       const angle = getAngle(touch.clientX, touch.clientY);
+//       const rotation = angle - startAngle;
+//       currentRotation = rotation;
+//       knob.style.transform = `rotate(${rotation}deg)`;
+//       e.preventDefault();
+//     }
+//   };
 
-  const endTouch = () => {
-    // You could persist value here if needed
-  };
+//   const endTouch = () => {
+//     // You could persist value here if needed
+//   };
 
-  knob.addEventListener('touchstart', startTouch, { passive: false });
-  knob.addEventListener('touchmove', moveTouch, { passive: false });
-  knob.addEventListener('touchend', endTouch);
-});
+//   knob.addEventListener('touchstart', startTouch, { passive: false });
+//   knob.addEventListener('touchmove', moveTouch, { passive: false });
+//   knob.addEventListener('touchend', endTouch);
+// });
 
 
 
@@ -233,116 +210,25 @@ function renderPedalControls(pedal, $pedalDiv) {
                 const knobIndicator = control["knob-indicator"] ?? pedal["knobs-indicator"];
                 const isThick = control.border === "thick";
 
-                const knob = $("<div>")
-                    .addClass(isSmall ? "smallknob" : "knob")
-                    .addClass(isLarge ? "largeknob" : "knob")
-                    .addClass(isXLarge ? "xlargeknob" : "knob")
-                    .toggleClass("thick", isThick)
-                    .css({
-                        background: knobColor,
-                        border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}`
-                    })
+                const knob = $("<div>").addClass(isSmall ? "smallknob" : "knob").addClass(isLarge ? "largeknob" : "knob").addClass(isXLarge ? "xlargeknob" : "knob").toggleClass("thick", isThick)
+                    .css({ background: knobColor, border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}` })
                     .css("--indicator-color", knobIndicator)
                     .attr("data-control-label", control.label);
 
-
-const $tooltip = $("<div>")
-  .addClass("bx--tooltip bx--tooltip--top")
-  .attr("data-tooltip", "")
-  .css({
-    display: "none",
-    position: "absolute",
-    top: "38px",
-    left: "50%",
-    transform: "translateX(-50%)"
-    // "z-index": "10"
-  });
-
-// caret (the arrow)
-const $caret = $("<span>").addClass("bx--tooltip__caret");
-
-// label (the text inside)
-const $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
-
-// put them together
-$tooltip.append($caret, $tooltipText);
-
-
-
+                // Tooltip management
+                const $tooltip = $("<div>")
+                  .addClass("bx--tooltip bx--tooltip--top").attr("data-tooltip", "")
+                  .css({ display: "none", position: "absolute", top: "38px", left: "50%", transform: "translateX(-50%)" });
+                const $caret = $("<span>").addClass("bx--tooltip__caret");
+                const $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
+                $tooltip.append($caret, $tooltipText);
 
                 const rotation = getRotationFromValue(control, control.value);
                 knob.data("rotation", rotation);
                 knob.css("transform", `rotate(${rotation}deg)`);
 
                 let $valueLabel = null;
-                if (control.values && Array.isArray(control.values)) {
-                    $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
-                }
-
-                // knob.on("mousedown", function (e) {
-                //     const startY = e.pageY;
-                //     const startValue = control.value;
-
-                //     $(document).on("mousemove.knob", function (e2) {
-                //         const delta = startY - e2.pageY;
-                //         const steps = Math.round(delta / 5);
-
-                //         if (control.values && Array.isArray(control.values)) {
-                //             let currentIndex = control.values.indexOf(startValue);
-                //             if (currentIndex === -1) currentIndex = 0;
-                //             let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
-                //             control.value = control.values[newIndex];
-                //         } else {
-                //             const min = control.min ?? 0;
-                //             const max = control.max ?? 100;
-                //             let newValue = startValue + steps;
-                //             newValue = Math.min(Math.max(newValue, min), max);
-                //             control.value = newValue;
-                //         }
-
-                // knob.on("mousedown", function (e) {
-                //   const startY = e.pageY;
-                //   const startValue = control.value;
-
-                //   $(document).on("mousemove.knob", function (e2) {
-                //       const delta = startY - e2.pageY;
-
-                //       if (control.values && Array.isArray(control.values)) {
-                //           // ✅ Discrete knobs: unchanged
-                //           const steps = Math.round(delta / 5);
-                //           let currentIndex = control.values.indexOf(startValue);
-                //           if (currentIndex === -1) currentIndex = 0;
-                //           let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
-                //           control.value = control.values[newIndex];
-                //       } else {
-                //           // ✅ Numeric knobs: make positions 10× denser
-                //           const min = control.min ?? 0;
-                //           const max = control.max ?? 100;
-                //           const steps = (delta / 5) / 2; 
-                //           let newValue = startValue + steps;
-                //           newValue = Math.min(Math.max(newValue, min), max);
-                //           control.value = parseFloat(newValue.toFixed(2)); // keep decimals clean
-                //       }
-
-
-                //         const newRotation = getRotationFromValue(control, control.value);
-                //         knob.data("rotation", newRotation);
-                //         knob.css("transform", `rotate(${newRotation}deg)`);
-                //         if ($valueLabel) {
-                //             $valueLabel.text(control.value);
-                //         }
-                //         // 🔥 Show/update tooltip while dragging
-                //         $tooltipText.text(control.value);
-                //         $tooltip.show();
-
-                //     });
-
-                //     $(document).on("mouseup.knob", function () {
-                //         $(document).off(".knob");
-                //         $tooltip.hide(); // 🔥 Hide tooltip when released
-                //     });
-
-                // });
+                if (control.values && Array.isArray(control.values)) { $valueLabel = $("<div>").addClass("knob-value-label").text(control.value); }
 
                 // Unified drag handler for mouse and touch
                 function startDrag(e) {
@@ -401,12 +287,8 @@ $tooltip.append($caret, $tooltipText);
                 let $label;
                 if (control.position === "under-top" && control.type === "smallknob") {
                     $label = $("<div>").css({
-                        position: "absolute",
-                        "margin-left": "4px",
-                        "margin-top": "45px",
-                        transform: "translateY(-50%)",
-                        "white-space": "nowrap",
-                        "font-size": "10px"
+                        position: "absolute", "margin-left": "4px", "margin-top": "45px", 
+                        transform: "translateY(-50%)", "white-space": "nowrap", "font-size": "10px"
                     }).text(control.label);
                 } 
                 else {
@@ -487,11 +369,10 @@ $tooltip.append($caret, $tooltipText);
                 const setColor = (index) => {
                     const color = colors[index] || "#000000";
                     led.css("background-color", color);
-                    //led.css("box-shadow", color !== "#000000" ? `0 0 8px 3px ${color}` : "none");
                     led.css("box-shadow", color === "#000000"
-                    ? "inset -2px -2px 2px rgba(255, 255, 255, 0.3), inset 1px 1px 2px rgba(0, 0, 0, 0.6)"
-                    : `0 0 12px 4px ${color}, 0 0 20px 6px ${color}`);
-                   control.value = index; // update value in control object
+                      ? "inset -2px -2px 2px rgba(255, 255, 255, 0.3), inset 1px 1px 2px rgba(0, 0, 0, 0.6)"
+                      : `0 0 12px 4px ${color}, 0 0 20px 6px ${color}`);
+                    control.value = index; // update value in control object
                     led.data("colorIndex", index);
                 };
 
@@ -522,7 +403,6 @@ $tooltip.append($caret, $tooltipText);
                 
                 else if (typeof control.position === "string" && control.position.startsWith("margin-right:")) {
                     // Extract the pixel value
-                    // const match = control.position.match(/margin-right:\s*(\d+)px/);
                     const match = control.position.match(/margin-right:\s*(-?\d+)px/);
                     if (match) {
                         const px = match[1] + "px";
@@ -531,7 +411,6 @@ $tooltip.append($caret, $tooltipText);
                     $row.append($ledContainer);
                 } else if (typeof control.position === "string" && control.position.startsWith("margin-left:")) {
                     // Extract the pixel value
-                    // const match = control.position.match(/margin-left:\s*(\d+)px/);
                     const match = control.position.match(/margin-left:\s*(-?\d+)px/);
                     if (match) {
                         const px = match[1] + "px";
@@ -582,7 +461,6 @@ $tooltip.append($caret, $tooltipText);
             }
 
 
-
             // LCD
             if (control.type === "lcd") {
                 const $label = $("<div>").addClass("label-top");
@@ -594,18 +472,10 @@ $tooltip.append($caret, $tooltipText);
                     .val(control.value)
                     .attr("data-control-label", control.label)
                     .css({
-                        width: `${control.width * 6}px`,
-                        height: `${control.height * 6}px`,
-                        fontFamily: "monospace",
-                        fontSize: "17px",
-                        textAlign: "center", 
-                        backgroundColor: screenColor,
-                        color: textColor,
-                        border: "2px solid #333",
-                        borderRadius: "4px",
-                        padding: "2px",
-                        position: "relative",
-                        top: "15px"
+                        width: `${control.width * 6}px`, height: `${control.height * 6}px`,
+                        fontFamily: "monospace", fontSize: "17px", textAlign: "center", 
+                        backgroundColor: screenColor, color: textColor,
+                        border: "2px solid #333", borderRadius: "4px", padding: "2px", position: "relative", top: "15px"
                     });
 
                 if (control.shape === "round") { 
@@ -679,10 +549,7 @@ function setupEditPedalHandler(pedals) {
 
     const isAdmin = window.currentUser.role === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
-
-    const isLockedStatus = ["reviewing", "public"].includes(
-      (pedal.published || "").toLowerCase()
-    );
+    const isLockedStatus = ["reviewing", "public"].includes((pedal.published || "").toLowerCase());
 
     // Decide which buttons to show
     let boolConfirmBtn = true;
@@ -691,9 +558,9 @@ function setupEditPedalHandler(pedals) {
 
     // Restriction: user is not admin, is author, and pedal is reviewing/public
     if (!isAdmin && isAuthor && isLockedStatus) {
-      boolConfirmBtn = false; // remove Save
-      boolDenyBtn = false;    // remove Delete
-      boolCancelBtn = true;   // keep Cancel
+      boolConfirmBtn = false;
+      boolDenyBtn = false;
+      boolCancelBtn = true;
     }
 
     const pedalCopy = JSON.parse(JSON.stringify(pedal));
@@ -813,25 +680,14 @@ function setupEditPedalHandler(pedals) {
                 .then(res => res.json())
                 .then(data => {
                   if (data.success) {
-                    // Swal.fire({
-                    //   title: 'Duplicated!',
-                    //   text: 'Your gear has been copied.',
-                    //   icon: 'success',
-                    //   confirmButtonText: 'OK',
-                    //   customClass: {
-                    //     confirmButton: 'bx--btn bx--btn--primary'
-                    //   }
-                    // })
-                    // .then(() => location.reload());
-                    if (data.success) {
+
                       const createdPedal = {
                         ...newPedalData,
                         _id: data.id,
                         _rev: data.rev
                       };
 
-                      // Add to global array
-                      pedals.push(createdPedal);
+                      pedals.push(createdPedal); // Add to global array
 
                       // Render the new pedal
                       const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
@@ -840,7 +696,7 @@ function setupEditPedalHandler(pedals) {
                       $("#catalog").append($pedalDiv);
 
                       // Update pedal count
-                      updatePedalCounts(); // <-- replaces with full counters, includes all statuses
+                      updatePedalCounts();
 
                       // Re-bind edit handlers if needed
                       setupEditPedalHandler(pedals);
@@ -852,7 +708,7 @@ function setupEditPedalHandler(pedals) {
                         confirmButtonText: 'OK',
                         customClass: { confirmButton: 'bx--btn bx--btn--primary' }
                       });
-                    }
+                    
 
                   } else {
                     Swal.fire({
@@ -860,9 +716,7 @@ function setupEditPedalHandler(pedals) {
                       text: data.error || 'Failed to save duplicate',
                       icon: 'error',
                       confirmButtonText: 'OK',
-                      customClass: {
-                        confirmButton: 'bx--btn bx--btn--primary'
-                      }
+                      customClass: { confirmButton: 'bx--btn bx--btn--primary' }
                     });
                   }
                 });
@@ -879,9 +733,7 @@ function setupEditPedalHandler(pedals) {
         }
 
         // Force rebuild so errors clear when corrected
-        const validation = iframe.contentWindow.buildJSON
-          ? iframe.contentWindow.buildJSON()
-          : iframe.contentWindow.getPedalValidation();
+        const validation = iframe.contentWindow.buildJSON ? iframe.contentWindow.buildJSON() : iframe.contentWindow.getPedalValidation();
 
         const errors = [];
         if (validation.cssError) errors.push(`CSS Error: ${validation.cssError}`);
@@ -914,21 +766,13 @@ function setupEditPedalHandler(pedals) {
         .then(res => res.json())
         .then(data => {
           Swal.hideLoading();
-          // if (data.success) {
-          //   Swal.fire({
-          //     title: 'Gear saved!',
-          //     icon: 'success',
-          //     confirmButtonText: 'OK',
-          //     customClass: { confirmButton: 'bx--btn bx--btn--primary' }
-          //   }).then(() => location.reload());
           if (data.success) {
-            // Update pedal in array
-            const idx = pedals.findIndex(p => p._id === updated._id);
+            const idx = pedals.findIndex(p => p._id === updated._id); // Update pedal in array
             if (idx !== -1) {
               pedals[idx] = {
                 ...updated,
-                _id: data.id || updated._id,   // backend might send `id`
-                _rev: data.rev || updated._rev // backend should send `rev`
+                _id: data.id || updated._id,
+                _rev: data.rev || updated._rev
               };
             }
 
@@ -940,7 +784,7 @@ function setupEditPedalHandler(pedals) {
             }
 
             // Update pedal count
-            updatePedalCounts(); // <-- replaces with full counters, includes all statuses
+            updatePedalCounts();
 
             Swal.fire({
               title: 'Gear saved!',
@@ -990,17 +834,14 @@ function setupEditPedalHandler(pedals) {
                                     icon: 'success',
                                     confirmButtonText: 'OK',
                                     customClass: { confirmButton: 'bx--btn bx--btn--primary' }
-                                // }).then(() => location.reload());
                                 }).then(() => {
-                                // Remove from array
+                                
                                 const idx = pedals.findIndex(p => p._id === pedal._id);
-                                if (idx !== -1) pedals.splice(idx, 1);
-
-                                // Remove from DOM
-                                $(`[data-pedal-id="${pedal._id}"]`).remove();
+                                if (idx !== -1) pedals.splice(idx, 1); // Remove from array
+                                $(`[data-pedal-id="${pedal._id}"]`).remove(); // Remove from DOM
 
                                 // Update pedal count
-                                updatePedalCounts(); // <-- replaces with full counters, includes all statuses
+                                updatePedalCounts();
                               });
 
                             } else {
@@ -1020,42 +861,40 @@ function setupEditPedalHandler(pedals) {
 
 window.setupEditPedalHandler = setupEditPedalHandler;
 
-
-
-
-  function sanitizeHtml(html) {
-    if (typeof DOMPurify !== "undefined") {
-        return DOMPurify.sanitize(html, {
-            ALLOWED_TAGS: ['span', 'br', 'hr', 'div'],
-            ALLOWED_ATTR: ['style']
-        });
-    } else {
-        return html;
-    }
+// HELPER
+function sanitizeHtml(html) {
+  if (typeof DOMPurify !== "undefined") {
+      return DOMPurify.sanitize(html, {
+          ALLOWED_TAGS: ['span', 'br', 'hr', 'div'],
+          ALLOWED_ATTR: ['style']
+      });
+  } else {
+      return html;
   }
+}
+
+// HELPER
+function safeLogoStyle(inputStyle) {
+  if (!inputStyle) return "";
+  // Reject javascript or expression
+  if (/expression\s*\(|javascript:/i.test(inputStyle)) { return ""; }
+
+  // Optionally allow only certain props
+  const allowedProps = ["color", "font-size", "font-weight", "font-style", "font-family", 
+                        "background-color", "padding", "position", "margin", "margin-left", "margin-right", "margin-bottom", 
+                        "bottom", "top", "left", "right", "letter-spacing", "word-spacing", "display", "border", "margin-top", 
+                        "line-height", "transform", "height", "width", "border-radius", "box-shadow", "background-size",
+                        "background-image", "text-align", "background", "rotate", "overflow", "white-space", "text-shadow"];
+  const safeRules = inputStyle.split(";").filter(rule => {
+    const [prop] = rule.split(":");
+    return allowedProps.includes(prop.trim().toLowerCase());
+  });
+  return safeRules.join(";");
+}
 
 
-  function safeLogoStyle(inputStyle) {
-    if (!inputStyle) return "";
-    // Reject javascript or expression
-    if (/expression\s*\(|javascript:/i.test(inputStyle)) { return ""; }
 
-    // Optionally allow only certain props
-    const allowedProps = ["color", "font-size", "font-weight", "font-style", "font-family", 
-                          "background-color", "padding", "position", "margin", "margin-left", "margin-right", "margin-bottom", 
-                          "bottom", "top", "left", "right", "letter-spacing", "word-spacing", "display", "border", "margin-top", 
-                          "line-height", "transform", "height", "width", "border-radius", "box-shadow", "background-size",
-                          "background-image", "text-align", "background", "rotate", "overflow", "white-space", "text-shadow"];
-    const safeRules = inputStyle.split(";").filter(rule => {
-      const [prop] = rule.split(":");
-      return allowedProps.includes(prop.trim().toLowerCase());
-    });
-    return safeRules.join(";");
-  }
-
-
-
-// Render a gear in catalog and editor
+// HELPER: render a gear in catalog and editor
 function renderPedal(pedal, userRole) {
   const pedalId = pedal._id || pedal.id;
   const pedalName = pedal.name || pedal.id;
@@ -1069,10 +908,7 @@ function renderPedal(pedal, userRole) {
     inside = "full";
   } else {
     const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-    if (match) {
-      colorOnly = match[1];
-      inside = match[2] || "";
-    }
+    if (match) { colorOnly = match[1]; inside = match[2] || ""; }
   }
 
   // Base CSS
@@ -1091,9 +927,7 @@ function renderPedal(pedal, userRole) {
       backgroundImage: `url("${insideColorRaw}")`,
       backgroundSize: 'cover',
       backgroundPosition: 'center'
-    } : {
-      background: colorOnly
-    })
+    } : { background: colorOnly })
   };
 
   let $pedalDiv;
@@ -1157,11 +991,6 @@ function renderPedal(pedal, userRole) {
   if (window.currentUser) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
-    // const isLockedStatus = ["reviewing", "public"].includes(
-    //   (pedal.published || "").toLowerCase()
-    // );
-
-    // if (isAdmin || (isAuthor && !isLockedStatus)) {
     if (isAdmin || isAuthor) {
       const $editBtn = $("<button>")
         .addClass("edit-btn")
@@ -1226,9 +1055,6 @@ function getPedalTypeCss(pedal, baseCss, inside) {
   }
   return baseCss;
 }
-
-
-
 
 
 
@@ -1356,7 +1182,6 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
 
 
 
-
 // Function to filter pedals with colored LEDs in preset
 function filterPedalsWithColoredLeds(pedalsObj) {
   const filteredPedals = {};
@@ -1400,7 +1225,6 @@ function filterPedalsWithColoredLeds(pedalsObj) {
 
   return filteredPedals;
 }
-
 
 
 
@@ -1466,7 +1290,6 @@ async function renderFullPedalboard() {
     rowDiv.style.flexWrap = 'wrap';
     rowDiv.style.alignItems = 'flex-start';
     rowDiv.style.gap = '10px';
-    // rowDiv.style.marginTop = '30px';
 
 
     for (const pbPedal of rowsMap[rowNum]) {
