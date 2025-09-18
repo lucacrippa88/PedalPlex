@@ -12,23 +12,23 @@ function initNavPreset() {
   </div>
 
   <!-- Right: buttons -->
-  <div style="display: flex; align-items: center; gap: 1rem;">
+  <div class="showDesktop" style="display: flex; align-items: center; gap: 1rem;">
 
-    <button id="savePstBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save preset" disabled
+    <button id="savePstBtn1" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save preset" disabled
       style="display: flex; align-items: center; gap: 0.5rem;">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
         <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
       </svg>
       Save
     </button>
-    <button id="createPstBtn" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Preset"
+    <button id="createPstBtn1" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Preset"
       style="display: flex; align-items: center; gap: 0.5rem;">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
         <path d="M30 6L26 6 26 2 24 2 24 6 20 6 20 8 24 8 24 12 26 12 26 8 30 8 30 6zM24 15v7.5562A3.9552 3.9552 0 0022 22a4 4 0 104 4V15zM22 28a2 2 0 112-2A2.0027 2.0027 0 0122 28zM17 6H10A2.002 2.002 0 008 8V22.5562A3.9557 3.9557 0 006 22a4 4 0 104 4V8h7zM6 28a2 2 0 112-2A2.0023 2.0023 0 016 28z" stroke="currentColor"/>
       </svg>
       Add preset
     </button>
-        <button id="addFolderBtn" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Folder"
+        <button id="addFolderBtn1" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Folder"
       style="display: flex; align-items: center; gap: 0.5rem;">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
         <path d="M26 20L24 20 24 24 20 24 20 26 24 26 24 30 26 30 26 26 30 26 30 24 26 24z" stroke="currentColor"/>
@@ -39,16 +39,16 @@ function initNavPreset() {
 
   </div>
 
-  <div style="display: flex; align-items: center; gap: 1rem;">
+  <div class="showMobile" style="display: flex; align-items: center; gap: 1rem;">
 
-    <button id="savePstBtn" class="showMobile bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save preset" disabled
+    <button id="savePstBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save preset" disabled
       style="display: flex; align-items: center; gap: 0.5rem;">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
         <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
       </svg>
       Save
     </button>
-    <button id="createPstBtn" class="showMobile bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Preset"
+    <button id="createPstBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Preset"
       style="display: flex; align-items: center; gap: 0.5rem;">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
         <path d="M30 6L26 6 26 2 24 2 24 6 20 6 20 8 24 8 24 12 26 12 26 8 30 8 30 6zM24 15v7.5562A3.9552 3.9552 0 0022 22a4 4 0 104 4V15zM22 28a2 2 0 112-2A2.0027 2.0027 0 0122 28zM17 6H10A2.002 2.002 0 008 8V22.5562A3.9557 3.9557 0 006 22a4 4 0 104 4V8h7zM6 28a2 2 0 112-2A2.0023 2.0023 0 016 28z" stroke="currentColor"/>
