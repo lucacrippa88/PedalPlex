@@ -290,13 +290,13 @@ function renderPedalControls(pedal, $pedalDiv) {
                           let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
                           control.value = control.values[newIndex];
                       } else {
-                          // ✅ Numeric knobs: increase resolution ×10
-                          const steps = Math.round(delta / 5) * 10;
+                          // ✅ Numeric knobs: make positions 10× denser
                           const min = control.min ?? 0;
                           const max = control.max ?? 100;
+                          const steps = (delta / 5) / 10; 
                           let newValue = startValue + steps;
                           newValue = Math.min(Math.max(newValue, min), max);
-                          control.value = newValue;
+                          control.value = parseFloat(newValue.toFixed(2)); // keep decimals clean
                       }
 
 
