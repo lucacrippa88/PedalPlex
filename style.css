@@ -387,7 +387,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
   /* Generic hide/show desktop*/
-  .showDesktop { display: block !important; }
+  .showDesktop { display: flex !important; }
   .showMobile { display: none !important; }
 
 /* =========================
@@ -397,7 +397,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
   /* Generic hide/show mobile */
   .showDesktop { display: none !important; }
-  .showMobile { display: block !important; }
+  .showMobile { display: flex !important; }
   .showMobile.bx--btn--icon-only {
     width: 2.5rem;   /* 40px */
     height: 2.5rem;  /* 40px */
