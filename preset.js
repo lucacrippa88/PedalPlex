@@ -955,7 +955,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
         opt.value = p._id;
         opt.textContent = p.preset_name || 'Untitled Preset';
         presetSelect.appendChild(opt);
-    });
+    }); 
 
     // Hide or show dropdown & edit button
     if (filteredPresets.length === 0 || isNewFolder) {
