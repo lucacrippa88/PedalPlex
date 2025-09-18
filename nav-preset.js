@@ -41,7 +41,7 @@ function initNavPreset() {
     
 <button
   id="savePstBtn"
-  class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
+  class="showMobile bx--btn bx--btn--primary bx--btn--sm"
   type="button"
   aria-label="Save preset"
   disabled>
@@ -59,7 +59,7 @@ function initNavPreset() {
 
 <button
   id="createPstBtn"
-  class="showMobile bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only"
+  class="showMobile bx--btn bx--btn--secondary bx--btn--sm"
   type="button"
   aria-label="Create New Preset">
   <svg focusable="false" preserveAspectRatio="xMidYMid meet"
@@ -76,7 +76,7 @@ function initNavPreset() {
 
 <button
   id="addFolderBtn"
-  class="showMobile bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only"
+  class="showMobile bx--btn bx--btn--secondary bx--btn--sm"
   type="button"
   aria-label="Create New Folder">
   <svg focusable="false" preserveAspectRatio="xMidYMid meet"
