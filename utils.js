@@ -246,26 +246,27 @@ function renderPedalControls(pedal, $pedalDiv) {
                     .attr("data-control-label", control.label);
 
 
-// Tooltip (hidden initially)
 const $tooltip = $("<div>")
-  .addClass("bx--tooltip bx--tooltip--top") // Carbon Design style
+  .addClass("bx--tooltip bx--tooltip--top")
+  .attr("data-tooltip", "")
   .css({
     display: "none",
     position: "absolute",
-    top: "-35px",
+    top: "-40px",
     left: "50%",
     transform: "translateX(-50%)",
-    padding: "4px 8px",
-    "font-size": "12px",
-    "white-space": "nowrap",
     "z-index": "10"
   });
 
-const $tooltipText = $("<span>")
-  .addClass("bx--tooltip__label")
-  .text(control.value);
+// caret (the arrow)
+const $caret = $("<span>").addClass("bx--tooltip__caret");
 
-$tooltip.append($tooltipText);
+// label (the text inside)
+const $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
+
+// put them together
+$tooltip.append($caret, $tooltipText);
+
 
 
 
