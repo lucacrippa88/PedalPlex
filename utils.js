@@ -252,7 +252,7 @@ const $tooltip = $("<div>")
   .css({
     display: "none",
     position: "absolute",
-    top: "-40px",
+    top: "38px",
     left: "50%",
     transform: "translateX(-50%)",
     "z-index": "10"

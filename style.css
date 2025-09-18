@@ -213,6 +213,10 @@ html { box-sizing: content-box !important; }
 .knob-value-label { font-size: 12px; font-weight: bold; color: inherit; user-select: none; text-align: center; }
 .label-top { text-align: center; font-size: 12px; margin-bottom: 2px; z-index: 100; }
 
+/* Knob tooltips */
+.bx--tooltip__label { text-align: center; width: 100%; display: block!important; color:#ffffff }
+.bx--tooltip { min-width: 2rem; }
+
 /* LED */
 .led { width: 12px; height: 12px; border-radius: 50%; margin-top: 4px; transition: box-shadow 0.3s ease; z-index: 10; }
 .row > div > .led, .row > div > input[type="checkbox"] { margin-top: 4px; align-self: center; }
