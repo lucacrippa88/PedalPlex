@@ -383,3 +383,28 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     justify-content: center;
   }
 }
+
+/* =========================
+   Mobile / Small screen adjustments
+   ========================= */
+@media (max-width: 768px) {
+  /* Hide site title on small screens */
+  header .title {
+    display: none !important;
+  }
+
+  /* Hide pedal counts */
+  #pedalCount {
+    display: none !important;
+  }
+
+  /* Adjust subtitle positioning if needed */
+  header .subtitle {
+    font-size: 1rem;
+  }
+
+  /* Optionally adjust input width for filter */
+  #pedalFilterInput {
+    width: 80px !important;
+  }
+}

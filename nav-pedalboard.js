@@ -7,7 +7,7 @@ function initNavPedalboard() {
           <div class="pedalplex-logo"></div>
         </button>
 
-        <div class="title">PedalPlex</div><span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Build Pedalboard</span>
+        <div class="title">PedalPlex</div><span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Pedalboards</span>
       </div>
 
       <!-- Right: search toggle, input, create button -->
