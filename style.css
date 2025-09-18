@@ -490,9 +490,9 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   }
 }
 
+ 
 
-
-/* Mobile icons buttons */
+/* Mobile icons buttons container */
 @media (max-width: 768px) {
   .mobile-icon-btns {
     justify-content: flex-start; /* horizontal layout on mobile */
