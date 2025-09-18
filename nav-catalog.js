@@ -3,8 +3,7 @@
 // Initialize navigation catalog
 function initNavCatalog(userRole) {
   const isAdmin = (userRole === "admin");
-  const subtitleText = `Gears`;
-
+  
   // Nav HTML
   const navHtml = `
     <header style="display: flex; align-items: center; justify-content: space-between;">
@@ -14,7 +13,7 @@ function initNavCatalog(userRole) {
         </button>
 
         <div class="title">PedalPlex</div>
-        <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">${subtitleText}</span>
+        <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Gears</span>
       </div>
 
       <div style="display: flex; align-items: center; gap: 1rem;">
