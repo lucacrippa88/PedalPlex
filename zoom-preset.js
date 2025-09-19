@@ -41,16 +41,17 @@ function applyZoom() {
 
   showZoomSpinner();
 
-  // Apply zoom immediately (transition handles smoothness)
-  zoomTarget.style.transform = `scale(${zoomLevel})`;
+  // On mobile, limit zoom so pedals never overflow
+  if (window.innerWidth <= 768) {
+    zoomLevel = getMobileSafeZoom();
+  }
 
+  zoomTarget.style.transform = `scale(${zoomLevel})`;
   saveZoom();
 
-  // Hide spinner after short delay
-  setTimeout(() => {
-    hideZoomSpinner();
-  }, 300); // match transition duration
+  setTimeout(() => hideZoomSpinner(), 300);
 }
+
 
 
 // Zoom buttons
@@ -99,4 +100,27 @@ function showZoomSpinner() {
 }
 function hideZoomSpinner() {
   document.getElementById("zoomSpinner").style.display = "none";
+}
+
+
+
+
+function getMobileSafeZoom() {
+  const zoomTarget = document.getElementById("preset");
+  if (!zoomTarget) return 1.0;
+
+  const rect = zoomTarget.getBoundingClientRect();
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+
+  // Current width/height of pedalboard content
+  const contentWidth = rect.width / zoomLevel;
+  const contentHeight = rect.height / zoomLevel;
+
+  // Compute max scale that fits in screen
+  const maxScaleWidth = screenWidth / contentWidth;
+  const maxScaleHeight = screenHeight / contentHeight;
+
+  // Return the smaller of current zoom and mobile-safe zoom
+  return Math.min(zoomLevel, maxScaleWidth, maxScaleHeight, maxZoom);
 }
