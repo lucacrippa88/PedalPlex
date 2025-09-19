@@ -993,7 +993,7 @@ function renderPedal(pedal, userRole) {
     const isAuthor = window.currentUser.username === pedal.author;
     if (isAdmin || isAuthor) {
       const $editBtn = $("<button>")
-        .addClass("edit-btn")
+        .addClass("edit-btn showDesktop")
         .attr("title", "Edit pedal JSON")
         .data("pedal", pedal)
         .html(`

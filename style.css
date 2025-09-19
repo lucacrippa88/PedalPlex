@@ -92,6 +92,27 @@ header {
   background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
 }
 
+
+.pedalplex-logo-fullscreen-menu {
+  width: 50px;
+  height: 50px;
+  mask-image: url('logos/pedalplex_logo_white.png');
+  -webkit-mask-image: url('logos/pedalplex_logo_white.png');
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
+  display: inline-block;
+}
+
+.pedalplex-logo-fullscreen-menu:hover {
+  background-position: 100% 50%;
+}
+
+
 /* Inputs */
 #username, #password, #email, #newPassword, #oldPassword {
   font-size: 0.875rem;
@@ -507,7 +528,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   right: 0px;
   display: flex;
   gap: 8px;
-  z-index: 9999;
+  z-index: 200;
   margin-bottom: 25px;
   padding: 15px 20px 15px 0px;
   background-color: #2e2e2e;
