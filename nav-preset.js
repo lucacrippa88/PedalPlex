@@ -115,12 +115,15 @@ function initNavPreset() {
       pedalsObject[pedal.id] = { controls: flatControls };
     }
 
+    Swal.fire({ title: "Saving preset...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+
     const success = await savePreset(currentPresetId, {
       preset_name: presetName,
       pedals: pedalsObject
     });
 
     if (success) {
+      Swal.close()
       Swal.fire({ icon: "success", title: "Preset Saved", text: `Preset "${presetName}" was successfully updated.`, timer: 1000, showConfirmButton: false })
       .then(() => location.reload());
     } else {
