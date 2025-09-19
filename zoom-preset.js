@@ -113,7 +113,7 @@ function getMobileSafeZoom() {
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
 
-  const margin = 16; // safety margin in pixels
+  const margin = 24; // safety margin in pixels
 
   // Current width/height of pedalboard content (unscaled)
   const contentWidth = rect.width / zoomLevel;
