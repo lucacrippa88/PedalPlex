@@ -24,7 +24,7 @@ window.fullscreenMenuHtml = `
       Your profile
     </button>
     <br><br>
-    <button id="logoutBtn" class="bx--btn bx--btn--danger"
+    <button id="logoutBtn" class="bx--btn bx--btn--primary"
       style="display: flex; align-items: center; gap: 0.5rem;">
       Logout
       <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32" width="16" height="16">
@@ -80,7 +80,7 @@ $(document).ready(function () {
       confirmButtonText: 'Logout',
       cancelButtonText: 'Cancel',
       customClass: {
-        confirmButton: 'bx--btn bx--btn--danger',
+        confirmButton: 'bx--btn bx--btn--primary',
         cancelButton: 'bx--btn bx--btn--secondary'
       },
       buttonsStyling: false

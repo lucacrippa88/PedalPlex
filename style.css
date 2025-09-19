@@ -545,6 +545,15 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     flex: 0 0 auto; /* keep button size */
   }
 
+  /* Inputs override */
+  #username, #password, #email, #newPassword, #oldPassword {
+    width: 80% !important;   /* fill available space */
+    max-width: 80% !important;
+    height: auto;             /* let Carbon style dictate height */
+    font-size: 1rem;
+    padding: 10px 12px;
+  }
+
 }
 
  
