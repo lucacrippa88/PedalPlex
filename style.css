@@ -526,7 +526,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 /* Mobile: stack selects vertically, keep buttons on the right of their related select */
 @media (max-width: 768px) {
 
-  #preset { display: flex; flex-wrap: wrap; gap: 10px; /*justify-content: center;*/ max-width: 100vw; white-space: normal; }
+  #preset { display: flex; flex-wrap: wrap; gap: 10px; justify-content: left; max-width: 100vw; white-space: normal; }
 
   /* Pedalboard select can remain full-width, no button */
   #pedalboardSelect {
