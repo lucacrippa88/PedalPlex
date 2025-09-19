@@ -380,80 +380,65 @@ function syncUIFromJSON(pedal) {
 
     // --- Helper: restore position (dropdown + numeric px) ---
     function applyPosition($ctrl, ctrl) {
-    const $keyword = $ctrl.find(".ctrl-position-keyword");
-    const $margin = $ctrl.find(".ctrl-position-margin");
-    const $marginValue = $ctrl.find(".ctrl-position-margin-value");
-    const $dropdown = $ctrl.find(".ctrl-position");
-    const $posInput = $ctrl.find(".ctrl-position-value");
+        const $keyword = $ctrl.find(".ctrl-position-keyword");
+        const $margin = $ctrl.find(".ctrl-position-margin");
+        const $marginValue = $ctrl.find(".ctrl-position-margin-value");
+        const $dropdown = $ctrl.find(".ctrl-position");
+        const $posInput = $ctrl.find(".ctrl-position-value");
 
-    if (ctrl.position) {
-        if ($keyword.length) { // knobs
-            // const parts = ctrl.position.split(" "); // split "keyword margin-right:20px"
-            // $keyword.val(parts[0] || "");
-            // if (parts[1] && (parts[1].startsWith("margin-left:") || parts[1].startsWith("margin-right:"))) {
-            //     const [side, px] = parts[1].split(":");
-            //     $margin.val(side);
-            //     $marginValue.val(parseInt(px) || 0).show();
-            // } else {
-            //     $margin.val("");
-            //     $marginValue.val("").hide();
-            // }
+        if (ctrl.position) {
+            if ($keyword.length) { // knobs
+                const parts = ctrl.position.trim().split(" ");
 
-            const parts = ctrl.position.trim().split(" ");
+                // Case 1: keyword + margin
+                if (parts.length > 1) {
+                    $keyword.val(parts[0] || "");
+                    if (parts[1].startsWith("margin-")) {
+                        const [side, px] = parts[1].split(":");
+                        $margin.val(side);
+                        $marginValue.val(parseInt(px) || 0).show();
+                    } else {
+                        $margin.val("");
+                        $marginValue.val("").hide();
+                    }
 
-            // Case 1: keyword + margin
-            if (parts.length > 1) {
-                $keyword.val(parts[0] || "");
-                if (parts[1].startsWith("margin-")) {
-                    const [side, px] = parts[1].split(":");
+                // Case 2: margin-only
+                } else if (parts[0].startsWith("margin-")) {
+                    $keyword.val(""); // no keyword
+                    const [side, px] = parts[0].split(":");
                     $margin.val(side);
                     $marginValue.val(parseInt(px) || 0).show();
+
+                // Case 3: keyword-only
                 } else {
+                    $keyword.val(parts[0] || "");
                     $margin.val("");
                     $marginValue.val("").hide();
                 }
 
-            // Case 2: margin-only
-            } else if (parts[0].startsWith("margin-")) {
-                $keyword.val(""); // no keyword
-                const [side, px] = parts[0].split(":");
-                $margin.val(side);
-                $marginValue.val(parseInt(px) || 0).show();
-
-            // Case 3: keyword-only
-            } else {
-                $keyword.val(parts[0] || "");
+            } 
+            else if ($dropdown.length) { // other controls
+                if (ctrl.position.startsWith("margin-left:") || ctrl.position.startsWith("margin-right:")) {
+                    const [side, pxVal] = ctrl.position.split(":");
+                    $dropdown.val(side);
+                    $posInput.val(parseInt(pxVal) || 0).show();
+                } else {
+                    $dropdown.val(ctrl.position);
+                    $posInput.val("").hide();
+                }
+            }
+        } else {
+            if ($keyword.length) {
+                $keyword.val("");
                 $margin.val("");
                 $marginValue.val("").hide();
             }
-
-        } 
-        else if ($dropdown.length) { // other controls
-            if (ctrl.position.startsWith("margin-left:") || ctrl.position.startsWith("margin-right:")) {
-                const [side, pxVal] = ctrl.position.split(":");
-                $dropdown.val(side);
-                $posInput.val(parseInt(pxVal) || 0).show();
-            } else {
-                $dropdown.val(ctrl.position);
+            if ($dropdown.length) {
+                $dropdown.val("");
                 $posInput.val("").hide();
             }
         }
-    } else {
-        if ($keyword.length) {
-            $keyword.val("");
-            $margin.val("");
-            $marginValue.val("").hide();
-        }
-        if ($dropdown.length) {
-            $dropdown.val("");
-            $posInput.val("").hide();
-        }
     }
-}
-
-
-
-
 
     // --- Basic pedal info ---
     $("#pedal-id").val(pedal._id || "");
@@ -509,11 +494,6 @@ function syncUIFromJSON(pedal) {
         $("#pedal-inside-border-check").prop("checked", false);
         $("#pedal-inside-border, #pedal-inside-border-check").hide();
     }
-
-
-
-
-
 
 
     // --- Clear & rebuild controls ---
@@ -716,7 +696,12 @@ if ($("#pedal-published-button").length) {
 
 
     // Re-render pedal
-    $("#pedal-box").empty().append(renderPedal(pedal));
+    $("#pedal-box").empty();
+    const $pedalDiv = renderPedal(pedal);
+    $("#pedal-box").append($pedalDiv);
+
+    // Attach all control logic (knobs, sliders, tooltips, etc.)
+    renderPedalControls(pedal, $pedalDiv);
 
     // Delay re-enabling buildJSON to prevent width/height reset on click
     setTimeout(() => {

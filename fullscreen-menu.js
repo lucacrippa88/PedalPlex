@@ -17,7 +17,7 @@ window.fullscreenMenuHtml = `
     <a href="pedalboard">Manage pedalboards</a>
     <a href="catalog">View gears catalog</a>
     <br><br>
-    <span class="showMobile">-- Visit desktop website to access all editing features --</span></br></br>
+    <span class="showMobile" style="color:#161616">-- Visit desktop website<br>to access all editing features --</span></br></br>
     <button id="profileBtn" class="bx--btn bx--btn--secondary"
       style="display: flex; align-items: center; gap: 0.5rem;">
       <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32" width="16" height="16">
@@ -58,7 +58,10 @@ const songQuotes = [
   "You may say I'm a dreamer, but I'm not the only one!",
   "The answer, my friend, is blowing in the wind!",
   "Mama, I'm coming home...",
-  "Back in business again!"
+  "Back in business again!",
+  "Won't you fly high, free bird, yeah!",
+  "So if you want to love me, then darlin' don't refrain...",
+  "And if you listen very hard, the tune will come to you at last!"
 ];
 
 // DOM ready
