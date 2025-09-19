@@ -1,5 +1,5 @@
-const minZoom = 0.7;
-const maxZoom = 1;
+const minZoom = 0.5;
+const maxZoom = 1.0;
 const step = 0.05;
 let zoomLevel = 1.0;
 
