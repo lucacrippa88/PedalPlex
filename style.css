@@ -565,3 +565,36 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     display: none; /* hide on desktop */
   }
 }
+
+
+/* Desktop: keep natural layout */
+#pedalboardSelect,
+#folderSelect,
+#presetSelect {
+  max-width: 200px; /* or whatever looks good for desktop */
+}
+
+/* Mobile: scale down to fit one row */
+@media (max-width: 480px) {
+  #preset-controls {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 4px; /* tighter spacing */
+    overflow-x: auto; /* fallback if content is still too wide */
+  }
+
+  #pedalboardSelect,
+  #folderSelect,
+  #presetSelect {
+    flex: 1 1 0;     /* let them shrink evenly */
+    max-width: none; /* remove hard max */
+    font-size: 0.8rem; /* smaller font for fit */
+    padding: 2px 4px; /* tighter padding */
+  }
+
+  /* shrink desktop buttons */
+  #renameFolderBtn.showDesktop,
+  #renamePresetBtn.showDesktop {
+    display: none !important;
+  }
+}
