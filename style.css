@@ -168,7 +168,7 @@ header {
 #page-content { padding-top: 64px; }
 .swal2-container { z-index: 99999 !important; }
 body { background: #2e2e2e; color: #fff; padding: 20px; font-family: 'IBM Plex Sans', sans-serif; }
-html { box-sizing: border-box !important; }
+html { box-sizing: content-box !important; }
 *, *::before, *::after { box-sizing: inherit !important; }
 
 /* Auth container */
