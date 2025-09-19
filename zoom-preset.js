@@ -113,14 +113,17 @@ function getMobileSafeZoom() {
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
 
-  // Current width/height of pedalboard content
+  const margin = 16; // safety margin in pixels
+
+  // Current width/height of pedalboard content (unscaled)
   const contentWidth = rect.width / zoomLevel;
   const contentHeight = rect.height / zoomLevel;
 
-  // Compute max scale that fits in screen
-  const maxScaleWidth = screenWidth / contentWidth;
-  const maxScaleHeight = screenHeight / contentHeight;
+  // Compute max scale that fits in screen with margin
+  const maxScaleWidth = (screenWidth - margin * 2) / contentWidth;
+  const maxScaleHeight = (screenHeight - margin * 2) / contentHeight;
 
-  // Return the smaller of current zoom and mobile-safe zoom
+  // Return the smaller of current zoom and mobile-safe zoom, capped at maxZoom
   return Math.min(zoomLevel, maxScaleWidth, maxScaleHeight, maxZoom);
 }
+
