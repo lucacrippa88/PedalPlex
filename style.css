@@ -166,8 +166,56 @@ header {
 #page-content { padding-top: 64px; }
 .swal2-container { z-index: 99999 !important; }
 body { background: #2e2e2e; color: #fff; padding: 20px; font-family: 'IBM Plex Sans', sans-serif; }
-html { box-sizing: content-box !important; }
+html { box-sizing: border-box !important; }
 *, *::before, *::after { box-sizing: inherit !important; }
+
+
+
+
+/* Auth container */
+.auth-container {
+  margin: 80px auto;
+  max-width: 400px;
+  padding: 0 16px; /* safe padding */
+  box-sizing: border-box;
+}
+
+/* Inputs override */
+#username, #password, #email, #newPassword, #oldPassword {
+  width: 100% !important;   /* fill available space */
+  max-width: 100% !important;
+  height: auto;             /* let Carbon style dictate height */
+  font-size: 1rem;
+  padding: 10px 12px;
+}
+
+/* Submit button full width */
+#submitBtn {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Password toggle stays inside input */
+#togglePassword {
+  padding: 4px;
+  line-height: 0;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .auth-container {
+    margin-top: 40px;
+    padding: 0 12px;
+  }
+  .auth-container h2 {
+    font-size: 1.25rem;
+  }
+  .toggle-link {
+    font-size: 0.9rem;
+  }
+}
+
+
 
 /* Pedal dropdowns, catalog */
 #pedalAddDropdownContainer { background: white; max-height: 300px; overflow-y: auto; width: 200px; z-index: 1000; }
