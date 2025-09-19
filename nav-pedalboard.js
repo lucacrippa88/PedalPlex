@@ -13,9 +13,9 @@ function initNavPedalboard() {
       <!-- Right: search toggle, input, create button -->
       <div style="display: flex; align-items: center; gap: 1rem;">
 
-        <span style="font-size: 0.75rem; opacity: 0.7;">Add gears</span>
+        <span class="showDesktop" style="font-size: 0.75rem; opacity: 0.7;">Add gears</span>
 
-        <button id="toggleFilterBtn" aria-label="Toggle search" style="background:none; border:none; cursor:pointer; padding:4px;">
+        <button id="toggleFilterBtn" class="showDesktop" aria-label="Toggle search" style="background:none; border:none; cursor:pointer; padding:4px;">
             <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
                 <circle cx="11" cy="11" r="7"></circle>
@@ -24,7 +24,7 @@ function initNavPedalboard() {
         </button>
 
         <input 
-          type="text" 
+          type="text"
           id="pedalFilterInput" 
           placeholder="..." 
           style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 200px; display: none;" 
@@ -53,7 +53,7 @@ function initNavPedalboard() {
 
         <button
           id="createBtn"
-          class="bx--btn bx--btn--secondary bx--btn--sm"
+          class="showDesktop bx--btn bx--btn--secondary bx--btn--sm"
           type="button"
           aria-label="Create New Pedalboard"
           style="display: flex; align-items: center; gap: 0.5rem;">
