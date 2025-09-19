@@ -523,7 +523,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     width: 100%;
   }
   #folderSelect {
-    flex: 1; /* take remaining space */
+    flex: 1;
+    width: 33%;
   }
   #renameFolderBtn {
     flex: 0 0 auto; /* keep button size */
