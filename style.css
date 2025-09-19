@@ -567,34 +567,34 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 }
 
 
-/* Desktop: keep natural layout */
-#pedalboardSelect,
-#folderSelect,
-#presetSelect {
-  max-width: 200px; /* or whatever looks good for desktop */
+/* Desktop: keep your current layout */
+#preset-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Mobile: scale down to fit one row */
-@media (max-width: 480px) {
+/* Mobile layout */
+@media (max-width: 768px) {
   #preset-controls {
     display: flex;
     flex-wrap: nowrap;
-    gap: 4px; /* tighter spacing */
-    overflow-x: auto; /* fallback if content is still too wide */
+    gap: 4px;
   }
 
   #pedalboardSelect,
   #folderSelect,
   #presetSelect {
-    flex: 1 1 0;     /* let them shrink evenly */
-    max-width: none; /* remove hard max */
-    font-size: 0.8rem; /* smaller font for fit */
-    padding: 2px 4px; /* tighter padding */
+    flex: 1 1 33%;
+    max-width: 33%;
+    box-sizing: border-box;
+    font-size: 0.85rem;
+    padding: 4px; /* smaller padding so they fit */
   }
 
-  /* shrink desktop buttons */
-  #renameFolderBtn.showDesktop,
-  #renamePresetBtn.showDesktop {
+  /* Hide edit buttons on mobile */
+  .showDesktop {
     display: none !important;
   }
 }
+
