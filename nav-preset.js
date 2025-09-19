@@ -121,7 +121,7 @@ function initNavPreset() {
     });
 
     if (success) {
-      Swal.fire({ icon: "success", title: "Preset Saved", text: `Preset "${presetName}" was successfully updated.`, timer: 2000, showConfirmButton: false })
+      Swal.fire({ icon: "success", title: "Preset Saved", text: `Preset "${presetName}" was successfully updated.`, timer: 1000, showConfirmButton: false })
       .then(() => location.reload());
     } else {
       Swal.fire("Error", "Failed to save preset", "error");

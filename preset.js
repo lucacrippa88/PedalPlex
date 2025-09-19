@@ -357,7 +357,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     Swal.close();
 
     if (data.success) {
-      Swal.fire({ icon: "success", title: "Preset Deleted", timer: 2000, showConfirmButton: false })
+      Swal.fire({ icon: "success", title: "Preset Deleted", timer: 1000, showConfirmButton: false })
         .then(() => location.reload());
     } else {
       Swal.fire("Error", data.error || "Failed to delete preset", "error");
@@ -419,7 +419,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       icon: "success",
       title: "Preset Updated",
       text: `Preset "${newName}" saved and assigned to folder.`,
-      timer: 2000,
+      timer: 1000,
       showConfirmButton: false
     }).then(() => location.reload());
 
@@ -530,7 +530,7 @@ async function duplicatePreset(presetId, newName, folderId) {
       icon: "success",
       title: "Preset Duplicated",
       text: `Preset duplicated as "${duplicated.preset_name}"`,
-      timer: 1500,
+      timer: 1000,
       showConfirmButton: false,
       didClose: () => {
         location.reload();

@@ -666,7 +666,7 @@ $(document).ready(function () {
                 icon: 'success',
                 title: 'Pedalboard Created',
                 text: `Pedalboard "${boardName}" has been created successfully.`,
-                timer: 2000,
+                timer: 1000,
                 showConfirmButton: false,
                 willClose: () => {
                   location.reload();
@@ -799,7 +799,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
                     title: 'Deleted!',
                     text: 'The pedalboard has been deleted.',
                     icon: 'success',
-                    timer: 2000,
+                    timer: 1000,
                     showConfirmButton: false
                   });
 
