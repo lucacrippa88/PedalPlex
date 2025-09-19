@@ -509,9 +509,10 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   gap: 8px;
   z-index: 9999;
   margin-bottom: 25px;
-  padding: 15px 0px 15px 0px;
-  background-color: #ffffff;
+  padding: 15px 20px 15px 0px;
+  background-color: #2e2e2e;
   width: 100%;
+  justify-content: flex-end;
 }
 
 /* Desktop: keep everything in one line */
