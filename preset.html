@@ -275,6 +275,13 @@ function hidePresetLoader() {
 document.addEventListener('DOMContentLoaded', () => {
   CarbonComponents.watch();
 });
+
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth <= 768) {
+    applyZoom(); // re-apply safe zoom when orientation changes
+  }
+});
 </script>
 
 
