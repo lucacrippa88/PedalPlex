@@ -497,6 +497,10 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 }
 
 
+#togglePassword {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;
+}
+
 
 
 /* Desktop: keep everything in one line */
@@ -514,6 +518,10 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   #pedalboardSelect {
     width: 100%;
     margin-left: 0;
+  }
+
+  #togglePassword {
+    position: absolute; right: 25px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;
   }
 
   /* Folder select + button container */
