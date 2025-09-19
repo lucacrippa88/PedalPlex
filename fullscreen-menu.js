@@ -12,10 +12,12 @@ window.fullscreenMenuHtml = `
   </div>
 
   <div class="fullscreen-nav">
+    <div class="pedalplex-logo-fullscreen-menu"></div><br>
     <a href="preset">Edit your presets</a>
     <a href="pedalboard">Manage pedalboards</a>
     <a href="catalog">View gears catalog</a>
     <br><br>
+    <span class="showMobile">-- Visit desktop website to access all editing features --</span></br></br>
     <button id="profileBtn" class="bx--btn bx--btn--secondary"
       style="display: flex; align-items: center; gap: 0.5rem;">
       <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32" width="16" height="16">
