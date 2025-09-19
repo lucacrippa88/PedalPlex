@@ -92,7 +92,7 @@ $(document).ready(function () {
           title: 'Logged out',
           text: 'Redirecting to login page...',
           icon: 'success',
-          timer: 2000,
+          timer: 1000,
           showConfirmButton: false,
           allowOutsideClick: false,
           allowEscapeKey: false,
@@ -103,7 +103,7 @@ $(document).ready(function () {
 
         setTimeout(() => {
           window.location.href = '/PedalPlex/';
-        }, 2000);
+        }, 1000);
       }
     });
   });

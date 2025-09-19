@@ -323,7 +323,7 @@ function attachRenameFolderListener() {
             title: 'Deleted!',
             text: `"${folder.name}" has been removed.`,
             icon: 'success',
-            timer: 1500,
+            timer: 1000,
             showConfirmButton: false
           });
         } else {
@@ -376,7 +376,7 @@ function attachRenameFolderListener() {
             title: 'Success',
             text: `Folder renamed to "${newName}"`,
             icon: 'success',
-            timer: 1500,
+            timer: 1000,
             showConfirmButton: false
           });
         } else {

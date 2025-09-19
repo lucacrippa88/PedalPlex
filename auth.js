@@ -51,7 +51,7 @@ $('#authForm').on('submit', function (e) {
           icon: 'success',
           title: 'Login Successful',
           text: 'Welcome, ' + (res.username || username) + '!',
-          timer: 2000, 
+          timer: 1000, 
           showConfirmButton: false,
           allowOutsideClick: false,
           allowEscapeKey: false,
@@ -64,7 +64,7 @@ $('#authForm').on('submit', function (e) {
         // Redirect after 2 seconds
         setTimeout(function () {
           window.location.href = 'pedalboard';
-        }, 2000);
+        }, 1000);
 
       } else if (!isLogin) {
         Swal.fire({
@@ -152,7 +152,7 @@ $(document).ready(function () {
               title: 'Success',
               icon: 'success',
               text: 'Password reset link sent to your email.',
-              timer: 2000,
+              timer: 1000,
               showConfirmButton: false,
               allowOutsideClick: false,
               allowEscapeKey: false
