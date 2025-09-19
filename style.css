@@ -508,12 +508,6 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 /* Mobile: stack selects vertically, keep buttons on the right of their related select */
 @media (max-width: 768px) {
-  /* #preset-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  } */
 
   /* Pedalboard select can remain full-width, no button */
   #pedalboardSelect {
@@ -558,13 +552,11 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   .mobile-icon-btns {
     justify-content: flex-start; /* horizontal layout on mobile */
   }
-}
-
-@media (min-width: 769px) {
   .mobile-icon-btns {
     display: none; /* hide on desktop */
   }
 }
+
 
 
 /* Mobile: 3 selects in one row */
@@ -573,13 +565,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     flex-wrap: nowrap; /* keep them in one line */
   }
 
-  #pedalboardSelect,
-  #folderSelect,
-  #presetSelect {
-    flex: 0 0 33%;   /* force exactly 33% */
-    max-width: 33%;
-    min-width: 0;    /* avoid overflow */
-  }
+
 
 }
 
