@@ -221,7 +221,7 @@ html { box-sizing: content-box !important; }
 /* Pedal dropdowns, catalog */
 #pedalAddDropdownContainer { background: white; max-height: 300px; overflow-y: auto; width: 200px; z-index: 1000; }
 #catalog, #selected-pedals { margin-top: 1rem; min-height: 2rem; }
-#preset { display: flex; flex-wrap: wrap; gap: 10px; /*justify-content: center;*/ max-width: 100vw; white-space: normal; }
+#preset { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 100vw; white-space: normal; }
 #catalog { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 100vw; white-space: normal; }
 #pedalboard { display: flex; flex-direction: column; gap: 10px; align-items: center; }
 .pedal-catalog, .pedal { border-radius: 10px; padding: 12px; display: flex; flex-direction: column; align-items: center; position: relative; }
@@ -501,7 +501,18 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   position: absolute; right: -14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;
 }
 
-
+#zoom-controls {
+  position: fixed;
+  bottom: -25px;
+  right: 0px;
+  display: flex;
+  gap: 8px;
+  z-index: 9999;
+  margin-bottom: 25px;
+  padding: 15px 0px 15px 0px;
+  background-color: #ffffff;
+  width: 100%;
+}
 
 /* Desktop: keep everything in one line */
 #preset-controls {
@@ -513,6 +524,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 /* Mobile: stack selects vertically, keep buttons on the right of their related select */
 @media (max-width: 768px) {
+
+  #preset { display: flex; flex-wrap: wrap; gap: 10px; /*justify-content: center;*/ max-width: 100vw; white-space: normal; }
 
   /* Pedalboard select can remain full-width, no button */
   #pedalboardSelect {
