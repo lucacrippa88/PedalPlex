@@ -275,7 +275,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
 
   const result = await Swal.fire({
-    title: "Edit Preset",
+    title: "Edit Preset name and folder",
     html: htmlContent,
     showCancelButton: true,
     showDenyButton: true,
@@ -287,7 +287,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       const newName = document.getElementById("presetNameInput").value.trim();
       const folderId = document.getElementById("folderSelectInput").value;
       if (!newName) {
-        Swal.showValidationMessage("Preset name cannot be empty");
+        Swal.showValidationMessage("Preset name cannot be empty!");
         return false;
       }
       return { newName, folderId };
@@ -313,7 +313,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
           const folderId = document.getElementById("folderSelectInput").value;
 
           if (!newName) {
-            Swal.showValidationMessage("Preset name cannot be empty");
+            Swal.showValidationMessage("Preset name cannot be empty!");
             return;
           }
 
