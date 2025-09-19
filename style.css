@@ -162,15 +162,14 @@ header {
   color: #161616;
 }
 
+
+
 /* Page content */
 #page-content { padding-top: 64px; }
 .swal2-container { z-index: 99999 !important; }
 body { background: #2e2e2e; color: #fff; padding: 20px; font-family: 'IBM Plex Sans', sans-serif; }
 html { box-sizing: border-box !important; }
 *, *::before, *::after { box-sizing: inherit !important; }
-
-
-
 
 /* Auth container */
 .auth-container {
@@ -189,10 +188,11 @@ html { box-sizing: border-box !important; }
   padding: 10px 12px;
 }
 
-/* Submit button full width */
+/* Submit button – always regular size */
 #submitBtn {
-  width: 100% !important;
-  max-width: 100% !important;
+  width: auto !important;
+  max-width: none !important;
+  display: inline-block; /* keeps natural button size */
 }
 
 /* Password toggle stays inside input */
@@ -214,6 +214,7 @@ html { box-sizing: border-box !important; }
     font-size: 0.9rem;
   }
 }
+
 
 
 
