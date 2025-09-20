@@ -139,121 +139,6 @@ function getPedalHeight(height) {
 
 
 
-
-// // Function to render pedal controls dynamically
-// function renderPedalControls(pedal, $pedalDiv) {
-
-//     pedal.controls.forEach(controlRow => {
-//         const $row = $("<div>").addClass("row");
-
-//         // Used to correctly display controls
-//         if (pedal.type === "head") { $row.addClass("lowest-row"); }
-//         if (pedal.type === "pedal-inverted") { $row.addClass("lower-row"); }
-
-//         controlRow.row.forEach(control => {
-
-//             // Knobs (small, large, xlarge)
-//             if (["knob", "smallknob", "largeknob", "xlargeknob"].includes(control.type)) {
-//                 const isSmall = control.type === "smallknob";
-//                 const isLarge = control.type === "largeknob";
-//                 const isXLarge = control.type === "xlargeknob";
-
-//                 // Determine knob color and border based on control-specific override or pedal defaults
-//                 const knobColor = control["knob-color"] ?? pedal["knobs-color"];
-//                 const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
-//                 const knobIndicator = control["knob-indicator"] ?? pedal["knobs-indicator"];
-//                 const isThick = control.border === "thick";
-
-//                 const knob = $("<div>").addClass(isSmall ? "smallknob" : "knob").addClass(isLarge ? "largeknob" : "knob").addClass(isXLarge ? "xlargeknob" : "knob").toggleClass("thick", isThick)
-//                     .css({ background: knobColor, border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}` })
-//                     .css("--indicator-color", knobIndicator)
-//                     .attr("data-control-label", control.label);
-
-//                 // Tooltip management
-//                 const $tooltip = $("<div>")
-//                   .addClass("bx--tooltip bx--tooltip--top").attr("data-tooltip", "")
-//                   .css({ display: "none", position: "absolute", top: "38px", left: "50%", transform: "translateX(-50%)" });
-//                 const $caret = $("<span>").addClass("bx--tooltip__caret");
-//                 const $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
-//                 $tooltip.append($caret, $tooltipText);
-
-//                 const rotation = getRotationFromValue(control, control.value);
-//                 knob.data("rotation", rotation);
-//                 knob.css("transform", `rotate(${rotation}deg)`);
-
-//                 let $valueLabel = null;
-//                 if (control.values && Array.isArray(control.values)) { $valueLabel = $("<div>").addClass("knob-value-label").text(control.value); }
-
-//                 // Unified drag handler for mouse and touch
-//                 function startDrag(e) {
-//                     e.preventDefault(); // prevent scrolling on mobile
-
-//                     const startY = e.type.startsWith("touch") ? e.touches[0].pageY : e.pageY;
-//                     const startValue = control.value;
-
-//                     function onMove(e2) {
-//                         const currentY = e2.type.startsWith("touch") ? e2.touches[0].pageY : e2.pageY;
-//                         const delta = startY - currentY;
-
-//                         if (control.values && Array.isArray(control.values)) {
-//                             // Discrete knobs
-//                             const steps = Math.round(delta / 5);
-//                             let currentIndex = control.values.indexOf(startValue);
-//                             if (currentIndex === -1) currentIndex = 0;
-//                             let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
-//                             control.value = control.values[newIndex];
-//                         } else {
-//                             // Numeric knobs (1 decimal, less dense)
-//                             const min = control.min ?? 0;
-//                             const max = control.max ?? 100;
-//                             const steps = (delta / 5) / 2;
-//                             let newValue = startValue + steps;
-//                             newValue = Math.min(Math.max(newValue, min), max);
-//                             control.value = parseFloat(newValue.toFixed(1));
-//                         }
-
-//                         const newRotation = getRotationFromValue(control, control.value);
-//                         knob.data("rotation", newRotation);
-//                         knob.css("transform", `rotate(${newRotation}deg)`);
-//                         if ($valueLabel) $valueLabel.text(control.value);
-
-//                         // Update tooltip if present
-//                         if ($tooltipText) {
-//                             $tooltipText.text(control.value);
-//                             $tooltip.show();
-//                         }
-//                     }
-
-//                     function endDrag() {
-//                         $(document).off("mousemove.knob touchmove.knob", onMove);
-//                         $(document).off("mouseup.knob touchend.knob", endDrag);
-//                         if ($tooltip) $tooltip.hide();
-//                     }
-
-//                     $(document).on("mousemove.knob touchmove.knob", onMove);
-//                     $(document).on("mouseup.knob touchend.knob", endDrag);
-//                 }
-
-//                 // Bind both mouse and touch start
-//                 knob.on("mousedown touchstart", startDrag);
-
-
-//                 let $label;
-//                 if (control.position === "under-top" && control.type === "smallknob") {
-//                     $label = $("<div>").css({
-//                         position: "absolute", "margin-left": "4px", "margin-top": "45px", 
-//                         transform: "translateY(-50%)", "white-space": "nowrap", "font-size": "10px"
-//                     }).text(control.label);
-//                 } 
-//                 else {
-//                     $label = $("<div>").addClass("label-top").text(control.label);
-//                 }
-
-//                 const $container = $("<div>").addClass("knob-container").append(knob).css({ position: "relative" }).append(knob, $tooltip);;
-//                 $container.append($label);
-//                 if ($valueLabel) $container.append($valueLabel);
-//                 const $knobWrapper = $("<div>").append($label, $container);
-
 // Function to render pedal controls dynamically
 function renderPedalControls(pedal, $pedalDiv, editMode = false) {
     pedal.controls.forEach(controlRow => {
@@ -382,13 +267,19 @@ function renderPedalControls(pedal, $pedalDiv, editMode = false) {
                     .css({ position: "relative" })
                     .append(knob);
 
-                if (!editMode && $tooltip) {
-                    $container.append($tooltip);
-                }
+if (!editMode && $tooltip) {
+    $container.append($tooltip);
+}
 
-                $container.append($label);
-                if (!editMode && $valueLabel) $container.append($valueLabel); // Avoid appending knob value in edit mode
-                const $knobWrapper = $("<div>").append($label, $container);
+$container.append($label);
+
+// only append value label if not editMode
+if (!editMode && $valueLabel) {
+    $container.append($valueLabel);
+}
+
+const $knobWrapper = $("<div>").append($container);
+
 
                 if (typeof control.position === "string") {
                     const pos = control.position;
