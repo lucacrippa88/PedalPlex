@@ -186,7 +186,14 @@ function buildJSON() {
     const jsonString = JSON.stringify(pedal, null, 2);
     $("#json-output").val(jsonString);
     const $pedalDiv = $("#pedal-box");
-    $pedalDiv.empty().append(renderPedal(pedal));
+    $pedalDiv.empty();
+
+    const $rendered = renderPedal(pedal);
+    $pedalDiv.append($rendered);
+
+    // ✅ Attach knob/slider/tooltip handlers
+    renderPedalControls(pedal, $rendered);
+
 
     const hasMissingFields = !highlightRequiredFields();
 
