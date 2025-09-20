@@ -310,9 +310,10 @@ function renderPedalControls(pedal, $pedalDiv, editMode = false) {
                 knob.css("transform", `rotate(${rotation}deg)`);
 
                 let $valueLabel = null;
-                if (control.values && Array.isArray(control.values)) {
+                if (!editMode && control.values && Array.isArray(control.values)) {
                     $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
                 }
+
 
                 // Drag handler
                 function startDrag(e) {
@@ -386,7 +387,7 @@ function renderPedalControls(pedal, $pedalDiv, editMode = false) {
                 }
 
                 $container.append($label);
-                if ($valueLabel) $container.append($valueLabel);
+                if (!editMode && $valueLabel) $container.append($valueLabel); // Avoid appending knob value in edit mode
                 const $knobWrapper = $("<div>").append($label, $container);
 
                 if (typeof control.position === "string") {
