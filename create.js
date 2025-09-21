@@ -372,6 +372,36 @@ function highlightRequiredFields() {
 
 
 
+function updateInsideUI() {
+    const type = $("#inside-type-select").val();
+    const isFull = $("#pedal-inside-full-check").is(":checked");
+
+    if (type === "color") {
+        // Show Full checkbox + label
+        $("#pedal-inside-full-check, #pedal-inside-full-check-label").show();
+
+        // Border only if Full is checked
+        if (isFull) {
+            $("#pedal-inside-border, #pedal-inside-border-check, #pedal-inside-border-label").show();
+        } else {
+            $("#pedal-inside-border, #pedal-inside-border-check, #pedal-inside-border-label").hide();
+        }
+    } else {
+        // Image mode → hide Full, always show border
+        $("#pedal-inside-full-check, #pedal-inside-full-check-label").hide();
+        $("#pedal-inside-border, #pedal-inside-border-check, #pedal-inside-border-label").show();
+    }
+}
+
+
+// Attach global handlers ONCE
+$(document).on("change", "#inside-type-select", updateInsideUI);
+$(document).on("change", "#pedal-inside-full-check", updateInsideUI);
+
+
+
+
+
 
 
 function syncUIFromJSON(pedal) {
@@ -464,12 +494,14 @@ function syncUIFromJSON(pedal) {
             $("#inside-color-label").hide();
             $("#inside-image-label").show();
             $("#pedal-inside-image").val(insideVal);
+            updateInsideUI();
         } else {
             $("#inside-type-select").val("color");
             $("#inside-color-label").show();
             $("#inside-image-label").hide();
             $("#pedal-inside-color").val(insideVal.replace(" full", ""));
             $("#pedal-inside-full-check").prop("checked", insideVal.includes("full"));
+            updateInsideUI();
         }
     } else {
         // default if missing
@@ -489,36 +521,14 @@ function syncUIFromJSON(pedal) {
         $("#pedal-inside-border-check").prop("checked", false);
     }
 
-    // --- Helper: update Inside UI visibility ---
-    function updateInsideUI() {
-        const type = $("#inside-type-select").val();
-        const isFull = $("#pedal-inside-full-check").is(":checked");
 
-        if (type === "color") {
-            // Show full checkbox & label
-            $("#pedal-inside-full-check, #pedal-inside-full-check-label").show();
-
-            // Border controls depend on full checkbox
-            if (isFull) {
-                $("#pedal-inside-border, #pedal-inside-border-check").show();
-            } else {
-                $("#pedal-inside-border, #pedal-inside-border-check").hide();
-            }
-        } else {
-            // Image mode
-            $("#pedal-inside-full-check, #pedal-inside-full-check-label").hide();
-
-            // Border controls always visible in image mode
-            $("#pedal-inside-border, #pedal-inside-border-check").show();
-        }
-    }
 
     // Initial call to set visibility
     updateInsideUI();
 
     // Event handlers
-    $("#inside-type-select").on("change", updateInsideUI);
-    $("#pedal-inside-full-check").on("change", updateInsideUI);
+    // $("#inside-type-select").on("change", updateInsideUI);
+    // $("#pedal-inside-full-check").on("change", updateInsideUI);
 
 
 
@@ -682,10 +692,10 @@ function syncUIFromJSON(pedal) {
     }
 
     // --- Setup dynamic handlers for new controls ---
-    $("#pedal-inside-full-check").on("change", function() {
-        const isFull = $(this).is(":checked");
-        $("#pedal-inside-border, #pedal-inside-border-check").toggle(isFull);
-    });
+    // $("#pedal-inside-full-check").on("change", function() {
+    //     const isFull = $(this).is(":checked");
+    //     $("#pedal-inside-border, #pedal-inside-border-check").toggle(isFull);
+    // });
 
     // Author (read-only)
     if ($("#pedal-author").length) {
@@ -736,34 +746,34 @@ if ($("#pedal-published-button").length) {
     }, 0);
 
 
-    // After restoring inside-color / inside-image state
-    $("#inside-type-select").on("change", function() {
-        const type = $(this).val();
-        if (type === "color") {
-            $("#pedal-inside-full-check, #pedal-inside-full-check-label").show();
+    // // After restoring inside-color / inside-image state
+    // $("#inside-type-select").on("change", function() {
+    //     const type = $(this).val();
+    //     if (type === "color") {
+    //         $("#pedal-inside-full-check, #pedal-inside-full-check-label").show();
 
-            // Show/hide border depending on current Full checkbox state
-            if ($("#pedal-inside-full-check").is(":checked")) {
-                $("#pedal-inside-border, #pedal-inside-border-check").show();
-            } else {
-                $("#pedal-inside-border, #pedal-inside-border-check").hide();
-            }
-        } else {
-            // image mode
-            $("#pedal-inside-full-check, #pedal-inside-full-check-label").hide();
-            $("#pedal-inside-border, #pedal-inside-border-check").hide();
-        }
-    });
+    //         // Show/hide border depending on current Full checkbox state
+    //         if ($("#pedal-inside-full-check").is(":checked")) {
+    //             $("#pedal-inside-border, #pedal-inside-border-check").show();
+    //         } else {
+    //             $("#pedal-inside-border, #pedal-inside-border-check").hide();
+    //         }
+    //     } else {
+    //         // image mode
+    //         $("#pedal-inside-full-check, #pedal-inside-full-check-label").hide();
+    //         $("#pedal-inside-border, #pedal-inside-border-check").hide();
+    //     }
+    // });
 
-    // When the Full checkbox is toggled
-    $("#pedal-inside-full-check").on("change", function() {
-        const isFull = $(this).is(":checked");
-        if (isFull) {
-            $("#pedal-inside-border, #pedal-inside-border-check").show();
-        } else {
-            $("#pedal-inside-border, #pedal-inside-border-check").hide();
-        }
-    });
+    // // When the Full checkbox is toggled
+    // $("#pedal-inside-full-check").on("change", function() {
+    //     const isFull = $(this).is(":checked");
+    //     if (isFull) {
+    //         $("#pedal-inside-border, #pedal-inside-border-check").show();
+    //     } else {
+    //         $("#pedal-inside-border, #pedal-inside-border-check").hide();
+    //     }
+    // });
 
 
 }
@@ -785,3 +795,9 @@ $(document).on("change", ".ctrl-knob-type", function() {
         $ctrl.find(".ctrl-values-list, .ctrl-value-select").hide();
     }
 });
+
+
+
+
+$(document).on("change", "#inside-type-select", updateInsideUI);
+$(document).on("change", "#pedal-inside-full-check", updateInsideUI);
