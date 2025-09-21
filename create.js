@@ -492,8 +492,13 @@ function syncUIFromJSON(pedal) {
     } else {
         $("#pedal-inside-border").val("");
         $("#pedal-inside-border-check").prop("checked", false);
-        $("#pedal-inside-border, #pedal-inside-border-check").hide();
+        if ($("#pedal-inside-full-check").is(":checked")) {
+            $("#pedal-inside-border, #pedal-inside-border-check").show();
+        } else {
+            $("#pedal-inside-border, #pedal-inside-border-check").hide();
+        }
     }
+
 
 
     // --- Clear & rebuild controls ---
