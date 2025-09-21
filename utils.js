@@ -1,4 +1,7 @@
-// HELPER
+const editMode = window.isEditMode
+
+
+/ HELPER
 function rgbToHex(rgb) {
   const result = rgb.match(/\d+/g);
   if (!result || result.length < 3) return '#000000';
