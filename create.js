@@ -459,39 +459,54 @@ function syncUIFromJSON(pedal) {
         const isImage = /^(https?:\/\/|data:image\/|images\/)/i.test(insideVal);
 
         if (isImage) {
+            // Image mode
             $("#inside-type-select").val("image");
             $("#inside-color-label").hide();
             $("#inside-image-label").show();
             $("#pedal-inside-image").val(insideVal);
 
-            // hide "full" checkbox in image mode
-            $("#pedal-inside-full-check").prop("checked", false);
+            // Hide Full checkbox & label
+            $("#pedal-inside-full-check").prop("checked", false).hide();
             $("#pedal-inside-full-check-label").hide();
+
+            // Hide Inside Border controls
+            $("#pedal-inside-border").hide();
+            $("#pedal-inside-border-check").hide();
         } else {
+            // Color mode
             $("#inside-type-select").val("color");
             $("#inside-color-label").show();
             $("#inside-image-label").hide();
             $("#pedal-inside-color").val(insideVal.replace(" full", ""));
 
-            // show and restore "full" checkbox in color mode
+            // Show Full checkbox & label
             const isFull = insideVal.includes("full");
-            $("#pedal-inside-full-check").prop("checked", isFull);
+            $("#pedal-inside-full-check").prop("checked", isFull).show();
             $("#pedal-inside-full-check-label").show();
+
+            // Show or hide Inside Border depending on Full checkbox
+            if (isFull) {
+                $("#pedal-inside-border").show();
+                $("#pedal-inside-border-check").show();
+            } else {
+                $("#pedal-inside-border").hide();
+                $("#pedal-inside-border-check").hide();
+            }
         }
-
-        // Always restore "Full" checkbox state
-        // const isFull = insideVal.includes("full");
-        // $("#pedal-inside-full-check").prop("checked", isFull);
-        // $("#pedal-inside-full-check-label").show();
-
     } else {
-        // default if inside-color is missing
+        // Default if inside-color missing
         $("#inside-type-select").val("color");
         $("#inside-color-label").show();
         $("#inside-image-label").hide();
         $("#pedal-inside-color").val("");
-        $("#pedal-inside-full-check").prop("checked", false);
+
+        $("#pedal-inside-full-check").prop("checked", false).show();
+        $("#pedal-inside-full-check-label").show();
+
+        $("#pedal-inside-border").hide();
+        $("#pedal-inside-border-check").hide();
     }
+
 
     // Always restore inside-border if it exists in DB
     if (pedal["inside-border"] !== undefined && pedal["inside-border"] !== "") {
@@ -724,13 +739,32 @@ if ($("#pedal-published-button").length) {
     }, 0);
 
 
-    // After restoring inside-color / inside-image state in syncUIFromJSON
+    // After restoring inside-color / inside-image state
     $("#inside-type-select").on("change", function() {
-        if ($(this).val() === "color") {
-            $("#pedal-inside-full-check-label").show();
+        const type = $(this).val();
+        if (type === "color") {
+            $("#pedal-inside-full-check, #pedal-inside-full-check-label").show();
+
+            // Show/hide border depending on current Full checkbox state
+            if ($("#pedal-inside-full-check").is(":checked")) {
+                $("#pedal-inside-border, #pedal-inside-border-check").show();
+            } else {
+                $("#pedal-inside-border, #pedal-inside-border-check").hide();
+            }
         } else {
-            $("#pedal-inside-full-check").prop("checked", false);
-            $("#pedal-inside-full-check-label").hide();
+            // image mode
+            $("#pedal-inside-full-check, #pedal-inside-full-check-label").hide();
+            $("#pedal-inside-border, #pedal-inside-border-check").hide();
+        }
+    });
+
+    // When the Full checkbox is toggled
+    $("#pedal-inside-full-check").on("change", function() {
+        const isFull = $(this).is(":checked");
+        if (isFull) {
+            $("#pedal-inside-border, #pedal-inside-border-check").show();
+        } else {
+            $("#pedal-inside-border, #pedal-inside-border-check").hide();
         }
     });
 
