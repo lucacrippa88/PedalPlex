@@ -181,8 +181,6 @@ function renderPedalControls(pedal, $pedalDiv) {
                 let $tooltip = null;
                 let $tooltipText = null;
 
-                console.log("edit mode: "+editMode)
-
                 if (!editMode) {
                     $tooltip = $("<div>")
                         .addClass("bx--tooltip bx--tooltip--top")
