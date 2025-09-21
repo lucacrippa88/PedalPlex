@@ -174,6 +174,9 @@ function renderPedalControls(pedal, $pedalDiv, editMode = false) {
                 // Only create tooltip if not in edit mode
                 let $tooltip = null;
                 let $tooltipText = null;
+
+                console.log("edit mode: "+editMode)
+
                 if (!editMode) {
                     $tooltip = $("<div>")
                         .addClass("bx--tooltip bx--tooltip--top")
