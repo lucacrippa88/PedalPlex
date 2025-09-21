@@ -177,21 +177,21 @@ function renderPedalControls(pedal, $pedalDiv, editMode = false) {
 
                 console.log("edit mode: "+editMode)
 
-                if (!editMode) {
-                    $tooltip = $("<div>")
-                        .addClass("bx--tooltip bx--tooltip--top")
-                        .attr("data-tooltip", "")
-                        .css({
-                            display: "none",
-                            position: "absolute",
-                            top: "38px",
-                            left: "50%",
-                            transform: "translateX(-50%)"
-                        });
-                    const $caret = $("<span>").addClass("bx--tooltip__caret");
-                    $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
-                    $tooltip.append($caret, $tooltipText);
-                }
+                // if (!editMode) {
+                //     $tooltip = $("<div>")
+                //         .addClass("bx--tooltip bx--tooltip--top")
+                //         .attr("data-tooltip", "")
+                //         .css({
+                //             display: "none",
+                //             position: "absolute",
+                //             top: "38px",
+                //             left: "50%",
+                //             transform: "translateX(-50%)"
+                //         });
+                //     const $caret = $("<span>").addClass("bx--tooltip__caret");
+                //     $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
+                //     $tooltip.append($caret, $tooltipText);
+                // }
 
                 const rotation = getRotationFromValue(control, control.value);
                 knob.data("rotation", rotation);
