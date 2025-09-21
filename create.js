@@ -210,7 +210,7 @@ function buildJSON() {
     }
 
     if (hasMissingFields) {
-        $("#json-error").append(" Error: Required fields are missing!");
+        $("#json-error").append(" Error: Required fields are missing! ");
     }
 
 
@@ -223,7 +223,7 @@ function buildJSON() {
     });
 
     if (!ledFound) {
-        $("#json-error").append("Error: At least one LED is required!");
+        $("#json-error").append("Error: At least one LED is required! ");
         cssError += "Error: At least one LED is required!";
     }
 
@@ -463,11 +463,20 @@ function syncUIFromJSON(pedal) {
             $("#inside-color-label").hide();
             $("#inside-image-label").show();
             $("#pedal-inside-image").val(insideVal);
+
+            // hide "full" checkbox in image mode
+            $("#pedal-inside-full-check").prop("checked", false);
+            $("#pedal-inside-full-check-label").hide();
         } else {
             $("#inside-type-select").val("color");
             $("#inside-color-label").show();
             $("#inside-image-label").hide();
             $("#pedal-inside-color").val(insideVal.replace(" full", ""));
+
+            // show and restore "full" checkbox in color mode
+            const isFull = insideVal.includes("full");
+            $("#pedal-inside-full-check").prop("checked", isFull);
+            $("#pedal-inside-full-check-label").show();
         }
 
         // Always restore "Full" checkbox state
@@ -487,7 +496,7 @@ function syncUIFromJSON(pedal) {
     // Always restore inside-border if it exists in DB
     if (pedal["inside-border"] !== undefined && pedal["inside-border"] !== "") {
         $("#pedal-inside-border").val(pedal["inside-border"]);
-        $("#pedal-inside-border-check").prop("checked", true);   // ✅ important!
+        $("#pedal-inside-border-check").prop("checked", true);
         $("#pedal-inside-border, #pedal-inside-border-check").show();
     } else {
         $("#pedal-inside-border").val("");
@@ -713,6 +722,18 @@ if ($("#pedal-published-button").length) {
         isSyncing = false;
         buildJSON(); // rebuild once
     }, 0);
+
+
+    // After restoring inside-color / inside-image state in syncUIFromJSON
+    $("#inside-type-select").on("change", function() {
+        if ($(this).val() === "color") {
+            $("#pedal-inside-full-check-label").show();
+        } else {
+            $("#pedal-inside-full-check").prop("checked", false);
+            $("#pedal-inside-full-check-label").hide();
+        }
+    });
+
 
 }
 
