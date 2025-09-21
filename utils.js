@@ -234,6 +234,7 @@ function renderPedalControls(pedal, $pedalDiv, editMode = false) {
                             $tooltipText.text(control.value);
                             $tooltip.show();
                         }
+
                     }
 
                     function endDrag() {
@@ -267,18 +268,20 @@ function renderPedalControls(pedal, $pedalDiv, editMode = false) {
                     .css({ position: "relative" })
                     .append(knob);
 
-if (!editMode && $tooltip) {
-    $container.append($tooltip);
-}
+                if (!editMode && $tooltip) {
+                    $container.append($tooltip);
+                }
 
-$container.append($label);
+                $container.append($label);
 
-// only append value label if not editMode
-if (!editMode && $valueLabel) {
-    $container.append($valueLabel);
-}
+                // append knob value only in catalog mode
+                if (!editMode && $valueLabel) {
+                    $container.append($valueLabel);
+                }
 
-const $knobWrapper = $("<div>").append($container);
+                // wrapper should only wrap the container, not duplicate label
+                const $knobWrapper = $("<div>").append($container);
+
 
 
                 if (typeof control.position === "string") {
