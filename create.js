@@ -480,9 +480,9 @@ function syncUIFromJSON(pedal) {
         }
 
         // Always restore "Full" checkbox state
-        const isFull = insideVal.includes("full");
-        $("#pedal-inside-full-check").prop("checked", isFull);
-        $("#pedal-inside-full-check-label").show();
+        // const isFull = insideVal.includes("full");
+        // $("#pedal-inside-full-check").prop("checked", isFull);
+        // $("#pedal-inside-full-check-label").show();
 
     } else {
         // default if inside-color is missing
