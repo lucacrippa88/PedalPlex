@@ -58,7 +58,15 @@
 
     const token = localStorage.getItem('authToken');
     if (!token) {
-      window.location.href = '/PedalPlex/';
+      // Guest mode
+      $('#loadingMessage').hide();
+      $('#page-content').show();
+
+      window.currentUser = { role: 'guest', username: 'guest' };
+
+      if (typeof initNavPedalboard === 'function') initNavPedalboard('guest');
+      if (typeof initPedalboard === 'function') initPedalboard('guest');
+
       return;
     }
 
@@ -75,8 +83,9 @@
 
         window.currentUser = userFromServer;
 
-        if (typeof initNavPedalboard === 'function') initNavPedalboard();
+        if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
         if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
+
       },
       error: function(xhr) {
         console.error('Auth check failed:', xhr.status, xhr.responseText);

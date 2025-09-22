@@ -72,50 +72,7 @@
     }
   });
 });
-
-  // $(document).ready(function() {
-  //   if (window.location.protocol === 'file:') {
-  //     alert('Please run this app via a local HTTP server for full functionality.');
-
-  //     $('#loadingMessage').hide();
-  //     $('#page-content').hide();
-  //     return;
-  //   }
-
-  //   const token = localStorage.getItem('authToken');
-  //   if (!token) {
-  //     window.location.href = '/PedalPlex/';
-  //     return;
-  //   }
-
-  //   $.ajax({
-  //     url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
-  //     method: 'GET',
-  //     dataType: 'json',
-  //     headers: {
-  //       'Authorization': 'Bearer ' + token
-  //     },
-  //     success: function(userFromServer) {
-  //       $('#loadingMessage').hide(); 
-  //       $('#page-content').show();
-
-  //       window.currentUser = userFromServer;
-
-  //       if (typeof initNavCatalog === 'function') initNavCatalog(userFromServer.role);
-  //       if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
-  //     },
-  //     error: function(xhr) {
-  //       console.error('Auth check failed:', xhr.status, xhr.responseText);
-  //       if (xhr.status === 401) {
-  //         localStorage.removeItem('authToken');
-  //         window.location.href = '/PedalPlex/';
-  //       } else {
-  //         alert('Failed to verify authentication. Please try again.');
-  //       }
-  //     }
-  //   });
-  // });
-  </script>
+</script>
 
 
 </body>
