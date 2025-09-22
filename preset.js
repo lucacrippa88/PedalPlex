@@ -1120,33 +1120,31 @@ function initGuestMode() {
 
   const firstBoard = guestBoards[0];
 
-  // 1️⃣ Populate pedalboard select
+  // Populate pedalboard select (same as now)
   const $pedalboardSelect = $('#pedalboardSelect');
-  $pedalboardSelect.empty();
-  const option = $('<option>').val(0).text(firstBoard.board_name);
-  $pedalboardSelect.append(option);
+  $pedalboardSelect.empty().append(
+    $('<option>').val(0).text(firstBoard.board_name)
+  );
   $pedalboardSelect.prop('disabled', false);
 
-  // 2️⃣ Disable folder & preset selects and rename buttons
-  const $folderSelect = $('#folderSelect');
-  $folderSelect.empty();
-  // Add disabled "No folders" option for guest
-  $folderSelect.append('<option value="" disabled selected>-- No folders --</option>');
-  $folderSelect.prop('disabled', true);
-
-  $('#presetSelect').empty().prop('disabled', true);
+  $('#folderSelect, #presetSelect').empty().prop('disabled', true);
   $('#renameFolderBtn, #renamePresetBtn').prop('disabled', true).addClass('btn-disabled');
 
-  // 3️⃣ Disable nav buttons
   ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn']
     .forEach(id => { 
       const el = document.getElementById(id);
       if (el) { el.disabled = true; el.classList.add('btn-disabled'); }
     });
 
-  // 4️⃣ Render the pedalboard
-  if (typeof renderFullPedalboard === 'function') {
-    renderFullPedalboard(firstBoard.pedals);
+  // 🔑 Ensure catalog is loaded before rendering
+  function tryRender() {
+    if (window.catalogMap && Object.keys(window.catalogMap).length > 0) {
+      renderFullPedalboard(firstBoard.pedals);
+    } else {
+      setTimeout(tryRender, 100); // retry after 100ms
+    }
   }
+  tryRender();
 }
+
 
