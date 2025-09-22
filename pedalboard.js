@@ -939,3 +939,17 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
 
 
 
+// Returns the currently selected pedalboard object (with pedals)
+function getCurrentPedalboard() {
+  // For logged-in users
+  if (window.currentUser?.role !== "guest") {
+    return window.pedalboard;
+  }
+
+  // For guests: ensure we have something to return
+  if (!window.pedalboard) {
+    return { board_name: "Guest Board", pedals: [] };
+  }
+
+  return window.pedalboard;
+}
