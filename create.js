@@ -529,11 +529,6 @@ function syncUIFromJSON(pedal) {
     // Initial call to set visibility
     updateInsideUI();
 
-    // Event handlers
-    // $("#inside-type-select").on("change", updateInsideUI);
-    // $("#pedal-inside-full-check").on("change", updateInsideUI);
-
-
 
     // --- Clear & rebuild controls ---
     $("#controls").empty();
@@ -694,12 +689,6 @@ function syncUIFromJSON(pedal) {
         });
     }
 
-    // --- Setup dynamic handlers for new controls ---
-    // $("#pedal-inside-full-check").on("change", function() {
-    //     const isFull = $(this).is(":checked");
-    //     $("#pedal-inside-border, #pedal-inside-border-check").toggle(isFull);
-    // });
-
     // Author (read-only)
     if ($("#pedal-author").length) {
         $("#pedal-author").val(pedal.author || "unknown");
@@ -747,37 +736,6 @@ if ($("#pedal-published-button").length) {
         isSyncing = false;
         buildJSON(); // rebuild once
     }, 0);
-
-
-    // // After restoring inside-color / inside-image state
-    // $("#inside-type-select").on("change", function() {
-    //     const type = $(this).val();
-    //     if (type === "color") {
-    //         $("#pedal-inside-full-check, #pedal-inside-full-check-label").show();
-
-    //         // Show/hide border depending on current Full checkbox state
-    //         if ($("#pedal-inside-full-check").is(":checked")) {
-    //             $("#pedal-inside-border, #pedal-inside-border-check").show();
-    //         } else {
-    //             $("#pedal-inside-border, #pedal-inside-border-check").hide();
-    //         }
-    //     } else {
-    //         // image mode
-    //         $("#pedal-inside-full-check, #pedal-inside-full-check-label").hide();
-    //         $("#pedal-inside-border, #pedal-inside-border-check").hide();
-    //     }
-    // });
-
-    // // When the Full checkbox is toggled
-    // $("#pedal-inside-full-check").on("change", function() {
-    //     const isFull = $(this).is(":checked");
-    //     if (isFull) {
-    //         $("#pedal-inside-border, #pedal-inside-border-check").show();
-    //     } else {
-    //         $("#pedal-inside-border, #pedal-inside-border-check").hide();
-    //     }
-    // });
-
 
 }
 
