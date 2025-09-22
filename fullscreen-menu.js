@@ -116,8 +116,10 @@
 
 // });
 
+
+
 // ==========================
-// Song quotes array (global)
+// Song quotes array
 // ==========================
 const songQuotes = [
   "Rock 'n' roll will never die!",
@@ -165,7 +167,6 @@ window.fullscreenMenuHtml = `
     </span>
     <br><br>
 
-    <!-- Buttons -->
     <button id="profileBtn" class="bx--btn bx--btn--secondary"
       style="display: none; align-items: center; gap: 0.5rem;">
       <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32" width="16" height="16">
@@ -214,16 +215,20 @@ $(document).ready(function () {
     $('#fullscreenMenu').addClass('active');
   });
 
-  // ==========================
-  // Show/hide buttons based on user
-  // ==========================
-  if (window.currentUser && window.currentUser.role !== "guest") {
-    $("#loginFullscreenBtn, #guestLoginMessage").hide();
-    $("#profileBtn, #logoutBtn").show();
-  } else {
-    $("#loginFullscreenBtn, #guestLoginMessage").show();
-    $("#profileBtn, #logoutBtn").hide();
-  }
+  // Poll for window.currentUser every 100ms until defined
+  const checkUserInterval = setInterval(() => {
+    if (window.currentUser !== undefined) {
+      clearInterval(checkUserInterval);
+
+      if (window.currentUser.role && window.currentUser.role !== "guest") {
+        $("#loginFullscreenBtn, #guestLoginMessage").hide();
+        $("#profileBtn, #logoutBtn").show();
+      } else {
+        $("#loginFullscreenBtn, #guestLoginMessage").show();
+        $("#profileBtn, #logoutBtn").hide();
+      }
+    }
+  }, 100);
 
   // Profile button
   $(document).on('click', '#profileBtn', function () {
@@ -256,5 +261,3 @@ $(document).ready(function () {
     window.location.href = '/PedalPlex/';
   });
 });
-
-
