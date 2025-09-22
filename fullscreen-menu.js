@@ -167,24 +167,28 @@ window.fullscreenMenuHtml = `
     </span>
     <br><br>
 
-    <button id="profileBtn" class="bx--btn bx--btn--secondary"
-      style="display: none; align-items: center; gap: 0.5rem;">
-      <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32" width="16" height="16">
-        <path d="M16 16a7 7 0 1 0-7-7 7 7 0 0 0 7 7zm0 2c-4.42 0-13 2.21-13 6.61V28h26v-3.39C29 20.21 20.42 18 16 18z"/>
+    <button id="profileBtn" class="bx--btn bx--btn--secondary" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+        <path d="M16 4a5 5 0 11-5 5 5 5 0 015-5m0-2a7 7 0 107 7A7 7 0 0016 2zM26 30H24V25a5 5 0 00-5-5H13a5 5 0 00-5 5v5H6V25a7 7 0 017-7h6a7 7 0 017 7z"/>
       </svg>
       Your profile
     </button>
+
     <br><br>
-    <button id="logoutBtn" class="bx--btn bx--btn--primary"
-      style="display: none; align-items: center; gap: 0.5rem;">
-      Logout
-      <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32" width="16" height="16">
-        <path d="M20 23v-2h-8V11h8V9h-8a2.0023 2.0023 0 0 0-2 2v10a2.0023 2.0023 0 0 0 2 2Zm7-7-5-5v3H12v4h10v3Z"/>
+
+    <button id="logoutBtn" class="bx--btn bx--btn--primary" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+        <path d="M6,30H18a2.0023,2.0023,0,0,0,2-2V25H18v3H6V4H18V7h2V4a2.0023,2.0023,0,0,0-2-2H6A2.0023,2.0023,0,0,0,4,4V28A2.0023,2.0023,0,0,0,6,30Z"/>
+        <path d="M20.586 20.586L24.172 17 10 17 10 15 24.172 15 20.586 11.414 22 10 28 16 22 22 20.586 20.586z"/>
       </svg>
+      Login
     </button>
 
-    <button id="loginFullscreenBtn" class="bx--btn bx--btn--primary"
-      style="display: none; align-items: center; gap: 0.5rem;">
+    <button id="loginFullscreenBtn" class="bx--btn bx--btn--primary" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+        <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
+        <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
+      </svg>
       Login
     </button>
   </div>
