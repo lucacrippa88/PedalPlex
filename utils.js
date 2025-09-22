@@ -1243,6 +1243,26 @@ function filterPedalsWithColoredLeds(pedalsObj) {
 
 
 
+// Load guest pedalboard from localstorage
+function loadGuestPedalboard() {
+  const stored = localStorage.getItem('guestPedalboard');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      // Assuming only 1 board for guest
+      window.pedalboard = parsed[0] || { pedals: [] };
+      console.log("Loaded pedalboard from localStorage for guest", window.pedalboard);
+    } catch (err) {
+      console.error("Failed to parse guestPedalboard", err);
+      window.pedalboard = { pedals: [] };
+    }
+  } else {
+    window.pedalboard = { pedals: [] };
+  }
+}
+
+
+
 // Render full pedalboard in preset page
 async function renderFullPedalboard() {
   if (!resultsDiv) {
