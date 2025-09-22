@@ -7,12 +7,42 @@ let currentPresetName = null;
 window.allPedalboards = [];
 
 function initPreset() {
+    const isGuest = !window.currentUser;
     const userId = window.currentUser?.userid;
     resultsDiv = document.getElementById("page-content");
 
     window.catalog = [];
     window.pedalboard = { pedals: [] };
     window.presetMap = {};
+
+    if (isGuest) {
+        // Load pedalboard state from localStorage if present
+        const savedBoardId = localStorage.getItem('lastPedalboardId');
+        const savedBoardState = savedBoardId ? localStorage.getItem(`pedalboard_state_${savedBoardId}`) : null;
+
+        window.pedalboard = savedBoardState
+            ? JSON.parse(savedBoardState)
+            : { _id: 'guest_board', board_name: 'Guest Board', pedals: [] };
+
+        // Disable pedalboard select & preset/folder controls
+        ['pedalboardSelect','presetSelect','folderSelect','renamePresetBtn','savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.disabled = true;
+                el.classList.add('btn-disabled');
+            }
+        });
+
+        renderFullPedalboard();
+
+        // Load guest presets from localStorage if any
+        window.presets = JSON.parse(localStorage.getItem(`presets_${window.pedalboard._id}`) || "[]");
+        window.presetMap = {};
+        window.presets.forEach(p => { if(p._id) window.presetMap[p._id] = p; });
+
+        populatePresetDropdownByFolder('default');
+        return; // Skip server fetches
+    }
 
     // Show loader overlay
     document.getElementById("pageLoader").style.display = "flex";
