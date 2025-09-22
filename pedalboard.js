@@ -970,7 +970,3 @@ function saveGuestPedalboard() {
   window.allPedalboards = guestBoards;
   Swal.fire("Saved!", "Your pedalboard is temporarily saved locally.", "success");
 }
-
-
-
-console.log(window.pedalboard)
