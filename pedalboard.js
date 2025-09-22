@@ -514,7 +514,7 @@ function openEditPedalModal(pbPedal) {
           <!-- Rotation Dropdown (no Carbon classes) -->
           <div style="flex: 1;">
             <label for="rotationSelect" class="bx--label">Rotation</label>
-            <select id="rotationSelect" style="width: 100%; padding: 0.5em; border: 1px solid #8d8d8d; border-radius: 0.25em;">
+            <select id="rotationSelect" style="width: 100%; padding: 0.5em; border: 1px solid #8d8d8d; border-radius: 0.25em; height: 40px; font-size: initial;">
               <option value="0" ${pbPedal.rotation === 0 ? 'selected' : ''}>0°</option>
               <option value="90" ${pbPedal.rotation === 90 ? 'selected' : ''}>90°</option>
               <option value="180" ${pbPedal.rotation === 180 ? 'selected' : ''}>180°</option>
@@ -526,7 +526,7 @@ function openEditPedalModal(pbPedal) {
           <div style="flex: 1;">
             <label for="rowInput" class="bx--label">Row</label>
             <input id="rowInput" type="number" min="1" value="${pbPedal.row}" 
-              style="width: 100%; padding: 0.5em; border: 1px solid #8d8d8d; border-radius: 0.25em;">
+              style="width: 100%; padding: 0.5em; border: 1px solid #8d8d8d; border-radius: 0.25em; font-size: initial; height: 24px;">
           </div>
 
         </div>
