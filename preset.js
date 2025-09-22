@@ -1060,3 +1060,44 @@ async function createPresetOnServer(presetData) {
     return null;
   }
 }
+
+
+
+
+
+
+function initGuestMode() {
+  const stored = localStorage.getItem('guestPedalboard');
+  if (!stored) return;
+
+  let guestBoards;
+  try { guestBoards = JSON.parse(stored); } 
+  catch (e) { console.error('Invalid guestPedalboard', e); return; }
+
+  if (!Array.isArray(guestBoards) || guestBoards.length === 0) return;
+
+  const firstBoard = guestBoards[0];
+
+  // 1️⃣ Populate pedalboard select
+  const $pedalboardSelect = $('#pedalboardSelect');
+  $pedalboardSelect.empty();
+  const option = $('<option>').val(0).text(firstBoard.board_name);
+  $pedalboardSelect.append(option);
+  $pedalboardSelect.prop('disabled', false); // selectable but only one option
+
+  // 2️⃣ Disable folder & preset selects and rename buttons
+  $('#folderSelect, #presetSelect').empty().prop('disabled', true);
+  $('#renameFolderBtn, #renamePresetBtn').prop('disabled', true).addClass('btn-disabled');
+
+  // 3️⃣ Disable nav buttons (already done in initNavPreset), but reinforce if needed
+  ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn']
+    .forEach(id => { 
+      const el = document.getElementById(id);
+      if (el) { el.disabled = true; el.classList.add('btn-disabled'); }
+    });
+
+  // 4️⃣ Render the pedalboard
+  if (typeof renderFullPedalboard === 'function') {
+    renderFullPedalboard(firstBoard.pedals); // use pedals array directly
+  }
+}
