@@ -29,26 +29,6 @@ function setupPedalboardDropdownAndRender() {
 
 
 
-// function initPedalboard(userRole) {
-//   const userId = window.currentUser?.userid;
-//   const resultsDiv = document.getElementById("pedalboard");
-
-//   window.catalog = [];
-//   window.pedalboard = {
-//     pedals: []
-//   };
-
-//   // Show loading spinner
-//   resultsDiv.innerHTML = `
-//     <div class="bx--loading-overlay">
-//       <div class="bx--loading" role="status">
-//         <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-//           <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-//           <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-//         </svg>
-//       </div>
-//     </div>`;
-
 function initPedalboard(userRole) {
   const userId = window.currentUser?.userid;
   const resultsDiv = document.getElementById("pedalboard");
@@ -133,27 +113,51 @@ function initPedalboard(userRole) {
     })
     .then(data => {
 
-  // --- GUEST USER CHECK ---
-  if (userRole === 'guest') {
-    const savedBoards = localStorage.getItem('guestPedalboard');
-    const boards = savedBoards ? JSON.parse(savedBoards) : [];
+// --- GUEST USER CHECK ---
+if (userRole === 'guest') {
+  const savedBoard = localStorage.getItem('guestPedalboard');
 
-    if (boards.length === 0) {
-      $("#pedalboard-controls").css("display", "none");
-      resultsDiv.innerHTML = `
-        <div style="text-align: center; margin-top: 40px;">
-          <p style="font-size: 1.1em; margin-bottom: 20px;">
-            No pedalboards found. Create a new one!
-          </p>
-          <button id="createBtn" class="bx--btn bx--btn--secondary">Create pedalboard</button>
-        </div>`;
-      window.allPedalboards = [];
-    } else {
-      window.allPedalboards = boards;
-      setupPedalboardDropdownAndRender();
-    }
-    return; // stop further logged-in server fetch
+  if (!savedBoard) {
+    $("#pedalboard-controls").css("display", "none");
+    resultsDiv.innerHTML = `
+      <div style="text-align: center; margin-top: 40px;">
+        <p style="font-size: 1.1em; margin-bottom: 20px;">
+          No pedalboard found. Create a new one!
+        </p>
+        <button id="createBtn" class="bx--btn bx--btn--secondary">Create pedalboard</button>
+      </div>`;
+    window.allPedalboards = [];
+    return;
   }
+
+  // Wrap single object in array for consistency
+  const board = JSON.parse(savedBoard);
+  window.allPedalboards = [board];
+
+  // Show controls
+  $("#pedalboard-controls").css("display", "inline-flex");
+
+  // Populate dropdown (even if it's only one option)
+  const dropdown = document.getElementById('pedalboardSelect');
+  dropdown.innerHTML = '';
+  const option = document.createElement('option');
+  option.value = 0;
+  option.textContent = board.board_name || "Guest Pedalboard";
+  dropdown.appendChild(option);
+
+  // Select first (and only) board
+  window.pedalboard = board;
+  renderPedalboard();
+
+  dropdown.addEventListener('change', (e) => {
+    const idx = parseInt(e.target.value, 10);
+    window.pedalboard = window.allPedalboards[idx];
+    renderPedalboard();
+  });
+
+  return; // stop here (don’t hit server fetch)
+}
+
 
   // --- EXISTING LOGGED-IN USER LOGIC ---
   if (!data.docs || !Array.isArray(data.docs) || data.docs.length === 0) {
@@ -640,15 +644,10 @@ function savePedalboard() {
 
   // --- GUEST USER SAVE ---
   if (window.currentUser?.role === 'guest') {
-    localStorage.setItem('guestPedalboard', JSON.stringify(window.allPedalboards));
-    Swal.fire({
-      icon: 'success',
-      title: 'Pedalboard saved locally!',
-      timer: 1200,
-      showConfirmButton: false
-    });
+    saveGuestPedalboard();
     return;
   }
+
 
   // --- LOGGED-IN USER SAVE (existing fetch) ---
   const pedalboardToSave = window.allPedalboards[selectedBoardIndex];
@@ -953,3 +952,14 @@ function getCurrentPedalboard() {
 
   return window.pedalboard;
 }
+
+
+// Local pedalboard save
+function saveGuestPedalboard() {
+  const board = getCurrentPedalboard();
+  const guestBoards = [board]; // always save as array
+  localStorage.setItem("guestPedalboard", JSON.stringify(guestBoards));
+  window.allPedalboards = guestBoards;
+  Swal.fire("Saved!", "Your pedalboard is temporarily saved locally.", "success");
+}
+
