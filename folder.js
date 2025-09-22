@@ -44,7 +44,7 @@ function populateFolderDropdown() {
   const folderSelect = document.getElementById('folderSelect');
   if (!folderSelect) return;
 
-  folderSelect.innerHTML = '';
+  folderSelect.innerHTML = '-- No folders --';
 
   // Always add a synthetic "Default" entry at the top
   const defaultOption = document.createElement("option");
