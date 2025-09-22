@@ -219,15 +219,17 @@ $(document).ready(function () {
     $('#fullscreenMenu').addClass('active');
   });
 
-  // Poll for window.currentUser every 100ms until defined
+  // Safe check for currentUser
   const checkUserInterval = setInterval(() => {
     if (window.currentUser !== undefined) {
       clearInterval(checkUserInterval);
 
-      if (window.currentUser.role && window.currentUser.role !== "guest") {
+      // If logged-in user exists and role is NOT guest
+      if (window.currentUser && window.currentUser.role && window.currentUser.role !== "guest") {
         $("#loginFullscreenBtn, #guestLoginMessage").hide();
         $("#profileBtn, #logoutBtn").show();
       } else {
+        // Guest mode
         $("#loginFullscreenBtn, #guestLoginMessage").show();
         $("#profileBtn, #logoutBtn").hide();
       }
@@ -236,28 +238,40 @@ $(document).ready(function () {
 
   // Profile button
   $(document).on('click', '#profileBtn', function () {
-    window.location.href = 'profile';
+    // Only allow if user exists
+    if (window.currentUser && window.currentUser.role !== "guest") {
+      window.location.href = 'profile';
+    } else {
+      Swal.fire({
+        icon: 'info',
+        title: 'Guest mode',
+        text: 'Please log in to access your profile.',
+        confirmButtonText: 'OK'
+      });
+    }
   });
 
   // Logout button
   $(document).on('click', '#logoutBtn', function () {
-    Swal.fire({
-      title: 'Are you sure you want to logout?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Logout',
-      cancelButtonText: 'Cancel',
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--primary',
-        cancelButton: 'bx--btn bx--btn--secondary'
-      },
-      buttonsStyling: false
-    }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.removeItem('authToken');
-        window.location.href = '/PedalPlex/';
-      }
-    });
+    if (window.currentUser && window.currentUser.role !== "guest") {
+      Swal.fire({
+        title: 'Are you sure you want to logout?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Logout',
+        cancelButtonText: 'Cancel',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary',
+          cancelButton: 'bx--btn bx--btn--secondary'
+        },
+        buttonsStyling: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem('authToken');
+          window.location.href = '/PedalPlex/';
+        }
+      });
+    }
   });
 
   // Login button for guest
@@ -265,3 +279,4 @@ $(document).ready(function () {
     window.location.href = '/PedalPlex/';
   });
 });
+
