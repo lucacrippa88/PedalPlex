@@ -158,10 +158,23 @@
     }
 
     const token = localStorage.getItem('authToken');
+
     if (!token) {
-      window.location.href = '/PedalPlex/';
+      console.warn('No auth token found — initializing guest mode.');
+
+      window.currentUser = null; // no user
+      $('#loadingMessage').hide();
+      $('#page-content').show();        // show the page
+      $('#preset-controls').show();     // show controls
+      if (typeof initNavPreset === 'function') initNavPreset();
+      if (typeof initPreset === 'function') initPreset();
+
+      // disable save/create/add folder buttons
+      $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn').prop('disabled', true).addClass('btn-disabled');
+
       return;
     }
+
 
     $.ajax({
       url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
