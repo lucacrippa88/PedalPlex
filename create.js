@@ -372,26 +372,42 @@ function highlightRequiredFields() {
 
 
 
-function updateInsideUI() {
-    const type = $("#inside-type-select").val();
-    const isFull = $("#pedal-inside-full-check").is(":checked");
 
-    if (type === "color") {
-        // Show Full checkbox + label
-        $("#pedal-inside-full-check, #pedal-inside-full-check-label").show();
+$(function() {
+    function updateInsideUI() {
+        const type = $("#inside-type-select").val();
+        const isFull = $("#pedal-inside-full-check").is(":checked");
 
-        // Border only if Full is checked
-        if (isFull) {
-            $("#pedal-inside-border, #pedal-inside-border-check, #pedal-inside-border-label").show();
+        if (type === "color") {
+            $("#inside-color-label").show();
+            $("#inside-image-label").hide();
+
+            $("#pedal-inside-full-check-label").show();
+
+            if (isFull) {
+                $("#pedal-inside-border-label").show();
+            } else {
+                $("#pedal-inside-border-label").hide();
+            }
         } else {
-            $("#pedal-inside-border, #pedal-inside-border-check, #pedal-inside-border-label").hide();
+            // Image mode
+            $("#inside-color-label").hide();
+            $("#inside-image-label").show();
+
+            $("#pedal-inside-full-check-label").hide();
+            $("#pedal-inside-border-label").show(); // always show in image mode
         }
-    } else {
-        // Image mode → hide Full, always show border
-        $("#pedal-inside-full-check, #pedal-inside-full-check-label").hide();
-        $("#pedal-inside-border, #pedal-inside-border-check, #pedal-inside-border-label").show();
     }
-}
+
+    // Bind events
+    $("#inside-type-select").on("change", updateInsideUI);
+    $("#pedal-inside-full-check").on("change", updateInsideUI);
+
+    // Run once at page load
+    updateInsideUI();
+});
+
+
 
 
 // Attach global handlers ONCE
