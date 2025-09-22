@@ -1248,9 +1248,8 @@ function loadGuestPedalboard() {
   const stored = localStorage.getItem('guestPedalboard');
   if (stored) {
     try {
-      const parsed = JSON.parse(stored);
-      // Assuming only 1 board for guest
-      window.pedalboard = parsed[0] || { pedals: [] };
+      const guestBoards = JSON.parse(stored);
+      window.pedalboard = guestBoards[0] || { pedals: [] };
       console.log("Loaded pedalboard from localStorage for guest", window.pedalboard);
     } catch (err) {
       console.error("Failed to parse guestPedalboard", err);
@@ -1265,10 +1264,10 @@ function loadGuestPedalboard() {
 
 // Render full pedalboard in preset page
 async function renderFullPedalboard() {
-  if (!resultsDiv) {
-    console.error("resultsDiv not initialized yet");
-    return;
-  }
+  // if (!resultsDiv) {
+  //   console.error("resultsDiv not initialized yet");
+  //   return;
+  // }
   const container = document.getElementById('preset');
   if (!container) {
     console.warn('No #pedalboard container found');
@@ -1276,49 +1275,20 @@ async function renderFullPedalboard() {
   }
   container.innerHTML = '';
 
-  // if (!window.pedalboard.pedals || window.pedalboard.pedals.length === 0) {
-  //   container.innerHTML = `
-  //     <div style="text-align: center; margin-top: 40px;">
-  //       <p style="font-size: 1.1em; margin-bottom: 20px;">
-  //         Pedalboard is empty.
-  //       </p>
-  //       <button
-  //         id="createBtn"
-  //         class="bx--btn bx--btn--secondary"
-  //         type="button"
-  //         aria-label="Go to Pedalboard"
-  //         style="
-  //           display: inline-flex;
-  //           align-items: center;
-  //           gap: 0.5rem;
-  //           margin: 0 auto;
-  //         ">
-  //         <svg xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 32 32" fill="currentColor">
-  //           <path d="M18 6L16.59 7.41 23.17 14H4v2H23.17l-6.58 6.59L18 26l10-10z"/>
-  //         </svg>
-  //         Go to pedalboard
-  //       </button>
-  //     </div>
-  //   `;
-
-  //   document.getElementById('createBtn').addEventListener('click', function () {
-  //     window.location.href = 'pedalboard';
-  //   });
-
-  //   return;
-  // }
-  // Handle guest: load pedalboard from localStorage if needed
   // Guest mode fallback
   if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals) || window.pedalboard.pedals.length === 0) {
     const stored = localStorage.getItem('guestPedalboard');
     if (stored) {
       try {
-        const guestBoard = JSON.parse(stored);
-        // Ensure pedals array exists
-        window.pedalboard = {
-          ...guestBoard,
-          pedals: Array.isArray(guestBoard.pedals) ? guestBoard.pedals : []
-        };
+        // const guestBoard = JSON.parse(stored);
+        // // Ensure pedals array exists
+        // window.pedalboard = {
+        //   ...guestBoard,
+        //   pedals: Array.isArray(guestBoard.pedals) ? guestBoard.pedals : []
+        // };
+        const guestBoards = JSON.parse(stored);
+        const guestBoard = guestBoards[0] || { pedals: [] };
+        window.pedalboard = guestBoard;
         console.log('Loaded pedalboard from localStorage for guest');
       } catch (err) {
         console.error('Failed to parse guestPedalboard from localStorage', err);
