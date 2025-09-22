@@ -1,4 +1,7 @@
 function initNavPreset() {
+
+  const isGuest = !window.currentUser;
+
   const navHtml = `
 <header style="display: flex; align-items: center; justify-content: space-between;">
   <!-- Left: menu toggle + title -->
@@ -63,6 +66,25 @@ function initNavPreset() {
 
   $("body").prepend(navHtml);
   $("body").append(window.fullscreenMenuHtml);
+
+   // Disable Save/Create/Folder buttons for guests
+    if (isGuest) {
+        ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.disabled = true;
+                el.classList.add('btn-disabled');
+            }
+        });
+
+        // Attach info modal for guests
+        ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('click', () => {
+                Swal.fire("Guest Mode", "Preset editing is disabled in guest mode.", "info");
+            });
+        });
+    }
 
   // Fullscreen menu toggle
   $("#menuToggle").on("click", function () {
