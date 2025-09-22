@@ -192,6 +192,10 @@
 
         if (typeof initNavPreset === 'function') initNavPreset();
         if (typeof initPreset === 'function') initPreset();
+
+        initGuestMode();
+
+        return;
       },
       error: function(xhr) {
         console.error('Auth check failed:', xhr.status, xhr.responseText);
