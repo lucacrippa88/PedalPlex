@@ -1138,12 +1138,26 @@ function initGuestMode() {
 
   // 🔑 Ensure catalog is loaded before rendering
   function tryRender() {
-    if (window.catalogMap && Object.keys(window.catalogMap).length > 0) {
-      renderFullPedalboard(firstBoard.pedals);
-    } else {
-      setTimeout(tryRender, 100); // retry after 100ms
-    }
+  if (!window.catalogMap || Object.keys(window.catalogMap).length === 0) {
+    return setTimeout(tryRender, 100); // keep waiting
   }
+
+  const validPedals = firstBoard.pedals.filter(p => {
+    if (!window.catalogMap[p.pedal_id]) {
+      console.warn("Skipping missing pedal:", p.pedal_id);
+      return false;
+    }
+    return true;
+  });
+
+  if (validPedals.length === 0) {
+    console.error("No valid pedals found in catalog for guest board:", firstBoard.board_name);
+    return;
+  }
+
+  renderFullPedalboard(validPedals);
+}
+
   tryRender();
 }
 
