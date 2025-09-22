@@ -373,39 +373,26 @@ function highlightRequiredFields() {
 
 
 
-$(function() {
-    function updateInsideUI() {
-        const type = $("#inside-type-select").val();
-        const isFull = $("#pedal-inside-full-check").is(":checked");
+// keep at bottom of create.js
+function updateInsideUI() {
+    const type = $("#inside-type-select").val();
+    const isFull = $("#pedal-inside-full-check").is(":checked");
 
-        if (type === "color") {
-            $("#inside-color-label").show();
-            $("#inside-image-label").hide();
-
-            $("#pedal-inside-full-check-label").show();
-
-            if (isFull) {
-                $("#pedal-inside-border-label").show();
-            } else {
-                $("#pedal-inside-border-label").hide();
-            }
+    if (type === "color") {
+        $("#pedal-inside-full-check, #pedal-inside-full-check-label").show();
+        if (isFull) {
+            $("#pedal-inside-border, #pedal-inside-border-check, #pedal-inside-border-label").show();
         } else {
-            // Image mode
-            $("#inside-color-label").hide();
-            $("#inside-image-label").show();
-
-            $("#pedal-inside-full-check-label").hide();
-            $("#pedal-inside-border-label").show(); // always show in image mode
+            $("#pedal-inside-border, #pedal-inside-border-check, #pedal-inside-border-label").hide();
         }
+    } else {
+        $("#pedal-inside-full-check, #pedal-inside-full-check-label").hide();
+        $("#pedal-inside-border, #pedal-inside-border-check, #pedal-inside-border-label").show();
     }
+}
 
-    // Bind events
-    $("#inside-type-select").on("change", updateInsideUI);
-    $("#pedal-inside-full-check").on("change", updateInsideUI);
-
-    // Run once at page load
-    updateInsideUI();
-});
+// expose to global scope so syncUIFromJSON can see it
+window.updateInsideUI = updateInsideUI;
 
 
 
