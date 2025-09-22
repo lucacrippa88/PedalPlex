@@ -166,15 +166,14 @@
       $('#loadingMessage').hide();
       $('#page-content').show();        // show the page
       $('#preset-controls').show();     // show controls
-
       if (typeof initNavPreset === 'function') initNavPreset();
       if (typeof initPreset === 'function') initPreset();
 
-      if (typeof initGuestMode === 'function') initGuestMode(); // <-- render local pedalboard
+      // disable save/create/add folder buttons
+      $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn').prop('disabled', true).addClass('btn-disabled');
 
       return;
     }
-
 
 
     $.ajax({
@@ -193,10 +192,6 @@
 
         if (typeof initNavPreset === 'function') initNavPreset();
         if (typeof initPreset === 'function') initPreset();
-
-        initGuestMode();
-
-        return;
       },
       error: function(xhr) {
         console.error('Auth check failed:', xhr.status, xhr.responseText);
