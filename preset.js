@@ -6,6 +6,15 @@ let currentPresetName = null;
 
 window.allPedalboards = [];
 
+$(document).ready(function() {
+  if (!localStorage.getItem('authToken')) {
+    console.warn("No auth token found — initializing guest mode.");
+    loadGuestPedalboard();
+  }
+  
+  renderFullPedalboard();
+});
+
 function initPreset() {
     const isGuest = !window.currentUser;
     const userId = window.currentUser?.userid;
