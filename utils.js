@@ -1276,38 +1276,33 @@ async function renderFullPedalboard() {
   container.innerHTML = '';
 
   // Guest mode fallback
-  if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals) || window.pedalboard.pedals.length === 0) {
+  // Wait for pedalboard to load (server or localStorage)
+if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals)) {
+  try {
     const stored = localStorage.getItem('guestPedalboard');
-    if (stored) {
-      try {
-        // const guestBoard = JSON.parse(stored);
-        // // Ensure pedals array exists
-        // window.pedalboard = {
-        //   ...guestBoard,
-        //   pedals: Array.isArray(guestBoard.pedals) ? guestBoard.pedals : []
-        // };
-        const guestBoards = JSON.parse(stored);
-        const guestBoard = guestBoards[0] || { pedals: [] };
-        window.pedalboard = guestBoard;
-        console.log('Loaded pedalboard from localStorage for guest');
-      } catch (err) {
-        console.error('Failed to parse guestPedalboard from localStorage', err);
-        container.innerHTML = `<p style="text-align:center;margin-top:40px;">No pedalboard available.</p>`;
-        return;
-      }
-    } else {
-      container.innerHTML = `
-        <div style="text-align: center; margin-top: 40px;">
-          <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty.</p>
-          <button id="createBtn" class="bx--btn bx--btn--secondary">Go to pedalboard</button>
-        </div>
-      `;
-      document.getElementById('createBtn').addEventListener('click', () => {
-        window.location.href = 'pedalboard.html';
-      });
-      return;
-    }
+    const guestBoards = stored ? JSON.parse(stored) : [];
+    window.pedalboard = guestBoards[0] || { pedals: [] };
+    console.log('Loaded pedalboard from localStorage for guest');
+  } catch (err) {
+    console.error('Failed to load pedalboard', err);
+    window.pedalboard = { pedals: [] };
   }
+}
+
+// Only show empty message **after fetch attempt**
+if (!window.pedalboard.pedals.length) {
+  container.innerHTML = `
+    <div style="text-align: center; margin-top: 40px;">
+      <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty.</p>
+      <button id="createBtn" class="bx--btn bx--btn--secondary">Go to pedalboard</button>
+    </div>
+  `;
+  document.getElementById('createBtn').addEventListener('click', () => {
+    window.location.href = 'pedalboard.html';
+  });
+  return;
+}
+
 
   // Now safe to iterate pedals
   if (!Array.isArray(window.pedalboard.pedals)) {
