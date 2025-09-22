@@ -61,8 +61,8 @@ function populateFolderDropdown() {
     return 0;
   });
 
+  console.log("fldr: "+sortedFolders)
     if (sortedFolders.length === 0) {
-      console.log("fldr: "+sortedFolders)
     // Show a disabled placeholder if no folders exist
     const noFoldersOption = document.createElement("option");
     noFoldersOption.value = "";
