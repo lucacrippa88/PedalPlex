@@ -1261,49 +1261,45 @@ function loadGuestPedalboard() {
 }
 
 
-
 // Render full pedalboard in preset page
 async function renderFullPedalboard() {
-  // if (!resultsDiv) {
-  //   console.error("resultsDiv not initialized yet");
-  //   return;
-  // }
   const container = document.getElementById('preset');
   const loader = document.getElementById('pageLoader');
   if (!container || !loader) return;
-  
+
   // Show loader immediately
   loader.style.display = 'block';
   container.innerHTML = ''; // keep container empty while loading
 
-  // Guest mode fallback
-  // Wait for pedalboard to load (server or localStorage)
-if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals)) {
-  try {
-    const stored = localStorage.getItem('guestPedalboard');
-    const guestBoards = stored ? JSON.parse(stored) : [];
-    window.pedalboard = guestBoards[0] || { pedals: [] };
-    console.log('Loaded pedalboard from localStorage for guest');
-  } catch (err) {
-    console.error('Failed to load pedalboard', err);
-    window.pedalboard = { pedals: [] };
+  // Guest mode fallback / fetch pedalboard
+  if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals)) {
+    try {
+      const stored = localStorage.getItem('guestPedalboard');
+      const guestBoards = stored ? JSON.parse(stored) : [];
+      window.pedalboard = guestBoards[0] || { pedals: [] };
+      console.log('Loaded pedalboard from localStorage for guest');
+    } catch (err) {
+      console.error('Failed to load pedalboard', err);
+      window.pedalboard = { pedals: [] };
+    }
   }
-}
 
-// Only show empty message **after fetch attempt**
-if (!window.pedalboard.pedals.length) {
-  container.innerHTML = `
-    <div style="text-align: center; margin-top: 40px;">
-      <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty.</p>
-      <button id="createBtn" class="bx--btn bx--btn--secondary">Go to pedalboard</button>
-    </div>
-  `;
-  document.getElementById('createBtn').addEventListener('click', () => {
-    window.location.href = 'pedalboard.html';
-  });
-  return;
-}
+  // Hide loader AFTER fetch attempt
+  loader.style.display = 'none';
 
+  // Only show empty message after fetch attempt
+  if (!window.pedalboard.pedals.length) {
+    container.innerHTML = `
+      <div style="text-align: center; margin-top: 40px;">
+        <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty.</p>
+        <button id="createBtn" class="bx--btn bx--btn--secondary">Go to pedalboard</button>
+      </div>
+    `;
+    document.getElementById('createBtn').addEventListener('click', () => {
+      window.location.href = 'pedalboard.html';
+    });
+    return;
+  }
 
   // Now safe to iterate pedals
   if (!Array.isArray(window.pedalboard.pedals)) {
@@ -1330,7 +1326,6 @@ if (!window.pedalboard.pedals.length) {
     rowDiv.style.alignItems = 'flex-start';
     rowDiv.style.gap = '10px';
 
-
     for (const pbPedal of rowsMap[rowNum]) {
       try {
         const pedalData = window.catalogMap[pbPedal.pedal_id];
@@ -1346,13 +1341,11 @@ if (!window.pedalboard.pedals.length) {
         let inside = "";
         let colorOnly = insideColorRaw;
 
-        // Check if inside-color is an image URL (http, https, data URI, or local images/)
         const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
 
         if (isImage) {
-          inside = "full"; // Force full mode for images
+          inside = "full";
         } else {
-          // Existing logic for color + optional text
           const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
           if (match) {
             colorOnly = match[1];
@@ -1363,7 +1356,7 @@ if (!window.pedalboard.pedals.length) {
         const widthValue = parseFloat(getPedalWidth(pedal.width));
 
         const baseCss = {
-          border: `5px solid ${pedal["color"]}`, // Outer border
+          border: `5px solid ${pedal["color"]}`,
           borderRadius: '10px',
           color: pedal["font-color"],
           width: getPedalWidth(pedal.width),
@@ -1372,7 +1365,7 @@ if (!window.pedalboard.pedals.length) {
           marginBottom: '10px',
           display: 'inline-block',
           ...(pedal["inside-border"] && {
-            boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
+            boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}`
           }),
           ...(isImage ? {
             backgroundImage: `url("${insideColorRaw}")`,
@@ -1387,78 +1380,45 @@ if (!window.pedalboard.pedals.length) {
 
         if (pedal.type === "pedal") {
           const boxShadow = getBoxShadow(pedal, inside, `inset 0 -36px 0 0 ${pedal["color"]}`);
-
-          $pedalDiv = $("<div>")
-            .addClass("pedal-catalog")
-            .css({
-              ...baseCss,
-              boxShadow
-            })
+          $pedalDiv = $("<div>").addClass("pedal-catalog").css({ ...baseCss, boxShadow })
             .attr("data-pedal-name", pedal.name)
             .attr("data-pedal-id", pedal._id);
-
         } else if (pedal.type === "expression") {
           const boxShadow = getBoxShadow(pedal, inside, `inset 0 -36px 0 0 ${pedal["color"]}`);
-
-          $pedalDiv = $("<div>")
-            .addClass("pedal-catalog")
-            .css({
-              ...baseCss,
-              borderRadius: '25px',
-              boxShadow
-            })
+          $pedalDiv = $("<div>").addClass("pedal-catalog").css({ ...baseCss, borderRadius: '25px', boxShadow })
             .attr("data-pedal-name", pedal.name)
             .attr("data-pedal-id", pedal._id);
-
         } else if (pedal.type === "combo") {
           const boxShadow = getBoxShadow(pedal, inside, `inset 0 -80px 0 0 ${pedal["color"]}`);
-
-          $pedalDiv = $("<div>")
-            .addClass("pedal-catalog")
-            .css({
-              ...baseCss,
-              boxShadow
-            })
+          $pedalDiv = $("<div>").addClass("pedal-catalog").css({ ...baseCss, boxShadow })
             .attr("data-pedal-name", pedal.name)
             .attr("data-pedal-id", pedal._id);
-
         } else if (pedal.type === "head" || pedal.type === "pedal-inverted") {
           const boxShadow = getBoxShadow(pedal, inside, `inset 0 80px 0 0 ${pedal["color"]}`);
-
-          $pedalDiv = $("<div>")
-            .addClass("pedal-catalog")
-            .css({
-              ...baseCss,
-              boxShadow
-            })
+          $pedalDiv = $("<div>").addClass("pedal-catalog").css({ ...baseCss, boxShadow })
             .attr("data-pedal-name", pedal.name)
             .attr("data-pedal-id", pedal._id);
-
         } else if (pedal.type === "round") {
           const boxShadow = getBoxShadow(pedal, inside, `inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`);
-
           $pedalDiv = $("<div>").addClass("pedal-catalog").css({
             ...baseCss,
-            borderRadius: "50%",  // make it circular
-            width: getPedalWidth(pedal.width),  // Same width and height
-            height: getPedalWidth(pedal.width), // Same width and height
+            borderRadius: "50%",
+            width: getPedalWidth(pedal.width),
+            height: getPedalWidth(pedal.width),
             boxShadow
           }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         }
 
         const cleanName = sanitizeHtml(pedal.name);
 
-        // Head or inverted logo
         if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
           const $nameDiv = $("<div>").addClass("head-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
           $pedalDiv.append($nameDiv);
         }
 
-        // Render controls
         renderPedalControls(pedal, $pedalDiv);
 
-        // Pedal logo
-        if ((pedal.type === "pedal") || (pedal.type === "combo") || (pedal.type === "round") || (pedal.type === "expression")) {
+        if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
           const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
           $pedalDiv.append($nameDiv);
         }
@@ -1480,10 +1440,8 @@ if (!window.pedalboard.pedals.length) {
           const radians = angle * Math.PI / 180;
           const sin = Math.abs(Math.sin(radians));
           const cos = Math.abs(Math.cos(radians));
-
           const rotatedWidth = widthPx * cos + heightPx * sin;
           const rotatedHeight = widthPx * sin + heightPx * cos;
-
           Object.assign(wrapperStyles, {
             width: `${rotatedWidth}px`,
             height: `${rotatedHeight}px`,
@@ -1511,6 +1469,7 @@ if (!window.pedalboard.pedals.length) {
   });
   window.currentPedalsOnBoard = pedalsOnBoard;
 }
+
 
 
 // HELPER
