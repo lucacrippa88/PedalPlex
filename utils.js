@@ -404,43 +404,113 @@ function renderPedalControls(pedal, $pedalDiv) {
             }
 
             // Slider
-            if (control.type === "slider") {
-              const $label = $("<div>").text(control.label).addClass("slider-label");
+            // if (control.type === "slider") {
+            //   const $label = $("<div>").text(control.label).addClass("slider-label");
 
-              const $slider = $("<input type='range'>")
-                .attr({
-                  min: control.min,
-                  max: control.max,
-                  value: control.value,
-                  "data-control-label": control.label
-                })
-                .on("input", function () { control.value = parseFloat($(this).val()); });
+            //   const $slider = $("<input type='range'>")
+            //     .attr({
+            //       min: control.min,
+            //       max: control.max,
+            //       value: control.value,
+            //       "data-control-label": control.label
+            //     })
+            //     .on("input", function () { control.value = parseFloat($(this).val()); });
 
-                let $sliderWrapper;
+            //     let $sliderWrapper;
 
-              if (control.orientation === "vertical") {
-                $slider.addClass("vertical");
-                $sliderWrapper = $("<div>")
-                .addClass("slider-wrapper-vertical")
-                .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" }) // gestire casi qui lower -30px
-                .append($label, $slider);
+            //   if (control.orientation === "vertical") {
+            //     $slider.addClass("vertical");
+            //     $sliderWrapper = $("<div>")
+            //     .addClass("slider-wrapper-vertical")
+            //     .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" }) // gestire casi qui lower -30px
+            //     .append($label, $slider);
 
-              } else if (control.orientation === "vertical small") {
-                $slider.addClass("verticalsmall");
-                $sliderWrapper = $("<div>")
-                  .addClass("slider-wrapper-vertical")
-                  .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" })
-                  .append($label, $slider);
-              } else {
-                $slider.addClass("horizontal");
-                $sliderWrapper = $("<div>")
-                  .addClass("slider-wrapper-horizontal")
-                  .css({ display: "flex", flexDirection: "column", alignItems: "flex-start", marginBottom: "10px", width: "100%" })
-                  .append($label, $slider);
-              }
+            //   } else if (control.orientation === "vertical small") {
+            //     $slider.addClass("verticalsmall");
+            //     $sliderWrapper = $("<div>")
+            //       .addClass("slider-wrapper-vertical")
+            //       .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px" })
+            //       .append($label, $slider);
+            //   } else {
+            //     $slider.addClass("horizontal");
+            //     $sliderWrapper = $("<div>")
+            //       .addClass("slider-wrapper-horizontal")
+            //       .css({ display: "flex", flexDirection: "column", alignItems: "flex-start", marginBottom: "10px", width: "100%" })
+            //       .append($label, $slider);
+            //   }
 
-              $row.append($sliderWrapper);
-            }
+            //   $row.append($sliderWrapper);
+            // }
+
+            // Slider
+if (control.type === "slider") {
+  const $label = $("<div>").text(control.label).addClass("slider-label");
+
+  const $slider = $("<input type='range'>")
+    .attr({
+      min: control.min,
+      max: control.max,
+      value: control.value,
+      "data-control-label": control.label
+    })
+    .on("input", function () { 
+      control.value = parseFloat($(this).val()); 
+      if (!editMode && $tooltipText) {
+        $tooltipText.text(control.value);
+        $tooltip.show();
+      }
+    });
+
+  let $tooltip = null;
+  let $tooltipText = null;
+
+  // Only show tooltip if not in edit mode
+  if (!editMode) {
+    $tooltip = $("<div>")
+      .addClass("bx--tooltip bx--tooltip--top")
+      .css({
+        display: "none",
+        position: "absolute",
+        top: "-30px", // adjust position above the slider
+        left: "50%",
+        transform: "translateX(-50%)"
+      });
+
+    const $caret = $("<span>").addClass("bx--tooltip__caret");
+    $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
+    $tooltip.append($caret, $tooltipText);
+  }
+
+  let $sliderWrapper;
+  if (control.orientation === "vertical") {
+    $slider.addClass("vertical");
+    $sliderWrapper = $("<div>")
+      .addClass("slider-wrapper-vertical")
+      .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px", position: "relative" })
+      .append($label, $slider);
+  } else if (control.orientation === "vertical small") {
+    $slider.addClass("verticalsmall");
+    $sliderWrapper = $("<div>")
+      .addClass("slider-wrapper-vertical")
+      .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px", position: "relative" })
+      .append($label, $slider);
+  } else {
+    $slider.addClass("horizontal");
+    $sliderWrapper = $("<div>")
+      .addClass("slider-wrapper-horizontal")
+      .css({ display: "flex", flexDirection: "column", alignItems: "flex-start", marginBottom: "10px", width: "100%", position: "relative" })
+      .append($label, $slider);
+  }
+
+  // Attach tooltip if not in edit mode
+  if (!editMode && $tooltip) {
+    $sliderWrapper.append($tooltip);
+    $slider.on("mousedown touchstart", () => $tooltip.show());
+    $(document).on("mouseup touchend", () => $tooltip.hide());
+  }
+
+  $row.append($sliderWrapper);
+}
 
 
             // LCD
