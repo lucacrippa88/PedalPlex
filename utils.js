@@ -1289,7 +1289,7 @@ async function renderFullPedalboard() {
   // }
   // Handle guest: load pedalboard from localStorage if needed
   if (!window.pedalboard || !window.pedalboard.pedals || window.pedalboard.pedals.length === 0) {
-    const storedPedalboard = localStorage.getItem('lastPedalboard');
+    const storedPedalboard = localStorage.getItem('guestPedalboard');
     if (storedPedalboard) {
       try {
         window.pedalboard = JSON.parse(storedPedalboard);
