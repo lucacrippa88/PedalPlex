@@ -1083,13 +1083,19 @@ function initGuestMode() {
   $pedalboardSelect.empty();
   const option = $('<option>').val(0).text(firstBoard.board_name);
   $pedalboardSelect.append(option);
-  $pedalboardSelect.prop('disabled', false); // selectable but only one option
+  $pedalboardSelect.prop('disabled', false);
 
   // 2️⃣ Disable folder & preset selects and rename buttons
-  $('#folderSelect, #presetSelect').empty().prop('disabled', true);
+  const $folderSelect = $('#folderSelect');
+  $folderSelect.empty();
+  // Add disabled "No folders" option for guest
+  $folderSelect.append('<option value="" disabled selected>-- No folders --</option>');
+  $folderSelect.prop('disabled', true);
+
+  $('#presetSelect').empty().prop('disabled', true);
   $('#renameFolderBtn, #renamePresetBtn').prop('disabled', true).addClass('btn-disabled');
 
-  // 3️⃣ Disable nav buttons (already done in initNavPreset), but reinforce if needed
+  // 3️⃣ Disable nav buttons
   ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn']
     .forEach(id => { 
       const el = document.getElementById(id);
@@ -1098,6 +1104,7 @@ function initGuestMode() {
 
   // 4️⃣ Render the pedalboard
   if (typeof renderFullPedalboard === 'function') {
-    renderFullPedalboard(firstBoard.pedals); // use pedals array directly
+    renderFullPedalboard(firstBoard.pedals);
   }
 }
+
