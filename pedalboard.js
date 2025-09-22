@@ -29,13 +29,34 @@ function setupPedalboardDropdownAndRender() {
 
 
 
+// function initPedalboard(userRole) {
+//   const userId = window.currentUser?.userid;
+//   const resultsDiv = document.getElementById("pedalboard");
+
+//   window.catalog = [];
+//   window.pedalboard = {
+//     pedals: []
+//   };
+
+//   // Show loading spinner
+//   resultsDiv.innerHTML = `
+//     <div class="bx--loading-overlay">
+//       <div class="bx--loading" role="status">
+//         <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+//           <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+//           <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+//         </svg>
+//       </div>
+//     </div>`;
+
 function initPedalboard(userRole) {
+  const userId = window.currentUser?.userid;
   const resultsDiv = document.getElementById("pedalboard");
 
   window.catalog = [];
   window.pedalboard = { pedals: [] };
 
-  // Show loading spinner
+  // Loader
   resultsDiv.innerHTML = `
     <div class="bx--loading-overlay">
       <div class="bx--loading" role="status">
@@ -46,33 +67,45 @@ function initPedalboard(userRole) {
       </div>
     </div>`;
 
-  // --- GUEST MODE ---
-  if (userRole === 'guest') {
-    const savedBoards = localStorage.getItem('guestPedalboards');
-    const boards = savedBoards ? JSON.parse(savedBoards) : [];
+  // --- GUEST USER ---
+  if (userRole === "guest") {
+    fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=guest&username=guest`)
+      .then(res => {
+        if (!res.ok) throw new Error(`Catalog fetch failed: ${res.status}`);
+        return res.json();
+      })
+      .then(catalog => {
+        resultsDiv.innerHTML = "";
+        window.catalog = catalog;
+        setupFilterUI(window.catalog);
 
-    if (boards.length === 0) {
-      $("#pedalboard-controls").hide();
-      resultsDiv.innerHTML = `
-        <div style="text-align: center; margin-top: 40px;">
-          <p style="font-size: 1.1em; margin-bottom: 20px;">
-            No pedalboards found. Create a new one!
-          </p>
-          <button id="createBtn" class="bx--btn bx--btn--secondary">Create pedalboard</button>
-        </div>`;
-      window.allPedalboards = [];
-    } else {
-      window.allPedalboards = boards;
-      $("#pedalboard-controls").show();
-      setupPedalboardDropdownAndRender();
-    }
-    return; // skip server fetch
+        const savedBoards = localStorage.getItem("guestPedalboards");
+        const boards = savedBoards ? JSON.parse(savedBoards) : [];
+
+        if (boards.length === 0) {
+          $("#pedalboard-controls").css("display", "none");
+          resultsDiv.innerHTML = `
+            <div style="text-align: center; margin-top: 40px;">
+              <p style="font-size: 1.1em; margin-bottom: 20px;">
+                No pedalboards found. Create a new one!
+              </p>
+              <button id="createBtn" class="bx--btn bx--btn--secondary">Create pedalboard</button>
+            </div>`;
+          window.allPedalboards = [];
+        } else {
+          window.allPedalboards = boards;
+          setupPedalboardDropdownAndRender();
+        }
+      })
+      .catch(err => {
+        console.error("Guest catalog fetch failed:", err);
+        resultsDiv.innerHTML = `<p style="color:red;">Error loading guest catalog: ${err}</p>`;
+      });
+    return; // ✅ stop here for guests
   }
 
-  // --- LOGGED-IN USER ---
-  const userId = window.currentUser?.userid;
 
-  // Load catalog first
+  // Load catalog
   fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${userRole}&username=${window.currentUser.username}`)
     .then(response => {
       if (!response.ok) throw new Error(`Catalog fetch failed: ${response.status}`);
@@ -83,11 +116,15 @@ function initPedalboard(userRole) {
       window.catalog = catalog;
       setupFilterUI(window.catalog);
 
-      // Fetch pedalboard from server
+      // Fetch pedalboard data
       return fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId })
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: userId
+        })
       });
     })
     .then(response => {
@@ -95,49 +132,74 @@ function initPedalboard(userRole) {
       return response.json();
     })
     .then(data => {
-      if (!data.docs || !Array.isArray(data.docs) || data.docs.length === 0) {
-        $("#pedalboard-controls").hide();
-        resultsDiv.innerHTML = `
-          <div style="text-align: center; margin-top: 40px;">
-            <p>No pedalboards found. Create a new one!</p>
-            <button id="createBtn" class="bx--btn bx--btn--secondary">Create pedalboard</button>
-          </div>`;
-        window.allPedalboards = [];
-        return;
-      }
 
-      $("#pedalboard-controls").show();
+  // --- GUEST USER CHECK ---
+  if (userRole === 'guest') {
+    const savedBoards = localStorage.getItem('guestPedalboards');
+    const boards = savedBoards ? JSON.parse(savedBoards) : [];
 
-      // Sort pedalboards alphabetically
-      data.docs.sort((a, b) => (a.board_name || '').localeCompare(b.board_name || ''));
-      window.allPedalboards = data.docs;
+    if (boards.length === 0) {
+      $("#pedalboard-controls").css("display", "none");
+      resultsDiv.innerHTML = `
+        <div style="text-align: center; margin-top: 40px;">
+          <p style="font-size: 1.1em; margin-bottom: 20px;">
+            No pedalboards found. Create a new one!
+          </p>
+          <button id="createBtn" class="bx--btn bx--btn--secondary">Create pedalboard</button>
+        </div>`;
+      window.allPedalboards = [];
+    } else {
+      window.allPedalboards = boards;
+      setupPedalboardDropdownAndRender();
+    }
+    return; // stop further logged-in server fetch
+  }
 
-      const dropdown = document.getElementById('pedalboardSelect');
-      dropdown.innerHTML = '';
-      data.docs.forEach((board, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = board.board_name || `Pedalboard ${index + 1}`;
-        dropdown.appendChild(option);
-      });
+  // --- EXISTING LOGGED-IN USER LOGIC ---
+  if (!data.docs || !Array.isArray(data.docs) || data.docs.length === 0) {
+    $("#pedalboard-controls").css("display", "none");
+    resultsDiv.innerHTML = ` ...Create pedalboard button... `;
+    return;
+  }
 
-      let selectedBoardIndex = 0;
-      window.pedalboard = window.allPedalboards[selectedBoardIndex];
-      renderPedalboard();
+  $("#pedalboard-controls").css("display", "inline-flex");
 
-      dropdown.addEventListener('change', e => {
-        selectedBoardIndex = parseInt(e.target.value, 10);
-        window.pedalboard = window.allPedalboards[selectedBoardIndex];
-        renderPedalboard();
-      });
-    })
+  // Sort pedalboards alphabetically
+  data.docs.sort((a, b) => {
+    const nameA = (a.board_name || '').toLowerCase();
+    const nameB = (b.board_name || '').toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+
+  window.allPedalboards = data.docs;
+
+  const dropdown = document.getElementById('pedalboardSelect');
+  dropdown.innerHTML = '';
+  data.docs.forEach((board, index) => {
+    const option = document.createElement('option');
+    option.value = index;
+    option.textContent = board.board_name || `Pedalboard ${index + 1}`;
+    dropdown.appendChild(option);
+  });
+
+  selectedBoardIndex = 0;
+  window.pedalboard = window.allPedalboards[selectedBoardIndex];
+  renderPedalboard();
+
+  dropdown.addEventListener('change', (e) => {
+    selectedBoardIndex = parseInt(e.target.value, 10);
+    window.pedalboard = window.allPedalboards[selectedBoardIndex];
+    renderPedalboard();
+  });
+})
+
+
+
     .catch(error => {
       console.error('Error:', error.message || error);
-      resultsDiv.innerHTML = `<p style="color:red;">Failed to load pedalboard: ${error.message || error}</p>`;
-      $("#pedalboard-controls").hide();
     });
-}
 
+}
 
 
 
