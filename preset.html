@@ -176,33 +176,35 @@
     }
 
 
-    $.ajax({
-      url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
-      method: 'GET',
-      dataType: 'json',
-      headers: {
-        'Authorization': 'Bearer ' + token
-      },
-      success: function(userFromServer) {
-        $('#loadingMessage').hide();
-        $('#page-content').show();
-        // $('#preset-controls').show();
+    // Only attempt server auth if token exists
+    if (token) {
+      $.ajax({
+        url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
+        method: 'GET',
+        dataType: 'json',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function(userFromServer) {
+          $('#loadingMessage').hide();
+          $('#page-content').show();
+          window.currentUser = userFromServer;
 
-        window.currentUser = userFromServer;
-
-        if (typeof initNavPreset === 'function') initNavPreset();
-        if (typeof initPreset === 'function') initPreset();
-      },
-      error: function(xhr) {
-        console.error('Auth check failed:', xhr.status, xhr.responseText);
-        if (xhr.status === 401) {
-          localStorage.removeItem('authToken');
-          window.location.href = '/PedalPlex/';
-        } else {
-          alert('Failed to verify authentication. Please try again.');
+          if (typeof initNavPreset === 'function') initNavPreset();
+          if (typeof initPreset === 'function') initPreset();
+        },
+        error: function(xhr) {
+          console.error('Auth check failed:', xhr.status, xhr.responseText);
+          if (xhr.status === 401) {
+            localStorage.removeItem('authToken');
+            window.location.href = '/PedalPlex/';
+          } else {
+            alert('Failed to verify authentication. Please try again.');
+          }
         }
-      }
-    });
+      });
+    }
+    
   });
   </script>
 
