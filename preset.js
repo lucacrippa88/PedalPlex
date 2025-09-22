@@ -298,7 +298,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
   const folderSelectHtml = `
   <select id="folderSelectInput" class="swal2-select" style="margin-top:10px">
-    <option value="" ${presetFolderId === "-- No folders --" ? "selected" : ""}>Default (unassigned)</option>
+    <option value="" ${presetFolderId === "" ? "selected" : ""}>Default (unassigned)</option>
     ${folderOptions}
   </select>
   `;
