@@ -44,7 +44,7 @@ function populateFolderDropdown() {
   const folderSelect = document.getElementById('folderSelect');
   if (!folderSelect) return;
 
-  folderSelect.innerHTML = '-- No folders --';
+  folderSelect.innerHTML = '';
 
   // Always add a synthetic "Default" entry at the top
   const defaultOption = document.createElement("option");
@@ -61,21 +61,47 @@ function populateFolderDropdown() {
     return 0;
   });
 
-  // Add folders to dropdown
-  sortedFolders.forEach(f => {
-    if (!f) return;
-    const opt = document.createElement('option');
-    opt.value = f.id || f._id;
-    opt.textContent = f.name || '(Untitled folder)';
-    folderSelect.appendChild(opt);
-  });
+    if (sortedFolders.length === 0) {
+    // Show a disabled placeholder if no folders exist
+    const noFoldersOption = document.createElement("option");
+    noFoldersOption.value = "";
+    noFoldersOption.textContent = "-- No folders --";
+    noFoldersOption.disabled = true;
+    folderSelect.appendChild(noFoldersOption);
+    folderSelect.value = "default"; // make Default selected
+  } else {
+    // Add all real folders
+    sortedFolders.forEach(f => {
+      if (!f) return;
+      const opt = document.createElement('option');
+      opt.value = f.id || f._id;
+      opt.textContent = f.name || '(Untitled folder)';
+      folderSelect.appendChild(opt);
+    });
 
-  // Placeholder option at the end (optional)
-  const placeholder = document.createElement('option');
-  placeholder.value = '';
-  placeholder.textContent = '-- Select Folder --';
-  placeholder.disabled = true;
-  folderSelect.appendChild(placeholder);
+    // Optional placeholder at the end
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = '-- Select Folder --';
+    placeholder.disabled = true;
+    folderSelect.appendChild(placeholder);
+  }
+
+  // // Add folders to dropdown
+  // sortedFolders.forEach(f => {
+  //   if (!f) return;
+  //   const opt = document.createElement('option');
+  //   opt.value = f.id || f._id;
+  //   opt.textContent = f.name || '(Untitled folder)';
+  //   folderSelect.appendChild(opt);
+  // });
+
+  // // Placeholder option at the end (optional)
+  // const placeholder = document.createElement('option');
+  // placeholder.value = '';
+  // placeholder.textContent = '-- Select Folder --';
+  // placeholder.disabled = true;
+  // folderSelect.appendChild(placeholder);
 
   // ✅ Auto-apply first preset when folder changes
   folderSelect.onchange = (e) => {
