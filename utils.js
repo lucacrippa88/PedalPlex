@@ -433,7 +433,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                   .css({
                     display: "none",
                     position: "absolute",
-                    bottom: "-30px", // below slider
+                    bottom: "-40px", // below slider
                     left: "50%",
                     transform: "translateX(-50%)"
                   });
