@@ -1269,11 +1269,12 @@ async function renderFullPedalboard() {
   //   return;
   // }
   const container = document.getElementById('preset');
-  if (!container) {
-    console.warn('No #pedalboard container found');
-    return;
-  }
-  container.innerHTML = '';
+  const loader = document.getElementById('pageLoader');
+  if (!container || !loader) return;
+  
+  // Show loader immediately
+  loader.style.display = 'block';
+  container.innerHTML = ''; // keep container empty while loading
 
   // Guest mode fallback
   // Wait for pedalboard to load (server or localStorage)
