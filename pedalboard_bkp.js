@@ -2,33 +2,6 @@ let selectedBoardIndex = 0;
 window.allPedalboards = []; // store all pedalboards here
 
 
-function setupPedalboardDropdownAndRender() {
-  if (!window.allPedalboards || window.allPedalboards.length === 0) return;
-
-  $("#pedalboard-controls").css("display", "inline-flex");
-  const dropdown = document.getElementById('pedalboardSelect');
-  dropdown.innerHTML = '';
-
-  window.allPedalboards.forEach((board, index) => {
-    const option = document.createElement('option');
-    option.value = index;
-    option.textContent = board.board_name || `Pedalboard ${index + 1}`;
-    dropdown.appendChild(option);
-  });
-
-  selectedBoardIndex = 0;
-  window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
-  renderPedalboard();
-
-  dropdown.addEventListener('change', (e) => {
-    selectedBoardIndex = parseInt(e.target.value, 10);
-    window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
-    renderPedalboard();
-  });
-}
-
-
-
 function initPedalboard(userRole) {
   const userId = window.currentUser?.userid;
   const resultsDiv = document.getElementById("pedalboard");
@@ -77,67 +50,73 @@ function initPedalboard(userRole) {
       return response.json();
     })
     .then(data => {
+      if (!data.docs || !Array.isArray(data.docs) || data.docs.length === 0) {
+        $("#pedalboard-controls").css("display", "none");
+        resultsDiv.innerHTML = `
+          <div style="text-align: center; margin-top: 40px;">
+            <p style="font-size: 1.1em; margin-bottom: 20px;">
+              No pedalboards found. Create a new one!
+            </p>
+            <button
+              id="createBtn"
+              class="bx--btn bx--btn--secondary"
+              type="button"
+              aria-label="Create New Pedalboard"
+              style="
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin: 0 auto;
+              ">
+              <svg
+                focusable="false"
+                preserveAspectRatio="xMidYMid meet"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                width="16"
+                height="16"
+                viewBox="0 0 32 32"
+                aria-hidden="true"
+                class="bx--btn__icon">
+                <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Create pedalboard
+            </button>
+          </div>
+        `;
+        return;
+      }
+      $("#pedalboard-controls").css("display", "inline-flex");
 
-  // --- GUEST USER CHECK ---
-  if (userRole === 'guest') {
-    const savedBoards = localStorage.getItem('guestPedalboards');
-    const boards = savedBoards ? JSON.parse(savedBoards) : [];
 
-    if (boards.length === 0) {
-      $("#pedalboard-controls").css("display", "none");
-      resultsDiv.innerHTML = `
-        <div style="text-align: center; margin-top: 40px;">
-          <p style="font-size: 1.1em; margin-bottom: 20px;">
-            No pedalboards found. Create a new one!
-          </p>
-          <button id="createBtn" class="bx--btn bx--btn--secondary">Create pedalboard</button>
-        </div>`;
-      window.allPedalboards = [];
-    } else {
-      window.allPedalboards = boards;
-      setupPedalboardDropdownAndRender();
-    }
-    return; // stop further logged-in server fetch
-  }
+      // Sort pedalboards alphabetically by board_name, case-insensitive
+      data.docs.sort((a, b) => {
+        const nameA = (a.board_name || '').toLowerCase();
+        const nameB = (b.board_name || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
 
-  // --- EXISTING LOGGED-IN USER LOGIC ---
-  if (!data.docs || !Array.isArray(data.docs) || data.docs.length === 0) {
-    $("#pedalboard-controls").css("display", "none");
-    resultsDiv.innerHTML = ` ...Create pedalboard button... `;
-    return;
-  }
+      window.allPedalboards = data.docs; // STORE all pedalboards here
 
-  $("#pedalboard-controls").css("display", "inline-flex");
+      const dropdown = document.getElementById('pedalboardSelect');
+      dropdown.innerHTML = '';
+      data.docs.forEach((board, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = board.board_name || `Pedalboard ${index + 1}`;
+        dropdown.appendChild(option);
+      });
 
-  // Sort pedalboards alphabetically
-  data.docs.sort((a, b) => {
-    const nameA = (a.board_name || '').toLowerCase();
-    const nameB = (b.board_name || '').toLowerCase();
-    return nameA.localeCompare(nameB);
-  });
+      selectedBoardIndex = 0;
+      window.pedalboard = window.allPedalboards[selectedBoardIndex];
+      renderPedalboard();
 
-  window.allPedalboards = data.docs;
-
-  const dropdown = document.getElementById('pedalboardSelect');
-  dropdown.innerHTML = '';
-  data.docs.forEach((board, index) => {
-    const option = document.createElement('option');
-    option.value = index;
-    option.textContent = board.board_name || `Pedalboard ${index + 1}`;
-    dropdown.appendChild(option);
-  });
-
-  selectedBoardIndex = 0;
-  window.pedalboard = window.allPedalboards[selectedBoardIndex];
-  renderPedalboard();
-
-  dropdown.addEventListener('change', (e) => {
-    selectedBoardIndex = parseInt(e.target.value, 10);
-    window.pedalboard = window.allPedalboards[selectedBoardIndex];
-    renderPedalboard();
-  });
-})
-
+      dropdown.addEventListener('change', (e) => {
+        selectedBoardIndex = parseInt(e.target.value, 10);
+        window.pedalboard = window.allPedalboards[selectedBoardIndex];
+        renderPedalboard();
+      });
+    })
 
 
     .catch(error => {
@@ -559,14 +538,21 @@ function extractColorFromLogo(logoCss) {
 
 function savePedalboard() {
   const saveBtn = document.getElementById('saveBtn');
-  const userId = currentUser?.userid;
+  const userId = currentUser.userid;
 
   if (saveBtn) {
     saveBtn.classList.add('cds--btn', 'cds--btn--primary'); 
   }
 
-  if (!window.allPedalboards || !Array.isArray(window.allPedalboards) || selectedBoardIndex === undefined || selectedBoardIndex < 0) {
+  if (
+    !window.allPedalboards ||
+    !Array.isArray(window.allPedalboards) ||
+    selectedBoardIndex === undefined ||
+    selectedBoardIndex < 0 ||
+    selectedBoardIndex >= window.allPedalboards.length
+  ) {
     if (saveBtn) saveBtn.disabled = true;
+
     Swal.fire({
       icon: 'error',
       title: 'Error',
@@ -575,27 +561,19 @@ function savePedalboard() {
       customClass: {
         confirmButton: "bx--btn bx--btn--primary",
       }
+    }).then(() => {
+      location.reload();
     });
+
     return;
   }
 
   if (saveBtn) saveBtn.disabled = false;
 
-  window.allPedalboards[selectedBoardIndex] = structuredClone(window.pedalboard);
+  window.allPedalboards[selectedBoardIndex] = {
+    ...window.pedalboard
+  };
 
-  // --- GUEST USER SAVE ---
-  if (window.currentUser?.role === 'guest') {
-    localStorage.setItem('guestPedalboards', JSON.stringify(window.allPedalboards));
-    Swal.fire({
-      icon: 'success',
-      title: 'Pedalboard saved locally!',
-      timer: 1200,
-      showConfirmButton: false
-    });
-    return;
-  }
-
-  // --- LOGGED-IN USER SAVE (existing fetch) ---
   const pedalboardToSave = window.allPedalboards[selectedBoardIndex];
 
   fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
@@ -668,30 +646,8 @@ $(document).ready(function () {
       }
     }).then((result) => {
       if (result.isConfirmed) {
-  const boardName = result.value;
-  const userId = currentUser?.userid;
-
-  // --- GUEST USER CREATE ---
-  if (currentUser?.role === 'guest') {
-    const guestBoards = JSON.parse(localStorage.getItem('guestPedalboards') || '[]');
-    const newBoard = { board_name: boardName, pedals: [] };
-    guestBoards.push(newBoard);
-    localStorage.setItem('guestPedalboards', JSON.stringify(guestBoards));
-    window.allPedalboards = guestBoards;
-    selectedBoardIndex = guestBoards.length - 1;
-    window.pedalboard = structuredClone(newBoard);
-    setupPedalboardDropdownAndRender();
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Pedalboard created locally!',
-      timer: 1200,
-      showConfirmButton: false
-    });
-    return;
-  }
-
-  // --- LOGGED-IN USER CREATE (existing fetch) ---
+        const boardName = result.value;
+        const userId = currentUser.userid;
 
         fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php', {
           method: "POST",

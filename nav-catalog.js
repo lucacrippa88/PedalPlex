@@ -59,7 +59,7 @@ function initNavCatalog(userRole) {
           Login
         </button>
     `;
-    $("#toggleFilterBtn").after(loginBtnHtml);
+    $("#toggleFilterBtn").after(loginBtnHtml);  // ----------------------
 
     // Add click handler
     $(document).on("click", "#loginBtn", function() {
