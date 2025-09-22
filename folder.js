@@ -61,8 +61,8 @@ function populateFolderDropdown() {
     return 0;
   });
 
-    if (foldersArray.length === 0) {
-      console.log("fldr: "+foldersArray)
+    if (sortedFolders.length === 0) {
+      console.log("fldr: "+sortedFolders)
     // Show a disabled placeholder if no folders exist
     const noFoldersOption = document.createElement("option");
     noFoldersOption.value = "";
@@ -72,7 +72,7 @@ function populateFolderDropdown() {
     folderSelect.value = "default"; // make Default selected
   } else {
     // Add all real folders
-    foldersArray.forEach(f => {
+    sortedFolders.forEach(f => {
       if (!f) return;
       const opt = document.createElement('option');
       opt.value = f.id || f._id;
