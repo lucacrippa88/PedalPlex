@@ -24,47 +24,97 @@
   <script>
   // Check user authentication
   $(document).ready(function() {
-    if (window.location.protocol === 'file:') {
-      alert('Please run this app via a local HTTP server for full functionality.');
+  if (window.location.protocol === 'file:') {
+    alert('Please run this app via a local HTTP server for full functionality.');
+    $('#loadingMessage').hide();
+    $('#page-content').hide();
+    return;
+  }
 
-      $('#loadingMessage').hide();
-      $('#page-content').hide();
-      return;
-    }
+  const token = localStorage.getItem('authToken');
 
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      window.location.href = '/PedalPlex/';
-      return;
-    }
+  if (!token) {
+    // Guest mode
+    $('#loadingMessage').hide();
+    $('#page-content').show();
 
-    $.ajax({
-      url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
-      method: 'GET',
-      dataType: 'json',
-      headers: {
-        'Authorization': 'Bearer ' + token
-      },
-      success: function(userFromServer) {
-        $('#loadingMessage').hide(); 
-        $('#page-content').show();
+    window.currentUser = { role: 'guest' };
 
-        window.currentUser = userFromServer;
+    if (typeof initNavCatalog === 'function') initNavCatalog('guest');
+    if (typeof initCatalog === 'function') initCatalog('guest');
 
-        if (typeof initNavCatalog === 'function') initNavCatalog(userFromServer.role);
-        if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
-      },
-      error: function(xhr) {
-        console.error('Auth check failed:', xhr.status, xhr.responseText);
-        if (xhr.status === 401) {
-          localStorage.removeItem('authToken');
-          window.location.href = '/PedalPlex/';
-        } else {
-          alert('Failed to verify authentication. Please try again.');
-        }
+    return;
+  }
+
+  // Existing auth check
+  $.ajax({
+    url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
+    method: 'GET',
+    dataType: 'json',
+    headers: { 'Authorization': 'Bearer ' + token },
+    success: function(userFromServer) {
+      $('#loadingMessage').hide(); 
+      $('#page-content').show();
+
+      window.currentUser = userFromServer;
+
+      if (typeof initNavCatalog === 'function') initNavCatalog(userFromServer.role);
+      if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
+    },
+    error: function(xhr) {
+      console.error('Auth check failed:', xhr.status, xhr.responseText);
+      if (xhr.status === 401) {
+        localStorage.removeItem('authToken');
+        window.location.href = '/PedalPlex/';
+      } else {
+        alert('Failed to verify authentication. Please try again.');
       }
-    });
+    }
   });
+});
+
+  // $(document).ready(function() {
+  //   if (window.location.protocol === 'file:') {
+  //     alert('Please run this app via a local HTTP server for full functionality.');
+
+  //     $('#loadingMessage').hide();
+  //     $('#page-content').hide();
+  //     return;
+  //   }
+
+  //   const token = localStorage.getItem('authToken');
+  //   if (!token) {
+  //     window.location.href = '/PedalPlex/';
+  //     return;
+  //   }
+
+  //   $.ajax({
+  //     url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
+  //     method: 'GET',
+  //     dataType: 'json',
+  //     headers: {
+  //       'Authorization': 'Bearer ' + token
+  //     },
+  //     success: function(userFromServer) {
+  //       $('#loadingMessage').hide(); 
+  //       $('#page-content').show();
+
+  //       window.currentUser = userFromServer;
+
+  //       if (typeof initNavCatalog === 'function') initNavCatalog(userFromServer.role);
+  //       if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
+  //     },
+  //     error: function(xhr) {
+  //       console.error('Auth check failed:', xhr.status, xhr.responseText);
+  //       if (xhr.status === 401) {
+  //         localStorage.removeItem('authToken');
+  //         window.location.href = '/PedalPlex/';
+  //       } else {
+  //         alert('Failed to verify authentication. Please try again.');
+  //       }
+  //     }
+  //   });
+  // });
   </script>
 
 

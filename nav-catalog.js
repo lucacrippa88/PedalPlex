@@ -34,50 +34,57 @@ function initNavCatalog(userRole) {
           style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;" 
           aria-label="Filter pedals"/>
 
-          <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
-            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-              <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Add gear
-          </button>
+        <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Add gear
+        </button>
       </div>
     </header>
   `;
 
   $("body").prepend(navHtml);
 
-  function isTokenValid() {
-    const token = localStorage.getItem("authToken");
-    if (!token) return false;
-    try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const payload = JSON.parse(atob(base64));
-      const now = Math.floor(Date.now() / 1000);
-      return payload.exp && payload.exp > now;
-    } catch (err) {
-      console.error("Invalid JWT:", err);
-      return false;
+  // Hide Add Gear button for guests
+  if (userRole === "guest") {
+    $("#createPedalBtn").hide();
+  } else {
+    // Only attach click handlers for logged-in users
+    function isTokenValid() {
+      const token = localStorage.getItem("authToken");
+      if (!token) return false;
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(atob(base64));
+        const now = Math.floor(Date.now() / 1000);
+        return payload.exp && payload.exp > now;
+      } catch (err) {
+        console.error("Invalid JWT:", err);
+        return false;
+      }
     }
+
+    function handleCreatePedalClick() {
+      if (!isTokenValid()) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Login Required',
+          text: 'Please log in to create a pedal.',
+          confirmButtonText: 'Login',
+          customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+        }).then(() => { window.location.href = "/PedalPlex/"; });
+        return;
+      }
+      createNewPedal();
+    }
+
+    $(document).on('click', '#createPedalBtn', handleCreatePedalClick);
+    $(document).on('click', '#createOwnPedalBtn', handleCreatePedalClick);
   }
 
-  function handleCreatePedalClick() {
-    if (!isTokenValid()) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Login Required',
-        text: 'Please log in to create a pedal.',
-        confirmButtonText: 'Login',
-        customClass: { confirmButton: 'bx--btn bx--btn--primary' }
-      }).then(() => { window.location.href = "/PedalPlex/"; });
-      return;
-    }
-    createNewPedal();
-  }
-
-  $(document).on('click', '#createPedalBtn', handleCreatePedalClick);
-  $(document).on('click', '#createOwnPedalBtn', handleCreatePedalClick);
-
+  // Fullscreen menu
   $("body").append(window.fullscreenMenuHtml);
 
   $("#menuToggle").on("click", function () {
@@ -103,6 +110,11 @@ function initNavCatalog(userRole) {
     });
     updatePedalCounts();
   });
+
+  // Apply guest mode filter visibility
+  if (userRole === "guest") {
+    $(".status-filter").not('[data-filter="all"]').hide();
+  }
 }
 
 // Updates pedal counts including draft/private/reviewing/public-by-me
@@ -139,15 +151,20 @@ function updatePedalCounts(activeFilter = null) {
 
   let countsHtml =
     `${totalVisible} gear${totalVisible === 1 ? "" : "s"} available ` +
-    `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalAbsolute}</span>, 
-     Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
+    `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalAbsolute}</span>`;
+
+  // Only show these if not a guest
+  if (window.currentUser?.role !== "guest") {
+    countsHtml += `, Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
      Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${statusCounts.private}</span>, 
      Reviewing: ${reviewingBadge}, 
      Published by me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>`;
-
-  if (window.currentUser?.role === "admin") {
-    countsHtml += `, Published by Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${userPedalsCount}</span>`;
+    
+    if (window.currentUser?.role === "admin") {
+      countsHtml += `, Published by Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${userPedalsCount}</span>`;
+    }
   }
+
   countsHtml += `)`;
 
   $("#pedalCount").html(countsHtml);
@@ -211,7 +228,10 @@ function initCatalog(userRole) {
         </div>     
       </div>`;
 
-  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${userRole}&username=${window.currentUser.username}`)
+  const roleParam = userRole === "guest" ? "guest" : userRole;
+  const usernameParam = window.currentUser?.username || "";
+
+  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`)
     .then(res => res.ok ? res.json() : Promise.reject("Network error"))
     .then(pedals => {
       resultsDiv.innerHTML = "";
@@ -226,7 +246,7 @@ function initCatalog(userRole) {
       });
 
       updatePedalCounts();
-      setupEditPedalHandler(pedals);
+      if (userRole !== "guest") setupEditPedalHandler(pedals);
     })
     .catch(err => {
       console.error("Error fetching pedals:", err);
