@@ -49,6 +49,21 @@ function initNavCatalog(userRole) {
   // Hide Add Gear button for guests
   if (userRole === "guest") {
     $("#createPedalBtn").hide();
+    // Add Login button
+    const loginBtnHtml = `
+      <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Login" style="display: flex; align-items: center; gap: 0.5rem;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 24 24">
+          <path d="M10 17l5-5-5-5v10z"/>
+        </svg>
+        Login
+      </button>
+    `;
+    $("#toggleFilterBtn").after(loginBtnHtml);
+
+    // Add click handler
+    $(document).on("click", "#loginBtn", function() {
+      window.location.href = "/PedalPlex/"; // redirect to login page
+    });
   } else {
     // Only attach click handlers for logged-in users
     function isTokenValid() {
