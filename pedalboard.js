@@ -79,7 +79,7 @@ function initPedalboard(userRole) {
         window.catalog = catalog;
         setupFilterUI(window.catalog);
 
-        const savedBoards = localStorage.getItem("guestPedalboards");
+        const savedBoards = localStorage.getItem("guestPedalboard");
         const boards = savedBoards ? JSON.parse(savedBoards) : [];
 
         if (boards.length === 0) {
@@ -135,7 +135,7 @@ function initPedalboard(userRole) {
 
   // --- GUEST USER CHECK ---
   if (userRole === 'guest') {
-    const savedBoards = localStorage.getItem('guestPedalboards');
+    const savedBoards = localStorage.getItem('guestPedalboard');
     const boards = savedBoards ? JSON.parse(savedBoards) : [];
 
     if (boards.length === 0) {
@@ -640,7 +640,7 @@ function savePedalboard() {
 
   // --- GUEST USER SAVE ---
   if (window.currentUser?.role === 'guest') {
-    localStorage.setItem('guestPedalboards', JSON.stringify(window.allPedalboards));
+    localStorage.setItem('guestPedalboard', JSON.stringify(window.allPedalboards));
     Swal.fire({
       icon: 'success',
       title: 'Pedalboard saved locally!',
@@ -728,10 +728,10 @@ $(document).ready(function () {
 
   // --- GUEST USER CREATE ---
   if (currentUser?.role === 'guest') {
-    const guestBoards = JSON.parse(localStorage.getItem('guestPedalboards') || '[]');
+    const guestBoards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
     const newBoard = { board_name: boardName, pedals: [] };
     guestBoards.push(newBoard);
-    localStorage.setItem('guestPedalboards', JSON.stringify(guestBoards));
+    localStorage.setItem('guestPedalboard', JSON.stringify(guestBoards));
     window.allPedalboards = guestBoards;
     selectedBoardIndex = guestBoards.length - 1;
     window.pedalboard = structuredClone(newBoard);
