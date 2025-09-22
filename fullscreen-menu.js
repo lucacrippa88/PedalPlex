@@ -117,10 +117,32 @@
 // });
 
 
-// Determine user role
+// ==========================
+// Song quotes array (global)
+// ==========================
+const songQuotes = [
+  "Rock 'n' roll will never die!",
+  "We are the champions, my friend!",
+  "We're not gonna take it!",
+  "I wanna rock and roll all night and party every day!",
+  "I was born with a plastic spoon in my mouth!",
+  "Take it Easy!",
+  "I'd trade all my tomorrows for a single yesterday!",
+  "We learned more from a three-minute record than we ever learned in school!",
+  "You may say I'm a dreamer, but I'm not the only one!",
+  "Mama, I'm coming home...",
+  "Back in business again!",
+  "Won't you fly high, free bird, yeah!",
+  "So if you want to love me, then darlin' don't refrain...",
+  "And if you listen very hard, the tune will come to you at last!"
+];
+
+// Determine user role (default to guest)
 const userRole = window.currentUser?.role || "guest";
 
-// Define fullscreen menu HTML template dynamically
+// ==========================
+// Fullscreen menu HTML
+// ==========================
 window.fullscreenMenuHtml = `
 <div class="fullscreen-menu" id="fullscreenMenu"><br>
   <div class="fullscreen-header" style="display: flex; justify-content: space-between; align-items: center;">
@@ -178,11 +200,20 @@ window.fullscreenMenuHtml = `
 </div>
 `;
 
-// DOM ready
+// ==========================
+// DOM Ready
+// ==========================
 $(document).ready(function () {
   // Close fullscreen menu
   $(document).on('click', '#closeMenu', function () {
     $('#fullscreenMenu').removeClass('active');
+  });
+
+  // Open menu and display random quote
+  $(document).on('click', '#menuToggle', function () {
+    const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
+    $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
+    $("#fullscreenMenu").addClass("active");
   });
 
   // Profile button
@@ -190,7 +221,7 @@ $(document).ready(function () {
     window.location.href = 'profile';
   });
 
-  // Logout
+  // Logout button
   $(document).on('click', '#logoutBtn', function () {
     Swal.fire({
       title: 'Are you sure you want to logout?',
@@ -214,13 +245,9 @@ $(document).ready(function () {
           showConfirmButton: false,
           allowOutsideClick: false,
           allowEscapeKey: false,
-          customClass: {
-            popup: 'swal2-carbon-popup'
-          }
+          customClass: { popup: 'swal2-carbon-popup' }
         });
-        setTimeout(() => {
-          window.location.href = '/PedalPlex/';
-        }, 1000);
+        setTimeout(() => { window.location.href = '/PedalPlex/'; }, 1000);
       }
     });
   });
@@ -230,3 +257,4 @@ $(document).ready(function () {
     window.location.href = '/PedalPlex/';
   });
 });
+
