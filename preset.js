@@ -9,11 +9,14 @@ window.allPedalboards = [];
 $(document).ready(function() {
   if (!localStorage.getItem('authToken')) {
     console.warn("No auth token found — initializing guest mode.");
-    loadGuestPedalboard();
+    initGuestMode();
+    return; // prevent the rest of preset initialization
   }
-  
-  renderFullPedalboard();
+
+  // Only non-guest users continue with normal initialization
+  initPreset();
 });
+
 
 function initPreset() {
     const isGuest = !window.currentUser;
@@ -1067,6 +1070,7 @@ async function createPresetOnServer(presetData) {
 
 
 function initGuestMode() {
+  window.currentUser = null;
   const stored = localStorage.getItem('guestPedalboard');
   if (!stored) return;
 
