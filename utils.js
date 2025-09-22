@@ -1288,32 +1288,28 @@ async function renderFullPedalboard() {
   //   return;
   // }
   // Handle guest: load pedalboard from localStorage if needed
-  if (!window.pedalboard || !window.pedalboard.pedals || window.pedalboard.pedals.length === 0) {
-    const storedPedalboard = localStorage.getItem('guestPedalboard');
-    if (storedPedalboard) {
+  // Guest mode fallback
+  if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals) || window.pedalboard.pedals.length === 0) {
+    const stored = localStorage.getItem('guestPedalboard');
+    if (stored) {
       try {
-        window.pedalboard = JSON.parse(storedPedalboard);
+        const guestBoard = JSON.parse(stored);
+        // Ensure pedals array exists
+        window.pedalboard = {
+          ...guestBoard,
+          pedals: Array.isArray(guestBoard.pedals) ? guestBoard.pedals : []
+        };
         console.log('Loaded pedalboard from localStorage for guest');
-      } catch (e) {
-        console.error('Failed to parse localStorage pedalboard', e);
-        container.innerHTML = `<p style="text-align:center;margin-top:40px;">No pedalboard found.</p>`;
+      } catch (err) {
+        console.error('Failed to parse guestPedalboard from localStorage', err);
+        container.innerHTML = `<p style="text-align:center;margin-top:40px;">No pedalboard available.</p>`;
         return;
       }
     } else {
       container.innerHTML = `
         <div style="text-align: center; margin-top: 40px;">
           <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty.</p>
-          <button
-            id="createBtn"
-            class="bx--btn bx--btn--secondary"
-            type="button"
-            aria-label="Go to Pedalboard"
-            style="display: inline-flex; align-items: center; gap: 0.5rem; margin: 0 auto;">
-            <svg xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 32 32" fill="currentColor">
-              <path d="M18 6L16.59 7.41 23.17 14H4v2H23.17l-6.58 6.59L18 26l10-10z"/>
-            </svg>
-            Go to pedalboard
-          </button>
+          <button id="createBtn" class="bx--btn bx--btn--secondary">Go to pedalboard</button>
         </div>
       `;
       document.getElementById('createBtn').addEventListener('click', () => {
@@ -1323,7 +1319,12 @@ async function renderFullPedalboard() {
     }
   }
 
-  // Show preset controls
+  // Now safe to iterate pedals
+  if (!Array.isArray(window.pedalboard.pedals)) {
+    console.error('window.pedalboard.pedals is still invalid:', window.pedalboard);
+    return;
+  }
+
   $("#preset-controls").css("display", "inline-flex");
 
   // Organize pedals by row
