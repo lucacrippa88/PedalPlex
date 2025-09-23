@@ -1178,6 +1178,7 @@ function initGuestMode() {
   })
   .then(res => res.json())
   .then(pedals => {
+    console.log("Fetched pedals:", pedals);
     if (!Array.isArray(pedals)) {
       console.error("Unexpected response from GET_PEDALS_BY_IDS.php:", pedals);
       return;
