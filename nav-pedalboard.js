@@ -13,7 +13,7 @@ function initNavPedalboard(userRole) {
       <div style="display: flex; align-items: center; gap: 1rem;">
         <span class="showDesktop" style="font-size: 0.75rem; opacity: 0.7;">Add gears</span>
 
-        <button id="toggleFilterBtn" class="showDesktop" aria-label="Toggle search" style="background:none; border:none; cursor:pointer; padding:4px;">
+        <button id="toggleFilterBtn" class="showDesktop" aria-label="Toggle search" style="background:none; border:none; cursor:pointer; padding:4px; display:none;">
           <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
               viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
               <circle cx="11" cy="11" r="7"></circle>
@@ -68,20 +68,33 @@ function initNavPedalboard(userRole) {
   });
   $("#closeMenu").on("click", function() { $("#fullscreenMenu").removeClass("active"); });
 
+  // Filter toggle
   $("#toggleFilterBtn").on("click", function () {
     $("#pedalFilterInput").toggle().focus();
   });
-
   $("#pedalFilterInput").on("input", function () {
     const filterValue = $(this).val().toLowerCase();
     console.log("Filtering pedals by:", filterValue);
   });
 
-  if (isGuest) {
-    // Hide create button for guests
-    $("#createBtn").hide();
+  // Function to show filter only if there is at least one pedalboard
+  function toggleFilterVisibility() {
+    if (window.allPedalboards && window.allPedalboards.length > 0) {
+      $("#toggleFilterBtn").show();
+    } else {
+      $("#toggleFilterBtn").hide();
+      $("#pedalFilterInput").hide();
+    }
+  }
 
-    // Offline Save button
+  toggleFilterVisibility(); // Initial check
+  // Call toggleFilterVisibility() whenever pedalboards change:
+  window.updateNavFilterVisibility = toggleFilterVisibility;
+
+  if (isGuest) {
+    $("#createBtn").hide(); // Guest can't create on server
+
+    // Offline save button
     $("#saveBtn").html(`
       <svg focusable='false' preserveAspectRatio='xMidYMid meet'
            xmlns='http://www.w3.org/2000/svg' fill='currentColor'
@@ -90,38 +103,25 @@ function initNavPedalboard(userRole) {
       </svg> Offline Save
     `);
 
-    // Offline save button action
     $("#saveBtn").on("click", function() {
-      if (typeof saveGuestPedalboard === "function") {
-        saveGuestPedalboard();
-
-        if (window.allPedalboards.length === 1) {
-          setupPedalboardDropdownAndRender();
-        }
-      } else {
-        console.warn("saveGuestPedalboard() not found");
-      }
+      if (typeof saveGuestPedalboard === "function") saveGuestPedalboard();
+      if (window.allPedalboards.length === 1) setupPedalboardDropdownAndRender();
     });
 
-    // Add login button
+    // Add login button and position filter input before it
     const loginBtnHtml = `<button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" 
                            style="display: flex; align-items: center; gap: 0.5rem;">Login</button>`;
     $("#toggleFilterBtn").after(loginBtnHtml);
-
-    // Move filter input before login button
     $("#loginBtn").before($("#pedalFilterInput"));
 
     $("#loginBtn").on("click", () => window.location.href = "/PedalPlex/");
   } else {
-    // Logged-in users: normal save to DB
+    // Logged-in users
     $("#saveBtn").on("click", function() {
       if (typeof savePedalboard === "function") savePedalboard();
-      else console.warn("savePedalboard() not found");
     });
-
     $("#createBtn").on("click", function() {
       if (typeof createNewPedalboard === "function") createNewPedalboard();
-      else console.warn("createNewPedalboard() not found");
     });
   }
 }
