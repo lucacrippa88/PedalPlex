@@ -1079,133 +1079,134 @@ async function createPresetOnServer(presetData) {
 
 
 
-// function initGuestMode() {
-//   const stored = localStorage.getItem('guestPedalboard');
-//   if (!stored) return;
-
-//   let guestBoards;
-//   try { guestBoards = JSON.parse(stored); } 
-//   catch (e) { console.error('Invalid guestPedalboard', e); return; }
-
-//   if (!Array.isArray(guestBoards) || guestBoards.length === 0) return;
-
-//   const firstBoard = guestBoards[0];
-
-//   // disable preset/folder controls as before
-//   const $pedalboardSelect = $('#pedalboardSelect');
-//   $pedalboardSelect.empty().append(
-//     $('<option>').val(0).text(firstBoard.board_name)
-//   );
-//   $pedalboardSelect.prop('disabled', false);
-
-//   $('#folderSelect, #presetSelect').empty().prop('disabled', true);
-//   $('#renameFolderBtn, #renamePresetBtn').prop('disabled', true).addClass('btn-disabled');
-//   ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn']
-//     .forEach(id => { 
-//       const el = document.getElementById(id);
-//       if (el) { el.disabled = true; el.classList.add('btn-disabled'); }
-//     });
-
-//   // ✅ Fetch catalog for guests too
-//   fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
-//     .then(res => res.json())
-//     .then(catalog => {
-//       window.catalog = catalog;
-//       window.catalogMap = {};
-//       catalog.forEach(p => window.catalogMap[p._id] = p);
-
-//       // now safe to render pedals
-//       const validPedals = (firstBoard.pedals || []).filter(p => {
-//         if (!window.catalogMap[p.pedal_id]) {
-//           console.warn("Skipping missing pedal:", p.pedal_id);
-//           return false;
-//         }
-//         return true;
-//       });
-
-//       renderFullPedalboard(validPedals);
-//     })
-//     .catch(err => console.error("Guest catalog fetch failed:", err));
-// }
-
 function initGuestMode() {
-  // Make sure resultsDiv exists before rendering
-  if (!window.resultsDiv) {
-    window.resultsDiv = document.getElementById("page-content");
-  }
-
   const stored = localStorage.getItem('guestPedalboard');
   if (!stored) return;
 
   let guestBoards;
-  try {
-    guestBoards = JSON.parse(stored);
-  } catch (e) {
-    console.error('Invalid guestPedalboard', e);
-    return;
-  }
+  try { guestBoards = JSON.parse(stored); } 
+  catch (e) { console.error('Invalid guestPedalboard', e); return; }
 
   if (!Array.isArray(guestBoards) || guestBoards.length === 0) return;
 
   const firstBoard = guestBoards[0];
-  const pedalIds = (firstBoard.pedals || []).map(p => String(p.pedal_id).trim());
 
-  // Disable preset/folder UI
+  // disable preset/folder controls as before
   const $pedalboardSelect = $('#pedalboardSelect');
   $pedalboardSelect.empty().append(
     $('<option>').val(0).text(firstBoard.board_name)
-  ).prop('disabled', false);
+  );
+  $pedalboardSelect.prop('disabled', false);
 
   $('#folderSelect, #presetSelect').empty().prop('disabled', true);
   $('#renameFolderBtn, #renamePresetBtn').prop('disabled', true).addClass('btn-disabled');
-
   ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn']
     .forEach(id => { 
       const el = document.getElementById(id);
       if (el) { el.disabled = true; el.classList.add('btn-disabled'); }
     });
 
-  if (pedalIds.length === 0) {
-    console.warn("Guest board has no pedals.");
-    renderFullPedalboard([]);
-    return;
-  }
+  // ✅ Fetch catalog for guests too
+  fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
+    .then(res => res.json())
+    .then(catalog => {
+      window.catalog = catalog;
+      window.catalogMap = {};
+      catalog.forEach(p => window.catalogMap[p._id] = p);
 
-  console.log("Fetching pedals for IDs:", pedalIds);
+      // now safe to render pedals
+      const validPedals = (firstBoard.pedals || []).filter(p => {
+        if (!window.catalogMap[p.pedal_id]) {
+          console.warn("Skipping missing pedal:", p.pedal_id);
+          return false;
+        }
+        return true;
+      });
 
-  fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ pedal_ids: pedalIds })
-  })
-  .then(res => res.json())
-  .then(pedals => {
-    if (!Array.isArray(pedals)) {
-      console.error("Unexpected response from GET_PEDALS_BY_IDS.php:", pedals);
-      return;
-    }
-
-    // Populate global catalog
-    window.catalog = pedals;
-    window.catalogMap = {};
-    pedals.forEach(p => {
-      window.catalogMap[String(p._id).trim()] = p;
-    });
-
-    // Match guest pedals against catalog
-    const validPedals = (firstBoard.pedals || []).map(p => {
-      const id = String(p.pedal_id).trim();
-      const catalogPedal = window.catalogMap[id];
-      if (!catalogPedal) {
-        console.warn("Pedal not found in catalog, skipping:", id);
-        return null;
-      }
-      return catalogPedal;
-    }).filter(Boolean);
-
-    // ✅ Now it's safe to render
-    renderFullPedalboard(validPedals);
-  })
-  .catch(err => console.error("Guest pedal fetch failed:", err));
+      renderFullPedalboard(validPedals);
+    })
+    .catch(err => console.error("Guest catalog fetch failed:", err));
 }
 
+
+
+// function initGuestMode() {
+//   // Make sure resultsDiv exists before rendering
+//   if (!window.resultsDiv) {
+//     window.resultsDiv = document.getElementById("page-content");
+//   }
+
+//   const stored = localStorage.getItem('guestPedalboard');
+//   if (!stored) return;
+
+//   let guestBoards;
+//   try {
+//     guestBoards = JSON.parse(stored);
+//   } catch (e) {
+//     console.error('Invalid guestPedalboard', e);
+//     return;
+//   }
+
+//   if (!Array.isArray(guestBoards) || guestBoards.length === 0) return;
+
+//   const firstBoard = guestBoards[0];
+//   const pedalIds = (firstBoard.pedals || []).map(p => String(p.pedal_id).trim());
+
+//   // Disable preset/folder UI
+//   const $pedalboardSelect = $('#pedalboardSelect');
+//   $pedalboardSelect.empty().append(
+//     $('<option>').val(0).text(firstBoard.board_name)
+//   ).prop('disabled', false);
+
+//   $('#folderSelect, #presetSelect').empty().prop('disabled', true);
+//   $('#renameFolderBtn, #renamePresetBtn').prop('disabled', true).addClass('btn-disabled');
+
+//   ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn']
+//     .forEach(id => { 
+//       const el = document.getElementById(id);
+//       if (el) { el.disabled = true; el.classList.add('btn-disabled'); }
+//     });
+
+//   if (pedalIds.length === 0) {
+//     console.warn("Guest board has no pedals.");
+//     renderFullPedalboard([]);
+//     return;
+//   }
+
+//   console.log("Fetching pedals for IDs:", pedalIds);
+
+//   fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({ pedal_ids: pedalIds })
+//   })
+//   .then(res => res.json())
+//   .then(pedals => {
+//     if (!Array.isArray(pedals)) {
+//       console.error("Unexpected response from GET_PEDALS_BY_IDS.php:", pedals);
+//       return;
+//     }
+
+//     // Populate global catalog
+//     window.catalog = pedals;
+//     window.catalogMap = {};
+//     pedals.forEach(p => {
+//       window.catalogMap[String(p._id).trim()] = p;
+//     });
+
+//     // Match guest pedals against catalog
+//     const validPedals = (firstBoard.pedals || []).map(p => {
+//       const id = String(p.pedal_id).trim();
+//       const catalogPedal = window.catalogMap[id];
+//       if (!catalogPedal) {
+//         console.warn("Pedal not found in catalog, skipping:", id);
+//         return null;
+//       }
+//       return catalogPedal;
+//     }).filter(Boolean);
+
+//     // ✅ Now it's safe to render
+//     renderFullPedalboard(validPedals);
+//   })
+//   .catch(err => console.error("Guest pedal fetch failed:", err));
+// }
