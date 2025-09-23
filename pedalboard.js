@@ -842,54 +842,70 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
     }
 
     // DELETE LOGIC
-    // DELETE LOGIC
-else if (result.isDenied) {
-  const currentBoard = window.allPedalboards[selectedBoardIndex];
+    else if (result.isDenied) {
 
-  if (currentUser?.role === 'guest') {
-    // Confirm deletion for guest
-    Swal.fire({
-      title: `Delete "${currentBoard.board_name}"?`,
-      text: 'This will remove the pedalboard locally and cannot be undone.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, delete it',
-      cancelButtonText: 'Cancel',
-      customClass: {
-        confirmButton: "bx--btn bx--btn--danger",
-        cancelButton: "bx--btn bx--btn--secondary",
-      }
-    }).then(confirm => {
-      if (confirm.isConfirmed) {
-        // Remove from localStorage
-        let guestBoards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
-        guestBoards.splice(selectedBoardIndex, 1);
-        localStorage.setItem('guestPedalboard', JSON.stringify(guestBoards));
+      const currentBoard = window.allPedalboards[selectedBoardIndex];
 
-        // Update in-memory
-        window.allPedalboards = guestBoards;
-        if (guestBoards.length > 0) {
-          selectedBoardIndex = 0;
-          window.pedalboard = structuredClone(guestBoards[0]);
-          setupPedalboardDropdownAndRender();
-        } else {
-          selectedBoardIndex = -1;
-          window.pedalboard = null;
-          document.getElementById('pedalboard').innerHTML = '';
-          $("#pedalboard-controls").hide();
-        }
-
+      if (currentUser?.role === 'guest') {
+        // Confirm deletion for guest
         Swal.fire({
-          title: 'Deleted!',
-          text: 'Your local pedalboard has been removed.',
-          icon: 'success',
-          timer: 1200,
-          showConfirmButton: false
-        });
-      }
-    });
-  }
+          title: `Delete "${currentBoard.board_name}"?`,
+          text: 'This will remove the pedalboard locally and cannot be undone.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, delete it',
+          cancelButtonText: 'Cancel',
+          customClass: {
+            confirmButton: "bx--btn bx--btn--danger",
+            cancelButton: "bx--btn bx--btn--secondary",
+          }
+        }).then(confirm => {
+          if (confirm.isConfirmed) {
+            // Remove from localStorage
+            let guestBoards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
+            guestBoards.splice(selectedBoardIndex, 1);
+            localStorage.setItem('guestPedalboard', JSON.stringify(guestBoards));
 
+            // Update in-memory
+            window.allPedalboards = guestBoards;
+
+            if (guestBoards.length > 0) {
+              selectedBoardIndex = 0;
+              window.pedalboard = structuredClone(guestBoards[0]);
+              setupPedalboardDropdownAndRender();
+            } else {
+              selectedBoardIndex = -1;
+              window.pedalboard = null;
+
+              // Clear UI and show create button
+              const container = document.getElementById('pedalboard');
+              container.innerHTML = `
+                <div style="text-align: center; margin-top: 40px;">
+                  <p style="font-size: 1.1em; margin-bottom: 20px;">
+                    No pedalboards found. Create a new one!
+                  </p>
+                  <button id="createBtn" class="bx--btn bx--btn--secondary">Create pedalboard</button>
+                </div>
+              `;
+
+              $("#pedalboard-controls").hide();
+            }
+
+            Swal.fire({
+              title: 'Deleted!',
+              text: 'Your local pedalboard has been removed.',
+              icon: 'success',
+              timer: 1200,
+              showConfirmButton: false
+            });
+          }
+        });
+
+        // Important: exit here, don't continue to logged-in user deletion
+        return;
+      }
+
+        // --- LOGGED-IN USER deletion logic ---
       const userId = currentUser.userid;
       const boardId = currentBoard._id;
 
