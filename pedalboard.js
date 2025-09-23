@@ -1031,5 +1031,11 @@ function saveGuestPedalboard() {
   const guestBoards = [board]; // always save as array
   localStorage.setItem("guestPedalboard", JSON.stringify(guestBoards));
   window.allPedalboards = guestBoards;
-  Swal.fire("Saved!", "Your pedalboard is temporarily saved locally.", "success");
+  Swal.fire({
+    icon: 'success',
+    title: 'Saved!',
+    text: 'Your pedalboard is temporarily saved locally.',
+    timer: 1000,           // Auto-close after 1 second
+    showConfirmButton: false
+  });
 }
