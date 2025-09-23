@@ -67,25 +67,7 @@ function initNavPreset() {
   $("body").prepend(navHtml);
   $("body").append(window.fullscreenMenuHtml);
 
-   // Disable Save/Create/Folder buttons for guests
-    // if (isGuest) {
-    //     ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn'].forEach(id => {
-    //         const el = document.getElementById(id);
-    //         if(el) {
-    //             el.disabled = true;
-    //             el.classList.add('btn-disabled');
-    //         }
-    //     });
-
-    //     // Attach info modal for guests
-    //     ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile'].forEach(id => {
-    //         const el = document.getElementById(id);
-    //         if(el) el.addEventListener('click', () => {
-    //             Swal.fire("Guest Mode", "Preset editing is disabled in guest mode.", "info");
-    //         });
-    //     });
-    // }
-
+    // Disable Save/Create/Folder buttons and add Login for guests
     if (isGuest) {
     // Remove save buttons
     ['savePstBtn','savePstBtnMobile'].forEach(id => {
