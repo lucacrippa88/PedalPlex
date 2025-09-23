@@ -1136,7 +1136,7 @@ function initGuestMode() {
   try {
     guestBoards = JSON.parse(stored);
   } catch (e) {
-    console.error('Invalid guestPedalboard', e);
+    console.error('Invalid guestPedalboard JSON', e);
     return;
   }
 
@@ -1155,7 +1155,6 @@ function initGuestMode() {
 
   $('#folderSelect, #presetSelect').empty().prop('disabled', true);
   $('#renameFolderBtn, #renamePresetBtn').prop('disabled', true).addClass('btn-disabled');
-
   ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn']
     .forEach(id => { 
       const el = document.getElementById(id);
@@ -1171,8 +1170,11 @@ function initGuestMode() {
   console.log("Fetching pedals for IDs:", pedalIds);
 
   // -------------------------
-  // Fetch only the required pedals
+  // Always ensure catalogMap exists to prevent undefined errors
   // -------------------------
+  window.catalog = [];
+  window.catalogMap = {};
+
   fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -1180,33 +1182,31 @@ function initGuestMode() {
   })
   .then(res => res.json())
   .then(pedals => {
-    console.log("Fetched pedals:", pedals);
     if (!Array.isArray(pedals)) {
       console.error("Unexpected response from GET_PEDALS_BY_IDS.php:", pedals);
-      return;
+      pedals = [];
     }
 
-    // Populate global catalog
+    // populate catalog and map
     window.catalog = pedals;
     window.catalogMap = {};
-    pedals.forEach(p => window.catalogMap[p._id] = p);
+    pedals.forEach(p => { if (p && p._id) window.catalogMap[p._id] = p; });
 
-    // Filter pedals that actually exist in catalog
+    // Filter pedals that exist in catalog
     const validPedals = (firstBoard.pedals || []).filter(p => {
       if (!window.catalogMap[p.pedal_id]) {
-        console.warn("Pedal not found in catalog:", p.pedal_id);
+        console.warn("Pedal not found in catalog, skipping:", p.pedal_id);
         return false;
       }
       return true;
     });
 
-    // Render pedalboard
+    // Render the pedalboard safely
     renderFullPedalboard(validPedals);
   })
-  .catch(err => console.error("Guest pedal fetch failed:", err));
+  .catch(err => {
+    console.error("Guest pedal fetch failed:", err);
+    // fallback: render empty pedalboard if fetch fails
+    renderFullPedalboard([]);
+  });
 }
-
-
-
-
-
