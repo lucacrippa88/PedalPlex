@@ -1168,6 +1168,8 @@ function initGuestMode() {
     return;
   }
 
+  console.log("Fetching pedals for IDs:", pedalIds);
+
   // -------------------------
   // Fetch only the required pedals
   // -------------------------
