@@ -68,23 +68,60 @@ function initNavPreset() {
   $("body").append(window.fullscreenMenuHtml);
 
    // Disable Save/Create/Folder buttons for guests
-    if (isGuest) {
-        ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn'].forEach(id => {
-            const el = document.getElementById(id);
-            if(el) {
-                el.disabled = true;
-                el.classList.add('btn-disabled');
-            }
-        });
+    // if (isGuest) {
+    //     ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn'].forEach(id => {
+    //         const el = document.getElementById(id);
+    //         if(el) {
+    //             el.disabled = true;
+    //             el.classList.add('btn-disabled');
+    //         }
+    //     });
 
-        // Attach info modal for guests
-        ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile'].forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.addEventListener('click', () => {
+    //     // Attach info modal for guests
+    //     ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile'].forEach(id => {
+    //         const el = document.getElementById(id);
+    //         if(el) el.addEventListener('click', () => {
+    //             Swal.fire("Guest Mode", "Preset editing is disabled in guest mode.", "info");
+    //         });
+    //     });
+    // }
+
+    if (isGuest) {
+    // Remove save buttons
+    ['savePstBtn','savePstBtnMobile'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    });
+
+    // Add login button
+    const loginBtnHtml = `
+    <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Login" 
+        style="display: flex; align-items: center; gap: 0.5rem;">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
+            <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
+        </svg>
+        Login
+    </button>`;
+    $(".showDesktop").prepend(loginBtnHtml);
+
+    $("#loginBtn").on("click", () => {
+        window.location.href = "/PedalPlex/";
+    });
+
+    // Disable create/add preset and add folder buttons
+    ['createPstBtn','createPstBtnMobile','addFolderBtn'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) {
+            el.disabled = true;
+            el.classList.add('btn-disabled');
+            el.addEventListener('click', () => {
                 Swal.fire("Guest Mode", "Preset editing is disabled in guest mode.", "info");
             });
-        });
-    }
+        }
+    });
+}
+
 
   // Fullscreen menu toggle
   $("#menuToggle").on("click", function () {
