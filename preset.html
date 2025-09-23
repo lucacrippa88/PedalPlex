@@ -165,7 +165,7 @@
       window.currentUser = null; // no user
       $('#loadingMessage').hide();
       $('#page-content').show();        // show the page
-      $('#preset-controls').html("Login to organise your Presets in folders and save them!");     // show controls
+      $('#preset-controls').show().html("Login to organise your Presets in folders and save them!");     // show controls
       if (typeof initNavPreset === 'function') initNavPreset();
       if (typeof initPreset === 'function') initPreset();
 
