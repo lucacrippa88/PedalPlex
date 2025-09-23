@@ -1180,25 +1180,17 @@ function initGuestMode() {
   window.catalogMap = {};
   pedals.forEach(p => window.catalogMap[p._id] = p);
 
-  // 🔍 Debug: check which pedals don’t resolve
-  (firstBoard.pedals || []).forEach(p => {
+  const validPedals = (firstBoard.pedals || []).filter(p => {
     if (!window.catalogMap[p.pedal_id]) {
-      console.warn(
-        "Pedal not found in catalog:",
-        JSON.stringify(p.pedal_id),
-        "Available keys:",
-        Object.keys(window.catalogMap)
-      );
+      console.warn("Pedal not found in catalog:", p.pedal_id);
+      return false;
     }
+    return true;
   });
-
-  // Filter out only valid pedals
-  const validPedals = (firstBoard.pedals || []).filter(
-    p => window.catalogMap[p.pedal_id]
-  );
 
   renderFullPedalboard(validPedals);
 })
+
 
   .catch(err => console.error("Guest pedal fetch failed:", err));
 }
