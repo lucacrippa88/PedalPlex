@@ -1170,17 +1170,36 @@ function initGuestMode() {
     body: JSON.stringify({ pedal_ids: pedalIds })
   })
   .then(res => res.json())
-  .then(pedals => {
-    // Build map for fast lookup
-    window.catalog = pedals;
-    window.catalogMap = {};
-    pedals.forEach(p => window.catalogMap[p._id] = p);
+.then(pedals => {
+  if (!Array.isArray(pedals)) {
+    console.error("Unexpected response from GET_PEDALS_BY_IDS.php:", pedals);
+    return;
+  }
 
-    // Filter guest board pedals against fetched details
-    const validPedals = (firstBoard.pedals || []).filter(p => window.catalogMap[p.pedal_id]);
+  window.catalog = pedals;
+  window.catalogMap = {};
+  pedals.forEach(p => window.catalogMap[p._id] = p);
 
-    renderFullPedalboard(validPedals);
-  })
+  // 🔍 Debug: check which pedals don’t resolve
+  (firstBoard.pedals || []).forEach(p => {
+    if (!window.catalogMap[p.pedal_id]) {
+      console.warn(
+        "Pedal not found in catalog:",
+        JSON.stringify(p.pedal_id),
+        "Available keys:",
+        Object.keys(window.catalogMap)
+      );
+    }
+  });
+
+  // Filter out only valid pedals
+  const validPedals = (firstBoard.pedals || []).filter(
+    p => window.catalogMap[p.pedal_id]
+  );
+
+  renderFullPedalboard(validPedals);
+})
+
   .catch(err => console.error("Guest pedal fetch failed:", err));
 }
 
