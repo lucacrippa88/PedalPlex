@@ -1317,7 +1317,10 @@ async function renderFullPedalboard() {
 
     for (const pbPedal of rowsMap[rowNum]) {
       try {
-        const pedalData = window.catalogMap[pbPedal.pedal_id];
+        // const pedalData = window.catalogMap[pbPedal.pedal_id];
+        const id = String(pbPedal.pedal_id || "").trim();
+        const pedalData = window.catalogMap[id] || window.catalogMap[id.normalize()];
+
         if (!pedalData) {
           console.warn(`Pedal not found in catalog: ${pbPedal.pedal_id}`);
           continue;
