@@ -1129,6 +1129,8 @@ async function createPresetOnServer(presetData) {
 // }
 
 function initGuestMode() {
+  resultsDiv = document.getElementById("page-content"); // ensure resultsDiv is set early
+
   const stored = localStorage.getItem('guestPedalboard');
   if (!stored) return;
 
@@ -1136,18 +1138,16 @@ function initGuestMode() {
   try {
     guestBoards = JSON.parse(stored);
   } catch (e) {
-    console.error('Invalid guestPedalboard JSON', e);
+    console.error('Invalid guestPedalboard', e);
     return;
   }
 
   if (!Array.isArray(guestBoards) || guestBoards.length === 0) return;
 
   const firstBoard = guestBoards[0];
-  const pedalIds = (firstBoard.pedals || []).map(p => p.pedal_id);
+  const pedalIds = (firstBoard.pedals || []).map(p => String(p.pedal_id).trim());
 
-  // -------------------------
   // Disable preset/folder UI
-  // -------------------------
   const $pedalboardSelect = $('#pedalboardSelect');
   $pedalboardSelect.empty().append(
     $('<option>').val(0).text(firstBoard.board_name)
@@ -1155,6 +1155,7 @@ function initGuestMode() {
 
   $('#folderSelect, #presetSelect').empty().prop('disabled', true);
   $('#renameFolderBtn, #renamePresetBtn').prop('disabled', true).addClass('btn-disabled');
+
   ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn']
     .forEach(id => { 
       const el = document.getElementById(id);
@@ -1169,12 +1170,6 @@ function initGuestMode() {
 
   console.log("Fetching pedals for IDs:", pedalIds);
 
-  // -------------------------
-  // Always ensure catalogMap exists to prevent undefined errors
-  // -------------------------
-  window.catalog = [];
-  window.catalogMap = {};
-
   fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -1184,29 +1179,29 @@ function initGuestMode() {
   .then(pedals => {
     if (!Array.isArray(pedals)) {
       console.error("Unexpected response from GET_PEDALS_BY_IDS.php:", pedals);
-      pedals = [];
+      return;
     }
 
-    // populate catalog and map
+    // Populate global catalog
     window.catalog = pedals;
     window.catalogMap = {};
-    pedals.forEach(p => { if (p && p._id) window.catalogMap[p._id] = p; });
-
-    // Filter pedals that exist in catalog
-    const validPedals = (firstBoard.pedals || []).filter(p => {
-      if (!window.catalogMap[p.pedal_id]) {
-        console.warn("Pedal not found in catalog, skipping:", p.pedal_id);
-        return false;
-      }
-      return true;
+    pedals.forEach(function(p) {
+      window.catalogMap[String(p._id).trim()] = p; // normalize IDs
     });
 
-    // Render the pedalboard safely
+    // Map guest pedal objects to catalog entries
+    const validPedals = (firstBoard.pedals || []).map(function(p) {
+      var id = String(p.pedal_id).trim();
+      var catalogPedal = window.catalogMap[id];
+      if (!catalogPedal) {
+        console.warn("Pedal not found in catalog, skipping:", id);
+        return null;
+      }
+      return catalogPedal;
+    }).filter(Boolean);
+
     renderFullPedalboard(validPedals);
   })
-  .catch(err => {
-    console.error("Guest pedal fetch failed:", err);
-    // fallback: render empty pedalboard if fetch fails
-    renderFullPedalboard([]);
-  });
+  .catch(err => console.error("Guest pedal fetch failed:", err));
 }
+
