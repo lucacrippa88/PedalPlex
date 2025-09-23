@@ -1129,7 +1129,10 @@ async function createPresetOnServer(presetData) {
 // }
 
 function initGuestMode() {
-  resultsDiv = document.getElementById("page-content"); // ensure resultsDiv is set early
+  // Make sure resultsDiv exists before rendering
+  if (!window.resultsDiv) {
+    window.resultsDiv = document.getElementById("page-content");
+  }
 
   const stored = localStorage.getItem('guestPedalboard');
   if (!stored) return;
@@ -1185,14 +1188,14 @@ function initGuestMode() {
     // Populate global catalog
     window.catalog = pedals;
     window.catalogMap = {};
-    pedals.forEach(function(p) {
-      window.catalogMap[String(p._id).trim()] = p; // normalize IDs
+    pedals.forEach(p => {
+      window.catalogMap[String(p._id).trim()] = p;
     });
 
-    // Map guest pedal objects to catalog entries
-    const validPedals = (firstBoard.pedals || []).map(function(p) {
-      var id = String(p.pedal_id).trim();
-      var catalogPedal = window.catalogMap[id];
+    // Match guest pedals against catalog
+    const validPedals = (firstBoard.pedals || []).map(p => {
+      const id = String(p.pedal_id).trim();
+      const catalogPedal = window.catalogMap[id];
       if (!catalogPedal) {
         console.warn("Pedal not found in catalog, skipping:", id);
         return null;
@@ -1200,6 +1203,7 @@ function initGuestMode() {
       return catalogPedal;
     }).filter(Boolean);
 
+    // ✅ Now it's safe to render
     renderFullPedalboard(validPedals);
   })
   .catch(err => console.error("Guest pedal fetch failed:", err));
