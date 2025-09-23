@@ -1035,7 +1035,7 @@ function saveGuestPedalboard() {
     icon: 'success',
     title: 'Saved!',
     text: 'Your pedalboard is temporarily saved locally.',
-    timer: 1000,           // Auto-close after 1 second
+    timer: 1000,
     showConfirmButton: false
   });
 }
