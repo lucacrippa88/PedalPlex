@@ -842,7 +842,54 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
     }
 
     // DELETE LOGIC
-    else if (result.isDenied) {
+    // DELETE LOGIC
+else if (result.isDenied) {
+  const currentBoard = window.allPedalboards[selectedBoardIndex];
+
+  if (currentUser?.role === 'guest') {
+    // Confirm deletion for guest
+    Swal.fire({
+      title: `Delete "${currentBoard.board_name}"?`,
+      text: 'This will remove the pedalboard locally and cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'Cancel',
+      customClass: {
+        confirmButton: "bx--btn bx--btn--danger",
+        cancelButton: "bx--btn bx--btn--secondary",
+      }
+    }).then(confirm => {
+      if (confirm.isConfirmed) {
+        // Remove from localStorage
+        let guestBoards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
+        guestBoards.splice(selectedBoardIndex, 1);
+        localStorage.setItem('guestPedalboard', JSON.stringify(guestBoards));
+
+        // Update in-memory
+        window.allPedalboards = guestBoards;
+        if (guestBoards.length > 0) {
+          selectedBoardIndex = 0;
+          window.pedalboard = structuredClone(guestBoards[0]);
+          setupPedalboardDropdownAndRender();
+        } else {
+          selectedBoardIndex = -1;
+          window.pedalboard = null;
+          document.getElementById('pedalboard').innerHTML = '';
+          $("#pedalboard-controls").hide();
+        }
+
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'Your local pedalboard has been removed.',
+          icon: 'success',
+          timer: 1200,
+          showConfirmButton: false
+        });
+      }
+    });
+  }
+
       const userId = currentUser.userid;
       const boardId = currentBoard._id;
 
