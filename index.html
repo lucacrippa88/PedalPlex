@@ -63,7 +63,7 @@
 
 
   <!-- Secondary CTA -->
-  <section style="margin-top:4rem; text-align:center;">
+  <section style="margin-top:5rem; text-align:center;">
     <p>Already have an account?</p>
     <div style="margin-top:2rem; display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
       <a href="login" class="bx--btn bx--btn--primary" type="button" aria-label="Login" 
@@ -78,12 +78,24 @@
   </section>
 
   <!-- Footer -->
-  <footer style="margin-top:4rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
-    © 2025 PedalPlex · <a href="#">Terms</a> · <a href="#">Privacy</a> · <a href="#">Support</a>
+  <footer id="footer" style="margin-top:4rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
+    © <span id="year-range"></span> PedalPlex · 
+    <a href="#">Terms</a> · <a href="#">Privacy</a> · <a href="#">Support</a>
   </footer>
+
 
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script src="nav.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      const startYear = 2025;
+      const currentYear = new Date().getFullYear();
+      const yearText = (currentYear > startYear) ? `${startYear}–${currentYear}` : startYear;
+      $("#year-range").text(yearText);
+    });
+  </script>
+
 </body>
 </html>
