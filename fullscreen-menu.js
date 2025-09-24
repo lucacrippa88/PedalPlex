@@ -77,13 +77,11 @@ window.fullscreenMenuHtml = `
     <span style='font-style:italic'>Rock 'n' roll will never die!</span>
   </div>
 
-  // <div class="menu-footer" style="text-align: center; margin-top: auto; padding: 1rem; font-size: 0.75rem; color: #aaa;">
-  //   Made with love by <a href='https://github.com/lucacrippa88' target='_blank'>@luca.crippa88</a><br><br>© 2025 PedalPlex. All rights reserved.
-  // </div>
-    <div class='menu-footer' id="footer" style="margin-top:4rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
-      © <span id="year-range"></span> PedalPlex · 
-      <a href="#">Terms</a> · <a href="#">Privacy</a> · <a href="#">Support</a>
-    </div>
+  <div class='menu-footer' style="margin-top:4rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
+    © <span id="year-range"></span> PedalPlex · 
+    <a href="#">Terms</a> · <a href="#">Privacy</a> · <a href="#">Support</a>
+  </div>
+  
 </div>
 `;
 
