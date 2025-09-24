@@ -5,17 +5,26 @@ const songQuotes = [
   "Rock 'n' roll will never die!",
   "We are the champions, my friend!",
   "We're not gonna take it!",
-  "I wanna rock and roll all night and party every day!",
+  "I wanna rock and roll all night / And party every day!",
   "I was born with a plastic spoon in my mouth!",
   "Take it Easy!",
-  "I'd trade all my tomorrows for a single yesterday!",
+  "I'd trade all my tomorrows / For a single yesterday!",
   "We learned more from a three-minute record than we ever learned in school!",
   "You may say I'm a dreamer, but I'm not the only one!",
   "Mama, I'm coming home...",
   "Back in business again!",
   "Won't you fly high, free bird, yeah!",
-  "So if you want to love me, then darlin' don't refrain...",
-  "And if you listen very hard, the tune will come to you at last!"
+  "So if you want to love me / Then darlin' don't refrain...",
+  "And if you listen very hard / The tune will come to you at last!",
+  "Here I am, rock you like a hurricane!",
+  "Exit light, enter night!",
+  "Living easy, loving free!",
+  "Don’t stop believin’!",
+  "Sweet dreams are made of this...",
+  "Take me down to the Paradise City / Where the grass is green and the girls are pretty!",
+  "I’m a cowboy, on a steel horse I ride / I’m wanted dead or alive!",
+  "Is this the real life? Is this just fantasy? / Caught in a landslide, no escape from reality...",
+  "If you wake up and don’t want to smile / If it takes just a little while…"
 ];
 
 // ==========================
