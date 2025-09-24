@@ -582,9 +582,17 @@ async function duplicatePreset(presetId, newName, folderId) {
     const folderSelect = document.getElementById('folderSelect');
     if (folderSelect) populatePresetDropdownByFolder(folderSelect.value);
 
-    // Done
-    Swal.fire({ icon: 'success', title: 'Preset Duplicated', text: `Preset duplicated as "${duplicated.preset_name}"`, timer: 1000, showConfirmButton: false })
-      .then(() => location.reload());
+    // Done — show success briefly, then reload
+    Swal.fire({
+      icon: 'success',
+      title: 'Preset Duplicated',
+      text: `Preset duplicated as "${duplicated.preset_name}"`,
+      timer: 1000,
+      showConfirmButton: false
+    });
+
+    setTimeout(() => location.reload(), 1000);
+
 
   } catch (err) {
     console.error('duplicatePreset error:', err);
