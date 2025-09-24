@@ -3,68 +3,81 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PedalPlex – Login / Register</title>
+  <title>PedalPlex</title>
+
+  <!-- Carbon Design System -->
   <link rel="stylesheet" href="https://unpkg.com/carbon-components/css/carbon-components.min.css">
+  <!-- Your custom overrides -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="auth-container" style="margin-top:80px; max-width: 400px; margin-left: auto; margin-right: auto; text-align: center;">
-    <h2 id="formTitle">Login</h2>
-    <br>
+  <!-- Hero / Splash -->
+  <main id="page-content" style="margin-top:50px; text-align:center; margin-bottom:50px;">
+    <h1 style="font-size:2.5rem; font-weight:700;">Save and Recall Your Pedal Presets Online</h1>
+    <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
+      Drag, drop, tweak, and save your own guitar & bass pedal setups.
+    </p>
 
-  <form id="authForm" style="max-width: 400px; margin: auto;">
-    <!-- Username -->
-    <input type="text" id="username" placeholder="Username" required class="bx--text-input"
-          style="margin-bottom: 10px; width: 100%;" />
+    <!-- CTA buttons -->
+    <div style="margin-top:2rem; display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+        <a href="pedalboard" class="bx--btn bx--btn--primary" type="button" aria-label="Start Building"
+            style="display: flex; align-items: center; gap: 0.5rem;">
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                <path d="M6.34 19H17.65V21H6.34z" transform="rotate(-45 11.995 20.002)"></path><path d="M17,30a1,1,0,0,1-.37-.07,1,1,0,0,1-.62-.79l-1-7,2-.28.75,5.27L21,24.52V17a1,1,0,0,1,.29-.71l4.07-4.07A8.94,8.94,0,0,0,28,5.86V4H26.14a8.94,8.94,0,0,0-6.36,2.64l-4.07,4.07A1,1,0,0,1,15,11H7.48L4.87,14.26l5.27.75-.28,2-7-1a1,1,0,0,1-.79-.62,1,1,0,0,1,.15-1l4-5A1,1,0,0,1,7,9h7.59l3.77-3.78A10.92,10.92,0,0,1,26.14,2H28a2,2,0,0,1,2,2V5.86a10.92,10.92,0,0,1-3.22,7.78L23,17.41V25a1,1,0,0,1-.38.78l-5,4A1,1,0,0,1,17,30Z"></path>            </svg>
+            Start Building
+        </a>
+        <a href="catalog" class="bx--btn bx--btn--secondary" type="button" aria-label="Start Building"
+            style="display: flex; align-items: center; gap: 0.5rem;">
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                <path d="M22 26H10a2 2 0 01-2-2V8a2 2 0 012-2H22a2 2 0 012 2V24A2 2 0 0122 26zM10 8V24H22V8zM4 24H0V22H4V10H0V8H4a2 2 0 012 2V22A2 2 0 014 24zM32 24H28a2 2 0 01-2-2V10a2 2 0 012-2h4v2H28V22h4z"/>
+            </svg>
+            Explore Catalog
+        </a>
+    </div>
+  </main>
 
-    <!-- Password with toggle -->
-    <div style="position: relative; margin-bottom: 10px;">
-      <input type="password" id="password" placeholder="Password" required class="bx--text-input"
-          style="width: 100%;" />
-      <button type="button" id="togglePassword" aria-label="Show password">
-          <svg xmlns="http://www.w3.org/2000/svg" class="bx--icon" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
-          <path d="M16,10a6,6,0,1,1-6,6A6,6,0,0,1,16,10Zm0-2C10.5,8,5.8,12,4,16c1.8,4,6.5,8,12,8s10.2-4,12-8C26.2,12,21.5,8,16,8Z"/>
+  <img src="logos/splash.png" alt="Splash image" style="width:100%; height:auto; margin-top:2rem;" />
+
+    <!-- Features -->
+    <section class="bx--grid" style="margin-top:4rem; text-align:center;">
+    <div class="bx--row">
+        <div class="bx--col-lg-4 bx--col-md-4 bx--col-sm-12">
+        <h3>Create Pedalboards</h3>
+        <p>Arrange pedals with an easy drag-and-drop interface.</p>
+        </div>
+        <div class="bx--col-lg-4 bx--col-md-4 bx--col-sm-12">
+        <h3>Save Presets</h3>
+        <p>Store your knob and switch settings for instant recall.</p>
+        </div>
+        <div class="bx--col-lg-4 bx--col-md-4 bx--col-sm-12">
+        <h3>Browse Catalog</h3>
+        <p>Explore a growing library of pedals and effects.</p>
+        </div>
+    </div>
+    </section>
+
+
+
+  <!-- Secondary CTA -->
+  <section style="margin-top:4rem; text-align:center;">
+    <p>Already have an account? <a href="login" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Login" 
+        style="display: flex; align-items: center; gap: 0.5rem;">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
+            <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
         </svg>
-      </button>
-    </div>
+        Login here
+    </a></p>
+  </section>
 
-    <!-- Optional Email -->
-    <input type="email" id="email" placeholder="Email" class="bx--text-input" style="display: none; margin-bottom: 10px; width: 100%;" />
+  <!-- Footer -->
+  <footer style="margin-top:4rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
+    © 2025 PedalPlex · <a href="#">Terms</a> · <a href="#">Privacy</a> · <a href="#">Support</a>
+  </footer>
 
-    <br>
-
-    <!-- Submit Button -->
-    <button type="submit" class="bx--btn bx--btn--primary" id="submitBtn" style="width: 100%;">Login</button>
-  </form>
-
-
-    <br>
-
-    <div class="toggle-link">
-      <span id="toggleText">Don't have an account? <a href="#" id="toggleForm">Register here</a></span>
-    </div>
-
-    <div style="margin-top: 15px;">
-      <a href="#" id="forgotPasswordLink">Forgot Password?</a>
-    </div>
-  </div>
-
+  <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="nav.js"></script>
-  <script src="auth.js"></script>
-
-  <script>
-    // View password icom
-    const toggleBtn = document.getElementById('togglePassword');
-    const passwordField = document.getElementById('password');
-
-    toggleBtn.addEventListener('click', () => {
-      const isPassword = passwordField.type === 'password';
-      passwordField.type = isPassword ? 'text' : 'password';
-    });
-  </script>
-
 </body>
 </html>

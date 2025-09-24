@@ -63,7 +63,7 @@ function initNavCatalog(userRole) {
 
     // Add click handler
     $(document).on("click", "#loginBtn", function() {
-      window.location.href = "/PedalPlex/"; // redirect to login page
+      window.location.href = "login"; // redirect to login page
     });
   } else {
     // Only attach click handlers for logged-in users
@@ -90,7 +90,7 @@ function initNavCatalog(userRole) {
           text: 'Please log in to create a pedal.',
           confirmButtonText: 'Login',
           customClass: { confirmButton: 'bx--btn bx--btn--primary' }
-        }).then(() => { window.location.href = "/PedalPlex/"; });
+        }).then(() => { window.location.href = "login"; });
         return;
       }
       createNewPedal();
