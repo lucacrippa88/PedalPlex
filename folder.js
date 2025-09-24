@@ -177,22 +177,18 @@ async function saveFolderToDB(folder, explicitBoardId) {
 // ---------------------------
 // Add Folder
 // ---------------------------
+// ---------------------------
+// Add Folder (fixed for multiple pedalboards)
+// ---------------------------
 function attachAddFolderListener() {
   const addFolderBtn = document.getElementById('addFolderBtn');
   if (!addFolderBtn) return;
 
   addFolderBtn.addEventListener('click', async () => {
+
+    // --- 1. Get currently selected pedalboard from dropdown ---
     const pedalboardSelect = document.getElementById('pedalboardSelect');
-    if (!pedalboardSelect) {
-      Swal.fire({
-        title: 'Select Board',
-        text: 'No pedalboard selector found.',
-        icon: 'error',
-        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-        buttonsStyling: false,
-      });
-      return;
-    }
+    if (!pedalboardSelect || !window.allPedalboards) return;
 
     const selectedIndex = parseInt(pedalboardSelect.value, 10);
     const selectedBoard = window.allPedalboards?.[selectedIndex];
@@ -209,6 +205,8 @@ function attachAddFolderListener() {
     }
 
     const boardName = selectedBoard.board_name || 'Unnamed Pedalboard';
+
+    // --- 2. Ask user for folder name ---
     const { value: folderName, isConfirmed } = await Swal.fire({
       title: `New Folder for "${boardName}"`,
       input: 'text',
@@ -224,42 +222,43 @@ function attachAddFolderListener() {
       inputValidator: (v) => !v.trim() && 'Folder name cannot be empty'
     });
 
-    if (isConfirmed && folderName && folderName.trim()) {
-      const newFolder = {
-        name: folderName.trim(),
-        preset_ids: []
-      };
+    if (!isConfirmed || !folderName?.trim()) return;
 
-      // Pass the currently selected pedalboard's ID explicitly
-      const saved = await saveFolderToDB(newFolder, selectedBoard._id);
-      if (saved) {
-        const normalized = {
-          id: saved.id || saved._id || saved.id,
-          _id: saved.id || saved._id,
-          name: newFolder.name,
-          preset_ids: []
-        };
+    const newFolder = { name: folderName.trim(), preset_ids: [] };
 
-        // Reload folders for the current pedalboard
-        await loadFoldersForCurrentPedalboard();
+    // --- 3. Save folder to DB passing the explicit pedalboard ID ---
+    const saved = await saveFolderToDB(newFolder, selectedBoard._id);
+    if (!saved) return;
 
-        const folderSelect = document.getElementById('folderSelect');
-        if (folderSelect) {
-          folderSelect.value = saved.id || saved._id;
-          populatePresetDropdownByFolder(folderSelect.value, null, true);
-        }
+    // Normalize saved folder
+    const normalizedFolder = {
+      id: saved.id || saved._id || saved.id,
+      _id: saved.id || saved._id,
+      name: newFolder.name,
+      preset_ids: []
+    };
 
-        Swal.fire({
-          title: 'Success',
-          text: `Folder "${newFolder.name}" created for "${boardName}"`,
-          icon: 'success',
-          customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-          buttonsStyling: false,
-        });
-      }
+    // --- 4. Reload folders for this pedalboard ---
+    await loadFoldersForCurrentPedalboard();
+
+    // --- 5. Update folder dropdown and select the new folder ---
+    const folderSelect = document.getElementById('folderSelect');
+    if (folderSelect) {
+      folderSelect.value = saved.id || saved._id;
+      populatePresetDropdownByFolder(folderSelect.value, null, true);
     }
+
+    Swal.fire({
+      title: 'Success',
+      text: `Folder "${newFolder.name}" created for "${boardName}"`,
+      icon: 'success',
+      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+      buttonsStyling: false,
+    });
+
   });
 }
+
 
 // function attachAddFolderListener() {
 //   const addFolderBtn = document.getElementById('addFolderBtn');
