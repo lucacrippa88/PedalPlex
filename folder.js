@@ -182,21 +182,33 @@ function attachAddFolderListener() {
   if (!addFolderBtn) return;
 
   addFolderBtn.addEventListener('click', async () => {
-    const board = window.pedalboard;
-    if (!board || !board._id) {
+    const pedalboardSelect = document.getElementById('pedalboardSelect');
+    if (!pedalboardSelect) {
       Swal.fire({
         title: 'Select Board',
-        text: 'Please select a pedalboard before creating a folder.',
-        icon: 'info',
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-        },
+        text: 'No pedalboard selector found.',
+        icon: 'error',
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false,
       });
       return;
     }
 
-    const boardName = board.board_name || 'Unnamed Pedalboard';
+    const selectedIndex = parseInt(pedalboardSelect.value, 10);
+    const selectedBoard = window.allPedalboards?.[selectedIndex];
+
+    if (!selectedBoard || !selectedBoard._id) {
+      Swal.fire({
+        title: 'Select Board',
+        text: 'Please select a pedalboard before creating a folder.',
+        icon: 'info',
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+        buttonsStyling: false,
+      });
+      return;
+    }
+
+    const boardName = selectedBoard.board_name || 'Unnamed Pedalboard';
     const { value: folderName, isConfirmed } = await Swal.fire({
       title: `New Folder for "${boardName}"`,
       input: 'text',
@@ -218,38 +230,110 @@ function attachAddFolderListener() {
         preset_ids: []
       };
 
-      const saved = await saveFolderToDB(newFolder, board._id);
+      // Pass the currently selected pedalboard's ID explicitly
+      const saved = await saveFolderToDB(newFolder, selectedBoard._id);
       if (saved) {
-        // cloudant response may contain id/_id — normalize
         const normalized = {
           id: saved.id || saved._id || saved.id,
           _id: saved.id || saved._id,
           name: newFolder.name,
           preset_ids: []
         };
-        // Reload folders from server to ensure _rev and other fields are fresh
+
+        // Reload folders for the current pedalboard
         await loadFoldersForCurrentPedalboard();
+
         const folderSelect = document.getElementById('folderSelect');
         if (folderSelect) {
           folderSelect.value = saved.id || saved._id;
-          // Ensure presets are cleared for this new folder
           populatePresetDropdownByFolder(folderSelect.value, null, true);
         }
-
 
         Swal.fire({
           title: 'Success',
           text: `Folder "${newFolder.name}" created for "${boardName}"`,
           icon: 'success',
-          customClass: {
-            confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-          },
+          customClass: { confirmButton: 'bx--btn bx--btn--primary' },
           buttonsStyling: false,
         });
       }
     }
   });
 }
+
+// function attachAddFolderListener() {
+//   const addFolderBtn = document.getElementById('addFolderBtn');
+//   if (!addFolderBtn) return;
+
+//   addFolderBtn.addEventListener('click', async () => {
+//     const board = window.pedalboard;
+//     if (!board || !board._id) {
+//       Swal.fire({
+//         title: 'Select Board',
+//         text: 'Please select a pedalboard before creating a folder.',
+//         icon: 'info',
+//         customClass: {
+//           confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+//         },
+//         buttonsStyling: false,
+//       });
+//       return;
+//     }
+
+//     const boardName = board.board_name || 'Unnamed Pedalboard';
+//     const { value: folderName, isConfirmed } = await Swal.fire({
+//       title: `New Folder for "${boardName}"`,
+//       input: 'text',
+//       inputLabel: 'Folder Name',
+//       confirmButtonText: "Create",
+//       inputPlaceholder: 'Enter folder name',
+//       showCancelButton: true,
+//       buttonsStyling: false,
+//       customClass: {
+//         confirmButton: "bx--btn bx--btn--primary",
+//         cancelButton: "bx--btn bx--btn--secondary"
+//       },
+//       inputValidator: (v) => !v.trim() && 'Folder name cannot be empty'
+//     });
+
+//     if (isConfirmed && folderName && folderName.trim()) {
+//       const newFolder = {
+//         name: folderName.trim(),
+//         preset_ids: []
+//       };
+
+//       const saved = await saveFolderToDB(newFolder, board._id);
+//       if (saved) {
+//         // cloudant response may contain id/_id — normalize
+//         const normalized = {
+//           id: saved.id || saved._id || saved.id,
+//           _id: saved.id || saved._id,
+//           name: newFolder.name,
+//           preset_ids: []
+//         };
+//         // Reload folders from server to ensure _rev and other fields are fresh
+//         await loadFoldersForCurrentPedalboard();
+//         const folderSelect = document.getElementById('folderSelect');
+//         if (folderSelect) {
+//           folderSelect.value = saved.id || saved._id;
+//           // Ensure presets are cleared for this new folder
+//           populatePresetDropdownByFolder(folderSelect.value, null, true);
+//         }
+
+
+//         Swal.fire({
+//           title: 'Success',
+//           text: `Folder "${newFolder.name}" created for "${boardName}"`,
+//           icon: 'success',
+//           customClass: {
+//             confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+//           },
+//           buttonsStyling: false,
+//         });
+//       }
+//     }
+//   });
+// }
 
 // ---------------------------
 // Rename/Delete Folder (consistent UX)
