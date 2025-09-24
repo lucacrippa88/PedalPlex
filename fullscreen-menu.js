@@ -104,12 +104,10 @@ $(document).ready(function () {
     if (window.currentUser !== undefined) {
       clearInterval(checkUserInterval);
 
-      // If logged-in user exists and role is NOT guest
       if (window.currentUser && window.currentUser.role && window.currentUser.role !== "guest") {
         $("#loginFullscreenBtn, #guestLoginMessage").hide();
         $("#profileBtn, #logoutBtn").show();
       } else {
-        // Guest mode
         $("#loginFullscreenBtn, #guestLoginMessage").show();
         $("#profileBtn, #logoutBtn").hide();
       }
@@ -118,7 +116,6 @@ $(document).ready(function () {
 
   // Profile button
   $(document).on('click', '#profileBtn', function () {
-    // Only allow if user exists
     if (window.currentUser && window.currentUser.role !== "guest") {
       window.location.href = 'profile';
     } else {
@@ -158,5 +155,19 @@ $(document).ready(function () {
   $(document).on('click', '#loginFullscreenBtn', function () {
     window.location.href = 'login';
   });
-});
 
+  // ==========================
+  // Inject Footer + Dynamic Year
+  // ==========================
+  $("body").append(`
+    <footer id="footer" style="margin-top:4rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
+      © <span id="year-range"></span> PedalPlex · 
+      <a href="#">Terms</a> · <a href="#">Privacy</a> · <a href="#">Support</a>
+    </footer>
+  `);
+
+  const startYear = 2025;
+  const currentYear = new Date().getFullYear();
+  const yearText = (currentYear > startYear) ? `${startYear}–${currentYear}` : startYear;
+  $("#year-range").text(yearText);
+});
