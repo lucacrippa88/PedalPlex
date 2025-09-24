@@ -160,8 +160,32 @@ $(document).ready(function () {
 
 
 
-  const startYear = 2025;
-  const currentYear = new Date().getFullYear();
-  const yearText = (currentYear > startYear) ? `${startYear}–${currentYear}` : startYear;
-  $("#year-range").text(yearText);
+  // -- dynamic year helper (robust: waits until #year-range exists) --
+  function setYearRangeIfReady() {
+    const startYear = 2025;
+    const currentYear = new Date().getFullYear();
+    const yearText = (currentYear > startYear) ? `${startYear}–${currentYear}` : `${startYear}`;
+    const $yr = $("#year-range");
+    if ($yr.length) {
+      $yr.text(yearText);
+      return true;
+    }
+    return false;
+  }
+
+  // Try immediately; if element not present yet, poll until it appears (then write and stop).
+  if (!setYearRangeIfReady()) {
+    let retries = 0;
+    const maxRetries = 30; // ~3 seconds with 100ms interval
+    const pollId = setInterval(() => {
+      retries++;
+      if (setYearRangeIfReady() || retries >= maxRetries) {
+        clearInterval(pollId);
+        if (retries >= maxRetries) {
+          console.warn("year-range element not found after waiting; year not set.");
+        }
+      }
+    }, 100);
+  }
+
 });
