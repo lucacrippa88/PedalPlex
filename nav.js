@@ -7,7 +7,7 @@ $(document).ready(function () {
           <div class="pedalplex-logo"></div>
         </button>
 
-        <div class="title">PedalPlex</div><span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Welcome</span>
+        <div class="title">PedalPlex</div><span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600"></span>
       </div>
 
       </div>
