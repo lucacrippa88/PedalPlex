@@ -180,20 +180,23 @@ async function saveFolderToDB(folder, explicitBoardId) {
 // ---------------------------
 // Add Folder (fixed for multiple pedalboards)
 // ---------------------------
+// ---------------------------
+// Add Folder (dropdown-selected pedalboard only)
+// ---------------------------
 function attachAddFolderListener() {
   const addFolderBtn = document.getElementById('addFolderBtn');
   if (!addFolderBtn) return;
 
   addFolderBtn.addEventListener('click', async () => {
 
-    // --- 1. Get currently selected pedalboard from dropdown ---
+    // Get currently selected pedalboard from dropdown
     const pedalboardSelect = document.getElementById('pedalboardSelect');
-    if (!pedalboardSelect || !window.allPedalboards) return;
+    if (!pedalboardSelect) return;
 
     const selectedIndex = parseInt(pedalboardSelect.value, 10);
     const selectedBoard = window.allPedalboards?.[selectedIndex];
 
-    if (!selectedBoard || !selectedBoard._id) {
+    if (!selectedBoard?._id) {
       Swal.fire({
         title: 'Select Board',
         text: 'Please select a pedalboard before creating a folder.',
@@ -206,7 +209,7 @@ function attachAddFolderListener() {
 
     const boardName = selectedBoard.board_name || 'Unnamed Pedalboard';
 
-    // --- 2. Ask user for folder name ---
+    // Ask user for folder name
     const { value: folderName, isConfirmed } = await Swal.fire({
       title: `New Folder for "${boardName}"`,
       input: 'text',
@@ -226,22 +229,14 @@ function attachAddFolderListener() {
 
     const newFolder = { name: folderName.trim(), preset_ids: [] };
 
-    // --- 3. Save folder to DB passing the explicit pedalboard ID ---
+    // Save folder to DB passing the selected pedalboard ID
     const saved = await saveFolderToDB(newFolder, selectedBoard._id);
     if (!saved) return;
 
-    // Normalize saved folder
-    const normalizedFolder = {
-      id: saved.id || saved._id || saved.id,
-      _id: saved.id || saved._id,
-      name: newFolder.name,
-      preset_ids: []
-    };
-
-    // --- 4. Reload folders for this pedalboard ---
+    // Reload folders for the selected pedalboard
     await loadFoldersForCurrentPedalboard();
 
-    // --- 5. Update folder dropdown and select the new folder ---
+    // Update folder dropdown and select the new folder
     const folderSelect = document.getElementById('folderSelect');
     if (folderSelect) {
       folderSelect.value = saved.id || saved._id;
@@ -258,6 +253,7 @@ function attachAddFolderListener() {
 
   });
 }
+
 
 
 // function attachAddFolderListener() {
