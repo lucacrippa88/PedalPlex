@@ -623,3 +623,28 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 }
 
+
+
+/* Force 3 equal columns for Features */
+.features .bx--row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+  gap: 2rem; /* spacing between columns */
+}
+
+.features .bx--col {
+  flex: 1 1 30%;   /* shrink/grow but aim for ~30% each */
+  max-width: 30%;
+  min-width: 250px; /* ensures readability on small screens */
+}
+
+.features h3 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.features p {
+  color: #666;
+}
