@@ -524,84 +524,154 @@ async function savePreset(presetId, updateData) {
 
 
 // Duplicate preset with proper confirmation
+// Replaces the existing duplicatePreset function — uses selected pedalboard from #pedalboardSelect
 async function duplicatePreset(presetId, newName, folderId) {
   try {
-    const original = window.presetMap[presetId];
+    const original = window.presetMap && window.presetMap[presetId];
     if (!original) {
-      Swal.fire({
-        title: 'Error',
-        text: 'Preset not found',
-        icon: 'error',
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--primary',
-        },
-        buttonsStyling: false,
-      });
+      Swal.fire({ title: 'Error', text: 'Preset not found', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
       return;
     }
 
-    // Show loading Swal while working
-    Swal.fire({
-      title: 'Duplicating preset...',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    // Show loading UI
+    Swal.fire({ title: 'Duplicating preset...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
+    // --- Determine currently selected pedalboard from dropdown (do NOT rely on window.pedalboard) ---
+    const pedalboardSelect = document.getElementById('pedalboardSelect');
+    const selectedBoardId = pedalboardSelect?.value || (window.pedalboard && window.pedalboard._id) || null;
+    const selectedBoardName = pedalboardSelect?.selectedOptions?.[0]?.text || (window.pedalboard && window.pedalboard.board_name) || '';
+
+    if (!selectedBoardId) {
+      Swal.close();
+      Swal.fire({ title: 'Error', text: 'No pedalboard selected', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
+      return;
+    }
+
+    // Build duplicated preset payload using selectedBoardId
     const duplicated = {
-      user_id: window.currentUser.userid,
-      board_id: window.pedalboard._id,
-      board_name: window.pedalboard.board_name,
+      user_id: window.currentUser?.userid,
+      board_id: selectedBoardId,
+      board_name: selectedBoardName,
       preset_name: `${newName} - Copy`,
       pedals: JSON.parse(JSON.stringify(original.pedals || {})),
     };
 
+    // Create on server
     const newId = await createPresetOnServer(duplicated);
 
     if (!newId) {
-      Swal.close(); // close loader
-      Swal.fire({
-        title: 'Error',
-        text: 'Could not duplicate preset',
-        icon: 'error',
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--primary',
-        },
-        buttonsStyling: false,
-      });
+      Swal.close();
+      Swal.fire({ title: 'Error', text: 'Could not duplicate preset', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
       return;
     }
 
+    // If a folderId was provided, move the new preset into it
     if (folderId) {
-      await movePresetToFolder(newId, folderId);
+      try {
+        await movePresetToFolder(newId, folderId);
+      } catch (err) {
+        console.error('duplicatePreset: movePresetToFolder error', err);
+        // not fatal — continue
+      }
     }
 
-    // Show SweetAlert confirmation with a short timer before reload
-    await Swal.fire({
-      icon: "success",
-      title: "Preset Duplicated",
-      text: `Preset duplicated as "${duplicated.preset_name}"`,
-      timer: 1000,
-      showConfirmButton: false,
-      didClose: () => {
-        location.reload();
-      }
-    });
+    // Refresh folders/presets for the currently selected pedalboard (uses dropdown-selected board)
+    if (typeof window.loadFoldersForCurrentPedalboard === 'function') {
+      await window.loadFoldersForCurrentPedalboard();
+    }
+    const folderSelect = document.getElementById('folderSelect');
+    if (folderSelect) populatePresetDropdownByFolder(folderSelect.value);
+
+    // Done
+    Swal.fire({ icon: 'success', title: 'Preset Duplicated', text: `Preset duplicated as "${duplicated.preset_name}"`, timer: 1000, showConfirmButton: false })
+      .then(() => location.reload());
 
   } catch (err) {
-    console.error("duplicatePreset error:", err);
-    Swal.fire({
-      title: 'Error',
-      text: 'Unexpected error duplicating preset',
-      icon: 'error',
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--primary',
-      },
-      buttonsStyling: false,
-    });
+    console.error('duplicatePreset error:', err);
+    Swal.close();
+    Swal.fire({ title: 'Error', text: 'Unexpected error duplicating preset', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
   }
 }
+
+
+// async function duplicatePreset(presetId, newName, folderId) {
+//   try {
+//     const original = window.presetMap[presetId];
+//     if (!original) {
+//       Swal.fire({
+//         title: 'Error',
+//         text: 'Preset not found',
+//         icon: 'error',
+//         customClass: {
+//           confirmButton: 'bx--btn bx--btn--primary',
+//         },
+//         buttonsStyling: false,
+//       });
+//       return;
+//     }
+
+//     // Show loading Swal while working
+//     Swal.fire({
+//       title: 'Duplicating preset...',
+//       allowOutsideClick: false,
+//       didOpen: () => {
+//         Swal.showLoading();
+//       }
+//     });
+
+//     const duplicated = {
+//       user_id: window.currentUser.userid,
+//       board_id: window.pedalboard._id,
+//       board_name: window.pedalboard.board_name,
+//       preset_name: `${newName} - Copy`,
+//       pedals: JSON.parse(JSON.stringify(original.pedals || {})),
+//     };
+
+//     const newId = await createPresetOnServer(duplicated);
+
+//     if (!newId) {
+//       Swal.close(); // close loader
+//       Swal.fire({
+//         title: 'Error',
+//         text: 'Could not duplicate preset',
+//         icon: 'error',
+//         customClass: {
+//           confirmButton: 'bx--btn bx--btn--primary',
+//         },
+//         buttonsStyling: false,
+//       });
+//       return;
+//     }
+
+//     if (folderId) {
+//       await movePresetToFolder(newId, folderId);
+//     }
+
+//     // Show SweetAlert confirmation with a short timer before reload
+//     await Swal.fire({
+//       icon: "success",
+//       title: "Preset Duplicated",
+//       text: `Preset duplicated as "${duplicated.preset_name}"`,
+//       timer: 1000,
+//       showConfirmButton: false,
+//       didClose: () => {
+//         location.reload();
+//       }
+//     });
+
+//   } catch (err) {
+//     console.error("duplicatePreset error:", err);
+//     Swal.fire({
+//       title: 'Error',
+//       text: 'Unexpected error duplicating preset',
+//       icon: 'error',
+//       customClass: {
+//         confirmButton: 'bx--btn bx--btn--primary',
+//       },
+//       buttonsStyling: false,
+//     });
+//   }
+// }
 
 
 
