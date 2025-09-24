@@ -189,14 +189,11 @@ function attachAddFolderListener() {
 
   addFolderBtn.addEventListener('click', async () => {
 
-    // Get currently selected pedalboard from dropdown
     const pedalboardSelect = document.getElementById('pedalboardSelect');
     if (!pedalboardSelect) return;
 
-    const selectedIndex = parseInt(pedalboardSelect.value, 10);
-    const selectedBoard = window.allPedalboards?.[selectedIndex];
-
-    if (!selectedBoard?._id) {
+    const selectedIndex = pedalboardSelect.selectedIndex;
+    if (selectedIndex < 0) {
       Swal.fire({
         title: 'Select Board',
         text: 'Please select a pedalboard before creating a folder.',
@@ -207,9 +204,21 @@ function attachAddFolderListener() {
       return;
     }
 
+    // Get the actual pedalboard object from allPedalboards
+    const selectedBoard = window.allPedalboards?.[selectedIndex];
+    if (!selectedBoard || !selectedBoard._id) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Could not determine the selected pedalboard.',
+        icon: 'error',
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+        buttonsStyling: false,
+      });
+      return;
+    }
+
     const boardName = selectedBoard.board_name || 'Unnamed Pedalboard';
 
-    // Ask user for folder name
     const { value: folderName, isConfirmed } = await Swal.fire({
       title: `New Folder for "${boardName}"`,
       input: 'text',
@@ -229,14 +238,14 @@ function attachAddFolderListener() {
 
     const newFolder = { name: folderName.trim(), preset_ids: [] };
 
-    // Save folder to DB passing the selected pedalboard ID
+    // Call saveFolderToDB with **selected pedalboard ID**
     const saved = await saveFolderToDB(newFolder, selectedBoard._id);
     if (!saved) return;
 
-    // Reload folders for the selected pedalboard
+    // Refresh folders for this pedalboard
     await loadFoldersForCurrentPedalboard();
 
-    // Update folder dropdown and select the new folder
+    // Select the new folder in dropdown
     const folderSelect = document.getElementById('folderSelect');
     if (folderSelect) {
       folderSelect.value = saved.id || saved._id;
@@ -250,9 +259,9 @@ function attachAddFolderListener() {
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false,
     });
-
   });
 }
+
 
 
 
