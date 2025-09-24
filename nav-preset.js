@@ -88,7 +88,7 @@ function initNavPreset() {
     $(".showDesktop").prepend(loginBtnHtml);
 
     $("#loginBtn").on("click", () => {
-        window.location.href = "/PedalPlex/";
+        window.location.href = "login";
     });
 
     // Disable create/add preset and add folder buttons

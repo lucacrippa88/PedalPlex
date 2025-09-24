@@ -65,7 +65,7 @@
       console.error('Auth check failed:', xhr.status, xhr.responseText);
       if (xhr.status === 401) {
         localStorage.removeItem('authToken');
-        window.location.href = '/PedalPlex/';
+        window.location.href = 'login';
       } else {
         alert('Failed to verify authentication. Please try again.');
       }
