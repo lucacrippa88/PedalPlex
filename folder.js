@@ -519,9 +519,11 @@ function attachRenameFolderListener() {
 // Returns window.folders (promise resolves when done)
 // ---------------------------
 async function loadFoldersForCurrentPedalboard(forSwal = false) {
+  const pedalboardSelect = document.getElementById('pedalboardSelect');
+  const boardId = pedalboardSelect?.value;
 
-  if (!window.currentUser || !window.pedalboard || !window.pedalboard._id) {
-    console.warn('[folders] Missing currentUser or pedalboard/_id — aborting loadFoldersForCurrentPedalboard');
+  if (!window.currentUser || !boardId) {
+    console.warn('[folders] Missing currentUser or selected pedalboard — aborting loadFoldersForCurrentPedalboard');
     window.folders = [];
     if (!forSwal) populateFolderDropdown();
     return window.folders;
@@ -538,7 +540,7 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
   try {
     const payload = {
       user_id: window.currentUser.userid,
-      board_id: window.pedalboard._id
+      board_id: boardId
     };
 
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_FOLDERS.php', {
@@ -548,35 +550,26 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
     });
 
     const text = await res.text();
-
     let data;
-    try {
-      data = text ? JSON.parse(text) : null;
-    } catch (parseErr) {
-      console.error('[folders] Failed to parse JSON from GET_FOLDERS:', parseErr);
-      data = null;
-    }
+    try { data = text ? JSON.parse(text) : null; } 
+    catch (parseErr) { console.error('[folders] Failed to parse JSON:', parseErr); data = null; }
 
-    // Normalize into window.folders array
     if (!data) { window.folders = [];
     } else if (Array.isArray(data.folders)) { window.folders = data.folders;
     } else if (Array.isArray(data.docs)) { window.folders = data.docs;
     } else if (Array.isArray(data)) { window.folders = data;
-    } else if (data.error) {
-      console.error('[folders] Server returned error:', data.error);
-      window.folders = [];
-    } else {
+    } else if (data.error) { console.error('[folders] Server error:', data.error); window.folders = [];
+    } else { 
       const possible = data.folders || data.docs || Object.values(data).find(v => Array.isArray(v));
       window.folders = Array.isArray(possible) ? possible : [];
     }
 
-    // Ensure each folder has proper id, name, preset_ids, and _rev
     window.folders = window.folders.map((f, idx) => {
       if (typeof f === 'string') return { id: `folder_${idx}`, name: f, preset_ids: [], _rev: null };
       return {
-        id: f._id || f.id || f['_id'] || `folder_${idx}`,   // fallback ID
+        id: f._id || f.id || f['_id'] || `folder_${idx}`,
         _id: f._id || f.id || f['_id'] || `folder_${idx}`,
-        _rev: f._rev || f.rev || null,                      // keep revision
+        _rev: f._rev || f.rev || null,
         name: f.name || f.folder_name || f.title || `(Folder ${idx + 1})`,
         preset_ids: Array.isArray(f.preset_ids)
           ? f.preset_ids
@@ -584,11 +577,10 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
       };
     });
 
-
-    // Update main page dropdown only if not for Swal
     if (!forSwal) populateFolderDropdown();
 
     return window.folders;
+
   } catch (err) {
     console.error('[folders] Error fetching folders:', err);
     window.folders = [];
@@ -601,6 +593,91 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
     }
   }
 }
+
+
+// async function loadFoldersForCurrentPedalboard(forSwal = false) {
+
+//   if (!window.currentUser || !window.pedalboard || !window.pedalboard._id) {
+//     console.warn('[folders] Missing currentUser or pedalboard/_id — aborting loadFoldersForCurrentPedalboard');
+//     window.folders = [];
+//     if (!forSwal) populateFolderDropdown();
+//     return window.folders;
+//   }
+
+//   let loader, folderSelect;
+//   if (!forSwal) {
+//     loader = document.getElementById('folderSelectLoader');
+//     folderSelect = document.getElementById('folderSelect');
+//     if (loader) loader.style.display = 'flex';
+//     if (folderSelect) folderSelect.style.display = 'none';
+//   }
+
+//   try {
+//     const payload = {
+//       user_id: window.currentUser.userid,
+//       board_id: window.pedalboard._id
+//     };
+
+//     const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_FOLDERS.php', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify(payload)
+//     });
+
+//     const text = await res.text();
+
+//     let data;
+//     try {
+//       data = text ? JSON.parse(text) : null;
+//     } catch (parseErr) {
+//       console.error('[folders] Failed to parse JSON from GET_FOLDERS:', parseErr);
+//       data = null;
+//     }
+
+//     // Normalize into window.folders array
+//     if (!data) { window.folders = [];
+//     } else if (Array.isArray(data.folders)) { window.folders = data.folders;
+//     } else if (Array.isArray(data.docs)) { window.folders = data.docs;
+//     } else if (Array.isArray(data)) { window.folders = data;
+//     } else if (data.error) {
+//       console.error('[folders] Server returned error:', data.error);
+//       window.folders = [];
+//     } else {
+//       const possible = data.folders || data.docs || Object.values(data).find(v => Array.isArray(v));
+//       window.folders = Array.isArray(possible) ? possible : [];
+//     }
+
+//     // Ensure each folder has proper id, name, preset_ids, and _rev
+//     window.folders = window.folders.map((f, idx) => {
+//       if (typeof f === 'string') return { id: `folder_${idx}`, name: f, preset_ids: [], _rev: null };
+//       return {
+//         id: f._id || f.id || f['_id'] || `folder_${idx}`,   // fallback ID
+//         _id: f._id || f.id || f['_id'] || `folder_${idx}`,
+//         _rev: f._rev || f.rev || null,                      // keep revision
+//         name: f.name || f.folder_name || f.title || `(Folder ${idx + 1})`,
+//         preset_ids: Array.isArray(f.preset_ids)
+//           ? f.preset_ids
+//           : (Array.isArray(f.presets) ? f.presets : [])
+//       };
+//     });
+
+
+//     // Update main page dropdown only if not for Swal
+//     if (!forSwal) populateFolderDropdown();
+
+//     return window.folders;
+//   } catch (err) {
+//     console.error('[folders] Error fetching folders:', err);
+//     window.folders = [];
+//     if (!forSwal) populateFolderDropdown();
+//     return window.folders;
+//   } finally {
+//     if (!forSwal) {
+//       if (loader) loader.style.display = 'none';
+//       if (folderSelect) folderSelect.style.display = 'inline-block';
+//     }
+//   }
+// }
 
 // Expose globally (keep your existing API)
 window.attachAddFolderListener = attachAddFolderListener;
