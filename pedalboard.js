@@ -8,126 +8,104 @@ function saveSelectedBoardToLocalStorage() {
   localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
 }
 
-// function setupPedalboardDropdownAndRender() {
-//   if (!window.allPedalboards || window.allPedalboards.length === 0) return;
 
-//   $("#pedalboard-controls").css("display", "inline-flex");
-//   const dropdown = document.getElementById('pedalboardSelect');
-//   dropdown.innerHTML = '';
-
-//   window.allPedalboards.forEach((board, index) => {
-//     const option = document.createElement('option');
-//     option.value = index;
-//     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
-//     dropdown.appendChild(option);
-//   });
-
-//   selectedBoardIndex = 0;
-//   window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
-//   renderPedalboard();
-
-//   // Save to localStorage on initial load
-//   saveSelectedBoardToLocalStorage();
-
-//   dropdown.addEventListener('change', (e) => {
-//     selectedBoardIndex = parseInt(e.target.value, 10);
-//     window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
-//     renderPedalboard();
-
-//     // Save to localStorage on change
-//     saveSelectedBoardToLocalStorage();
-//   });
-// }
 
 
 
 // function setupPedalboardDropdownAndRender() {
 //   if (!window.allPedalboards || window.allPedalboards.length === 0) return;
 
-//   $("#pedalboard-controls").css("display", "inline-flex");
 //   const dropdown = document.getElementById('pedalboardSelect');
 //   dropdown.innerHTML = '';
 
+//   // Add options
 //   window.allPedalboards.forEach((board, index) => {
 //     const option = document.createElement('option');
-//     option.value = index; // keep index for event handling
+//     option.value = index; // value still index for event handling
 //     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
 //     dropdown.appendChild(option);
 //   });
 
-//   // --- Select pedalboard by name from localStorage ---
+//   // Select by name from localStorage
 //   const lastName = localStorage.getItem('lastPedalboardText');
 //   let selectedIndex = 0;
 
 //   if (lastName) {
-//     const foundIndex = window.allPedalboards.findIndex(b => b.board_name === lastName);
-//     if (foundIndex !== -1) selectedIndex = foundIndex;
+//     for (let i = 0; i < dropdown.options.length; i++) {
+//       if (dropdown.options[i].textContent === lastName) {
+//         selectedIndex = i;
+//         break;
+//       }
+//     }
 //   }
 
+//   // Apply selection
+//   dropdown.selectedIndex = selectedIndex;
 //   selectedBoardIndex = selectedIndex;
 //   window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
-//   dropdown.selectedIndex = selectedBoardIndex; // select it in the dropdown
 //   renderPedalboard();
 
-//   // Save to localStorage on initial load
+//   // Save the selection (optional, to refresh localStorage)
 //   saveSelectedBoardToLocalStorage();
 
 //   dropdown.addEventListener('change', (e) => {
 //     selectedBoardIndex = parseInt(e.target.value, 10);
 //     window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
 //     renderPedalboard();
-
-//     // Save to localStorage on change
 //     saveSelectedBoardToLocalStorage();
 //   });
 // }
 
 
-
-
 function setupPedalboardDropdownAndRender() {
-  if (!window.allPedalboards || window.allPedalboards.length === 0) return;
-
   const dropdown = document.getElementById('pedalboardSelect');
+  if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
+
   dropdown.innerHTML = '';
 
-  // Add options
+  // Populate dropdown
   window.allPedalboards.forEach((board, index) => {
     const option = document.createElement('option');
-    option.value = index; // value still index for event handling
+    option.value = index; // always index for event handling
     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
     dropdown.appendChild(option);
   });
 
-  // Select by name from localStorage
-  const lastName = localStorage.getItem('lastPedalboardText');
   let selectedIndex = 0;
 
-  if (lastName) {
-    for (let i = 0; i < dropdown.options.length; i++) {
-      if (dropdown.options[i].textContent === lastName) {
-        selectedIndex = i;
-        break;
+  if (window.currentUser?.role === 'guest') {
+    // Guests always select the first board
+    selectedIndex = 0;
+  } else {
+    // Logged-in users: select by lastPedalboardText
+    const lastName = localStorage.getItem('lastPedalboardText');
+    if (lastName) {
+      for (let i = 0; i < dropdown.options.length; i++) {
+        if (dropdown.options[i].textContent === lastName) {
+          selectedIndex = i;
+          break;
+        }
       }
     }
   }
 
-  // Apply selection
   dropdown.selectedIndex = selectedIndex;
-  selectedBoardIndex = selectedIndex;
-  window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
+  window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
   renderPedalboard();
 
-  // Save the selection (optional, to refresh localStorage)
+  // Save current selection to localStorage
   saveSelectedBoardToLocalStorage();
 
+  // Handle dropdown change
   dropdown.addEventListener('change', (e) => {
-    selectedBoardIndex = parseInt(e.target.value, 10);
-    window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
+    selectedIndex = parseInt(e.target.value, 10);
+    window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
     renderPedalboard();
     saveSelectedBoardToLocalStorage();
   });
 }
+
+
 
 
 
