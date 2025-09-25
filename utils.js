@@ -994,11 +994,13 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
         ? `by: ${pedal.author}, ${pedal.published}` // admin sees all
         : `by: ${pedal.author}, ${pedal.published}`; // regular user sees their own
 
-      const $authorDiv = $("<div>")
-        .addClass("pedal-author")
-        .text(authorText);
-
-      $pedalDiv.prepend($authorDiv);
+      // Add this info only if not in pedalboard page
+      if (pedalboardPage == false) {
+        const $authorDiv = $("<div>")
+          .addClass("pedal-author")
+          .text(authorText);
+        $pedalDiv.prepend($authorDiv);
+      }
     }
   }
 
