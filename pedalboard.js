@@ -12,62 +12,13 @@ function saveSelectedBoardToLocalStorage() {
 
 
 
-// function setupPedalboardDropdownAndRender() {
-//   if (!window.allPedalboards || window.allPedalboards.length === 0) return;
-
-//   const dropdown = document.getElementById('pedalboardSelect');
-//   dropdown.innerHTML = '';
-
-//   // Add options
-//   window.allPedalboards.forEach((board, index) => {
-//     const option = document.createElement('option');
-//     option.value = index; // value still index for event handling
-//     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
-//     dropdown.appendChild(option);
-//   });
-
-//   // Select by name from localStorage
-//   const lastName = localStorage.getItem('lastPedalboardText');
-//   let selectedIndex = 0;
-
-//   if (lastName) {
-//     for (let i = 0; i < dropdown.options.length; i++) {
-//       if (dropdown.options[i].textContent === lastName) {
-//         selectedIndex = i;
-//         break;
-//       }
-//     }
-//   }
-
-//   // Apply selection
-//   dropdown.selectedIndex = selectedIndex;
-//   selectedBoardIndex = selectedIndex;
-//   window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
-//   renderPedalboard();
-
-//   // Save the selection (optional, to refresh localStorage)
-//   saveSelectedBoardToLocalStorage();
-
-//   dropdown.addEventListener('change', (e) => {
-//     selectedBoardIndex = parseInt(e.target.value, 10);
-//     window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
-//     renderPedalboard();
-//     saveSelectedBoardToLocalStorage();
-//   });
-// }
-
-
 function setupPedalboardDropdownAndRender() {
   const dropdown = document.getElementById('pedalboardSelect');
   if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
 
   dropdown.innerHTML = '';
 
-  if (window.currentUser?.role !== 'guest') {
-    selectLastPedalboardByText();     // select by text for logged-in users
-  }
-
-  // Populate dropdown
+  // Populate dropdown first
   window.allPedalboards.forEach((board, index) => {
     const option = document.createElement('option');
     option.value = index; // always index for event handling
@@ -78,8 +29,7 @@ function setupPedalboardDropdownAndRender() {
   let selectedIndex = 0;
 
   if (window.currentUser?.role === 'guest') {
-    // Guests always select the first board
-    selectedIndex = 0;
+    selectedIndex = 0; // guest always first
   } else {
     // Logged-in users: select by lastPedalboardText
     const lastName = localStorage.getItem('lastPedalboardText');
@@ -113,26 +63,27 @@ function setupPedalboardDropdownAndRender() {
 
 
 
-function selectLastPedalboardByText() {
-  const dropdown = document.getElementById('pedalboardSelect');
-  if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
 
-  const lastName = localStorage.getItem('lastPedalboardText');
-  if (!lastName) return; // nothing to select
+// function selectLastPedalboardByText() {
+//   const dropdown = document.getElementById('pedalboardSelect');
+//   if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
 
-  let selectedIndex = 0; // fallback if not found
+//   const lastName = localStorage.getItem('lastPedalboardText');
+//   if (!lastName) return; // nothing to select
 
-  for (let i = 0; i < dropdown.options.length; i++) {
-    if (dropdown.options[i].textContent === lastName) {
-      selectedIndex = i;
-      break;
-    }
-  }
+//   let selectedIndex = 0; // fallback if not found
 
-  dropdown.selectedIndex = selectedIndex;
-  window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
-  renderPedalboard();
-}
+//   for (let i = 0; i < dropdown.options.length; i++) {
+//     if (dropdown.options[i].textContent === lastName) {
+//       selectedIndex = i;
+//       break;
+//     }
+//   }
+
+//   dropdown.selectedIndex = selectedIndex;
+//   window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
+//   renderPedalboard();
+// }
 
 
 
