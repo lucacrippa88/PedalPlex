@@ -63,6 +63,10 @@ function setupPedalboardDropdownAndRender() {
 
   dropdown.innerHTML = '';
 
+  if (window.currentUser?.role !== 'guest') {
+    selectLastPedalboardByText();     // select by text for logged-in users
+  }
+
   // Populate dropdown
   window.allPedalboards.forEach((board, index) => {
     const option = document.createElement('option');
@@ -107,6 +111,28 @@ function setupPedalboardDropdownAndRender() {
 
 
 
+
+
+function selectLastPedalboardByText() {
+  const dropdown = document.getElementById('pedalboardSelect');
+  if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
+
+  const lastName = localStorage.getItem('lastPedalboardText');
+  if (!lastName) return; // nothing to select
+
+  let selectedIndex = 0; // fallback if not found
+
+  for (let i = 0; i < dropdown.options.length; i++) {
+    if (dropdown.options[i].textContent === lastName) {
+      selectedIndex = i;
+      break;
+    }
+  }
+
+  dropdown.selectedIndex = selectedIndex;
+  window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
+  renderPedalboard();
+}
 
 
 
