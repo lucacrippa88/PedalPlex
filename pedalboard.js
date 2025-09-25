@@ -10,26 +10,29 @@ function saveSelectedBoardToLocalStorage() {
 
 
 
+
+
+
+
+
 function setupPedalboardDropdownAndRender() {
   const dropdown = document.getElementById('pedalboardSelect');
   if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
 
   dropdown.innerHTML = '';
 
-  // Populate dropdown first
+  // Populate dropdown
   window.allPedalboards.forEach((board, index) => {
     const option = document.createElement('option');
-    option.value = index; // index for event handling
+    option.value = index; // always index for event handling
     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
     dropdown.appendChild(option);
   });
 
+  // Determine which board to select
   let selectedIndex = 0;
 
-  if (window.currentUser?.role === 'guest') {
-    // Guests always select the first board
-    selectedIndex = 0;
-  } else {
+  if (window.currentUser?.role !== 'guest') {
     // Logged-in users: select by lastPedalboardText
     const lastName = localStorage.getItem('lastPedalboardText');
     if (lastName) {
@@ -40,12 +43,17 @@ function setupPedalboardDropdownAndRender() {
         }
       }
     }
+  } else {
+    // Guests always select the first board
+    selectedIndex = 0;
   }
 
+  // Apply selection
   dropdown.selectedIndex = selectedIndex;
   window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
   renderPedalboard();
 
+  // Save current selection to localStorage
   saveSelectedBoardToLocalStorage();
 
   // Handle dropdown change
