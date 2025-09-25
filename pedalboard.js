@@ -518,6 +518,61 @@ document.addEventListener('DOMContentLoaded', () => {
 // }
 
 
+// function renderPedalboard() {
+//   const container = document.getElementById('pedalboard');
+//   if (!container) return;
+//   container.innerHTML = '';
+
+//   if (!window.pedalboard?.pedals || window.pedalboard.pedals.length === 0) {
+//     container.textContent = "No pedals found.";
+//     return;
+//   }
+
+//   // Group pedals by row
+//   const rowsMap = {};
+//   window.pedalboard.pedals.forEach(pbPedal => {
+//     const rowNum = pbPedal.row || 1;
+//     if (!rowsMap[rowNum]) rowsMap[rowNum] = [];
+//     rowsMap[rowNum].push(pbPedal);
+//   });
+
+//   // Sort rows ascending
+//   const sortedRows = Object.keys(rowsMap).map(r => parseInt(r, 10)).sort((a, b) => a - b);
+
+//   sortedRows.forEach(rowNum => {
+//     const rowDiv = document.createElement('div');
+//     rowDiv.style.display = 'flex';
+//     rowDiv.style.flexWrap = 'wrap';
+//     rowDiv.style.marginBottom = '10px';
+//     rowDiv.style.gap = '10px';
+//     container.appendChild(rowDiv);
+
+//     rowsMap[rowNum].forEach(pbPedal => {
+//       const pedalData = window.catalog.find(p => p._id === pbPedal.pedal_id);
+//       if (!pedalData) {
+//         console.warn(`Pedal not found in catalog: ${pbPedal.pedal_id}`);
+//         return;
+//       }
+
+//       // Use existing renderPedal from utils.js
+//       const $pedalEl = renderPedal(pedalData, window.currentUser?.role || 'guest', pedalboardPage = true);
+
+//       // Apply rotation
+//       $pedalEl.css('transform', `rotate(${pbPedal.rotation || 0}deg)`);
+
+//       // Add click listener to open edit modal
+//       $pedalEl.css('cursor', 'pointer');
+//       $pedalEl.on('click', () => openEditPedalModal(pbPedal));
+
+//       // Append to the row
+//       rowDiv.appendChild($pedalEl[0]); // $pedalEl is a jQuery object; [0] is the DOM element
+//     });
+//   });
+// }
+
+
+
+
 function renderPedalboard() {
   const container = document.getElementById('pedalboard');
   if (!container) return;
@@ -557,22 +612,47 @@ function renderPedalboard() {
       // Use existing renderPedal from utils.js
       const $pedalEl = renderPedal(pedalData, window.currentUser?.role || 'guest', pedalboardPage = true);
 
-      // Apply rotation
-      $pedalEl.css('transform', `rotate(${pbPedal.rotation || 0}deg)`);
-
       // Add click listener to open edit modal
       $pedalEl.css('cursor', 'pointer');
       $pedalEl.on('click', () => openEditPedalModal(pbPedal));
 
-      // Append to the row
-      rowDiv.appendChild($pedalEl[0]); // $pedalEl is a jQuery object; [0] is the DOM element
+      // Calculate wrapper styles accounting for rotation
+      const angle = pbPedal.rotation || 0;
+      const widthPx = parseFloat(getPedalWidth(pedalData.width));
+      const heightPx = parseFloat(getPedalHeight(pedalData.height));
+      const hasRotation = angle !== 0;
+
+      let wrapperStyles = {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        position: 'relative',
+        boxSizing: 'content-box',
+        marginBottom: '20px',
+      };
+
+      if (hasRotation) {
+        const radians = angle * Math.PI / 180;
+        const sin = Math.abs(Math.sin(radians));
+        const cos = Math.abs(Math.cos(radians));
+
+        const rotatedWidth = widthPx * cos + heightPx * sin;
+        const rotatedHeight = widthPx * sin + heightPx * cos;
+
+        Object.assign(wrapperStyles, {
+          width: `${rotatedWidth}px`,
+          height: `${rotatedHeight}px`,
+          marginLeft: `${rotatedWidth * 0.2}px`,
+          marginRight: `${rotatedWidth * 0.2}px`,
+          ...(widthPx > heightPx ? { marginTop: '30px' } : {})
+        });
+      }
+
+      const $wrapper = $("<div>").css(wrapperStyles).append($pedalEl);
+      rowDiv.appendChild($wrapper[0]);
     });
   });
 }
-
-
-
-
 
 
 
