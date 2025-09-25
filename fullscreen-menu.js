@@ -10,7 +10,7 @@ const songQuotes = [
   "Take it Easy!",
   "I'd trade all my tomorrows / For a single yesterday!",
   "We learned more from a three-minute record than we ever learned in school!",
-  "You may say I'm a dreamer, but I'm not the only one!",
+  "You may say I'm a dreamer / But I'm not the only one!",
   "Mama, I'm coming home...",
   "Back in business again!",
   "Won't you fly high, free bird, yeah!",
