@@ -2,32 +2,6 @@ let selectedBoardIndex = 0;
 window.allPedalboards = []; // store all pedalboards here
 
 
-// function setupPedalboardDropdownAndRender() {
-//   if (!window.allPedalboards || window.allPedalboards.length === 0) return;
-
-//   $("#pedalboard-controls").css("display", "inline-flex");
-//   const dropdown = document.getElementById('pedalboardSelect');
-//   dropdown.innerHTML = '';
-
-//   window.allPedalboards.forEach((board, index) => {
-//     const option = document.createElement('option');
-//     option.value = index;
-//     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
-//     dropdown.appendChild(option);
-//   });
-
-//   selectedBoardIndex = 0;
-//   window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
-//   renderPedalboard();
-
-//   dropdown.addEventListener('change', (e) => {
-//     selectedBoardIndex = parseInt(e.target.value, 10);
-//     window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
-//     renderPedalboard();
-//   });
-// }
-
-
 function saveSelectedBoardToLocalStorage() {
   if (!window.pedalboard) return;
   localStorage.setItem('lastPedalboardId', window.pedalboard._id);
@@ -242,15 +216,6 @@ if (userRole === 'guest') {
     dropdown.appendChild(option);
   });
 
-  // selectedBoardIndex = 0;
-  // window.pedalboard = window.allPedalboards[selectedBoardIndex];
-  // renderPedalboard();
-
-  // dropdown.addEventListener('change', (e) => {
-  //   selectedBoardIndex = parseInt(e.target.value, 10);
-  //   window.pedalboard = window.allPedalboards[selectedBoardIndex];
-  //   renderPedalboard();
-  // });
 
   selectedBoardIndex = 0;
   window.pedalboard = window.allPedalboards[selectedBoardIndex];

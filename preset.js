@@ -662,17 +662,36 @@ function applyPresetToPedalboard(presetDoc) {
     const resetPedal = JSON.parse(JSON.stringify(defaultPedalFromCatalog));
 
     // Step 2: Apply preset values on top (if present)
+    // const presetPedal = pedalsFromPreset[pedalId];
+    // if (presetPedal && presetPedal.controls) {
+    //   resetPedal.controls.forEach(row => {
+    //     row.row.forEach(ctrl => {
+    //       const controlLabel = ctrl.label;
+    //       if (presetPedal.controls.hasOwnProperty(controlLabel)) {
+    //         ctrl.value = presetPedal.controls[controlLabel];
+    //       }
+    //     });
+    //   });
+    // }
+    
+    // Step 2: Apply preset values on top (if present)
     const presetPedal = pedalsFromPreset[pedalId];
-    if (presetPedal && presetPedal.controls) {
-      resetPedal.controls.forEach(row => {
-        row.row.forEach(ctrl => {
-          const controlLabel = ctrl.label;
-          if (presetPedal.controls.hasOwnProperty(controlLabel)) {
-            ctrl.value = presetPedal.controls[controlLabel];
-          }
+    if (presetPedal) {
+      // apply controls
+      if (presetPedal.controls) {
+        resetPedal.controls.forEach(row => {
+          row.row.forEach(ctrl => {
+            const controlLabel = ctrl.label;
+            if (presetPedal.controls.hasOwnProperty(controlLabel)) {
+              ctrl.value = presetPedal.controls[controlLabel];
+            }
+          });
         });
-      });
+      }
+      // add row info
+      resetPedal.row = presetPedal.row || resetPedal.row || 1;
     }
+
 
     // Step 3: Re-render controls
     $pedalDiv.find('.row').remove();
