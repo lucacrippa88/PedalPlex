@@ -518,7 +518,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // }
 
 
-
 function renderPedalboard() {
   const container = document.getElementById('pedalboard');
   if (!container) return;
@@ -529,7 +528,7 @@ function renderPedalboard() {
     return;
   }
 
-  // Group pedals by row number
+  // Group pedals by row
   const rowsMap = {};
   window.pedalboard.pedals.forEach(pbPedal => {
     const rowNum = pbPedal.row || 1;
@@ -554,25 +553,22 @@ function renderPedalboard() {
         return;
       }
 
-      // Create a temporary container for renderPedal
-      const tempContainer = document.createElement('div');
-      document.body.appendChild(tempContainer); // required if renderPedal expects to be in DOM
+      // Use existing renderPedal from utils.js
+      const $pedalEl = renderPedal(pedalData, window.currentUser?.role || 'guest');
 
-      renderPedal(pedalData, pbPedal, tempContainer);
+      // Apply rotation
+      $pedalEl.css('transform', `rotate(${pbPedal.rotation || 0}deg)`);
 
-      // Move rendered element(s) into the row
-      Array.from(tempContainer.children).forEach(pedalEl => {
-        pedalEl.style.transform = `rotate(${pbPedal.rotation || 0}deg)`;
-        pedalEl.style.cursor = 'pointer';
-        pedalEl.addEventListener('click', () => openEditPedalModal(pbPedal));
-        rowDiv.appendChild(pedalEl);
-      });
+      // Add click listener to open edit modal
+      $pedalEl.css('cursor', 'pointer');
+      $pedalEl.on('click', () => openEditPedalModal(pbPedal));
 
-      // Clean up
-      document.body.removeChild(tempContainer);
+      // Append to the row
+      rowDiv.appendChild($pedalEl[0]); // $pedalEl is a jQuery object; [0] is the DOM element
     });
   });
 }
+
 
 
 
