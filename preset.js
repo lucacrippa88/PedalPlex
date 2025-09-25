@@ -673,7 +673,7 @@ function applyPresetToPedalboard(presetDoc) {
     //     });
     //   });
     // }
-    
+
     // Step 2: Apply preset values on top (if present)
     const presetPedal = pedalsFromPreset[pedalId];
     if (presetPedal) {
@@ -1099,7 +1099,14 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
         currentPresetRev = selectedPreset._rev;
         presetSelect.value = selectedPreset._id;
 
-        applyPresetToPedalboard(selectedPreset);
+        // applyPresetToPedalboard(selectedPreset);
+        if (selectedPreset) {
+            applyPresetToPedalboard(selectedPreset);
+        } else {
+            // No preset: render the pedalboard as-is, keeping row info
+            renderFullPedalboard(window.pedalboard.pedals);
+        }
+
         saveCurrentSelectionToStorage();
     }
 
