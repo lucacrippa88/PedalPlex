@@ -34,15 +34,11 @@ function setupPedalboardDropdownAndRender() {
     // Guests: always select first board
     selectedIndex = 0;
   } else {
-    // Logged-in users: select lastPedalboardText from localStorage if it exists
-    const lastName = localStorage.getItem('lastPedalboardText');
-    if (lastName) {
-      for (let i = 0; i < dropdown.options.length; i++) {
-        if (dropdown.options[i].textContent === lastName) {
-          selectedIndex = i;
-          break;
-        }
-      }
+    // Logged-in users: select lastPedalboardId from localStorage if it exists
+    const lastId = localStorage.getItem('lastPedalboardId');
+    if (lastId) {
+      const idx = window.allPedalboards.findIndex(b => b._id === lastId);
+      if (idx !== -1) selectedIndex = idx;
     }
   }
 
@@ -57,7 +53,7 @@ function setupPedalboardDropdownAndRender() {
     window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
     renderPedalboard();
 
-    // Save the selection persistently now
+    // Save selection persistently now
     saveSelectedBoardToLocalStorage();
   });
 }
@@ -270,12 +266,24 @@ if (userRole === 'guest') {
   });
 
 
-  selectedBoardIndex = 0;
-  window.pedalboard = window.allPedalboards[selectedBoardIndex];
-  renderPedalboard();
+  // selectedBoardIndex = 0;
+  // window.pedalboard = window.allPedalboards[selectedBoardIndex];
+  // renderPedalboard();
 
-  // Save to localStorage after setting first pedalboard
-  saveSelectedBoardToLocalStorage();
+  // // Save to localStorage after setting first pedalboard
+  // saveSelectedBoardToLocalStorage();
+
+  // Select first board by default (if none saved in localStorage)
+  let lastId = localStorage.getItem('lastPedalboardId');
+  let defaultIndex = 0;
+  if (lastId) {
+    const idx = window.allPedalboards.findIndex(b => b._id === lastId);
+    if (idx !== -1) defaultIndex = idx;
+  }
+
+selectedBoardIndex = defaultIndex;
+window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
+renderPedalboard();
 
   dropdown.addEventListener('change', (e) => {
     selectedBoardIndex = parseInt(e.target.value, 10);
