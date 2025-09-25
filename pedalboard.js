@@ -10,8 +10,6 @@ function saveSelectedBoardToLocalStorage() {
 
 
 
-
-
 function setupPedalboardDropdownAndRender() {
   const dropdown = document.getElementById('pedalboardSelect');
   if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
@@ -21,7 +19,7 @@ function setupPedalboardDropdownAndRender() {
   // Populate dropdown first
   window.allPedalboards.forEach((board, index) => {
     const option = document.createElement('option');
-    option.value = index; // always index for event handling
+    option.value = index; // index for event handling
     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
     dropdown.appendChild(option);
   });
@@ -29,7 +27,8 @@ function setupPedalboardDropdownAndRender() {
   let selectedIndex = 0;
 
   if (window.currentUser?.role === 'guest') {
-    selectedIndex = 0; // guest always first
+    // Guests always select the first board
+    selectedIndex = 0;
   } else {
     // Logged-in users: select by lastPedalboardText
     const lastName = localStorage.getItem('lastPedalboardText');
@@ -47,7 +46,6 @@ function setupPedalboardDropdownAndRender() {
   window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
   renderPedalboard();
 
-  // Save current selection to localStorage
   saveSelectedBoardToLocalStorage();
 
   // Handle dropdown change
