@@ -2,6 +2,38 @@ let selectedBoardIndex = 0;
 window.allPedalboards = []; // store all pedalboards here
 
 
+// function setupPedalboardDropdownAndRender() {
+//   if (!window.allPedalboards || window.allPedalboards.length === 0) return;
+
+//   $("#pedalboard-controls").css("display", "inline-flex");
+//   const dropdown = document.getElementById('pedalboardSelect');
+//   dropdown.innerHTML = '';
+
+//   window.allPedalboards.forEach((board, index) => {
+//     const option = document.createElement('option');
+//     option.value = index;
+//     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
+//     dropdown.appendChild(option);
+//   });
+
+//   selectedBoardIndex = 0;
+//   window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
+//   renderPedalboard();
+
+//   dropdown.addEventListener('change', (e) => {
+//     selectedBoardIndex = parseInt(e.target.value, 10);
+//     window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
+//     renderPedalboard();
+//   });
+// }
+
+
+function saveSelectedBoardToLocalStorage() {
+  if (!window.pedalboard) return;
+  localStorage.setItem('lastPedalboardId', window.pedalboard._id);
+  localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
+}
+
 function setupPedalboardDropdownAndRender() {
   if (!window.allPedalboards || window.allPedalboards.length === 0) return;
 
@@ -20,12 +52,19 @@ function setupPedalboardDropdownAndRender() {
   window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
   renderPedalboard();
 
+  // Save to localStorage on initial load
+  saveSelectedBoardToLocalStorage();
+
   dropdown.addEventListener('change', (e) => {
     selectedBoardIndex = parseInt(e.target.value, 10);
     window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
     renderPedalboard();
+
+    // Save to localStorage on change
+    saveSelectedBoardToLocalStorage();
   });
 }
+
 
 
 
@@ -203,14 +242,30 @@ if (userRole === 'guest') {
     dropdown.appendChild(option);
   });
 
+  // selectedBoardIndex = 0;
+  // window.pedalboard = window.allPedalboards[selectedBoardIndex];
+  // renderPedalboard();
+
+  // dropdown.addEventListener('change', (e) => {
+  //   selectedBoardIndex = parseInt(e.target.value, 10);
+  //   window.pedalboard = window.allPedalboards[selectedBoardIndex];
+  //   renderPedalboard();
+  // });
+
   selectedBoardIndex = 0;
   window.pedalboard = window.allPedalboards[selectedBoardIndex];
   renderPedalboard();
+
+  // Save to localStorage after setting first pedalboard
+  saveSelectedBoardToLocalStorage();
 
   dropdown.addEventListener('change', (e) => {
     selectedBoardIndex = parseInt(e.target.value, 10);
     window.pedalboard = window.allPedalboards[selectedBoardIndex];
     renderPedalboard();
+
+    // Save to localStorage on change
+    saveSelectedBoardToLocalStorage();
   });
 })
 
@@ -431,228 +486,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
-
-
-// function renderPedalboard() {
-//   const container = document.getElementById('pedalboard');
-//   // if (!container) {
-//   //   console.warn('No #pedalboard container found');
-//   //   return;
-//   // }
-//   container.innerHTML = '';
-
-//   if (!window.pedalboard.pedals || window.pedalboard.pedals.length === 0) {
-//     container.textContent = "No pedals found.";
-//     return;
-//   }
-
-//   // Group pedals by row number
-//   const rowsMap = {};
-//   window.pedalboard.pedals.forEach(pbPedal => {
-//     const rowNum = pbPedal.row || 1;
-//     if (!rowsMap[rowNum]) rowsMap[rowNum] = [];
-//     rowsMap[rowNum].push(pbPedal);
-//   });
-
-//   // Sort rows ascending
-//   const sortedRows = Object.keys(rowsMap).map(r => parseInt(r, 10)).sort((a, b) => a - b);
-
-//   sortedRows.forEach(rowNum => {
-//     const rowDiv = document.createElement('div');
-//     rowDiv.style.display = 'flex';
-//     rowDiv.style.flexWrap = 'wrap';
-//     rowDiv.style.marginBottom = '10px';
-
-//     rowsMap[rowNum].forEach(pbPedal => {
-//       const pedalData = window.catalog.find(p => p._id === pbPedal.pedal_id);
-//       if (!pedalData) {
-//         console.warn(`Pedal not found in catalog: ${pbPedal.pedal_id}`);
-//         return;
-//       }
-
-//       const pedalDiv = document.createElement('div');
-//       pedalDiv.className = 'pedalboard-pedal';
-//       pedalDiv.style.backgroundColor = pedalData.color || '#444';
-//       pedalDiv.style.color = pedalData['font-color'] || '#fff';
-//       pedalDiv.style.margin = '5px';
-//       pedalDiv.style.padding = '5px';
-//       pedalDiv.style.display = 'flex';
-//       pedalDiv.style.flexDirection = 'column';
-//       pedalDiv.style.justifyContent = 'center';
-//       pedalDiv.style.alignItems = 'center';
-//       pedalDiv.style.borderRadius = '8px';
-//       pedalDiv.style.width = '200px';
-//       pedalDiv.style.height = '120px';
-//       pedalDiv.style.boxSizing = 'border-box';
-//       pedalDiv.style.userSelect = 'none';
-//       pedalDiv.style.textAlign = 'center';
-//       pedalDiv.style.cursor = 'pointer';
-//       pedalDiv.style.transform = `rotate(${pbPedal.rotation}deg)`;
-
-//       const colorFromLogo = extractColorFromLogo(pedalData.logo);
-
-//       const nameSpan = document.createElement('span');
-//       nameSpan.textContent = pbPedal.pedal_id;
-//       if (colorFromLogo) nameSpan.style.color = colorFromLogo;
-//       nameSpan.style.fontWeight = 'bold';
-//       pedalDiv.appendChild(nameSpan);
-
-//       const rowSpan = document.createElement('div');
-//       rowSpan.textContent = `Row: ${pbPedal.row}`;
-//       rowSpan.style.marginTop = '6px';
-//       rowSpan.style.fontSize = '0.9em';
-//       if (colorFromLogo) rowSpan.style.color = colorFromLogo;
-//       else rowSpan.style.color = pedalData['font-color'] || '#ddd';
-//       pedalDiv.appendChild(rowSpan);
-
-//       pedalDiv.addEventListener('click', () => {
-//         openEditPedalModal(pbPedal);
-//       });
-
-//       rowDiv.appendChild(pedalDiv);
-//     });
-
-//     container.appendChild(rowDiv);
-//   });
-// }
-
-
-// function renderPedalboard() {
-//   const container = document.getElementById('pedalboard');
-//   if (!container) return;
-//   container.innerHTML = '';
-
-//   if (!window.pedalboard?.pedals || window.pedalboard.pedals.length === 0) {
-//     container.textContent = "No pedals found.";
-//     return;
-//   }
-
-//   // Group pedals by row
-//   const rowsMap = {};
-//   window.pedalboard.pedals.forEach(pbPedal => {
-//     const rowNum = pbPedal.row || 1;
-//     if (!rowsMap[rowNum]) rowsMap[rowNum] = [];
-//     rowsMap[rowNum].push(pbPedal);
-//   });
-
-//   // Sort rows ascending
-//   const sortedRows = Object.keys(rowsMap).map(r => parseInt(r, 10)).sort((a, b) => a - b);
-
-//   sortedRows.forEach(rowNum => {
-//     const rowDiv = document.createElement('div');
-//     rowDiv.style.display = 'flex';
-//     rowDiv.style.flexWrap = 'wrap';
-//     rowDiv.style.marginBottom = '10px';
-//     rowDiv.style.gap = '10px';
-//     container.appendChild(rowDiv);
-
-//     rowsMap[rowNum].forEach(pbPedal => {
-//       const pedalData = window.catalog.find(p => p._id === pbPedal.pedal_id);
-//       if (!pedalData) {
-//         console.warn(`Pedal not found in catalog: ${pbPedal.pedal_id}`);
-//         return;
-//       }
-
-//       // Use existing renderPedal from utils.js
-//       const $pedalEl = renderPedal(pedalData, window.currentUser?.role || 'guest', pedalboardPage = true);
-
-//       // Apply rotation
-//       $pedalEl.css('transform', `rotate(${pbPedal.rotation || 0}deg)`);
-
-//       // Add click listener to open edit modal
-//       $pedalEl.css('cursor', 'pointer');
-//       $pedalEl.on('click', () => openEditPedalModal(pbPedal));
-
-//       // Append to the row
-//       rowDiv.appendChild($pedalEl[0]); // $pedalEl is a jQuery object; [0] is the DOM element
-//     });
-//   });
-// }
-
-
-
-
-// function renderPedalboard() {
-//   const container = document.getElementById('pedalboard');
-//   if (!container) return;
-//   container.innerHTML = '';
-
-//   if (!window.pedalboard?.pedals || window.pedalboard.pedals.length === 0) {
-//     container.textContent = "No pedals found.";
-//     return;
-//   }
-
-//   // Group pedals by row
-//   const rowsMap = {};
-//   window.pedalboard.pedals.forEach(pbPedal => {
-//     const rowNum = pbPedal.row || 1;
-//     if (!rowsMap[rowNum]) rowsMap[rowNum] = [];
-//     rowsMap[rowNum].push(pbPedal);
-//   });
-
-//   // Sort rows ascending
-//   const sortedRows = Object.keys(rowsMap).map(r => parseInt(r, 10)).sort((a, b) => a - b);
-
-//   sortedRows.forEach(rowNum => {
-//     const rowDiv = document.createElement('div');
-//     rowDiv.style.display = 'flex';
-//     rowDiv.style.flexWrap = 'wrap';
-//     rowDiv.style.marginBottom = '10px';
-//     rowDiv.style.gap = '10px';
-//     container.appendChild(rowDiv);
-
-//     rowsMap[rowNum].forEach(pbPedal => {
-//       const pedalData = window.catalog.find(p => p._id === pbPedal.pedal_id);
-//       if (!pedalData) {
-//         console.warn(`Pedal not found in catalog: ${pbPedal.pedal_id}`);
-//         return;
-//       }
-
-//       // Use existing renderPedal from utils.js
-//       const $pedalEl = renderPedal(pedalData, window.currentUser?.role || 'guest', pedalboardPage = true);
-
-//       // Add click listener to open edit modal
-//       $pedalEl.css('cursor', 'pointer');
-//       $pedalEl.on('click', () => openEditPedalModal(pbPedal));
-
-//       // Calculate wrapper styles accounting for rotation
-//       const angle = pbPedal.rotation || 0;
-//       const widthPx = parseFloat(getPedalWidth(pedalData.width));
-//       const heightPx = parseFloat(getPedalHeight(pedalData.height));
-//       const hasRotation = angle !== 0;
-
-//       let wrapperStyles = {
-//         display: 'flex',
-//         justifyContent: 'center',
-//         alignItems: 'flex-start',
-//         position: 'relative',
-//         boxSizing: 'content-box',
-//         marginBottom: '20px',
-//       };
-
-//       if (hasRotation) {
-//         const radians = angle * Math.PI / 180;
-//         const sin = Math.abs(Math.sin(radians));
-//         const cos = Math.abs(Math.cos(radians));
-
-//         const rotatedWidth = widthPx * cos + heightPx * sin;
-//         const rotatedHeight = widthPx * sin + heightPx * cos;
-
-//         Object.assign(wrapperStyles, {
-//           width: `${rotatedWidth}px`,
-//           height: `${rotatedHeight}px`,
-//           marginLeft: `${rotatedWidth * 0.2}px`,
-//           marginRight: `${rotatedWidth * 0.2}px`,
-//           ...(widthPx > heightPx ? { marginTop: '30px' } : {})
-//         });
-//       }
-
-//       const $wrapper = $("<div>").css(wrapperStyles).append($pedalEl);
-//       rowDiv.appendChild($wrapper[0]);
-//     });
-//   });
-// }
 
 function renderPedalboard() {
   const container = document.getElementById('pedalboard');
