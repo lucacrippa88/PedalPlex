@@ -555,7 +555,7 @@ function renderPedalboard() {
       }
 
       // Use existing renderPedal from utils.js
-      const $pedalEl = renderPedal(pedalData, window.currentUser?.role || 'guest');
+      const $pedalEl = renderPedal(pedalData, window.currentUser?.role || 'guest', pedalboardPage = true);
 
       // Apply rotation
       $pedalEl.css('transform', `rotate(${pbPedal.rotation || 0}deg)`);
