@@ -544,6 +544,7 @@ function renderPedalboard() {
     rowDiv.style.display = 'flex';
     rowDiv.style.flexWrap = 'wrap';
     rowDiv.style.marginBottom = '10px';
+    rowDiv.style.gap = '10px';
     container.appendChild(rowDiv);
 
     rowsMap[rowNum].forEach(pbPedal => {
