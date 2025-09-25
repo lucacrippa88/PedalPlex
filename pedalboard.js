@@ -91,32 +91,36 @@ function setupPedalboardDropdownAndRender() {
   const dropdown = document.getElementById('pedalboardSelect');
   dropdown.innerHTML = '';
 
+  // Add options
   window.allPedalboards.forEach((board, index) => {
     const option = document.createElement('option');
-    option.value = index; // still use index for event handling
+    option.value = index; // value still index for event handling
     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
     dropdown.appendChild(option);
   });
 
-  // --- Select pedalboard by name from localStorage ---
+  // Select by name from localStorage
   const lastName = localStorage.getItem('lastPedalboardText');
   let selectedIndex = 0;
 
   if (lastName) {
-    const foundIndex = window.allPedalboards.findIndex(b => b.board_name === lastName);
-    if (foundIndex !== -1) selectedIndex = foundIndex;
+    for (let i = 0; i < dropdown.options.length; i++) {
+      if (dropdown.options[i].textContent === lastName) {
+        selectedIndex = i;
+        break;
+      }
+    }
   }
 
   // Apply selection
+  dropdown.selectedIndex = selectedIndex;
   selectedBoardIndex = selectedIndex;
   window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
-  dropdown.selectedIndex = selectedBoardIndex;
   renderPedalboard();
 
-  // Save current selection to localStorage
+  // Save the selection (optional, to refresh localStorage)
   saveSelectedBoardToLocalStorage();
 
-  // Event listener
   dropdown.addEventListener('change', (e) => {
     selectedBoardIndex = parseInt(e.target.value, 10);
     window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
@@ -124,6 +128,7 @@ function setupPedalboardDropdownAndRender() {
     saveSelectedBoardToLocalStorage();
   });
 }
+
 
 
 
