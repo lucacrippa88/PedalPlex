@@ -570,8 +570,6 @@ document.addEventListener('DOMContentLoaded', () => {
 //   });
 // }
 
-
-
 function renderPedalboard() {
   const container = document.getElementById('pedalboard');
   if (!container) return;
@@ -590,7 +588,6 @@ function renderPedalboard() {
     rowsMap[rowNum].push(pbPedal);
   });
 
-  // Sort rows ascending
   const sortedRows = Object.keys(rowsMap).map(r => parseInt(r, 10)).sort((a, b) => a - b);
 
   sortedRows.forEach(rowNum => {
@@ -608,75 +605,43 @@ function renderPedalboard() {
         return;
       }
 
-      const angle = pbPedal.rotation || 0;
+      // Use original renderPedal to keep controls
+      const $pedalEl = renderPedal(pedalData, window.currentUser?.role || 'guest', pedalboardPage = true);
 
-      // Determine pedal colors and background
-      const isImage = !!pedalData["image"]; 
-      const insideColorRaw = pedalData["image"];
-      const colorOnly = pedalData["color"] || '#ccc';
-
-      // Create pedal element with rotation styling
-      const $pedalEl = $("<div>").css({
-        border: `5px solid ${pedalData["color"]}`,
-        borderRadius: '10px',
-        color: pedalData["font-color"],
-        width: getPedalWidth(pedalData.width),
-        height: getPedalHeight(pedalData.height),
-        transform: `rotate(${angle}deg)`,
-        marginBottom: '10px',
-        display: 'inline-block',
-        ...(pedalData["inside-border"] && {
-          boxShadow: `inset 0 0 0 3px ${pedalData["inside-border"]}`
-        }),
-        ...(isImage ? {
-          backgroundImage: `url("${insideColorRaw}")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        } : {
-          background: colorOnly
-        }),
-        cursor: 'pointer'
-      });
-
+      // Add click listener for edit modal
+      $pedalEl.css('cursor', 'pointer');
       $pedalEl.on('click', () => openEditPedalModal(pbPedal));
 
-      // Calculate wrapper dimensions to accommodate rotation
+      const angle = pbPedal.rotation || 0;
       const widthPx = parseFloat(getPedalWidth(pedalData.width));
       const heightPx = parseFloat(getPedalHeight(pedalData.height));
-      const hasRotation = angle !== 0;
 
-      let wrapperStyles = {
+      // Wrapper for rotation & spacing
+      const radians = angle * Math.PI / 180;
+      const sin = Math.abs(Math.sin(radians));
+      const cos = Math.abs(Math.cos(radians));
+
+      const rotatedWidth = widthPx * cos + heightPx * sin;
+      const rotatedHeight = widthPx * sin + heightPx * cos;
+
+      const wrapperStyles = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'flex-start',
         position: 'relative',
         boxSizing: 'content-box',
-        marginBottom: '20px',
+        width: `${rotatedWidth}px`,
+        height: `${rotatedHeight}px`,
+        marginLeft: `${rotatedWidth * 0.2}px`,
+        marginRight: `${rotatedWidth * 0.2}px`,
+        ...(widthPx > heightPx ? { marginTop: '30px' } : {})
       };
-
-      if (hasRotation) {
-        const radians = angle * Math.PI / 180;
-        const sin = Math.abs(Math.sin(radians));
-        const cos = Math.abs(Math.cos(radians));
-
-        const rotatedWidth = widthPx * cos + heightPx * sin;
-        const rotatedHeight = widthPx * sin + heightPx * cos;
-
-        Object.assign(wrapperStyles, {
-          width: `${rotatedWidth}px`,
-          height: `${rotatedHeight}px`,
-          marginLeft: `${rotatedWidth * 0.2}px`,
-          marginRight: `${rotatedWidth * 0.2}px`,
-          ...(widthPx > heightPx ? { marginTop: '30px' } : {})
-        });
-      }
 
       const $wrapper = $("<div>").css(wrapperStyles).append($pedalEl);
       rowDiv.appendChild($wrapper[0]);
     });
   });
 }
-
 
 
 
