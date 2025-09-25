@@ -521,14 +521,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderPedalboard() {
   const container = document.getElementById('pedalboard');
+  if (!container) return;
   container.innerHTML = '';
 
-  if (!window.pedalboard.pedals || window.pedalboard.pedals.length === 0) {
+  if (!window.pedalboard?.pedals || window.pedalboard.pedals.length === 0) {
     container.textContent = "No pedals found.";
     return;
   }
 
-  // Group pedals by row
+  // Group pedals by row number
   const rowsMap = {};
   window.pedalboard.pedals.forEach(pbPedal => {
     const rowNum = pbPedal.row || 1;
@@ -536,6 +537,7 @@ function renderPedalboard() {
     rowsMap[rowNum].push(pbPedal);
   });
 
+  // Sort rows ascending
   const sortedRows = Object.keys(rowsMap).map(r => parseInt(r, 10)).sort((a, b) => a - b);
 
   sortedRows.forEach(rowNum => {
@@ -543,6 +545,7 @@ function renderPedalboard() {
     rowDiv.style.display = 'flex';
     rowDiv.style.flexWrap = 'wrap';
     rowDiv.style.marginBottom = '10px';
+    container.appendChild(rowDiv);
 
     rowsMap[rowNum].forEach(pbPedal => {
       const pedalData = window.catalog.find(p => p._id === pbPedal.pedal_id);
@@ -551,19 +554,26 @@ function renderPedalboard() {
         return;
       }
 
-      // Use your utils.js renderer
-      const pedalEl = renderPedal(pedalData, pbPedal);
+      // Capture children count before renderPedal
+      const beforeCount = rowDiv.children.length;
 
-      // Add click handler for edit modal
-      pedalEl.style.cursor = 'pointer';
-      pedalEl.addEventListener('click', () => openEditPedalModal(pbPedal));
+      // Call the existing renderPedal function
+      renderPedal(pedalData, pbPedal);
 
-      rowDiv.appendChild(pedalEl);
+      // The new element(s) added by renderPedal
+      const afterChildren = Array.from(rowDiv.children);
+      const newPedals = afterChildren.slice(beforeCount);
+
+      newPedals.forEach(pedalEl => {
+        // Add rotation & cursor & click handler for edit modal
+        pedalEl.style.transform = `rotate(${pbPedal.rotation || 0}deg)`;
+        pedalEl.style.cursor = 'pointer';
+        pedalEl.addEventListener('click', () => openEditPedalModal(pbPedal));
+      });
     });
-
-    container.appendChild(rowDiv);
   });
 }
+
 
 
 
