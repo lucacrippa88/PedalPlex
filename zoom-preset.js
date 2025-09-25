@@ -62,20 +62,16 @@ function applyZoom() {
     zoomLevel = getMobileSafeZoom();
   }
 
+  // Scale each pedal individually instead of scaling #preset
   zoomTarget.querySelectorAll(".pedal-catalog").forEach(pedal => {
-    // Store original width/height once
-    if (!pedal.dataset.baseWidth) {
-      pedal.dataset.baseWidth = pedal.offsetWidth;
-      pedal.dataset.baseHeight = pedal.offsetHeight;
-    }
-
-    pedal.style.width = (pedal.dataset.baseWidth * zoomLevel) + "px";
-    pedal.style.height = (pedal.dataset.baseHeight * zoomLevel) + "px";
+    pedal.style.transform = `scale(${zoomLevel})`;
+    pedal.style.transformOrigin = "top left"; // prevent shifting
   });
 
   saveZoom();
   setTimeout(() => hideZoomSpinner(), 300);
 }
+
 
 
 
