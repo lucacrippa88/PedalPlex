@@ -41,16 +41,59 @@ function saveSelectedBoardToLocalStorage() {
 
 
 
+// function setupPedalboardDropdownAndRender() {
+//   if (!window.allPedalboards || window.allPedalboards.length === 0) return;
+
+//   $("#pedalboard-controls").css("display", "inline-flex");
+//   const dropdown = document.getElementById('pedalboardSelect');
+//   dropdown.innerHTML = '';
+
+//   window.allPedalboards.forEach((board, index) => {
+//     const option = document.createElement('option');
+//     option.value = index; // keep index for event handling
+//     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
+//     dropdown.appendChild(option);
+//   });
+
+//   // --- Select pedalboard by name from localStorage ---
+//   const lastName = localStorage.getItem('lastPedalboardText');
+//   let selectedIndex = 0;
+
+//   if (lastName) {
+//     const foundIndex = window.allPedalboards.findIndex(b => b.board_name === lastName);
+//     if (foundIndex !== -1) selectedIndex = foundIndex;
+//   }
+
+//   selectedBoardIndex = selectedIndex;
+//   window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
+//   dropdown.selectedIndex = selectedBoardIndex; // select it in the dropdown
+//   renderPedalboard();
+
+//   // Save to localStorage on initial load
+//   saveSelectedBoardToLocalStorage();
+
+//   dropdown.addEventListener('change', (e) => {
+//     selectedBoardIndex = parseInt(e.target.value, 10);
+//     window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
+//     renderPedalboard();
+
+//     // Save to localStorage on change
+//     saveSelectedBoardToLocalStorage();
+//   });
+// }
+
+
+
+
 function setupPedalboardDropdownAndRender() {
   if (!window.allPedalboards || window.allPedalboards.length === 0) return;
 
-  $("#pedalboard-controls").css("display", "inline-flex");
   const dropdown = document.getElementById('pedalboardSelect');
   dropdown.innerHTML = '';
 
   window.allPedalboards.forEach((board, index) => {
     const option = document.createElement('option');
-    option.value = index; // keep index for event handling
+    option.value = index; // still use index for event handling
     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
     dropdown.appendChild(option);
   });
@@ -64,23 +107,24 @@ function setupPedalboardDropdownAndRender() {
     if (foundIndex !== -1) selectedIndex = foundIndex;
   }
 
+  // Apply selection
   selectedBoardIndex = selectedIndex;
   window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
-  dropdown.selectedIndex = selectedBoardIndex; // select it in the dropdown
+  dropdown.selectedIndex = selectedBoardIndex;
   renderPedalboard();
 
-  // Save to localStorage on initial load
+  // Save current selection to localStorage
   saveSelectedBoardToLocalStorage();
 
+  // Event listener
   dropdown.addEventListener('change', (e) => {
     selectedBoardIndex = parseInt(e.target.value, 10);
     window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
     renderPedalboard();
-
-    // Save to localStorage on change
     saveSelectedBoardToLocalStorage();
   });
 }
+
 
 
 
