@@ -572,7 +572,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
 function renderPedalboard() {
   const container = document.getElementById('pedalboard');
   if (!container) return;
@@ -609,15 +608,39 @@ function renderPedalboard() {
         return;
       }
 
-      // Use existing renderPedal from utils.js
-      const $pedalEl = renderPedal(pedalData, window.currentUser?.role || 'guest', pedalboardPage = true);
+      const angle = pbPedal.rotation || 0;
 
-      // Add click listener to open edit modal
-      $pedalEl.css('cursor', 'pointer');
+      // Determine pedal colors and background
+      const isImage = !!pedalData["image"]; 
+      const insideColorRaw = pedalData["image"];
+      const colorOnly = pedalData["color"] || '#ccc';
+
+      // Create pedal element with rotation styling
+      const $pedalEl = $("<div>").css({
+        border: `5px solid ${pedalData["color"]}`,
+        borderRadius: '10px',
+        color: pedalData["font-color"],
+        width: getPedalWidth(pedalData.width),
+        height: getPedalHeight(pedalData.height),
+        transform: `rotate(${angle}deg)`,
+        marginBottom: '10px',
+        display: 'inline-block',
+        ...(pedalData["inside-border"] && {
+          boxShadow: `inset 0 0 0 3px ${pedalData["inside-border"]}`
+        }),
+        ...(isImage ? {
+          backgroundImage: `url("${insideColorRaw}")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        } : {
+          background: colorOnly
+        }),
+        cursor: 'pointer'
+      });
+
       $pedalEl.on('click', () => openEditPedalModal(pbPedal));
 
-      // Calculate wrapper styles accounting for rotation
-      const angle = pbPedal.rotation || 0;
+      // Calculate wrapper dimensions to accommodate rotation
       const widthPx = parseFloat(getPedalWidth(pedalData.width));
       const heightPx = parseFloat(getPedalHeight(pedalData.height));
       const hasRotation = angle !== 0;
