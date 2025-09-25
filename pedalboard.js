@@ -23,7 +23,7 @@ function setupPedalboardDropdownAndRender() {
   // Populate dropdown
   window.allPedalboards.forEach((board, index) => {
     const option = document.createElement('option');
-    option.value = index; // always index for event handling
+    option.value = index;
     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
     dropdown.appendChild(option);
   });
@@ -31,10 +31,10 @@ function setupPedalboardDropdownAndRender() {
   let selectedIndex = 0;
 
   if (window.currentUser?.role === 'guest') {
-    // Guests: select first board
+    // Guests: always select first board
     selectedIndex = 0;
   } else {
-    // Logged-in users: try to select lastPedalboardText from localStorage
+    // Logged-in users: select lastPedalboardText from localStorage if it exists
     const lastName = localStorage.getItem('lastPedalboardText');
     if (lastName) {
       for (let i = 0; i < dropdown.options.length; i++) {
@@ -46,20 +46,22 @@ function setupPedalboardDropdownAndRender() {
     }
   }
 
-  // Apply selection WITHOUT overwriting localStorage
+  // Set the selected board in memory and render, but DO NOT save to localStorage yet
   dropdown.selectedIndex = selectedIndex;
   window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
   renderPedalboard();
 
-  // Only save when user actively changes dropdown
+  // Only save to localStorage when user manually changes the dropdown
   dropdown.addEventListener('change', (e) => {
     selectedIndex = parseInt(e.target.value, 10);
     window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
     renderPedalboard();
 
-    saveSelectedBoardToLocalStorage(); // update localStorage only on manual change
+    // Save the selection persistently now
+    saveSelectedBoardToLocalStorage();
   });
 }
+
 
 
 
