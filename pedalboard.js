@@ -554,25 +554,26 @@ function renderPedalboard() {
         return;
       }
 
-      // Capture children count before renderPedal
-      const beforeCount = rowDiv.children.length;
+      // Create a temporary container for renderPedal
+      const tempContainer = document.createElement('div');
+      document.body.appendChild(tempContainer); // required if renderPedal expects to be in DOM
 
-      // Call the existing renderPedal function
-      renderPedal(pedalData, pbPedal);
+      renderPedal(pedalData, pbPedal, tempContainer);
 
-      // The new element(s) added by renderPedal
-      const afterChildren = Array.from(rowDiv.children);
-      const newPedals = afterChildren.slice(beforeCount);
-
-      newPedals.forEach(pedalEl => {
-        // Add rotation & cursor & click handler for edit modal
+      // Move rendered element(s) into the row
+      Array.from(tempContainer.children).forEach(pedalEl => {
         pedalEl.style.transform = `rotate(${pbPedal.rotation || 0}deg)`;
         pedalEl.style.cursor = 'pointer';
         pedalEl.addEventListener('click', () => openEditPedalModal(pbPedal));
+        rowDiv.appendChild(pedalEl);
       });
+
+      // Clean up
+      document.body.removeChild(tempContainer);
     });
   });
 }
+
 
 
 
