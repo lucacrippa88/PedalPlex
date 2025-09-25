@@ -285,6 +285,13 @@ selectedBoardIndex = defaultIndex;
 window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
 renderPedalboard();
 
+// Update dropdown selection to reflect loaded board
+const select = document.getElementById("pedalboardSelect");
+if (select) {
+  select.value = selectedBoardIndex.toString();
+}
+
+
   dropdown.addEventListener('change', (e) => {
     selectedBoardIndex = parseInt(e.target.value, 10);
     window.pedalboard = window.allPedalboards[selectedBoardIndex];
