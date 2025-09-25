@@ -528,7 +528,7 @@ function renderPedalboard() {
     return;
   }
 
-  // Group pedals by row number
+  // Group pedals by row
   const rowsMap = {};
   window.pedalboard.pedals.forEach(pbPedal => {
     const rowNum = pbPedal.row || 1;
@@ -536,7 +536,6 @@ function renderPedalboard() {
     rowsMap[rowNum].push(pbPedal);
   });
 
-  // Sort rows ascending
   const sortedRows = Object.keys(rowsMap).map(r => parseInt(r, 10)).sort((a, b) => a - b);
 
   sortedRows.forEach(rowNum => {
@@ -552,87 +551,20 @@ function renderPedalboard() {
         return;
       }
 
-      const pedalDiv = document.createElement('div');
-      pedalDiv.className = 'pedalboard-pedal';
-      pedalDiv.style.backgroundColor = pedalData.color || '#444';
-      pedalDiv.style.color = pedalData['font-color'] || '#fff';
-      pedalDiv.style.margin = '5px';
-      pedalDiv.style.padding = '10px';
-      pedalDiv.style.display = 'flex';
-      pedalDiv.style.flexDirection = 'column';
-      pedalDiv.style.justifyContent = 'flex-start';
-      pedalDiv.style.alignItems = 'center';
-      pedalDiv.style.borderRadius = '8px';
-      pedalDiv.style.width = '160px';
-      pedalDiv.style.height = '220px';
-      pedalDiv.style.boxSizing = 'border-box';
-      pedalDiv.style.userSelect = 'none';
-      pedalDiv.style.textAlign = 'center';
-      pedalDiv.style.cursor = 'pointer';
-      pedalDiv.style.transform = `rotate(${pbPedal.rotation}deg)`;
+      // Use your utils.js renderer
+      const pedalEl = renderPedal(pedalData, pbPedal);
 
-      // --- Logo / Label ---
-      if (pedalData.logo) {
-        const logoImg = document.createElement('img');
-        logoImg.src = pedalData.logo;
-        logoImg.alt = pedalData._id;
-        logoImg.style.maxWidth = '80%';
-        logoImg.style.maxHeight = '60px';
-        logoImg.style.marginBottom = '8px';
-        pedalDiv.appendChild(logoImg);
-      } else {
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = pbPedal.pedal_id;
-        nameSpan.style.fontWeight = 'bold';
-        pedalDiv.appendChild(nameSpan);
-      }
+      // Add click handler for edit modal
+      pedalEl.style.cursor = 'pointer';
+      pedalEl.addEventListener('click', () => openEditPedalModal(pbPedal));
 
-      // --- Controls (knobs, switches) ---
-      if (Array.isArray(pedalData.controls)) {
-        const controlsDiv = document.createElement('div');
-        controlsDiv.style.display = 'flex';
-        controlsDiv.style.flexWrap = 'wrap';
-        controlsDiv.style.gap = '6px';
-        controlsDiv.style.justifyContent = 'center';
-        controlsDiv.style.marginTop = '8px';
-
-        pedalData.controls.forEach(ctrl => {
-          const ctrlDiv = document.createElement('div');
-          ctrlDiv.textContent = ctrl.label || ctrl.type;
-          ctrlDiv.style.width = '40px';
-          ctrlDiv.style.height = '40px';
-          ctrlDiv.style.borderRadius = '50%';
-          ctrlDiv.style.background = '#222';
-          ctrlDiv.style.color = '#fff';
-          ctrlDiv.style.display = 'flex';
-          ctrlDiv.style.alignItems = 'center';
-          ctrlDiv.style.justifyContent = 'center';
-          ctrlDiv.style.fontSize = '0.7em';
-          ctrlDiv.style.cursor = 'default';
-          controlsDiv.appendChild(ctrlDiv);
-        });
-
-        pedalDiv.appendChild(controlsDiv);
-      }
-
-      // --- Row info ---
-      const rowSpan = document.createElement('div');
-      rowSpan.textContent = `Row: ${pbPedal.row}`;
-      rowSpan.style.marginTop = '8px';
-      rowSpan.style.fontSize = '0.8em';
-      pedalDiv.appendChild(rowSpan);
-
-      // --- Edit on click ---
-      pedalDiv.addEventListener('click', () => {
-        openEditPedalModal(pbPedal);
-      });
-
-      rowDiv.appendChild(pedalDiv);
+      rowDiv.appendChild(pedalEl);
     });
 
     container.appendChild(rowDiv);
   });
 }
+
 
 
 
