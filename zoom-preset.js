@@ -53,8 +53,8 @@ function loadZoom() {
 // }
 
 function applyZoom() {
-  const zoomTarget = document.getElementById("preset");
-  if (!zoomTarget) return;
+  const container = document.getElementById("preset");
+  if (!container) return;
 
   showZoomSpinner();
 
@@ -62,15 +62,29 @@ function applyZoom() {
     zoomLevel = getMobileSafeZoom();
   }
 
-  // Scale each pedal individually instead of scaling #preset
-  zoomTarget.querySelectorAll(".pedal-catalog").forEach(pedal => {
+  container.querySelectorAll(".pedal-catalog").forEach(pedal => {
+    // Save original dimensions once
+    if (!pedal.dataset.baseWidth) {
+      pedal.dataset.baseWidth = pedal.offsetWidth;
+      pedal.dataset.baseHeight = pedal.offsetHeight;
+    }
+
+    const baseWidth = parseFloat(pedal.dataset.baseWidth);
+    const baseHeight = parseFloat(pedal.dataset.baseHeight);
+
+    // Apply visual scaling
     pedal.style.transform = `scale(${zoomLevel})`;
-    pedal.style.transformOrigin = "top left"; // prevent shifting
+
+    // Tell flexbox the new effective size
+    pedal.style.width = `${baseWidth * zoomLevel}px`;
+    pedal.style.height = `${baseHeight * zoomLevel}px`;
   });
 
   saveZoom();
   setTimeout(() => hideZoomSpinner(), 300);
 }
+
+
 
 
 
