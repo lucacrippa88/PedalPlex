@@ -1256,7 +1256,8 @@ async function renderFullPedalboard() {
     console.error("resultsDiv not initialized yet");
     return;
   }
-  const container = document.getElementById('preset');
+  // const container = document.getElementById('preset');
+  const container = document.getElementById('preset-scale');
   if (!container) {
     console.warn('No #pedalboard container found');
     return;

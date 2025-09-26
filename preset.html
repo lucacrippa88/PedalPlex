@@ -18,7 +18,20 @@
     transition: transform 0.3s ease-in-out; /* smooth zoom */
     transform-origin: top left;
   }
+  /* For zoom */
+  #preset {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: auto;
+  }
 
+  #preset-scale {
+    transform-origin: top left;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 </style>
 
 </head>
@@ -98,7 +111,7 @@
 
     <br><br><br><br>
 
-    <div id="preset" style="flex-direction: column; align-items: center;"></div>
+    <div id="preset" style="flex-direction: column; align-items: center;"><div id="preset-scale"></div>div></div>
   </div>
 
 
