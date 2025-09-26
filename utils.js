@@ -1107,7 +1107,8 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
           const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
           const a = parseFloat(values[0]);
           const b = parseFloat(values[1]);
-          angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+          // angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+          angle = Math.atan2(b, a) * (180 / Math.PI); // keep decimal
         } else {
           const style = $(this).attr('style');
           const match = style && style.match(/rotate\((-?\d+)deg\)/);
@@ -1135,7 +1136,7 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
       }
 
       controlsArray.push({
-        [label]: savedValue
+        [label]: parseFloat(savedValue) // optional if not already float
       });
     });
 
