@@ -53,36 +53,22 @@ function loadZoom() {
 // }
 
 function applyZoom() {
-  const container = document.getElementById("preset");
-  if (!container) return;
+  const zoomTarget = document.getElementById("preset-scale");
+  if (!zoomTarget) return;
 
   showZoomSpinner();
 
+  // On mobile, limit zoom so pedals never overflow
   if (window.innerWidth <= 768) {
     zoomLevel = getMobileSafeZoom();
   }
 
-  container.querySelectorAll(".pedal-catalog").forEach(pedal => {
-    // Save original dimensions once
-    if (!pedal.dataset.baseWidth) {
-      pedal.dataset.baseWidth = pedal.offsetWidth;
-      pedal.dataset.baseHeight = pedal.offsetHeight;
-    }
-
-    const baseWidth = parseFloat(pedal.dataset.baseWidth);
-    const baseHeight = parseFloat(pedal.dataset.baseHeight);
-
-    // Apply visual scaling
-    pedal.style.transform = `scale(${zoomLevel})`;
-
-    // Tell flexbox the new effective size
-    pedal.style.width = `${baseWidth * zoomLevel}px`;
-    pedal.style.height = `${baseHeight * zoomLevel}px`;
-  });
+  zoomTarget.style.transform = `scale(${zoomLevel})`;
 
   saveZoom();
   setTimeout(() => hideZoomSpinner(), 300);
 }
+
 
 
 
