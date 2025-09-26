@@ -19,18 +19,21 @@
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      pointer-events: none; /* so it doesn’t block clicks */
-
-      /* repeating dashed pattern */
       background-image: 
         repeating-linear-gradient(
-          45deg,                  /* angle of dashes */
-          transparent,             /* gap start */
-          transparent 4px,         /* gap end */
-          rgba(0,0,0,0.3) 4px,    /* dash start */
-          rgba(0,0,0,0.3) 8px     /* dash end */
+          45deg,
+          transparent,
+          transparent 4px,
+          rgba(0,0,0,0.2) 4px,
+          rgba(0,0,0,0.2) 8px
         );
-      z-index: 10; /* in front */
+      z-index: 10;
+      pointer-events: auto; /* overlay receives events */
+    }
+
+    /* Make overlay ignore clicks for the pedal div itself, but block children */
+    .pedal-catalog > * {
+      pointer-events: none; /* children cannot receive pointer events */
     }
   </style>
 </head>
