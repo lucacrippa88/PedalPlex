@@ -31,7 +31,8 @@ function getValueFromRotation(angle) {
   // Clamp value within min/max and round if needed
   if (value < minValue) value = minValue;
   if (value > maxValue) value = maxValue;
-  return Math.round(value);
+  // return Math.round(value);
+  return value; // no rounding
 }
 
 
