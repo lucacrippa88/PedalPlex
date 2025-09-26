@@ -32,7 +32,7 @@ function getValueFromRotation(angle) {
   if (value < minValue) value = minValue;
   if (value > maxValue) value = maxValue;
   // return Math.round(value);
-  return value; // no rounding
+  return Math.round(value * 10) / 10; // round to 1 decimal place
 }
 
 
