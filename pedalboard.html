@@ -85,7 +85,43 @@
     <script src="pedalboard.js"></script>
     <script src="fullscreen-menu.js"></script>
     <script src="nav-pedalboard.js"></script>
+    <script src="zoom-preset.js"></script>
   </div>
+
+      <div class="zoom-controls">
+      <a href="pedalboard" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button">Go to Pedalboards
+        <svg
+          focusable="false"
+          preserveAspectRatio="xMidYMid meet"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          width="16"
+          height="16"
+          viewBox="0 0 32 32"
+          aria-hidden="true"
+          class="bx--btn__icon">
+          <g transform="rotate(90 16 16)">
+              <path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"></path>
+              <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
+            </g>        
+          </svg>   
+      </a>   
+      <button class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="zoomIn()">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M18 12L14 12 14 8 12 8 12 12 8 12 8 14 12 14 12 18 14 18 14 14 18 14 18 12z"></path><path d="M21.4479,20A10.856,10.856,0,0,0,24,13,11,11,0,1,0,13,24a10.856,10.856,0,0,0,7-2.5521L27.5859,29,29,27.5859ZM13,22a9,9,0,1,1,9-9A9.01,9.01,0,0,1,13,22Z"></path>
+        </svg>
+      </button>
+      <button class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="zoomOut()">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M8 12H18V14H8z"></path><path d="M21.4479,20A10.856,10.856,0,0,0,24,13,11,11,0,1,0,13,24a10.856,10.856,0,0,0,7-2.5521L27.5859,29,29,27.5859ZM13,22a9,9,0,1,1,9-9A9.01,9.01,0,0,1,13,22Z"></path>
+        </svg>
+      </button>
+      <button class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="resetZoom()">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M22.4478,21A10.855,10.855,0,0,0,25,14,10.99,10.99,0,0,0,6,6.4658V2H4v8h8V8H7.332a8.9768,8.9768,0,1,1-2.1,8H3.1912A11.0118,11.0118,0,0,0,14,25a10.855,10.855,0,0,0,7-2.5522L28.5859,30,30,28.5859Z"/>
+        </svg>
+      </button>
+    </div>
 
 
   <script>
