@@ -1117,10 +1117,55 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
         value = getValueFromRotation(angle);
       }
 
+      // 🔎 Check if this knob is discrete in the catalog
+      let pedalDef = window.catalog.find(p => p.name === pedalName || p.id === pedalName);
+      if (pedalDef && Array.isArray(pedalDef.controls)) {
+        for (const rowWrapper of pedalDef.controls) {
+          if (Array.isArray(rowWrapper.row)) {
+            const ctrlDef = rowWrapper.row.find(c => c.label === label && Array.isArray(c.options));
+            if (ctrlDef) {
+              // If discrete knob → convert index → label
+              if (!isNaN(value) && ctrlDef.options[value] !== undefined) {
+                value = ctrlDef.options[value];
+              }
+            }
+          }
+        }
+      }
+
       controlsArray.push({
-        [label]: isNaN(value) ? value : parseFloat(value)
+        [label]: value
       });
     });
+    // $pedal.find('.knob').each(function () {
+    //   const label = $(this).data('control-label');
+    //   const $valueLabel = $(this).next('.knob-value-label');
+    //   let value;
+
+    //   if ($valueLabel.length && $valueLabel.text().trim() !== '') {
+    //     value = $valueLabel.text().trim();
+    //   } else {
+    //     const transform = $(this).css('transform');
+    //     let angle = 0;
+
+    //     if (transform && transform !== 'none') {
+    //       const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
+    //       const a = parseFloat(values[0]);
+    //       const b = parseFloat(values[1]);
+    //       angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+    //     } else {
+    //       const style = $(this).attr('style');
+    //       const match = style && style.match(/rotate\((-?\d+)deg\)/);
+    //       angle = match ? parseInt(match[1], 10) : 0;
+    //     }
+
+    //     value = getValueFromRotation(angle);
+    //   }
+
+    //   controlsArray.push({
+    //     [label]: isNaN(value) ? value : parseFloat(value)
+    //   });
+    // });
 
     // Process dropdowns
     $pedal.find('select[data-control-label]').each(function () {
