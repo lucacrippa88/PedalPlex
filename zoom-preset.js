@@ -53,20 +53,8 @@ function loadZoom() {
 // }
 
 function applyZoom() {
-  const zoomTarget = document.getElementById("preset");
-  if (!zoomTarget) return;
-
-  showZoomSpinner();
-
-  // On mobile, limit zoom so pedals never overflow
-  if (window.innerWidth <= 768) {
-    zoomLevel = getMobileSafeZoom();
-  }
-
-  zoomTarget.style.transform = `scale(${zoomLevel})`;
-
+  document.documentElement.style.setProperty("--zoom", zoomLevel);
   saveZoom();
-  setTimeout(() => hideZoomSpinner(), 300);
 }
 
 
