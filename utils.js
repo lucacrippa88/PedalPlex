@@ -1133,9 +1133,28 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
         }
       }
 
+      // Try to map numeric value to label if this is a discrete knob
+      let savedValue = value;
+
+      let pedalDef = window.catalog.find(p => p.name === pedalName || p.id === pedalName);
+      if (pedalDef && Array.isArray(pedalDef.controls)) {
+        for (const rowWrapper of pedalDef.controls) {
+          if (Array.isArray(rowWrapper.row)) {
+            const ctrlDef = rowWrapper.row.find(c => c.label === label && Array.isArray(c.options));
+            if (ctrlDef) {
+              // If the knob has options, try to map index → label
+              if (typeof value === "number" && ctrlDef.options[value] !== undefined) {
+                savedValue = ctrlDef.options[value];  // e.g. 13 → "II"
+              }
+            }
+          }
+        }
+      }
+
       controlsArray.push({
-        [label]: value
+        [label]: savedValue
       });
+
     });
     // $pedal.find('.knob').each(function () {
     //   const label = $(this).data('control-label');
