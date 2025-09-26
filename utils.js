@@ -1076,10 +1076,10 @@ function getPedalTypeCss(pedal, baseCss, inside) {
   }
   return baseCss;
 }
+ 
 
 
-
-// Get all active gears controls to save the preset
+// Get all active gears controls to save the presets
 function collectPedalControlValues(presetName = "Untitled Preset") {
   const pedals = [];
 
