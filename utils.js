@@ -1093,65 +1093,21 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
     let hasColoredLed = false;
 
     // Process knobs
-    // $pedal.find('.knob').each(function () {
-    //   const label = $(this).data('control-label');
-    //   const $valueLabel = $(this).next('.knob-value-label');
-    //   let value;
-
-    //   if ($valueLabel.length && $valueLabel.text().trim() !== '') {
-    //     value = $valueLabel.text().trim();
-    //   } else {
-    //     const transform = $(this).css('transform');
-    //     let angle = 0;
-
-    //     if (transform && transform !== 'none') {
-    //       const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
-    //       const a = parseFloat(values[0]);
-    //       const b = parseFloat(values[1]);
-    //       // angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
-    //       angle = Math.atan2(b, a) * (180 / Math.PI); // keep decimal
-    //     } else {
-    //       const style = $(this).attr('style');
-    //       const match = style && style.match(/rotate\((-?\d+)deg\)/);
-    //       angle = match ? parseInt(match[1], 10) : 0;
-    //     }
-
-    //     value = getValueFromRotation(angle);
-    //   }
-
-    //   let savedValue = value;
-
-    //   let pedalDef = window.catalog.find(p => p.name === pedalName || p.id === pedalName);
-    //   if (pedalDef && Array.isArray(pedalDef.controls)) {
-    //     for (const rowWrapper of pedalDef.controls) {
-    //       if (Array.isArray(rowWrapper.row)) {
-    //         const ctrlDef = rowWrapper.row.find(c => c.label === label && Array.isArray(c.options));
-    //         if (ctrlDef) {
-    //           // If the knob has options, try to map index → label
-    //           if (typeof value === "number" && ctrlDef.options[value] !== undefined) {
-    //             savedValue = ctrlDef.options[value];  // e.g. 13 → "II"
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-
-    //   controlsArray.push({
-    //     [label]: parseFloat(savedValue) // optional if not already float
-    //   });
-    // });
-
-    // Process knobs
     $pedal.find('.knob').each(function () {
       const label = $(this).data('control-label');
       const $valueLabel = $(this).next('.knob-value-label');
-      let savedValue;
+
+        if ($valueLabel.length) {
+          console.log('Control:', label, '-> Label value:', $valueLabel.text().trim());
+        } else {
+          console.log('Control:', label, '-> No .knob-value-label found');
+        }
+
+      let value;
 
       if ($valueLabel.length && $valueLabel.text().trim() !== '') {
-        // If there is a .knob-value-label, use it directly
-        savedValue = $valueLabel.text().trim();
+        value = $valueLabel.text().trim();
       } else {
-        // Otherwise, calculate numeric value from rotation
         const transform = $(this).css('transform');
         let angle = 0;
 
@@ -1159,19 +1115,38 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
           const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
           const a = parseFloat(values[0]);
           const b = parseFloat(values[1]);
-          angle = Math.atan2(b, a) * (180 / Math.PI);
+          // angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+          angle = Math.atan2(b, a) * (180 / Math.PI); // keep decimal
         } else {
           const style = $(this).attr('style');
-          const match = style && style.match(/rotate\((-?\d+(?:\.\d+)?)deg\)/);
-          angle = match ? parseFloat(match[1]) : 0;
+          const match = style && style.match(/rotate\((-?\d+)deg\)/);
+          angle = match ? parseInt(match[1], 10) : 0;
         }
 
-        savedValue = getValueFromRotation(angle); // keeps float now
+        value = getValueFromRotation(angle);
       }
 
-      controlsArray.push({ [label]: savedValue });
-    });
+      let savedValue = value;
 
+      let pedalDef = window.catalog.find(p => p.name === pedalName || p.id === pedalName);
+      if (pedalDef && Array.isArray(pedalDef.controls)) {
+        for (const rowWrapper of pedalDef.controls) {
+          if (Array.isArray(rowWrapper.row)) {
+            const ctrlDef = rowWrapper.row.find(c => c.label === label && Array.isArray(c.options));
+            if (ctrlDef) {
+              // If the knob has options, try to map index → label
+              if (typeof value === "number" && ctrlDef.options[value] !== undefined) {
+                savedValue = ctrlDef.options[value];  // e.g. 13 → "II"
+              }
+            }
+          }
+        }
+      }
+
+      controlsArray.push({
+        [label]: parseFloat(savedValue) // optional if not already float
+      });
+    });
 
     // Process dropdowns
     $pedal.find('select[data-control-label]').each(function () {
