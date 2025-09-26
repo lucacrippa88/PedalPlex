@@ -11,6 +11,17 @@
     .pedal-catalog {
       outline: 2px dashed #666;   /* dashed border around the pedal */
       outline-offset: 2px;        /* space between pedal and dashed line */
+      position: relative;
+    }
+    .pedal-catalog::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;          /* so it doesn’t block clicks */
+      border: 2px dashed rgba(100, 100, 100, 0.7);  /* dashed overlay */
+      border-radius: 8px;            /* optional, match pedal corners */
+      box-sizing: border-box;
     }
   </style>
 </head>
