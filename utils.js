@@ -1095,13 +1095,10 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
     // Process knobs
     $pedal.find('.knob').each(function () {
       const label = $(this).data('control-label');
-      const $valueLabel = $(this).next('.knob-value-label');
 
-        if ($valueLabel.length) {
-          console.log('Control:', label, '-> Label value:', $valueLabel.text().trim());
-        } else {
-          console.log('Control:', label, '-> No .knob-value-label found');
-        }
+      const $valueLabel = $(this).parent().find('.knob-value-label');
+      console.log('Control:', label, '-> Label value:', $valueLabel.text().trim());
+
 
       let value;
 
