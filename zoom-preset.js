@@ -53,8 +53,21 @@ function loadZoom() {
 // }
 
 function applyZoom() {
-  document.documentElement.style.setProperty("--zoom", zoomLevel);
+  const zoomTarget = document.getElementById("preset");
+  if (!zoomTarget) return;
+
+  showZoomSpinner();
+
+  // On mobile, limit zoom so pedals never overflow
+  if (window.innerWidth <= 768) {
+    zoomLevel = getMobileSafeZoom();
+  }
+
+  // zoomTarget.style.transform = `scale(${zoomLevel})`;
+  zoomTarget.style.zoom = zoomLevel;
+
   saveZoom();
+  setTimeout(() => hideZoomSpinner(), 300);
 }
 
 

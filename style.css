@@ -648,24 +648,3 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 .features p {
   color: #666;
 }
-
-
-
-
-:root {
-  --zoom: 1; /* default zoom scale */
-}
-
-#preset {
-  display: flex;
-  flex-wrap: wrap;         /* allow reflow onto new lines */
-  gap: 12px;
-  justify-content: flex-start;
-  align-items: flex-start;
-}
-
-.pedal-catalog {
-  transform: scale(var(--zoom));
-  transform-origin: top left;
-  transition: transform 0.3s ease-in-out;
-}
