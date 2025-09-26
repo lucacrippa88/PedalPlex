@@ -53,7 +53,7 @@ function loadZoom() {
 // }
 
 function applyZoom() {
-  const zoomTarget = document.getElementById("preset-scale");
+  const zoomTarget = document.getElementById("preset");
   if (!zoomTarget) return;
 
   showZoomSpinner();
