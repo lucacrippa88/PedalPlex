@@ -43,7 +43,7 @@ window.fullscreenMenuHtml = `
   </div>
 
   <div class="fullscreen-nav">
-    <div class="pedalplex-logo-fullscreen-menu"></div><br>
+    <a href='/PedalPlex/' class="pedalplex-logo-fullscreen-menu"></a><br>
     <a href="preset">Edit your presets</a>
     <a href="pedalboard">Manage pedalboards</a>
     <a href="catalog">View gears catalog</a>
