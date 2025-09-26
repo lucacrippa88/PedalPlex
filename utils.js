@@ -226,7 +226,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                         } else {
                             const min = control.min ?? 0;
                             const max = control.max ?? 100;
-                            const steps = (delta / 5);// / 2;
+                            const steps = (delta / 5) / 2;
                             let newValue = startValue + steps;
                             newValue = Math.min(Math.max(newValue, min), max);
                             control.value = parseFloat(newValue.toFixed(1));
@@ -412,7 +412,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                   min: control.min,
                   max: control.max,
                   value: control.value,
-                  step: (control.step ?? 1),// / 2, // 2x denser
+                  step: (control.step ?? 1) / 2, // 2x denser
                   "data-control-label": control.label
                 })
                 .on("input", function () { 
@@ -1079,7 +1079,7 @@ function getPedalTypeCss(pedal, baseCss, inside) {
  
 
 
-// Get all active gears controls to save the presets
+// Get all active gears controls to save the preset
 function collectPedalControlValues(presetName = "Untitled Preset") {
   const pedals = [];
 
