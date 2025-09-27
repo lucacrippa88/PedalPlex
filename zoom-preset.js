@@ -1,5 +1,5 @@
 const minZoom = 0.7;
-const maxZoom = 1.0;
+const maxZoom = 1.2;
 const step = 0.05;
 let zoomLevel = 1.0;
 
@@ -34,7 +34,7 @@ function loadZoom() {
   zoomLevel = saved ? parseFloat(saved) : 1.0;
 }
 
-// Apply zoom to the current #preset element
+
 // function applyZoom() {
 //   const zoomTarget = document.getElementById("preset");
 //   if (!zoomTarget) return;
@@ -46,15 +46,20 @@ function loadZoom() {
 //     zoomLevel = getMobileSafeZoom();
 //   }
 
-//   zoomTarget.style.transform = `scale(${zoomLevel})`;
-//   saveZoom();
+//   // zoomTarget.style.transform = `scale(${zoomLevel})`;
+//   zoomTarget.style.zoom = zoomLevel;
 
+//   saveZoom();
 //   setTimeout(() => hideZoomSpinner(), 300);
 // }
 
 function applyZoom() {
-  const zoomTarget = document.getElementById("preset");
-  if (!zoomTarget) return;
+  const zoomTargets = [
+    document.getElementById("preset"),
+    document.getElementById("pedalboard")
+  ].filter(Boolean); // keep only existing ones
+
+  if (zoomTargets.length === 0) return;
 
   showZoomSpinner();
 
@@ -63,16 +68,13 @@ function applyZoom() {
     zoomLevel = getMobileSafeZoom();
   }
 
-  // zoomTarget.style.transform = `scale(${zoomLevel})`;
-  zoomTarget.style.zoom = zoomLevel;
+  zoomTargets.forEach(zoomTarget => {
+    zoomTarget.style.zoom = zoomLevel;
+  });
 
   saveZoom();
   setTimeout(() => hideZoomSpinner(), 300);
 }
-
-
-
-
 
 
 
