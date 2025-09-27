@@ -38,6 +38,27 @@
   </style>
 </head>
 <body>
+
+    <div class="bx--loading-overlay" id="pageLoader" style="display:none;">
+      <div class="bx--loading" role="status">
+        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+        </svg>
+      </div>
+    </div>
+
+
+
+  <!-- Zoom spinner -->
+  <div id="zoomSpinner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; background: rgba(255,255,255,0.7); padding: 1rem; border-radius: 8px;">
+    <div class="bx--loading bx--loading--small" role="alert" aria-live="assertive" aria-label="Loading">
+      <svg class="bx--loading__svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+        <circle class="bx--loading__background" cx="50" cy="50" r="44" stroke-width="8"></circle>
+        <circle class="bx--loading__stroke" cx="50" cy="50" r="44" stroke-width="8"></circle>
+      </svg>
+    </div>
+  </div>
   
   <div id="page-content">
 
