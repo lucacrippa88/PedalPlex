@@ -14,46 +14,90 @@ function saveSelectedBoardToLocalStorage() {
 
 
 
+// function setupPedalboardDropdownAndRender() {
+//   const dropdown = document.getElementById('pedalboardSelect');
+//   if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
+
+//   dropdown.innerHTML = '';
+
+//   // Populate dropdown
+//   window.allPedalboards.forEach((board, index) => {
+//     const option = document.createElement('option');
+//     option.value = index;
+//     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
+//     dropdown.appendChild(option);
+//   });
+
+//   let selectedIndex = 0;
+
+//   if (window.currentUser?.role === 'guest') {
+//     // Guests: always select first board
+//     selectedIndex = 0;
+//   } else {
+//     // Logged-in users: select lastPedalboardId from localStorage if it exists
+//     const lastId = localStorage.getItem('lastPedalboardId');
+//     if (lastId) {
+//       const idx = window.allPedalboards.findIndex(b => b._id === lastId);
+//       if (idx !== -1) selectedIndex = idx;
+//     }
+//   }
+
+//   // Set the selected board in memory and render, but DO NOT save to localStorage yet
+//   dropdown.selectedIndex = selectedIndex;
+//   window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
+//   renderPedalboard();
+
+//   // Only save to localStorage when user manually changes the dropdown
+//   dropdown.addEventListener('change', (e) => {
+//     selectedIndex = parseInt(e.target.value, 10);
+//     window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
+//     renderPedalboard();
+
+//     // Save selection persistently now
+//     saveSelectedBoardToLocalStorage();
+//   });
+// }
+
 function setupPedalboardDropdownAndRender() {
   const dropdown = document.getElementById('pedalboardSelect');
   if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
 
   dropdown.innerHTML = '';
 
-  // Populate dropdown
-  window.allPedalboards.forEach((board, index) => {
+  // Populate dropdown with board._id as value
+  window.allPedalboards.forEach((board) => {
     const option = document.createElement('option');
-    option.value = index;
-    option.textContent = board.board_name || `Pedalboard ${index + 1}`;
+    option.value = board._id; 
+    option.textContent = board.board_name || "Unnamed Pedalboard";
     dropdown.appendChild(option);
   });
 
-  let selectedIndex = 0;
-
+  // Figure out which board to select
+  let selectedId;
   if (window.currentUser?.role === 'guest') {
-    // Guests: always select first board
-    selectedIndex = 0;
+    selectedId = window.allPedalboards[0]._id; // always first
   } else {
-    // Logged-in users: select lastPedalboardId from localStorage if it exists
     const lastId = localStorage.getItem('lastPedalboardId');
-    if (lastId) {
-      const idx = window.allPedalboards.findIndex(b => b._id === lastId);
-      if (idx !== -1) selectedIndex = idx;
+    if (lastId && window.allPedalboards.find(b => b._id === lastId)) {
+      selectedId = lastId;
+    } else {
+      selectedId = window.allPedalboards[0]._id; // fallback
     }
   }
 
-  // Set the selected board in memory and render, but DO NOT save to localStorage yet
-  dropdown.selectedIndex = selectedIndex;
-  window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
+  // Apply selection
+  dropdown.value = selectedId;
+  const board = window.allPedalboards.find(b => b._id === selectedId);
+  window.pedalboard = structuredClone(board);
   renderPedalboard();
 
-  // Only save to localStorage when user manually changes the dropdown
+  // Save only on manual change
   dropdown.addEventListener('change', (e) => {
-    selectedIndex = parseInt(e.target.value, 10);
-    window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
+    const newId = e.target.value;
+    const newBoard = window.allPedalboards.find(b => b._id === newId);
+    if (!newBoard) return;
+    window.pedalboard = structuredClone(newBoard);
     renderPedalboard();
-
-    // Save selection persistently now
     saveSelectedBoardToLocalStorage();
   });
 }
@@ -255,8 +299,10 @@ if (select) {
 
 
   dropdown.addEventListener('change', (e) => {
-    selectedBoardIndex = parseInt(e.target.value, 10);
-    window.pedalboard = window.allPedalboards[selectedBoardIndex];
+    // selectedBoardIndex = parseInt(e.target.value, 10);
+    // window.pedalboard = window.allPedalboards[selectedBoardIndex];
+    const selectedId = e.target.value;
+    window.pedalboard = window.allPedalboards.find(b => b._id === selectedId);
     renderPedalboard();
 
     // Save to localStorage on change
