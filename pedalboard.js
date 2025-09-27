@@ -230,7 +230,8 @@ if (userRole === 'guest') {
   dropdown.innerHTML = '';
   data.docs.forEach((board, index) => {
     const option = document.createElement('option');
-    option.value = index;
+    // option.value = index;
+    option.value = board._id;
     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
     dropdown.appendChild(option);
   });
