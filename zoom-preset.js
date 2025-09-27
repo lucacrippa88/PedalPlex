@@ -3,28 +3,13 @@ const maxZoom = 1.2;
 const step = 0.05;
 let zoomLevel = 1.0;
 
-// // Get currently selected pedalboard text
-// function getSelectedPedalboardId() {
-//   const select = document.getElementById("pedalboardSelect");
-//   const idx = select.selectedIndex;
-//   if (idx < 0) return null;
-//   return select.options[idx].value; // use ID, not text
-// }
-function getSelectedPedalboardKey() {
+// Get currently selected pedalboard text
+function getSelectedPedalboardId() {
   const select = document.getElementById("pedalboardSelect");
-  if (!select) return null;
-
   const idx = select.selectedIndex;
   if (idx < 0) return null;
-
-  // Use the real board from window.allPedalboards
-  const board = window.allPedalboards?.[idx];
-  if (!board) return null;
-
-  // Prefer DB _id if available, else fallback to board_name
-  return board._id || board.board_name || `board_${idx}`;
+  return select.options[idx].value; // use ID, not text
 }
-
 // Get currently selected preset text
 function getSelectedPreset() {
   const select = document.getElementById("presetSelect");
@@ -34,34 +19,20 @@ function getSelectedPreset() {
 }
 
 
-// // Save zoom for the current pedalboard to localstorage
-// function saveZoom() {
-//   const id = getSelectedPedalboardId();
-//   if (!id) return;
-//   localStorage.setItem(`zoom_${id}`, zoomLevel);
-// }
-
-// // Load zoom for the current pedalboard
-// function loadZoom() {
-//   const id = getSelectedPedalboardId();
-//   if (!id) return;
-//   const saved = localStorage.getItem(`zoom_${id}`);
-//   zoomLevel = saved ? parseFloat(saved) : 1.0;
-// }
-
+// Save zoom for the current pedalboard to localstorage
 function saveZoom() {
-  const key = getSelectedPedalboardKey();
-  if (!key) return;
-  localStorage.setItem(`zoom_${key}`, zoomLevel);
+  const id = getSelectedPedalboardId();
+  if (!id) return;
+  localStorage.setItem(`zoom_${id}`, zoomLevel);
 }
 
+// Load zoom for the current pedalboard
 function loadZoom() {
-  const key = getSelectedPedalboardKey();
-  if (!key) return;
-  const saved = localStorage.getItem(`zoom_${key}`);
+  const id = getSelectedPedalboardId();
+  if (!id) return;
+  const saved = localStorage.getItem(`zoom_${id}`);
   zoomLevel = saved ? parseFloat(saved) : 1.0;
 }
-
 
 
 // function applyZoom() {
