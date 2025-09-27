@@ -24,6 +24,7 @@ function setupPedalboardDropdownAndRender() {
   window.allPedalboards.forEach((board, index) => {
     const option = document.createElement('option');
     option.value = index;
+    option.setAttribute('value-id', board._id);
     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
     dropdown.appendChild(option);
   });
@@ -232,6 +233,7 @@ if (userRole === 'guest') {
   data.docs.forEach((board, index) => {
     const option = document.createElement('option');
     option.value = index;
+    option.setAttribute('value-id', board._id);
     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
     dropdown.appendChild(option);
   });
