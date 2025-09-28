@@ -48,6 +48,11 @@ function setupPedalboardDropdownAndRender() {
   window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
   renderPedalboard();
 
+  // Restore zoom once board is loaded
+  if (typeof onPedalboardLoaded === "function") {
+    setTimeout(onPedalboardLoaded, 100);
+  }
+
   // Only save to localStorage when user manually changes the dropdown
   dropdown.addEventListener('change', (e) => {
     selectedIndex = parseInt(e.target.value, 10);
@@ -192,6 +197,11 @@ if (userRole === 'guest') {
   window.pedalboard = board;
   renderPedalboard();
 
+  // Restore zoom
+  if (typeof onPedalboardLoaded === "function") {
+    setTimeout(onPedalboardLoaded, 100);
+  }
+
   dropdown.addEventListener('change', (e) => {
     const idx = parseInt(e.target.value, 10);
     window.pedalboard = window.allPedalboards[idx];
@@ -255,6 +265,11 @@ renderPedalboard();
 const select = document.getElementById("pedalboardSelect");
 if (select) {
   select.value = selectedBoardIndex.toString();
+}
+
+// Restore zoom here too
+if (typeof onPedalboardLoaded === "function") {
+  setTimeout(onPedalboardLoaded, 100);
 }
 
 
