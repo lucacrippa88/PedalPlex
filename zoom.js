@@ -119,10 +119,17 @@ function resetZoom() {
 /**
  * Called after a pedalboard finishes loading
  */
+// function onPedalboardLoaded() {
+//   loadZoom();
+//   applyZoom();
+// }
 function onPedalboardLoaded() {
-  loadZoom();
-  applyZoom();
+  setTimeout(() => {
+    loadZoom();
+    applyZoom();
+  }, 300);
 }
+
 
 /**
  * Called after a preset has been applied
@@ -135,14 +142,27 @@ function restoreZoomForCurrentBoard() {
 /**
  * Hook up dropdown changes (for both pedalboard and preset selects)
  */
+// ["pedalboardSelect", "presetSelect"].forEach(selectId => {
+//   const el = document.getElementById(selectId);
+//   if (el) {
+//     el.addEventListener("change", () => {
+//       setTimeout(onPedalboardLoaded, 50); // delay ensures DOM is ready
+//     });
+//   }
+// });
 ["pedalboardSelect", "presetSelect"].forEach(selectId => {
   const el = document.getElementById(selectId);
   if (el) {
     el.addEventListener("change", () => {
-      setTimeout(onPedalboardLoaded, 50); // delay ensures DOM is ready
+      // Wait a bit longer for pedalboard content to render
+      setTimeout(() => {
+        loadZoom();
+        applyZoom();
+      }, 300); 
     });
   }
 });
+
 
 /**
  * Zoom spinner
