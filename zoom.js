@@ -16,15 +16,15 @@ function getSelectedBoardId() {
 
   if (!select) return null;
 
-  const idx = select.selectedIndex;
-  if (idx < 0) return null;
+  const opt = select.options[select.selectedIndex];
+  if (!opt) return null;
 
-  const opt = select.options[idx];
-  // Pedalboard.html → use value-id
+  // Pedalboard.html → use value-id if it exists
   if (opt.hasAttribute("value-id")) {
     return opt.getAttribute("value-id");
   }
-  // Preset.html → use value
+
+  // Preset.html → use normal value
   return opt.value;
 }
 
@@ -40,11 +40,22 @@ function saveZoom() {
 /**
  * Load zoom level for the current board
  */
-function loadZoom() {
-  const id = getSelectedBoardId();
-  if (!id) return;
-  const saved = localStorage.getItem(`zoom_${id}`);
-  zoomLevel = saved ? parseFloat(saved) : 1.0;
+function getSelectedBoardId() {
+  const select = document.getElementById("pedalboardSelect") 
+               || document.getElementById("presetSelect");
+
+  if (!select) return null;
+
+  const opt = select.options[select.selectedIndex];
+  if (!opt) return null;
+
+  // Pedalboard.html → use value-id if it exists
+  if (opt.hasAttribute("value-id")) {
+    return opt.getAttribute("value-id");
+  }
+
+  // Preset.html → use normal value
+  return opt.value;
 }
 
 /**
