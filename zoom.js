@@ -10,23 +10,44 @@ let zoomLevel = 1.0;
  * - In pedalboard.html: ID is stored in option[value-id]
  * - In preset.html: ID is directly option.value
  */
+// function getSelectedBoardId() {
+//   const select = document.getElementById("pedalboardSelect") 
+//                || document.getElementById("presetSelect");
+
+//   if (!select) return null;
+
+//   const idx = select.selectedIndex;
+//   if (idx < 0) return null;
+
+//   const opt = select.options[idx];
+//   // Pedalboard.html → use value-id
+//   if (opt.hasAttribute("value-id")) {
+//     return opt.getAttribute("value-id");
+//   }
+//   // Preset.html → use value
+//   return opt.value;
+// }
 function getSelectedBoardId() {
   const select = document.getElementById("pedalboardSelect") 
                || document.getElementById("presetSelect");
 
   if (!select) return null;
 
-  const idx = select.selectedIndex;
-  if (idx < 0) return null;
+  const opt = select.options[select.selectedIndex];
+  if (!opt) return null;
 
-  const opt = select.options[idx];
-  // Pedalboard.html → use value-id
+  let id = null;
+
   if (opt.hasAttribute("value-id")) {
-    return opt.getAttribute("value-id");
+    id = opt.getAttribute("value-id");
+  } else {
+    id = opt.value;
   }
-  // Preset.html → use value
-  return opt.value;
+
+  console.log("Current selected board ID:", id, "from option:", opt.outerHTML);
+  return id;
 }
+
 
 /**
  * Save zoom level for the current board
