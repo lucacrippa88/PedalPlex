@@ -554,10 +554,11 @@ function renderPedalControls(pedal, $pedalDiv) {
         const $controlsInRow = $row.children();
         const $smallKnobs = $controlsInRow.find(".smallknob");
 
-        if ($smallKnobs.length === 3 && $controlsInRow.find(":not(.knob-container)").length === 0) {
-            // tighten margins but don’t collapse fully
-            $smallKnobs.parent().css({ "margin-right": "5px", "margin-left": "5px" });
-            $row.css("gap", "10px");
+        if (
+          $smallKnobs.length === 3 &&
+          $controlsInRow.find(":not(.knob-container)").length === 0
+        ) {
+          $row.css("gap", "0px");
         }
     }); 
 }
