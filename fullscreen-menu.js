@@ -88,7 +88,7 @@ window.fullscreenMenuHtml = `
 
   <div class='menu-footer' style="margin-top:4rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
     © <span id="year-range"></span> PedalPlex · 
-    <a href="#">Terms</a> · <a href="#">Privacy</a> · <a href="#">Support</a>
+    <a href="terms">Terms</a> · <a href="privacy">Privacy</a> · <a href="#">Support</a>
   </div>
   
 </div>
