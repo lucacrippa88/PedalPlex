@@ -102,7 +102,9 @@ function initPedalboard(userRole) {
         const boards = savedBoards ? JSON.parse(savedBoards) : [];
 
         if (boards.length === 0) {
-          $("#pedalboard-controls").css("display", "none");
+          // $("#pedalboard-controls").css("display", "none");
+          $("#pedalboardSelect").css("display", "none");
+          $("#renameBoardBtn").css("display", "none");
           resultsDiv.innerHTML = `
             <div style="text-align: center; margin-top: 40px;">
               <p style="font-size: 1.1em; margin-bottom: 20px;">
