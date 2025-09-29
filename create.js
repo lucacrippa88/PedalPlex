@@ -161,15 +161,18 @@ function buildJSON() {
 
     // Author (read-only, comes from hidden field)
     const authorVal = $("#pedal-author").val();
-    pedal.author = authorVal && authorVal.trim() !== "" ? authorVal : (window.currentUser ? window.currentUser.username : "unknown");
+    if (authorVal && authorVal.trim() !== "") {
+        pedal.author = authorVal;
+        pedal.authorId = $("#pedal-author-id").val() || "";
+    } else if (window.currentUser) {
+        // only for new pedal
+        pedal.author = window.currentUser.username;
+        pedal.authorId = window.currentUser.userid;
+    } else {
+        pedal.author = "unknown";
+        pedal.authorId = "";
+    }
 
-    // AuthorId (read-only, comes from hidden field)
-    // const authorIdVal = $("#pedal-author-id").val();
-    // pedal.authorId = authorIdVal && authorIdVal.trim() !== "" ? authorIdVal : (window.currentUser ? window.currentUser.userid : "");
-
-    // Always set author from the logged-in user
-    pedal.author = parent?.window?.currentUser?.username || "unknown";
-    pedal.authorId = parent?.window?.currentUser?.userid || "";
 
     // Published: editable via custom select (defaults to draft if not set)
     const selectedText = $("#pedal-published-button").text().trim().toLowerCase();
