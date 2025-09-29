@@ -549,6 +549,15 @@ function renderPedalControls(pedal, $pedalDiv) {
         });
 
         $pedalDiv.append($row);
+
+        // Adjust gap if only 3 smallknobs
+        const $controlsInRow = $row.children();
+        const $smallKnobs = $controlsInRow.find(".smallknob");
+
+        if ($smallKnobs.length === 3 && $controlsInRow.find(":not(.knob-container, .smallknob)").length === 0) {
+            $smallKnobs.parent().css({ "margin-right": "0px", "margin-left": "0px" });
+            $row.css("gap", "0px");
+        }
     }); 
 }
 
