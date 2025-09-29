@@ -359,12 +359,12 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 .modal-footer { display: block; margin: auto; position: relative; padding-bottom: 40px; }
 
 /* Fonts (all preserved) */
-@font-face { font-family: bigmuff; src: url("fonts/ITC\ Pioneer\ Regular.otf"); }
+@font-face { font-family: bigmuff, pioneer; src: url("fonts/ITC\ Pioneer\ Regular.otf"); }
 @font-face { font-family: boss; src: url("fonts/BossStyle-Bold.otf"); }
-@font-face { font-family: amped; src: url("fonts/BebasNeue-Regular.otf"); }
-@font-face { font-family: mxr; src: url("fonts/eurostile.TTF"); }
-@font-face { font-family: tsmini; src: url("fonts/Schluber.otf"); }
-@font-face { font-family: sp; src: url("fonts/Lobster-Regular.ttf"); }
+@font-face { font-family: amped, bebasneue; src: url("fonts/BebasNeue-Regular.otf"); }
+@font-face { font-family: mxr, eurostile; src: url("fonts/eurostile.TTF"); }
+@font-face { font-family: tsmini, schluber; src: url("fonts/Schluber.otf"); }
+@font-face { font-family: sp, lobster; src: url("fonts/Lobster-Regular.ttf"); }
 @font-face { font-family: orangeamps; src: url("fonts/AmpedOrange.ttf"); }
 @font-face { font-family: marshall; src: url("fonts/Amplify_PersonalUseOnly.ttf"); }
 @font-face { font-family: vox; src: url("fonts/PlayfairDisplay-Black.ttf"); }
@@ -401,6 +401,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 @font-face { font-family: bolton; src: url("fonts/Bolton.ttf"); }
 @font-face { font-family: MIB; src: url("fonts/MIB.ttf"); }
 @font-face { font-family: thorema; src: url("fonts/thorema-demo.regular.ttf"); }
+@font-face { font-family: pixeland; src: url("fonts/Pixeland.ttf"); }
+@font-face { font-family: minecraft; src: url("fonts/Minecraft.ttf"); }
 
 
 /* Diamond plate */
