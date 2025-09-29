@@ -550,16 +550,14 @@ function renderPedalControls(pedal, $pedalDiv) {
 
         $pedalDiv.append($row);
 
-        // Adjust gap if only 3 smallknobs
-        const $controlsInRow = $row.children();
-        const $smallKnobs = $controlsInRow.find(".smallknob");
+        // Adjust gap if only 3 smallknobs and no other controls
+        const $allSmallKnobs = $row.find(".smallknob");
+        const $allControls = $row.find("> div"); // direct children of the row
 
-        if (
-          $smallKnobs.length === 3 &&
-          $controlsInRow.find(":not(.knob-container)").length === 0
-        ) {
+        if ($allSmallKnobs.length === 3 && $allControls.length === 3) {
           $row.css("gap", "0px");
         }
+        
     }); 
 }
 
