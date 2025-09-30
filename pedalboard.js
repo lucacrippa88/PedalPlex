@@ -835,6 +835,9 @@ $(document).ready(function () {
       timer: 1200,
       showConfirmButton: false
     });
+    // Show viewPreset even for guests if at least one pedalboard exists
+    $("#pedalboard-controls").css("display", "inline-flex");
+      $("#viewPreset").css("display", "inline-flex");
     return;
   }
 
