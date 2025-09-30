@@ -118,6 +118,9 @@ function initPedalboard(userRole) {
           window.allPedalboards = [];
         } else {
           window.allPedalboards = boards;
+          // Show viewPreset even for guests if at least one pedalboard exists
+          $("#pedalboard-controls").css("display", "inline-flex");
+          $("#viewPreset").css("display", "inline-flex");
           setupPedalboardDropdownAndRender();
         }
       })
