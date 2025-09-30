@@ -156,7 +156,7 @@ $(document).ready(function () {
       }).then((result) => {
         if (result.isConfirmed) {
           localStorage.removeItem('authToken');
-          window.location.href = 'login';
+          window.location.href = '/PedalPlex/';
         }
       });
     }
