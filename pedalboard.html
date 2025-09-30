@@ -188,7 +188,11 @@
               icon: "question",
               showCancelButton: true,
               confirmButtonText: "Yes, import",
-              cancelButtonText: "No, discard"
+              cancelButtonText: "No, discard",
+              customClass: {
+                confirmButton: "bx--btn bx--btn--primary",
+                cancelButton: "bx--btn bx--btn--secondary",
+              }
             }).then((result) => {
               if (result.isConfirmed) {
                 // Import sequentially
