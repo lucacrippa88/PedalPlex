@@ -1133,6 +1133,7 @@ function saveGuestPedalboard() {
 
 
 function importGuestPedalboard(board, user_id) {
+  console.log("Start import of board "+board+" for user "+user_id);
   return new Promise((resolve, reject) => {
     $.ajax({
       url: 'https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php',
