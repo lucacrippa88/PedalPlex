@@ -102,9 +102,10 @@ function initPedalboard(userRole) {
         const boards = savedBoards ? JSON.parse(savedBoards) : [];
 
         if (boards.length === 0) {
-          // $("#pedalboard-controls").css("display", "none");
-          $("#pedalboardSelect").css("display", "none");
-          $("#renameBoardBtn").css("display", "none");
+          $("#pedalboard-controls").css("display", "none");
+            $("#pedalboardSelect").css("display", "none");
+            $("#renameBoardBtn").css("display", "none");
+            $("#viewPreset").css("display", "none");   
           resultsDiv.innerHTML = `You don't have any pedalboard yet.<br><br><button id="createBtn" class="showDesktop bx--btn bx--btn--secondary" type="button" aria-label="Create New Pedalboard" style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <g transform="rotate(90 16 16)">
@@ -162,6 +163,9 @@ if (userRole === 'guest') {
 
   if (!savedBoard) {
     $("#pedalboard-controls").css("display", "none");
+      $("#pedalboardSelect").css("display", "none");
+      $("#renameBoardBtn").css("display", "none");
+      $("#viewPreset").css("display", "none");   
     resultsDiv.innerHTML = `
       <div style="text-align: center; margin-top: 40px;">
         <p style="font-size: 1.1em; margin-bottom: 20px;">
@@ -179,6 +183,9 @@ if (userRole === 'guest') {
 
   // Show controls
   $("#pedalboard-controls").css("display", "inline-flex");
+    $("#pedalboardSelect").css("display", "none");
+    $("#renameBoardBtn").css("display", "none");
+    $("#viewPreset").css("display", "inline-flex");   
 
   // Populate dropdown (even if it's only one option)
   const dropdown = document.getElementById('pedalboardSelect');
@@ -223,6 +230,9 @@ if (userRole === 'guest') {
   }
 
   $("#pedalboard-controls").css("display", "inline-flex");
+    $("#pedalboardSelect").css("display", "inline-flex");
+    $("#renameBoardBtn").css("display", "inline-flex");
+    $("#viewPreset").css("display", "inline-flex");   
 
   // Sort pedalboards alphabetically
   data.docs.sort((a, b) => {
@@ -952,14 +962,14 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
               // Clear UI and show create button
               const container = document.getElementById('pedalboard');
               container.innerHTML = `You don't have any pedalboard yet.<br><br><button id="createBtn" class="showDesktop bx--btn bx--btn--secondary" type="button" aria-label="Create New Pedalboard" style="display: flex; align-items: center; gap: 0.5rem;">
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <g transform="rotate(90 16 16)">
-              <path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"></path>
-              <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
-            </g>
-          </svg>
-          Create pedalboard
-        </button>`;
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                  <g transform="rotate(90 16 16)">
+                    <path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"></path>
+                    <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
+                  </g>
+                </svg>
+                Create pedalboard
+              </button>`;
 
               $("#pedalboard-controls").hide();
             }
