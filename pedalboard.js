@@ -1128,3 +1128,28 @@ function saveGuestPedalboard() {
     showConfirmButton: false
   });
 }
+
+
+
+
+function importGuestPedalboard(board, user_id) {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: 'https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php',
+      method: 'POST',
+      data: {
+        board_name: board.board_name || "Untitled Board",
+        user_id: user_id
+      },
+      success: function(resp) {
+        console.log("Imported guest board:", resp);
+        resolve(resp);
+      },
+      error: function(err) {
+        console.error("Failed to import guest board:", err);
+        reject(err);
+      }
+    });
+  });
+}
+
