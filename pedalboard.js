@@ -1136,7 +1136,7 @@ function importGuestPedalboard(board, userFromServer) {
   return new Promise((resolve, reject) => {
     const boardName = board.board_name || "Untitled Board";
     const pedals = board.pedals || [];
-    const userId = userFromServer.id || userFromServer.user_id; // depends on your backend
+    const userId = window.currentUser?.userid;
 
     if (!boardName || !userId) {
       console.error("Cannot import: missing board_name or user_id", { board, userFromServer });
