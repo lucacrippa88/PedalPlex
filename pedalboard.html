@@ -178,12 +178,12 @@
         window.currentUser = userFromServer;
 
         // 1. Check for guest pedalboards in localStorage
-        const guestBoards = localStorage.getItem("guestPedalboards");
+        const guestBoards = localStorage.getItem("guestPedalboard");
         if (guestBoards) {
           const parsed = JSON.parse(guestBoards);
           if (parsed.length > 0) {
             Swal.fire({
-              title: "Import Guest Pedalboards?",
+              title: "Import Guest Pedalboard?",
               text: "We found pedalboards you created as a guest. Do you want to import them into your account?",
               icon: "question",
               showCancelButton: true,
@@ -195,18 +195,18 @@
                 const promises = parsed.map(b => importGuestPedalboard(b, userFromServer.id));
                 Promise.all(promises)
                   .then(() => {
-                    localStorage.removeItem("guestPedalboards");
-                    Swal.fire("Imported!", "Your guest pedalboards are now in your account.", "success")
+                    localStorage.removeItem("guestPedalboard");
+                    Swal.fire("Imported!", "Your guest pedalboard is now in your account.", "success")
                       .then(() => {
                         if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
                         if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
                       });
                   })
                   .catch(err => {
-                    Swal.fire("Error", "Some guest pedalboards could not be imported.", "error");
+                    Swal.fire("Error", "Guest pedalboard could not be imported.", "error");
                   });
               } else {
-                localStorage.removeItem("guestPedalboards"); // discard
+                localStorage.removeItem("guestPedalboard"); // discard
               }
             });
             return;
