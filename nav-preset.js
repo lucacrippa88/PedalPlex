@@ -85,7 +85,7 @@ function initNavPreset() {
         </svg>
         Login
     </button>`;
-    $(".showDesktop").prepend(loginBtnHtml);
+    // $(".showDesktop").prepend(loginBtnHtml);
 
     $("#loginBtn").on("click", () => {
         window.location.href = "login";
