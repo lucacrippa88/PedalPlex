@@ -7,7 +7,7 @@ function initNavPedalboard(userRole) {
         <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
           <div class="pedalplex-logo"></div>
         </button>
-        <div class="title">PedalPlex</div>
+        <a href="/PedalPlex/" style="text-decoration:none;" class="title">PedalPlex</a>
         <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Pedalboards</span>
       </div>
       <div style="display: flex; align-items: center; gap: 1rem;">
