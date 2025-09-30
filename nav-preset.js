@@ -15,7 +15,7 @@ function initNavPreset() {
   </div>
 
   <!-- Right: buttons -->
-  <div class="showDesktop" style="display: flex; align-items: center; gap: 1rem;">
+  <div class="rightButtons showDesktop" style="display: flex; align-items: center; gap: 1rem;">
 
     <button id="savePstBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save preset" disabled
       style="display: flex; align-items: center; gap: 0.5rem;">
@@ -85,7 +85,7 @@ function initNavPreset() {
         </svg>
         Login
     </button>`;
-    // $(".showDesktop").prepend(loginBtnHtml);
+    $(".rightButtons").prepend(loginBtnHtml);
 
     $("#loginBtn").on("click", () => {
         window.location.href = "login";
