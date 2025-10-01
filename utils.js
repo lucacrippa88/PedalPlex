@@ -891,7 +891,7 @@ function sanitizeHtml(html) {
   if (typeof DOMPurify !== "undefined") {
       return DOMPurify.sanitize(html, {
           ALLOWED_TAGS: ['span', 'br', 'hr', 'div'],
-          ALLOWED_ATTR: ['style']
+          ALLOWED_ATTR: ['style', 'class']
       });
   } else {
       return html;
@@ -905,7 +905,7 @@ function safeLogoStyle(inputStyle) {
   if (/expression\s*\(|javascript:/i.test(inputStyle)) { return ""; }
 
   // Optionally allow only certain props
-  const allowedProps = ["class", "color", "font-size", "font-weight", "font-style", "font-family", 
+  const allowedProps = ["color", "font-size", "font-weight", "font-style", "font-family", 
                         "background-color", "padding", "position", "margin", "margin-left", "margin-right", "margin-bottom", 
                         "bottom", "top", "left", "right", "letter-spacing", "word-spacing", "display", "border", "margin-top", 
                         "line-height", "transform", "height", "width", "border-radius", "box-shadow", "background-size",
