@@ -905,7 +905,7 @@ function safeLogoStyle(inputStyle) {
   if (/expression\s*\(|javascript:/i.test(inputStyle)) { return ""; }
 
   // Optionally allow only certain props
-  const allowedProps = ["color", "font-size", "font-weight", "font-style", "font-family", 
+  const allowedProps = ["class", "color", "font-size", "font-weight", "font-style", "font-family", 
                         "background-color", "padding", "position", "margin", "margin-left", "margin-right", "margin-bottom", 
                         "bottom", "top", "left", "right", "letter-spacing", "word-spacing", "display", "border", "margin-top", 
                         "line-height", "transform", "height", "width", "border-radius", "box-shadow", "background-size",
