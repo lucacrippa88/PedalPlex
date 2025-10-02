@@ -191,7 +191,7 @@
               cancelButtonText: "No, discard",
               customClass: {
                 confirmButton: "bx--btn bx--btn--primary",
-                cancelButton: "bx--btn bx--btn--secondary",
+                cancelButton: "bx--btn bx--btn--secondary"
               }
             }).then((result) => {
               if (result.isConfirmed) {
@@ -200,7 +200,17 @@
                 Promise.all(promises)
                   .then(() => {
                     localStorage.removeItem("guestPedalboard");
-                    Swal.fire("Imported!", "Your guest pedalboard is now in your account.", "success")
+                      Swal.fire({
+                        title: "Imported!",
+                        text: "Your guest pedalboard is now in your account.",
+                        icon: "success",
+                        confirmButtonText: "Ok",
+                        customClass: {
+                          confirmButton: "bx--btn bx--btn--primary",
+                          cancelButton: "bx--btn bx--btn--secondary"
+                        },
+                        showCancelButton: false
+                      })
                       .then(() => {
                         if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
                         if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
