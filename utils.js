@@ -699,6 +699,7 @@ function setupEditPedalHandler(pedals) {
                 const newPedalData = dupResult.value;
 
                 const token = localStorage.getItem('authToken');
+                console.log(token);
 
                 fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_CATALOG.php', {
                   method: 'POST',
