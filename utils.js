@@ -949,26 +949,35 @@ function sanitizePedalHTML(input) {
             // sanitize attributes
             [...node.attributes].forEach(attr => {
                 const name = attr.name.toLowerCase();
+
+                // keep class, clean unsafe chars
                 if (name === 'class') {
                     node.className = node.className.replace(/[^a-zA-Z0-9 _-]/g,'');
-                } else if (name === 'style') {
-                    const safeStyle = node.style.cssText
+                } 
+                // keep style but remove dangerous patterns
+                else if (name === 'style') {
+                    let safeStyle = node.style.cssText
                         .replace(/expression\s*\(/gi,'')
                         .replace(/javascript\s*:/gi,'')
-                        .replace(/url\s*\(\s*data\s*:/gi,'');
+                        .replace(/url\s*\(\s*data\s*:/gi,'')
+                        .replace(/behavior\s*:/gi,''); // block old IE expressions
                     node.style.cssText = safeStyle;
-                } else {
+                } 
+                // remove all other attributes including on*
+                else {
                     node.removeAttribute(attr.name);
                 }
             });
         }
 
+        // recursively clean children
         Array.from(node.childNodes).forEach(child => cleanNode(child));
     }
 
     Array.from(temp.childNodes).forEach(child => cleanNode(child));
     return temp.innerHTML;
 }
+
 
 
 
@@ -1096,138 +1105,7 @@ function sanitizePedalHTML(input) {
 //   return $pedalDiv;
 // }
 
-// HELPER: render a gear safely in catalog and editor
-function renderPedal(pedal, userRole, pedalboardPage = false) {
-  const pedalId = pedal._id || pedal.id;
-  const pedalNameRaw = pedal.name || pedal.id;
-  const insideColorRaw = pedal["inside-color"] || "";
-  
-  // Escape function to prevent XSS
-  function escapeHTML(str) {
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#x27;")
-      .replace(/\//g, "&#x2F;");
-  }
 
-  // Sanitize style attributes (whitelist only safe CSS)
-  function sanitizeStyle(styleStr) {
-    if (!styleStr) return "";
-    const allowedCss = [
-      "color","font-size","font-weight","font-style","font-family",
-      "background-color","padding","position","margin","margin-left","margin-right","margin-bottom",
-      "bottom","top","left","right","letter-spacing","word-spacing","display","border","margin-top",
-      "line-height","transform","height","width","border-radius","box-shadow","background-size",
-      "background-image","text-align","background","rotate","overflow","white-space","text-shadow","text-decoration"
-    ];
-    let safeStyles = [];
-    styleStr.split(";").forEach(item => {
-      const kv = item.split(":");
-      if (kv.length !== 2) return;
-      let prop = kv[0].trim().toLowerCase();
-      let val = kv[1].trim();
-      if (allowedCss.includes(prop)) {
-        // block JS in style
-        if (/expression\s*\(|javascript\s*:|url\s*\(\s*data:/i.test(val)) return;
-        safeStyles.push(prop + ": " + val);
-      }
-    });
-    return safeStyles.join("; ");
-  }
-
-  // Detect if inside-color is an image
-  let inside = "";
-  let colorOnly = insideColorRaw;
-  const isImage = /^https?:\/\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
-  if (isImage) {
-    inside = "full";
-  } else {
-    const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-    if (match) { colorOnly = match[1]; inside = match[2] || ""; }
-  }
-
-  // Base CSS
-  const baseCss = {
-    border: `5px solid ${pedal["color"]}`,
-    borderRadius: '10px',
-    color: pedal["font-color"],
-    width: getPedalWidth(pedal.width),
-    height: getPedalHeight(pedal.height),
-    marginBottom: '10px',
-    display: 'inline-block',
-    ...(pedal["inside-border"] && {
-      boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}`
-    }),
-    ...(isImage ? {
-      backgroundImage: `url("${escapeHTML(insideColorRaw)}")`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center'
-    } : { background: colorOnly })
-  };
-
-  let $pedalDiv = $("<div>")
-    .addClass("pedal-catalog")
-    .css(getPedalTypeCss(pedal, baseCss, inside))
-    .attr("data-pedal-name", pedalNameRaw)
-    .attr("data-pedal-id", pedalId)
-    .attr("data-published", (pedal.published || "draft").toLowerCase())
-    .attr("data-author", pedal.author || "");
-
-  // Escape pedal name/logo safely
-  const safeName = escapeHTML(pedal.name || "");
-  const safeLogoStyle = sanitizeStyle(pedal.logo || "");
-
-  // Head and inverted pedals → add name/logo
-  if (["head", "pedal-inverted"].includes(pedal.type)) {
-    $pedalDiv.append($("<div>")
-      .addClass("head-name")
-      .html(safeName)
-      .attr("style", safeLogoStyle));
-  }
-
-  // Other pedal types → add name/logo
-  if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
-    $pedalDiv.append($("<div>")
-      .addClass("pedal-name")
-      .html(safeName)
-      .attr("style", safeLogoStyle));
-  }
-
-  // Render controls
-  renderPedalControls(pedal, $pedalDiv);
-
-  // Add author label
-  if (window.currentUser && pedal.author && !pedalboardPage) {
-    const isAdmin = userRole === 'admin';
-    const isAuthor = window.currentUser.username === pedal.author;
-    if (isAdmin || isAuthor) {
-      $pedalDiv.prepend($("<div>")
-        .addClass("pedal-author")
-        .text(`by: ${pedal.author}, ${pedal.published}`));
-    }
-  }
-
-  // Add edit button
-  if (window.currentUser && !pedalboardPage) {
-    const isAdmin = userRole === 'admin';
-    const isAuthor = window.currentUser.username === pedal.author;
-    if (isAdmin || isAuthor) {
-      const $editBtn = $("<button>")
-        .addClass("edit-btn showDesktop")
-        .attr("title", "Edit pedal JSON")
-        .data("pedal", pedal)
-        .html(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
-          <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
-        </svg>`);
-      $pedalDiv.append($editBtn);
-    }
-  }
-
-  return $pedalDiv;
-}
 
 
 
