@@ -926,147 +926,56 @@ function safeLogoStyle(inputStyle) {
  * - Keeps class and style attributes (inline CSS)
  * - Removes any JS events, scripts, or malicious URLs
  */
-// function sanitizePedalHTML(input) {
-//     if (!input) return '';
-
-//     const temp = document.createElement('div');
-//     temp.innerHTML = input;
-
-//     function cleanNode(node) {
-//         if (node.nodeType === Node.TEXT_NODE) return;
-
-//         if (node.nodeType === Node.ELEMENT_NODE) {
-//             const tag = node.tagName.toLowerCase();
-//             const allowedTags = ['span','style','br','hr','div'];
-
-//             if (!allowedTags.includes(tag)) {
-//                 const frag = document.createDocumentFragment();
-//                 while (node.firstChild) frag.appendChild(node.firstChild);
-//                 node.parentNode.replaceChild(frag, node);
-//                 return;
-//             }
-
-//             // sanitize attributes
-//             [...node.attributes].forEach(attr => {
-//                 const name = attr.name.toLowerCase();
-
-//                 // keep class, clean unsafe chars
-//                 if (name === 'class') {
-//                     node.className = node.className.replace(/[^a-zA-Z0-9 _-]/g,'');
-//                 } 
-//                 // keep style but remove dangerous patterns
-//                 else if (name === 'style') {
-//                     let safeStyle = node.style.cssText
-//                         .replace(/expression\s*\(/gi,'')
-//                         .replace(/javascript\s*:/gi,'')
-//                         .replace(/url\s*\(\s*data\s*:/gi,'')
-//                         .replace(/behavior\s*:/gi,''); // block old IE expressions
-//                     node.style.cssText = safeStyle;
-//                 } 
-//                 // remove all other attributes including on*
-//                 else {
-//                     node.removeAttribute(attr.name);
-//                 }
-//             });
-//         }
-
-//         // recursively clean children
-//         Array.from(node.childNodes).forEach(child => cleanNode(child));
-//     }
-
-//     Array.from(temp.childNodes).forEach(child => cleanNode(child));
-//     return temp.innerHTML;
-// }
-
-// Minimal defensive sanitizer for immediate rendering (use in buildJSON/renderPedal)
 function sanitizePedalHTML(input) {
-  if (!input && input !== '') return '';
+    if (!input) return '';
 
-  // decode entities first
-  var ta = document.createElement('textarea');
-  ta.innerHTML = input;
-  var decoded = ta.value;
+    const temp = document.createElement('div');
+    temp.innerHTML = input;
 
-  // quick rejection of control chars (remove CRLF)
-  decoded = decoded.replace(/[\r\n]/g, ' ');
+    function cleanNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) return;
 
-  // Create DOM and walk
-  var container = document.createElement('div');
-  container.innerHTML = decoded;
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            const tag = node.tagName.toLowerCase();
+            const allowedTags = ['span','style','br','hr','div'];
 
-  var allowedTags = { 'span': true, 'div': true, 'br': true, 'hr': true };
+            if (!allowedTags.includes(tag)) {
+                const frag = document.createDocumentFragment();
+                while (node.firstChild) frag.appendChild(node.firstChild);
+                node.parentNode.replaceChild(frag, node);
+                return;
+            }
 
-  function walk(node) {
-    if (node.nodeType === Node.TEXT_NODE) return;
+            // sanitize attributes
+            [...node.attributes].forEach(attr => {
+                const name = attr.name.toLowerCase();
 
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      var tag = node.tagName.toLowerCase();
-
-      // remove dangerous whole elements
-      if (/(script|img|svg|iframe|object|embed|math|video|audio)/i.test(tag)) {
-        // replace with text content so no child markup executes
-        var txt = document.createTextNode(node.textContent || '');
-        node.parentNode.replaceChild(txt, node);
-        return;
-      }
-
-      // if tag is not allowed, unwrap it (keep children)
-      if (!allowedTags[tag]) {
-        var frag = document.createDocumentFragment();
-        while (node.firstChild) frag.appendChild(node.firstChild);
-        node.parentNode.replaceChild(frag, node);
-        // children moved to frag — continue walking inner children via frag will handle later
-        return;
-      }
-
-      // Clean attributes: keep only class and style; remove all event/on* attrs
-      var attrs = Array.prototype.slice.call(node.attributes || []);
-      attrs.forEach(function(a) {
-        var name = a.name.toLowerCase();
-        var val = a.value || '';
-
-        // strip event handlers or javascript in attributes
-        if (name.indexOf('on') === 0 || /javascript\s*:/i.test(val)) {
-          node.removeAttribute(a.name);
-          return;
+                // keep class, clean unsafe chars
+                if (name === 'class') {
+                    node.className = node.className.replace(/[^a-zA-Z0-9 _-]/g,'');
+                } 
+                // keep style but remove dangerous patterns
+                else if (name === 'style') {
+                    let safeStyle = node.style.cssText
+                        .replace(/expression\s*\(/gi,'')
+                        .replace(/javascript\s*:/gi,'')
+                        .replace(/url\s*\(\s*data\s*:/gi,'')
+                        .replace(/behavior\s*:/gi,''); // block old IE expressions
+                    node.style.cssText = safeStyle;
+                } 
+                // remove all other attributes including on*
+                else {
+                    node.removeAttribute(attr.name);
+                }
+            });
         }
 
-        if (name === 'class') {
-          node.className = val.replace(/[^A-Za-z0-9 _\-]/g, '').replace(/\s+/g, ' ').trim();
-          return;
-        }
-
-        if (name === 'style') {
-          // keep only safe style properties, minimal list
-          var allowedCss = ['color','font-size','font-weight','font-style','font-family','background-color','padding','margin','margin-left','margin-right','margin-top','margin-bottom','line-height','height','width','border-radius','box-shadow','background','background-image','text-align','display','overflow','white-space','text-decoration','text-shadow'];
-          var safe = [];
-          (val.split(';')||[]).forEach(function(part){
-            var kv = part.split(':');
-            if (kv.length < 2) return;
-            var prop = kv.shift().trim().toLowerCase();
-            var v = kv.join(':').trim();
-            if (allowedCss.indexOf(prop) === -1) return;
-            if (/expression\s*\(|javascript\s*:|url\s*\(\s*data:/i.test(v)) return;
-            if (/[<>\\{\\}]/.test(v)) return;
-            safe.push(prop + ': ' + v);
-          });
-          if (safe.length) node.setAttribute('style', safe.join('; '));
-          else node.removeAttribute('style');
-          return;
-        }
-
-        // all other attributes removed
-        node.removeAttribute(a.name);
-      });
+        // recursively clean children
+        Array.from(node.childNodes).forEach(child => cleanNode(child));
     }
 
-    // recurse (take snapshot of children)
-    var children = Array.prototype.slice.call(node.childNodes || []);
-    children.forEach(walk);
-  }
-
-  Array.prototype.slice.call(container.childNodes).forEach(walk);
-  return container.innerHTML;
+    Array.from(temp.childNodes).forEach(child => cleanNode(child));
+    return temp.innerHTML;
 }
 
 
@@ -1075,133 +984,11 @@ function sanitizePedalHTML(input) {
 
 
 
-// // HELPER: render a gear in catalog and editor
-// function renderPedal(pedal, userRole, pedalboardPage = false) {
-//   const pedalId = pedal._id || pedal.id;
-//   const pedalName = pedal.name || pedal.id;
-//   const insideColorRaw = pedal["inside-color"] || "";
-//   let inside = "";
-//   let colorOnly = insideColorRaw;
 
-//   // Detect if inside-color is an image
-//   const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
-//   if (isImage) {
-//     inside = "full";
-//   } else {
-//     const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-//     if (match) { colorOnly = match[1]; inside = match[2] || ""; }
-//   }
-
-//   // Base CSS
-//   const baseCss = {
-//     border: `5px solid ${pedal["color"]}`,
-//     borderRadius: '10px',
-//     color: pedal["font-color"],
-//     width: getPedalWidth(pedal.width),
-//     height: getPedalHeight(pedal.height),
-//     marginBottom: '10px',
-//     display: 'inline-block',
-//     ...(pedal["inside-border"] && {
-//       boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}`
-//     }),
-//     ...(isImage ? {
-//       backgroundImage: `url("${insideColorRaw}")`,
-//       backgroundSize: 'cover',
-//       backgroundPosition: 'center'
-//     } : { background: colorOnly })
-//   };
-
-//   let $pedalDiv;
-
-//   // Different rendering per pedal type
-//   switch (pedal.type) {
-//     case "pedal":
-//     case "expression":
-//     case "combo":
-//     case "head":
-//     case "pedal-inverted":
-//     case "round":
-//       $pedalDiv = $("<div>")
-//         .addClass("pedal-catalog")
-//         .css(getPedalTypeCss(pedal, baseCss, inside))
-//         .attr("data-pedal-name", pedalName)
-//         .attr("data-pedal-id", pedalId)
-//         .attr("data-published", (pedal.published || "draft").toLowerCase())
-//         .attr("data-author", pedal.author || "");
-//       break;
-//   }
-
-//   // const cleanName = sanitizeHtml(pedal.name);
-//   const cleanName = sanitizePedalHTML(pedal.name);
-
-
-
-//   // Head and inverted pedals → add name/logo
-//   if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-//     const $nameDiv = $("<div>").addClass("head-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
-//     $pedalDiv.append($nameDiv);
-//   }
-
-//   // Render pedal controls
-//   renderPedalControls(pedal, $pedalDiv);
-
-//   // Add name/logo for others
-//   if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
-//     const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
-//     $pedalDiv.append($nameDiv);
-//   } 
-
-
-//   // Add author label below pedal based on userRole
-//   if (window.currentUser && pedal.author) {
-//     const isAdmin = userRole === 'admin';
-//     const isAuthor = window.currentUser.username === pedal.author;
-
-//     if (isAdmin || isAuthor) {
-//       const authorText = isAdmin
-//         ? `by: ${pedal.author}, ${pedal.published}` // admin sees all
-//         : `by: ${pedal.author}, ${pedal.published}`; // regular user sees their own
-
-//       // Add this info only if not in pedalboard page
-//       if (pedalboardPage == false) {
-//         const $authorDiv = $("<div>")
-//           .addClass("pedal-author")
-//           .text(authorText);
-//         $pedalDiv.prepend($authorDiv);
-//       }
-//     }
-//   }
-
-//   // Add edit button if admin OR current user is the author. Disable for author if status is reviewing or public
-//   if (window.currentUser) {
-//     const isAdmin = userRole === 'admin';
-//     const isAuthor = window.currentUser.username === pedal.author;
-
-//     // Show these only if not in pedalboard page
-//     if (pedalboardPage == false) {
-//       if (isAdmin || isAuthor) {
-//         const $editBtn = $("<button>")
-//           .addClass("edit-btn showDesktop")
-//           .attr("title", "Edit pedal JSON")
-//           .data("pedal", pedal)
-//           .html(`
-//             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
-//               <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
-//             </svg>
-//           `);
-//         $pedalDiv.append($editBtn);
-//       }
-//     }
-//   }
-
-//   return $pedalDiv;
-// }
-
-
-// HELPER: safely render a pedal in catalog/editor
+// HELPER: render a gear in catalog and editor
 function renderPedal(pedal, userRole, pedalboardPage = false) {
   const pedalId = pedal._id || pedal.id;
-  const pedalNameRaw = pedal.name || pedal.id;
+  const pedalName = pedal.name || pedal.id;
   const insideColorRaw = pedal["inside-color"] || "";
   let inside = "";
   let colorOnly = insideColorRaw;
@@ -1215,7 +1002,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     if (match) { colorOnly = match[1]; inside = match[2] || ""; }
   }
 
-  // Base CSS (unchanged, safe)
+  // Base CSS
   const baseCss = {
     border: `5px solid ${pedal["color"]}`,
     borderRadius: '10px',
@@ -1224,7 +1011,9 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     height: getPedalHeight(pedal.height),
     marginBottom: '10px',
     display: 'inline-block',
-    ...(pedal["inside-border"] ? { boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` } : {}),
+    ...(pedal["inside-border"] && {
+      boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}`
+    }),
     ...(isImage ? {
       backgroundImage: `url("${insideColorRaw}")`,
       backgroundSize: 'cover',
@@ -1232,67 +1021,91 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     } : { background: colorOnly })
   };
 
-  // Create container
-  let $pedalDiv = $("<div>")
-    .addClass("pedal-catalog")
-    .css(getPedalTypeCss(pedal, baseCss, inside))
-    .attr("data-pedal-name", pedalNameRaw)
-    .attr("data-pedal-id", pedalId)
-    .attr("data-published", (pedal.published || "draft").toLowerCase())
-    .attr("data-author", pedal.author || "");
+  let $pedalDiv;
 
-  // --- SAFELY insert pedal name/logo ---
-  const cleanName = sanitizePedalHTML(pedal.name || "");
-  const cleanLogoStyle = safeLogoStyle(pedal.logo) || "";
+  // Different rendering per pedal type
+  switch (pedal.type) {
+    case "pedal":
+    case "expression":
+    case "combo":
+    case "head":
+    case "pedal-inverted":
+    case "round":
+      $pedalDiv = $("<div>")
+        .addClass("pedal-catalog")
+        .css(getPedalTypeCss(pedal, baseCss, inside))
+        .attr("data-pedal-name", pedalName)
+        .attr("data-pedal-id", pedalId)
+        .attr("data-published", (pedal.published || "draft").toLowerCase())
+        .attr("data-author", pedal.author || "");
+      break;
+  }
 
-  // Head / inverted pedals
-  if (["head","pedal-inverted"].includes(pedal.type)) {
-    const $nameDiv = $("<div>").addClass("head-name").text(cleanName).attr("style", cleanLogoStyle);
+  // const cleanName = sanitizeHtml(pedal.name);
+  const cleanName = sanitizePedalHTML(pedal.name);
+
+
+
+  // Head and inverted pedals → add name/logo
+  if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+    const $nameDiv = $("<div>").addClass("head-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
     $pedalDiv.append($nameDiv);
   }
 
-  // Other pedals
-  if (["pedal","combo","round","expression"].includes(pedal.type)) {
-    const $nameDiv = $("<div>").addClass("pedal-name").text(cleanName).attr("style", cleanLogoStyle);
-    $pedalDiv.append($nameDiv);
-  }
-
-  // Render controls
+  // Render pedal controls
   renderPedalControls(pedal, $pedalDiv);
 
-  // Author label
-  if (window.currentUser && pedal.author && !pedalboardPage) {
+  // Add name/logo for others
+  if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
+    const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
+    $pedalDiv.append($nameDiv);
+  } 
+
+
+  // Add author label below pedal based on userRole
+  if (window.currentUser && pedal.author) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
+
     if (isAdmin || isAuthor) {
-      const authorText = `by: ${pedal.author}, ${pedal.published}`;
-      const $authorDiv = $("<div>").addClass("pedal-author").text(authorText);
-      $pedalDiv.prepend($authorDiv);
+      const authorText = isAdmin
+        ? `by: ${pedal.author}, ${pedal.published}` // admin sees all
+        : `by: ${pedal.author}, ${pedal.published}`; // regular user sees their own
+
+      // Add this info only if not in pedalboard page
+      if (pedalboardPage == false) {
+        const $authorDiv = $("<div>")
+          .addClass("pedal-author")
+          .text(authorText);
+        $pedalDiv.prepend($authorDiv);
+      }
     }
   }
 
-  // Edit button
-  if (window.currentUser && !pedalboardPage) {
+  // Add edit button if admin OR current user is the author. Disable for author if status is reviewing or public
+  if (window.currentUser) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
-    if (isAdmin || isAuthor) {
-      const $editBtn = $("<button>")
-        .addClass("edit-btn showDesktop")
-        .attr("title", "Edit pedal JSON")
-        .data("pedal", pedal)
-        .html(`
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
-            <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
-          </svg>
-        `);
-      $pedalDiv.append($editBtn);
+
+    // Show these only if not in pedalboard page
+    if (pedalboardPage == false) {
+      if (isAdmin || isAuthor) {
+        const $editBtn = $("<button>")
+          .addClass("edit-btn showDesktop")
+          .attr("title", "Edit pedal JSON")
+          .data("pedal", pedal)
+          .html(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
+              <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
+            </svg>
+          `);
+        $pedalDiv.append($editBtn);
+      }
     }
   }
 
   return $pedalDiv;
 }
-
-
 
 
 
