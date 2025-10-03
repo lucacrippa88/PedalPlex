@@ -1045,11 +1045,11 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
               });
 
               const token = localStorage.getItem('authToken');
-              
+
               fetch('https://www.cineteatrosanluigi.it/plex/DELETE_PEDALBOARD.php', {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
+                  'Content-Type': 'application/json',
                   'Authorization': 'Bearer ' + token
                 },
                 body: new URLSearchParams({
