@@ -887,16 +887,16 @@ function setupEditPedalHandler(pedals) {
 window.setupEditPedalHandler = setupEditPedalHandler;
 
 // HELPER
-function sanitizeHtml(html) {
-  if (typeof DOMPurify !== "undefined") {
-      return DOMPurify.sanitize(html, {
-          ALLOWED_TAGS: ['span', 'br', 'hr', 'div'],
-          ALLOWED_ATTR: ['style', 'class']
-      });
-  } else {
-      return html;
-  }
-}
+// function sanitizeHtml(html) {
+//   if (typeof DOMPurify !== "undefined") {
+//       return DOMPurify.sanitize(html, {
+//           ALLOWED_TAGS: ['span', 'br', 'hr', 'div'],
+//           ALLOWED_ATTR: ['style', 'class']
+//       });
+//   } else {
+//       return html;
+//   }
+// }
 
 // HELPER
 function safeLogoStyle(inputStyle) {
@@ -916,6 +916,61 @@ function safeLogoStyle(inputStyle) {
   });
   return safeRules.join(";");
 }
+
+
+
+
+/**
+ * sanitizePedalHTML
+ * - Only allows span, style, br, hr, div
+ * - Keeps class and style attributes (inline CSS)
+ * - Removes any JS events, scripts, or malicious URLs
+ */
+function sanitizePedalHTML(input) {
+    if (!input) return '';
+
+    const temp = document.createElement('div');
+    temp.innerHTML = input;
+
+    function cleanNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) return;
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            const tag = node.tagName.toLowerCase();
+            const allowedTags = ['span','style','br','hr','div'];
+
+            if (!allowedTags.includes(tag)) {
+                const frag = document.createDocumentFragment();
+                while (node.firstChild) frag.appendChild(node.firstChild);
+                node.parentNode.replaceChild(frag, node);
+                return;
+            }
+
+            // sanitize attributes
+            [...node.attributes].forEach(attr => {
+                const name = attr.name.toLowerCase();
+                if (name === 'class') {
+                    node.className = node.className.replace(/[^a-zA-Z0-9 _-]/g,'');
+                } else if (name === 'style') {
+                    const safeStyle = node.style.cssText
+                        .replace(/expression\s*\(/gi,'')
+                        .replace(/javascript\s*:/gi,'')
+                        .replace(/url\s*\(\s*data\s*:/gi,'');
+                    node.style.cssText = safeStyle;
+                } else {
+                    node.removeAttribute(attr.name);
+                }
+            });
+        }
+
+        Array.from(node.childNodes).forEach(child => cleanNode(child));
+    }
+
+    Array.from(temp.childNodes).forEach(child => cleanNode(child));
+    return temp.innerHTML;
+}
+
+
 
 
 
@@ -975,7 +1030,9 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       break;
   }
 
-  const cleanName = sanitizeHtml(pedal.name);
+  // const cleanName = sanitizeHtml(pedal.name);
+  const cleanName = sanitizePedalHTML(pedal.name);
+
 
 
   // Head and inverted pedals → add name/logo
@@ -1447,7 +1504,8 @@ async function renderFullPedalboard() {
           }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         }
 
-        const cleanName = sanitizeHtml(pedal.name);
+        // const cleanName = sanitizeHtml(pedal.name);
+        const cleanName = sanitizePedalHTML(pedal.name);
 
         // Head or inverted logo
         if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
