@@ -1052,11 +1052,8 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
                   'Content-Type': 'application/json',
                   'Authorization': 'Bearer ' + token
                 },
-                // body: new URLSearchParams({
-                //   user_id: userId,
-                //   board_id: boardId
-                // })
                 body: JSON.stringify({
+                  user_id: userId,
                   board_id: boardId
                 })
               })
