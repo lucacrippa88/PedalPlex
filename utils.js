@@ -792,7 +792,10 @@ function setupEditPedalHandler(pedals) {
 
         fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_CATALOG.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
           body: JSON.stringify(updated)
         })
         .then(res => res.json())
