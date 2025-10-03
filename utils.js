@@ -926,57 +926,149 @@ function safeLogoStyle(inputStyle) {
  * - Keeps class and style attributes (inline CSS)
  * - Removes any JS events, scripts, or malicious URLs
  */
+// function sanitizePedalHTML(input) {
+//     if (!input) return '';
+
+//     const temp = document.createElement('div');
+//     temp.innerHTML = input;
+
+//     function cleanNode(node) {
+//         if (node.nodeType === Node.TEXT_NODE) return;
+
+//         if (node.nodeType === Node.ELEMENT_NODE) {
+//             const tag = node.tagName.toLowerCase();
+//             const allowedTags = ['span','style','br','hr','div'];
+
+//             if (!allowedTags.includes(tag)) {
+//                 const frag = document.createDocumentFragment();
+//                 while (node.firstChild) frag.appendChild(node.firstChild);
+//                 node.parentNode.replaceChild(frag, node);
+//                 return;
+//             }
+
+//             // sanitize attributes
+//             [...node.attributes].forEach(attr => {
+//                 const name = attr.name.toLowerCase();
+
+//                 // keep class, clean unsafe chars
+//                 if (name === 'class') {
+//                     node.className = node.className.replace(/[^a-zA-Z0-9 _-]/g,'');
+//                 } 
+//                 // keep style but remove dangerous patterns
+//                 else if (name === 'style') {
+//                     let safeStyle = node.style.cssText
+//                         .replace(/expression\s*\(/gi,'')
+//                         .replace(/javascript\s*:/gi,'')
+//                         .replace(/url\s*\(\s*data\s*:/gi,'')
+//                         .replace(/behavior\s*:/gi,''); // block old IE expressions
+//                     node.style.cssText = safeStyle;
+//                 } 
+//                 // remove all other attributes including on*
+//                 else {
+//                     node.removeAttribute(attr.name);
+//                 }
+//             });
+//         }
+
+//         // recursively clean children
+//         Array.from(node.childNodes).forEach(child => cleanNode(child));
+//     }
+
+//     Array.from(temp.childNodes).forEach(child => cleanNode(child));
+//     return temp.innerHTML;
+// }
+
+// Minimal defensive sanitizer for immediate rendering (use in buildJSON/renderPedal)
 function sanitizePedalHTML(input) {
-    if (!input) return '';
+  if (!input && input !== '') return '';
 
-    const temp = document.createElement('div');
-    temp.innerHTML = input;
+  // decode entities first
+  var ta = document.createElement('textarea');
+  ta.innerHTML = input;
+  var decoded = ta.value;
 
-    function cleanNode(node) {
-        if (node.nodeType === Node.TEXT_NODE) return;
+  // quick rejection of control chars (remove CRLF)
+  decoded = decoded.replace(/[\r\n]/g, ' ');
 
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            const tag = node.tagName.toLowerCase();
-            const allowedTags = ['span','style','br','hr','div'];
+  // Create DOM and walk
+  var container = document.createElement('div');
+  container.innerHTML = decoded;
 
-            if (!allowedTags.includes(tag)) {
-                const frag = document.createDocumentFragment();
-                while (node.firstChild) frag.appendChild(node.firstChild);
-                node.parentNode.replaceChild(frag, node);
-                return;
-            }
+  var allowedTags = { 'span': true, 'div': true, 'br': true, 'hr': true };
 
-            // sanitize attributes
-            [...node.attributes].forEach(attr => {
-                const name = attr.name.toLowerCase();
+  function walk(node) {
+    if (node.nodeType === Node.TEXT_NODE) return;
 
-                // keep class, clean unsafe chars
-                if (name === 'class') {
-                    node.className = node.className.replace(/[^a-zA-Z0-9 _-]/g,'');
-                } 
-                // keep style but remove dangerous patterns
-                else if (name === 'style') {
-                    let safeStyle = node.style.cssText
-                        .replace(/expression\s*\(/gi,'')
-                        .replace(/javascript\s*:/gi,'')
-                        .replace(/url\s*\(\s*data\s*:/gi,'')
-                        .replace(/behavior\s*:/gi,''); // block old IE expressions
-                    node.style.cssText = safeStyle;
-                } 
-                // remove all other attributes including on*
-                else {
-                    node.removeAttribute(attr.name);
-                }
-            });
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      var tag = node.tagName.toLowerCase();
+
+      // remove dangerous whole elements
+      if (/(script|img|svg|iframe|object|embed|math|video|audio)/i.test(tag)) {
+        // replace with text content so no child markup executes
+        var txt = document.createTextNode(node.textContent || '');
+        node.parentNode.replaceChild(txt, node);
+        return;
+      }
+
+      // if tag is not allowed, unwrap it (keep children)
+      if (!allowedTags[tag]) {
+        var frag = document.createDocumentFragment();
+        while (node.firstChild) frag.appendChild(node.firstChild);
+        node.parentNode.replaceChild(frag, node);
+        // children moved to frag — continue walking inner children via frag will handle later
+        return;
+      }
+
+      // Clean attributes: keep only class and style; remove all event/on* attrs
+      var attrs = Array.prototype.slice.call(node.attributes || []);
+      attrs.forEach(function(a) {
+        var name = a.name.toLowerCase();
+        var val = a.value || '';
+
+        // strip event handlers or javascript in attributes
+        if (name.indexOf('on') === 0 || /javascript\s*:/i.test(val)) {
+          node.removeAttribute(a.name);
+          return;
         }
 
-        // recursively clean children
-        Array.from(node.childNodes).forEach(child => cleanNode(child));
+        if (name === 'class') {
+          node.className = val.replace(/[^A-Za-z0-9 _\-]/g, '').replace(/\s+/g, ' ').trim();
+          return;
+        }
+
+        if (name === 'style') {
+          // keep only safe style properties, minimal list
+          var allowedCss = ['color','font-size','font-weight','font-style','font-family','background-color','padding','margin','margin-left','margin-right','margin-top','margin-bottom','line-height','height','width','border-radius','box-shadow','background','background-image','text-align','display','overflow','white-space','text-decoration','text-shadow'];
+          var safe = [];
+          (val.split(';')||[]).forEach(function(part){
+            var kv = part.split(':');
+            if (kv.length < 2) return;
+            var prop = kv.shift().trim().toLowerCase();
+            var v = kv.join(':').trim();
+            if (allowedCss.indexOf(prop) === -1) return;
+            if (/expression\s*\(|javascript\s*:|url\s*\(\s*data:/i.test(v)) return;
+            if (/[<>\\{\\}]/.test(v)) return;
+            safe.push(prop + ': ' + v);
+          });
+          if (safe.length) node.setAttribute('style', safe.join('; '));
+          else node.removeAttribute('style');
+          return;
+        }
+
+        // all other attributes removed
+        node.removeAttribute(a.name);
+      });
     }
 
-    Array.from(temp.childNodes).forEach(child => cleanNode(child));
-    return temp.innerHTML;
+    // recurse (take snapshot of children)
+    var children = Array.prototype.slice.call(node.childNodes || []);
+    children.forEach(walk);
+  }
+
+  Array.prototype.slice.call(container.childNodes).forEach(walk);
+  return container.innerHTML;
 }
+
 
 
 
