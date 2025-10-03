@@ -745,16 +745,19 @@ function savePedalboard() {
   // --- LOGGED-IN USER SAVE (existing fetch) ---
   const pedalboardToSave = window.allPedalboards[selectedBoardIndex];
 
-  fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      user_id: userId,
-      pedalboard: pedalboardToSave
+    const token = localStorage.getItem('authToken');
+
+    fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        pedalboard: pedalboardToSave
+      })
     })
-  })
     .then(async response => {
       const text = await response.text();
       let data;
@@ -1040,10 +1043,14 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
                 didOpen: () => Swal.showLoading(),
                 allowOutsideClick: false
               });
+
+              const token = localStorage.getItem('authToken');
+              
               fetch('https://www.cineteatrosanluigi.it/plex/DELETE_PEDALBOARD.php', {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded'
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  'Authorization': 'Bearer ' + token
                 },
                 body: new URLSearchParams({
                   user_id: userId,

@@ -162,16 +162,6 @@
       headers: {
         'Authorization': 'Bearer ' + token
       },
-      // success: function(userFromServer) {
-      //   $('#loadingMessage').hide();
-      //   $('#page-content').show();
-
-      //   window.currentUser = userFromServer;
-
-      //   if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
-      //   if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
-
-      // },
       success: function(userFromServer) {
         $('#loadingMessage').hide();
         $('#page-content').show();
