@@ -699,7 +699,6 @@ function setupEditPedalHandler(pedals) {
                 const newPedalData = dupResult.value;
 
                 const token = localStorage.getItem('authToken');
-                console.log(token);
 
                 fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_CATALOG.php', {
                   method: 'POST',
@@ -791,7 +790,6 @@ function setupEditPedalHandler(pedals) {
         Swal.showLoading();
 
         const token = localStorage.getItem('authToken');
-        console.log(token);
 
         fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_CATALOG.php', {
           method: 'POST',
@@ -1192,7 +1190,6 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
       if ($valueLabel.length && $valueLabel.text().trim() !== '') {
         // 🔹 Discrete knob → take text directly
         value = $valueLabel.text().trim();
-        console.log('Discrete control:', label, '->', value);
       } else {
         // 🔹 Continuous knob → calculate numeric value
         const transform = $(this).css('transform');
@@ -1210,7 +1207,6 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
         }
 
         value = getValueFromRotation(angle);
-        console.log('Continuous control:', label, '->', value);
       }
 
       // Save exactly as text if discrete, otherwise number
