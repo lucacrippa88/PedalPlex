@@ -501,11 +501,15 @@ function updatePresetDropdownName(presetId, newName) {
 
 // Update/save preset
 async function savePreset(presetId, updateData) {
+
+  const token = localStorage.getItem('authToken');
+
   try {
     const res = await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_PRESET.php", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
       },
       body: JSON.stringify({
         preset_id: presetId,
