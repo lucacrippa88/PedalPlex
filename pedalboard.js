@@ -1056,10 +1056,9 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
                 //   user_id: userId,
                 //   board_id: boardId
                 // })
-                  body: JSON.stringify({
-    user_id: userId,
-    board_id: boardId
-  })
+                body: JSON.stringify({
+                  board_id: boardId
+                })
               })
               .then(res => res.json())
               .then(data => {
