@@ -1075,10 +1075,133 @@ function sanitizePedalHTML(input) {
 
 
 
-// HELPER: render a gear in catalog and editor
+// // HELPER: render a gear in catalog and editor
+// function renderPedal(pedal, userRole, pedalboardPage = false) {
+//   const pedalId = pedal._id || pedal.id;
+//   const pedalName = pedal.name || pedal.id;
+//   const insideColorRaw = pedal["inside-color"] || "";
+//   let inside = "";
+//   let colorOnly = insideColorRaw;
+
+//   // Detect if inside-color is an image
+//   const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
+//   if (isImage) {
+//     inside = "full";
+//   } else {
+//     const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+//     if (match) { colorOnly = match[1]; inside = match[2] || ""; }
+//   }
+
+//   // Base CSS
+//   const baseCss = {
+//     border: `5px solid ${pedal["color"]}`,
+//     borderRadius: '10px',
+//     color: pedal["font-color"],
+//     width: getPedalWidth(pedal.width),
+//     height: getPedalHeight(pedal.height),
+//     marginBottom: '10px',
+//     display: 'inline-block',
+//     ...(pedal["inside-border"] && {
+//       boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}`
+//     }),
+//     ...(isImage ? {
+//       backgroundImage: `url("${insideColorRaw}")`,
+//       backgroundSize: 'cover',
+//       backgroundPosition: 'center'
+//     } : { background: colorOnly })
+//   };
+
+//   let $pedalDiv;
+
+//   // Different rendering per pedal type
+//   switch (pedal.type) {
+//     case "pedal":
+//     case "expression":
+//     case "combo":
+//     case "head":
+//     case "pedal-inverted":
+//     case "round":
+//       $pedalDiv = $("<div>")
+//         .addClass("pedal-catalog")
+//         .css(getPedalTypeCss(pedal, baseCss, inside))
+//         .attr("data-pedal-name", pedalName)
+//         .attr("data-pedal-id", pedalId)
+//         .attr("data-published", (pedal.published || "draft").toLowerCase())
+//         .attr("data-author", pedal.author || "");
+//       break;
+//   }
+
+//   // const cleanName = sanitizeHtml(pedal.name);
+//   const cleanName = sanitizePedalHTML(pedal.name);
+
+
+
+//   // Head and inverted pedals → add name/logo
+//   if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+//     const $nameDiv = $("<div>").addClass("head-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
+//     $pedalDiv.append($nameDiv);
+//   }
+
+//   // Render pedal controls
+//   renderPedalControls(pedal, $pedalDiv);
+
+//   // Add name/logo for others
+//   if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
+//     const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
+//     $pedalDiv.append($nameDiv);
+//   } 
+
+
+//   // Add author label below pedal based on userRole
+//   if (window.currentUser && pedal.author) {
+//     const isAdmin = userRole === 'admin';
+//     const isAuthor = window.currentUser.username === pedal.author;
+
+//     if (isAdmin || isAuthor) {
+//       const authorText = isAdmin
+//         ? `by: ${pedal.author}, ${pedal.published}` // admin sees all
+//         : `by: ${pedal.author}, ${pedal.published}`; // regular user sees their own
+
+//       // Add this info only if not in pedalboard page
+//       if (pedalboardPage == false) {
+//         const $authorDiv = $("<div>")
+//           .addClass("pedal-author")
+//           .text(authorText);
+//         $pedalDiv.prepend($authorDiv);
+//       }
+//     }
+//   }
+
+//   // Add edit button if admin OR current user is the author. Disable for author if status is reviewing or public
+//   if (window.currentUser) {
+//     const isAdmin = userRole === 'admin';
+//     const isAuthor = window.currentUser.username === pedal.author;
+
+//     // Show these only if not in pedalboard page
+//     if (pedalboardPage == false) {
+//       if (isAdmin || isAuthor) {
+//         const $editBtn = $("<button>")
+//           .addClass("edit-btn showDesktop")
+//           .attr("title", "Edit pedal JSON")
+//           .data("pedal", pedal)
+//           .html(`
+//             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
+//               <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
+//             </svg>
+//           `);
+//         $pedalDiv.append($editBtn);
+//       }
+//     }
+//   }
+
+//   return $pedalDiv;
+// }
+
+
+// HELPER: safely render a pedal in catalog/editor
 function renderPedal(pedal, userRole, pedalboardPage = false) {
   const pedalId = pedal._id || pedal.id;
-  const pedalName = pedal.name || pedal.id;
+  const pedalNameRaw = pedal.name || pedal.id;
   const insideColorRaw = pedal["inside-color"] || "";
   let inside = "";
   let colorOnly = insideColorRaw;
@@ -1092,7 +1215,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     if (match) { colorOnly = match[1]; inside = match[2] || ""; }
   }
 
-  // Base CSS
+  // Base CSS (unchanged, safe)
   const baseCss = {
     border: `5px solid ${pedal["color"]}`,
     borderRadius: '10px',
@@ -1101,9 +1224,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     height: getPedalHeight(pedal.height),
     marginBottom: '10px',
     display: 'inline-block',
-    ...(pedal["inside-border"] && {
-      boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}`
-    }),
+    ...(pedal["inside-border"] ? { boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` } : {}),
     ...(isImage ? {
       backgroundImage: `url("${insideColorRaw}")`,
       backgroundSize: 'cover',
@@ -1111,86 +1232,60 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     } : { background: colorOnly })
   };
 
-  let $pedalDiv;
+  // Create container
+  let $pedalDiv = $("<div>")
+    .addClass("pedal-catalog")
+    .css(getPedalTypeCss(pedal, baseCss, inside))
+    .attr("data-pedal-name", pedalNameRaw)
+    .attr("data-pedal-id", pedalId)
+    .attr("data-published", (pedal.published || "draft").toLowerCase())
+    .attr("data-author", pedal.author || "");
 
-  // Different rendering per pedal type
-  switch (pedal.type) {
-    case "pedal":
-    case "expression":
-    case "combo":
-    case "head":
-    case "pedal-inverted":
-    case "round":
-      $pedalDiv = $("<div>")
-        .addClass("pedal-catalog")
-        .css(getPedalTypeCss(pedal, baseCss, inside))
-        .attr("data-pedal-name", pedalName)
-        .attr("data-pedal-id", pedalId)
-        .attr("data-published", (pedal.published || "draft").toLowerCase())
-        .attr("data-author", pedal.author || "");
-      break;
-  }
+  // --- SAFELY insert pedal name/logo ---
+  const cleanName = sanitizePedalHTML(pedal.name || "");
+  const cleanLogoStyle = safeLogoStyle(pedal.logo) || "";
 
-  // const cleanName = sanitizeHtml(pedal.name);
-  const cleanName = sanitizePedalHTML(pedal.name);
-
-
-
-  // Head and inverted pedals → add name/logo
-  if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-    const $nameDiv = $("<div>").addClass("head-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
+  // Head / inverted pedals
+  if (["head","pedal-inverted"].includes(pedal.type)) {
+    const $nameDiv = $("<div>").addClass("head-name").text(cleanName).attr("style", cleanLogoStyle);
     $pedalDiv.append($nameDiv);
   }
 
-  // Render pedal controls
+  // Other pedals
+  if (["pedal","combo","round","expression"].includes(pedal.type)) {
+    const $nameDiv = $("<div>").addClass("pedal-name").text(cleanName).attr("style", cleanLogoStyle);
+    $pedalDiv.append($nameDiv);
+  }
+
+  // Render controls
   renderPedalControls(pedal, $pedalDiv);
 
-  // Add name/logo for others
-  if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
-    const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
-    $pedalDiv.append($nameDiv);
-  } 
-
-
-  // Add author label below pedal based on userRole
-  if (window.currentUser && pedal.author) {
+  // Author label
+  if (window.currentUser && pedal.author && !pedalboardPage) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
-
     if (isAdmin || isAuthor) {
-      const authorText = isAdmin
-        ? `by: ${pedal.author}, ${pedal.published}` // admin sees all
-        : `by: ${pedal.author}, ${pedal.published}`; // regular user sees their own
-
-      // Add this info only if not in pedalboard page
-      if (pedalboardPage == false) {
-        const $authorDiv = $("<div>")
-          .addClass("pedal-author")
-          .text(authorText);
-        $pedalDiv.prepend($authorDiv);
-      }
+      const authorText = `by: ${pedal.author}, ${pedal.published}`;
+      const $authorDiv = $("<div>").addClass("pedal-author").text(authorText);
+      $pedalDiv.prepend($authorDiv);
     }
   }
 
-  // Add edit button if admin OR current user is the author. Disable for author if status is reviewing or public
-  if (window.currentUser) {
+  // Edit button
+  if (window.currentUser && !pedalboardPage) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
-
-    // Show these only if not in pedalboard page
-    if (pedalboardPage == false) {
-      if (isAdmin || isAuthor) {
-        const $editBtn = $("<button>")
-          .addClass("edit-btn showDesktop")
-          .attr("title", "Edit pedal JSON")
-          .data("pedal", pedal)
-          .html(`
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
-              <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
-            </svg>
-          `);
-        $pedalDiv.append($editBtn);
-      }
+    if (isAdmin || isAuthor) {
+      const $editBtn = $("<button>")
+        .addClass("edit-btn showDesktop")
+        .attr("title", "Edit pedal JSON")
+        .data("pedal", pedal)
+        .html(`
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
+            <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
+          </svg>
+        `);
+      $pedalDiv.append($editBtn);
     }
   }
 
