@@ -1,5 +1,6 @@
 let lastValidation = null;
 
+
 // Builder logic
 function buildJSON() {
     if (isSyncing) return lastValidation; // Skip rebuild during JSON sync
