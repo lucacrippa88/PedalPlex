@@ -846,10 +846,13 @@ $(document).ready(function () {
 
   // --- LOGGED-IN USER CREATE (existing fetch) ---
 
+        const token = localStorage.getItem('authToken');
+
         fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php', {
           method: "POST",
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Bearer " + token
           },
           body: new URLSearchParams({
             board_name: boardName,
@@ -1151,9 +1154,14 @@ function importGuestPedalboard(board, userFromServer) {
       return;
     }
 
+    const token = localStorage.getItem('authToken');
+
     $.ajax({
       url: 'https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php',
       method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      },
       data: {
         board_name: boardName,
         user_id: userId,
