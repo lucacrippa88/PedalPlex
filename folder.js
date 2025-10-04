@@ -140,9 +140,14 @@ async function saveFolderToDB(folder, explicitBoardId) {
       return null;
     }
 
+    const token = localStorage.getItem('authToken');
+
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_FOLDER.php', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
       body: `user_id=${encodeURIComponent(window.currentUser.userid)}&board_id=${encodeURIComponent(boardId)}&name=${encodeURIComponent(folder.name)}`
     });
 
