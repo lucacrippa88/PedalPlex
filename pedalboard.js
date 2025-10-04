@@ -764,8 +764,8 @@ function savePedalboard() {
   if (hasInvalidChars(pedalboardToSave)) {
     Swal.fire({
       icon: 'error',
-      title: 'Invalid characters detected',
-      text: 'Your pedalboard contains special characters that are not allowed.',
+      title: 'Invalid board name',
+      text: 'Board name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
       confirmButtonText: 'Ok',
       customClass: {
         confirmButton: "bx--btn bx--btn--primary",
@@ -880,20 +880,30 @@ $(document).ready(function () {
         const token = localStorage.getItem('authToken');
 
         // --- Validation for board name ---
-        // Allowed: letters, numbers, spaces, underscore, dash
-        const allowedRegex = /^[A-Za-z0-9 _-]+$/;
+        const allowedRegex = /^[A-Za-z0-9 _-]*$/; // notice * to match empty string
         if (!allowedRegex.test(boardName)) {
+          // Remove forbidden characters immediately
+          const sanitizedBoardName = boardName.replace(/[^A-Za-z0-9 _-]/g, '');
+          
+          // Update input field so user sees the cleaned value
+          const boardNameInput = document.getElementById('boardNameInput'); // replace with your actual input ID
+          if (boardNameInput) {
+            boardNameInput.value = sanitizedBoardName;
+          }
+
           Swal.fire({
             title: 'Invalid board name',
-            text: 'Board name contains forbidden characters. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
+            text: 'Board name contained forbidden characters. They were removed. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
             icon: 'error',
             customClass: {
               confirmButton: 'bx--btn bx--btn--primary',
             },
             buttonsStyling: false,
           });
-          return; // 🔴 Stop execution
+
+          return; // Stop further execution
         }
+
 
         fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php', {
           method: "POST",
