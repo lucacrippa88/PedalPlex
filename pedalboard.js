@@ -984,6 +984,31 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
   }).then(result => {
     if (result.isConfirmed) {
       const newName = result.value.trim();
+      // window.allPedalboards[selectedBoardIndex].board_name = newName;
+      // window.pedalboard.board_name = newName;
+
+      // const dropdown = document.getElementById('pedalboardSelect');
+      // dropdown.options[selectedBoardIndex].textContent = newName;
+
+      // savePedalboard();
+      const allowedRegex = /^[A-Za-z0-9 _-]+$/;
+
+      if (!allowedRegex.test(newName)) {
+        Swal.fire({
+          title: 'Invalid board name',
+          text: 'Board name contains forbidden characters. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
+          icon: 'error',
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--primary',
+          },
+          buttonsStyling: false,
+        });
+
+        // Do NOT update dropdown
+        return;
+      }
+
+      // ✅ Name is valid, update dropdown and internal data
       window.allPedalboards[selectedBoardIndex].board_name = newName;
       window.pedalboard.board_name = newName;
 
@@ -991,6 +1016,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
       dropdown.options[selectedBoardIndex].textContent = newName;
 
       savePedalboard();
+
     }
 
     // DELETE LOGIC
