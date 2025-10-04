@@ -1157,25 +1157,32 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
 
 
 
-// Intrinsecally safe
 async function createPresetOnServer(presetData) {
   try {
+    const token = localStorage.getItem('authToken');
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
       body: JSON.stringify(presetData),
     });
+
     const data = await res.json();
-    if (!res.ok || !data.success) {
+
+    if (!res.ok || !data.ok) {   // check 'ok' from PHP
       console.error("Failed to create preset:", data);
       return null;
     }
-    return data.id; // new preset ID from backend
+
+    return data.id; // correct key returned by PHP
   } catch (err) {
     console.error("createPresetOnServer error:", err);
     return null;
   }
 }
+
 
 
 
