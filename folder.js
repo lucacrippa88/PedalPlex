@@ -148,7 +148,11 @@ async function saveFolderToDB(folder, explicitBoardId) {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
       },
-      body: `user_id=${encodeURIComponent(window.currentUser.userid)}&board_id=${encodeURIComponent(boardId)}&name=${encodeURIComponent(folder.name)}`
+      body: JSON.stringify({
+        user_id: window.currentUser.userid,
+        board_id: boardId,
+        name: folder.name
+      })
     });
 
     const result = await res.json();
