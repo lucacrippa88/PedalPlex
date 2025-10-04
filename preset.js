@@ -803,50 +803,83 @@ async function createPreset() {
   }
 
   // -------------------------------
-  // 4. Create preset in Cloudant
-  // -------------------------------
-  const bodyData = {
-    user_id: currentUser.userid,
-    board_name: selectedBoardName,
-    board_id: selectedBoardId,
-    preset_name: presetName,
-    pedals: {}
-  };
+// 4. Create preset in Cloudant
+// -------------------------------
 
-  let newPresetId;
+const allowedRegex = /^[A-Za-z0-9 _-]+$/; // letters, numbers, spaces, underscore, dash
 
-  try {
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bodyData)
-    });
+// Validate board_name
+if (!allowedRegex.test(selectedBoardName)) {
+  Swal.fire({
+    title: 'Invalid board name',
+    text: 'Board name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+    icon: 'error',
+    customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+    buttonsStyling: false
+  });
+  return; // Stop execution
+}
 
-    const data = await res.json();
+// Validate preset_name
+if (!allowedRegex.test(presetName)) {
+  Swal.fire({
+    title: 'Invalid preset name',
+    text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+    icon: 'error',
+    customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+    buttonsStyling: false
+  });
+  return; // Stop execution
+}
 
-    if (!res.ok || !data.success) {
-      Swal.fire({
-        title: 'Error',
-        text: 'Failed to create preset: ' + (data.message || 'Unknown error'),
-        icon: 'error',
-        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-        buttonsStyling: false
-      });
-      return;
-    }
+// Prepare body data (user_id is ignored on server, derived from JWT)
+const bodyData = {
+  board_name: selectedBoardName,
+  board_id: selectedBoardId,
+  preset_name: presetName,
+  pedals: {}
+};
 
-    newPresetId = data.id;
+let newPresetId;
 
-  } catch (err) {
+try {
+  const token = localStorage.getItem('authToken'); // JWT token
+
+  const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify(bodyData)
+  });
+
+  const data = await res.json();
+
+  if (!res.ok || !data.ok) {
     Swal.fire({
       title: 'Error',
-      text: 'Network or server error: ' + err.message,
+      text: 'Failed to create preset: ' + (data.error || 'Unknown error'),
       icon: 'error',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
     return;
   }
+
+  newPresetId = data.id;
+
+} catch (err) {
+  Swal.fire({
+    title: 'Error',
+    text: 'Network or server error: ' + err.message,
+    icon: 'error',
+    customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+    buttonsStyling: false
+  });
+  return;
+}
+
 
   // -------------------------------
   // 5. Assign newly created preset to selected folder
@@ -1124,7 +1157,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
 
 
 
-
+// Intrinsecally safe
 async function createPresetOnServer(presetData) {
   try {
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
