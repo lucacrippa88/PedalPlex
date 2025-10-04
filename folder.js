@@ -121,10 +121,97 @@ function populateFolderDropdown() {
 
 
 
+// // ---------------------------
+// // Save folder to DB
+// // ---------------------------
+// async function saveFolderToDB(folder, explicitBoardId) {
+//   try {
+//     const boardId = explicitBoardId || (window.pedalboard && window.pedalboard._id);
+//     if (!boardId) {
+//       Swal.fire({
+//         title: 'Error',
+//         text: 'No pedalboard selected. Please select one before creating a folder.',
+//         icon: 'error',
+//         customClass: {
+//           confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+//         },
+//         buttonsStyling: false,
+//       });
+//       return null;
+//     }
+
+//     const token = localStorage.getItem('authToken');
+
+//     const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_FOLDER.php', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': 'Bearer ' + token
+//       },
+//       body: JSON.stringify({
+//         user_id: window.currentUser.userid,
+//         board_id: boardId,
+//         name: folder.name
+//       })
+//     });
+
+//     const result = await res.json();
+//     if (result.ok) return result;
+
+//       Swal.fire({
+//         title: 'Error',
+//         text: 'Could not save folder: ' + (result.error || 'Unknown error'),
+//         icon: 'error',
+//         customClass: {
+//           confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+//         },
+//         buttonsStyling: false,
+//       });
+//       return null;
+//   } catch (err) {
+//     console.error(err);
+//     Swal.fire({
+//       title: 'Error',
+//       text: 'Network or server error',
+//       icon: 'error',
+//       customClass: {
+//         confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+//       },
+//       buttonsStyling: false,
+//     });
+//     return null;
+//   }
+// }
+
 // ---------------------------
 // Save folder to DB
 // ---------------------------
 async function saveFolderToDB(folder, explicitBoardId) {
+  // Input field element (replace '#folderNameInput' with your actual input ID)
+  const folderInput = document.querySelector('#folderNameInput');
+  
+  // Allowed characters: letters, numbers, space, underscore, dash
+  const allowedRegex = /^[\p{L}\p{N} _-]*$/u;
+
+  if (!allowedRegex.test(folder.name)) {
+    // Highlight input in red if invalid characters exist
+    if (folderInput) folderInput.style.border = '2px solid red';
+    
+    Swal.fire({
+      title: 'Invalid characters',
+      text: 'Folder name contains forbidden special characters. Only letters, numbers, spaces, underscore (_), and dash (-) are allowed.',
+      icon: 'error',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary',
+      },
+      buttonsStyling: false,
+    });
+    return null;
+  } else {
+    // Reset border if valid
+    if (folderInput) folderInput.style.border = '';
+  }
+
   try {
     const boardId = explicitBoardId || (window.pedalboard && window.pedalboard._id);
     if (!boardId) {
@@ -133,7 +220,7 @@ async function saveFolderToDB(folder, explicitBoardId) {
         text: 'No pedalboard selected. Please select one before creating a folder.',
         icon: 'error',
         customClass: {
-          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+          confirmButton: 'bx--btn bx--btn--primary',
         },
         buttonsStyling: false,
       });
@@ -158,16 +245,16 @@ async function saveFolderToDB(folder, explicitBoardId) {
     const result = await res.json();
     if (result.ok) return result;
 
-      Swal.fire({
-        title: 'Error',
-        text: 'Could not save folder: ' + (result.error || 'Unknown error'),
-        icon: 'error',
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-        },
-        buttonsStyling: false,
-      });
-      return null;
+    Swal.fire({
+      title: 'Error',
+      text: 'Could not save folder: ' + (result.error || 'Unknown error'),
+      icon: 'error',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary',
+      },
+      buttonsStyling: false,
+    });
+    return null;
   } catch (err) {
     console.error(err);
     Swal.fire({
@@ -175,7 +262,7 @@ async function saveFolderToDB(folder, explicitBoardId) {
       text: 'Network or server error',
       icon: 'error',
       customClass: {
-        confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        confirmButton: 'bx--btn bx--btn--primary',
       },
       buttonsStyling: false,
     });
@@ -183,12 +270,7 @@ async function saveFolderToDB(folder, explicitBoardId) {
   }
 }
 
-// ---------------------------
-// Add Folder
-// ---------------------------
-// ---------------------------
-// Add Folder (fixed for multiple pedalboards)
-// ---------------------------
+
 // ---------------------------
 // Add Folder (dropdown-selected pedalboard only)
 // ---------------------------
