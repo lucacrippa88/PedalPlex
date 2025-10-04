@@ -811,8 +811,8 @@ const allowedRegex = /^[A-Za-z0-9 _-]+$/; // letters, numbers, spaces, underscor
 // Validate board_name
 if (!allowedRegex.test(selectedBoardName)) {
   Swal.fire({
-    title: 'Invalid board name',
-    text: 'Board name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+    title: 'Invalid preset name',
+    text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
     icon: 'error',
     customClass: { confirmButton: 'bx--btn bx--btn--primary' },
     buttonsStyling: false
