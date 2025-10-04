@@ -848,6 +848,22 @@ $(document).ready(function () {
 
         const token = localStorage.getItem('authToken');
 
+        // --- Validation for board name ---
+        // Allowed: letters, numbers, spaces, underscore, dash
+        const allowedRegex = /^[A-Za-z0-9 _-]+$/;
+        if (!allowedRegex.test(boardName)) {
+          Swal.fire({
+            title: 'Invalid board name',
+            text: 'Board name contains forbidden characters. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
+            icon: 'error',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary',
+            },
+            buttonsStyling: false,
+          });
+          return; // 🔴 Stop execution
+        }
+
         fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php', {
           method: "POST",
           headers: {
@@ -888,6 +904,7 @@ $(document).ready(function () {
               text: err.message || 'Network or server error'
             });
           });
+
       }
     });
   });
@@ -1142,6 +1159,44 @@ function saveGuestPedalboard() {
 
 
 
+// function importGuestPedalboard(board, userFromServer) {
+//   return new Promise((resolve, reject) => {
+//     const boardName = board.board_name || "Untitled Board";
+//     const pedals = board.pedals || [];
+//     const userId = window.currentUser?.userid;
+
+//     if (!boardName || !userId) {
+//       console.error("Cannot import: missing board_name or user_id", { board, userFromServer });
+//       reject("Missing board_name or user_id");
+//       return;
+//     }
+
+//     const token = localStorage.getItem('authToken');
+
+//     $.ajax({
+//       url: 'https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php',
+//       method: 'POST',
+//       headers: {
+//         'Authorization': 'Bearer ' + token
+//       },
+//       data: {
+//         board_name: boardName,
+//         user_id: userId,
+//         pedals: JSON.stringify(pedals)   // pass pedals too
+//       },
+//       success: function(resp) {
+//         console.log("Imported guest board:", resp);
+//         resolve(resp);
+//       },
+//       error: function(err) {
+//         console.error("Failed to import guest board:", err);
+//         reject(err);
+//       }
+//     });
+//   });
+// }
+
+
 function importGuestPedalboard(board, userFromServer) {
   return new Promise((resolve, reject) => {
     const boardName = board.board_name || "Untitled Board";
@@ -1152,6 +1207,23 @@ function importGuestPedalboard(board, userFromServer) {
       console.error("Cannot import: missing board_name or user_id", { board, userFromServer });
       reject("Missing board_name or user_id");
       return;
+    }
+
+    // --- Validation for board name ---
+    // Allowed: letters, numbers, space, underscore, dash
+    const allowedRegex = /^[A-Za-z0-9 _-]+$/;
+    if (!allowedRegex.test(boardName)) {
+      Swal.fire({
+        title: 'Invalid board name',
+        text: 'Board name contains forbidden characters. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary',
+        },
+        buttonsStyling: false,
+      });
+      reject("Invalid board_name");
+      return; // 🔴 Stop execution
     }
 
     const token = localStorage.getItem('authToken');
@@ -1178,5 +1250,3 @@ function importGuestPedalboard(board, userFromServer) {
     });
   });
 }
-
-
