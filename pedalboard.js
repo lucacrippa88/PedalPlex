@@ -741,58 +741,89 @@ function savePedalboard() {
     return;
   }
 
-
-  // --- LOGGED-IN USER SAVE (existing fetch) ---
+  // --- VALIDATION FOR SPECIAL CHARACTERS ---
   const pedalboardToSave = window.allPedalboards[selectedBoardIndex];
 
-    const token = localStorage.getItem('authToken');
-
-    fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      body: JSON.stringify({
-        user_id: userId,
-        pedalboard: pedalboardToSave
-      })
-    })
-    .then(async response => {
-      const text = await response.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch {
-        throw new Error(`Invalid JSON response from server: ${text}`);
-      }
-
-      if (!response.ok) {
-        const errorMsg = data.error ? `${data.error}${data.message ? ': ' + data.message : ''}` : `Save failed: ${response.status}`;
-        throw new Error(errorMsg);
-      }
-
-      return data;
-    })
-    .then(data => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Pedalboard saved!',
-        timer: 1500,
-        showConfirmButton: false,
-        willClose: () => {
-          location.reload();
+  function hasInvalidChars(obj) {
+    const regex = /[<>$#{}]/; // define your unwanted special characters here
+    for (let key in obj) {
+      if (typeof obj[key] === 'string' && regex.test(obj[key])) return true;
+      if (Array.isArray(obj[key])) {
+        for (let item of obj[key]) {
+          if (typeof item === 'string' && regex.test(item)) return true;
+          if (typeof item === 'object' && hasInvalidChars(item)) return true;
         }
-      });
-    })
-    .catch(err => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error saving pedalboard',
-        text: err.message || err,
-      });
+      }
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        if (hasInvalidChars(obj[key])) return true;
+      }
+    }
+    return false;
+  }
+
+  if (hasInvalidChars(pedalboardToSave)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Invalid characters detected',
+      text: 'Your pedalboard contains special characters that are not allowed.',
+      confirmButtonText: 'Ok',
+      customClass: {
+        confirmButton: "bx--btn bx--btn--primary",
+      }
     });
+    return;
+  }
+
+  // --- LOGGED-IN USER SAVE ---
+  const token = localStorage.getItem('authToken');
+
+  fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({
+      user_id: userId,
+      pedalboard: pedalboardToSave
+    })
+  })
+  .then(async response => {
+    const text = await response.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(`Invalid JSON response from server: ${text}`);
+    }
+
+    if (!response.ok) {
+      const errorMsg = data.error ? `${data.error}${data.message ? ': ' + data.message : ''}` : `Save failed: ${response.status}`;
+      throw new Error(errorMsg);
+    }
+
+    return data;
+  })
+  .then(data => {
+    Swal.fire({
+      icon: 'success',
+      title: 'Pedalboard saved!',
+      timer: 1500,
+      showConfirmButton: false,
+      willClose: () => {
+        location.reload();
+      }
+    });
+  })
+  .catch(err => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error saving pedalboard',
+      text: err.message || err,
+    });
+  });
 }
+
 
 
 
