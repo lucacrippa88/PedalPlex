@@ -518,11 +518,15 @@ async function savePreset(presetId, updateData) {
 
   // Validate preset_id
   if (!idRegex.test(presetId)) {
-    await Swal.fire({
+    Swal.fire({
       icon: 'error',
       title: 'Invalid Preset ID',
-      text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
-      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+      text: 'Preset ID contains forbidden characters. Allowed: letters, numbers, underscore (_) and dash (-).',
+      showConfirmButton: true,
+      confirmButtonText: 'Close',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary'
+      },
       buttonsStyling: false
     });
     return { success: false, reason: "invalid_id" };
@@ -530,11 +534,16 @@ async function savePreset(presetId, updateData) {
 
   // Validate preset_name
   if (updateData.preset_name && !nameRegex.test(updateData.preset_name)) {
-    await Swal.fire({
+    Swal.fire({
       icon: 'error',
       title: 'Invalid Preset Name',
-      text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
-      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+      html: 'Preset name contains forbidden characters.<br><br>' +
+            '<b>Allowed:</b> letters (A–Z, a–z), numbers (0–9), spaces, underscore (_), and dash (-).',
+      showConfirmButton: true,
+      confirmButtonText: 'Close',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary'
+      },
       buttonsStyling: false
     });
     return { success: false, reason: "invalid_name" };
@@ -558,16 +567,21 @@ async function savePreset(presetId, updateData) {
     return { success: !!data.success };
   } catch (err) {
     console.error(err);
-    await Swal.fire({
+    Swal.fire({
       icon: 'error',
       title: 'Network or Server Error',
       text: err.message || 'Unexpected error occurred.',
-      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+      showConfirmButton: true,
+      confirmButtonText: 'Close',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary'
+      },
       buttonsStyling: false
     });
     return { success: false, reason: "network_error" };
   }
 }
+
 
 
 
