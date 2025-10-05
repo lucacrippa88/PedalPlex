@@ -1066,11 +1066,14 @@ async function movePresetToFolder(presetId, targetFolderId) {
       const formData = new URLSearchParams();
       formData.append('folder_id', folderObj.id || folderObj._id);
       formData.append('preset_ids', JSON.stringify(folderObj.preset_ids || []));
+
+      const token = localStorage.getItem('authToken');
       updatePromises.push(
         fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer ' + token
           },
           body: formData.toString()
         }).then(r => r.json()).catch(err => ({
@@ -1161,10 +1164,12 @@ async function assignPresetToFolder(presetId, folderId) {
   formData.append('preset_ids', JSON.stringify(folder.preset_ids));
 
   try {
+    const token = localStorage.getItem('authToken');
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer ' + token
       },
       body: formData.toString()
     });

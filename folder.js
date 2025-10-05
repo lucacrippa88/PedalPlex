@@ -21,9 +21,13 @@ async function updateFolderOnServer(folder) {
     // ensure it's a JSON string
     formData.append('preset_ids', JSON.stringify(folder.preset_ids || []));
 
+    const token = localStorage.getItem('authToken');
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: { 
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer ' + token
+       },
       body: formData.toString()
     });
     const json = await res.json();
@@ -572,9 +576,13 @@ function attachRenameFolderListener() {
       });
 
       try {
+        const token = localStorage.getItem('authToken');
         const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          headers: { 
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer ' + token
+          },
           body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(newName.trim())}`
         });
 
