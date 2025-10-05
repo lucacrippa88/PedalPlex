@@ -529,7 +529,7 @@ async function savePreset(presetId, updateData) {
       },
       buttonsStyling: false
     });
-    return { success: false, reason: "invalid_id" };
+    return false; // ⛔ ensure caller sees failure
   }
 
   // Validate preset_name
@@ -546,7 +546,7 @@ async function savePreset(presetId, updateData) {
       },
       buttonsStyling: false
     });
-    return { success: false, reason: "invalid_name" };
+    return false; // ⛔ ensure caller sees failure
   }
 
   // --- API call ---
@@ -564,7 +564,7 @@ async function savePreset(presetId, updateData) {
     });
 
     const data = await res.json();
-    return { success: !!data.success };
+    return !!data.success; // return true/false
   } catch (err) {
     console.error(err);
     Swal.fire({
@@ -578,9 +578,10 @@ async function savePreset(presetId, updateData) {
       },
       buttonsStyling: false
     });
-    return { success: false, reason: "network_error" };
+    return false;
   }
 }
+
 
 
 
