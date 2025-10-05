@@ -407,7 +407,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       method: "POST",
       headers: { 
         "Content-Type": "application/json", 
-        //"Authorization": "Bearer " + token
+        "Authorization": "Bearer " + token
       },
       body: JSON.stringify({ preset_id: currentPresetId, preset_rev: currentPresetRev })
     });
@@ -507,9 +507,38 @@ function updatePresetDropdownName(presetId, newName) {
 
 // Update/save preset
 async function savePreset(presetId, updateData) {
-
   const token = localStorage.getItem('authToken');
 
+  // --- Validation ---
+  const idRegex = /^[A-Za-z0-9_-]+$/;
+  const nameRegex = /^[A-Za-z0-9 _-]+$/;
+
+  // Check preset_id
+  if (!idRegex.test(presetId)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Invalid Preset ID',
+      text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+      buttonsStyling: false
+    });
+    return false; // stop execution
+  }
+
+  // Check preset_name if provided
+  if (updateData.preset_name && !nameRegex.test(updateData.preset_name)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Invalid Preset Name',
+      html: 'Preset name contains forbidden characters.<br><br>' +
+            '<b>Allowed:</b> letters (A–Z, a–z), numbers (0–9), spaces, underscore (_), and dash (-).',
+      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+      buttonsStyling: false
+    });
+    return false;
+  }
+
+  // --- API call ---
   try {
     const res = await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_PRESET.php", {
       method: "POST",
@@ -527,9 +556,17 @@ async function savePreset(presetId, updateData) {
     return data.success;
   } catch (err) {
     console.error(err);
+    Swal.fire({
+      icon: 'error',
+      title: 'Network or Server Error',
+      text: err.message || 'Unexpected error occurred.',
+      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+      buttonsStyling: false
+    });
     return false;
   }
 }
+
 
 
 
