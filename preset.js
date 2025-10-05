@@ -505,29 +505,33 @@ function updatePresetDropdownName(presetId, newName) {
 
 
 
+
+
+
+
 // Update/save preset
 async function savePreset(presetId, updateData) {
   const token = localStorage.getItem('authToken');
 
-  // --- Validation ---
   const idRegex = /^[A-Za-z0-9_-]+$/;
   const nameRegex = /^[A-Za-z0-9 _-]+$/;
 
-  // Check preset_id
+  // Validate preset_id
   if (!idRegex.test(presetId)) {
-    Swal.fire({
+    await Swal.fire({
       icon: 'error',
       title: 'Invalid Preset ID',
-      text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+      html: 'Preset ID contains forbidden characters.<br><br>' +
+            '<b>Allowed:</b> letters (A–Z, a–z), numbers (0–9), underscore (_), and dash (-).',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
-    return false; // stop execution
+    return { success: false, reason: "invalid_id" };
   }
 
-  // Check preset_name if provided
+  // Validate preset_name
   if (updateData.preset_name && !nameRegex.test(updateData.preset_name)) {
-    Swal.fire({
+    await Swal.fire({
       icon: 'error',
       title: 'Invalid Preset Name',
       html: 'Preset name contains forbidden characters.<br><br>' +
@@ -535,7 +539,7 @@ async function savePreset(presetId, updateData) {
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
-    return false;
+    return { success: false, reason: "invalid_name" };
   }
 
   // --- API call ---
@@ -553,19 +557,20 @@ async function savePreset(presetId, updateData) {
     });
 
     const data = await res.json();
-    return data.success;
+    return { success: !!data.success };
   } catch (err) {
     console.error(err);
-    Swal.fire({
+    await Swal.fire({
       icon: 'error',
       title: 'Network or Server Error',
       text: err.message || 'Unexpected error occurred.',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
-    return false;
+    return { success: false, reason: "network_error" };
   }
 }
+
 
 
 
