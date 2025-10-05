@@ -484,7 +484,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       Swal.close();
       Swal.fire({
         title: 'Error',
-        text: 'Failed to rename preset',
+        text: 'Failed to rename preset. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
