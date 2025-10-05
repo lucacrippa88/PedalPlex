@@ -521,8 +521,7 @@ async function savePreset(presetId, updateData) {
     await Swal.fire({
       icon: 'error',
       title: 'Invalid Preset ID',
-      html: 'Preset ID contains forbidden characters.<br><br>' +
-            '<b>Allowed:</b> letters (A–Z, a–z), numbers (0–9), underscore (_), and dash (-).',
+      text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
@@ -534,8 +533,7 @@ async function savePreset(presetId, updateData) {
     await Swal.fire({
       icon: 'error',
       title: 'Invalid Preset Name',
-      html: 'Preset name contains forbidden characters.<br><br>' +
-            '<b>Allowed:</b> letters (A–Z, a–z), numbers (0–9), spaces, underscore (_), and dash (-).',
+      text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
