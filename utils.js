@@ -897,17 +897,7 @@ function setupEditPedalHandler(pedals) {
 
 window.setupEditPedalHandler = setupEditPedalHandler;
 
-// HELPER
-// function sanitizeHtml(html) {
-//   if (typeof DOMPurify !== "undefined") {
-//       return DOMPurify.sanitize(html, {
-//           ALLOWED_TAGS: ['span', 'br', 'hr', 'div'],
-//           ALLOWED_ATTR: ['style', 'class']
-//       });
-//   } else {
-//       return html;
-//   }
-// }
+
 
 // HELPER
 function safeLogoStyle(inputStyle) {

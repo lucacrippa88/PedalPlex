@@ -400,9 +400,15 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     if (!confirmDelete.isConfirmed) return;
 
     Swal.fire({ title: "Deleting...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+
+    const token = localStorage.getItem('authToken');
+
     const response = await fetch("https://www.cineteatrosanluigi.it/plex/DELETE_PRESET.php", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json", 
+        "Authorization": "Bearer " + token
+      },
       body: JSON.stringify({ preset_id: currentPresetId, preset_rev: currentPresetRev })
     });
     const data = await response.json();
