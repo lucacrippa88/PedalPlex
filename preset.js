@@ -6,53 +6,62 @@ let currentPresetName = null;
 
 window.allPedalboards = [];
 
-$(document).ready(function() {
+$(document).ready(function () {
   if (!localStorage.getItem('authToken')) {
     console.warn("No auth token found — initializing guest mode.");
     initGuestMode();
   }
-  
+
   renderFullPedalboard();
 });
 
 function initPreset() {
-    const isGuest = !window.currentUser;
-    const userId = window.currentUser?.userid;
-    resultsDiv = document.getElementById("page-content");
+  const isGuest = !window.currentUser;
+  const userId = window.currentUser?.userid;
+  resultsDiv = document.getElementById("page-content");
 
-    window.catalog = [];
-    window.pedalboard = { pedals: [] };
-    window.presetMap = {};
+  window.catalog = [];
+  window.pedalboard = {
+    pedals: []
+  };
+  window.presetMap = {};
 
-    if (isGuest) {
+  if (isGuest) {
     // Try loading guest board from localStorage
     const guestRaw = localStorage.getItem('guestPedalboard');
     let guestBoards = [];
     if (guestRaw) {
-        try { guestBoards = JSON.parse(guestRaw); } 
-        catch (e) { console.error('Invalid guestPedalboard JSON', e); }
+      try {
+        guestBoards = JSON.parse(guestRaw);
+      } catch (e) {
+        console.error('Invalid guestPedalboard JSON', e);
+      }
     }
 
     if (Array.isArray(guestBoards) && guestBoards.length > 0) {
-        // Take the first saved guest board
-        const guestBoard = guestBoards[0];
-        window.pedalboard = {
-            _id: 'guest_board',
-            board_name: guestBoard.board_name || 'Guest Board',
-            pedals: guestBoard.pedals || []
-        };
+      // Take the first saved guest board
+      const guestBoard = guestBoards[0];
+      window.pedalboard = {
+        _id: 'guest_board',
+        board_name: guestBoard.board_name || 'Guest Board',
+        pedals: guestBoard.pedals || []
+      };
     } else {
-        // fallback if no guest board saved
-        window.pedalboard = { _id: 'guest_board', board_name: 'Guest Board', pedals: [] };
+      // fallback if no guest board saved
+      window.pedalboard = {
+        _id: 'guest_board',
+        board_name: 'Guest Board',
+        pedals: []
+      };
     }
 
     // Disable pedalboard select & preset/folder controls
-    ['pedalboardSelect','presetSelect','folderSelect','renamePresetBtn','savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.disabled = true;
-            el.classList.add('btn-disabled');
-        }
+    ['pedalboardSelect', 'presetSelect', 'folderSelect', 'renamePresetBtn', 'savePstBtn', 'savePstBtnMobile', 'createPstBtn', 'createPstBtnMobile', 'addFolderBtn'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.disabled = true;
+        el.classList.add('btn-disabled');
+      }
     });
 
     // Render the guest pedalboard
@@ -63,125 +72,131 @@ function initPreset() {
     window.presetMap = {};
     populatePresetDropdownByFolder('default');
     return; // Skip DB fetches
-}
+  }
 
 
-    // Show loader overlay
-    document.getElementById("pageLoader").style.display = "flex";
+  // Show loader overlay
+  document.getElementById("pageLoader").style.display = "flex";
 
-    // Load catalog
-    fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
-        .then(res => {
-            if (!res.ok) throw new Error(`Catalog fetch failed: ${res.status}`);
-            return res.json();
+  // Load catalog
+  fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
+    .then(res => {
+      if (!res.ok) throw new Error(`Catalog fetch failed: ${res.status}`);
+      return res.json();
+    })
+    .then(catalog => {
+      window.catalog = catalog;
+      window.catalogMap = {};
+      catalog.forEach(p => window.catalogMap[p._id] = p);
+      document.getElementById("pageLoader").style.display = "none";
+
+      // Fetch pedalboards
+      return fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: userId
         })
-        .then(catalog => {
-            window.catalog = catalog;
-            window.catalogMap = {};
-            catalog.forEach(p => window.catalogMap[p._id] = p);
-            document.getElementById("pageLoader").style.display = "none";
+      });
+    })
+    .then(res => {
+      if (!res.ok) throw new Error(`Pedalboard fetch failed: ${res.status}`);
+      return res.json();
+    })
+    .then(async data => {
+      window.allPedalboards = data.docs && Array.isArray(data.docs) ? data.docs : [];
 
-            // Fetch pedalboards
-            return fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId })
-            });
-        })
-        .then(res => {
-            if (!res.ok) throw new Error(`Pedalboard fetch failed: ${res.status}`);
-            return res.json();
-        })
-        .then(async data => {
-            window.allPedalboards = data.docs && Array.isArray(data.docs) ? data.docs : [];
+      // Sort alphabetically
+      window.allPedalboards.sort((a, b) => (a.board_name || '').toLowerCase().localeCompare((b.board_name || '').toLowerCase()));
 
-            // Sort alphabetically
-            window.allPedalboards.sort((a, b) => (a.board_name || '').toLowerCase().localeCompare((b.board_name || '').toLowerCase()));
+      const dropdown = document.getElementById('pedalboardSelect');
+      dropdown.innerHTML = '';
 
-            const dropdown = document.getElementById('pedalboardSelect');
-            dropdown.innerHTML = '';
+      // Placeholder
+      const placeholderOption = document.createElement('option');
+      placeholderOption.value = '';
+      placeholderOption.textContent = '-- Select a pedalboard --';
+      placeholderOption.disabled = true;
+      dropdown.appendChild(placeholderOption);
 
-            // Placeholder
-            const placeholderOption = document.createElement('option');
-            placeholderOption.value = '';
-            placeholderOption.textContent = '-- Select a pedalboard --';
-            placeholderOption.disabled = true;
-            dropdown.appendChild(placeholderOption);
+      // Add boards
+      window.allPedalboards.forEach(pb => {
+        const option = document.createElement('option');
+        option.value = pb._id;
+        option.textContent = pb.board_name || 'Untitled Pedalboard';
+        dropdown.appendChild(option);
+      });
 
-            // Add boards
-            window.allPedalboards.forEach(pb => {
-                const option = document.createElement('option');
-                option.value = pb._id;
-                option.textContent = pb.board_name || 'Untitled Pedalboard';
-                dropdown.appendChild(option);
-            });
+      // -------------------------
+      // Step 1: Restore pedalboard from localStorage
+      // -------------------------
+      let restored = false;
+      const savedBoardId = localStorage.getItem('lastPedalboardId');
+      if (savedBoardId) {
+        const opt = Array.from(dropdown.options).find(o => o.value === savedBoardId);
+        if (opt) {
+          dropdown.value = savedBoardId;
+          window.pedalboard = window.allPedalboards.find(pb => pb._id === savedBoardId);
+          restored = true;
+        }
+      }
 
-            // -------------------------
-            // Step 1: Restore pedalboard from localStorage
-            // -------------------------
-            let restored = false;
-            const savedBoardId = localStorage.getItem('lastPedalboardId');
-            if (savedBoardId) {
-                const opt = Array.from(dropdown.options).find(o => o.value === savedBoardId);
-                if (opt) {
-                    dropdown.value = savedBoardId;
-                    window.pedalboard = window.allPedalboards.find(pb => pb._id === savedBoardId);
-                    restored = true;
-                }
-            }
+      // Default selection if none restored
+      if (!restored && window.allPedalboards.length > 0) {
+        dropdown.selectedIndex = 1; // skip placeholder
+        window.pedalboard = window.allPedalboards[0];
+        localStorage.setItem('lastPedalboardId', window.pedalboard._id);
+        localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
+      }
 
-            // Default selection if none restored
-            if (!restored && window.allPedalboards.length > 0) {
-                dropdown.selectedIndex = 1; // skip placeholder
-                window.pedalboard = window.allPedalboards[0];
-                localStorage.setItem('lastPedalboardId', window.pedalboard._id);
-                localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
-            }
+      renderFullPedalboard();
 
-            renderFullPedalboard();
+      // Fetch presets for selected pedalboard
+      await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
+        const presetSelect = document.getElementById('presetSelect');
+        const folderSelect = document.getElementById('folderSelect');
 
-            // Fetch presets for selected pedalboard
-            await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
-                const presetSelect = document.getElementById('presetSelect');
-                const folderSelect = document.getElementById('folderSelect');
+        // 1️⃣ Restore folder first
+        const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
+        if (folderSelect) {
+          const folderOptionExists = Array.from(folderSelect.options).some(o => o.value === savedFolderId);
+          folderSelect.value = folderOptionExists ? savedFolderId : 'default';
+        }
 
-                // 1️⃣ Restore folder first
-                const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
-                if (folderSelect) {
-                    const folderOptionExists = Array.from(folderSelect.options).some(o => o.value === savedFolderId);
-                    folderSelect.value = folderOptionExists ? savedFolderId : 'default';
-                }
+        // 2️⃣ Restore preset selection via populatePresetDropdownByFolder
+        const savedPresetId = localStorage.getItem('lastPresetId');
+        populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
 
-                // 2️⃣ Restore preset selection via populatePresetDropdownByFolder
-                const savedPresetId = localStorage.getItem('lastPresetId');
-                populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
+        // 3️⃣ Restore zoom for current pedalboard
+        if (typeof restoreZoomForCurrentBoard === "function") {
+          restoreZoomForCurrentBoard();
+        }
 
-                // 3️⃣ Restore zoom for current pedalboard
-                if (typeof restoreZoomForCurrentBoard === "function") {
-                    restoreZoomForCurrentBoard();
-                }
+        // 4️⃣ Trigger change event for Save button state
+        presetSelect.dispatchEvent(new Event('change', {
+          bubbles: true
+        }));
+      });
 
-                // 4️⃣ Trigger change event for Save button state
-                presetSelect.dispatchEvent(new Event('change', { bubbles: true }));
-            });
+      // Pedalboard change listener
+      dropdown.addEventListener('change', async (e) => {
+        const selectedBoardId = e.target.value;
+        window.pedalboard = window.allPedalboards.find(pb => pb._id === selectedBoardId);
+        renderFullPedalboard();
+        localStorage.setItem('lastPedalboardId', selectedBoardId);
+        localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
+        await fetchPresetsByBoardId(userId, selectedBoardId);
+      });
 
-            // Pedalboard change listener
-            dropdown.addEventListener('change', async (e) => {
-                const selectedBoardId = e.target.value;
-                window.pedalboard = window.allPedalboards.find(pb => pb._id === selectedBoardId);
-                renderFullPedalboard();
-                localStorage.setItem('lastPedalboardId', selectedBoardId);
-                localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
-                await fetchPresetsByBoardId(userId, selectedBoardId);
-            });
+      // Folder dropdown listener
+      document.getElementById('folderSelect')?.addEventListener('change', (e) => {
+        populatePresetDropdownByFolder(e.target.value);
+      });
 
-            // Folder dropdown listener
-            document.getElementById('folderSelect')?.addEventListener('change', (e) => {
-                populatePresetDropdownByFolder(e.target.value);
-            });
-
-        })
-        .catch(err => console.error('initPreset error:', err));
+    })
+    .catch(err => console.error('initPreset error:', err));
 }
 
 
@@ -218,8 +233,13 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
   try {
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESET.php', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: user_id, board_id: board_id })
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user_id: user_id,
+        board_id: board_id
+      })
     });
 
     if (!res.ok) throw new Error('Failed to fetch presets');
@@ -276,7 +296,9 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       title: "No Preset Selected",
       text: "Please select a preset to rename or assign to a folder.",
       confirmButtonText: "Ok",
-      customClass: { confirmButton: "bx--btn bx--btn--primary" }
+      customClass: {
+        confirmButton: "bx--btn bx--btn--primary"
+      }
     });
     return;
   }
@@ -292,7 +314,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
   // Ensure folders are loaded first
   if (!window.folders || window.folders.length === 0) {
-      await window.loadFoldersForCurrentPedalboard(true);
+    await window.loadFoldersForCurrentPedalboard(true);
   }
 
   // Helper to get folder ID containing the preset
@@ -342,7 +364,10 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
         Swal.showValidationMessage("Preset name cannot be empty!");
         return false;
       }
-      return { newName, folderId };
+      return {
+        newName,
+        folderId
+      };
     },
     customClass: {
       confirmButton: "bx--btn bx--btn--primary",
@@ -395,27 +420,42 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       showCancelButton: true,
       confirmButtonText: "Yes, delete it",
       cancelButtonText: "Cancel",
-      customClass: { confirmButton: "bx--btn bx--btn--danger", cancelButton: "bx--btn bx--btn--secondary" }
+      customClass: {
+        confirmButton: "bx--btn bx--btn--danger",
+        cancelButton: "bx--btn bx--btn--secondary"
+      }
     });
     if (!confirmDelete.isConfirmed) return;
 
-    Swal.fire({ title: "Deleting...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+    Swal.fire({
+      title: "Deleting...",
+      didOpen: () => Swal.showLoading(),
+      allowOutsideClick: false
+    });
 
     const token = localStorage.getItem('authToken');
 
     const response = await fetch("https://www.cineteatrosanluigi.it/plex/DELETE_PRESET.php", {
       method: "POST",
-      headers: { 
-        "Content-Type": "application/json", 
+      headers: {
+        "Content-Type": "application/json",
         "Authorization": "Bearer " + token
       },
-      body: JSON.stringify({ preset_id: currentPresetId, preset_rev: currentPresetRev })
+      body: JSON.stringify({
+        preset_id: currentPresetId,
+        preset_rev: currentPresetRev
+      })
     });
     const data = await response.json();
     Swal.close();
 
     if (data.success) {
-      Swal.fire({ icon: "success", title: "Preset Deleted", timer: 1000, showConfirmButton: false })
+      Swal.fire({
+          icon: "success",
+          title: "Preset Deleted",
+          timer: 1000,
+          showConfirmButton: false
+        })
         .then(() => location.reload());
     } else {
       Swal.fire("Error", data.error || "Failed to delete preset", "error");
@@ -425,25 +465,34 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
   // Handle save
   if (result.value) {
-    const { newName, folderId } = result.value;
+    const {
+      newName,
+      folderId
+    } = result.value;
 
-    Swal.fire({ title: "Saving...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+    Swal.fire({
+      title: "Saving...",
+      didOpen: () => Swal.showLoading(),
+      allowOutsideClick: false
+    });
 
     // 1. Rename preset
-    const success = await savePreset(currentPresetId, { preset_name: newName });
-    // if (!success) {
-    //   Swal.close();
-    //   Swal.fire({
-    //     title: 'Error',
-    //     text: 'Failed to rename preset',
-    //     icon: 'error',
-    //     customClass: {
-    //       confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-    //     },
-    //     buttonsStyling: false,
-    //   });
-    //   return;
-    // }
+    const success = await savePreset(currentPresetId, {
+      preset_name: newName
+    });
+    if (!success) {
+      Swal.close();
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to rename preset',
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
+        },
+        buttonsStyling: false,
+      });
+      return;
+    }
 
     // 2. Update folder assignment (atomic move)
     {
@@ -469,7 +518,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
     // Update in-memory preset object
     if (window.presetMap[currentPresetId]) {
-        window.presetMap[currentPresetId].preset_name = newName;
+      window.presetMap[currentPresetId].preset_name = newName;
     }
 
     Swal.close();
@@ -509,47 +558,9 @@ function updatePresetDropdownName(presetId, newName) {
 
 
 
-// Update/save preset
+// Update / save preset 
 async function savePreset(presetId, updateData) {
   const token = localStorage.getItem('authToken');
-
-  const idRegex = /^[A-Za-z0-9_-]+$/;
-  const nameRegex = /^[A-Za-z0-9 _-]+$/;
-
-  // Validate preset_id
-  if (!idRegex.test(presetId)) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Invalid Preset ID',
-      text: 'Preset ID contains forbidden characters. Allowed: letters, numbers, underscore (_) and dash (-).',
-      showConfirmButton: true,
-      confirmButtonText: 'Close',
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--primary'
-      },
-      buttonsStyling: false
-    });
-    return false; // ⛔ ensure caller sees failure
-  }
-
-  // Validate preset_name
-  if (updateData.preset_name && !nameRegex.test(updateData.preset_name)) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Invalid Preset Name',
-      html: 'Preset name contains forbidden characters.<br><br>' +
-            '<b>Allowed:</b> letters (A–Z, a–z), numbers (0–9), spaces, underscore (_), and dash (-).',
-      showConfirmButton: true,
-      confirmButtonText: 'Close',
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--primary'
-      },
-      buttonsStyling: false
-    });
-    return false; // ⛔ ensure caller sees failure
-  }
-
-  // --- API call ---
   try {
     const res = await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_PRESET.php", {
       method: "POST",
@@ -562,22 +573,10 @@ async function savePreset(presetId, updateData) {
         ...updateData
       })
     });
-
     const data = await res.json();
-    return !!data.success; // return true/false
+    return data.success;
   } catch (err) {
     console.error(err);
-    Swal.fire({
-      icon: 'error',
-      title: 'Network or Server Error',
-      text: err.message || 'Unexpected error occurred.',
-      showConfirmButton: true,
-      confirmButtonText: 'Close',
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--primary'
-      },
-      buttonsStyling: false
-    });
     return false;
   }
 }
@@ -597,14 +596,20 @@ async function duplicatePreset(presetId, newName, folderId) {
         title: 'Error',
         text: 'Preset not found',
         icon: 'error',
-        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary'
+        },
         buttonsStyling: false
       });
       return;
     }
 
     // Show loading UI
-    Swal.fire({ title: 'Duplicating preset...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+    Swal.fire({
+      title: 'Duplicating preset...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
 
     // --- Determine selected pedalboard from dropdown (do NOT rely on window.pedalboard) ---
     const pedalboardSelect = document.getElementById('pedalboardSelect');
@@ -617,7 +622,9 @@ async function duplicatePreset(presetId, newName, folderId) {
         title: 'Error',
         text: 'No pedalboard selected',
         icon: 'error',
-        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary'
+        },
         buttonsStyling: false
       });
       return;
@@ -641,7 +648,9 @@ async function duplicatePreset(presetId, newName, folderId) {
         title: 'Error',
         text: 'Could not duplicate preset',
         icon: 'error',
-        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary'
+        },
         buttonsStyling: false
       });
       return;
@@ -687,7 +696,9 @@ async function duplicatePreset(presetId, newName, folderId) {
       title: 'Error',
       text: 'Unexpected error duplicating preset',
       icon: 'error',
-      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary'
+      },
       buttonsStyling: false
     });
   }
@@ -805,7 +816,9 @@ async function createPreset() {
   // -------------------------------
   // 1. Prompt for preset name
   // -------------------------------
-  const { value: presetName } = await Swal.fire({
+  const {
+    value: presetName
+  } = await Swal.fire({
     title: 'Enter new preset name',
     input: 'text',
     inputLabel: 'Preset Name',
@@ -823,16 +836,23 @@ async function createPreset() {
   // -------------------------------
   // 2. Prompt for folder selection
   // -------------------------------
-  const folderOptions = [
-    { id: '', name: 'No Folder' },
-    ...window.folders.map(f => ({ id: f.id || f._id, name: f.name }))
+  const folderOptions = [{
+      id: '',
+      name: 'No Folder'
+    },
+    ...window.folders.map(f => ({
+      id: f.id || f._id,
+      name: f.name
+    }))
   ];
 
   const folderHtml = `<select id="selectFolder" class="swal2-select">
     ${folderOptions.map(f => `<option value="${f.id}">${f.name}</option>`).join('')}
   </select>`;
 
-  const { value: selectedFolderId } = await Swal.fire({
+  const {
+    value: selectedFolderId
+  } = await Swal.fire({
     title: 'Select folder for this preset',
     html: folderHtml,
     showCancelButton: true,
@@ -857,89 +877,99 @@ async function createPreset() {
       title: 'Error',
       text: 'No pedalboard selected',
       icon: 'error',
-      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary'
+      },
       buttonsStyling: false
     });
     return;
   }
 
   // -------------------------------
-// 4. Create preset in Cloudant
-// -------------------------------
+  // 4. Create preset in Cloudant
+  // -------------------------------
 
-const allowedRegex = /^[A-Za-z0-9 _-]+$/; // letters, numbers, spaces, underscore, dash
+  const allowedRegex = /^[A-Za-z0-9 _-]+$/; // letters, numbers, spaces, underscore, dash
 
-// Validate board_name
-if (!allowedRegex.test(selectedBoardName)) {
-  Swal.fire({
-    title: 'Invalid preset name',
-    text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
-    icon: 'error',
-    customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-    buttonsStyling: false
-  });
-  return; // Stop execution
-}
+  // Validate board_name
+  if (!allowedRegex.test(selectedBoardName)) {
+    Swal.fire({
+      title: 'Invalid preset name',
+      text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+      icon: 'error',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary'
+      },
+      buttonsStyling: false
+    });
+    return; // Stop execution
+  }
 
-// Validate preset_name
-if (!allowedRegex.test(presetName)) {
-  Swal.fire({
-    title: 'Invalid preset name',
-    text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
-    icon: 'error',
-    customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-    buttonsStyling: false
-  });
-  return; // Stop execution
-}
+  // Validate preset_name
+  if (!allowedRegex.test(presetName)) {
+    Swal.fire({
+      title: 'Invalid preset name',
+      text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+      icon: 'error',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary'
+      },
+      buttonsStyling: false
+    });
+    return; // Stop execution
+  }
 
-// Prepare body data (user_id is ignored on server, derived from JWT)
-const bodyData = {
-  board_name: selectedBoardName,
-  board_id: selectedBoardId,
-  preset_name: presetName,
-  pedals: {}
-};
+  // Prepare body data (user_id is ignored on server, derived from JWT)
+  const bodyData = {
+    board_name: selectedBoardName,
+    board_id: selectedBoardId,
+    preset_name: presetName,
+    pedals: {}
+  };
 
-let newPresetId;
+  let newPresetId;
 
-try {
-  const token = localStorage.getItem('authToken'); // JWT token
+  try {
+    const token = localStorage.getItem('authToken'); // JWT token
 
-  const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
-    },
-    body: JSON.stringify(bodyData)
-  });
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify(bodyData)
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok || !data.ok) {
+    if (!res.ok || !data.ok) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to create preset: ' + (data.error || 'Unknown error'),
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary'
+        },
+        buttonsStyling: false
+      });
+      return;
+    }
+
+    newPresetId = data.id;
+
+  } catch (err) {
     Swal.fire({
       title: 'Error',
-      text: 'Failed to create preset: ' + (data.error || 'Unknown error'),
+      text: 'Network or server error: ' + err.message,
       icon: 'error',
-      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary'
+      },
       buttonsStyling: false
     });
     return;
   }
-
-  newPresetId = data.id;
-
-} catch (err) {
-  Swal.fire({
-    title: 'Error',
-    text: 'Network or server error: ' + err.message,
-    icon: 'error',
-    customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-    buttonsStyling: false
-  });
-  return;
-}
 
 
   // -------------------------------
@@ -991,7 +1021,10 @@ try {
 // Move preset to single target folder (removes from all others first).
 // targetFolderId: string|null  — if null or empty, removes from all folders (unassigned)
 async function movePresetToFolder(presetId, targetFolderId) {
-  if (!presetId) return { ok: false, error: 'Missing presetId' };
+  if (!presetId) return {
+    ok: false,
+    error: 'Missing presetId'
+  };
 
   // ensure folders loaded
   window.folders = window.folders || [];
@@ -1036,9 +1069,14 @@ async function movePresetToFolder(presetId, targetFolderId) {
       updatePromises.push(
         fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
           body: formData.toString()
-        }).then(r => r.json()).catch(err => ({ ok: false, error: String(err) }))
+        }).then(r => r.json()).catch(err => ({
+          ok: false,
+          error: String(err)
+        }))
       );
     }
   }
@@ -1048,14 +1086,22 @@ async function movePresetToFolder(presetId, targetFolderId) {
     results = await Promise.all(updatePromises);
   } catch (err) {
     console.error('movePresetToFolder: error updating folders:', err);
-    return { ok: false, error: String(err), details: err };
+    return {
+      ok: false,
+      error: String(err),
+      details: err
+    };
   }
 
   // check results for success
   const failed = results.filter(r => !(r && (r.ok === true || r.id)));
   if (failed.length > 0) {
     console.error('movePresetToFolder: some updates failed', failed, results);
-    return { ok: false, error: 'Some folder updates failed', details: failed };
+    return {
+      ok: false,
+      error: 'Some folder updates failed',
+      details: failed
+    };
   }
 
   // Update in-memory preset.folder_id if possible
@@ -1075,7 +1121,9 @@ async function movePresetToFolder(presetId, targetFolderId) {
   const effectiveFolder = folderSelect?.value || (targetFolderId || 'default');
   populatePresetDropdownByFolder(effectiveFolder);
 
-  return { ok: true };
+  return {
+    ok: true
+  };
 }
 
 
@@ -1085,12 +1133,12 @@ async function movePresetToFolder(presetId, targetFolderId) {
 // Save the full pedalboard state to localStorage
 function savePedalboard() {
   if (!window.pedalboard) return;
-    try {
-      const boardId = window.pedalboard._id || 'unsaved_board';
-      // Save pedalboard state keyed by board ID
-      localStorage.setItem(`pedalboard_state_${boardId}`, JSON.stringify(window.pedalboard));
-    } catch (err) {
-      console.error("Failed to save pedalboard:", err);
+  try {
+    const boardId = window.pedalboard._id || 'unsaved_board';
+    // Save pedalboard state keyed by board ID
+    localStorage.setItem(`pedalboard_state_${boardId}`, JSON.stringify(window.pedalboard));
+  } catch (err) {
+    console.error("Failed to save pedalboard:", err);
   }
 }
 
@@ -1115,7 +1163,9 @@ async function assignPresetToFolder(presetId, folderId) {
   try {
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
       body: formData.toString()
     });
     const result = await res.json();
@@ -1130,87 +1180,87 @@ async function assignPresetToFolder(presetId, folderId) {
 // Filter and populate presets based on selected folder
 // ---------------------------
 function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNewFolder = false) {
-    const presetSelect = document.getElementById('presetSelect');
-    const editBtn = document.getElementById('renamePresetBtn');
-    if (!presetSelect || !window.presets) return;
+  const presetSelect = document.getElementById('presetSelect');
+  const editBtn = document.getElementById('renamePresetBtn');
+  if (!presetSelect || !window.presets) return;
 
+  presetSelect.innerHTML = '';
+
+  let filteredPresets = [];
+
+  if (folderId === 'default') {
+    // Show presets not assigned to any folder
+    const folderPresetIds = new Set();
+    (window.folders || []).forEach(f => {
+      if (Array.isArray(f.preset_ids)) f.preset_ids.forEach(id => folderPresetIds.add(id));
+    });
+    filteredPresets = window.presets.filter(p => !folderPresetIds.has(p._id));
+  } else {
+    // Show presets assigned to selected folder
+    const folder = (window.folders || []).find(f => (f.id || f._id) === folderId);
+    if (folder && Array.isArray(folder.preset_ids)) {
+      filteredPresets = window.presets.filter(p => folder.preset_ids.includes(p._id));
+    }
+  }
+
+  // Sort alphabetically
+  filteredPresets.sort((a, b) =>
+    (a.preset_name || '').toLowerCase().localeCompare((b.preset_name || '').toLowerCase())
+  );
+
+  // Populate dropdown
+  filteredPresets.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p._id;
+    opt.textContent = p.preset_name || 'Untitled Preset';
+    presetSelect.appendChild(opt);
+  });
+
+  // Hide or show dropdown & edit button
+  if (filteredPresets.length === 0 || isNewFolder) {
+    // For new folders: show placeholder instead of auto-hiding
     presetSelect.innerHTML = '';
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = '-- No presets --';
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    presetSelect.appendChild(placeholder);
 
-    let filteredPresets = [];
+    presetSelect.style.display = 'inline-block';
+    if (editBtn) editBtn.style.display = 'none';
 
-    if (folderId === 'default') {
-        // Show presets not assigned to any folder
-        const folderPresetIds = new Set();
-        (window.folders || []).forEach(f => {
-            if (Array.isArray(f.preset_ids)) f.preset_ids.forEach(id => folderPresetIds.add(id));
-        });
-        filteredPresets = window.presets.filter(p => !folderPresetIds.has(p._id));
+    currentPresetId = null;
+    currentPresetName = null;
+    currentPresetRev = null;
+  } else {
+    presetSelect.style.display = 'inline-block';
+    if (editBtn) editBtn.style.display = 'inline-block';
+
+    // Select preset
+    let selectedPreset = preferredPresetId ?
+      filteredPresets.find(p => p._id === preferredPresetId) || filteredPresets[0] :
+      filteredPresets[0];
+
+    currentPresetId = selectedPreset._id;
+    currentPresetName = selectedPreset.preset_name;
+    currentPresetRev = selectedPreset._rev;
+    presetSelect.value = selectedPreset._id;
+
+    // applyPresetToPedalboard(selectedPreset);
+    if (selectedPreset) {
+      applyPresetToPedalboard(selectedPreset);
     } else {
-        // Show presets assigned to selected folder
-        const folder = (window.folders || []).find(f => (f.id || f._id) === folderId);
-        if (folder && Array.isArray(folder.preset_ids)) {
-            filteredPresets = window.presets.filter(p => folder.preset_ids.includes(p._id));
-        }
+      // No preset: render the pedalboard as-is, keeping row info
+      renderFullPedalboard(window.pedalboard.pedals);
     }
 
-    // Sort alphabetically
-    filteredPresets.sort((a, b) =>
-        (a.preset_name || '').toLowerCase().localeCompare((b.preset_name || '').toLowerCase())
-    );
+    saveCurrentSelectionToStorage();
+  }
 
-    // Populate dropdown
-    filteredPresets.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p._id;
-        opt.textContent = p.preset_name || 'Untitled Preset';
-        presetSelect.appendChild(opt);
-    }); 
-
-    // Hide or show dropdown & edit button
-    if (filteredPresets.length === 0 || isNewFolder) {
-        // For new folders: show placeholder instead of auto-hiding
-        presetSelect.innerHTML = '';
-        const placeholder = document.createElement('option');
-        placeholder.value = '';
-        placeholder.textContent = '-- No presets --';
-        placeholder.disabled = true;
-        placeholder.selected = true;
-        presetSelect.appendChild(placeholder);
-
-        presetSelect.style.display = 'inline-block';
-        if (editBtn) editBtn.style.display = 'none';
-
-        currentPresetId = null;
-        currentPresetName = null;
-        currentPresetRev = null;
-    } else {
-        presetSelect.style.display = 'inline-block';
-        if (editBtn) editBtn.style.display = 'inline-block';
-
-        // Select preset
-        let selectedPreset = preferredPresetId
-            ? filteredPresets.find(p => p._id === preferredPresetId) || filteredPresets[0]
-            : filteredPresets[0];
-
-        currentPresetId = selectedPreset._id;
-        currentPresetName = selectedPreset.preset_name;
-        currentPresetRev = selectedPreset._rev;
-        presetSelect.value = selectedPreset._id;
-
-        // applyPresetToPedalboard(selectedPreset);
-        if (selectedPreset) {
-            applyPresetToPedalboard(selectedPreset);
-        } else {
-            // No preset: render the pedalboard as-is, keeping row info
-            renderFullPedalboard(window.pedalboard.pedals);
-        }
-
-        saveCurrentSelectionToStorage();
-    }
-
-    // Enable/disable Save button
-    const saveBtn = document.getElementById('savePstBtn');
-    if (saveBtn) saveBtn.disabled = filteredPresets.length === 0 || isNewFolder;
+  // Enable/disable Save button
+  const saveBtn = document.getElementById('savePstBtn');
+  if (saveBtn) saveBtn.disabled = filteredPresets.length === 0 || isNewFolder;
 }
 
 
@@ -1223,7 +1273,7 @@ async function createPresetOnServer(presetData) {
     const token = localStorage.getItem('authToken');
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + token
       },
@@ -1232,7 +1282,7 @@ async function createPresetOnServer(presetData) {
 
     const data = await res.json();
 
-    if (!res.ok || !data.ok) {   // check 'ok' from PHP
+    if (!res.ok || !data.ok) { // check 'ok' from PHP
       console.error("Failed to create preset:", data);
       return null;
     }
@@ -1255,8 +1305,12 @@ function initGuestMode() {
   if (!stored) return;
 
   let guestBoards;
-  try { guestBoards = JSON.parse(stored); } 
-  catch (e) { console.error('Invalid guestPedalboard', e); return; }
+  try {
+    guestBoards = JSON.parse(stored);
+  } catch (e) {
+    console.error('Invalid guestPedalboard', e);
+    return;
+  }
 
   if (!Array.isArray(guestBoards) || guestBoards.length === 0) return;
 
@@ -1271,11 +1325,14 @@ function initGuestMode() {
 
   $('#folderSelect, #presetSelect').empty().prop('disabled', true);
   $('#renameFolderBtn, #renamePresetBtn').prop('disabled', true).addClass('btn-disabled');
-  ['savePstBtn','savePstBtnMobile','createPstBtn','createPstBtnMobile','addFolderBtn']
-    .forEach(id => { 
-      const el = document.getElementById(id);
-      if (el) { el.disabled = true; el.classList.add('btn-disabled'); }
-    });
+  ['savePstBtn', 'savePstBtnMobile', 'createPstBtn', 'createPstBtnMobile', 'addFolderBtn']
+  .forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.disabled = true;
+      el.classList.add('btn-disabled');
+    }
+  });
 
   // ✅ Fetch catalog for guests too
   fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
