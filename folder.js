@@ -509,9 +509,22 @@ function attachRenameFolderListener() {
         formData.append('folder_id', folderId);
         formData.append('folder_rev', folder._rev || '');
 
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          Swal.fire({
+            icon: "error",
+            title: "Authentication error",
+            text: "You must be logged in to delete a folder.",
+          });
+          return;
+        }
+
         const res = await fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FOLDER.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Bearer " + token,  // ✅ attach JWT
+          },
           body: formData.toString()
         });
 
