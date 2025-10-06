@@ -848,11 +848,11 @@ fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
   }
 
   if (!res.ok || !data.ok) {
-    // Backend rejected the board name
-    throw new Error(data.error || "Unknown server error");
+    // ❌ Backend rejected
+    throw new Error(data.error || "Pedalboard rename failed");
   }
 
-  // ✅ Success: update UI
+  // ✅ Success — now update UI
   window.allPedalboards[selectedBoardIndex].board_name = newName;
   window.pedalboard.board_name = newName;
   const dropdown = document.getElementById('pedalboardSelect');
@@ -864,11 +864,12 @@ fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
     timer: 1000,
     showConfirmButton: false
   });
+
 })
 .catch(err => {
   Swal.fire({
     icon: 'error',
-    title: 'Rename failed',
+    title: 'Error renaming pedalboard',
     text: err.message,
     confirmButtonText: 'Ok',
     customClass: {
@@ -876,6 +877,7 @@ fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
     }
   });
 });
+
 
 
 
@@ -983,8 +985,8 @@ $(document).ready(function () {
   }
 
   if (!res.ok || !data.ok) {
-    // ⚠️ Backend failed (e.g., HTML sanitization)
-    throw new Error(data.error || "Unknown server error");
+    // ❌ Backend rejected, show Swal
+    throw new Error(data.error || "Pedalboard creation failed");
   }
 
   // ✅ Success
@@ -994,16 +996,14 @@ $(document).ready(function () {
     text: `Pedalboard "${boardName}" has been created successfully.`,
     timer: 1000,
     showConfirmButton: false,
-    willClose: () => {
-      location.reload();
-    }
+    willClose: () => location.reload()
   });
 
 })
 .catch(err => {
   Swal.fire({
     icon: 'error',
-    title: 'Pedalboard creation failed',
+    title: 'Error creating pedalboard',
     text: err.message,
     confirmButtonText: 'Ok',
     customClass: {
@@ -1011,6 +1011,7 @@ $(document).ready(function () {
     }
   });
 });
+
 
 
       }
