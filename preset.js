@@ -466,7 +466,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     return;
   }
 
-  // Handle save
+
 // Handle save
 if (result.value) {
   const { newName, folderId } = result.value;
@@ -483,6 +483,7 @@ if (result.value) {
     });
     return;
   }
+
 
   // Step 1: Show spinner
   Swal.fire({
@@ -1392,13 +1393,10 @@ function initGuestMode() {
 // --- Global function accessible everywhere ---
 function removeForbiddenChars(str) {
   if (!str) return '';
-
-  // Remove forbidden ASCII chars
-  str = str.replace(/[$%*\\|()\[\]{}^£;]/g, '');
-
-  // Remove emojis and "other symbols" (Unicode category So)
-  str = str.replace(/[\p{So}]/gu, '');
-
-  // Collapse multiple spaces and trim
-  return str.replace(/\s+/g, ' ').trim();
+  
+  // Only allow letters, numbers, spaces, and safe punctuation: / , . - _ & ' " ! ? :
+  const safeRegex = /[^a-zA-Z0-9\s\/,.\-_&'"!?:]/g;
+  
+  return str.replace(safeRegex, '').trim();
 }
+
