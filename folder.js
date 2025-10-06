@@ -110,7 +110,7 @@ function populateFolderDropdown() {
       if (!f) return;
       const opt = document.createElement('option');
       opt.value = f.id || f._id;
-      opt.textContent = f.name || '(Untitled folder)';
+      opt.textContent = decodeHTMLEntities(f.name || '(Untitled folder)');
       folderSelect.appendChild(opt);
     });
 
@@ -483,6 +483,7 @@ function attachRenameFolderListener() {
         const sanitizedName = removeForbiddenChars(newName.trim());
 
         if (sanitizedName !== newName.trim()) {
+          Swal.close(); // close the "Renaming..." modal
           Swal.fire({
             title: 'Invalid characters',
             text: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
@@ -516,7 +517,7 @@ function attachRenameFolderListener() {
 
           Swal.fire({
             title: 'Success',
-            text: `Folder renamed to "${newName}"`,
+            text: `Folder renamed to "${decodeHTMLEntities(sanitizedName)}"`,
             icon: 'success',
             timer: 1000,
             showConfirmButton: false
