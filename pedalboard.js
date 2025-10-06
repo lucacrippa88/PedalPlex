@@ -777,51 +777,108 @@ function savePedalboard() {
   // --- LOGGED-IN USER SAVE ---
   const token = localStorage.getItem('authToken');
 
-  fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
-    },
-    body: JSON.stringify({
-      user_id: userId,
-      pedalboard: pedalboardToSave
-    })
-  })
-  .then(async response => {
-    const text = await response.text();
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      throw new Error(`Invalid JSON response from server: ${text}`);
-    }
+  // fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //     'Authorization': 'Bearer ' + token
+  //   },
+  //   body: JSON.stringify({
+  //     user_id: userId,
+  //     pedalboard: pedalboardToSave
+  //   })
+  // })
+  // .then(async response => {
+  //   const text = await response.text();
+  //   let data;
+  //   try {
+  //     data = JSON.parse(text);
+  //   } catch {
+  //     throw new Error(`Invalid JSON response from server: ${text}`);
+  //   }
 
-    if (!response.ok) {
-      const errorMsg = data.error ? `${data.error}${data.message ? ': ' + data.message : ''}` : `Save failed: ${response.status}`;
-      throw new Error(errorMsg);
-    }
+  //   if (!response.ok) {
+  //     const errorMsg = data.error ? `${data.error}${data.message ? ': ' + data.message : ''}` : `Save failed: ${response.status}`;
+  //     throw new Error(errorMsg);
+  //   }
 
-    return data;
+  //   return data;
+  // })
+  // .then(data => {
+  //   Swal.fire({
+  //     icon: 'success',
+  //     title: 'Pedalboard saved!',
+  //     timer: 1500,
+  //     showConfirmButton: false,
+  //     willClose: () => {
+  //       location.reload();
+  //     }
+  //   });
+  // })
+  // .catch(err => {
+  //   Swal.fire({
+  //     icon: 'error',
+  //     title: 'Error saving pedalboard',
+  //     text: err.message || err,
+  //   });
+  // });
+
+  // After user enters new name
+fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " + token
+  },
+  body: JSON.stringify({
+    user_id: currentUser.userid,
+    pedalboard: {
+      ...currentBoard,
+      board_name: newName
+    }
   })
-  .then(data => {
-    Swal.fire({
-      icon: 'success',
-      title: 'Pedalboard saved!',
-      timer: 1500,
-      showConfirmButton: false,
-      willClose: () => {
-        location.reload();
-      }
-    });
-  })
-  .catch(err => {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error saving pedalboard',
-      text: err.message || err,
-    });
+})
+.then(async res => {
+  const text = await res.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    throw new Error(`Invalid JSON from server: ${text}`);
+  }
+
+  if (!res.ok || !data.ok) {
+    // Backend rejected the board name
+    throw new Error(data.error || "Unknown server error");
+  }
+
+  // ✅ Success: update UI
+  window.allPedalboards[selectedBoardIndex].board_name = newName;
+  window.pedalboard.board_name = newName;
+  const dropdown = document.getElementById('pedalboardSelect');
+  dropdown.options[selectedBoardIndex].textContent = newName;
+
+  Swal.fire({
+    icon: 'success',
+    title: 'Pedalboard renamed!',
+    timer: 1000,
+    showConfirmButton: false
   });
+})
+.catch(err => {
+  Swal.fire({
+    icon: 'error',
+    title: 'Rename failed',
+    text: err.message,
+    confirmButtonText: 'Ok',
+    customClass: {
+      confirmButton: "bx--btn bx--btn--primary"
+    }
+  });
+});
+
+
+
 }
 
 
