@@ -122,6 +122,7 @@ function createNewPedal() {
       newPedal.authorId = window.currentUser.userid || null;
 
       const token = localStorage.getItem('authToken');
+      console.log("token: ", token)
 
       fetch('https://www.cineteatrosanluigi.it/plex/CREATE_GEAR.php', {
         method: 'POST',
