@@ -484,7 +484,7 @@ if (result.value) {
   }
 
   // Step 1: Show spinner
-  Swal.fire({
+  await Swal.fire({
     title: "Saving...",
     allowOutsideClick: false,
     didOpen: () => Swal.showLoading()
@@ -494,7 +494,7 @@ if (result.value) {
     // Step 2: Save preset name
     const success = await savePreset(currentPresetId, { preset_name: sanitizedName });
     if (!success) {
-      Swal.close();
+      Swal.close(); // close spinner before showing error
       await Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -502,7 +502,7 @@ if (result.value) {
         customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false
       });
-      return;
+      return; // stop execution
     }
 
     // Step 3: Move preset to folder
@@ -527,7 +527,6 @@ if (result.value) {
     }
     saveCurrentSelectionToStorage();
 
-    // Step 5: Close spinner before showing success
     Swal.close();
 
     await Swal.fire({
@@ -538,8 +537,7 @@ if (result.value) {
       showConfirmButton: false
     });
 
-    // Step 6: Reload UI after short delay so user sees success
-    setTimeout(() => location.reload(), 200);
+    location.reload();
 
   } catch (err) {
     Swal.close();
@@ -554,7 +552,6 @@ if (result.value) {
     });
   }
 }
-
 
 
 });
@@ -585,6 +582,11 @@ function updatePresetDropdownName(presetId, newName) {
 // Update / save preset 
 async function savePreset(presetId, updateData) {
   const token = localStorage.getItem('authToken');
+  const payload = {
+    preset_id: presetId,
+    _rev: currentPresetRev, // <-- send current revision!
+    ...updateData
+  };
   try {
     const res = await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_PRESET.php", {
       method: "POST",
@@ -592,10 +594,7 @@ async function savePreset(presetId, updateData) {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
       },
-      body: JSON.stringify({
-        preset_id: presetId,
-        ...updateData
-      })
+      body: JSON.stringify(payload)
     });
     const data = await res.json();
     return data.success;
@@ -604,6 +603,7 @@ async function savePreset(presetId, updateData) {
     return false;
   }
 }
+
 
 
 
@@ -912,6 +912,8 @@ async function createPreset() {
   // -------------------------------
   // 4. Create preset in Cloudant
   // -------------------------------
+
+
 
   // Validate selectedBoardName
   const sanitizedBoardName = removeForbiddenChars(selectedBoardName);
