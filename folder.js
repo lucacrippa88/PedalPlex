@@ -465,85 +465,163 @@ function attachRenameFolderListener() {
   
     // ---- RENAME ----
     if (isConfirmed) {
+  // --- Sanitization function ---
+  function removeForbiddenChars(str) {
+    const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
+    str = str.replace(/[\p{So}\p{Cn}]/gu, ''); // remove emojis
+    str = str.replace(forbiddenRegex, '');      // remove explicit forbidden chars
+    str = str.replace(/\s+/g, ' ').trim();     // collapse spaces & trim
+    return str;
+  }
+
+  const sanitizedName = removeForbiddenChars(newName.trim());
+
+  // Validate before showing loading modal
+  if (sanitizedName !== newName.trim()) {
+    Swal.fire({
+      title: 'Invalid characters',
+      html: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+      icon: 'error',
+      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+      buttonsStyling: false,
+      allowOutsideClick: true
+    });
+    return; // stop execution
+  }
+
+  // Name is valid — now show loading modal
+  Swal.fire({
+    title: 'Renaming...',
+    allowOutsideClick: false,
+    didOpen: () => Swal.showLoading()
+  });
+
+  try {
+    const token = localStorage.getItem('authToken');
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer ' + token
+      },
+      body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(sanitizedName)}`
+    });
+
+    const result = await res.json();
+
+    if (result.ok) {
+      await loadFoldersForCurrentPedalboard();
+      const folderSelect = document.getElementById('folderSelect');
+      if (folderSelect) folderSelect.value = folderId;
+
       Swal.fire({
-        title: 'Renaming...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
+        title: 'Success',
+        text: `Folder renamed to "${decodeHTMLEntities(sanitizedName)}"`,
+        icon: 'success',
+        timer: 1000,
+        showConfirmButton: false
       });
-
-      try {
-        // --- Sanitization function (reuse same rules) ---
-        function removeForbiddenChars(str) {
-          const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
-          str = str.replace(/[\p{So}\p{Cn}]/gu, ''); // remove emojis
-          str = str.replace(forbiddenRegex, '');      // remove explicit forbidden chars
-          str = str.replace(/\s+/g, ' ').trim();     // collapse spaces & trim
-          return str;
-        }
-
-        const sanitizedName = removeForbiddenChars(newName.trim());
-
-        if (sanitizedName !== newName.trim()) {
-          // Replace loading modal with error modal
-          // Close the loading modal first
-          Swal.close();
-          // Then show the error modal
-          Swal.fire({
-            title: 'Invalid characters',
-            html: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
-            icon: 'error',
-            showConfirmButton: true,
-            allowOutsideClick: true,
-            timer: undefined
-          });
-          return; // Stop execution if invalid characters
-        }
-
-        const token = localStorage.getItem('authToken');
-        const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer ' + token
-          },
-          body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(sanitizedName)}`
-        });
-
-        const result = await res.json();
-
-        if (result.ok) {
-          // 🔄 Reload folders from server so we get updated _rev
-          await loadFoldersForCurrentPedalboard();
-          const folderSelect = document.getElementById('folderSelect');
-          if (folderSelect) folderSelect.value = folderId;
-
-          Swal.fire({
-            title: 'Success',
-            text: `Folder renamed to "${decodeHTMLEntities(sanitizedName)}"`,
-            icon: 'success',
-            timer: 1000,
-            showConfirmButton: false
-          });
-        } else {
-          Swal.fire({
-            title: 'Error',
-            text: result.error || 'Could not rename folder.',
-            icon: 'error',
-            customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-            buttonsStyling: false,
-          });
-        }
-      } catch (err) {
-        console.error('[folders] rename error:', err);
-        Swal.fire({
-          title: 'Error',
-          text: 'Network or server error while renaming.',
-          icon: 'error',
-          customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-          buttonsStyling: false,
-        });
-      }
+    } else {
+      Swal.fire({
+        title: 'Error',
+        text: result.error || 'Could not rename folder.',
+        icon: 'error',
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+        buttonsStyling: false,
+      });
     }
+  } catch (err) {
+    console.error('[folders] rename error:', err);
+    Swal.fire({
+      title: 'Error',
+      text: 'Network or server error while renaming.',
+      icon: 'error',
+      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+      buttonsStyling: false,
+    });
+  }
+}
+
+    // if (isConfirmed) {
+    //   Swal.fire({
+    //     title: 'Renaming...',
+    //     allowOutsideClick: false,
+    //     didOpen: () => Swal.showLoading()
+    //   });
+
+    //   try {
+    //     // --- Sanitization function (reuse same rules) ---
+    //     function removeForbiddenChars(str) {
+    //       const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
+    //       str = str.replace(/[\p{So}\p{Cn}]/gu, ''); // remove emojis
+    //       str = str.replace(forbiddenRegex, '');      // remove explicit forbidden chars
+    //       str = str.replace(/\s+/g, ' ').trim();     // collapse spaces & trim
+    //       return str;
+    //     }
+
+    //     const sanitizedName = removeForbiddenChars(newName.trim());
+
+    //     if (sanitizedName !== newName.trim()) {
+    //       // Replace loading modal with error modal
+    //       // Close the loading modal first
+    //       Swal.close();
+    //       // Then show the error modal
+    //       Swal.fire({
+    //         title: 'Invalid characters',
+    //         html: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+    //         icon: 'error',
+    //         showConfirmButton: true,
+    //         allowOutsideClick: true,
+    //         timer: undefined
+    //       });
+    //       return; // Stop execution if invalid characters
+    //     }
+
+    //     const token = localStorage.getItem('authToken');
+    //     const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+    //       method: 'POST',
+    //       headers: { 
+    //         'Content-Type': 'application/x-www-form-urlencoded',
+    //         'Authorization': 'Bearer ' + token
+    //       },
+    //       body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(sanitizedName)}`
+    //     });
+
+    //     const result = await res.json();
+
+    //     if (result.ok) {
+    //       // 🔄 Reload folders from server so we get updated _rev
+    //       await loadFoldersForCurrentPedalboard();
+    //       const folderSelect = document.getElementById('folderSelect');
+    //       if (folderSelect) folderSelect.value = folderId;
+
+    //       Swal.fire({
+    //         title: 'Success',
+    //         text: `Folder renamed to "${decodeHTMLEntities(sanitizedName)}"`,
+    //         icon: 'success',
+    //         timer: 1000,
+    //         showConfirmButton: false
+    //       });
+    //     } else {
+    //       Swal.fire({
+    //         title: 'Error',
+    //         text: result.error || 'Could not rename folder.',
+    //         icon: 'error',
+    //         customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+    //         buttonsStyling: false,
+    //       });
+    //     }
+    //   } catch (err) {
+    //     console.error('[folders] rename error:', err);
+    //     Swal.fire({
+    //       title: 'Error',
+    //       text: 'Network or server error while renaming.',
+    //       icon: 'error',
+    //       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+    //       buttonsStyling: false,
+    //     });
+    //   }
+    // }
 
   });
 }
