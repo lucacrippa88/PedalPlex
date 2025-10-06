@@ -744,143 +744,84 @@ function savePedalboard() {
   // --- VALIDATION FOR SPECIAL CHARACTERS ---
   const pedalboardToSave = window.allPedalboards[selectedBoardIndex];
 
-  // function hasInvalidChars(obj) {
-  //   const regex = /[<>$#{}]/; // define your unwanted special characters here
-  //   for (let key in obj) {
-  //     if (typeof obj[key] === 'string' && regex.test(obj[key])) return true;
-  //     if (Array.isArray(obj[key])) {
-  //       for (let item of obj[key]) {
-  //         if (typeof item === 'string' && regex.test(item)) return true;
-  //         if (typeof item === 'object' && hasInvalidChars(item)) return true;
-  //       }
-  //     }
-  //     if (typeof obj[key] === 'object' && obj[key] !== null) {
-  //       if (hasInvalidChars(obj[key])) return true;
-  //     }
-  //   }
-  //   return false;
-  // }
+  function hasInvalidChars(obj) {
+    const regex = /[<>$#{}]/; // define your unwanted special characters here
+    for (let key in obj) {
+      if (typeof obj[key] === 'string' && regex.test(obj[key])) return true;
+      if (Array.isArray(obj[key])) {
+        for (let item of obj[key]) {
+          if (typeof item === 'string' && regex.test(item)) return true;
+          if (typeof item === 'object' && hasInvalidChars(item)) return true;
+        }
+      }
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        if (hasInvalidChars(obj[key])) return true;
+      }
+    }
+    return false;
+  }
 
-  // if (hasInvalidChars(pedalboardToSave)) {
-  //   Swal.fire({
-  //     icon: 'error',
-  //     title: 'Invalid board name',
-  //     text: 'Board name contains forbidden characters.',
-  //     confirmButtonText: 'Ok',
-  //     customClass: {
-  //       confirmButton: "bx--btn bx--btn--primary",
-  //     }
-  //   });
-  //   return;
-  // }
+  if (hasInvalidChars(pedalboardToSave)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Invalid board name',
+      text: 'Board name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+      confirmButtonText: 'Ok',
+      customClass: {
+        confirmButton: "bx--btn bx--btn--primary",
+      }
+    });
+    return;
+  }
 
   // --- LOGGED-IN USER SAVE ---
   const token = localStorage.getItem('authToken');
 
-  // fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     'Authorization': 'Bearer ' + token
-  //   },
-  //   body: JSON.stringify({
-  //     user_id: userId,
-  //     pedalboard: pedalboardToSave
-  //   })
-  // })
-  // .then(async response => {
-  //   const text = await response.text();
-  //   let data;
-  //   try {
-  //     data = JSON.parse(text);
-  //   } catch {
-  //     throw new Error(`Invalid JSON response from server: ${text}`);
-  //   }
-
-  //   if (!response.ok) {
-  //     const errorMsg = data.error ? `${data.error}${data.message ? ': ' + data.message : ''}` : `Save failed: ${response.status}`;
-  //     throw new Error(errorMsg);
-  //   }
-
-  //   return data;
-  // })
-  // .then(data => {
-  //   Swal.fire({
-  //     icon: 'success',
-  //     title: 'Pedalboard saved!',
-  //     timer: 1500,
-  //     showConfirmButton: false,
-  //     willClose: () => {
-  //       location.reload();
-  //     }
-  //   });
-  // })
-  // .catch(err => {
-  //   Swal.fire({
-  //     icon: 'error',
-  //     title: 'Error saving pedalboard',
-  //     text: err.message || err,
-  //   });
-  // });
-
-  // After user enters new name
-fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + token
-  },
-  body: JSON.stringify({
-    user_id: currentUser.userid,
-    pedalboard: {
-      ...currentBoard,
-      board_name: newName
-    }
+  fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({
+      user_id: userId,
+      pedalboard: pedalboardToSave
+    })
   })
-})
-.then(async res => {
-  const text = await res.text();
-  let data;
-  try {
-    data = JSON.parse(text);
-  } catch {
-    throw new Error(`Invalid JSON from server: ${text}`);
-  }
-
-  if (!res.ok || !data.ok) {
-    // ❌ Backend rejected
-    throw new Error(data.error || "Pedalboard rename failed");
-  }
-
-  // ✅ Success — now update UI
-  window.allPedalboards[selectedBoardIndex].board_name = newName;
-  window.pedalboard.board_name = newName;
-  const dropdown = document.getElementById('pedalboardSelect');
-  dropdown.options[selectedBoardIndex].textContent = newName;
-
-  Swal.fire({
-    icon: 'success',
-    title: 'Pedalboard renamed!',
-    timer: 1000,
-    showConfirmButton: false
-  });
-
-})
-.catch(err => {
-  Swal.fire({
-    icon: 'error',
-    title: 'Error renaming pedalboard',
-    text: err.message,
-    confirmButtonText: 'Ok',
-    customClass: {
-      confirmButton: "bx--btn bx--btn--primary"
+  .then(async response => {
+    const text = await response.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(`Invalid JSON response from server: ${text}`);
     }
+
+    if (!response.ok) {
+      const errorMsg = data.error ? `${data.error}${data.message ? ': ' + data.message : ''}` : `Save failed: ${response.status}`;
+      throw new Error(errorMsg);
+    }
+
+    return data;
+  })
+  .then(data => {
+    Swal.fire({
+      icon: 'success',
+      title: 'Pedalboard saved!',
+      timer: 1500,
+      showConfirmButton: false,
+      willClose: () => {
+        location.reload();
+      }
+    });
+  })
+  .catch(err => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error saving pedalboard',
+      text: err.message || err,
+    });
   });
-});
-
-
-
-
 }
 
 
@@ -938,81 +879,72 @@ $(document).ready(function () {
 
         const token = localStorage.getItem('authToken');
 
-        // // --- Validation for board name ---
-        // const allowedRegex = /^[A-Za-z0-9 _-]*$/; // notice * to match empty string
-        // if (!allowedRegex.test(boardName)) {
-        //   // Remove forbidden characters immediately
-        //   const sanitizedBoardName = boardName.replace(/[^A-Za-z0-9 _-]/g, '');
+        // --- Validation for board name ---
+        const allowedRegex = /^[A-Za-z0-9 _-]*$/; // notice * to match empty string
+        if (!allowedRegex.test(boardName)) {
+          // Remove forbidden characters immediately
+          const sanitizedBoardName = boardName.replace(/[^A-Za-z0-9 _-]/g, '');
           
-        //   // Update input field so user sees the cleaned value
-        //   const boardNameInput = document.getElementById('boardNameInput'); // replace with your actual input ID
-        //   if (boardNameInput) {
-        //     boardNameInput.value = sanitizedBoardName;
-        //   }
+          // Update input field so user sees the cleaned value
+          const boardNameInput = document.getElementById('boardNameInput'); // replace with your actual input ID
+          if (boardNameInput) {
+            boardNameInput.value = sanitizedBoardName;
+          }
 
-        //   Swal.fire({
-        //     title: 'Invalid board name',
-        //     text: 'Board name contained forbidden characters.',
-        //     icon: 'error',
-        //     customClass: {
-        //       confirmButton: 'bx--btn bx--btn--primary',
-        //     },
-        //     buttonsStyling: false,
-        //   });
+          Swal.fire({
+            title: 'Invalid board name',
+            text: 'Board name contained forbidden characters. They were removed. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
+            icon: 'error',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary',
+            },
+            buttonsStyling: false,
+          });
 
-        //   return; // Stop further execution
-        // }
+          return; // Stop further execution
+        }
 
 
         fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php', {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Authorization": "Bearer " + token
-  },
-  body: new URLSearchParams({
-    board_name: boardName,
-    user_id: userId
-  })
-})
-.then(async res => {
-  const text = await res.text();
-  let data;
-  try {
-    data = JSON.parse(text);
-  } catch {
-    throw new Error(`Invalid JSON from server: ${text}`);
-  }
-
-  if (!res.ok || !data.ok) {
-    // ❌ Backend rejected, show Swal
-    throw new Error(data.error || "Pedalboard creation failed");
-  }
-
-  // ✅ Success
-  Swal.fire({
-    icon: 'success',
-    title: 'Pedalboard Created',
-    text: `Pedalboard "${boardName}" has been created successfully.`,
-    timer: 1000,
-    showConfirmButton: false,
-    willClose: () => location.reload()
-  });
-
-})
-.catch(err => {
-  Swal.fire({
-    icon: 'error',
-    title: 'Error creating pedalboard',
-    text: err.message,
-    confirmButtonText: 'Ok',
-    customClass: {
-      confirmButton: "bx--btn bx--btn--primary"
-    }
-  });
-});
-
-
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Bearer " + token
+          },
+          body: new URLSearchParams({
+            board_name: boardName,
+            user_id: userId
+          })
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.ok) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Pedalboard Created',
+                text: `Pedalboard "${boardName}" has been created successfully.`,
+                timer: 1000,
+                showConfirmButton: false,
+                willClose: () => {
+                  location.reload();
+                }
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Creation Failed',
+                text: data.error || 'Unknown error'
+              });
+            }
+          })
+          .catch(err => {
+            console.error("Fetch error:", err);
+            Swal.fire({
+              icon: 'error',
+              title: 'Request Error',
+              text: err.message || 'Network or server error'
+            });
+          });
 
       }
     });
@@ -1059,26 +991,22 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
       // dropdown.options[selectedBoardIndex].textContent = newName;
 
       // savePedalboard();
+      const allowedRegex = /^[A-Za-z0-9 _-]+$/;
 
-      // TEST -----------------
-      // const allowedRegex = /^[A-Za-z0-9 _-]+$/;
+      if (!allowedRegex.test(newName)) {
+        Swal.fire({
+          title: 'Invalid board name',
+          text: 'Board name contains forbidden characters. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
+          icon: 'error',
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--primary',
+          },
+          buttonsStyling: false,
+        });
 
-      // if (!allowedRegex.test(newName)) {
-      //   Swal.fire({
-      //     title: 'Invalid board name',
-      //     text: 'Board name contains forbidden characters.',
-      //     icon: 'error',
-      //     customClass: {
-      //       confirmButton: 'bx--btn bx--btn--primary',
-      //     },
-      //     buttonsStyling: false,
-      //   });
-
-      //   // Do NOT update dropdown
-      //   return;
-      // 
-      //}
-      // TEST -----------------
+        // Do NOT update dropdown
+        return;
+      }
 
       // ✅ Name is valid, update dropdown and internal data
       window.allPedalboards[selectedBoardIndex].board_name = newName;
@@ -1311,20 +1239,20 @@ function importGuestPedalboard(board, userFromServer) {
 
     // --- Validation for board name ---
     // Allowed: letters, numbers, space, underscore, dash
-    // const allowedRegex = /^[A-Za-z0-9 _-]+$/;
-    // if (!allowedRegex.test(boardName)) {
-    //   Swal.fire({
-    //     title: 'Invalid board name',
-    //     text: 'Board name contains forbidden characters.',
-    //     icon: 'error',
-    //     customClass: {
-    //       confirmButton: 'bx--btn bx--btn--primary',
-    //     },
-    //     buttonsStyling: false,
-    //   });
-    //   reject("Invalid board_name");
-    //   return; // 🔴 Stop execution
-    // }
+    const allowedRegex = /^[A-Za-z0-9 _-]+$/;
+    if (!allowedRegex.test(boardName)) {
+      Swal.fire({
+        title: 'Invalid board name',
+        text: 'Board name contains forbidden characters. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary',
+        },
+        buttonsStyling: false,
+      });
+      reject("Invalid board_name");
+      return; // 🔴 Stop execution
+    }
 
     const token = localStorage.getItem('authToken');
 
