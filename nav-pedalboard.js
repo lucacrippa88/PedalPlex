@@ -96,24 +96,10 @@ function initNavPedalboard(userRole) {
       </svg> Offline Save
     `);
 
-    // Function to update guest create button state
-    function updateGuestCreateBtn() {
-        const hasBoards = Array.isArray(window.allPedalboards) && window.allPedalboards.length > 0;
-        if (hasBoards) {
-            $("#createBtn").prop("disabled", true).addClass("bx--btn--disabled");
-        } else {
-            $("#createBtn").prop("disabled", false).removeClass("bx--btn--disabled");
-        }
-    }
-
-    // Run on init
-    updateGuestCreateBtn();
-
     $("#saveBtn").on("click", function() {
       if (typeof saveGuestPedalboard === "function") saveGuestPedalboard();
       if (window.allPedalboards.length === 1) setupPedalboardDropdownAndRender();
       updateFilterVisibility();
-      updateGuestCreateBtn(); // update button state after saving
     });
 
     const loginBtnHtml = `<button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
