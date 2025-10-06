@@ -1392,14 +1392,13 @@ function initGuestMode() {
 // --- Global function accessible everywhere ---
 function removeForbiddenChars(str) {
   if (!str) return '';
-  
-  // Remove forbidden characters
-  const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
-  str = str.replace(forbiddenRegex, '');
-  
-  // Remove emojis / special symbols
-  str = str.replace(/[\p{So}\p{Cn}]/gu, '');
-  
-  // Collapse spaces and trim
+
+  // Remove forbidden ASCII chars
+  str = str.replace(/[$%*\\|()\[\]{}^£;]/g, '');
+
+  // Remove emojis and "other symbols" (Unicode category So)
+  str = str.replace(/[\p{So}]/gu, '');
+
+  // Collapse multiple spaces and trim
   return str.replace(/\s+/g, ' ').trim();
 }
