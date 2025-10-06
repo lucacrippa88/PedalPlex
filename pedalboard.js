@@ -745,19 +745,28 @@ function savePedalboard() {
   const pedalboardToSave = window.allPedalboards[selectedBoardIndex];
 
   function hasInvalidChars(obj) {
-    const regex = /[<>$#{}]/; // define your unwanted special characters here
+    const forbidden = /[$%*\\|()\[\]{}^£;<>]/;
+
     for (let key in obj) {
-      if (typeof obj[key] === 'string' && regex.test(obj[key])) return true;
-      if (Array.isArray(obj[key])) {
-        for (let item of obj[key]) {
-          if (typeof item === 'string' && regex.test(item)) return true;
-          if (typeof item === 'object' && hasInvalidChars(item)) return true;
+      if (!obj.hasOwnProperty(key)) continue;
+
+      const val = obj[key];
+
+      if (typeof val === 'string') {
+        if (forbidden.test(val)) return true;
+      } else if (Array.isArray(val)) {
+        for (let item of val) {
+          if (typeof item === 'string') {
+            if (forbidden.test(item)) return true;
+          } else if (typeof item === 'object' && item !== null) {
+            if (hasInvalidChars(item)) return true;
+          }
         }
-      }
-      if (typeof obj[key] === 'object' && obj[key] !== null) {
-        if (hasInvalidChars(obj[key])) return true;
+      } else if (typeof val === 'object' && val !== null) {
+        if (hasInvalidChars(val)) return true;
       }
     }
+
     return false;
   }
 
@@ -765,7 +774,7 @@ function savePedalboard() {
     Swal.fire({
       icon: 'error',
       title: 'Invalid board name',
-      text: 'Board name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+      text: 'Board name contains forbidden characters.',
       confirmButtonText: 'Ok',
       customClass: {
         confirmButton: "bx--btn bx--btn--primary",
@@ -880,29 +889,38 @@ $(document).ready(function () {
         const token = localStorage.getItem('authToken');
 
         // --- Validation for board name ---
-        const allowedRegex = /^[A-Za-z0-9 _-]*$/; // notice * to match empty string
-        if (!allowedRegex.test(boardName)) {
-          // Remove forbidden characters immediately
-          const sanitizedBoardName = boardName.replace(/[^A-Za-z0-9 _-]/g, '');
-          
+        const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/;
+
+        // Remove emojis as well
+        function removeEmojis(str) {
+          return str.replace(/[\p{So}\p{Cn}]/gu, '');
+        }
+        // Sanitize board name
+        let sanitizedBoardName = boardName;
+        // Remove forbidden chars
+        sanitizedBoardName = sanitizedBoardName.replace(forbiddenRegex, '');
+        // Remove emojis
+        sanitizedBoardName = removeEmojis(sanitizedBoardName);
+        // Optionally collapse multiple spaces
+        sanitizedBoardName = sanitizedBoardName.replace(/\s+/g, ' ').trim();
+        if (sanitizedBoardName !== boardName) {
           // Update input field so user sees the cleaned value
           const boardNameInput = document.getElementById('boardNameInput'); // replace with your actual input ID
           if (boardNameInput) {
             boardNameInput.value = sanitizedBoardName;
           }
-
           Swal.fire({
             title: 'Invalid board name',
-            text: 'Board name contained forbidden characters. They were removed. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
+            text: 'Board name contained forbidden characters.',
             icon: 'error',
             customClass: {
               confirmButton: 'bx--btn bx--btn--primary',
             },
             buttonsStyling: false,
           });
-
           return; // Stop further execution
         }
+
 
 
         fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php', {
@@ -984,19 +1002,27 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
   }).then(result => {
     if (result.isConfirmed) {
       const newName = result.value.trim();
-      // window.allPedalboards[selectedBoardIndex].board_name = newName;
-      // window.pedalboard.board_name = newName;
 
-      // const dropdown = document.getElementById('pedalboardSelect');
-      // dropdown.options[selectedBoardIndex].textContent = newName;
+      // --- Validation for new board name ---
+      const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/;
 
-      // savePedalboard();
-      const allowedRegex = /^[A-Za-z0-9 _-]+$/;
-
-      if (!allowedRegex.test(newName)) {
+      // Remove emojis using Unicode property escapes
+      function removeEmojis(str) {
+        return str.replace(/[\p{So}\p{Cn}]/gu, '');
+      }
+      // Sanitize newName
+      let sanitizedName = newName;
+      // Remove forbidden characters
+      sanitizedName = sanitizedName.replace(forbiddenRegex, '');
+      // Remove emojis
+      sanitizedName = removeEmojis(sanitizedName);
+      // Collapse multiple spaces and trim
+      sanitizedName = sanitizedName.replace(/\s+/g, ' ').trim();
+      // If sanitized name differs from original, show error and stop
+      if (sanitizedName !== newName) {
         Swal.fire({
           title: 'Invalid board name',
-          text: 'Board name contains forbidden characters. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
+          text: 'Board name contained forbidden characters.',
           icon: 'error',
           customClass: {
             confirmButton: 'bx--btn bx--btn--primary',
@@ -1007,6 +1033,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
         // Do NOT update dropdown
         return;
       }
+
 
       // ✅ Name is valid, update dropdown and internal data
       window.allPedalboards[selectedBoardIndex].board_name = newName;
@@ -1238,21 +1265,35 @@ function importGuestPedalboard(board, userFromServer) {
     }
 
     // --- Validation for board name ---
-    // Allowed: letters, numbers, space, underscore, dash
-    const allowedRegex = /^[A-Za-z0-9 _-]+$/;
-    if (!allowedRegex.test(boardName)) {
+    const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/;
+    // Remove emojis using Unicode property escapes
+    function removeEmojis(str) {
+      return str.replace(/[\p{So}\p{Cn}]/gu, '');
+    }
+    // Sanitize boardName
+    let sanitizedBoardName = boardName;
+    // Remove forbidden characters
+    sanitizedBoardName = sanitizedBoardName.replace(forbiddenRegex, '');
+    // Remove emojis
+    sanitizedBoardName = removeEmojis(sanitizedBoardName);
+    // Collapse multiple spaces and trim
+    sanitizedBoardName = sanitizedBoardName.replace(/\s+/g, ' ').trim();
+    // If sanitized name differs from original, show error and stop
+    if (sanitizedBoardName !== boardName) {
       Swal.fire({
         title: 'Invalid board name',
-        text: 'Board name contains forbidden characters. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
+        text: 'Board name contained forbidden characters.',
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary',
         },
         buttonsStyling: false,
       });
+
       reject("Invalid board_name");
-      return; // 🔴 Stop execution
+      return; // Stop execution
     }
+
 
     const token = localStorage.getItem('authToken');
 
