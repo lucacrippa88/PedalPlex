@@ -892,35 +892,49 @@ async function createPreset() {
   // 4. Create preset in Cloudant
   // -------------------------------
 
-  const allowedRegex = /^[A-Za-z0-9 _-]+$/; // letters, numbers, spaces, underscore, dash
+  // --- Helper to sanitize and validate names ---
+  function removeForbiddenChars(str) {
+    // Forbidden characters: $ % * \ | ( ) [ ] { } ^ £ ; < >
+    const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
 
-  // Validate board_name
-  if (!allowedRegex.test(selectedBoardName)) {
+    // Remove emojis using Unicode property escapes
+    str = str.replace(/[\p{So}\p{Cn}]/gu, '');
+
+    // Remove explicitly forbidden characters
+    str = str.replace(forbiddenRegex, '');
+
+    // Collapse multiple spaces and trim
+    str = str.replace(/\s+/g, ' ').trim();
+
+    return str;
+  }
+
+  // Validate selectedBoardName
+  const sanitizedBoardName = removeForbiddenChars(selectedBoardName);
+  if (sanitizedBoardName !== selectedBoardName) {
     Swal.fire({
       title: 'Invalid preset name',
-      text: 'Preset name contains forbidden characters.',
+      text: 'Board name contained forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
       icon: 'error',
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--primary'
-      },
+      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
     return; // Stop execution
   }
 
-  // Validate preset_name
-  if (!allowedRegex.test(presetName)) {
+  // Validate presetName
+  const sanitizedPresetName = removeForbiddenChars(presetName);
+  if (sanitizedPresetName !== presetName) {
     Swal.fire({
       title: 'Invalid preset name',
-      text: 'Preset name contains forbidden characters.',
+      text: 'Preset name contained forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
       icon: 'error',
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--primary'
-      },
+      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
     return; // Stop execution
   }
+
 
   // Prepare body data (user_id is ignored on server, derived from JWT)
   const bodyData = {

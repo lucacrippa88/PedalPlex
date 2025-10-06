@@ -1,5 +1,3 @@
-// folder.js (replace your existing file with this)
-
 // ---------------------------
 // folder.js (robust)
 // ---------------------------
@@ -9,16 +7,46 @@ let folders = []; // kept for backwards compatibility but use window.folders as 
 window.folders = window.folders || [];
 
 // ---------------------------
-// Update folder on server helper
+// Update folder on server helper (with sanitization)
 // ---------------------------
 async function updateFolderOnServer(folder) {
   try {
     const folderId = folder.id || folder._id;
     if (!folderId) throw new Error('Missing folder id for updateFolderOnServer');
 
+    // --- Sanitization function (reuse same rules as creation) ---
+    function removeForbiddenChars(str) {
+      // Forbidden characters: $ % * \ | ( ) [ ] { } ^ £ ; < >
+      const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
+      // Remove emojis using Unicode property escapes
+      str = str.replace(/[\p{So}\p{Cn}]/gu, '');
+      // Remove explicitly forbidden chars
+      str = str.replace(forbiddenRegex, '');
+      // Collapse multiple spaces and trim
+      str = str.replace(/\s+/g, ' ').trim();
+
+      return str;
+    }
+
+    // Sanitize folder name if present
+    let sanitizedName = folder.name ? removeForbiddenChars(folder.name) : '';
+
+    if (folder.name && sanitizedName !== folder.name) {
+      Swal.fire({
+        title: 'Invalid characters',
+        text: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary',
+        },
+        buttonsStyling: false,
+      });
+      return { ok: false, error: 'Folder name contains forbidden characters' };
+    }
+
     const formData = new URLSearchParams();
     formData.append('folder_id', folderId);
-    // ensure it's a JSON string
+    if (sanitizedName) formData.append('name', sanitizedName);
     formData.append('preset_ids', JSON.stringify(folder.preset_ids || []));
 
     const token = localStorage.getItem('authToken');
@@ -27,16 +55,19 @@ async function updateFolderOnServer(folder) {
       headers: { 
         'Content-Type': 'application/x-www-form-urlencoded',
         'Authorization': 'Bearer ' + token
-       },
+      },
       body: formData.toString()
     });
+
     const json = await res.json();
     return json;
+
   } catch (err) {
     console.error('[folders] updateFolderOnServer error:', err);
     return { ok: false, error: err.message || String(err) };
   }
 }
+
 
 // Expose to global so preset.js can call it
 window.updateFolderOnServer = updateFolderOnServer;
@@ -117,22 +148,39 @@ async function saveFolderToDB(folder, explicitBoardId) {
   // Input field element (replace '#folderNameInput' with your actual input ID)
   const folderInput = document.querySelector('#folderNameInput');
   
-  // Allowed characters: letters, numbers, space, underscore, dash
-  const allowedRegex = /^[\p{L}\p{N} _-]*$/u;
+  // --- Validation for folder name ---
+  function removeForbiddenChars(str) {
+    // Forbidden characters: $ % * \ | ( ) [ ] { } ^ £ ; < >
+    const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
 
-  if (!allowedRegex.test(folder.name)) {
+    // Remove emojis using Unicode property escapes
+    str = str.replace(/[\p{So}\p{Cn}]/gu, '');
+
+    // Remove explicitly forbidden chars
+    str = str.replace(forbiddenRegex, '');
+
+    // Collapse multiple spaces and trim
+    str = str.replace(/\s+/g, ' ').trim();
+
+    return str;
+  }
+
+  const sanitizedName = removeForbiddenChars(folder.name);
+
+  if (sanitizedName !== folder.name) {
     // Highlight input in red if invalid characters exist
     if (folderInput) folderInput.style.border = '2px solid red';
-    
+
     Swal.fire({
       title: 'Invalid characters',
-      text: 'Folder name contains forbidden special characters.',
+      text: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
       icon: 'error',
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary',
       },
       buttonsStyling: false,
     });
+
     return null;
   } else {
     // Reset border if valid
@@ -423,6 +471,30 @@ function attachRenameFolderListener() {
       });
 
       try {
+        // --- Sanitization function (reuse same rules) ---
+        function removeForbiddenChars(str) {
+          const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
+          str = str.replace(/[\p{So}\p{Cn}]/gu, ''); // remove emojis
+          str = str.replace(forbiddenRegex, '');      // remove explicit forbidden chars
+          str = str.replace(/\s+/g, ' ').trim();     // collapse spaces & trim
+          return str;
+        }
+
+        const sanitizedName = removeForbiddenChars(newName.trim());
+
+        if (sanitizedName !== newName.trim()) {
+          Swal.fire({
+            title: 'Invalid characters',
+            text: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+            icon: 'error',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary',
+            },
+            buttonsStyling: false,
+          });
+          return; // Stop execution if invalid characters
+        }
+
         const token = localStorage.getItem('authToken');
         const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
           method: 'POST',
@@ -430,7 +502,7 @@ function attachRenameFolderListener() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': 'Bearer ' + token
           },
-          body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(newName.trim())}`
+          body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(sanitizedName)}`
         });
 
         const result = await res.json();
