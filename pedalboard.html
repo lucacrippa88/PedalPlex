@@ -211,6 +211,9 @@
                   });
               } else {
                 localStorage.removeItem("guestPedalboard"); // discard
+                  // Initialize pedalboard for logged-in user
+                  if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
+                  if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
               }
             });
             return;
