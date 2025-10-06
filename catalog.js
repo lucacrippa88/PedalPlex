@@ -26,7 +26,13 @@ function initCatalog(userRole) {
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
 
-  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`)
+  const token = localStorage.getItem('authToken');
+
+  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
+    headers: {
+            'Authorization': 'Bearer ' + token
+          },
+    })
     .then(response => {
       if (!response.ok) throw new Error("Network response was not ok");
       return response.json();
