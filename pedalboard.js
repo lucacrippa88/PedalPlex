@@ -1,16 +1,12 @@
 let selectedBoardIndex = 0;
 window.allPedalboards = []; // store all pedalboards here
 
-
+// HELPER
 function saveSelectedBoardToLocalStorage() {
   if (!window.pedalboard) return;
   localStorage.setItem('lastPedalboardId', window.pedalboard._id);
   localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
 }
-
-
-
-
 
 
 
@@ -862,9 +858,56 @@ $(document).ready(function () {
   const userId = currentUser?.userid;
 
   // --- GUEST USER CREATE ---
+  // if (currentUser?.role === 'guest') {
+  //   const guestBoards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
+  //   const newBoard = { board_name: boardName, pedals: [] };
+  //   guestBoards.push(newBoard);
+  //   localStorage.setItem('guestPedalboard', JSON.stringify(guestBoards));
+  //   window.allPedalboards = guestBoards;
+  //   selectedBoardIndex = guestBoards.length - 1;
+  //   window.pedalboard = structuredClone(newBoard);
+  //   setupPedalboardDropdownAndRender();
+
+  //   Swal.fire({
+  //     icon: 'success',
+  //     title: 'Pedalboard created locally!',
+  //     timer: 1200,
+  //     showConfirmButton: false
+  //   });
+  //   // Show viewPreset even for guests if at least one pedalboard exists
+  //   $("#pedalboard-controls").css("display", "inline-flex");
+  //     $("#viewPreset").css("display", "inline-flex");
+  //   return;
+  // }
+
+  // --- GUEST USER CREATE ---
   if (currentUser?.role === 'guest') {
+    const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/;
+
+    function removeEmojis(str) {
+      return str.replace(/[\p{So}\p{Cn}]/gu, '');
+    }
+
+    // Sanitize input
+    let sanitizedBoardName = boardName.replace(forbiddenRegex, '');
+    sanitizedBoardName = removeEmojis(sanitizedBoardName);
+    sanitizedBoardName = sanitizedBoardName.replace(/\s+/g, ' ').trim();
+
+    if (sanitizedBoardName !== boardName) {
+      Swal.fire({
+        title: 'Invalid board name',
+        text: 'Board name contains forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+        icon: 'error',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary',
+        },
+        buttonsStyling: false,
+      });
+      return; // stop execution
+    }
+
     const guestBoards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
-    const newBoard = { board_name: boardName, pedals: [] };
+    const newBoard = { board_name: sanitizedBoardName, pedals: [] };
     guestBoards.push(newBoard);
     localStorage.setItem('guestPedalboard', JSON.stringify(guestBoards));
     window.allPedalboards = guestBoards;
@@ -878,11 +921,12 @@ $(document).ready(function () {
       timer: 1200,
       showConfirmButton: false
     });
-    // Show viewPreset even for guests if at least one pedalboard exists
+
     $("#pedalboard-controls").css("display", "inline-flex");
-      $("#viewPreset").css("display", "inline-flex");
+    $("#viewPreset").css("display", "inline-flex");
     return;
   }
+
 
   // --- LOGGED-IN USER CREATE (existing fetch) ---
 
