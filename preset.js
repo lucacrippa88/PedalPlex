@@ -1391,12 +1391,11 @@ function initGuestMode() {
 
 
 // --- Global function accessible everywhere ---
-function removeForbiddenChars(str) {
-  if (!str) return '';
-  
-  // Only allow letters, numbers, spaces, and safe punctuation: / , . - _ & ' " ! ? :
-  const safeRegex = /[^a-zA-Z0-9\s\/,.\-_&'"!?:]/g;
-  
-  return str.replace(safeRegex, '').trim();
-}
+  function removeForbiddenChars(str) {
+    const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
+    str = str.replace(/[\p{So}\p{Cn}]/gu, ''); // remove emojis
+    str = str.replace(forbiddenRegex, '');      // remove explicit forbidden chars
+    str = str.replace(/\s+/g, ' ').trim();     // collapse spaces & trim
+    return str;
+  }
 
