@@ -90,21 +90,6 @@ function populateFolderDropdown() {
     placeholder.disabled = true;
     folderSelect.appendChild(placeholder);
   }
-  // // Add folders to dropdown
-  // sortedFolders.forEach(f => {
-  //   if (!f) return;
-  //   const opt = document.createElement('option');
-  //   opt.value = f.id || f._id;
-  //   opt.textContent = f.name || '(Untitled folder)';
-  //   folderSelect.appendChild(opt);
-  // });
-
-  // // Placeholder option at the end (optional)
-  // const placeholder = document.createElement('option');
-  // placeholder.value = '';
-  // placeholder.textContent = '-- Select Folder --';
-  // placeholder.disabled = true;
-  // folderSelect.appendChild(placeholder);
 
   // ✅ Auto-apply first preset when folder changes
   folderSelect.onchange = (e) => {
@@ -125,68 +110,6 @@ function populateFolderDropdown() {
 
 
 
-// // ---------------------------
-// // Save folder to DB
-// // ---------------------------
-// async function saveFolderToDB(folder, explicitBoardId) {
-//   try {
-//     const boardId = explicitBoardId || (window.pedalboard && window.pedalboard._id);
-//     if (!boardId) {
-//       Swal.fire({
-//         title: 'Error',
-//         text: 'No pedalboard selected. Please select one before creating a folder.',
-//         icon: 'error',
-//         customClass: {
-//           confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-//         },
-//         buttonsStyling: false,
-//       });
-//       return null;
-//     }
-
-//     const token = localStorage.getItem('authToken');
-
-//     const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_FOLDER.php', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': 'Bearer ' + token
-//       },
-//       body: JSON.stringify({
-//         user_id: window.currentUser.userid,
-//         board_id: boardId,
-//         name: folder.name
-//       })
-//     });
-
-//     const result = await res.json();
-//     if (result.ok) return result;
-
-//       Swal.fire({
-//         title: 'Error',
-//         text: 'Could not save folder: ' + (result.error || 'Unknown error'),
-//         icon: 'error',
-//         customClass: {
-//           confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-//         },
-//         buttonsStyling: false,
-//       });
-//       return null;
-//   } catch (err) {
-//     console.error(err);
-//     Swal.fire({
-//       title: 'Error',
-//       text: 'Network or server error',
-//       icon: 'error',
-//       customClass: {
-//         confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-//       },
-//       buttonsStyling: false,
-//     });
-//     return null;
-//   }
-// }
-
 // ---------------------------
 // Save folder to DB
 // ---------------------------
@@ -203,7 +126,7 @@ async function saveFolderToDB(folder, explicitBoardId) {
     
     Swal.fire({
       title: 'Invalid characters',
-      text: 'Folder name contains forbidden special characters. Only letters, numbers, spaces, underscore (_), and dash (-) are allowed.',
+      text: 'Folder name contains forbidden special characters.',
       icon: 'error',
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary',
@@ -355,82 +278,6 @@ function attachAddFolderListener() {
 }
 
 
-
-
-
-// function attachAddFolderListener() {
-//   const addFolderBtn = document.getElementById('addFolderBtn');
-//   if (!addFolderBtn) return;
-
-//   addFolderBtn.addEventListener('click', async () => {
-//     const board = window.pedalboard;
-//     if (!board || !board._id) {
-//       Swal.fire({
-//         title: 'Select Board',
-//         text: 'Please select a pedalboard before creating a folder.',
-//         icon: 'info',
-//         customClass: {
-//           confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-//         },
-//         buttonsStyling: false,
-//       });
-//       return;
-//     }
-
-//     const boardName = board.board_name || 'Unnamed Pedalboard';
-//     const { value: folderName, isConfirmed } = await Swal.fire({
-//       title: `New Folder for "${boardName}"`,
-//       input: 'text',
-//       inputLabel: 'Folder Name',
-//       confirmButtonText: "Create",
-//       inputPlaceholder: 'Enter folder name',
-//       showCancelButton: true,
-//       buttonsStyling: false,
-//       customClass: {
-//         confirmButton: "bx--btn bx--btn--primary",
-//         cancelButton: "bx--btn bx--btn--secondary"
-//       },
-//       inputValidator: (v) => !v.trim() && 'Folder name cannot be empty'
-//     });
-
-//     if (isConfirmed && folderName && folderName.trim()) {
-//       const newFolder = {
-//         name: folderName.trim(),
-//         preset_ids: []
-//       };
-
-//       const saved = await saveFolderToDB(newFolder, board._id);
-//       if (saved) {
-//         // cloudant response may contain id/_id — normalize
-//         const normalized = {
-//           id: saved.id || saved._id || saved.id,
-//           _id: saved.id || saved._id,
-//           name: newFolder.name,
-//           preset_ids: []
-//         };
-//         // Reload folders from server to ensure _rev and other fields are fresh
-//         await loadFoldersForCurrentPedalboard();
-//         const folderSelect = document.getElementById('folderSelect');
-//         if (folderSelect) {
-//           folderSelect.value = saved.id || saved._id;
-//           // Ensure presets are cleared for this new folder
-//           populatePresetDropdownByFolder(folderSelect.value, null, true);
-//         }
-
-
-//         Swal.fire({
-//           title: 'Success',
-//           text: `Folder "${newFolder.name}" created for "${boardName}"`,
-//           icon: 'success',
-//           customClass: {
-//             confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
-//           },
-//           buttonsStyling: false,
-//         });
-//       }
-//     }
-//   });
-// }
 
 // ---------------------------
 // Rename/Delete Folder (consistent UX)
@@ -707,89 +554,6 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
 }
 
 
-// async function loadFoldersForCurrentPedalboard(forSwal = false) {
-
-//   if (!window.currentUser || !window.pedalboard || !window.pedalboard._id) {
-//     console.warn('[folders] Missing currentUser or pedalboard/_id — aborting loadFoldersForCurrentPedalboard');
-//     window.folders = [];
-//     if (!forSwal) populateFolderDropdown();
-//     return window.folders;
-//   }
-
-//   let loader, folderSelect;
-//   if (!forSwal) {
-//     loader = document.getElementById('folderSelectLoader');
-//     folderSelect = document.getElementById('folderSelect');
-//     if (loader) loader.style.display = 'flex';
-//     if (folderSelect) folderSelect.style.display = 'none';
-//   }
-
-//   try {
-//     const payload = {
-//       user_id: window.currentUser.userid,
-//       board_id: window.pedalboard._id
-//     };
-
-//     const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_FOLDERS.php', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify(payload)
-//     });
-
-//     const text = await res.text();
-
-//     let data;
-//     try {
-//       data = text ? JSON.parse(text) : null;
-//     } catch (parseErr) {
-//       console.error('[folders] Failed to parse JSON from GET_FOLDERS:', parseErr);
-//       data = null;
-//     }
-
-//     // Normalize into window.folders array
-//     if (!data) { window.folders = [];
-//     } else if (Array.isArray(data.folders)) { window.folders = data.folders;
-//     } else if (Array.isArray(data.docs)) { window.folders = data.docs;
-//     } else if (Array.isArray(data)) { window.folders = data;
-//     } else if (data.error) {
-//       console.error('[folders] Server returned error:', data.error);
-//       window.folders = [];
-//     } else {
-//       const possible = data.folders || data.docs || Object.values(data).find(v => Array.isArray(v));
-//       window.folders = Array.isArray(possible) ? possible : [];
-//     }
-
-//     // Ensure each folder has proper id, name, preset_ids, and _rev
-//     window.folders = window.folders.map((f, idx) => {
-//       if (typeof f === 'string') return { id: `folder_${idx}`, name: f, preset_ids: [], _rev: null };
-//       return {
-//         id: f._id || f.id || f['_id'] || `folder_${idx}`,   // fallback ID
-//         _id: f._id || f.id || f['_id'] || `folder_${idx}`,
-//         _rev: f._rev || f.rev || null,                      // keep revision
-//         name: f.name || f.folder_name || f.title || `(Folder ${idx + 1})`,
-//         preset_ids: Array.isArray(f.preset_ids)
-//           ? f.preset_ids
-//           : (Array.isArray(f.presets) ? f.presets : [])
-//       };
-//     });
-
-
-//     // Update main page dropdown only if not for Swal
-//     if (!forSwal) populateFolderDropdown();
-
-//     return window.folders;
-//   } catch (err) {
-//     console.error('[folders] Error fetching folders:', err);
-//     window.folders = [];
-//     if (!forSwal) populateFolderDropdown();
-//     return window.folders;
-//   } finally {
-//     if (!forSwal) {
-//       if (loader) loader.style.display = 'none';
-//       if (folderSelect) folderSelect.style.display = 'inline-block';
-//     }
-//   }
-// }
 
 // Expose globally (keep your existing API)
 window.attachAddFolderListener = attachAddFolderListener;

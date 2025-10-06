@@ -898,7 +898,7 @@ async function createPreset() {
   if (!allowedRegex.test(selectedBoardName)) {
     Swal.fire({
       title: 'Invalid preset name',
-      text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+      text: 'Preset name contains forbidden characters.',
       icon: 'error',
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary'
@@ -912,7 +912,7 @@ async function createPreset() {
   if (!allowedRegex.test(presetName)) {
     Swal.fire({
       title: 'Invalid preset name',
-      text: 'Preset name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+      text: 'Preset name contains forbidden characters.',
       icon: 'error',
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary'
