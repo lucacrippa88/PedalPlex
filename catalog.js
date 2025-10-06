@@ -30,8 +30,8 @@ function initCatalog(userRole) {
 
   fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
     headers: {
-            'Authorization': 'Bearer ' + token
-          },
+        'Authorization': 'Bearer ' + token
+      },
     })
     .then(response => {
       if (!response.ok) throw new Error("Network response was not ok");
