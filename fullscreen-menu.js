@@ -75,7 +75,7 @@ window.fullscreenMenuHtml = `
 
     <button id="loginFullscreenBtn" class="bx--btn bx--btn--primary" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-        <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
+        <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2 2V28A2,2,0,0,1,26,30Z"/>
         <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
       </svg>
       Login
@@ -90,14 +90,29 @@ window.fullscreenMenuHtml = `
     © <span id="year-range"></span> PedalPlex · 
     <a href="terms">Terms</a> · <a href="privacy">Privacy</a> · <a href="#">Support</a>
   </div>
-  
 </div>
 `;
+
+// ==========================
+// Helper: update fullscreen menu buttons
+// ==========================
+function updateFullscreenMenu() {
+  if (!window.currentUser || window.currentUser.role === "guest") {
+    $("#loginFullscreenBtn, #guestLoginMessage").show();
+    $("#profileBtn, #logoutBtn").hide();
+  } else {
+    $("#loginFullscreenBtn, #guestLoginMessage").hide();
+    $("#profileBtn, #logoutBtn").show();
+  }
+}
 
 // ==========================
 // DOM Ready
 // ==========================
 $(document).ready(function () {
+  // Inject menu HTML if missing
+  if (!$("#fullscreenMenu").length) $("body").append(window.fullscreenMenuHtml);
+
   // Close fullscreen menu
   $(document).on('click', '#closeMenu', function () {
     $('#fullscreenMenu').removeClass('active');
@@ -110,18 +125,11 @@ $(document).ready(function () {
     $('#fullscreenMenu').addClass('active');
   });
 
-  // Safe check for currentUser
+  // Wait for currentUser to be set, then update menu
   const checkUserInterval = setInterval(() => {
     if (window.currentUser !== undefined) {
       clearInterval(checkUserInterval);
-
-      if (window.currentUser && window.currentUser.role && window.currentUser.role !== "guest") {
-        $("#loginFullscreenBtn, #guestLoginMessage").hide();
-        $("#profileBtn, #logoutBtn").show();
-      } else {
-        $("#loginFullscreenBtn, #guestLoginMessage").show();
-        $("#profileBtn, #logoutBtn").hide();
-      }
+      updateFullscreenMenu();
     }
   }, 100);
 
@@ -156,6 +164,8 @@ $(document).ready(function () {
       }).then((result) => {
         if (result.isConfirmed) {
           localStorage.removeItem('authToken');
+          window.currentUser = { role: 'guest', username: 'guest' }; // reset state
+          updateFullscreenMenu(); // immediately update buttons
           window.location.href = '/PedalPlex/';
         }
       });
@@ -167,9 +177,7 @@ $(document).ready(function () {
     window.location.href = 'login';
   });
 
-
-
-  // -- dynamic year helper (robust: waits until #year-range exists) --
+  // -- dynamic year helper --
   function setYearRangeIfReady() {
     const startYear = 2025;
     const currentYear = new Date().getFullYear();
@@ -182,19 +190,12 @@ $(document).ready(function () {
     return false;
   }
 
-  // Try immediately; if element not present yet, poll until it appears (then write and stop).
   if (!setYearRangeIfReady()) {
     let retries = 0;
-    const maxRetries = 30; // ~3 seconds with 100ms interval
+    const maxRetries = 30;
     const pollId = setInterval(() => {
       retries++;
-      if (setYearRangeIfReady() || retries >= maxRetries) {
-        clearInterval(pollId);
-        if (retries >= maxRetries) {
-          console.warn("year-range element not found after waiting; year not set.");
-        }
-      }
+      if (setYearRangeIfReady() || retries >= maxRetries) clearInterval(pollId);
     }, 100);
   }
-
 });
