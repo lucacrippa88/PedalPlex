@@ -174,8 +174,8 @@
           const parsed = JSON.parse(guestBoards);
           if (parsed.length > 0) {
             Swal.fire({
-              title: "Import Guest Pedalboard?",
-              text: "We found pedalboards you created as a guest. Do you want to import them into your account?",
+              title: "Import last saved Guest Pedalboard?",
+              text: "We found a pedalboard you created as a guest. Do you want to import it into your account?",
               icon: "question",
               showCancelButton: true,
               confirmButtonText: "Yes, import",
@@ -211,7 +211,7 @@
                     Swal.fire("Error", "Guest pedalboard could not be imported.", "error");
                   });
               } else {
-                localStorage.removeItem("guestPedalboard"); // discard
+                  localStorage.removeItem("guestPedalboard"); // discard
                   // Initialize pedalboard for logged-in user
                   if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
                   if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
