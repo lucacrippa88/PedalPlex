@@ -716,7 +716,7 @@ if ($("#pedal-published-button").length) {
     // Remove li elements entirely for regular users if status is reviewing or public
     const userRole = parent?.window?.currentUser?.role || "user";
     if (userRole !== "admin" && (status === "reviewing" || status === "public")) {
-        $("#pedal-published-options li").remove(); // ← use the correct UL ID
+        $("#pedal-published-options li").remove();
         $("#request-publication").remove(); // also hide the Ask Publication button
     }
 
