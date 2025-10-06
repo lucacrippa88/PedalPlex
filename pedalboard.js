@@ -774,7 +774,7 @@ function savePedalboard() {
     Swal.fire({
       icon: 'error',
       title: 'Invalid board name',
-      text: 'Board name contains forbidden characters.',
+      text: 'Board name contains forbidden characters.  Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
       confirmButtonText: 'Ok',
       customClass: {
         confirmButton: "bx--btn bx--btn--primary",
@@ -911,7 +911,7 @@ $(document).ready(function () {
           }
           Swal.fire({
             title: 'Invalid board name',
-            text: 'Board name contained forbidden characters.',
+            text: 'Board name contains forbidden characters.  Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
             icon: 'error',
             customClass: {
               confirmButton: 'bx--btn bx--btn--primary',
@@ -1022,7 +1022,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
       if (sanitizedName !== newName) {
         Swal.fire({
           title: 'Invalid board name',
-          text: 'Board name contained forbidden characters.',
+          text: 'Board name contains forbidden characters.  Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
           icon: 'error',
           customClass: {
             confirmButton: 'bx--btn bx--btn--primary',
@@ -1282,7 +1282,7 @@ function importGuestPedalboard(board, userFromServer) {
     if (sanitizedBoardName !== boardName) {
       Swal.fire({
         title: 'Invalid board name',
-        text: 'Board name contained forbidden characters.',
+        text: 'Board name contains forbidden characters.  Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary',
