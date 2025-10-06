@@ -765,7 +765,7 @@ function savePedalboard() {
     Swal.fire({
       icon: 'error',
       title: 'Invalid board name',
-      text: 'Board name contains forbidden characters. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+      text: 'Board name contains forbidden characters.',
       confirmButtonText: 'Ok',
       customClass: {
         confirmButton: "bx--btn bx--btn--primary",
@@ -879,30 +879,30 @@ $(document).ready(function () {
 
         const token = localStorage.getItem('authToken');
 
-        // --- Validation for board name ---
-        const allowedRegex = /^[A-Za-z0-9 _-]*$/; // notice * to match empty string
-        if (!allowedRegex.test(boardName)) {
-          // Remove forbidden characters immediately
-          const sanitizedBoardName = boardName.replace(/[^A-Za-z0-9 _-]/g, '');
+        // // --- Validation for board name ---
+        // const allowedRegex = /^[A-Za-z0-9 _-]*$/; // notice * to match empty string
+        // if (!allowedRegex.test(boardName)) {
+        //   // Remove forbidden characters immediately
+        //   const sanitizedBoardName = boardName.replace(/[^A-Za-z0-9 _-]/g, '');
           
-          // Update input field so user sees the cleaned value
-          const boardNameInput = document.getElementById('boardNameInput'); // replace with your actual input ID
-          if (boardNameInput) {
-            boardNameInput.value = sanitizedBoardName;
-          }
+        //   // Update input field so user sees the cleaned value
+        //   const boardNameInput = document.getElementById('boardNameInput'); // replace with your actual input ID
+        //   if (boardNameInput) {
+        //     boardNameInput.value = sanitizedBoardName;
+        //   }
 
-          Swal.fire({
-            title: 'Invalid board name',
-            text: 'Board name contained forbidden characters. They were removed. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
-            icon: 'error',
-            customClass: {
-              confirmButton: 'bx--btn bx--btn--primary',
-            },
-            buttonsStyling: false,
-          });
+        //   Swal.fire({
+        //     title: 'Invalid board name',
+        //     text: 'Board name contained forbidden characters.',
+        //     icon: 'error',
+        //     customClass: {
+        //       confirmButton: 'bx--btn bx--btn--primary',
+        //     },
+        //     buttonsStyling: false,
+        //   });
 
-          return; // Stop further execution
-        }
+        //   return; // Stop further execution
+        // }
 
 
         fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php', {
@@ -991,22 +991,26 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
       // dropdown.options[selectedBoardIndex].textContent = newName;
 
       // savePedalboard();
-      const allowedRegex = /^[A-Za-z0-9 _-]+$/;
 
-      if (!allowedRegex.test(newName)) {
-        Swal.fire({
-          title: 'Invalid board name',
-          text: 'Board name contains forbidden characters. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
-          icon: 'error',
-          customClass: {
-            confirmButton: 'bx--btn bx--btn--primary',
-          },
-          buttonsStyling: false,
-        });
+      // TEST -----------------
+      // const allowedRegex = /^[A-Za-z0-9 _-]+$/;
 
-        // Do NOT update dropdown
-        return;
-      }
+      // if (!allowedRegex.test(newName)) {
+      //   Swal.fire({
+      //     title: 'Invalid board name',
+      //     text: 'Board name contains forbidden characters.',
+      //     icon: 'error',
+      //     customClass: {
+      //       confirmButton: 'bx--btn bx--btn--primary',
+      //     },
+      //     buttonsStyling: false,
+      //   });
+
+      //   // Do NOT update dropdown
+      //   return;
+      // 
+      //}
+      // TEST -----------------
 
       // ✅ Name is valid, update dropdown and internal data
       window.allPedalboards[selectedBoardIndex].board_name = newName;
@@ -1239,20 +1243,20 @@ function importGuestPedalboard(board, userFromServer) {
 
     // --- Validation for board name ---
     // Allowed: letters, numbers, space, underscore, dash
-    const allowedRegex = /^[A-Za-z0-9 _-]+$/;
-    if (!allowedRegex.test(boardName)) {
-      Swal.fire({
-        title: 'Invalid board name',
-        text: 'Board name contains forbidden characters. Allowed: letters, numbers, spaces, underscore (_), and dash (-).',
-        icon: 'error',
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--primary',
-        },
-        buttonsStyling: false,
-      });
-      reject("Invalid board_name");
-      return; // 🔴 Stop execution
-    }
+    // const allowedRegex = /^[A-Za-z0-9 _-]+$/;
+    // if (!allowedRegex.test(boardName)) {
+    //   Swal.fire({
+    //     title: 'Invalid board name',
+    //     text: 'Board name contains forbidden characters.',
+    //     icon: 'error',
+    //     customClass: {
+    //       confirmButton: 'bx--btn bx--btn--primary',
+    //     },
+    //     buttonsStyling: false,
+    //   });
+    //   reject("Invalid board_name");
+    //   return; // 🔴 Stop execution
+    // }
 
     const token = localStorage.getItem('authToken');
 
