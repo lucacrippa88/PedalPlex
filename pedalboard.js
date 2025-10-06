@@ -744,35 +744,35 @@ function savePedalboard() {
   // --- VALIDATION FOR SPECIAL CHARACTERS ---
   const pedalboardToSave = window.allPedalboards[selectedBoardIndex];
 
-  function hasInvalidChars(obj) {
-    const regex = /[<>$#{}]/; // define your unwanted special characters here
-    for (let key in obj) {
-      if (typeof obj[key] === 'string' && regex.test(obj[key])) return true;
-      if (Array.isArray(obj[key])) {
-        for (let item of obj[key]) {
-          if (typeof item === 'string' && regex.test(item)) return true;
-          if (typeof item === 'object' && hasInvalidChars(item)) return true;
-        }
-      }
-      if (typeof obj[key] === 'object' && obj[key] !== null) {
-        if (hasInvalidChars(obj[key])) return true;
-      }
-    }
-    return false;
-  }
+  // function hasInvalidChars(obj) {
+  //   const regex = /[<>$#{}]/; // define your unwanted special characters here
+  //   for (let key in obj) {
+  //     if (typeof obj[key] === 'string' && regex.test(obj[key])) return true;
+  //     if (Array.isArray(obj[key])) {
+  //       for (let item of obj[key]) {
+  //         if (typeof item === 'string' && regex.test(item)) return true;
+  //         if (typeof item === 'object' && hasInvalidChars(item)) return true;
+  //       }
+  //     }
+  //     if (typeof obj[key] === 'object' && obj[key] !== null) {
+  //       if (hasInvalidChars(obj[key])) return true;
+  //     }
+  //   }
+  //   return false;
+  // }
 
-  if (hasInvalidChars(pedalboardToSave)) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Invalid board name',
-      text: 'Board name contains forbidden characters.',
-      confirmButtonText: 'Ok',
-      customClass: {
-        confirmButton: "bx--btn bx--btn--primary",
-      }
-    });
-    return;
-  }
+  // if (hasInvalidChars(pedalboardToSave)) {
+  //   Swal.fire({
+  //     icon: 'error',
+  //     title: 'Invalid board name',
+  //     text: 'Board name contains forbidden characters.',
+  //     confirmButtonText: 'Ok',
+  //     customClass: {
+  //       confirmButton: "bx--btn bx--btn--primary",
+  //     }
+  //   });
+  //   return;
+  // }
 
   // --- LOGGED-IN USER SAVE ---
   const token = localStorage.getItem('authToken');
