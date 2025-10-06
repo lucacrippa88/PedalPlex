@@ -480,14 +480,15 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     });
 
     // 1. Rename preset
+    const sanitizedName = removeForbiddenChars(newName);
     const success = await savePreset(currentPresetId, {
-      preset_name: newName
+      preset_name: sanitizedName
     });
     if (!success) {
       Swal.close();
       Swal.fire({
         title: 'Error',
-        text: 'Failed to rename preset. Only letters, numbers, spaces, underscore (_) and dash (-) are allowed.',
+        text: 'Preset name contained forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary', // Carbon primary button
