@@ -360,14 +360,14 @@ function attachRenameFolderListener() {
       return;
     }
 
-    const boardName = window.pedalboard?.board_name || 'Unnamed Pedalboard';
+    const boardName = decodeHTMLEntities(window.pedalboard?.board_name || 'Unnamed Folder');
     const { value: newName, isConfirmed, isDenied } = await Swal.fire({
       title: `Edit folder for "${boardName}"`,
       input: 'text',
       inputLabel: 'New folder name',
       confirmButtonText: "Rename",
       denyButtonText: "Delete",
-      inputValue: folder.name,
+      inputValue: decodeHTMLEntities(folder.name), // decode here
       showCancelButton: true,
       showDenyButton: true,
       inputValidator: v => !v.trim() && 'Folder name cannot be empty',
