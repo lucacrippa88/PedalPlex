@@ -467,6 +467,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
   }
 
   // Handle save
+// Handle save
 if (result.value) {
   const { newName, folderId } = result.value;
 
@@ -484,7 +485,7 @@ if (result.value) {
   }
 
   // Step 1: Show spinner
-  await Swal.fire({
+  Swal.fire({
     title: "Saving...",
     allowOutsideClick: false,
     didOpen: () => Swal.showLoading()
@@ -494,7 +495,7 @@ if (result.value) {
     // Step 2: Save preset name
     const success = await savePreset(currentPresetId, { preset_name: sanitizedName });
     if (!success) {
-      Swal.close(); // close spinner before showing error
+      Swal.close();
       await Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -502,7 +503,7 @@ if (result.value) {
         customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false
       });
-      return; // stop execution
+      return;
     }
 
     // Step 3: Move preset to folder
@@ -527,6 +528,7 @@ if (result.value) {
     }
     saveCurrentSelectionToStorage();
 
+    // Step 5: Close spinner before showing success
     Swal.close();
 
     await Swal.fire({
@@ -537,7 +539,8 @@ if (result.value) {
       showConfirmButton: false
     });
 
-    location.reload();
+    // Step 6: Reload UI after short delay so user sees success
+    setTimeout(() => location.reload(), 200);
 
   } catch (err) {
     Swal.close();
@@ -552,6 +555,7 @@ if (result.value) {
     });
   }
 }
+
 
 
 });
