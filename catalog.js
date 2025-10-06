@@ -27,6 +27,7 @@ function initCatalog(userRole) {
   const usernameParam = window.currentUser?.username || "";
 
   const token = localStorage.getItem('authToken');
+  console.log("token: ", token)
 
   fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
     headers: {
