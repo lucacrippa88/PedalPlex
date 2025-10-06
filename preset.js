@@ -910,23 +910,6 @@ async function createPreset() {
   // 4. Create preset in Cloudant
   // -------------------------------
 
-  // --- Helper to sanitize and validate names ---
-  function removeForbiddenChars(str) {
-    // Forbidden characters: $ % * \ | ( ) [ ] { } ^ £ ; < >
-    const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
-
-    // Remove emojis using Unicode property escapes
-    str = str.replace(/[\p{So}\p{Cn}]/gu, '');
-
-    // Remove explicitly forbidden characters
-    str = str.replace(forbiddenRegex, '');
-
-    // Collapse multiple spaces and trim
-    str = str.replace(/\s+/g, ' ').trim();
-
-    return str;
-  }
-
   // Validate selectedBoardName
   const sanitizedBoardName = removeForbiddenChars(selectedBoardName);
   if (sanitizedBoardName !== selectedBoardName) {
@@ -1394,4 +1377,20 @@ function initGuestMode() {
       renderFullPedalboard(validPedals);
     })
     .catch(err => console.error("Guest catalog fetch failed:", err));
+}
+
+
+// --- Global function accessible everywhere ---
+function removeForbiddenChars(str) {
+  if (!str) return '';
+  
+  // Remove forbidden characters
+  const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
+  str = str.replace(forbiddenRegex, '');
+  
+  // Remove emojis / special symbols
+  str = str.replace(/[\p{So}\p{Cn}]/gu, '');
+  
+  // Collapse spaces and trim
+  return str.replace(/\s+/g, ' ').trim();
 }
