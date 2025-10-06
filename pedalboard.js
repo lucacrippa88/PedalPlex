@@ -906,45 +906,55 @@ $(document).ready(function () {
 
 
         fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php', {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": "Bearer " + token
-          },
-          body: new URLSearchParams({
-            board_name: boardName,
-            user_id: userId
-          })
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data.ok) {
-              Swal.fire({
-                icon: 'success',
-                title: 'Pedalboard Created',
-                text: `Pedalboard "${boardName}" has been created successfully.`,
-                timer: 1000,
-                showConfirmButton: false,
-                willClose: () => {
-                  location.reload();
-                }
-              });
-            } else {
-              Swal.fire({
-                icon: 'error',
-                title: 'Creation Failed',
-                text: data.error || 'Unknown error'
-              });
-            }
-          })
-          .catch(err => {
-            console.error("Fetch error:", err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Request Error',
-              text: err.message || 'Network or server error'
-            });
-          });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Authorization": "Bearer " + token
+  },
+  body: new URLSearchParams({
+    board_name: boardName,
+    user_id: userId
+  })
+})
+.then(async res => {
+  const text = await res.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    throw new Error(`Invalid JSON from server: ${text}`);
+  }
+
+  if (!res.ok || !data.ok) {
+    // ⚠️ Backend failed (e.g., HTML sanitization)
+    throw new Error(data.error || "Unknown server error");
+  }
+
+  // ✅ Success
+  Swal.fire({
+    icon: 'success',
+    title: 'Pedalboard Created',
+    text: `Pedalboard "${boardName}" has been created successfully.`,
+    timer: 1000,
+    showConfirmButton: false,
+    willClose: () => {
+      location.reload();
+    }
+  });
+
+})
+.catch(err => {
+  Swal.fire({
+    icon: 'error',
+    title: 'Pedalboard creation failed',
+    text: err.message,
+    confirmButtonText: 'Ok',
+    customClass: {
+      confirmButton: "bx--btn bx--btn--primary"
+    }
+  });
+});
+
 
       }
     });
