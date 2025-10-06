@@ -1599,3 +1599,11 @@ function getBoxShadow(pedal, inside, insetIfNotFull) {
   // Handle partial inside
   return `${outerShadow}, ${insetIfNotFull}`;
 }
+
+
+// HALPER
+function decodeHTMLEntities(str) {
+  const txt = document.createElement('textarea');
+  txt.innerHTML = str;
+  return txt.value;
+}
