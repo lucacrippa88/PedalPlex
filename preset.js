@@ -470,20 +470,20 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 if (result.value) {
   const { newName, folderId } = result.value;
 
-  // ✅ Step 0: Validate locally before showing spinner
+  // Step 0: Validate locally before spinner
   const sanitizedName = removeForbiddenChars(newName);
-  if (sanitizedName !== newName) {
+  if (!newName || sanitizedName !== newName) {
     await Swal.fire({
       icon: 'error',
       title: 'Invalid preset name',
-      text: 'Preset name contained forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+      text: 'Preset name cannot be empty and cannot contain forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
     return;
   }
 
-  // ✅ Step 1: Show saving spinner
+  // Step 1: Show spinner
   await Swal.fire({
     title: "Saving...",
     allowOutsideClick: false,
@@ -491,19 +491,36 @@ if (result.value) {
   });
 
   try {
-    // ✅ Step 2: Save preset name
+    // Step 2: Save preset name
     const success = await savePreset(currentPresetId, { preset_name: sanitizedName });
     if (!success) {
-      throw new Error('Preset name rejected or failed to save.');
+      Swal.close(); // close spinner before showing error
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Preset name rejected by server. Please use only allowed characters.',
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+        buttonsStyling: false
+      });
+      return; // stop execution
     }
 
-    // ✅ Step 3: Move preset to folder
+    // Step 3: Move preset to folder
     const moveResult = await movePresetToFolder(currentPresetId, folderId || null);
     if (!moveResult || moveResult.ok !== true) {
-      throw new Error('Failed to update folder assignment for preset.');
+      Swal.close();
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to update folder assignment for preset.',
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+        buttonsStyling: false
+      });
+      console.error('movePresetToFolder result:', moveResult);
+      return;
     }
 
-    // ✅ Step 4: Update local UI and state
+    // Step 4: Update local state & UI
     updatePresetDropdownName(currentPresetId, sanitizedName);
     if (window.presetMap[currentPresetId]) {
       window.presetMap[currentPresetId].preset_name = sanitizedName;
@@ -529,12 +546,13 @@ if (result.value) {
     await Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: err.message || 'An unexpected error occurred while saving the preset.',
+      text: err.message || 'Unexpected error occurred while saving preset.',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
   }
 }
+
 
 });
 
