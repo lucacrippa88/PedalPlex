@@ -8,59 +8,59 @@ function setPedalJSON(jsonString) {
 }
 
 // Initialize catalog
-// function initCatalog(userRole) {
-//   const resultsDiv = document.getElementById("catalog");
+function initCatalog(userRole) {
+  const resultsDiv = document.getElementById("catalog");
 
-//   // Show loading spinner
-//   resultsDiv.innerHTML = `
-//       <div class="bx--loading-overlay">
-//         <div class="bx--loading" role="status">
-//           <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-//             <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-//             <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-//           </svg>
-//         </div>     
-//       </div>`;
+  // Show loading spinner
+  resultsDiv.innerHTML = `
+      <div class="bx--loading-overlay">
+        <div class="bx--loading" role="status">
+          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+          </svg>
+        </div>     
+      </div>`;
 
-//   const roleParam = userRole === "guest" ? "guest" : userRole;
-//   const usernameParam = window.currentUser?.username || "";
+  const roleParam = userRole === "guest" ? "guest" : userRole;
+  const usernameParam = window.currentUser?.username || "";
 
-//   const token = localStorage.getItem('authToken');
-//   console.log("token: ", token)
+  const token = localStorage.getItem('authToken');
+  console.log("token: ", token)
 
-//   fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
-//     headers: {
-//         'Authorization': 'Bearer ' + token
-//       }
-//     })
-//     .then(response => {
-//       if (!response.ok) throw new Error("Network response was not ok");
-//       return response.json();
-//     })
-//     .then(data => {
-//       pedals = data; // save globally
-//       resultsDiv.innerHTML = "";
-//       $("#pedalCount").text(`${pedals.length} gears`);
+  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
+    headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("Network response was not ok");
+      return response.json();
+    })
+    .then(data => {
+      pedals = data; // save globally
+      resultsDiv.innerHTML = "";
+      $("#pedalCount").text(`${pedals.length} gears`);
 
-//       pedals.sort((a, b) => a._id - b._id);
+      pedals.sort((a, b) => a._id - b._id);
 
-//       pedals.forEach(pedal => {
-//         const $pedalDiv = renderPedal(pedal, userRole);
-//         $pedalDiv.attr("data-author", pedal.author || "");
-//         $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-//         $(resultsDiv).append($pedalDiv);
-//       });
+      pedals.forEach(pedal => {
+        const $pedalDiv = renderPedal(pedal, userRole);
+        $pedalDiv.attr("data-author", pedal.author || "");
+        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+        $(resultsDiv).append($pedalDiv);
+      });
 
-//       // For logged-in users, enable edit handlers
-//       if (userRole !== "guest") {
-//         setupEditPedalHandler(pedals);
-//       }
-//     })
-//     .catch(error => {
-//       console.error("Error fetching pedals:", error);
-//       resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${error.message}</p>`;
-//     });
-// }
+      // For logged-in users, enable edit handlers
+      if (userRole !== "guest") {
+        setupEditPedalHandler(pedals);
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching pedals:", error);
+      resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${error.message}</p>`;
+    });
+}
 
 // Creation of new gear pedal (only for logged-in users)
 function createNewPedal() {
