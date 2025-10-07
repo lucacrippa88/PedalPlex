@@ -1061,7 +1061,7 @@ function setupEditPedalHandler(pedals) {
                         ...newPedalData,
                         _id: data.id,
                         _rev: data.rev,
-                        author: data.author || newPedal.author,
+                        author: window.currentUser?.username || "",
                         canEdit: true
                       };
 
