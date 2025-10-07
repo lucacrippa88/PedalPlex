@@ -247,7 +247,13 @@ function initCatalog(userRole) {
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
 
-  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`)
+  const token = localStorage.getItem('authToken');
+
+  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
+    headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    })    
     .then(res => res.ok ? res.json() : Promise.reject("Network error"))
     .then(pedals => {
       resultsDiv.innerHTML = "";
