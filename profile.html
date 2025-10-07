@@ -83,8 +83,6 @@
 
         window.currentUser = userFromServer;
 
-        console.log(userFromServer.role)
-
         if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
       },
       error: function(xhr) {
