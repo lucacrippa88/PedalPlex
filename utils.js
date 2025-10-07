@@ -929,9 +929,8 @@ function setupEditPedalHandler(pedals) {
     let boolDenyBtn = true;
     let boolCancelBtn = true;
 
-    if (isLockedStatus) {
-      // optionally disable Delete / Save for locked pedals
-      boolDenyBtn = false; // cannot delete
+    if (isLockedStatus && window.currentUser.role !== "admin") {
+      boolDenyBtn = false; // only lock for non-admins
     }
 
     const pedalCopy = JSON.parse(JSON.stringify(pedal));
@@ -1061,7 +1060,9 @@ function setupEditPedalHandler(pedals) {
                       const createdPedal = {
                         ...newPedalData,
                         _id: data.id,
-                        _rev: data.rev
+                        _rev: data.rev,
+                        author: data.author || newPedal.author,
+                        canEdit: true
                       };
 
                       pedals.push(createdPedal); // Add to global array
