@@ -88,11 +88,18 @@ function createNewPedal() {
             customClass: { confirmButton: 'bx--btn bx--btn--primary' }
           }).then(() => {
             const resultsDiv = document.getElementById("catalog");
-            const createdPedal = { ...newPedal, _id: data.id, _rev: data.rev, author: data.author || newPedal.author };
+            const createdPedal = {
+              ...newPedal,
+              _id: data.id,
+              _rev: data.rev,
+              author: data.author || newPedal.author,
+              canEdit: true
+            };
             pedals.push(createdPedal);
             const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
             $pedalDiv.attr("data-author", createdPedal.author || "");
             $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
+            $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
             $(resultsDiv).append($pedalDiv);
             updatePedalCounts();
             setupEditPedalHandler(pedals);
