@@ -9,6 +9,7 @@ function setPedalJSON(jsonString) {
 
 // Initialize catalog
 function initCatalog(userRole) {
+  console.log("✅ initCatalog called with role:", userRole);
   const resultsDiv = document.getElementById("catalog");
 
   // Show loading spinner
