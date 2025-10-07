@@ -905,28 +905,14 @@ function renderPedalControls(pedal, $pedalDiv) {
 function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
 
-    // const pedal = $(this).data("pedal");
-    // if (!pedal) {
-    //   console.error("Pedal data not found!");
-    //   return;
-    // }
+    const pedal = $(this).data("pedal");
+    if (!pedal) {
+      console.error("Pedal data not found!");
+      return;
+    }
 
-    // // SECURITY: rely only on server-provided flag
-    // if (!pedal.canEdit) {
-    //   Swal.fire({
-    //     title: 'Permission denied',
-    //     text: 'You are not allowed to edit this gear.',
-    //     icon: 'error',
-    //     confirmButtonText: 'OK',
-    //     customClass: { confirmButton: 'bx--btn bx--btn--primary' }
-    //   });
-    //   return;
-    // }
-
-    const pedalId = $(this).attr("data-pedal-id");
-    const pedal = pedals.find(p => p._id === pedalId);
-
-    if (!pedal || !pedal.canEdit) {
+    // SECURITY: rely only on server-provided flag
+    if (!pedal.canEdit) {
       Swal.fire({
         title: 'Permission denied',
         text: 'You are not allowed to edit this gear.',
@@ -1176,7 +1162,8 @@ function setupEditPedalHandler(pedals) {
               pedals[idx] = {
                 ...updated,
                 _id: data.id || updated._id,
-                _rev: data.rev || updated._rev
+                _rev: data.rev || updated._rev,
+                canEdit: true
               };
             }
 
