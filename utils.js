@@ -930,7 +930,8 @@ function setupEditPedalHandler(pedals) {
     let boolCancelBtn = true;
 
     if (isLockedStatus && window.currentUser.role !== "admin") {
-      boolDenyBtn = false; // only lock for non-admins
+        boolConfirmBtn = false;  // hide Save for non-admins
+        boolDenyBtn = false;     // optionally also hide Delete
     }
 
     const pedalCopy = JSON.parse(JSON.stringify(pedal));
