@@ -905,14 +905,28 @@ function renderPedalControls(pedal, $pedalDiv) {
 function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
 
-    const pedal = $(this).data("pedal");
-    if (!pedal) {
-      console.error("Pedal data not found!");
-      return;
-    }
+    // const pedal = $(this).data("pedal");
+    // if (!pedal) {
+    //   console.error("Pedal data not found!");
+    //   return;
+    // }
 
-    // SECURITY: rely only on server-provided flag
-    if (!pedal.canEdit) {
+    // // SECURITY: rely only on server-provided flag
+    // if (!pedal.canEdit) {
+    //   Swal.fire({
+    //     title: 'Permission denied',
+    //     text: 'You are not allowed to edit this gear.',
+    //     icon: 'error',
+    //     confirmButtonText: 'OK',
+    //     customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+    //   });
+    //   return;
+    // }
+
+    const pedalId = $(this).attr("data-pedal-id");
+    const pedal = pedals.find(p => p._id === pedalId);
+
+    if (!pedal || !pedal.canEdit) {
       Swal.fire({
         title: 'Permission denied',
         text: 'You are not allowed to edit this gear.',
@@ -1057,6 +1071,7 @@ function setupEditPedalHandler(pedals) {
                 .then(data => {
                   if (data.success) {
 
+                      // After creating the new pedal
                       const createdPedal = {
                         ...newPedalData,
                         _id: data.id,
@@ -1065,32 +1080,19 @@ function setupEditPedalHandler(pedals) {
                         canEdit: true
                       };
 
-                      pedals.push(createdPedal); // Add to global array
-
-                      // // Render the new pedal
-                      // const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
-                      // $pedalDiv.attr("data-author", createdPedal.author || "");
-                      // $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
-
-                      // // Attach pedal object to the edit button
-                      // $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
-
-                      // $("#catalog").append($pedalDiv);
+                      // Add to global array
+                      pedals.push(createdPedal);
 
                       // Render the new pedal
                       const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
                       $pedalDiv.attr("data-author", createdPedal.author || "");
                       $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
 
-                      // Attach pedal object to the edit button
-                      $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
+                      // Attach pedal id to the edit button
+                      $pedalDiv.find(".edit-btn").attr("data-pedal-id", createdPedal._id);
 
+                      // Append to DOM
                       $("#catalog").append($pedalDiv);
-
-                      // Debug: check if the edit button has the pedal data
-const editBtn = $pedalDiv.find(".edit-btn");
-console.log("Edit button found:", editBtn.length > 0);
-console.log("Pedal data attached:", editBtn.data("pedal"));
 
                       // Update pedal count
                       updatePedalCounts();
