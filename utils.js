@@ -1071,6 +1071,10 @@ function setupEditPedalHandler(pedals) {
                       const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
                       $pedalDiv.attr("data-author", createdPedal.author || "");
                       $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
+
+// ATTACH PEDAL OBJECT for edit handler
+$pedalDiv.data("pedal", createdPedal);
+
                       $("#catalog").append($pedalDiv);
 
                       // Update pedal count
