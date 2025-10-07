@@ -1067,15 +1067,30 @@ function setupEditPedalHandler(pedals) {
 
                       pedals.push(createdPedal); // Add to global array
 
+                      // // Render the new pedal
+                      // const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
+                      // $pedalDiv.attr("data-author", createdPedal.author || "");
+                      // $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
+
+                      // // Attach pedal object to the edit button
+                      // $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
+
+                      // $("#catalog").append($pedalDiv);
+
                       // Render the new pedal
                       const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
                       $pedalDiv.attr("data-author", createdPedal.author || "");
                       $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
 
-// Attach pedal object to the edit button
-$pedalDiv.find(".edit-btn").data("pedal", createdPedal);
+                      // Attach pedal object to the edit button
+                      $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
 
                       $("#catalog").append($pedalDiv);
+
+                      // Debug: check if the edit button has the pedal data
+const editBtn = $pedalDiv.find(".edit-btn");
+console.log("Edit button found:", editBtn.length > 0);
+console.log("Pedal data attached:", editBtn.data("pedal"));
 
                       // Update pedal count
                       updatePedalCounts();
