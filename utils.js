@@ -1072,8 +1072,8 @@ function setupEditPedalHandler(pedals) {
                       $pedalDiv.attr("data-author", createdPedal.author || "");
                       $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
 
-// ATTACH PEDAL OBJECT for edit handler
-$pedalDiv.data("pedal", createdPedal);
+// Attach pedal object to the edit button
+$pedalDiv.find(".edit-btn").data("pedal", createdPedal);
 
                       $("#catalog").append($pedalDiv);
 
