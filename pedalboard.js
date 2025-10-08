@@ -124,7 +124,7 @@ function initPedalboard(userRole) {
         console.error("Guest catalog fetch failed:", err);
         resultsDiv.innerHTML = `<p style="color:red;">Error loading guest catalog: ${err}</p>`;
       });
-    return; // ✅ stop here for guests
+    return; // Stop here for guests
   }
 
 
@@ -229,9 +229,9 @@ if (userRole === 'guest') {
   }
 
   $("#pedalboard-controls").css("display", "inline-flex");
-    $("#pedalboardSelect").css("display", "inline-flex");
-    $("#renameBoardBtn").css("display", "inline-flex");
-    $("#viewPreset").css("display", "inline-flex");   
+  $("#pedalboardSelect").css("display", "inline-flex");
+  $("#renameBoardBtn").css("display", "inline-flex");
+  $("#viewPreset").css("display", "inline-flex");   
 
   // Sort pedalboards alphabetically
   data.docs.sort((a, b) => {
@@ -305,11 +305,6 @@ if (typeof onPedalboardLoaded === "function") {
 function setupFilterUI(pedals) {
   const input = document.getElementById('pedalFilterInput');
   const dropdownContainer = document.getElementById('pedalAddDropdownContainer');
-
-  // if (!input || !dropdownContainer) {
-  //   console.warn('Missing input or dropdown container');
-  //   return;
-  // }
 
   dropdownContainer.style.position = 'absolute'; // For absolute positioning
   dropdownContainer.style.background = 'white';
@@ -690,17 +685,12 @@ function openEditPedalModal(pbPedal) {
 
 
 
-
+// HELPER
 function extractColorFromLogo(logoCss) {
   if (!logoCss) return null;
   const match = logoCss.match(/color\s*:\s*([^;]+);?/i);
   return match ? match[1].trim() : null;
 }
-
-
-
-
-
 
 
 
@@ -856,29 +846,6 @@ $(document).ready(function () {
       if (result.isConfirmed) {
   const boardName = result.value;
   const userId = currentUser?.userid;
-
-  // --- GUEST USER CREATE ---
-  // if (currentUser?.role === 'guest') {
-  //   const guestBoards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
-  //   const newBoard = { board_name: boardName, pedals: [] };
-  //   guestBoards.push(newBoard);
-  //   localStorage.setItem('guestPedalboard', JSON.stringify(guestBoards));
-  //   window.allPedalboards = guestBoards;
-  //   selectedBoardIndex = guestBoards.length - 1;
-  //   window.pedalboard = structuredClone(newBoard);
-  //   setupPedalboardDropdownAndRender();
-
-  //   Swal.fire({
-  //     icon: 'success',
-  //     title: 'Pedalboard created locally!',
-  //     timer: 1200,
-  //     showConfirmButton: false
-  //   });
-  //   // Show viewPreset even for guests if at least one pedalboard exists
-  //   $("#pedalboard-controls").css("display", "inline-flex");
-  //     $("#viewPreset").css("display", "inline-flex");
-  //   return;
-  // }
 
   // --- GUEST USER CREATE ---
   if (currentUser?.role === 'guest') {
