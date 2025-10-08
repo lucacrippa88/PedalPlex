@@ -937,7 +937,7 @@ function safeLogoStyle(inputStyle) {
                         "background-color", "padding", "position", "margin", "margin-left", "margin-right", "margin-bottom", 
                         "bottom", "top", "left", "right", "letter-spacing", "word-spacing", "display", "border", "margin-top", 
                         "line-height", "transform", "height", "width", "border-radius", "box-shadow", "background-size",
-                        "background-image", "text-align", "background", "rotate", "overflow", "white-space", "text-shadow", "text-decoration"];
+                        "background-image", "text-align", "background", "rotate", "overflow", "white-space", "text-shadow", "text-decoration", "text-decoration-style"];
   const safeRules = inputStyle.split(";").filter(rule => {
     const [prop] = rule.split(":");
     return allowedProps.includes(prop.trim().toLowerCase());
