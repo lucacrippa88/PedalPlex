@@ -355,3 +355,4 @@ function initCatalog(userRole) {
   // --- Initial load ---
   loadMore();
 }
+
