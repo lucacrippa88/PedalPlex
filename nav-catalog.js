@@ -165,7 +165,7 @@ function initCatalog(userRole){
 
   window.allPedals=[];
   window.visibleCount=0;
-  const batchSize=20;
+  const batchSize=100;
 
   fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, { headers:{'Authorization':'Bearer '+token} })
   .then(res=>res.ok?res.json():Promise.reject("Network error"))
@@ -185,36 +185,44 @@ function initCatalog(userRole){
   })
   .catch(err=>{resultsDiv.innerHTML=`<p style="color:red;">Error loading pedals: ${err}</p>`; console.error(err);});
 
-  function renderNextBatch(){
-    const slice=window.allPedals.slice(window.visibleCount, window.visibleCount+batchSize);
-    slice.forEach(pedal=>{
-      const $pedalDiv=renderPedal(pedal,userRole);
-      $pedalDiv.attr("data-author",pedal.author||"");
-      $pedalDiv.attr("data-published",(pedal.published||"draft").toLowerCase());
+  function renderNextBatch() {
+    const slice = window.allPedals.slice(window.visibleCount, window.visibleCount + batchSize);
+    slice.forEach(pedal => {
+      const $pedalDiv = renderPedal(pedal, userRole);
+      $pedalDiv.attr("data-author", pedal.author || "");
+      $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
       $(resultsDiv).append($pedalDiv);
     });
-    window.visibleCount+=slice.length;
-    if(userRole!=="guest") setupEditPedalHandler(window.allPedals);
+    window.visibleCount += slice.length;
+
+    if (userRole !== "guest") setupEditPedalHandler(window.allPedals);
     updatePedalCounts();
+
+    // Sposta il sentinel sempre alla fine
+    const sentinel = document.getElementById("lazySentinel");
+    if (sentinel) resultsDiv.appendChild(sentinel);
   }
 
   function setupLazyLoader(){
-    const sentinel = document.createElement("div");
-    sentinel.id = "lazySentinel";
-    sentinel.style.height = "1px";
-    resultsDiv.appendChild(sentinel);
+    let sentinel = document.getElementById("lazySentinel");
+    if(!sentinel){
+      sentinel = document.createElement("div");
+      sentinel.id = "lazySentinel";
+      sentinel.style.height = "1px";
+      resultsDiv.appendChild(sentinel);
+    }
 
     const observer = new IntersectionObserver(entries => {
       if(entries[0].isIntersecting){
-        // solo se ci sono ancora pedali da mostrare
         if(window.visibleCount < window.allPedals.length){
           renderNextBatch();
         }
       }
-    }, { rootMargin: "100px" }); // trigger prima che arrivi in fondo
+    }, { rootMargin: "200px" });
 
     observer.observe(sentinel);
   }
+
 
   function renderFiltered(filtered){
     resultsDiv.innerHTML="";
