@@ -138,81 +138,71 @@ function updatePedalCounts(activeFilter=null){
   });
 }
 
-function filterPedalsByStatus(filter) {
-  const currentUsername = (window.currentUser?.username || "").toLowerCase();
-  
-  // Filtra tutti i pedali in memoria
-  let filtered = window.allPedals.filter(pedal => {
-    const status = (pedal.published || "draft").toLowerCase();
-    const author = (pedal.author || "").toLowerCase();
-    const isMine = (status === "public" && author === currentUsername);
-    const isUserCreated = author && author !== "admin";
-
-    if(filter === "all") return true;
-    if(filter === "publicByMe") return isMine;
-    if(filter === "user") return isUserCreated;
-    return status === filter;
+function filterPedalsByStatus(filter){
+  const currentUsername=(window.currentUser?.username||"").toLowerCase();
+  const filtered=window.allPedals.filter(p=>{
+    const status=(p.published||"draft").toLowerCase();
+    const author=(p.author||"").toLowerCase();
+    if(filter==="all") return true;
+    if(filter==="publicByMe") return status==="public" && author===currentUsername;
+    if(filter==="user") return author && author!=="admin";
+    return status===filter;
   });
-
-  // Aggiorna la lista visibile e resetta lazy load
-  window.visibleCount = 0;
-  window.filteredPedals = filtered; // array temporaneo per lazy load
-  resultsDiv.innerHTML = "";
-  renderNextFilteredBatch();
+  renderFiltered(filtered);
+  updatePedalCounts(filter);
 }
-
-function renderNextFilteredBatch() {
-  const slice = window.filteredPedals.slice(window.visibleCount, window.visibleCount + batchSize);
-  slice.forEach(pedal => {
-    const $pedalDiv = renderPedal(pedal, userRole);
-    $pedalDiv.attr("data-author", pedal.author || "");
-    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-    $(resultsDiv).append($pedalDiv);
-  });
-  window.visibleCount += slice.length;
-  updatePedalCounts();
-  
-  // Sposta il sentinel in fondo
-  const sentinel = document.getElementById("lazySentinel");
-  if(sentinel) resultsDiv.appendChild(sentinel);
-}
-
 
 // --------------------
 // initCatalog con lazy load
 // --------------------
-function initCatalog(userRole){
-  const resultsDiv=document.getElementById("catalog");
-  resultsDiv.innerHTML=`<div class="bx--loading-overlay"><div class="bx--loading" role="status"><svg class="bx--loading__svg" viewBox="-75 -75 150 150"><circle class="bx--loading__background" cx="0" cy="0" r="37.5"/><circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/></svg></div></div>`;
+// -- initCatalog con lazy load stabile, filtri contatori e ricerca --
+function initCatalog(userRole) {
+  const resultsDiv = document.getElementById("catalog");
+  resultsDiv.innerHTML = `
+    <div class="bx--loading-overlay">
+      <div class="bx--loading" role="status">
+        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+        </svg>
+      </div>     
+    </div>`;
 
-  const roleParam=userRole==="guest"?"guest":userRole;
-  const usernameParam=window.currentUser?.username||"";
-  const token=localStorage.getItem('authToken');
+  const roleParam = userRole === "guest" ? "guest" : userRole;
+  const usernameParam = window.currentUser?.username || "";
+  const token = localStorage.getItem('authToken');
+  const batchSize = 20;
 
-  window.allPedals=[];
-  window.visibleCount=0;
-  const batchSize=100;
+  // Stato globale
+  window.allPedals = [];
+  window.currentPedals = [];
+  window.visibleCount = 0;
 
-  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, { headers:{'Authorization':'Bearer '+token} })
-  .then(res=>res.ok?res.json():Promise.reject("Network error"))
-  .then(data=>{
-    window.allPedals=data.sort((a,b)=>a._id-b._id);
-    window.visibleCount=0;
-    resultsDiv.innerHTML="";
-    renderNextBatch();
-    updatePedalCounts();
-    setupLazyLoader();
-
-    $("#pedalFilterInput").off("input").on("input",function(){
-      const val=$(this).val().toLowerCase();
-      const filtered=window.allPedals.filter(p=> (p._id?.toLowerCase().includes(val) || p.name?.toLowerCase().includes(val) || p.author?.toLowerCase().includes(val)));
-      renderFiltered(filtered);
-    });
+  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
+    headers: { 'Authorization': 'Bearer ' + token }
   })
-  .catch(err=>{resultsDiv.innerHTML=`<p style="color:red;">Error loading pedals: ${err}</p>`; console.error(err);});
+  .then(res => res.ok ? res.json() : Promise.reject("Errore rete"))
+  .then(data => {
+    resultsDiv.innerHTML = "";
+    window.allPedals = data.sort((a, b) => a._id - b._id);
+    window.currentPedals = [...window.allPedals];
+    window.visibleCount = 0;
+
+    renderNextBatch();        // mostra primi batch
+    updatePedalCounts();      // contatori iniziali
+
+    setupLazyLoader();        // lazy load scroll
+    setupSearchFilter();      // filtro in tempo reale
+  })
+  .catch(err => {
+    console.error("Error fetching pedals:", err);
+    resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
+  });
+
+  // ---------------- Funzioni interne ----------------
 
   function renderNextBatch() {
-    const slice = window.allPedals.slice(window.visibleCount, window.visibleCount + batchSize);
+    const slice = window.currentPedals.slice(window.visibleCount, window.visibleCount + batchSize);
     slice.forEach(pedal => {
       const $pedalDiv = renderPedal(pedal, userRole);
       $pedalDiv.attr("data-author", pedal.author || "");
@@ -224,12 +214,12 @@ function initCatalog(userRole){
     if (userRole !== "guest") setupEditPedalHandler(window.allPedals);
     updatePedalCounts();
 
-    // Sposta il sentinel sempre alla fine
+    // sposta sentinel in fondo
     const sentinel = document.getElementById("lazySentinel");
     if (sentinel) resultsDiv.appendChild(sentinel);
   }
 
-  function setupLazyLoader(){
+  function setupLazyLoader() {
     let sentinel = document.getElementById("lazySentinel");
     if(!sentinel){
       sentinel = document.createElement("div");
@@ -240,7 +230,7 @@ function initCatalog(userRole){
 
     const observer = new IntersectionObserver(entries => {
       if(entries[0].isIntersecting){
-        if(window.visibleCount < window.allPedals.length){
+        if(window.visibleCount < window.currentPedals.length){
           renderNextBatch();
         }
       }
@@ -249,18 +239,41 @@ function initCatalog(userRole){
     observer.observe(sentinel);
   }
 
-
-  function renderFiltered(filtered){
-    resultsDiv.innerHTML="";
-    filtered.forEach(pedal=>{
-      const $pedalDiv=renderPedal(pedal,userRole);
-      $pedalDiv.attr("data-author",pedal.author||"");
-      $pedalDiv.attr("data-published",(pedal.published||"draft").toLowerCase());
-      $(resultsDiv).append($pedalDiv);
+  function setupSearchFilter() {
+    $("#pedalFilterInput").off("input").on("input", function () {
+      const val = $(this).val().toLowerCase();
+      window.currentPedals = window.allPedals.filter(p =>
+        (p._id?.toLowerCase().includes(val) || 
+         p.name?.toLowerCase().includes(val) ||
+         p.author?.toLowerCase().includes(val))
+      );
+      window.visibleCount = 0;
+      resultsDiv.innerHTML = "";
+      renderNextBatch();
     });
-    updatePedalCounts();
   }
 }
+
+// --- Filtro contatori aggiornato ---
+function filterPedalsByStatus(filter) {
+  const currentUsername = (window.currentUser?.username || "").toLowerCase();
+  window.currentPedals = window.allPedals.filter(pedal => {
+    const status = (pedal.published || "draft").toLowerCase();
+    const author = (pedal.author || "").toLowerCase();
+    const isMine = (status === "public" && author === currentUsername);
+    const isUserCreated = author && author !== "admin";
+
+    if(filter === "all") return true;
+    if(filter === "publicByMe") return isMine;
+    if(filter === "user") return isUserCreated;
+    return status === filter;
+  });
+
+  window.visibleCount = 0;
+  document.getElementById("catalog").innerHTML = "";
+  renderNextBatch();
+}
+
 
 
 // // Initialize catalog loader
