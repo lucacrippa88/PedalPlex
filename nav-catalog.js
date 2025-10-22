@@ -199,17 +199,20 @@ function initCatalog(userRole){
   }
 
   function setupLazyLoader(){
-    const sentinel=document.createElement("div");
-    sentinel.id="lazySentinel";
-    sentinel.style.height="1px";
+    const sentinel = document.createElement("div");
+    sentinel.id = "lazySentinel";
+    sentinel.style.height = "1px";
     resultsDiv.appendChild(sentinel);
-    const observer=new IntersectionObserver(entries=>{
+
+    const observer = new IntersectionObserver(entries => {
       if(entries[0].isIntersecting){
-        observer.unobserve(sentinel);
-        renderNextBatch();
-        if(window.visibleCount<window.allPedals.length) observer.observe(sentinel);
+        // solo se ci sono ancora pedali da mostrare
+        if(window.visibleCount < window.allPedals.length){
+          renderNextBatch();
+        }
       }
-    });
+    }, { rootMargin: "100px" }); // trigger prima che arrivi in fondo
+
     observer.observe(sentinel);
   }
 
