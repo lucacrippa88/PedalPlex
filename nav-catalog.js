@@ -231,128 +231,49 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// // Initialize catalog loader
-// function initCatalog(userRole) {
-//   const resultsDiv = document.getElementById("catalog");
-//   resultsDiv.innerHTML = `
-//       <div class="bx--loading-overlay">
-//         <div class="bx--loading" role="status">
-//           <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-//             <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-//             <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-//           </svg>
-//         </div>     
-//       </div>`;
-
-//   const roleParam = userRole === "guest" ? "guest" : userRole;
-//   const usernameParam = window.currentUser?.username || "";
-
-//   const token = localStorage.getItem('authToken');
-
-//   fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
-//     headers: {
-//         'Authorization': 'Bearer ' + token
-//       }
-//     })    
-//     .then(res => res.ok ? res.json() : Promise.reject("Network error"))
-//     .then(pedals => {
-//       resultsDiv.innerHTML = "";
-//       $("#pedalCount").text(`${pedals.length} gears`);
-
-//       pedals.sort((a,b) => a._id - b._id);
-//       pedals.forEach(pedal => {
-//         const $pedalDiv = renderPedal(pedal, userRole);
-//         $pedalDiv.attr("data-author", pedal.author || "");
-//         $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-//         $(resultsDiv).append($pedalDiv);
-//       });
-
-//       updatePedalCounts();
-//       if (userRole !== "guest") setupEditPedalHandler(pedals);
-//     })
-//     .catch(err => {
-//       console.error("Error fetching pedals:", err);
-//       resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
-//     });
-// }
-
+// Initialize catalog loader
 function initCatalog(userRole) {
-  const resultsDiv = $("#catalog");
-  let offset = 0;
-  const limit = 20;
-  let loading = false;
-  let allLoaded = false;
-  let currentSearch = "";
+  const resultsDiv = document.getElementById("catalog");
+  resultsDiv.innerHTML = `
+      <div class="bx--loading-overlay">
+        <div class="bx--loading" role="status">
+          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+          </svg>
+        </div>     
+      </div>`;
 
-  const token = localStorage.getItem('authToken');
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
 
-  resultsDiv.html(`<div class="loading">Loading...</div>`);
+  const token = localStorage.getItem('authToken');
 
-  async function loadMore(reset = false) {
-    if (loading || allLoaded) return;
-    loading = true;
-
-    if (reset) {
-      offset = 0;
-      allLoaded = false;
-      resultsDiv.empty();
-    }
-
-    const url = new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php");
-    url.searchParams.set("role", roleParam);
-    url.searchParams.set("username", usernameParam);
-    url.searchParams.set("limit", limit);
-    url.searchParams.set("offset", offset);
-    if (currentSearch) url.searchParams.set("search", currentSearch);
-
-    try {
-      const res = await fetch(url, {
-        headers: { 'Authorization': 'Bearer ' + token }
-      });
-      const pedals = await res.json();
-
-      if (!Array.isArray(pedals) || pedals.length === 0) {
-        allLoaded = true;
-        if (offset === 0) resultsDiv.html(`<p>No results found.</p>`);
-        return;
+  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
+    headers: {
+        'Authorization': 'Bearer ' + token
       }
+    })    
+    .then(res => res.ok ? res.json() : Promise.reject("Network error"))
+    .then(pedals => {
+      resultsDiv.innerHTML = "";
+      $("#pedalCount").text(`${pedals.length} gears`);
 
+      pedals.sort((a,b) => a._id - b._id);
       pedals.forEach(pedal => {
         const $pedalDiv = renderPedal(pedal, userRole);
         $pedalDiv.attr("data-author", pedal.author || "");
         $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-        resultsDiv.append($pedalDiv);
+        $(resultsDiv).append($pedalDiv);
       });
 
       updatePedalCounts();
       if (userRole !== "guest") setupEditPedalHandler(pedals);
-
-      offset += limit;
-    } catch (err) {
+    })
+    .catch(err => {
       console.error("Error fetching pedals:", err);
-      resultsDiv.append(`<p style="color:red;">Error loading pedals</p>`);
-    } finally {
-      loading = false;
-    }
-  }
-
-  // --- Scroll listener for infinite loading ---
-  $(window).on("scroll", () => {
-    if (loading || allLoaded) return;
-    if ($(window).scrollTop() + $(window).height() > $(document).height() - 300) {
-      loadMore();
-    }
-  });
-
-  // --- Remote search ---
-  $("#pedalFilterInput").off("input").on("input", function () {
-    currentSearch = $(this).val().trim();
-    loadMore(true);
-  });
-
-  // --- Initial load ---
-  loadMore();
+      resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
+    });
 }
+
 
