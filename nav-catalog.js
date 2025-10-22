@@ -138,19 +138,45 @@ function updatePedalCounts(activeFilter=null){
   });
 }
 
-function filterPedalsByStatus(filter){
-  const currentUsername=(window.currentUser?.username||"").toLowerCase();
-  const filtered=window.allPedals.filter(p=>{
-    const status=(p.published||"draft").toLowerCase();
-    const author=(p.author||"").toLowerCase();
-    if(filter==="all") return true;
-    if(filter==="publicByMe") return status==="public" && author===currentUsername;
-    if(filter==="user") return author && author!=="admin";
-    return status===filter;
+function filterPedalsByStatus(filter) {
+  const currentUsername = (window.currentUser?.username || "").toLowerCase();
+  
+  // Filtra tutti i pedali in memoria
+  let filtered = window.allPedals.filter(pedal => {
+    const status = (pedal.published || "draft").toLowerCase();
+    const author = (pedal.author || "").toLowerCase();
+    const isMine = (status === "public" && author === currentUsername);
+    const isUserCreated = author && author !== "admin";
+
+    if(filter === "all") return true;
+    if(filter === "publicByMe") return isMine;
+    if(filter === "user") return isUserCreated;
+    return status === filter;
   });
-  renderFiltered(filtered);
-  updatePedalCounts(filter);
+
+  // Aggiorna la lista visibile e resetta lazy load
+  window.visibleCount = 0;
+  window.filteredPedals = filtered; // array temporaneo per lazy load
+  resultsDiv.innerHTML = "";
+  renderNextFilteredBatch();
 }
+
+function renderNextFilteredBatch() {
+  const slice = window.filteredPedals.slice(window.visibleCount, window.visibleCount + batchSize);
+  slice.forEach(pedal => {
+    const $pedalDiv = renderPedal(pedal, userRole);
+    $pedalDiv.attr("data-author", pedal.author || "");
+    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+    $(resultsDiv).append($pedalDiv);
+  });
+  window.visibleCount += slice.length;
+  updatePedalCounts();
+  
+  // Sposta il sentinel in fondo
+  const sentinel = document.getElementById("lazySentinel");
+  if(sentinel) resultsDiv.appendChild(sentinel);
+}
+
 
 // --------------------
 // initCatalog con lazy load
