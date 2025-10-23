@@ -99,63 +99,9 @@ function initNavCatalog(userRole) {
   document.head.appendChild(style);
 }
 
-// --------------------
-// Pedal counts + filter
-// --------------------
-function updatePedalCounts(activeFilter=null){
-  if(!window.allPedals) return;
-  const totalVisible=$(".pedal-catalog:visible").length;
-  const totalAbsolute=window.allPedals.length;
-
-  const statusCounts={draft:0,private:0,reviewing:0,publicByMe:0};
-  let userPedalsCount=0;
-  const currentUsername=(window.currentUser?.username||"").toLowerCase();
-
-  window.allPedals.forEach(p=>{
-    const status=(p.published||"draft").toLowerCase();
-    const author=(p.author||"").toLowerCase();
-    if(status in statusCounts) statusCounts[status]++;
-    if(status==="public" && author===currentUsername) statusCounts.publicByMe++;
-    if(author && author!=="admin") userPedalsCount++;
-  });
-
-  const reviewingBadge=statusCounts.reviewing>0
-    ? `<span class="status-filter ${activeFilter==="reviewing"?"active-filter":""}" data-filter="reviewing" style="background:#f00;color:white;border-radius:50%;padding:1px 5px;font-size:0.75rem;font-weight:bold;min-width:18px;text-align:center;">${statusCounts.reviewing}</span>`
-    : `<span class="status-filter ${activeFilter==="reviewing"?"active-filter":""}" data-filter="reviewing">0</span>`;
-
-  let countsHtml=`${totalVisible} gear${totalVisible===1?"":"s"} available (All: <span class="status-filter ${activeFilter==="all"?"active-filter":""}" data-filter="all">${totalAbsolute}</span>`;
-  if(window.currentUser?.role!=="guest"){
-    countsHtml+=`, Draft: <span class="status-filter ${activeFilter==="draft"?"active-filter":""}" data-filter="draft">${statusCounts.draft}</span>, Private: <span class="status-filter ${activeFilter==="private"?"active-filter":""}" data-filter="private">${statusCounts.private}</span>, Reviewing: ${reviewingBadge}, Published by me: <span class="status-filter ${activeFilter==="publicByMe"?"active-filter":""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>`;
-    if(window.currentUser?.role==="admin")
-      countsHtml+=`, Published by Users: <span class="status-filter ${activeFilter==="user"?"active-filter":""}" data-filter="user">${userPedalsCount}</span>`;
-  }
-  countsHtml+=`)`;
-  $("#pedalCount").html(countsHtml);
-
-  $(".status-filter").off("click").on("click",function(){
-    const filter=$(this).data("filter");
-    filterPedalsByStatus(filter);
-  });
-}
-
-function filterPedalsByStatus(filter){
-  const currentUsername=(window.currentUser?.username||"").toLowerCase();
-  const filtered=window.allPedals.filter(p=>{
-    const status=(p.published||"draft").toLowerCase();
-    const author=(p.author||"").toLowerCase();
-    if(filter==="all") return true;
-    if(filter==="publicByMe") return status==="public" && author===currentUsername;
-    if(filter==="user") return author && author!=="admin";
-    return status===filter;
-  });
-  renderFiltered(filtered);
-  updatePedalCounts(filter);
-}
-
-// --------------------
-// initCatalog con lazy load
-// --------------------
-// -- initCatalog con lazy load stabile, filtri contatori e ricerca --
+// ======================
+// ✅ Catalog Initialization
+// ======================
 function initCatalog(userRole) {
   const resultsDiv = document.getElementById("catalog");
   resultsDiv.innerHTML = `
@@ -168,39 +114,52 @@ function initCatalog(userRole) {
       </div>     
     </div>`;
 
+  const token = localStorage.getItem("authToken");
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
-  const token = localStorage.getItem('authToken');
-  const batchSize = 20;
 
-  // Stato globale
+  const batchSize = 20;
   window.allPedals = [];
   window.currentPedals = [];
   window.visibleCount = 0;
+  window.activeFilter = "all";
 
+  // --- Fetch from server ---
   fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
-    headers: { 'Authorization': 'Bearer ' + token }
+    headers: { "Authorization": "Bearer " + token }
   })
-  .then(res => res.ok ? res.json() : Promise.reject("Errore rete"))
+  .then(res => res.ok ? res.json() : Promise.reject("Network error"))
   .then(data => {
     resultsDiv.innerHTML = "";
-    window.allPedals = data.sort((a, b) => a._id - b._id);
+    window.allPedals = data.sort((a, b) => a._id.localeCompare(b._id));
     window.currentPedals = [...window.allPedals];
     window.visibleCount = 0;
 
-    renderNextBatch();        // mostra primi batch
-    updatePedalCounts();      // contatori iniziali
+    updatePedalCounts();
+    renderNextBatch();
+    setupLazyLoader();
 
-    setupLazyLoader();        // lazy load scroll
-    setupSearchFilter();      // filtro in tempo reale
+    // 🔍 Live filter input
+    $("#pedalFilterInput").off("input").on("input", function () {
+      const val = $(this).val().toLowerCase();
+      const filtered = window.allPedals.filter(p =>
+        (p._id?.toLowerCase().includes(val) ||
+         p.name?.toLowerCase().includes(val) ||
+         p.author?.toLowerCase().includes(val))
+      );
+      window.currentPedals = filtered;
+      window.visibleCount = 0;
+      resultsDiv.innerHTML = "";
+      renderNextBatch();
+      updatePedalCounts(window.activeFilter);
+    });
   })
   .catch(err => {
     console.error("Error fetching pedals:", err);
     resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
   });
 
-  // ---------------- Funzioni interne ----------------
-
+  // --- Helpers ---
   function renderNextBatch() {
     const slice = window.currentPedals.slice(window.visibleCount, window.visibleCount + batchSize);
     slice.forEach(pedal => {
@@ -211,68 +170,117 @@ function initCatalog(userRole) {
     });
     window.visibleCount += slice.length;
 
-    if (userRole !== "guest") setupEditPedalHandler(window.allPedals);
-    updatePedalCounts();
-
-    // sposta sentinel in fondo
-    const sentinel = document.getElementById("lazySentinel");
-    if (sentinel) resultsDiv.appendChild(sentinel);
+    if (userRole !== "guest") setupEditPedalHandler(window.currentPedals);
+    updatePedalCounts(window.activeFilter);
   }
 
   function setupLazyLoader() {
-    let sentinel = document.getElementById("lazySentinel");
-    if(!sentinel){
-      sentinel = document.createElement("div");
-      sentinel.id = "lazySentinel";
-      sentinel.style.height = "1px";
-      resultsDiv.appendChild(sentinel);
-    }
+    const sentinel = document.createElement("div");
+    sentinel.id = "lazySentinel";
+    sentinel.style.height = "1px";
+    resultsDiv.appendChild(sentinel);
 
     const observer = new IntersectionObserver(entries => {
-      if(entries[0].isIntersecting){
-        if(window.visibleCount < window.currentPedals.length){
+      if (entries[0].isIntersecting) {
+        const hasMore = window.visibleCount < window.currentPedals.length;
+        if (hasMore) {
           renderNextBatch();
         }
       }
-    }, { rootMargin: "200px" });
-
+    }, { rootMargin: "300px" }); // trigger un po' prima
     observer.observe(sentinel);
   }
-
-  function setupSearchFilter() {
-    $("#pedalFilterInput").off("input").on("input", function () {
-      const val = $(this).val().toLowerCase();
-      window.currentPedals = window.allPedals.filter(p =>
-        (p._id?.toLowerCase().includes(val) || 
-         p.name?.toLowerCase().includes(val) ||
-         p.author?.toLowerCase().includes(val))
-      );
-      window.visibleCount = 0;
-      resultsDiv.innerHTML = "";
-      renderNextBatch();
-    });
-  }
 }
 
-// --- Filtro contatori aggiornato ---
-function filterPedalsByStatus(filter) {
+
+// ======================
+// ✅ Update Pedal Counts + Click Filters
+// ======================
+function updatePedalCounts(activeFilter = "all") {
+  const allPedals = window.allPedals || [];
+  const currentPedals = window.currentPedals || [];
   const currentUsername = (window.currentUser?.username || "").toLowerCase();
-  window.currentPedals = window.allPedals.filter(pedal => {
+
+  const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0 };
+  let userPedalsCount = 0;
+
+  allPedals.forEach(pedal => {
     const status = (pedal.published || "draft").toLowerCase();
     const author = (pedal.author || "").toLowerCase();
-    const isMine = (status === "public" && author === currentUsername);
-    const isUserCreated = author && author !== "admin";
-
-    if(filter === "all") return true;
-    if(filter === "publicByMe") return isMine;
-    if(filter === "user") return isUserCreated;
-    return status === filter;
+    if (status in statusCounts) statusCounts[status]++;
+    if (status === "public" && author === currentUsername) statusCounts.publicByMe++;
+    if (author && author !== "admin") userPedalsCount++;
   });
 
-  window.visibleCount = 0;
-  document.getElementById("catalog").innerHTML = "";
-  renderNextBatch();
+  const totalAbsolute = allPedals.length;
+  const totalVisible = currentPedals.length;
+
+  const reviewingBadge = statusCounts.reviewing > 0
+    ? `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing" style="background:#ff0000;color:white;border-radius:50%;padding:1px 5px;font-size:0.75rem;font-weight:bold;min-width:18px;text-align:center;">${statusCounts.reviewing}</span>`
+    : `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">0</span>`;
+
+  let countsHtml =
+    `${totalVisible} gear${totalVisible === 1 ? "" : "s"} shown ` +
+    `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalAbsolute}</span>`;
+
+  if (window.currentUser?.role !== "guest") {
+    countsHtml += `, Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
+     Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${statusCounts.private}</span>, 
+     Reviewing: ${reviewingBadge}, 
+     Published by me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>`;
+    
+    if (window.currentUser?.role === "admin") {
+      countsHtml += `, Published by Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${userPedalsCount}</span>`;
+    }
+  }
+
+  countsHtml += `)`;
+
+  $("#pedalCount").html(countsHtml);
+
+  // 🔁 Riaggancia i click dei contatori
+  $(".status-filter").off("click").on("click", function() {
+    const filter = $(this).data("filter");
+    filterPedalsByStatus(filter);
+  });
 }
+
+
+// ======================
+// ✅ Filter by Status
+// ======================
+function filterPedalsByStatus(filter) {
+  const currentUsername = (window.currentUser?.username || "").toLowerCase();
+  const allPedals = window.allPedals || [];
+  let filtered;
+
+  if (filter === "all") filtered = allPedals;
+  else if (filter === "publicByMe")
+    filtered = allPedals.filter(p => p.published?.toLowerCase() === "public" && (p.author || "").toLowerCase() === currentUsername);
+  else if (filter === "user")
+    filtered = allPedals.filter(p => (p.author || "").toLowerCase() !== "admin");
+  else
+    filtered = allPedals.filter(p => (p.published || "").toLowerCase() === filter);
+
+  const resultsDiv = document.getElementById("catalog");
+  resultsDiv.innerHTML = "";
+  window.currentPedals = filtered;
+  window.visibleCount = 0;
+  window.activeFilter = filter;
+
+  // 🔁 Ri-render con lazy load e contatori aggiornati
+  const batchSize = 20;
+  const slice = filtered.slice(0, batchSize);
+  slice.forEach(pedal => {
+    const $pedalDiv = renderPedal(pedal, window.currentUser.role);
+    $pedalDiv.attr("data-author", pedal.author || "");
+    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+    $(resultsDiv).append($pedalDiv);
+  });
+  window.visibleCount = slice.length;
+  updatePedalCounts(filter);
+}
+
 
 
 
