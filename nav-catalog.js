@@ -1,11 +1,10 @@
-// nav-catalog.js (versione completa, paginata, search server-side, filters)
+// nav-catalog.js
 
-///////////////////////
-// NAV (unchanged)
-///////////////////////
+// Initialize navigation catalog
 function initNavCatalog(userRole) {
   const isAdmin = (userRole === "admin");
 
+  // Nav HTML
   const navHtml = `
     <header style="display: flex; align-items: center; justify-content: space-between;">
       <div style="display: flex; align-items: center; gap: 1rem;">
@@ -44,268 +43,235 @@ function initNavCatalog(userRole) {
       </div>
     </header>
   `;
+
   $("body").prepend(navHtml);
 
+  // Hide Add Gear button for guests
   if (userRole === "guest") {
     $("#createPedalBtn").hide();
-    const loginBtnHtml = `<button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm">Login</button>`;
-    $("#toggleFilterBtn").after(loginBtnHtml);
-    $(document).on("click", "#loginBtn", () => window.location.href = "login");
+    // Add Login button
+    const loginBtnHtml = `
+        <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
+            <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
+          </svg>
+          Login
+        </button>
+    `;
+    $("#toggleFilterBtn").after(loginBtnHtml);  // ----------------------
+
+    // Add click handler
+    $(document).on("click", "#loginBtn", function() {
+      window.location.href = "login"; // redirect to login page
+    });
   } else {
-    $(document).on('click','#createPedalBtn', () => createNewPedal());
+    // Only attach click handlers for logged-in users
+    function isTokenValid() {
+      const token = localStorage.getItem("authToken");
+      if (!token) return false;
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(atob(base64));
+        const now = Math.floor(Date.now() / 1000);
+        return payload.exp && payload.exp > now;
+      } catch (err) {
+        console.error("Invalid JWT:", err);
+        return false;
+      }
+    }
+
+    function handleCreatePedalClick() {
+      if (!isTokenValid()) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Login Required',
+          text: 'Please log in to create a pedal.',
+          confirmButtonText: 'Login',
+          customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+        }).then(() => { window.location.href = "login"; });
+        return;
+      }
+      createNewPedal();
+    }
+
+    $(document).on('click', '#createPedalBtn', handleCreatePedalClick);
+    $(document).on('click', '#createOwnPedalBtn', handleCreatePedalClick);
   }
 
+  // Fullscreen menu
   $("body").append(window.fullscreenMenuHtml);
-  $("#menuToggle").on("click", () => $("#fullscreenMenu").addClass("active"));
+
+  $("#menuToggle").on("click", function () {
+    const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
+    $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
+    $("#fullscreenMenu").addClass("active");
+  });
   $("#closeMenu").on("click", () => $("#fullscreenMenu").removeClass("active"));
 
-  $("#toggleFilterBtn").on("click", function(){
+  $("#toggleFilterBtn").on("click", function () {
     const input = $("#pedalFilterInput");
-    input.is(":visible") ? input.hide().val("") : input.css("display","flex").focus();
+    if (input.is(":visible")) {
+      input.hide().val("");
+    } else {
+      input.css("display", "flex").focus();
+    }
+  });
+  $("#pedalFilterInput").on("input", function () {
+    const filterValue = $(this).val().toLowerCase();
+    $(".pedal-catalog").each(function () {
+      const name = $(this).data("pedal-id")?.toLowerCase() || "";
+      $(this).toggle(name.includes(filterValue));
+    });
+    updatePedalCounts();
   });
 
-  const style = document.createElement("style");
-  style.textContent = `
-    .status-filter{cursor:pointer;text-decoration:underline;color:#ddd;}
-    .status-filter.active-filter{font-weight:bold;color:#fff;text-decoration:none;border-bottom:2px solid #fff;}
-    @media(max-width:768px){#pedalCount span.status-filter:not([data-filter="all"]){display:none!important;}}
-  `;
-  document.head.appendChild(style);
+  // Apply guest mode filter visibility
+  if (userRole === "guest") {
+    $(".status-filter").not('[data-filter="all"]').hide();
+  }
 }
 
+// Updates pedal counts including draft/private/reviewing/public-by-me
+function updatePedalCounts(activeFilter = null) {
+  const visiblePedals = $(".pedal-catalog:visible");
+  const allPedals = $(".pedal-catalog");
+  const totalVisible = visiblePedals.length;
+  const totalAbsolute = allPedals.length;
 
-///////////////////////
-// CATALOG (paginated + lazy)
-///////////////////////
-function initCatalog(userRole) {
-  const resultsDiv = document.getElementById("catalog");
-  resultsDiv.innerHTML = `<div class="bx--loading-overlay"><div class="bx--loading" role="status"><svg class="bx--loading__svg" viewBox="-75 -75 150 150"><circle class="bx--loading__background" cx="0" cy="0" r="37.5"/><circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/></svg></div></div>`;
+  const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0 };
+  let userPedalsCount = 0;
+  const currentUsername = (window.currentUser?.username || "").toLowerCase();
 
-  // Config
-  const token = localStorage.getItem("authToken");
-  const roleParam = userRole === "guest" ? "guest" : userRole;
-  const usernameParam = window.currentUser?.username || "";
-  const limit = 20;
-
-  // Stato
-  window.catalogState = {
-    offset: 0,
-    limit,
-    loading: false,
-    allLoaded: false,
-    statusFilter: "all",   // "all", "draft", "private", "reviewing", "publicByMe", "user"
-    search: "",            // search term (server-side)
-    loadedIds: new Set(),  // evita duplicati
-    counts: null,          // counts server-side (aggiornati ad ogni risposta)
-  };
-
-  // create sentinel container if not exist
-  function ensureSentinel() {
-    let s = document.getElementById("lazySentinel");
-    if (!s) {
-      s = document.createElement("div");
-      s.id = "lazySentinel";
-      s.style.height = "1px";
-      resultsDiv.appendChild(s);
-    }
-    return s;
-  }
-
-  // helper per build URL
-  function buildUrl() {
-    const url = new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php");
-    url.searchParams.set("role", roleParam);
-    url.searchParams.set("username", usernameParam);
-    url.searchParams.set("limit", catalogState.limit);
-    url.searchParams.set("offset", catalogState.offset);
-    if (catalogState.search) url.searchParams.set("search", catalogState.search);
-    if (catalogState.statusFilter && catalogState.statusFilter !== "all") url.searchParams.set("status", catalogState.statusFilter);
-    return url.toString();
-  }
-
-  // Normalizza risposta (tolleranza: array oppure {items,total,counts})
-  function normalizeResponse(body) {
-    if (Array.isArray(body)) {
-      return { items: body, total: body.length, counts: null };
-    }
-    if (body && body.items) {
-      return { items: body.items, total: body.total || body.items.length, counts: body.counts || null };
-    }
-    return { items: [], total: 0, counts: null };
-  }
-
-  // Load page (offset/limit) dal server
-  async function loadPage() {
-    const cs = window.catalogState;
-    if (cs.loading || cs.allLoaded) return;
-    cs.loading = true;
-
-    // show small loading marker
-    showBatchLoader(true);
-
-    const url = buildUrl();
-    try {
-      const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const body = await res.json();
-      const { items, total, counts } = normalizeResponse(body);
-
-      // update counts / total
-      cs.counts = counts || cs.counts || null;
-
-      // append only new items (evita duplicati se server torna sovrapposti)
-      let appended = 0;
-      for (const item of items) {
-        if (!item || !item._id) continue;
-        if (cs.loadedIds.has(item._id)) continue;
-        cs.loadedIds.add(item._id);
-        appendPedalToDOM(item, userRole);
-        appended++;
-      }
-
-      // advance offset by number of items returned by server (not by appended to handle server paging)
-      cs.offset += items.length;
-
-      // determine if finished (server says total or returned less than limit)
-      if (typeof total === "number") {
-        if (cs.loadedIds.size >= total) cs.allLoaded = true;
-      } else {
-        if (items.length < cs.limit) cs.allLoaded = true;
-      }
-
-      // update counters UI from server counts if present, else fallback
-      updatePedalCountsFromServer(cs.counts, (typeof total === "number" ? total : null));
-
-    } catch (err) {
-      console.error("Error loading catalog page:", err);
-      // mostra messaggio d'errore ma non bloccare forever
-      if (window.catalogState.offset === 0) resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err.message || err}</p>`;
-    } finally {
-      cs.loading = false;
-      showBatchLoader(false);
-    }
-  }
-
-  // Appendi un singolo pedal al DOM
-  function appendPedalToDOM(pedal, role) {
-    const $pedalDiv = renderPedal(pedal, role);
-    $pedalDiv.attr("data-author", pedal.author || "");
-    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-    $(resultsDiv).append($pedalDiv);
-  }
-
-  // Small batch loader spinner text (in fondo)
-  function showBatchLoader(show) {
-    let el = document.getElementById("batchLoader");
-    if (show) {
-      if (!el) {
-        el = document.createElement("div");
-        el.id = "batchLoader";
-        el.style.padding = "12px";
-        el.style.textAlign = "center";
-        el.innerText = "Loading more…";
-        resultsDiv.appendChild(el);
-      }
-    } else {
-      if (el) el.remove();
-    }
-    // ensure sentinel always after loader
-    const s = ensureSentinel();
-    resultsDiv.appendChild(s);
-  }
-
-  // IntersectionObserver: osserva sentinel e chiama loadPage quando serve
-  const observer = new IntersectionObserver(entries => {
-    const ent = entries[0];
-    if (!ent.isIntersecting) return;
-    // only load if not already loading and not allLoaded
-    if (!window.catalogState.loading && !window.catalogState.allLoaded) {
-      loadPage();
-    }
-  }, { rootMargin: "250px" });
-
-  // reset & (ri)start loading (usato per search e per status filter)
-window.resetAndLoad = function({search = "", status = "all"} = {}) {
-    // clear DOM and state
-    resultsDiv.innerHTML = "";
-    window.catalogState.offset = 0;
-    window.catalogState.allLoaded = false;
-    window.catalogState.loading = false;
-    window.catalogState.search = search;
-    window.catalogState.statusFilter = status;
-    window.catalogState.loadedIds = new Set();
-    window.catalogState.counts = null;
-
-    // attach sentinel and observer
-    ensureSentinel();
-    observer.disconnect(); // remove any previous observations
-    observer.observe(document.getElementById("lazySentinel"));
-
-    // first page
-    loadPage();
-  }
-
-  // Server-side search debounce
-  function debounce(fn, delay){ let t; return function(...a){ clearTimeout(t); t=setTimeout(()=>fn(...a), delay); }; }
-  $("#pedalFilterInput").off("input").on("input", debounce(function(){
-    const val = $(this).val().trim();
-    // server-side search: reset state and request from server with search param
-    resetAndLoad({ search: val, status: window.catalogState.statusFilter });
-  }, 350));
-
-  // Click handlers for status filters (numbers). They call server with &status=...
-  $(document).off("click", ".status-filter").on("click", ".status-filter", function(){
-    const filter = $(this).data("filter") || "all";
-    window.catalogState.statusFilter = filter;
-    // mark active visual
-    $(".status-filter").removeClass("active-filter");
-    $(this).addClass("active-filter");
-    // reset & load for new status
-    resetAndLoad({ search: window.catalogState.search, status: filter });
+  allPedals.each(function() {
+    const status = ($(this).data("published") || "").toLowerCase();
+    const author = ($(this).data("author") || "").toLowerCase();
+    if (status in statusCounts) statusCounts[status]++;
+    if (status === "public" && author === currentUsername) statusCounts.publicByMe++;
+    if (author && author !== "admin") userPedalsCount++;
   });
 
-  // inizializza sentinel + osservatore e carica primo batch
-  ensureSentinel();
-  observer.observe(document.getElementById("lazySentinel"));
-  loadPage();
-} // end initCatalog
+  const reviewingBadge = statusCounts.reviewing > 0
+    ? `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing" style="
+        background:#ff0000;
+        color:white;
+        border-radius:50%;
+        padding:1px 5px;
+        font-size:0.75rem;
+        font-weight:bold;
+        min-width:18px;
+        text-align:center;
+      ">${statusCounts.reviewing}</span>`
+    : `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">0</span>`;
 
+  let countsHtml =
+    `${totalVisible} gear${totalVisible === 1 ? "" : "s"} available ` +
+    `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalAbsolute}</span>`;
 
-///////////////////////
-// Update counters using server counts if available
-///////////////////////
-function updatePedalCountsFromServer(counts, totalFromServer = null) {
-  // counts: { draft, private, reviewing, publicByMe, userCreated } or null
-  // totalFromServer: integer or null
-
-  const cs = window.catalogState || {};
-  const totalVisible = (document.querySelectorAll(".pedal-catalog") || []).length;
-  const totalAbsolute = (typeof totalFromServer === "number") ? totalFromServer : (cs.counts ? (cs.counts.draft + cs.counts.private + cs.counts.reviewing + (cs.counts.publicByMe || 0) + (cs.counts.userCreated || 0)) : totalVisible);
-
-  // If we have server counts use them, otherwise show counts computed from DOM (fallback)
-  const sc = counts || cs.counts || null;
-  let draftCount = sc ? (sc.draft || 0) : $(".pedal-catalog[data-published='draft']").length;
-  let privateCount = sc ? (sc.private || 0) : $(".pedal-catalog[data-published='private']").length;
-  let reviewingCount = sc ? (sc.reviewing || 0) : $(".pedal-catalog[data-published='reviewing']").length;
-  let publicByMe = sc ? (sc.publicByMe || 0) : 0;
-  let userCreated = sc ? (sc.userCreated || 0) : $(".pedal-catalog").filter(function(){ return ($(this).data("author") || "").toLowerCase() !== "admin"; }).length;
-
-  const currentFilter = window.catalogState?.statusFilter || "all";
-
-  const reviewingBadge = reviewingCount > 0
-    ? `<span class="status-filter ${currentFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing" style="background:#ff0000;color:white;border-radius:50%;padding:1px 5px;font-size:0.75rem;font-weight:bold;min-width:18px;text-align:center;">${reviewingCount}</span>`
-    : `<span class="status-filter ${currentFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">0</span>`;
-
-  let countsHtml = `${totalVisible} gear shown (All: <span class="status-filter ${currentFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalAbsolute}</span>`;
-
+  // Only show these if not a guest
   if (window.currentUser?.role !== "guest") {
-    countsHtml += `, Draft: <span class="status-filter ${currentFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${draftCount}</span>, Private: <span class="status-filter ${currentFilter === "private" ? "active-filter" : ""}" data-filter="private">${privateCount}</span>, Reviewing: ${reviewingBadge}, Published by me: <span class="status-filter ${currentFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${publicByMe}</span>`;
+    countsHtml += `, Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
+     Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${statusCounts.private}</span>, 
+     Reviewing: ${reviewingBadge}, 
+     Published by me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>`;
+    
     if (window.currentUser?.role === "admin") {
-      countsHtml += `, Published by Users: <span class="status-filter ${currentFilter === "user" ? "active-filter" : ""}" data-filter="user">${userCreated}</span>`;
+      countsHtml += `, Published by Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${userPedalsCount}</span>`;
     }
   }
 
   countsHtml += `)`;
+
   $("#pedalCount").html(countsHtml);
 
+  $(".status-filter").off("click").on("click", function() {
+    const filter = $(this).data("filter");
+    filterPedalsByStatus(filter);
+  });
+}
+
+// Unified filtering function
+function filterPedalsByStatus(filter) {
+  const currentUsername = (window.currentUser?.username || "").toLowerCase();
+  $(".pedal-catalog").each(function() {
+    const status = ($(this).data("published") || "").toLowerCase();
+    const author = ($(this).data("author") || "").toLowerCase();
+    const isMine = (status === "public" && author === currentUsername);
+    const isUserCreated = author && author !== "admin";
+    if (filter === "all") $(this).show();
+    else if (filter === "publicByMe") $(this).toggle(isMine);
+    else if (filter === "user") $(this).toggle(isUserCreated);
+    else $(this).toggle(status === filter);
+  });
+  updatePedalCounts(filter);
+}
+
+// CSS for link look + active highlight + mobile hide counters except total
+const style = document.createElement("style");
+style.textContent = `
+  .status-filter {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #ddd;
+  }
+  .status-filter.active-filter {
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 2px solid #fff;
+  }
+
+  /* Mobile: hide all pedal counters except total (All) */
+  @media (max-width: 768px) {
+    #pedalCount span.status-filter:not([data-filter="all"]) {
+      display: none !important;
+    }
+  }
+`;
+document.head.appendChild(style);
+
+// Initialize catalog loader
+function initCatalog(userRole) {
+  const resultsDiv = document.getElementById("catalog");
+  resultsDiv.innerHTML = `
+      <div class="bx--loading-overlay">
+        <div class="bx--loading" role="status">
+          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+          </svg>
+        </div>     
+      </div>`;
+
+  const roleParam = userRole === "guest" ? "guest" : userRole;
+  const usernameParam = window.currentUser?.username || "";
+
+  const token = localStorage.getItem('authToken');
+
+  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
+    headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    })    
+    .then(res => res.ok ? res.json() : Promise.reject("Network error"))
+    .then(pedals => {
+      resultsDiv.innerHTML = "";
+      $("#pedalCount").text(`${pedals.length} gears`);
+
+      pedals.sort((a,b) => a._id - b._id);
+      pedals.forEach(pedal => {
+        const $pedalDiv = renderPedal(pedal, userRole);
+        $pedalDiv.attr("data-author", pedal.author || "");
+        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+        $(resultsDiv).append($pedalDiv);
+      });
+
+      updatePedalCounts();
+      if (userRole !== "guest") setupEditPedalHandler(pedals);
+    })
+    .catch(err => {
+      console.error("Error fetching pedals:", err);
+      resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
+    });
 }
