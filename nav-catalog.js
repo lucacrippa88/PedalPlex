@@ -1,18 +1,22 @@
-// nav-catalog.js
+// nav-catalog.js (versione completa, paginata, search server-side, filters)
 
 ///////////////////////
-// NAV + HEADER
+// NAV (unchanged)
 ///////////////////////
 function initNavCatalog(userRole) {
+  const isAdmin = (userRole === "admin");
+
   const navHtml = `
     <header style="display: flex; align-items: center; justify-content: space-between;">
       <div style="display: flex; align-items: center; gap: 1rem;">
         <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
           <div class="pedalplex-logo"></div>
         </button>
+
         <div class="title">PedalPlex</div>
         <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Gears</span>
       </div>
+
       <div style="display: flex; align-items: center; gap: 1rem;">
         <span id="pedalCount" style="font-size: 0.75rem; color:#aaa"></span>
 
@@ -24,9 +28,14 @@ function initNavCatalog(userRole) {
           </svg>
         </button>
 
-        <input type="text" id="pedalFilterInput" placeholder="Filter gears..." style="font-size: 0.875rem; padding:6px 12px; border:1px solid #8c8c8c; border-radius:4px; outline-offset:2px; width:120px; display:none;" aria-label="Filter pedals"/>
+        <input 
+          type="text" 
+          id="pedalFilterInput" 
+          placeholder="Filter gears..." 
+          style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;" 
+          aria-label="Filter pedals"/>
 
-        <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display:flex;align-items:center;gap:0.5rem;">
+        <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
@@ -37,28 +46,26 @@ function initNavCatalog(userRole) {
   `;
   $("body").prepend(navHtml);
 
-  // Fullscreen menu
-  $("body").append(window.fullscreenMenuHtml);
-  $("#menuToggle").on("click",()=>$("#fullscreenMenu").addClass("active"));
-  $("#closeMenu").on("click",()=>$("#fullscreenMenu").removeClass("active"));
+  if (userRole === "guest") {
+    $("#createPedalBtn").hide();
+    const loginBtnHtml = `<button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm">Login</button>`;
+    $("#toggleFilterBtn").after(loginBtnHtml);
+    $(document).on("click", "#loginBtn", () => window.location.href = "login");
+  } else {
+    $(document).on('click','#createPedalBtn', () => createNewPedal());
+  }
 
-  $("#toggleFilterBtn").on("click",function(){
-    const input=$("#pedalFilterInput");
+  $("body").append(window.fullscreenMenuHtml);
+  $("#menuToggle").on("click", () => $("#fullscreenMenu").addClass("active"));
+  $("#closeMenu").on("click", () => $("#fullscreenMenu").removeClass("active"));
+
+  $("#toggleFilterBtn").on("click", function(){
+    const input = $("#pedalFilterInput");
     input.is(":visible") ? input.hide().val("") : input.css("display","flex").focus();
   });
 
-  // Buttons
-  if(userRole==="guest"){
-    $("#createPedalBtn").hide();
-    $("#toggleFilterBtn").after(`<button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm">Login</button>`);
-    $(document).on("click","#loginBtn",()=>window.location.href="login");
-  } else {
-    $(document).on("click","#createPedalBtn",()=>createNewPedal());
-  }
-
-  // CSS for counters
-  const style=document.createElement("style");
-  style.textContent=`
+  const style = document.createElement("style");
+  style.textContent = `
     .status-filter{cursor:pointer;text-decoration:underline;color:#ddd;}
     .status-filter.active-filter{font-weight:bold;color:#fff;text-decoration:none;border-bottom:2px solid #fff;}
     @media(max-width:768px){#pedalCount span.status-filter:not([data-filter="all"]){display:none!important;}}
@@ -66,185 +73,239 @@ function initNavCatalog(userRole) {
   document.head.appendChild(style);
 }
 
-///////////////////////
-// CATALOG + LAZY LOAD + SEARCH + FILTERS
-///////////////////////
-function initCatalog(userRole){
-  const resultsDiv=document.getElementById("catalog");
-  resultsDiv.innerHTML=`<div class="bx--loading-overlay"><div class="bx--loading" role="status"><svg class="bx--loading__svg" viewBox="-75 -75 150 150"><circle class="bx--loading__background" cx="0" cy="0" r="37.5"/><circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/></svg></div></div>`;
 
-  const token=localStorage.getItem("authToken");
-  const roleParam=userRole==="guest"?"guest":userRole;
-  const usernameParam=window.currentUser?.username||"";
-  const limit=20;
+///////////////////////
+// CATALOG (paginated + lazy)
+///////////////////////
+function initCatalog(userRole) {
+  const resultsDiv = document.getElementById("catalog");
+  resultsDiv.innerHTML = `<div class="bx--loading-overlay"><div class="bx--loading" role="status"><svg class="bx--loading__svg" viewBox="-75 -75 150 150"><circle class="bx--loading__background" cx="0" cy="0" r="37.5"/><circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/></svg></div></div>`;
 
-  window.catalogState={
-    offset:0,
+  // Config
+  const token = localStorage.getItem("authToken");
+  const roleParam = userRole === "guest" ? "guest" : userRole;
+  const usernameParam = window.currentUser?.username || "";
+  const limit = 20;
+
+  // Stato
+  window.catalogState = {
+    offset: 0,
     limit,
-    loading:false,
-    allLoaded:false,
-    search:"",
-    statusFilter:"all",
-    loadedIds:new Set(),
-    counts:null
+    loading: false,
+    allLoaded: false,
+    statusFilter: "all",   // "all", "draft", "private", "reviewing", "publicByMe", "user"
+    search: "",            // search term (server-side)
+    loadedIds: new Set(),  // evita duplicati
+    counts: null,          // counts server-side (aggiornati ad ogni risposta)
   };
 
-  function ensureSentinel(){
-    let s=document.getElementById("lazySentinel");
-    if(!s){
-      s=document.createElement("div");
-      s.id="lazySentinel";
-      s.style.height="1px";
+  // create sentinel container if not exist
+  function ensureSentinel() {
+    let s = document.getElementById("lazySentinel");
+    if (!s) {
+      s = document.createElement("div");
+      s.id = "lazySentinel";
+      s.style.height = "1px";
       resultsDiv.appendChild(s);
     }
     return s;
   }
 
-  function buildUrl(){
-    const url=new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php");
-    url.searchParams.set("role",roleParam);
-    url.searchParams.set("username",usernameParam);
-    url.searchParams.set("limit",catalogState.limit);
-    url.searchParams.set("offset",catalogState.offset);
-    if(catalogState.search) url.searchParams.set("search",catalogState.search);
-    if(catalogState.statusFilter && catalogState.statusFilter!=="all") url.searchParams.set("status",catalogState.statusFilter);
+  // helper per build URL
+  function buildUrl() {
+    const url = new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php");
+    url.searchParams.set("role", roleParam);
+    url.searchParams.set("username", usernameParam);
+    url.searchParams.set("limit", catalogState.limit);
+    url.searchParams.set("offset", catalogState.offset);
+    if (catalogState.search) url.searchParams.set("search", catalogState.search);
+    if (catalogState.statusFilter && catalogState.statusFilter !== "all") url.searchParams.set("status", catalogState.statusFilter);
     return url.toString();
   }
 
-  function normalizeResponse(body){
-    if(Array.isArray(body)) return {items:body,total:body.length,counts:null};
-    if(body && body.items) return {items:body.items,total:body.total||body.items.length,counts:body.counts||null};
-    return {items:[],total:0,counts:null};
+  // Normalizza risposta (tolleranza: array oppure {items,total,counts})
+  function normalizeResponse(body) {
+    if (Array.isArray(body)) {
+      return { items: body, total: body.length, counts: null };
+    }
+    if (body && body.items) {
+      return { items: body.items, total: body.total || body.items.length, counts: body.counts || null };
+    }
+    return { items: [], total: 0, counts: null };
   }
 
-  async function loadPage(){
-    const cs=window.catalogState;
-    if(cs.loading||cs.allLoaded) return;
-    cs.loading=true;
+  // Load page (offset/limit) dal server
+  async function loadPage() {
+    const cs = window.catalogState;
+    if (cs.loading || cs.allLoaded) return;
+    cs.loading = true;
+
+    // show small loading marker
     showBatchLoader(true);
 
-    try{
-      const res=await fetch(buildUrl(),{headers:{'Authorization':'Bearer '+token}});
-      if(!res.ok) throw new Error(`HTTP ${res.status}`);
-      const {items,total,counts}=normalizeResponse(await res.json());
+    const url = buildUrl();
+    try {
+      const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const body = await res.json();
+      const { items, total, counts } = normalizeResponse(body);
 
-      cs.counts=counts||cs.counts||null;
+      // update counts / total
+      cs.counts = counts || cs.counts || null;
 
-      let appended=0;
-      for(const item of items){
-        if(!item||!item._id) continue;
-        if(cs.loadedIds.has(item._id)) continue;
+      // append only new items (evita duplicati se server torna sovrapposti)
+      let appended = 0;
+      for (const item of items) {
+        if (!item || !item._id) continue;
+        if (cs.loadedIds.has(item._id)) continue;
         cs.loadedIds.add(item._id);
-        appendPedalToDOM(item,userRole);
+        appendPedalToDOM(item, userRole);
         appended++;
       }
 
-      cs.offset+=items.length;
-      if(typeof total==="number" && cs.loadedIds.size>=total) cs.allLoaded=true;
-      if(typeof total!=="number" && items.length<cs.limit) cs.allLoaded=true;
+      // advance offset by number of items returned by server (not by appended to handle server paging)
+      cs.offset += items.length;
 
-      updatePedalCountsFromServer(cs.counts,typeof total==="number"?total:null);
-    } catch(err){
-      console.error("Error loading catalog page:",err);
-      if(cs.offset===0) resultsDiv.innerHTML=`<p style="color:red;">Error loading pedals: ${err.message||err}</p>`;
-    } finally{
-      cs.loading=false;
+      // determine if finished (server says total or returned less than limit)
+      if (typeof total === "number") {
+        if (cs.loadedIds.size >= total) cs.allLoaded = true;
+      } else {
+        if (items.length < cs.limit) cs.allLoaded = true;
+      }
+
+      // update counters UI from server counts if present, else fallback
+      updatePedalCountsFromServer(cs.counts, (typeof total === "number" ? total : null));
+
+    } catch (err) {
+      console.error("Error loading catalog page:", err);
+      // mostra messaggio d'errore ma non bloccare forever
+      if (window.catalogState.offset === 0) resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err.message || err}</p>`;
+    } finally {
+      cs.loading = false;
       showBatchLoader(false);
     }
   }
 
-  function appendPedalToDOM(pedal,role){
-    const $pedalDiv=renderPedal(pedal,role);
-    $pedalDiv.attr("data-author",pedal.author||"");
-    $pedalDiv.attr("data-published",(pedal.published||"draft").toLowerCase());
+  // Appendi un singolo pedal al DOM
+  function appendPedalToDOM(pedal, role) {
+    const $pedalDiv = renderPedal(pedal, role);
+    $pedalDiv.attr("data-author", pedal.author || "");
+    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
     $(resultsDiv).append($pedalDiv);
-    if(userRole!=="guest") setupEditPedalHandler([pedal]);
   }
 
-  function showBatchLoader(show){
-    let el=document.getElementById("batchLoader");
-    if(show){
-      if(!el){
-        el=document.createElement("div");
-        el.id="batchLoader";
-        el.style.padding="12px";
-        el.style.textAlign="center";
-        el.innerText="Loading more…";
+  // Small batch loader spinner text (in fondo)
+  function showBatchLoader(show) {
+    let el = document.getElementById("batchLoader");
+    if (show) {
+      if (!el) {
+        el = document.createElement("div");
+        el.id = "batchLoader";
+        el.style.padding = "12px";
+        el.style.textAlign = "center";
+        el.innerText = "Loading more…";
         resultsDiv.appendChild(el);
       }
-    } else if(el) el.remove();
-    resultsDiv.appendChild(ensureSentinel());
+    } else {
+      if (el) el.remove();
+    }
+    // ensure sentinel always after loader
+    const s = ensureSentinel();
+    resultsDiv.appendChild(s);
   }
 
-  const observer=new IntersectionObserver(entries=>{
-    if(entries[0].isIntersecting && !catalogState.loading && !catalogState.allLoaded){
+  // IntersectionObserver: osserva sentinel e chiama loadPage quando serve
+  const observer = new IntersectionObserver(entries => {
+    const ent = entries[0];
+    if (!ent.isIntersecting) return;
+    // only load if not already loading and not allLoaded
+    if (!window.catalogState.loading && !window.catalogState.allLoaded) {
       loadPage();
     }
-  },{rootMargin:"250px"});
+  }, { rootMargin: "250px" });
 
-  window.resetAndLoad=function({search="",status="all"}={}){
-    resultsDiv.innerHTML="";
-    catalogState.offset=0;
-    catalogState.allLoaded=false;
-    catalogState.loading=false;
-    catalogState.search=search;
-    catalogState.statusFilter=status;
-    catalogState.loadedIds=new Set();
-    catalogState.counts=null;
+  // reset & (ri)start loading (usato per search e per status filter)
+window.resetAndLoad = function({search = "", status = "all"} = {}) {
+    // clear DOM and state
+    resultsDiv.innerHTML = "";
+    window.catalogState.offset = 0;
+    window.catalogState.allLoaded = false;
+    window.catalogState.loading = false;
+    window.catalogState.search = search;
+    window.catalogState.statusFilter = status;
+    window.catalogState.loadedIds = new Set();
+    window.catalogState.counts = null;
 
+    // attach sentinel and observer
     ensureSentinel();
-    observer.disconnect();
+    observer.disconnect(); // remove any previous observations
     observer.observe(document.getElementById("lazySentinel"));
+
+    // first page
     loadPage();
   }
 
+  // Server-side search debounce
+  function debounce(fn, delay){ let t; return function(...a){ clearTimeout(t); t=setTimeout(()=>fn(...a), delay); }; }
+  $("#pedalFilterInput").off("input").on("input", debounce(function(){
+    const val = $(this).val().trim();
+    // server-side search: reset state and request from server with search param
+    resetAndLoad({ search: val, status: window.catalogState.statusFilter });
+  }, 350));
+
+  // Click handlers for status filters (numbers). They call server with &status=...
+  $(document).off("click", ".status-filter").on("click", ".status-filter", function(){
+    const filter = $(this).data("filter") || "all";
+    window.catalogState.statusFilter = filter;
+    // mark active visual
+    $(".status-filter").removeClass("active-filter");
+    $(this).addClass("active-filter");
+    // reset & load for new status
+    resetAndLoad({ search: window.catalogState.search, status: filter });
+  });
+
+  // inizializza sentinel + osservatore e carica primo batch
   ensureSentinel();
   observer.observe(document.getElementById("lazySentinel"));
   loadPage();
+} // end initCatalog
 
-  // Search input debounce
-  function debounce(fn,delay){let t;return function(...a){clearTimeout(t);t=setTimeout(()=>fn(...a),delay);};}
-  $("#pedalFilterInput").off("input").on("input",debounce(function(){
-    const val=$(this).val().trim();
-    resetAndLoad({search:val,status:catalogState.statusFilter});
-  },350));
-
-  // Click filters on counters
-  $(document).off("click",".status-filter").on("click",".status-filter",function(){
-    const filter=$(this).data("filter")||"all";
-    catalogState.statusFilter=filter;
-    $(".status-filter").removeClass("active-filter");
-    $(this).addClass("active-filter");
-    resetAndLoad({search:catalogState.search,status:filter});
-  });
-}
 
 ///////////////////////
-// Update pedal counters from server response
+// Update counters using server counts if available
 ///////////////////////
-function updatePedalCountsFromServer(counts,totalFromServer=null){
-  const cs=window.catalogState||{};
-  const totalVisible=(document.querySelectorAll(".pedal-catalog")||[]).length;
-  const totalAbsolute=typeof totalFromServer==="number"?totalFromServer:(cs.counts?cs.counts.draft+cs.counts.private+cs.counts.reviewing+(cs.counts.publicByMe||0)+(cs.counts.userCreated||0):totalVisible);
-  const sc=counts||cs.counts||null;
+function updatePedalCountsFromServer(counts, totalFromServer = null) {
+  // counts: { draft, private, reviewing, publicByMe, userCreated } or null
+  // totalFromServer: integer or null
 
-  let draftCount=sc?sc.draft||0:$(".pedal-catalog[data-published='draft']").length;
-  let privateCount=sc?sc.private||0:$(".pedal-catalog[data-published='private']").length;
-  let reviewingCount=sc?sc.reviewing||0:$(".pedal-catalog[data-published='reviewing']").length;
-  let publicByMe=sc?sc.publicByMe||0:0;
-  let userCreated=sc?sc.userCreated||0:$(".pedal-catalog").filter(function(){return($(this).data("author")||"").toLowerCase()!=="admin";}).length;
+  const cs = window.catalogState || {};
+  const totalVisible = (document.querySelectorAll(".pedal-catalog") || []).length;
+  const totalAbsolute = (typeof totalFromServer === "number") ? totalFromServer : (cs.counts ? (cs.counts.draft + cs.counts.private + cs.counts.reviewing + (cs.counts.publicByMe || 0) + (cs.counts.userCreated || 0)) : totalVisible);
 
-  const currentFilter=cs.statusFilter||"all";
+  // If we have server counts use them, otherwise show counts computed from DOM (fallback)
+  const sc = counts || cs.counts || null;
+  let draftCount = sc ? (sc.draft || 0) : $(".pedal-catalog[data-published='draft']").length;
+  let privateCount = sc ? (sc.private || 0) : $(".pedal-catalog[data-published='private']").length;
+  let reviewingCount = sc ? (sc.reviewing || 0) : $(".pedal-catalog[data-published='reviewing']").length;
+  let publicByMe = sc ? (sc.publicByMe || 0) : 0;
+  let userCreated = sc ? (sc.userCreated || 0) : $(".pedal-catalog").filter(function(){ return ($(this).data("author") || "").toLowerCase() !== "admin"; }).length;
 
-  const reviewingBadge=reviewingCount>0
-    ? `<span class="status-filter ${currentFilter==="reviewing"?"active-filter":""}" data-filter="reviewing" style="background:#f00;color:white;border-radius:50%;padding:1px 5px;font-size:0.75rem;font-weight:bold;min-width:18px;text-align:center;">${reviewingCount}</span>`
-    : `<span class="status-filter ${currentFilter==="reviewing"?"active-filter":""}" data-filter="reviewing">0</span>`;
+  const currentFilter = window.catalogState?.statusFilter || "all";
 
-  let countsHtml=`${totalVisible} gear shown (All: <span class="status-filter ${currentFilter==="all"?"active-filter":""}" data-filter="all">${totalAbsolute}</span>`;
-  if(window.currentUser?.role!=="guest"){
-    countsHtml+=`, Draft: <span class="status-filter ${currentFilter==="draft"?"active-filter":""}" data-filter="draft">${draftCount}</span>, Private: <span class="status-filter ${currentFilter==="private"?"active-filter":""}" data-filter="private">${privateCount}</span>, Reviewing: ${reviewingBadge}, Published by me: <span class="status-filter ${currentFilter==="publicByMe"?"active-filter":""}" data-filter="publicByMe">${publicByMe}</span>`;
-    if(window.currentUser?.role==="admin") countsHtml+=`, Published by Users: <span class="status-filter ${currentFilter==="user"?"active-filter":""}" data-filter="user">${userCreated}</span>`;
+  const reviewingBadge = reviewingCount > 0
+    ? `<span class="status-filter ${currentFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing" style="background:#ff0000;color:white;border-radius:50%;padding:1px 5px;font-size:0.75rem;font-weight:bold;min-width:18px;text-align:center;">${reviewingCount}</span>`
+    : `<span class="status-filter ${currentFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">0</span>`;
+
+  let countsHtml = `${totalVisible} gear shown (All: <span class="status-filter ${currentFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalAbsolute}</span>`;
+
+  if (window.currentUser?.role !== "guest") {
+    countsHtml += `, Draft: <span class="status-filter ${currentFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${draftCount}</span>, Private: <span class="status-filter ${currentFilter === "private" ? "active-filter" : ""}" data-filter="private">${privateCount}</span>, Reviewing: ${reviewingBadge}, Published by me: <span class="status-filter ${currentFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${publicByMe}</span>`;
+    if (window.currentUser?.role === "admin") {
+      countsHtml += `, Published by Users: <span class="status-filter ${currentFilter === "user" ? "active-filter" : ""}" data-filter="user">${userCreated}</span>`;
+    }
   }
-  countsHtml+=`)`;
+
+  countsHtml += `)`;
   $("#pedalCount").html(countsHtml);
+
 }
