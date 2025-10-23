@@ -225,7 +225,7 @@ function initCatalog(userRole) {
   }, { rootMargin: "250px" });
 
   // reset & (ri)start loading (usato per search e per status filter)
-  function resetAndLoad({search = "", status = "all"} = {}) {
+window.resetAndLoad = function({search = "", status = "all"} = {}) {
     // clear DOM and state
     resultsDiv.innerHTML = "";
     window.catalogState.offset = 0;
@@ -308,22 +308,5 @@ function updatePedalCountsFromServer(counts, totalFromServer = null) {
   countsHtml += `)`;
   $("#pedalCount").html(countsHtml);
 
-  // riaggancia handler (assicurati che click chiami la funzione sopra)
-  $(".status-filter").off("click").on("click", function(){
-    const filter = $(this).data("filter") || "all";
-    $(".status-filter").removeClass("active-filter");
-    $(this).addClass("active-filter");
-    window.catalogState.statusFilter = filter;
-    // reset & load server-side with status
-    const currentSearch = window.catalogState.search || "";
-    // perform reset/load
-    // ps: chiamare la funzione che abbiamo definito in initCatalog: resetAndLoad
-    if (typeof resetAndLoad === "function") {
-      resetAndLoad({ search: currentSearch, status: filter });
-    } else {
-      // fallback: trigger a click event handled earlier
-      $(this).trigger("click");
-    }
-  });
 }
 
