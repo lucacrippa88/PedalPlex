@@ -30,9 +30,9 @@ function initNavCatalog(userRole) {
         <input 
           type="text" 
           id="pedalFilterInput" 
-          placeholder="Filter gears..." 
+          placeholder="Search gears..." 
           style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;" 
-          aria-label="Filter pedals"/>
+          aria-label="Search pedals"/>
 
         <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
@@ -49,37 +49,26 @@ function initNavCatalog(userRole) {
   // Hide Add Gear button for guests
   if (userRole === "guest") {
     $("#createPedalBtn").hide();
-    // Add Login button
     const loginBtnHtml = `
-        <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
-            <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
-          </svg>
-          Login
-        </button>
+      <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" style="display: flex; align-items: center; gap: 0.5rem;">
+        Login
+      </button>
     `;
-    $("#toggleFilterBtn").after(loginBtnHtml);  // ----------------------
+    $("#toggleFilterBtn").after(loginBtnHtml);
 
-    // Add click handler
     $(document).on("click", "#loginBtn", function() {
-      window.location.href = "login"; // redirect to login page
+      window.location.href = "login";
     });
   } else {
-    // Only attach click handlers for logged-in users
+    // Logged-in users: handle Create Pedal
     function isTokenValid() {
       const token = localStorage.getItem("authToken");
       if (!token) return false;
       try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const payload = JSON.parse(atob(base64));
+        const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
         const now = Math.floor(Date.now() / 1000);
         return payload.exp && payload.exp > now;
-      } catch (err) {
-        console.error("Invalid JWT:", err);
-        return false;
-      }
+      } catch { return false; }
     }
 
     function handleCreatePedalClick() {
@@ -102,7 +91,6 @@ function initNavCatalog(userRole) {
 
   // Fullscreen menu
   $("body").append(window.fullscreenMenuHtml);
-
   $("#menuToggle").on("click", function () {
     const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
     $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
@@ -110,30 +98,65 @@ function initNavCatalog(userRole) {
   });
   $("#closeMenu").on("click", () => $("#fullscreenMenu").removeClass("active"));
 
+  // Toggle search input
   $("#toggleFilterBtn").on("click", function () {
     const input = $("#pedalFilterInput");
-    if (input.is(":visible")) {
-      input.hide().val("");
-    } else {
-      input.css("display", "flex").focus();
-    }
+    if (input.is(":visible")) input.hide().val("");
+    else input.css("display", "flex").focus();
   });
+
+  // 🔹 Search LATO SERVER
   $("#pedalFilterInput").on("input", function () {
-    const filterValue = $(this).val().toLowerCase();
-    $(".pedal-catalog").each(function () {
-      const name = $(this).data("pedal-id")?.toLowerCase() || "";
-      $(this).toggle(name.includes(filterValue));
-    });
-    updatePedalCounts();
+    const searchValue = $(this).val().trim();
+    performServerSearch(searchValue);
   });
 
   // Apply guest mode filter visibility
-  if (userRole === "guest") {
-    $(".status-filter").not('[data-filter="all"]').hide();
-  }
+  if (userRole === "guest") $(".status-filter").not('[data-filter="all"]').hide();
 }
 
-// Updates pedal counts including draft/private/reviewing/public-by-me
+// ========================
+// SEARCH LATO SERVER
+// ========================
+function performServerSearch(searchText) {
+  const userRole = window.currentUser?.role || "guest";
+  const roleParam = userRole === "guest" ? "guest" : userRole;
+  const usernameParam = window.currentUser?.username || "";
+  const token = localStorage.getItem('authToken') || "";
+
+  const url = new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php");
+  url.searchParams.set("role", roleParam);
+  url.searchParams.set("username", usernameParam);
+  if (searchText) url.searchParams.set("search", searchText);
+
+  fetch(url, {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+  .then(res => res.ok ? res.json() : Promise.reject("Network error"))
+  .then(pedals => {
+    const resultsDiv = document.getElementById("catalog");
+    resultsDiv.innerHTML = "";
+
+    pedals.sort((a, b) => a._id - b._id);
+    pedals.forEach(pedal => {
+      const $pedalDiv = renderPedal(pedal, userRole);
+      $pedalDiv.attr("data-author", pedal.author || "");
+      $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+      $(resultsDiv).append($pedalDiv);
+    });
+
+    updatePedalCounts();   // aggiorna contatori
+    if (userRole !== "guest") setupEditPedalHandler(pedals);
+  })
+  .catch(err => {
+    console.error("Error fetching pedals:", err);
+    document.getElementById("catalog").innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
+  });
+}
+
+// ========================
+// UPDATE PEDAL COUNTS
+// ========================
 function updatePedalCounts(activeFilter = null) {
   const visiblePedals = $(".pedal-catalog:visible");
   const allPedals = $(".pedal-catalog");
@@ -169,7 +192,6 @@ function updatePedalCounts(activeFilter = null) {
     `${totalVisible} gear${totalVisible === 1 ? "" : "s"} available ` +
     `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalAbsolute}</span>`;
 
-  // Only show these if not a guest
   if (window.currentUser?.role !== "guest") {
     countsHtml += `, Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
      Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${statusCounts.private}</span>, 
@@ -182,7 +204,6 @@ function updatePedalCounts(activeFilter = null) {
   }
 
   countsHtml += `)`;
-
   $("#pedalCount").html(countsHtml);
 
   $(".status-filter").off("click").on("click", function() {
@@ -191,48 +212,20 @@ function updatePedalCounts(activeFilter = null) {
   });
 }
 
-// Unified filtering function
+// ========================
+// FILTER PEDALS
+// ========================
 function filterPedalsByStatus(filter) {
-  const currentUsername = (window.currentUser?.username || "").toLowerCase();
-  $(".pedal-catalog").each(function() {
-    const status = ($(this).data("published") || "").toLowerCase();
-    const author = ($(this).data("author") || "").toLowerCase();
-    const isMine = (status === "public" && author === currentUsername);
-    const isUserCreated = author && author !== "admin";
-    if (filter === "all") $(this).show();
-    else if (filter === "publicByMe") $(this).toggle(isMine);
-    else if (filter === "user") $(this).toggle(isUserCreated);
-    else $(this).toggle(status === filter);
-  });
-  updatePedalCounts(filter);
+  const userRole = window.currentUser?.role || "guest";
+
+  // Filtraggio lato server come la ricerca
+  initCatalog(userRole, filter);
 }
 
-// CSS for link look + active highlight + mobile hide counters except total
-const style = document.createElement("style");
-style.textContent = `
-  .status-filter {
-    cursor: pointer;
-    text-decoration: underline;
-    color: #ddd;
-  }
-  .status-filter.active-filter {
-    font-weight: bold;
-    color: #fff;
-    text-decoration: none;
-    border-bottom: 2px solid #fff;
-  }
-
-  /* Mobile: hide all pedal counters except total (All) */
-  @media (max-width: 768px) {
-    #pedalCount span.status-filter:not([data-filter="all"]) {
-      display: none !important;
-    }
-  }
-`;
-document.head.appendChild(style);
-
-// Initialize catalog loader
-function initCatalog(userRole) {
+// ========================
+// INIT CATALOG
+// ========================
+function initCatalog(userRole, filter = 'all') {
   const resultsDiv = document.getElementById("catalog");
   resultsDiv.innerHTML = `
       <div class="bx--loading-overlay">
@@ -246,14 +239,14 @@ function initCatalog(userRole) {
 
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
+  const token = localStorage.getItem('authToken') || "";
 
-  const token = localStorage.getItem('authToken');
+  const url = new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php");
+  url.searchParams.set("role", roleParam);
+  url.searchParams.set("username", usernameParam);
+  if (filter && filter !== 'all') url.searchParams.set("filter", filter);
 
-  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
-    headers: {
-        'Authorization': 'Bearer ' + token
-      }
-    })    
+  fetch(url, { headers: { 'Authorization': 'Bearer ' + token } })
     .then(res => res.ok ? res.json() : Promise.reject("Network error"))
     .then(pedals => {
       resultsDiv.innerHTML = "";
@@ -267,7 +260,7 @@ function initCatalog(userRole) {
         $(resultsDiv).append($pedalDiv);
       });
 
-      updatePedalCounts();
+      updatePedalCounts(filter);
       if (userRole !== "guest") setupEditPedalHandler(pedals);
     })
     .catch(err => {
@@ -275,3 +268,27 @@ function initCatalog(userRole) {
       resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
     });
 }
+
+// ========================
+// CSS STYLING STATUS FILTERS
+// ========================
+// const style = document.createElement("style");
+// style.textContent = `
+//   .status-filter {
+//     cursor: pointer;
+//     text-decoration: underline;
+//     color: #ddd;
+//   }
+//   .status-filter.active-filter {
+//     font-weight: bold;
+//     color: #fff;
+//     text-decoration: none;
+//     border-bottom: 2px solid #fff;
+//   }
+//   @media (max-width: 768px) {
+//     #pedalCount span.status-filter:not([data-filter="all"]) {
+//       display: none !important;
+//     }
+//   }
+// `;
+// document.head.appendChild(style);
