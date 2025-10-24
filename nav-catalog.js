@@ -152,55 +152,70 @@ function performServerSearch(searchText = "", filter = "all") {
 // ========================
 // UPDATE PEDAL COUNTS
 // ========================
-function updatePedalCounts(activeFilter = 'all') {
+// ========================
+// UPDATE PEDAL COUNTS
+// ========================
+function updatePedalCounts(activeFilter = 'all', totalPedalsFromServer = null) {
   const allPedals = $(".pedal-catalog");
-  const totalAbsolute = allPedals.length;
+  const visiblePedals = $(".pedal-catalog:visible");
+  const totalVisible = visiblePedals.length;
 
-  // Conta pedali per categoria
-  const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0, user: 0 };
-  const currentUsername = (window.currentUser?.username || "").toLowerCase();
+  // Totali fissi dal server se passati
+  let totals = totalPedalsFromServer || {
+    all: allPedals.length,
+    draft: 0,
+    private: 0,
+    reviewing: 0,
+    publicByMe: 0,
+    user: 0
+  };
 
-  allPedals.each(function() {
-    const status = ($(this).data("published") || "").toLowerCase();
-    const author = ($(this).data("author") || "").toLowerCase();
+  if (!totalPedalsFromServer) {
+    // Se non passati, calcolo dai dati DOM
+    allPedals.each(function() {
+      const status = ($(this).data("published") || "").toLowerCase();
+      const author = ($(this).data("author") || "").toLowerCase();
+      const currentUsername = (window.currentUser?.username || "").toLowerCase();
 
-    if (status in statusCounts) statusCounts[status]++;
-    if (status === "public" && author === currentUsername) statusCounts.publicByMe++;
-    if (status === "public" && author && author !== "admin" && author !== currentUsername) statusCounts.user++;
-  });
+      if (status in totals) totals[status]++;
+      if (status === "public" && author === currentUsername) totals.publicByMe++;
+      if (status === "public" && author && author !== "admin" && author !== currentUsername) totals.user++;
+    });
+  }
 
-  // Genera HTML contatori come link
+  // Contatori principali fissi
   let countsHtml = `
-    <span class="status-filter" data-filter="all">All: ${totalAbsolute}</span>
-    <span class="status-filter" data-filter="draft">Draft: ${statusCounts.draft}</span>
-    <span class="status-filter" data-filter="private">Private: ${statusCounts.private}</span>
-    <span class="status-filter" data-filter="reviewing">Reviewing: ${statusCounts.reviewing}</span>
-    <span class="status-filter" data-filter="publicByMe">Published by me: ${statusCounts.publicByMe}</span>
+    <span class="status-filter" data-filter="all">All: ${totals.all}</span>
+    <span class="status-filter" data-filter="draft">Draft: ${totals.draft}</span>
+    <span class="status-filter" data-filter="private">Private: ${totals.private}</span>
+    <span class="status-filter" data-filter="reviewing">Reviewing: ${totals.reviewing}</span>
+    <span class="status-filter" data-filter="publicByMe">Published by me: ${totals.publicByMe}</span>
   `;
 
   if (window.currentUser?.role === 'admin') {
-    countsHtml += `<span class="status-filter" data-filter="user">Published by Users: ${statusCounts.user}</span>`;
+    countsHtml += `<span class="status-filter" data-filter="user">Published by Users: ${totals.user}</span>`;
   }
+
+  // Contatore pedali visibili
+  countsHtml += `<span id="visiblePedalsCounter" style="margin-left:12px;">Visible: ${totalVisible}</span>`;
 
   $("#pedalCount").html(countsHtml);
 
-  // Applica lo stile dei link
-  $(".status-filter").css({
-    cursor: "pointer",
-    textDecoration: "underline",
-    marginRight: "8px"
-  });
+  // Stile link contatori
+  $(".status-filter").css({ cursor: "pointer", textDecoration: "underline", marginRight: "8px" });
+  $("#visiblePedalsCounter").css({ fontWeight: "bold" });
 
-  // Evidenzia il filtro selezionato
+  // Evidenzia filtro selezionato
   $(".status-filter").removeClass("active-filter");
   $(`.status-filter[data-filter="${activeFilter}"]`).addClass("active-filter");
 
-  // Gestione click filtro lato server
+  // Click filtro lato server
   $(".status-filter").off("click").on("click", function() {
     const filter = $(this).data("filter");
     filterPedalsByStatus(filter);
   });
 }
+
 
 // ========================
 // CSS aggiuntivo per il filtro selezionato
