@@ -1,6 +1,9 @@
 // ========================
 // NAV CATALOG INIT
 // ========================
+
+let fixedTotals = null; // Fixed total counters from server
+
 function initNavCatalog(userRole) {
   const isAdmin = (userRole === "admin");
 
@@ -148,22 +151,22 @@ function performServerSearch(searchText = "", filter = "all") {
 // ========================
 // UPDATE PEDAL COUNTS
 // ========================
-function updatePedalCounts(activeFilter = 'all', totalPedalsFromServer = null) {
-  const allPedals = $(".pedal-catalog");
+function updatePedalCounts(activeFilter = 'all') {
   const visiblePedals = $(".pedal-catalog:visible");
   const totalVisible = visiblePedals.length;
 
-  // Totali fissi dal server se passati, altrimenti calcolo dai DOM
-  let totals = totalPedalsFromServer || {
-    all: allPedals.length,
-    draft: 0,
-    private: 0,
-    reviewing: 0,
-    publicByMe: 0,
-    user: 0
-  };
+  // Se i totali fissi non sono ancora impostati, calcolali dai DOM
+  if (!fixedTotals) {
+    const allPedals = $(".pedal-catalog");
+    const totals = {
+      all: allPedals.length,
+      draft: 0,
+      private: 0,
+      reviewing: 0,
+      publicByMe: 0,
+      user: 0
+    };
 
-  if (!totalPedalsFromServer) {
     allPedals.each(function() {
       const status = ($(this).data("published") || "").toLowerCase();
       const author = ($(this).data("author") || "").toLowerCase();
@@ -173,19 +176,21 @@ function updatePedalCounts(activeFilter = 'all', totalPedalsFromServer = null) {
       if (status === "public" && author === currentUsername) totals.publicByMe++;
       if (status === "public" && author && author !== "admin" && author !== currentUsername) totals.user++;
     });
+
+    fixedTotals = totals; // salva i totali fissi
   }
 
-  // Contatori principali fissi
+  // Costruisci HTML contatori fissi
   let countsHtml = `
-    <span class="status-filter" data-filter="all">All: ${totals.all}</span>
-    <span class="status-filter" data-filter="draft">Draft: ${totals.draft}</span>
-    <span class="status-filter" data-filter="private">Private: ${totals.private}</span>
-    <span class="status-filter" data-filter="reviewing">Reviewing: ${totals.reviewing}</span>
-    <span class="status-filter" data-filter="publicByMe">Published by me: ${totals.publicByMe}</span>
+    <span class="status-filter" data-filter="all">All: ${fixedTotals.all}</span>
+    <span class="status-filter" data-filter="draft">Draft: ${fixedTotals.draft}</span>
+    <span class="status-filter" data-filter="private">Private: ${fixedTotals.private}</span>
+    <span class="status-filter" data-filter="reviewing">Reviewing: ${fixedTotals.reviewing}</span>
+    <span class="status-filter" data-filter="publicByMe">Published by me: ${fixedTotals.publicByMe}</span>
   `;
 
   if (window.currentUser?.role === 'admin') {
-    countsHtml += `<span class="status-filter" data-filter="user">Published by Users: ${totals.user}</span>`;
+    countsHtml += `<span class="status-filter" data-filter="user">Published by Users: ${fixedTotals.user}</span>`;
   }
 
   // Contatore pedali visibili dinamico
@@ -207,6 +212,7 @@ function updatePedalCounts(activeFilter = 'all', totalPedalsFromServer = null) {
     filterPedalsByStatus(filter);
   });
 }
+
 
 // ========================
 // CSS aggiuntivo per il filtro selezionato
