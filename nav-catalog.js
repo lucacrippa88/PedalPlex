@@ -127,7 +127,11 @@ function performServerSearch(searchText) {
   const url = new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php");
   url.searchParams.set("role", roleParam);
   url.searchParams.set("username", usernameParam);
-  if (searchText) url.searchParams.set("search", searchText);
+
+  // 🔹 Solo se c’è testo, aggiungo il parametro search
+  if (searchText && searchText.trim() !== "") {
+    url.searchParams.set("search", searchText.trim());
+  }
 
   fetch(url, {
     headers: { 'Authorization': 'Bearer ' + token }
@@ -137,7 +141,7 @@ function performServerSearch(searchText) {
     const resultsDiv = document.getElementById("catalog");
     resultsDiv.innerHTML = "";
 
-    pedals.sort((a, b) => a._id - b._id);
+    pedals.sort((a, b) => a._id.localeCompare(b._id)); // ordinamento alfabetico
     pedals.forEach(pedal => {
       const $pedalDiv = renderPedal(pedal, userRole);
       $pedalDiv.attr("data-author", pedal.author || "");
@@ -153,6 +157,7 @@ function performServerSearch(searchText) {
     document.getElementById("catalog").innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
   });
 }
+
 
 // ========================
 // UPDATE PEDAL COUNTS
