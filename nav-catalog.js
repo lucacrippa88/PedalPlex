@@ -253,25 +253,60 @@ function initCatalog(userRole) {
     headers: {
         'Authorization': 'Bearer ' + token
       }
-    })    
-    .then(res => res.ok ? res.json() : Promise.reject("Network error"))
-    .then(pedals => {
-      resultsDiv.innerHTML = "";
-      $("#pedalCount").text(`${pedals.length} gears`);
+    }) 
+    .then(async res => {
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("Server error:", text);
+    throw new Error("Network error");
+  }
 
-      pedals.sort((a,b) => a._id - b._id);
-      pedals.forEach(pedal => {
-        const $pedalDiv = renderPedal(pedal, userRole);
-        $pedalDiv.attr("data-author", pedal.author || "");
-        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-        $(resultsDiv).append($pedalDiv);
-      });
+  try {
+    return await res.json();
+  } catch (e) {
+    const text = await res.text();
+    console.error("Invalid JSON response:", text);
+    throw new Error("Invalid JSON from server");
+  }
+})
+.then(pedals => {
+  resultsDiv.innerHTML = "";
+  $("#pedalCount").text(`${pedals.length} gears`);
 
-      updatePedalCounts();
-      if (userRole !== "guest") setupEditPedalHandler(pedals);
-    })
-    .catch(err => {
-      console.error("Error fetching pedals:", err);
-      resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
-    });
+  pedals.sort((a,b) => a._id.localeCompare(b._id));
+  pedals.forEach(pedal => {
+    const $pedalDiv = renderPedal(pedal, userRole);
+    $pedalDiv.attr("data-author", pedal.author || "");
+    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+    $(resultsDiv).append($pedalDiv);
+  });
+
+  updatePedalCounts();
+  if (userRole !== "guest") setupEditPedalHandler(pedals);
+})
+.catch(err => {
+  console.error("Error fetching pedals:", err);
+  resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err.message}</p>`;
+});
+   
+    // .then(res => res.ok ? res.json() : Promise.reject("Network error"))
+    // .then(pedals => {
+    //   resultsDiv.innerHTML = "";
+    //   $("#pedalCount").text(`${pedals.length} gears`);
+
+    //   pedals.sort((a,b) => a._id - b._id);
+    //   pedals.forEach(pedal => {
+    //     const $pedalDiv = renderPedal(pedal, userRole);
+    //     $pedalDiv.attr("data-author", pedal.author || "");
+    //     $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+    //     $(resultsDiv).append($pedalDiv);
+    //   });
+
+    //   updatePedalCounts();
+    //   if (userRole !== "guest") setupEditPedalHandler(pedals);
+    // })
+    // .catch(err => {
+    //   console.error("Error fetching pedals:", err);
+    //   resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
+    // });
 }
