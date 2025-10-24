@@ -149,48 +149,75 @@ function performServerSearch(searchText = "", filter = "all") {
 // ========================
 // UPDATE COUNTERS
 // ========================
-function updatePedalCounts(activeFilter = null) {
-  const visiblePedals = $(".pedal-catalog:visible");
+// ========================
+// UPDATE PEDAL COUNTS
+// ========================
+function updatePedalCounts(activeFilter = 'all') {
   const allPedals = $(".pedal-catalog");
-  const totalVisible = visiblePedals.length;
   const totalAbsolute = allPedals.length;
 
-  const statusCounts = { draft:0, private:0, reviewing:0, publicByMe:0 };
-  let userPedalsCount = 0;
+  // Conta pedali per categoria
+  const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0, user: 0 };
   const currentUsername = (window.currentUser?.username || "").toLowerCase();
 
-  allPedals.each(function(){
-    const status = ($(this).data("published")||"").toLowerCase();
-    const author = ($(this).data("author")||"").toLowerCase();
-    if(status in statusCounts) statusCounts[status]++;
-    if(status==="public" && author===currentUsername) statusCounts.publicByMe++;
-    if(author && author!=="admin") userPedalsCount++;
+  allPedals.each(function() {
+    const status = ($(this).data("published") || "").toLowerCase();
+    const author = ($(this).data("author") || "").toLowerCase();
+
+    if (status in statusCounts) statusCounts[status]++;
+    if (status === "public" && author === currentUsername) statusCounts.publicByMe++;
+    if (status === "public" && author && author !== "admin" && author !== currentUsername) statusCounts.user++;
   });
 
-  const reviewingBadge = statusCounts.reviewing>0
-    ? `<span class="status-filter ${activeFilter==="reviewing"?"active-filter":""}" data-filter="reviewing" style="background:#ff0000;color:white;border-radius:50%;padding:1px 5px;font-size:0.75rem;font-weight:bold;min-width:18px;text-align:center;">${statusCounts.reviewing}</span>`
-    : `<span class="status-filter ${activeFilter==="reviewing"?"active-filter":""}" data-filter="reviewing">0</span>`;
+  // Genera HTML contatori come link
+  let countsHtml = `
+    <span class="status-filter" data-filter="all">All: ${totalAbsolute}</span>
+    <span class="status-filter" data-filter="draft">Draft: ${statusCounts.draft}</span>
+    <span class="status-filter" data-filter="private">Private: ${statusCounts.private}</span>
+    <span class="status-filter" data-filter="reviewing">Reviewing: ${statusCounts.reviewing}</span>
+    <span class="status-filter" data-filter="publicByMe">Published by me: ${statusCounts.publicByMe}</span>
+  `;
 
-  let countsHtml = `${totalVisible} gear${totalVisible===1?"":"s"} available (All: <span class="status-filter ${activeFilter==="all"?"active-filter":""}" data-filter="all">${totalAbsolute}</span>`;
-
-  if(window.currentUser?.role!=="guest"){
-    countsHtml += `, Draft: <span class="status-filter ${activeFilter==="draft"?"active-filter":""}" data-filter="draft">${statusCounts.draft}</span>,
-      Private: <span class="status-filter ${activeFilter==="private"?"active-filter":""}" data-filter="private">${statusCounts.private}</span>,
-      Reviewing: ${reviewingBadge},
-      Published by me: <span class="status-filter ${activeFilter==="publicByMe"?"active-filter":""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>`;
-    if(window.currentUser?.role==="admin"){
-      countsHtml += `, Published by Users: <span class="status-filter ${activeFilter==="user"?"active-filter":""}" data-filter="user">${userPedalsCount}</span>`;
-    }
+  if (window.currentUser?.role === 'admin') {
+    countsHtml += `<span class="status-filter" data-filter="user">Published by Users: ${statusCounts.user}</span>`;
   }
 
-  countsHtml += `)`;
   $("#pedalCount").html(countsHtml);
 
-  $(".status-filter").off("click").on("click", function(){
+  // Applica lo stile dei link
+  $(".status-filter").css({
+    cursor: "pointer",
+    textDecoration: "underline",
+    marginRight: "8px"
+  });
+
+  // Evidenzia il filtro selezionato
+  $(".status-filter").removeClass("active-filter");
+  $(`.status-filter[data-filter="${activeFilter}"]`).addClass("active-filter");
+
+  // Gestione click filtro lato server
+  $(".status-filter").off("click").on("click", function() {
     const filter = $(this).data("filter");
     filterPedalsByStatus(filter);
   });
 }
+
+// ========================
+// CSS aggiuntivo per il filtro selezionato
+// ========================
+$("<style>")
+  .prop("type", "text/css")
+  .html(`
+    .status-filter.active-filter {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    #pedalCount .status-filter:hover {
+      color: #fff;
+    }
+  `)
+  .appendTo("head");
+
 
 // ========================
 // INIT CATALOG
