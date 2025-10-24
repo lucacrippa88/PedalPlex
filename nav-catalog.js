@@ -101,6 +101,14 @@ function initNavCatalog(userRole) {
 }
 
 // ========================
+// FILTER PEDALS (click contatori) lato server
+// ========================
+function filterPedalsByStatus(filter) {
+  const searchText = $("#pedalFilterInput").val().trim(); // mantiene la ricerca attiva
+  performServerSearch(searchText, filter); // chiama il server con filtro
+}
+
+// ========================
 // SERVER SEARCH + FILTER
 // ========================
 function performServerSearch(searchText = "", filter = "all") {
@@ -113,8 +121,8 @@ function performServerSearch(searchText = "", filter = "all") {
   url.searchParams.set("role", roleParam);
   url.searchParams.set("username", usernameParam);
 
-  if(searchText.trim() !== "") url.searchParams.set("search", searchText.trim());
-  if(filter !== "all") url.searchParams.set("filter", filter);
+  if(searchText) url.searchParams.set("search", searchText);
+  if(filter && filter !== "all") url.searchParams.set("filter", filter); // FILTRO lato server
 
   fetch(url, { headers: { 'Authorization': 'Bearer ' + token } })
     .then(res => res.ok ? res.json() : Promise.reject("Network error"))
@@ -128,7 +136,7 @@ function performServerSearch(searchText = "", filter = "all") {
         $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
         $(resultsDiv).append($pedalDiv);
       });
-      updatePedalCounts(filter);
+      updatePedalCounts(filter); // aggiorna contatori con filtro attivo
       if(userRole !== "guest") setupEditPedalHandler(pedals);
     })
     .catch(err => {
@@ -137,13 +145,6 @@ function performServerSearch(searchText = "", filter = "all") {
     });
 }
 
-// ========================
-// FILTER PEDALS (click contatori)
-// ========================
-function filterPedalsByStatus(filter) {
-  const searchText = $("#pedalFilterInput").val().trim();
-  performServerSearch(searchText, filter);
-}
 
 // ========================
 // UPDATE COUNTERS
