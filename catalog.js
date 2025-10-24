@@ -8,7 +8,6 @@ function setPedalJSON(jsonString) {
 }
 
 
-// Creation of new gear pedal (only for logged-in users)
 function createNewPedal() {
   if (!window.currentUser || window.currentUser.role === "guest") {
     Swal.fire('Access Denied', 'Guests cannot create pedals. Please log in.', 'warning');
@@ -87,6 +86,7 @@ function createNewPedal() {
             customClass: { confirmButton: 'bx--btn bx--btn--primary' }
           }).then(() => {
             const resultsDiv = document.getElementById("catalog");
+
             const createdPedal = {
               ...newPedal,
               _id: data.id,
@@ -94,13 +94,38 @@ function createNewPedal() {
               author: data.author || newPedal.author,
               canEdit: true
             };
+
+            // Aggiorna lo stato globale dei pedali
             pedals.push(createdPedal);
+
+            // Renderizza il nuovo pedal
             const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
             $pedalDiv.attr("data-author", createdPedal.author || "");
             $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
             $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
             $(resultsDiv).append($pedalDiv);
+
+            // ========================
+            // AGGIORNA FIXED TOTALS
+            // ========================
+            if (!fixedTotals) fixedTotals = {
+              all: 0, draft: 0, private: 0, reviewing: 0, publicByMe: 0, user: 0
+            };
+
+            const status = (createdPedal.published || "draft").toLowerCase();
+            const author = (createdPedal.author || "").toLowerCase();
+            const currentUsername = (window.currentUser?.username || "").toLowerCase();
+
+            fixedTotals.all++;
+
+            if (status in fixedTotals) fixedTotals[status]++;
+            if (status === "public" && author === currentUsername) fixedTotals.publicByMe++;
+            if (status === "public" && author && author !== "admin" && author !== currentUsername) fixedTotals.user++;
+
+            // Aggiorna contatori visibili
             updatePedalCounts();
+
+            // Setup edit handler
             setupEditPedalHandler(pedals);
           });
         } else {
@@ -113,3 +138,4 @@ function createNewPedal() {
     }
   });
 }
+
