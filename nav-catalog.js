@@ -117,7 +117,7 @@ function initNavCatalog(userRole) {
   const handleSearchInput = debounce(function() {
     const searchValue = $("#pedalFilterInput").val().trim();
     performServerSearch(searchValue);
-  }, 300); // 300ms di debounce
+  }, 150); // 150ms di debounce
 
   $("#pedalFilterInput").on("input", handleSearchInput);
 
