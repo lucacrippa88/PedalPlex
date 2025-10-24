@@ -145,13 +145,6 @@ function performServerSearch(searchText = "", filter = "all") {
     });
 }
 
-
-// ========================
-// UPDATE COUNTERS
-// ========================
-// ========================
-// UPDATE PEDAL COUNTS
-// ========================
 // ========================
 // UPDATE PEDAL COUNTS
 // ========================
@@ -160,7 +153,7 @@ function updatePedalCounts(activeFilter = 'all', totalPedalsFromServer = null) {
   const visiblePedals = $(".pedal-catalog:visible");
   const totalVisible = visiblePedals.length;
 
-  // Totali fissi dal server se passati
+  // Totali fissi dal server se passati, altrimenti calcolo dai DOM
   let totals = totalPedalsFromServer || {
     all: allPedals.length,
     draft: 0,
@@ -171,7 +164,6 @@ function updatePedalCounts(activeFilter = 'all', totalPedalsFromServer = null) {
   };
 
   if (!totalPedalsFromServer) {
-    // Se non passati, calcolo dai dati DOM
     allPedals.each(function() {
       const status = ($(this).data("published") || "").toLowerCase();
       const author = ($(this).data("author") || "").toLowerCase();
@@ -196,7 +188,7 @@ function updatePedalCounts(activeFilter = 'all', totalPedalsFromServer = null) {
     countsHtml += `<span class="status-filter" data-filter="user">Published by Users: ${totals.user}</span>`;
   }
 
-  // Contatore pedali visibili
+  // Contatore pedali visibili dinamico
   countsHtml += `<span id="visiblePedalsCounter" style="margin-left:12px;">Visible: ${totalVisible}</span>`;
 
   $("#pedalCount").html(countsHtml);
@@ -207,7 +199,7 @@ function updatePedalCounts(activeFilter = 'all', totalPedalsFromServer = null) {
 
   // Evidenzia filtro selezionato
   $(".status-filter").removeClass("active-filter");
-  $(`.status-filter[data-filter="${activeFilter}"]`).addClass("active-filter");
+  $(`.status-filter[data-filter="${activeFilter}"]`).addClass("active-filter").css({ fontWeight:"bold", textDecoration:"underline" });
 
   // Click filtro lato server
   $(".status-filter").off("click").on("click", function() {
@@ -215,7 +207,6 @@ function updatePedalCounts(activeFilter = 'all', totalPedalsFromServer = null) {
     filterPedalsByStatus(filter);
   });
 }
-
 
 // ========================
 // CSS aggiuntivo per il filtro selezionato
@@ -232,6 +223,7 @@ $("<style>")
     }
   `)
   .appendTo("head");
+
 
 
 // ========================
