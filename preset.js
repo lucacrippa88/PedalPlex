@@ -15,6 +15,11 @@ $(document).ready(function () {
   renderFullPedalboard();
 });
 
+
+
+
+
+
 function initPreset() {
   const isGuest = !window.currentUser;
   const userId = window.currentUser?.userid;
@@ -78,29 +83,127 @@ function initPreset() {
   // Show loader overlay
   document.getElementById("pageLoader").style.display = "flex";
 
-  // Load catalog
-  fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
-    .then(res => {
-      if (!res.ok) throw new Error(`Catalog fetch failed: ${res.status}`);
-      return res.json();
-    })
-    .then(catalog => {
-      window.catalog = catalog;
-      window.catalogMap = {};
-      catalog.forEach(p => window.catalogMap[p._id] = p);
-      document.getElementById("pageLoader").style.display = "none";
+  // // Load catalog
+  // fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
+  //   .then(res => {
+  //     if (!res.ok) throw new Error(`Catalog fetch failed: ${res.status}`);
+  //     return res.json();
+  //   })
+  //   .then(catalog => {
+  //     window.catalog = catalog;
+  //     window.catalogMap = {};
+  //     catalog.forEach(p => window.catalogMap[p._id] = p);
+  //     document.getElementById("pageLoader").style.display = "none";
 
-      // Fetch pedalboards
-      return fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          user_id: userId
-        })
-      });
-    })
+  //     // Fetch pedalboards
+  //     return fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify({
+  //         user_id: userId
+  //       })
+  //     });
+  //   })
+  // -------------------------
+// Optimized: fetch pedalboards first
+// -------------------------
+fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ user_id: userId })
+})
+.then(res => {
+  if (!res.ok) throw new Error(`Pedalboard fetch failed: ${res.status}`);
+  return res.json();
+})
+.then(data => {
+  window.allPedalboards = data.docs && Array.isArray(data.docs) ? data.docs : [];
+
+  // Sort and populate dropdown
+  window.allPedalboards.sort((a,b)=>(a.board_name||'').toLowerCase().localeCompare((b.board_name||'').toLowerCase()));
+  const dropdown = document.getElementById('pedalboardSelect');
+  dropdown.innerHTML = '';
+  const placeholderOption = document.createElement('option');
+  placeholderOption.value = '';
+  placeholderOption.textContent = '-- Select a pedalboard --';
+  placeholderOption.disabled = true;
+  dropdown.appendChild(placeholderOption);
+  window.allPedalboards.forEach(pb=>{
+    const option = document.createElement('option');
+    option.value = pb._id;
+    option.textContent = pb.board_name || 'Untitled Pedalboard';
+    dropdown.appendChild(option);
+  });
+
+  // Restore last selection
+  let restored = false;
+  const savedBoardId = localStorage.getItem('lastPedalboardId');
+  if(savedBoardId){
+    const opt = Array.from(dropdown.options).find(o=>o.value===savedBoardId);
+    if(opt){
+      dropdown.value = savedBoardId;
+      window.pedalboard = window.allPedalboards.find(pb=>pb._id===savedBoardId);
+      restored = true;
+    }
+  }
+  if(!restored && window.allPedalboards.length>0){
+    dropdown.selectedIndex = 1;
+    window.pedalboard = window.allPedalboards[0];
+    localStorage.setItem('lastPedalboardId', window.pedalboard._id);
+    localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
+  }
+
+  renderFullPedalboard();
+
+  // -------------------------
+  // Fetch only pedals used in this pedalboard
+  // -------------------------
+  const pedalIds = window.pedalboard.pedals.map(p=>p.id).filter(Boolean);
+  if(pedalIds.length===0) return Promise.resolve([]);
+
+  return fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php',{
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify({ ids: pedalIds })
+  })
+  .then(res=>{
+    if(!res.ok) throw new Error(`Pedals fetch failed: ${res.status}`);
+    return res.json();
+  })
+  .then(pedalsData=>{
+    window.catalog = pedalsData.docs || [];
+    window.catalogMap = {};
+    window.catalog.forEach(p=>window.catalogMap[p._id]=p);
+    return [];
+  });
+})
+.then(()=>{
+  // -------------------------
+  // Fetch presets for this pedalboard
+  // -------------------------
+  return fetchPresetsByBoardId(userId, window.pedalboard._id, ()=>{
+    const presetSelect = document.getElementById('presetSelect');
+    const folderSelect = document.getElementById('folderSelect');
+
+    const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
+    if(folderSelect){
+      const folderOptionExists = Array.from(folderSelect.options).some(o=>o.value===savedFolderId);
+      folderSelect.value = folderOptionExists ? savedFolderId : 'default';
+    }
+
+    const savedPresetId = localStorage.getItem('lastPresetId');
+    populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
+
+    if(typeof restoreZoomForCurrentBoard==="function"){
+      restoreZoomForCurrentBoard();
+    }
+
+    presetSelect.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+})
+
     .then(res => {
       if (!res.ok) throw new Error(`Pedalboard fetch failed: ${res.status}`);
       return res.json();
