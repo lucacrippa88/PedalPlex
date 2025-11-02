@@ -1352,205 +1352,205 @@ function filterPedalsWithColoredLeds(pedalsObj) {
 
 
 
-// // Render full pedalboard in preset page
-// async function renderFullPedalboard() {
-//   const container = document.getElementById("preset");
-//   if (!container) {
-//     console.warn("No #preset container found");
-//     return;
-//   }
+// Render full pedalboard in preset page
+async function renderFullPedalboard() {
+  const container = document.getElementById("preset");
+  if (!container) {
+    console.warn("No #preset container found");
+    return;
+  }
 
-//   // Mostra lo spinner globale
-//   const globalLoader = document.getElementById("pageLoader");
-//   if (globalLoader) globalLoader.style.display = "flex";
+  // Mostra lo spinner globale
+  const globalLoader = document.getElementById("pageLoader");
+  if (globalLoader) globalLoader.style.display = "flex";
 
-//   // Aspetta caricamento pedalboard/pedali
-//   await waitForPedalboardReady();
+  // Aspetta caricamento pedalboard/pedali
+  await waitForPedalboardReady();
 
-//   // Nascondi lo spinner globale
-//   if (globalLoader) globalLoader.style.display = "none";
+  // Nascondi lo spinner globale
+  if (globalLoader) globalLoader.style.display = "none";
 
-//   container.innerHTML = "";
+  container.innerHTML = "";
 
-//   // Se non esiste pedalboard o è vuota → stato vuoto
-//   if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals) || window.pedalboard.pedals.length === 0) {
-//     showEmptyState(container);
-//     return;
-//   }
+  // Se non esiste pedalboard o è vuota → stato vuoto
+  if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals) || window.pedalboard.pedals.length === 0) {
+    showEmptyState(container);
+    return;
+  }
 
-//   // Mostra i controlli preset
-//   $("#preset-controls").css("display", "inline-flex");
+  // Mostra i controlli preset
+  $("#preset-controls").css("display", "inline-flex");
 
-//   // Organizza pedali per riga
-//   const rowsMap = {};
-//   window.pedalboard.pedals.forEach(pbPedal => {
-//     const rowNum = pbPedal.row || 1;
-//     if (!rowsMap[rowNum]) rowsMap[rowNum] = [];
-//     rowsMap[rowNum].push(pbPedal);
-//   });
+  // Organizza pedali per riga
+  const rowsMap = {};
+  window.pedalboard.pedals.forEach(pbPedal => {
+    const rowNum = pbPedal.row || 1;
+    if (!rowsMap[rowNum]) rowsMap[rowNum] = [];
+    rowsMap[rowNum].push(pbPedal);
+  });
 
-//   const sortedRows = Object.keys(rowsMap)
-//     .map(r => parseInt(r, 10))
-//     .sort((a, b) => a - b);
+  const sortedRows = Object.keys(rowsMap)
+    .map(r => parseInt(r, 10))
+    .sort((a, b) => a - b);
 
-//   for (const rowNum of sortedRows) {
-//     const rowDiv = document.createElement("div");
-//     rowDiv.style.display = "flex";
-//     rowDiv.style.flexWrap = "wrap";
-//     rowDiv.style.alignItems = "flex-start";
-//     rowDiv.style.gap = "10px";
+  for (const rowNum of sortedRows) {
+    const rowDiv = document.createElement("div");
+    rowDiv.style.display = "flex";
+    rowDiv.style.flexWrap = "wrap";
+    rowDiv.style.alignItems = "flex-start";
+    rowDiv.style.gap = "10px";
 
-//     for (const pbPedal of rowsMap[rowNum]) {
-//       try {
-//         const id = String(pbPedal.pedal_id || "").trim();
-//         const pedalData = window.catalogMap[id] || window.catalogMap[id.normalize()];
+    for (const pbPedal of rowsMap[rowNum]) {
+      try {
+        const id = String(pbPedal.pedal_id || "").trim();
+        const pedalData = window.catalogMap[id] || window.catalogMap[id.normalize()];
 
-//         if (!pedalData) {
-//           console.warn(`Pedal not found in catalog: ${pbPedal.pedal_id}`);
-//           continue;
-//         }
+        if (!pedalData) {
+          console.warn(`Pedal not found in catalog: ${pbPedal.pedal_id}`);
+          continue;
+        }
 
-//         const pedal = pedalData;
-//         const angle = pbPedal.rotation || 0;
-//         const insideColorRaw = pedal["inside-color"] || "";
-//         const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
-//         let inside = "";
-//         let colorOnly = insideColorRaw;
+        const pedal = pedalData;
+        const angle = pbPedal.rotation || 0;
+        const insideColorRaw = pedal["inside-color"] || "";
+        const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
+        let inside = "";
+        let colorOnly = insideColorRaw;
 
-//         if (!isImage) {
-//           const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-//           if (match) {
-//             colorOnly = match[1];
-//             inside = match[2] || "";
-//           }
-//         }
+        if (!isImage) {
+          const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+          if (match) {
+            colorOnly = match[1];
+            inside = match[2] || "";
+          }
+        }
 
-//         const baseCss = {
-//           border: `5px solid ${pedal["color"]}`,
-//           borderRadius: "10px",
-//           color: pedal["font-color"],
-//           width: getPedalWidth(pedal.width),
-//           height: getPedalHeight(pedal.height),
-//           transform: `rotate(${angle}deg)`,
-//           marginBottom: "10px",
-//           display: "inline-block",
-//           ...(pedal["inside-border"] && { boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` }),
-//           ...(isImage
-//             ? {
-//                 backgroundImage: `url("${insideColorRaw}")`,
-//                 backgroundSize: "cover",
-//                 backgroundPosition: "center"
-//               }
-//             : { background: colorOnly })
-//         };
+        const baseCss = {
+          border: `5px solid ${pedal["color"]}`,
+          borderRadius: "10px",
+          color: pedal["font-color"],
+          width: getPedalWidth(pedal.width),
+          height: getPedalHeight(pedal.height),
+          transform: `rotate(${angle}deg)`,
+          marginBottom: "10px",
+          display: "inline-block",
+          ...(pedal["inside-border"] && { boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` }),
+          ...(isImage
+            ? {
+                backgroundImage: `url("${insideColorRaw}")`,
+                backgroundSize: "cover",
+                backgroundPosition: "center"
+              }
+            : { background: colorOnly })
+        };
 
-//         const boxShadow = getBoxShadow(pedal, inside, `inset 0 -36px 0 0 ${pedal["color"]}`);
-//         const $pedalDiv = $("<div>")
-//           .addClass("pedal-catalog")
-//           .css({ ...baseCss, boxShadow })
-//           .attr("data-pedal-name", pedal.name)
-//           .attr("data-pedal-id", pedal._id);
+        const boxShadow = getBoxShadow(pedal, inside, `inset 0 -36px 0 0 ${pedal["color"]}`);
+        const $pedalDiv = $("<div>")
+          .addClass("pedal-catalog")
+          .css({ ...baseCss, boxShadow })
+          .attr("data-pedal-name", pedal.name)
+          .attr("data-pedal-id", pedal._id);
 
-//         const cleanName = sanitizePedalHTML(pedal.name);
-//         renderPedalControls(pedal, $pedalDiv);
+        const cleanName = sanitizePedalHTML(pedal.name);
+        renderPedalControls(pedal, $pedalDiv);
 
-//         if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
-//           const $nameDiv = $("<div>")
-//             .addClass("pedal-name")
-//             .html(cleanName)
-//             .attr("style", safeLogoStyle(pedal.logo) || "");
-//           $pedalDiv.append($nameDiv);
-//         }
+        if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
+          const $nameDiv = $("<div>")
+            .addClass("pedal-name")
+            .html(cleanName)
+            .attr("style", safeLogoStyle(pedal.logo) || "");
+          $pedalDiv.append($nameDiv);
+        }
 
-//         const widthPx = parseFloat(getPedalWidth(pedal.width));
-//         const heightPx = parseFloat(getPedalHeight(pedal.height));
-//         const hasRotation = angle !== 0;
+        const widthPx = parseFloat(getPedalWidth(pedal.width));
+        const heightPx = parseFloat(getPedalHeight(pedal.height));
+        const hasRotation = angle !== 0;
 
-//         const wrapper = document.createElement("div");
-//         wrapper.style.display = "flex";
-//         wrapper.style.justifyContent = "center";
-//         wrapper.style.alignItems = "flex-start";
-//         wrapper.style.position = "relative";
-//         wrapper.style.boxSizing = "content-box";
-//         wrapper.style.marginBottom = "20px";
+        const wrapper = document.createElement("div");
+        wrapper.style.display = "flex";
+        wrapper.style.justifyContent = "center";
+        wrapper.style.alignItems = "flex-start";
+        wrapper.style.position = "relative";
+        wrapper.style.boxSizing = "content-box";
+        wrapper.style.marginBottom = "20px";
 
-//         // --- Aggiungiamo il calcolo per pedali ruotati ---
-//         if (hasRotation) {
-//           const radians = angle * Math.PI / 180;
-//           const sin = Math.abs(Math.sin(radians));
-//           const cos = Math.abs(Math.cos(radians));
+        // --- Aggiungiamo il calcolo per pedali ruotati ---
+        if (hasRotation) {
+          const radians = angle * Math.PI / 180;
+          const sin = Math.abs(Math.sin(radians));
+          const cos = Math.abs(Math.cos(radians));
 
-//           const rotatedWidth = widthPx * cos + heightPx * sin;
-//           const rotatedHeight = widthPx * sin + heightPx * cos;
+          const rotatedWidth = widthPx * cos + heightPx * sin;
+          const rotatedHeight = widthPx * sin + heightPx * cos;
 
-//           wrapper.style.width = `${rotatedWidth}px`;
-//           wrapper.style.height = `${rotatedHeight}px`;
+          wrapper.style.width = `${rotatedWidth}px`;
+          wrapper.style.height = `${rotatedHeight}px`;
 
-//           // Margini adattivi per evitare sovrapposizioni
-//           wrapper.style.marginLeft = `${rotatedWidth * 0.2}px`;
-//           wrapper.style.marginRight = `${rotatedWidth * 0.2}px`;
-//           if (widthPx > heightPx) wrapper.style.marginTop = '30px';
-//         }
-//         // --- Fine logica pedali ruotati ---
+          // Margini adattivi per evitare sovrapposizioni
+          wrapper.style.marginLeft = `${rotatedWidth * 0.2}px`;
+          wrapper.style.marginRight = `${rotatedWidth * 0.2}px`;
+          if (widthPx > heightPx) wrapper.style.marginTop = '30px';
+        }
+        // --- Fine logica pedali ruotati ---
 
-//         wrapper.appendChild($pedalDiv[0]);
-//         rowDiv.appendChild(wrapper);
+        wrapper.appendChild($pedalDiv[0]);
+        rowDiv.appendChild(wrapper);
 
-//       } catch (err) {
-//         console.error("Error rendering pedal:", err);
-//       }
-//     }
+      } catch (err) {
+        console.error("Error rendering pedal:", err);
+      }
+    }
 
-//     container.appendChild(rowDiv);
-//   }
+    container.appendChild(rowDiv);
+  }
 
-//   // Salva pedali correnti
-//   const pedalsOnBoard = [];
-//   $(".pedal").each(function () {
-//     pedalsOnBoard.push($(this).data("pedal-name"));
-//   });
-//   window.currentPedalsOnBoard = pedalsOnBoard;
-// }
+  // Salva pedali correnti
+  const pedalsOnBoard = [];
+  $(".pedal").each(function () {
+    pedalsOnBoard.push($(this).data("pedal-name"));
+  });
+  window.currentPedalsOnBoard = pedalsOnBoard;
+}
 
-// // Mostra stato “vuoto”
-// function showEmptyState(container) {
-//   container.innerHTML = `
-//     <div style="text-align: center; margin-top: 40px;">
-//       <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty.</p>
-//       <button
-//         id="createBtn"
-//         class="bx--btn bx--btn--secondary"
-//         type="button"
-//         aria-label="Go to Pedalboard"
-//         style="display: inline-flex; align-items: center; gap: 0.5rem; margin: 0 auto;">
-//         <svg xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 32 32" fill="currentColor">
-//           <path d="M18 6L16.59 7.41 23.17 14H4v2H23.17l-6.58 6.59L18 26l10-10z"></path>
-//         </svg>
-//         Go to pedalboard
-//       </button>
-//     </div>
-//   `;
-//   document.getElementById("createBtn").addEventListener("click", () => {
-//     window.location.href = "pedalboard.html";
-//   });
-// }
+// Mostra stato “vuoto”
+function showEmptyState(container) {
+  container.innerHTML = `
+    <div style="text-align: center; margin-top: 40px;">
+      <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty.</p>
+      <button
+        id="createBtn"
+        class="bx--btn bx--btn--secondary"
+        type="button"
+        aria-label="Go to Pedalboard"
+        style="display: inline-flex; align-items: center; gap: 0.5rem; margin: 0 auto;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 32 32" fill="currentColor">
+          <path d="M18 6L16.59 7.41 23.17 14H4v2H23.17l-6.58 6.59L18 26l10-10z"></path>
+        </svg>
+        Go to pedalboard
+      </button>
+    </div>
+  `;
+  document.getElementById("createBtn").addEventListener("click", () => {
+    window.location.href = "pedalboard.html";
+  });
+}
 
-// // Aspetta finché la pedalboard è pronta
-// async function waitForPedalboardReady(maxWait = 7000) {
-//   const start = Date.now();
-//   return new Promise(resolve => {
-//     const check = () => {
-//       const ready =
-//         window.pedalboard &&
-//         Array.isArray(window.pedalboard.pedals) &&
-//         window.catalogMap &&
-//         Object.keys(window.catalogMap).length > 0;
-//       if (ready || Date.now() - start > maxWait) resolve();
-//       else setTimeout(check, 150);
-//     };
-//     check();
-//   });
-// }
+// Aspetta finché la pedalboard è pronta
+async function waitForPedalboardReady(maxWait = 7000) {
+  const start = Date.now();
+  return new Promise(resolve => {
+    const check = () => {
+      const ready =
+        window.pedalboard &&
+        Array.isArray(window.pedalboard.pedals) &&
+        window.catalogMap &&
+        Object.keys(window.catalogMap).length > 0;
+      if (ready || Date.now() - start > maxWait) resolve();
+      else setTimeout(check, 150);
+    };
+    check();
+  });
+}
 
 
 
@@ -1814,287 +1814,6 @@ function filterPedalsWithColoredLeds(pedalsObj) {
 
 
 
-
-
-// Render full pedalboard in preset page (versione unificata)
-async function renderFullPedalboard() {
-  const container = document.getElementById("preset");
-  if (!container) {
-    console.warn("No #preset container found");
-    return;
-  }
-
-  // Mostra spinner globale
-  const globalLoader = document.getElementById("pageLoader");
-  if (globalLoader) globalLoader.style.display = "flex";
-
-  // Aspetta caricamento pedalboard e catalogo
-  await waitForPedalboardReady();
-
-  // Nascondi spinner
-  if (globalLoader) globalLoader.style.display = "none";
-
-  container.innerHTML = "";
-
-  // Fallback per utenti guest → prova a caricare pedalboard da localStorage
-  if (
-    !window.pedalboard ||
-    !Array.isArray(window.pedalboard.pedals) ||
-    window.pedalboard.pedals.length === 0
-  ) {
-    const storedPedalboard = localStorage.getItem("lastPedalboard");
-    if (storedPedalboard) {
-      try {
-        window.pedalboard = JSON.parse(storedPedalboard);
-        console.log("Loaded pedalboard from localStorage for guest");
-      } catch (e) {
-        console.error("Failed to parse localStorage pedalboard", e);
-        showEmptyState(container);
-        return;
-      }
-    } else {
-      showEmptyState(container);
-      return;
-    }
-  }
-
-  // Mostra controlli preset
-  $("#preset-controls").css("display", "inline-flex");
-
-  // Organizza pedali per riga
-  const rowsMap = {};
-  window.pedalboard.pedals.forEach((pbPedal) => {
-    const rowNum = pbPedal.row || 1;
-    if (!rowsMap[rowNum]) rowsMap[rowNum] = [];
-    rowsMap[rowNum].push(pbPedal);
-  });
-
-  const sortedRows = Object.keys(rowsMap)
-    .map((r) => parseInt(r, 10))
-    .sort((a, b) => a - b);
-
-  for (const rowNum of sortedRows) {
-    const rowDiv = document.createElement("div");
-    rowDiv.style.display = "flex";
-    rowDiv.style.flexWrap = "wrap";
-    rowDiv.style.alignItems = "flex-start";
-    rowDiv.style.gap = "10px";
-
-    for (const pbPedal of rowsMap[rowNum]) {
-      try {
-        const id = String(pbPedal.pedal_id || "").trim();
-        const pedalData =
-          window.catalogMap[id] || window.catalogMap[id.normalize()];
-        if (!pedalData) {
-          console.warn(`Pedal not found in catalog: ${pbPedal.pedal_id}`);
-          continue;
-        }
-
-        const pedal = pedalData;
-        const angle = pbPedal.rotation || 0;
-        const insideColorRaw = pedal["inside-color"] || "";
-        let inside = "";
-        let colorOnly = insideColorRaw;
-
-        // Verifica se inside-color è un'immagine
-        const isImage =
-          /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(
-            insideColorRaw
-          );
-
-        if (isImage) {
-          inside = "full";
-        } else {
-          const match = insideColorRaw.match(
-            /(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/
-          );
-          if (match) {
-            colorOnly = match[1];
-            inside = match[2] || "";
-          }
-        }
-
-        const baseCss = {
-          border: `5px solid ${pedal["color"]}`,
-          borderRadius: "10px",
-          color: pedal["font-color"],
-          width: getPedalWidth(pedal.width),
-          height: getPedalHeight(pedal.height),
-          transform: `rotate(${angle}deg)`,
-          marginBottom: "10px",
-          display: "inline-block",
-          ...(pedal["inside-border"] && {
-            boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}`,
-          }),
-          ...(isImage
-            ? {
-                backgroundImage: `url("${insideColorRaw}")`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }
-            : { background: colorOnly }),
-        };
-
-        // Box shadow dinamico per tipo
-        let boxShadow = "";
-        switch (pedal.type) {
-          case "expression":
-            boxShadow = getBoxShadow(
-              pedal,
-              inside,
-              `inset 0 -36px 0 0 ${pedal["color"]}`
-            );
-            baseCss.borderRadius = "25px";
-            break;
-          case "combo":
-            boxShadow = getBoxShadow(
-              pedal,
-              inside,
-              `inset 0 -80px 0 0 ${pedal["color"]}`
-            );
-            break;
-          case "head":
-          case "pedal-inverted":
-            boxShadow = getBoxShadow(
-              pedal,
-              inside,
-              `inset 0 80px 0 0 ${pedal["color"]}`
-            );
-            break;
-          case "round":
-            boxShadow = getBoxShadow(
-              pedal,
-              inside,
-              `inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
-            );
-            baseCss.borderRadius = "50%";
-            baseCss.width = getPedalWidth(pedal.width);
-            baseCss.height = getPedalWidth(pedal.width);
-            break;
-          default:
-            boxShadow = getBoxShadow(
-              pedal,
-              inside,
-              `inset 0 -36px 0 0 ${pedal["color"]}`
-            );
-        }
-
-        const $pedalDiv = $("<div>")
-          .addClass("pedal-catalog")
-          .css({ ...baseCss, boxShadow })
-          .attr("data-pedal-name", pedal.name)
-          .attr("data-pedal-id", pedal._id);
-
-        const cleanName = sanitizePedalHTML(pedal.name);
-
-        // Head o inverted: logo sopra
-        if (pedal.type === "head" || pedal.type === "pedal-inverted") {
-          const $nameDiv = $("<div>")
-            .addClass("head-name")
-            .html(cleanName)
-            .attr("style", safeLogoStyle(pedal.logo) || "");
-          $pedalDiv.append($nameDiv);
-        }
-
-        // Controlli pedale
-        renderPedalControls(pedal, $pedalDiv);
-
-        // Nome o logo pedale
-        if (
-          ["pedal", "combo", "round", "expression"].includes(pedal.type)
-        ) {
-          const $nameDiv = $("<div>")
-            .addClass("pedal-name")
-            .html(cleanName)
-            .attr("style", safeLogoStyle(pedal.logo) || "");
-          $pedalDiv.append($nameDiv);
-        }
-
-        // Wrapper e rotazione
-        const widthPx = parseFloat(getPedalWidth(pedal.width));
-        const heightPx = parseFloat(getPedalHeight(pedal.height));
-        const hasRotation = angle !== 0;
-
-        const wrapper = document.createElement("div");
-        wrapper.style.display = "flex";
-        wrapper.style.justifyContent = "center";
-        wrapper.style.alignItems = "flex-start";
-        wrapper.style.position = "relative";
-        wrapper.style.boxSizing = "content-box";
-        wrapper.style.marginBottom = "20px";
-
-        if (hasRotation) {
-          const radians = (angle * Math.PI) / 180;
-          const sin = Math.abs(Math.sin(radians));
-          const cos = Math.abs(Math.cos(radians));
-
-          const rotatedWidth = widthPx * cos + heightPx * sin;
-          const rotatedHeight = widthPx * sin + heightPx * cos;
-
-          wrapper.style.width = `${rotatedWidth}px`;
-          wrapper.style.height = `${rotatedHeight}px`;
-          wrapper.style.marginLeft = `${rotatedWidth * 0.2}px`;
-          wrapper.style.marginRight = `${rotatedWidth * 0.2}px`;
-          if (widthPx > heightPx) wrapper.style.marginTop = "30px";
-        }
-
-        wrapper.appendChild($pedalDiv[0]);
-        rowDiv.appendChild(wrapper);
-      } catch (err) {
-        console.error("Error rendering pedal:", err);
-      }
-    }
-
-    container.appendChild(rowDiv);
-  }
-
-  // Salva pedali correnti
-  const pedalsOnBoard = [];
-  $(".pedal").each(function () {
-    pedalsOnBoard.push($(this).data("pedal-name"));
-  });
-  window.currentPedalsOnBoard = pedalsOnBoard;
-}
-
-// Stato “vuoto”
-function showEmptyState(container) {
-  container.innerHTML = `
-    <div style="text-align: center; margin-top: 40px;">
-      <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty.</p>
-      <button
-        id="createBtn"
-        class="bx--btn bx--btn--secondary"
-        type="button"
-        aria-label="Go to Pedalboard"
-        style="display: inline-flex; align-items: center; gap: 0.5rem; margin: 0 auto;">
-        <svg xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 32 32" fill="currentColor">
-          <path d="M18 6L16.59 7.41 23.17 14H4v2H23.17l-6.58 6.59L18 26l10-10z"></path>
-        </svg>
-        Go to pedalboard
-      </button>
-    </div>
-  `;
-  document.getElementById("createBtn").addEventListener("click", () => {
-    window.location.href = "pedalboard.html";
-  });
-}
-
-// Attesa asincrona
-async function waitForPedalboardReady(maxWait = 7000) {
-  const start = Date.now();
-  return new Promise((resolve) => {
-    const check = () => {
-      const ready =
-        window.pedalboard &&
-        Array.isArray(window.pedalboard.pedals) &&
-        window.catalogMap &&
-        Object.keys(window.catalogMap).length > 0;
-      if (ready || Date.now() - start > maxWait) resolve();
-      else setTimeout(check, 150);
-    };
-    check();
-  });
-}
 
 
 
