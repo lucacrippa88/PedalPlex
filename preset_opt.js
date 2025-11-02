@@ -1,3 +1,31 @@
+
+// ===============================
+// SAFE INIT WRAPPER (scalable + robust)
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+  initPresetWhenReady();
+});
+
+function initPresetWhenReady(retries = 0) {
+  const resultsDiv = document.getElementById("page-content");
+
+  if (!resultsDiv) {
+    if (retries < 20) {
+      console.warn(`[initPreset] #page-content not ready yet (attempt ${retries + 1}), retrying...`);
+      setTimeout(() => initPresetWhenReady(retries + 1), 200);
+    } else {
+      console.error("[initPreset] Failed to initialize: #page-content not found after multiple attempts.");
+    }
+    return;
+  }
+
+  // DOM is ready → launch main init
+  console.log("[initPreset] DOM ready, starting preset initialization...");
+  initPreset();
+}
+
+
+
 let resultsDiv;
 let selectedBoardIndex = null;
 let currentPresetId = null;
@@ -26,9 +54,9 @@ function initPreset() {
   resultsDiv = document.getElementById("page-content");
 
   if (!resultsDiv) {
-  console.warn("resultsDiv non pronto, ritento dopo 100ms...");
-  return setTimeout(initPreset, 100);
-}
+    console.error("initPreset: resultsDiv still missing, aborting initialization.");
+    return;
+  }
 
   window.catalog = [];
   window.pedalboard = { pedals: [] };
