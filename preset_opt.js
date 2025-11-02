@@ -25,6 +25,11 @@ function initPreset() {
   const userId = window.currentUser?.userid;
   resultsDiv = document.getElementById("page-content");
 
+  if (!resultsDiv) {
+  console.warn("resultsDiv non pronto, ritento dopo 100ms...");
+  return setTimeout(initPreset, 100);
+}
+
   window.catalog = [];
   window.pedalboard = { pedals: [] };
   window.presetMap = {};
@@ -144,7 +149,7 @@ function initPreset() {
       }
 
       // Step 3️⃣ — Fetch only pedals in this board
-      const pedalIds = (window.pedalboard?.pedals || []).map(p => p.id).filter(Boolean);
+      const pedalIds = (window.pedalboard?.pedals || []).map(p => p.pedal_id || p.id || p._id).filter(Boolean);
       if (pedalIds.length === 0) {
         window.catalog = [];
         window.catalogMap = {};
