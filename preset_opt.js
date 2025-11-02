@@ -1,3 +1,70 @@
+// ===============================
+// SAFE INIT WRAPPER (user + DOM ready)
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+  initAppWhenReady();
+});
+
+async function initAppWhenReady(retries = 0) {
+  const resultsDiv = document.getElementById("page-content");
+
+  if (!resultsDiv) {
+    if (retries < 20) {
+      console.warn(`[initApp] #page-content not ready yet (attempt ${retries + 1}), retrying...`);
+      setTimeout(() => initAppWhenReady(retries + 1), 200);
+    } else {
+      console.error("[initApp] Failed to initialize: #page-content not found after multiple attempts.");
+    }
+    return;
+  }
+
+  // ---------------------------
+  // Step 1: Ensure user is ready
+  // ---------------------------
+  if (!window.currentUser) {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      try {
+        // Se usi JWT, decodifica qui; altrimenti fetch info dal server
+        // esempio placeholder:
+        const userData = await fetchUserData(token);
+        if (!userData) throw new Error("No user data returned");
+        window.currentUser = userData;
+      } catch (err) {
+        console.error("[initApp] Failed to fetch currentUser from token:", err);
+        // fallback a guest mode
+        initGuestMode();
+        return;
+      }
+    } else {
+      console.warn("[initApp] No token found → guest mode");
+      initGuestMode();
+      return;
+    }
+  }
+
+  // ---------------------------
+  // Step 2: Now safe to initPreset
+  // ---------------------------
+  console.log("[initApp] DOM ready and currentUser found, initializing preset...");
+  initPreset();
+}
+
+// ---------------------------
+// Helper: fetch user data from token (replace con la tua logica reale)
+// ---------------------------
+async function fetchUserData(token) {
+  // esempio: chiamata al server per ottenere dati user
+  const res = await fetch("https://www.cineteatrosanluigi.it/plex/GET_USER.php", {
+    method: "GET",
+    headers: { "Authorization": "Bearer " + token }
+  });
+  if (!res.ok) throw new Error("Failed to fetch user");
+  return await res.json(); // { userid: "...", name: "..." }
+}
+
+
+
 
 // ===============================
 // SAFE INIT WRAPPER (scalable + robust)
