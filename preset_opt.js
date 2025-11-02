@@ -1530,7 +1530,6 @@ function initGuestMode() {
       });
 
       renderFullPedalboard(validPedals);
-      enableDropdowns();
     })
     .catch(err => console.error("Guest catalog fetch failed:", err));
 }
