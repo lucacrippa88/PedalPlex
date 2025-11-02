@@ -1440,9 +1440,20 @@ async function renderFullPedalboard() {
   // 👇 se la pedalboard è definita ma non contiene pedali
   if (window.pedalboard.pedals.length === 0) {
     container.innerHTML = `
-      <div style="text-align: center; margin-top: 40px;">
-        <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty.</p>
-      </div>
+        <div style="text-align: center; margin-top: 40px;">
+          <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty.</p>
+          <button
+            id="createBtn"
+            class="bx--btn bx--btn--secondary"
+            type="button"
+            aria-label="Go to Pedalboard"
+            style="display: inline-flex; align-items: center; gap: 0.5rem; margin: 0 auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 32 32" fill="currentColor">
+              <path d="M18 6L16.59 7.41 23.17 14H4v2H23.17l-6.58 6.59L18 26l10-10z"/>
+            </svg>
+            Go to pedalboard
+          </button>
+        </div>
     `;
     return;
   }
