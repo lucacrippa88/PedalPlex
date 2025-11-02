@@ -150,7 +150,9 @@ function initPreset() {
 
       // Step 3️⃣ — Fetch only pedals in this board
       const pedalIds = (window.pedalboard?.pedals || []).map(p => p.pedal_id || p.id || p._id).filter(Boolean);
-      console.log("Loaded catalog IDs:", pedalIds);
+        console.log("window.pedalboard:", window.pedalboard);
+        console.log("window.allPedalboards:", window.allPedalboards);
+        console.log("Loaded catalog IDs:", pedalIds);
 
       if (pedalIds.length === 0) {
         window.catalog = [];
