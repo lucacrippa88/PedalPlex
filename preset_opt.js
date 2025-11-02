@@ -308,6 +308,7 @@ function initPreset() {
           });
 
         await fetchPresetsByBoardId(userId, selectedBoardId, finalizePresetUI);
+        enableDropdowns();
       });
 
       // Folder dropdown listener (resta invariato)
@@ -335,6 +336,8 @@ function finalizePresetUI() {
   if (typeof restoreZoomForCurrentBoard === "function") {
     restoreZoomForCurrentBoard();
   }
+
+  enableDropdowns();
 
   presetSelect.dispatchEvent(new Event('change', { bubbles: true }));
 }
@@ -423,6 +426,7 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
 
     // Populate presetSelect based on the currently selected folder
     populatePresetDropdownByFolder(selectedFolderId);
+    enableDropdowns();
 
     if (callback) callback();
   } catch (err) {
@@ -1526,6 +1530,7 @@ function initGuestMode() {
       });
 
       renderFullPedalboard(validPedals);
+      enableDropdowns();
     })
     .catch(err => console.error("Guest catalog fetch failed:", err));
 }
@@ -1539,4 +1544,40 @@ function initGuestMode() {
     str = str.replace(/\s+/g, ' ').trim();     // collapse spaces & trim
     return str;
   }
+
+
+
+
+  // ================================
+// RIABILITA I DROPDOWN E RIMUOVI LO STILE "DISABLED"
+// ================================
+function enableDropdowns() {
+  const pedalboardSelect = document.getElementById('pedalboardSelect');
+  const folderSelect = document.getElementById('folderSelect');
+  const presetSelect = document.getElementById('presetSelect');
+
+  if (pedalboardSelect) {
+    pedalboardSelect.disabled = false;
+    pedalboardSelect.classList.remove('btn-disabled');
+  }
+
+  if (folderSelect) {
+    folderSelect.disabled = false;
+    folderSelect.classList.remove('btn-disabled');
+  }
+
+  if (presetSelect) {
+    presetSelect.disabled = false;
+    presetSelect.classList.remove('btn-disabled');
+  }
+
+  // Abilita anche eventuali pulsanti associati
+  ['renamePresetBtn', 'savePstBtn', 'savePstBtnMobile', 'createPstBtn', 'createPstBtnMobile', 'addFolderBtn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.disabled = false;
+      el.classList.remove('btn-disabled');
+    }
+  });
+}
 
