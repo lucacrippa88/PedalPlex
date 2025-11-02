@@ -47,7 +47,7 @@ $(document).ready(function () {
 
 
 
-
+// Init
 function initPreset() {
   const isGuest = !window.currentUser;
   const userId = window.currentUser?.userid;
