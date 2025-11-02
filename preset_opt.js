@@ -1494,7 +1494,7 @@ function initGuestMode() {
 
   const firstBoard = guestBoards[0];
 
-  // disable preset/folder controls as before
+  // Disabilita tutti i controlli preset/folder
   const $pedalboardSelect = $('#pedalboardSelect');
   $pedalboardSelect.empty().append(
     $('<option>').val(0).text(firstBoard.board_name)
@@ -1504,23 +1504,33 @@ function initGuestMode() {
   $('#folderSelect, #presetSelect').empty().prop('disabled', true);
   $('#renameFolderBtn, #renamePresetBtn').prop('disabled', true).addClass('btn-disabled');
   ['savePstBtn', 'savePstBtnMobile', 'createPstBtn', 'createPstBtnMobile', 'addFolderBtn']
-  .forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.disabled = true;
-      el.classList.add('btn-disabled');
-    }
-  });
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.disabled = true;
+        el.classList.add('btn-disabled');
+      }
+    });
 
-  // ✅ Fetch catalog for guests too
-  fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
+  // --- Fetch solo i pedali presenti nella pedalboard guest ---
+  const pedalIds = (firstBoard.pedals || []).map(p => p.pedal_id).filter(Boolean);
+  if (pedalIds.length === 0) {
+    renderFullPedalboard([]);
+    return;
+  }
+
+  fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids: pedalIds })
+  })
     .then(res => res.json())
-    .then(catalog => {
-      window.catalog = catalog;
+    .then(data => {
+      window.catalog = data.docs || [];
       window.catalogMap = {};
-      catalog.forEach(p => window.catalogMap[p._id] = p);
+      window.catalog.forEach(p => window.catalogMap[p._id] = p);
 
-      // now safe to render pedals
+      // Filtra solo pedali validi
       const validPedals = (firstBoard.pedals || []).filter(p => {
         if (!window.catalogMap[p.pedal_id]) {
           console.warn("Skipping missing pedal:", p.pedal_id);
@@ -1531,8 +1541,9 @@ function initGuestMode() {
 
       renderFullPedalboard(validPedals);
     })
-    .catch(err => console.error("Guest catalog fetch failed:", err));
+    .catch(err => console.error("Guest pedals fetch failed:", err));
 }
+
 
 
 // --- Global function accessible everywhere ---
