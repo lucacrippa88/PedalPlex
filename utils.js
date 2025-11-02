@@ -1360,28 +1360,19 @@ async function renderFullPedalboard() {
     return;
   }
 
-  // Mostra spinner Carbon Design
-  container.innerHTML = `
-    <div id="loading-spinner" style="text-align:center; margin-top:60px;">
-      <div class="bx--loading bx--loading--small" style="display:inline-block;">
-        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-          <title>Loading</title>
-          <circle class="bx--loading__background" cx="0" cy="0" r="26.8125"></circle>
-          <circle class="bx--loading__stroke" cx="0" cy="0" r="26.8125"></circle>
-        </svg>
-      </div>
-      <p style="margin-top: 12px;">Loading pedalboard...</p>
-    </div>
-  `;
+  // Mostra lo spinner globale
+  const globalLoader = document.getElementById("pageLoader");
+  if (globalLoader) globalLoader.style.display = "flex";
 
-  // Aspetta caricamento pedaliere / pedali
+  // Aspetta caricamento pedalboard/pedali
   await waitForPedalboardReady();
 
-  // Rimuovi spinner
-  const spinner = document.getElementById("loading-spinner");
-  if (spinner) spinner.remove();
+  // Nascondi lo spinner globale
+  if (globalLoader) globalLoader.style.display = "none";
 
-  // Se pedalboard non esiste o è vuota → mostra empty state
+  container.innerHTML = "";
+
+  // Se non esiste pedalboard o è vuota → stato vuoto
   if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals) || window.pedalboard.pedals.length === 0) {
     showEmptyState(container);
     return;
@@ -1390,7 +1381,7 @@ async function renderFullPedalboard() {
   // Mostra i controlli preset
   $("#preset-controls").css("display", "inline-flex");
 
-  // Organizza i pedali per riga
+  // Organizza pedali per riga
   const rowsMap = {};
   window.pedalboard.pedals.forEach(pbPedal => {
     const rowNum = pbPedal.row || 1;
@@ -1398,7 +1389,9 @@ async function renderFullPedalboard() {
     rowsMap[rowNum].push(pbPedal);
   });
 
-  const sortedRows = Object.keys(rowsMap).map(n => parseInt(n, 10)).sort((a, b) => a - b);
+  const sortedRows = Object.keys(rowsMap)
+    .map(r => parseInt(r, 10))
+    .sort((a, b) => a - b);
 
   for (const rowNum of sortedRows) {
     const rowDiv = document.createElement("div");
@@ -1524,18 +1517,14 @@ async function waitForPedalboardReady(maxWait = 7000) {
       const ready =
         window.pedalboard &&
         Array.isArray(window.pedalboard.pedals) &&
-        window.pedalboard.pedals.length > 0 &&
         window.catalogMap &&
         Object.keys(window.catalogMap).length > 0;
-
       if (ready || Date.now() - start > maxWait) resolve();
       else setTimeout(check, 150);
     };
     check();
   });
 }
-
-
 
 
 
