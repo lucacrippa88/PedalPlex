@@ -1416,7 +1416,7 @@ async function renderFullPedalboard() {
     } else {
       container.innerHTML = `
         <div style="text-align: center; margin-top: 40px;">
-          <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty.</p>
+          <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty..</p>
           <button
             id="createBtn"
             class="bx--btn bx--btn--secondary"
