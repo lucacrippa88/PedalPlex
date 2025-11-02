@@ -1462,14 +1462,40 @@ async function renderFullPedalboard() {
           $pedalDiv.append($nameDiv);
         }
 
+        const widthPx = parseFloat(getPedalWidth(pedal.width));
+        const heightPx = parseFloat(getPedalHeight(pedal.height));
+        const hasRotation = angle !== 0;
+
         const wrapper = document.createElement("div");
         wrapper.style.display = "flex";
         wrapper.style.justifyContent = "center";
         wrapper.style.alignItems = "flex-start";
         wrapper.style.position = "relative";
+        wrapper.style.boxSizing = "content-box";
         wrapper.style.marginBottom = "20px";
+
+        // --- Aggiungiamo il calcolo per pedali ruotati ---
+        if (hasRotation) {
+          const radians = angle * Math.PI / 180;
+          const sin = Math.abs(Math.sin(radians));
+          const cos = Math.abs(Math.cos(radians));
+
+          const rotatedWidth = widthPx * cos + heightPx * sin;
+          const rotatedHeight = widthPx * sin + heightPx * cos;
+
+          wrapper.style.width = `${rotatedWidth}px`;
+          wrapper.style.height = `${rotatedHeight}px`;
+
+          // Margini adattivi per evitare sovrapposizioni
+          wrapper.style.marginLeft = `${rotatedWidth * 0.2}px`;
+          wrapper.style.marginRight = `${rotatedWidth * 0.2}px`;
+          if (widthPx > heightPx) wrapper.style.marginTop = '30px';
+        }
+        // --- Fine logica pedali ruotati ---
+
         wrapper.appendChild($pedalDiv[0]);
         rowDiv.appendChild(wrapper);
+
       } catch (err) {
         console.error("Error rendering pedal:", err);
       }
