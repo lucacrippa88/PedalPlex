@@ -420,6 +420,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 @font-face { font-family: thorema; src: url("fonts/thorema-demo.regular.ttf"); }
 @font-face { font-family: pixeland; src: url("fonts/Pixeland.ttf"); }
 @font-face { font-family: minecraft; src: url("fonts/Minecraft.ttf"); }
+@font-face { font-family: ducky; src: url("fonts/jd_ducky.ttf"); }
+@font-face { font-family: godmother; src: url("fonts/fairy_godmother.otf"); }
 
 
 /* Diamond plate */
