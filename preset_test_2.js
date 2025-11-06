@@ -169,6 +169,16 @@ function initPreset() {
         }
       }
 
+      // // Default selection if none restored
+      // if (!restored && window.allPedalboards.length > 0) {
+      //   dropdown.selectedIndex = 1; // skip placeholder
+      //   window.pedalboard = window.allPedalboards[0];
+      //   localStorage.setItem('lastPedalboardId', window.pedalboard._id);
+      //   localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
+      // }
+
+      // renderFullPedalboard();
+
       // Default selection if none restored
       if (!restored && window.allPedalboards.length > 0) {
         dropdown.selectedIndex = 1; // skip placeholder
@@ -177,7 +187,18 @@ function initPreset() {
         localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
       }
 
+      // --- FIX: reset preset state before rendering the new pedalboard ---
+      console.log("[initPreset] Resetting presets before rendering new pedalboard");
+      window.presets = [];
+      window.presetMap = {};
+      localStorage.removeItem('lastPresetId');
+      localStorage.removeItem('lastPresetText');
+      populatePresetDropdownByFolder('default');
+      // ------------------------------------------------------------------
+
+      // Now render the pedalboard safely
       renderFullPedalboard();
+
 
       // Fetch presets for selected pedalboard
       await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
