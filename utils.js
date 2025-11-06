@@ -1557,6 +1557,9 @@ function filterPedalsWithColoredLeds(pedalsObj) {
 // ORIGINALE con Promise
 // Render full pedalboard in preset page
 async function renderFullPedalboard() {
+
+  console.log("🎛️ [renderFullPedalboard] start — rendering pedals...");
+
   return new Promise((resolve) => {   // <-- 1️⃣ Avvolgiamo tutto nella Promise
 
     if (!resultsDiv) {
@@ -1815,6 +1818,7 @@ async function renderFullPedalboard() {
 
     // Delay minimo per assicurarsi che il DOM sia pronto
     setTimeout(() => {
+      console.log("✅ [renderFullPedalboard] complete — DOM ready");
       resolve();
     }, 50);
 
