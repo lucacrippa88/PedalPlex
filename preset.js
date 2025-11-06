@@ -156,7 +156,7 @@ function initPreset() {
         localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
       }
 
-      renderFullPedalboard();
+      await renderFullPedalboard();
 
       // Fetch presets for selected pedalboard
       await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {

@@ -1554,13 +1554,16 @@ function filterPedalsWithColoredLeds(pedalsObj) {
 
 
 
-// ORIGINALE
+// ORIGINALE con Promise
 // Render full pedalboard in preset page
 async function renderFullPedalboard() {
-  if (!resultsDiv) {
-    console.error("resultsDiv not initialized yet");
-    return;
-  }
+  return new Promise((resolve) => {   // <-- 1️⃣ Avvolgiamo tutto nella Promise
+
+    if (!resultsDiv) {
+      console.error("resultsDiv not initialized yet");
+      resolve();                      // <-- 2️⃣ Risolvi anche nei return anticipati
+      return;
+    }
   const container = document.getElementById('preset');
   if (!container) {
     console.warn('No #pedalboard container found');
@@ -1809,6 +1812,13 @@ async function renderFullPedalboard() {
     pedalsOnBoard.push($(this).data("pedal-name"));
   });
   window.currentPedalsOnBoard = pedalsOnBoard;
+
+    // Delay minimo per assicurarsi che il DOM sia pronto
+    setTimeout(() => {
+      resolve();
+    }, 50);
+
+  }); // fine Promise
 }
 
 
