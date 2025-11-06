@@ -169,6 +169,16 @@ function initPreset() {
         }
       }
 
+      // // Default selection if none restored
+      // if (!restored && window.allPedalboards.length > 0) {
+      //   dropdown.selectedIndex = 1; // skip placeholder
+      //   window.pedalboard = window.allPedalboards[0];
+      //   localStorage.setItem('lastPedalboardId', window.pedalboard._id);
+      //   localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
+      // }
+
+      // renderFullPedalboard();
+
       // Default selection if none restored
       if (!restored && window.allPedalboards.length > 0) {
         dropdown.selectedIndex = 1; // skip placeholder
@@ -177,34 +187,133 @@ function initPreset() {
         localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
       }
 
+      // --- FIX: reset preset state before rendering the new pedalboard ---
+      console.log("[initPreset] Resetting presets before rendering new pedalboard");
+      window.presets = [];
+      window.presetMap = {};
+      localStorage.removeItem('lastPresetId');
+      localStorage.removeItem('lastPresetText');
+      populatePresetDropdownByFolder('default');
+      // ------------------------------------------------------------------
+
+      // Now render the pedalboard safely
       renderFullPedalboard();
 
-      // Fetch presets for selected pedalboard
-      await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
-        const presetSelect = document.getElementById('presetSelect');
-        const folderSelect = document.getElementById('folderSelect');
 
-        // 1️⃣ Restore folder first
-        const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
-        if (folderSelect) {
-          const folderOptionExists = Array.from(folderSelect.options).some(o => o.value === savedFolderId);
-          folderSelect.value = folderOptionExists ? savedFolderId : 'default';
-        }
+      // // Fetch presets for selected pedalboard
+      // await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
+      //   const presetSelect = document.getElementById('presetSelect');
+      //   const folderSelect = document.getElementById('folderSelect');
 
-        // 2️⃣ Restore preset selection via populatePresetDropdownByFolder
-        const savedPresetId = localStorage.getItem('lastPresetId');
-        populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
+      //   // 1️⃣ Restore folder first
+      //   const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
+      //   if (folderSelect) {
+      //     const folderOptionExists = Array.from(folderSelect.options).some(o => o.value === savedFolderId);
+      //     folderSelect.value = folderOptionExists ? savedFolderId : 'default';
+      //   }
 
-        // 3️⃣ Restore zoom for current pedalboard
-        if (typeof restoreZoomForCurrentBoard === "function") {
-          restoreZoomForCurrentBoard();
-        }
+      //   // 2️⃣ Restore preset selection via populatePresetDropdownByFolder
+      //   const savedPresetId = localStorage.getItem('lastPresetId');
+      //   populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
 
-        // 4️⃣ Trigger change event for Save button state
-        presetSelect.dispatchEvent(new Event('change', {
-          bubbles: true
-        }));
-      });
+      //   // 3️⃣ Restore zoom for current pedalboard
+      //   if (typeof restoreZoomForCurrentBoard === "function") {
+      //     restoreZoomForCurrentBoard();
+      //   }
+
+      //   // 4️⃣ Trigger change event for Save button state
+      //   presetSelect.dispatchEvent(new Event('change', {
+      //     bubbles: true
+      //   }));
+      // });
+
+      async function fetchPresetsByBoardId(user_id, board_id, callback) {
+  const presetSelect = document.getElementById('presetSelect');
+  if (!presetSelect) return;
+
+  // Use onchange assignment (replaces any previous handler)
+  presetSelect.onchange = (e) => {
+    const selectedPresetId = e.target.value;
+    // presetMap keyed by _id
+    const preset = window.presetMap && window.presetMap[selectedPresetId] ? window.presetMap[selectedPresetId] : (window.presets || []).find(p => p._id === selectedPresetId);
+    if (preset) {
+      // Guard: don’t re-apply the same preset
+      if (window.currentPresetId === preset._id) return;
+      currentPresetId = preset._id;
+      currentPresetName = preset.preset_name;
+      currentPresetRev = preset._rev;
+      applyPresetToPedalboard(preset);
+      // Save selection to storage
+      saveCurrentSelectionToStorage();
+    } else {
+      currentPresetId = null;
+      currentPresetName = null;
+      currentPresetRev = null;
+    }
+  };
+
+  showPresetLoader();
+
+  const token = localStorage.getItem('authToken');
+  
+  try {
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESET.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({
+        user_id: user_id,
+        board_id: board_id
+      })
+    });
+
+    if (!res.ok) throw new Error('Failed to fetch presets');
+
+    const data = await res.json();
+    hidePresetLoader();
+
+    if (data.error) {
+      console.error('Error fetching presets:', data.error);
+      if (callback) callback();
+      return;
+    }
+
+    // Store all presets globally
+    window.presets = data.presets || [];
+    // Build presetMap keyed by _id for easy lookup
+    window.presetMap = {};
+    window.presets.forEach(p => {
+      if (p && p._id) window.presetMap[p._id] = p;
+    });
+
+    // Ensure folders are loaded before we populate folder/preset selects
+    if (!window.folders || window.folders.length === 0) {
+      if (typeof window.loadFoldersForCurrentPedalboard === 'function') {
+        await window.loadFoldersForCurrentPedalboard();
+      }
+    }
+
+    // Make sure the folder dropdown is populated (folder.js exposes populateFolderDropdown)
+    if (typeof window.populateFolderDropdown === 'function') {
+      window.populateFolderDropdown();
+    }
+
+    // Decide which folder is currently selected (default -> 'default' means unassigned)
+    const folderSelect = document.getElementById('folderSelect');
+    const selectedFolderId = folderSelect?.value || 'default';
+
+    // Populate presetSelect based on the currently selected folder
+    populatePresetDropdownByFolder(selectedFolderId);
+
+    if (callback) callback();
+  } catch (err) {
+    hidePresetLoader();
+    console.error('Fetch error:', err);
+    if (callback) callback();
+  }
+}
 
       // Pedalboard change listener
       dropdown.addEventListener('change', async (e) => {
@@ -228,49 +337,6 @@ function initPreset() {
 
 
 
-async function fetchPresetsByBoardId(boardId) {
-  if (!boardId) {
-    console.warn("[fetchPresetsByBoardId] Missing boardId");
-    return [];
-  }
-
-  // Salva quale pedalboard ha richiesto i preset
-  const requestedBoardId = boardId;
-  console.log(`[fetchPresetsByBoardId] Fetching presets for board ${requestedBoardId}...`);
-
-  try {
-    const response = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESET.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ board_id: requestedBoardId })
-    });
-    const data = await response.json();
-
-    // Se nel frattempo è cambiata la pedalboard, scarta la risposta
-    if (!window.pedalboard || window.pedalboard._id !== requestedBoardId) {
-      console.warn(`[fetchPresetsByBoardId] Ignored stale response for ${requestedBoardId}`);
-      return [];
-    }
-
-    // Aggiorna lo stato globale solo se è ancora la pedalboard attiva
-    window.presets = Array.isArray(data.docs) ? data.docs : [];
-    window.presetMap = {};
-    window.presets.forEach(p => (window.presetMap[p._id] = p));
-    populatePresetDropdownByFolder('default');
-
-    console.log(`[fetchPresetsByBoardId] Loaded ${window.presets.length} presets for ${window.pedalboard.board_name}`);
-    return window.presets;
-  } catch (err) {
-    console.error(`[fetchPresetsByBoardId] Error loading presets for ${requestedBoardId}:`, err);
-
-    if (window.pedalboard && window.pedalboard._id === requestedBoardId) {
-      window.presets = [];
-      window.presetMap = {};
-      populatePresetDropdownByFolder('default');
-    }
-    return [];
-  }
-}
 
 
 
@@ -1380,4 +1446,3 @@ function initGuestMode() {
     str = str.replace(/\s+/g, ' ').trim();     // collapse spaces & trim
     return str;
   }
-
