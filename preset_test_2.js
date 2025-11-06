@@ -115,18 +115,22 @@ function initPreset() {
     if (idsArray.length > 0) {
       const pedalRes = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids: idsArray })
       });
       if (!pedalRes.ok) throw new Error(`Pedal fetch failed: ${pedalRes.status}`);
-      catalog = await pedalRes.json();
+
+      const pedalJson = await pedalRes.json();
+      catalog = Array.isArray(pedalJson.docs) ? pedalJson.docs : pedalJson;
+
     }
 
     window.catalog = catalog;
     window.catalogMap = {};
     catalog.forEach(p => window.catalogMap[p._id] = p);
+
+    console.log("Catalog IDs loaded:", Object.keys(window.catalogMap));
+    console.log("Pedal IDs requested:", idsArray);
 
     document.getElementById("pageLoader").style.display = "none";
 
