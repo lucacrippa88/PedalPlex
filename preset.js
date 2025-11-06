@@ -208,7 +208,6 @@ function initPreset() {
 
 
 
-// Replace your fetchPresetsByBoardId function with this async version
 async function fetchPresetsByBoardId(user_id, board_id, callback) {
   const presetSelect = document.getElementById('presetSelect');
   if (!presetSelect) return;

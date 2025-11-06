@@ -197,7 +197,8 @@ function initPreset() {
       // ------------------------------------------------------------------
 
       // Now render the pedalboard safely
-      renderFullPedalboard();
+      console.log("🕓 Switching pedalboard, rendering...");
+      await renderFullPedalboard();
 
 
       // // Fetch presets for selected pedalboard
