@@ -156,34 +156,35 @@ function initPreset() {
         localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
       }
 
+      console.log("🕓 Switching pedalboard, rendering...");
       await renderFullPedalboard();
 
       // Fetch presets for selected pedalboard
-      await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
-        const presetSelect = document.getElementById('presetSelect');
-        const folderSelect = document.getElementById('folderSelect');
+      // await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
+      //   const presetSelect = document.getElementById('presetSelect');
+      //   const folderSelect = document.getElementById('folderSelect');
 
-        // 1️⃣ Restore folder first
-        const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
-        if (folderSelect) {
-          const folderOptionExists = Array.from(folderSelect.options).some(o => o.value === savedFolderId);
-          folderSelect.value = folderOptionExists ? savedFolderId : 'default';
-        }
+      //   // 1️⃣ Restore folder first
+      //   const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
+      //   if (folderSelect) {
+      //     const folderOptionExists = Array.from(folderSelect.options).some(o => o.value === savedFolderId);
+      //     folderSelect.value = folderOptionExists ? savedFolderId : 'default';
+      //   }
 
-        // 2️⃣ Restore preset selection via populatePresetDropdownByFolder
-        const savedPresetId = localStorage.getItem('lastPresetId');
-        populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
+      //   // 2️⃣ Restore preset selection via populatePresetDropdownByFolder
+      //   const savedPresetId = localStorage.getItem('lastPresetId');
+      //   populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
 
-        // 3️⃣ Restore zoom for current pedalboard
-        if (typeof restoreZoomForCurrentBoard === "function") {
-          restoreZoomForCurrentBoard();
-        }
+      //   // 3️⃣ Restore zoom for current pedalboard
+      //   if (typeof restoreZoomForCurrentBoard === "function") {
+      //     restoreZoomForCurrentBoard();
+      //   }
 
-        // 4️⃣ Trigger change event for Save button state
-        presetSelect.dispatchEvent(new Event('change', {
-          bubbles: true
-        }));
-      });
+      //   // 4️⃣ Trigger change event for Save button state
+      //   presetSelect.dispatchEvent(new Event('change', {
+      //     bubbles: true
+      //   }));
+      // });
 
       // Pedalboard change listener
       dropdown.addEventListener('change', async (e) => {
