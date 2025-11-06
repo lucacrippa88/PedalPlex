@@ -121,7 +121,9 @@ function initPreset() {
         body: JSON.stringify({ ids: idsArray })
       });
       if (!pedalRes.ok) throw new Error(`Pedal fetch failed: ${pedalRes.status}`);
-      catalog = await pedalRes.json();
+
+      const pedalJson = await pedalRes.json();
+      let catalog = Array.isArray(pedalJson.docs) ? pedalJson.docs : pedalJson; // ✅ FIXED
     }
 
     window.catalog = catalog;
