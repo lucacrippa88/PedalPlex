@@ -210,7 +210,7 @@ function initPreset() {
       dropdown.addEventListener('change', async (e) => {
         const selectedBoardId = e.target.value;
         window.pedalboard = window.allPedalboards.find(pb => pb._id === selectedBoardId);
-        renderFullPedalboard();
+        await renderFullPedalboard();
         localStorage.setItem('lastPedalboardId', selectedBoardId);
         localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
         await fetchPresetsByBoardId(userId, selectedBoardId);
@@ -1235,39 +1235,45 @@ async function assignPresetToFolder(presetId, folderId) {
 }
 
 
-// ---------------------------
-// Filter and populate presets based on selected folder
-// ---------------------------
+
+/**
+ * Popola il dropdown dei preset filtrando per cartella
+ * e garantendo che siano solo preset della pedaliera corrente.
+ * @param {string} folderId - ID della cartella selezionata ('default' per non assegnati)
+ * @param {string|null} preferredPresetId - preset da selezionare se valido
+ * @param {boolean} isNewFolder - true se la cartella è appena creata
+ */
 function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNewFolder = false) {
   const presetSelect = document.getElementById('presetSelect');
   const editBtn = document.getElementById('renamePresetBtn');
-  if (!presetSelect || !window.presets) return;
+  if (!presetSelect || !window.presets || !window.pedalboard) return;
 
   presetSelect.innerHTML = '';
+
+  // 1️⃣ Filtra solo preset della pedaliera corrente
+  const presetsForBoard = window.presets.filter(p => p.board_id === window.pedalboard._id);
 
   let filteredPresets = [];
 
   if (folderId === 'default') {
-    // Show presets not assigned to any folder
-    const folderPresetIds = new Set();
+    // Mostra preset non assegnati a nessuna cartella
+    const assignedIds = new Set();
     (window.folders || []).forEach(f => {
-      if (Array.isArray(f.preset_ids)) f.preset_ids.forEach(id => folderPresetIds.add(id));
+      if (Array.isArray(f.preset_ids)) f.preset_ids.forEach(id => assignedIds.add(id));
     });
-    filteredPresets = window.presets.filter(p => !folderPresetIds.has(p._id));
+    filteredPresets = presetsForBoard.filter(p => !assignedIds.has(p._id));
   } else {
-    // Show presets assigned to selected folder
+    // Mostra preset assegnati alla cartella selezionata
     const folder = (window.folders || []).find(f => (f.id || f._id) === folderId);
     if (folder && Array.isArray(folder.preset_ids)) {
-      filteredPresets = window.presets.filter(p => folder.preset_ids.includes(p._id));
+      filteredPresets = presetsForBoard.filter(p => folder.preset_ids.includes(p._id));
     }
   }
 
-  // Sort alphabetically
-  filteredPresets.sort((a, b) =>
-    (a.preset_name || '').toLowerCase().localeCompare((b.preset_name || '').toLowerCase())
-  );
+  // Ordina alfabeticamente
+  filteredPresets.sort((a, b) => (a.preset_name || '').toLowerCase().localeCompare((b.preset_name || '').toLowerCase()));
 
-  // Populate dropdown
+  // Popola dropdown
   filteredPresets.forEach(p => {
     const opt = document.createElement('option');
     opt.value = p._id;
@@ -1275,15 +1281,15 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     presetSelect.appendChild(opt);
   });
 
-  // Hide or show dropdown & edit button
+  // Gestione pulsante e stato preset corrente
   if (filteredPresets.length === 0 || isNewFolder) {
-    // For new folders: show placeholder instead of auto-hiding
-    presetSelect.innerHTML = '';
+    // Nessun preset disponibile
     const placeholder = document.createElement('option');
     placeholder.value = '';
     placeholder.textContent = '-- No presets --';
     placeholder.disabled = true;
     placeholder.selected = true;
+    presetSelect.innerHTML = '';
     presetSelect.appendChild(placeholder);
 
     presetSelect.style.display = 'inline-block';
@@ -1296,31 +1302,123 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     presetSelect.style.display = 'inline-block';
     if (editBtn) editBtn.style.display = 'inline-block';
 
-    // Select preset
-    let selectedPreset = preferredPresetId ?
-      filteredPresets.find(p => p._id === preferredPresetId) || filteredPresets[0] :
-      filteredPresets[0];
+    // Seleziona preset preferito se valido, altrimenti primo preset della lista
+    let selectedPreset = preferredPresetId
+      ? filteredPresets.find(p => p._id === preferredPresetId) || filteredPresets[0]
+      : filteredPresets[0];
 
     currentPresetId = selectedPreset._id;
     currentPresetName = selectedPreset.preset_name;
     currentPresetRev = selectedPreset._rev;
     presetSelect.value = selectedPreset._id;
 
-    // applyPresetToPedalboard(selectedPreset);
-    if (selectedPreset) {
+    // Applica preset SOLO se appartiene alla pedaliera corrente
+    if (selectedPreset.board_id === window.pedalboard._id) {
       applyPresetToPedalboard(selectedPreset);
     } else {
-      // No preset: render the pedalboard as-is, keeping row info
+      console.warn('Selected preset does not belong to current pedalboard:', selectedPreset);
       renderFullPedalboard(window.pedalboard.pedals);
+      currentPresetId = null;
+      currentPresetName = null;
+      currentPresetRev = null;
     }
 
     saveCurrentSelectionToStorage();
   }
 
-  // Enable/disable Save button
+  // Abilita/disabilita pulsante Save
   const saveBtn = document.getElementById('savePstBtn');
   if (saveBtn) saveBtn.disabled = filteredPresets.length === 0 || isNewFolder;
 }
+
+
+
+// // ---------------------------
+// // Filter and populate presets based on selected folder
+// // ---------------------------
+// function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNewFolder = false) {
+//   const presetSelect = document.getElementById('presetSelect');
+//   const editBtn = document.getElementById('renamePresetBtn');
+//   if (!presetSelect || !window.presets) return;
+
+//   presetSelect.innerHTML = '';
+
+//   let filteredPresets = [];
+
+//   if (folderId === 'default') {
+//     // Show presets not assigned to any folder
+//     const folderPresetIds = new Set();
+//     (window.folders || []).forEach(f => {
+//       if (Array.isArray(f.preset_ids)) f.preset_ids.forEach(id => folderPresetIds.add(id));
+//     });
+//     filteredPresets = window.presets.filter(p => !folderPresetIds.has(p._id));
+//   } else {
+//     // Show presets assigned to selected folder
+//     const folder = (window.folders || []).find(f => (f.id || f._id) === folderId);
+//     if (folder && Array.isArray(folder.preset_ids)) {
+//       filteredPresets = window.presets.filter(p => folder.preset_ids.includes(p._id));
+//     }
+//   }
+
+//   // Sort alphabetically
+//   filteredPresets.sort((a, b) =>
+//     (a.preset_name || '').toLowerCase().localeCompare((b.preset_name || '').toLowerCase())
+//   );
+
+//   // Populate dropdown
+//   filteredPresets.forEach(p => {
+//     const opt = document.createElement('option');
+//     opt.value = p._id;
+//     opt.textContent = p.preset_name || 'Untitled Preset';
+//     presetSelect.appendChild(opt);
+//   });
+
+//   // Hide or show dropdown & edit button
+//   if (filteredPresets.length === 0 || isNewFolder) {
+//     // For new folders: show placeholder instead of auto-hiding
+//     presetSelect.innerHTML = '';
+//     const placeholder = document.createElement('option');
+//     placeholder.value = '';
+//     placeholder.textContent = '-- No presets --';
+//     placeholder.disabled = true;
+//     placeholder.selected = true;
+//     presetSelect.appendChild(placeholder);
+
+//     presetSelect.style.display = 'inline-block';
+//     if (editBtn) editBtn.style.display = 'none';
+
+//     currentPresetId = null;
+//     currentPresetName = null;
+//     currentPresetRev = null;
+//   } else {
+//     presetSelect.style.display = 'inline-block';
+//     if (editBtn) editBtn.style.display = 'inline-block';
+
+//     // Select preset
+//     let selectedPreset = preferredPresetId ?
+//       filteredPresets.find(p => p._id === preferredPresetId) || filteredPresets[0] :
+//       filteredPresets[0];
+
+//     currentPresetId = selectedPreset._id;
+//     currentPresetName = selectedPreset.preset_name;
+//     currentPresetRev = selectedPreset._rev;
+//     presetSelect.value = selectedPreset._id;
+
+//     // applyPresetToPedalboard(selectedPreset);
+//     if (selectedPreset) {
+//       applyPresetToPedalboard(selectedPreset);
+//     } else {
+//       // No preset: render the pedalboard as-is, keeping row info
+//       renderFullPedalboard(window.pedalboard.pedals);
+//     }
+
+//     saveCurrentSelectionToStorage();
+//   }
+
+//   // Enable/disable Save button
+//   const saveBtn = document.getElementById('savePstBtn');
+//   if (saveBtn) saveBtn.disabled = filteredPresets.length === 0 || isNewFolder;
+// }
 
 
 
