@@ -81,58 +81,37 @@ function initPreset() {
 
 
   // Show loader overlay
-    // Show loader overlay
   document.getElementById("pageLoader").style.display = "flex";
 
-  // 1️⃣ Scarica tutte le pedaliere per utente
-  fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      user_id: userId
+  // Load catalog
+  fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
+    .then(res => {
+      if (!res.ok) throw new Error(`Catalog fetch failed: ${res.status}`);
+      return res.json();
     })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error(`Pedalboard fetch failed: ${res.status}`);
-    return res.json();
-  })
-  .then(async data => {
-    window.allPedalboards = data.docs && Array.isArray(data.docs) ? data.docs : [];
+    .then(catalog => {
+      window.catalog = catalog;
+      window.catalogMap = {};
+      catalog.forEach(p => window.catalogMap[p._id] = p);
+      document.getElementById("pageLoader").style.display = "none";
 
-    // 2️⃣ Estrai gli ID pedali unici da tutte le pedaliere
-    const pedalIds = new Set();
-    window.allPedalboards.forEach(pb => {
-      if (pb.pedals && Array.isArray(pb.pedals)) {
-        pb.pedals.forEach(p => pedalIds.add(p.pedal_id || p._id));
-      }
-    });
-    const idsArray = Array.from(pedalIds);
-
-    // 3️⃣ Scarica solo i pedali necessari
-    let catalog = [];
-    if (idsArray.length > 0) {
-      const pedalRes = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids: idsArray })
+      // Fetch pedalboards
+      return fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: userId
+        })
       });
-      if (!pedalRes.ok) throw new Error(`Pedal fetch failed: ${pedalRes.status}`);
-
-      const pedalJson = await pedalRes.json();
-      catalog = Array.isArray(pedalJson.docs) ? pedalJson.docs : pedalJson;
-
-    }
-
-    window.catalog = catalog;
-    window.catalogMap = {};
-    catalog.forEach(p => window.catalogMap[p._id] = p);
-
-    console.log("Catalog IDs loaded:", Object.keys(window.catalogMap));
-    console.log("Pedal IDs requested:", idsArray);
-
-    document.getElementById("pageLoader").style.display = "none";
+    })
+    .then(res => {
+      if (!res.ok) throw new Error(`Pedalboard fetch failed: ${res.status}`);
+      return res.json();
+    })
+    .then(async data => {
+      window.allPedalboards = data.docs && Array.isArray(data.docs) ? data.docs : [];
 
       // Sort alphabetically
       window.allPedalboards.sort((a, b) => (a.board_name || '').toLowerCase().localeCompare((b.board_name || '').toLowerCase()));
@@ -177,34 +156,35 @@ function initPreset() {
         localStorage.setItem('lastPedalboardText', window.pedalboard.board_name);
       }
 
-      renderFullPedalboard();
+      console.log("🕓 Switching pedalboard, rendering...");
+      await renderFullPedalboard();
 
       // Fetch presets for selected pedalboard
-      await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
-        const presetSelect = document.getElementById('presetSelect');
-        const folderSelect = document.getElementById('folderSelect');
+      // await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
+      //   const presetSelect = document.getElementById('presetSelect');
+      //   const folderSelect = document.getElementById('folderSelect');
 
-        // 1️⃣ Restore folder first
-        const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
-        if (folderSelect) {
-          const folderOptionExists = Array.from(folderSelect.options).some(o => o.value === savedFolderId);
-          folderSelect.value = folderOptionExists ? savedFolderId : 'default';
-        }
+      //   // 1️⃣ Restore folder first
+      //   const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
+      //   if (folderSelect) {
+      //     const folderOptionExists = Array.from(folderSelect.options).some(o => o.value === savedFolderId);
+      //     folderSelect.value = folderOptionExists ? savedFolderId : 'default';
+      //   }
 
-        // 2️⃣ Restore preset selection via populatePresetDropdownByFolder
-        const savedPresetId = localStorage.getItem('lastPresetId');
-        populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
+      //   // 2️⃣ Restore preset selection via populatePresetDropdownByFolder
+      //   const savedPresetId = localStorage.getItem('lastPresetId');
+      //   populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
 
-        // 3️⃣ Restore zoom for current pedalboard
-        if (typeof restoreZoomForCurrentBoard === "function") {
-          restoreZoomForCurrentBoard();
-        }
+      //   // 3️⃣ Restore zoom for current pedalboard
+      //   if (typeof restoreZoomForCurrentBoard === "function") {
+      //     restoreZoomForCurrentBoard();
+      //   }
 
-        // 4️⃣ Trigger change event for Save button state
-        presetSelect.dispatchEvent(new Event('change', {
-          bubbles: true
-        }));
-      });
+      //   // 4️⃣ Trigger change event for Save button state
+      //   presetSelect.dispatchEvent(new Event('change', {
+      //     bubbles: true
+      //   }));
+      // });
 
       // Pedalboard change listener
       dropdown.addEventListener('change', async (e) => {
@@ -228,7 +208,6 @@ function initPreset() {
 
 
 
-// Replace your fetchPresetsByBoardId function with this async version
 async function fetchPresetsByBoardId(user_id, board_id, callback) {
   const presetSelect = document.getElementById('presetSelect');
   if (!presetSelect) return;
