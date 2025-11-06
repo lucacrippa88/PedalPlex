@@ -113,11 +113,12 @@ function initPreset() {
     // 3️⃣ Scarica solo i pedali necessari
     let catalog = [];
     if (idsArray.length > 0) {
-      const formData = new FormData();
-      formData.append("ids", idsArray.join(","));
       const pedalRes = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
         method: "POST",
-        body: formData
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ ids: idsArray })
       });
       if (!pedalRes.ok) throw new Error(`Pedal fetch failed: ${pedalRes.status}`);
       catalog = await pedalRes.json();
