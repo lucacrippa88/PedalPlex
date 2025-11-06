@@ -81,37 +81,53 @@ function initPreset() {
 
 
   // Show loader overlay
+    // Show loader overlay
   document.getElementById("pageLoader").style.display = "flex";
 
-  // Load catalog
-  fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
-    .then(res => {
-      if (!res.ok) throw new Error(`Catalog fetch failed: ${res.status}`);
-      return res.json();
+  // 1️⃣ Scarica tutte le pedaliere per utente
+  fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      user_id: userId
     })
-    .then(catalog => {
-      window.catalog = catalog;
-      window.catalogMap = {};
-      catalog.forEach(p => window.catalogMap[p._id] = p);
-      document.getElementById("pageLoader").style.display = "none";
+  })
+  .then(res => {
+    if (!res.ok) throw new Error(`Pedalboard fetch failed: ${res.status}`);
+    return res.json();
+  })
+  .then(async data => {
+    window.allPedalboards = data.docs && Array.isArray(data.docs) ? data.docs : [];
 
-      // Fetch pedalboards
-      return fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          user_id: userId
-        })
+    // 2️⃣ Estrai gli ID pedali unici da tutte le pedaliere
+    const pedalIds = new Set();
+    window.allPedalboards.forEach(pb => {
+      if (pb.pedals && Array.isArray(pb.pedals)) {
+        pb.pedals.forEach(p => pedalIds.add(p.pedal_id || p._id));
+      }
+    });
+    const idsArray = Array.from(pedalIds);
+
+    // 3️⃣ Scarica solo i pedali necessari
+    let catalog = [];
+    if (idsArray.length > 0) {
+      const formData = new FormData();
+      formData.append("ids", idsArray.join(","));
+      const pedalRes = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+        method: "POST",
+        body: formData
       });
-    })
-    .then(res => {
-      if (!res.ok) throw new Error(`Pedalboard fetch failed: ${res.status}`);
-      return res.json();
-    })
-    .then(async data => {
-      window.allPedalboards = data.docs && Array.isArray(data.docs) ? data.docs : [];
+      if (!pedalRes.ok) throw new Error(`Pedal fetch failed: ${pedalRes.status}`);
+      catalog = await pedalRes.json();
+    }
+
+    window.catalog = catalog;
+    window.catalogMap = {};
+    catalog.forEach(p => window.catalogMap[p._id] = p);
+
+    document.getElementById("pageLoader").style.display = "none";
 
       // Sort alphabetically
       window.allPedalboards.sort((a, b) => (a.board_name || '').toLowerCase().localeCompare((b.board_name || '').toLowerCase()));
