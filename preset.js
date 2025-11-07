@@ -1442,28 +1442,27 @@ function initGuestMode() {
 
 
 
+// Seleziona tutti i LED
+const leds = document.querySelectorAll(".pedal-catalog .led");
 
-  // Logga in console il colore dei LED quando cambiano
-function logLedColorChanges() {
-  const leds = document.querySelectorAll(".pedal-catalog .led");
+leds.forEach(led => {
+  const pedal = led.closest(".pedal-catalog");
+  const pedalName = pedal.dataset.pedalName || "Pedale sconosciuto";
+  const controlLabel = led.dataset.controlLabel || "LED";
 
-  leds.forEach(led => {
-    const pedal = led.closest(".pedal-catalog");
-    const pedalName = pedal?.dataset.pedalName || "Pedale sconosciuto";
-    const controlLabel = led.dataset.controlLabel || "LED";
+  // Funzione che legge il colore corrente e lo stampa in console
+  const logColor = () => {
+    const bgColor = getComputedStyle(led).backgroundColor;
+    console.log(`🎛️ ${pedalName} → ${controlLabel}: ${bgColor}`);
+  };
 
-    // Osserva modifiche allo stile del LED (cambio colore)
-    const observer = new MutationObserver(() => {
-      const color = getComputedStyle(led).backgroundColor;
-      console.log(`🎛️ ${pedalName} → ${controlLabel}: ${color}`);
-    });
+  // Se vuoi loggare quando il LED viene cliccato
+  led.addEventListener("click", logColor);
 
-    observer.observe(led, {
-      attributes: true,
-      attributeFilter: ["style"]
-    });
+  // Osserva eventuali modifiche dello style per log automatico
+  const observer = new MutationObserver(logColor);
+  observer.observe(led, {
+    attributes: true,
+    attributeFilter: ["style"]
   });
-}
-
-// Avvia quando il documento è pronto o dopo aver caricato i pedali
-document.addEventListener("DOMContentLoaded", logLedColorChanges);
+});
