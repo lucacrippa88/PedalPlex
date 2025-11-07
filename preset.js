@@ -1442,27 +1442,31 @@ function initGuestMode() {
 
 
 
-// Seleziona tutti i LED
-const leds = document.querySelectorAll(".pedal-catalog .led");
+// Assicurati che il DOM sia pronto
+document.addEventListener("DOMContentLoaded", () => {
+  const leds = document.querySelectorAll(".pedal-catalog .led");
 
-leds.forEach(led => {
-  const pedal = led.closest(".pedal-catalog");
-  const pedalName = pedal.dataset.pedalName || "Pedale sconosciuto";
-  const controlLabel = led.dataset.controlLabel || "LED";
+  leds.forEach(led => {
+    const pedal = led.closest(".pedal-catalog");
+    const pedalName = pedal.dataset.pedalName || "Pedale sconosciuto";
+    const controlLabel = led.dataset.controlLabel || "LED";
 
-  // Funzione che legge il colore corrente e lo stampa in console
-  const logColor = () => {
-    const bgColor = getComputedStyle(led).backgroundColor;
-    console.log(`🎛️ ${pedalName} → ${controlLabel}: ${bgColor}`);
-  };
+    // Funzione per loggare il colore
+    const logColor = () => {
+      const style = getComputedStyle(led);
+      const bgColor = style.backgroundColor;
+      const boxShadow = style.boxShadow;
+      console.log(`🎛️ ${pedalName} → ${controlLabel}: bg=${bgColor}, shadow=${boxShadow}`);
+    };
 
-  // Se vuoi loggare quando il LED viene cliccato
-  led.addEventListener("click", logColor);
+    // Log immediato per debug
+    logColor();
 
-  // Osserva eventuali modifiche dello style per log automatico
-  const observer = new MutationObserver(logColor);
-  observer.observe(led, {
-    attributes: true,
-    attributeFilter: ["style"]
+    // Log quando clicchi il LED
+    led.addEventListener("click", logColor);
+
+    // Observer per catturare cambiamenti di style
+    const observer = new MutationObserver(logColor);
+    observer.observe(led, { attributes: true, attributeFilter: ["style"] });
   });
 });
