@@ -1271,41 +1271,31 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
 
 
     // Process LEDs
-    $pedal.find('.led[data-control-label]').each(function () {
-      const label = $(this).data('control-label');
-      const bgColor = $(this).css('background-color');
-      const hexColor = rgbToHex(bgColor).toLowerCase();
+$pedal.find('.led[data-control-label]').each(function () {
+  const label = $(this).data('control-label');
+  const bgColor = $(this).css('background-color').trim().toLowerCase();
 
-      // Se il LED è acceso (non nero), il pedale va salvato
-      if (hexColor !== '#000000') {
-        hasColoredLed = true;
-      }
+  // Converti in RGB numerico per confrontare davvero col nero
+  const match = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  let isOn = false;
 
-      let matchedIndex = null;
+  if (match) {
+    const [r, g, b] = match.slice(1).map(Number);
+    // consideriamo spento solo se è praticamente nero
+    if (r > 5 || g > 5 || b > 5) isOn = true;
+  } else if (bgColor !== '#000000' && bgColor !== 'black' && bgColor !== 'transparent') {
+    // se non è esattamente nero o trasparente → acceso
+    isOn = true;
+  }
 
-      if (Array.isArray(window.catalog)) {
-        const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalName);
-        if (pedalData && Array.isArray(pedalData.controls)) {
-          for (const rowWrapper of pedalData.controls) {
-            if (Array.isArray(rowWrapper.row)) {
-              for (const control of rowWrapper.row) {
-                if (control.label === label && Array.isArray(control.colors)) {
-                  const catalogColors = control.colors.map(c => c.toLowerCase());
-                  const index = catalogColors.indexOf(hexColor);
-                  if (index !== -1) {
-                    matchedIndex = index;
-                    break;
-                  }
-                }
-              }
-            }
-            if (matchedIndex !== null) break;
-          }
-        }
-      }
+  if (isOn) {
+    hasColoredLed = true;
+  }
 
-      controlsArray.push({ [label]: matchedIndex });
-    });
+  // aggiunge comunque il LED al preset
+  controlsArray.push({ [label]: isOn ? 1 : 0 });
+});
+
 
 
 
