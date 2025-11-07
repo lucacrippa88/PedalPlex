@@ -1436,3 +1436,34 @@ function initGuestMode() {
     return str;
   }
 
+
+
+
+
+
+
+
+  // Logga in console il colore dei LED quando cambiano
+function logLedColorChanges() {
+  const leds = document.querySelectorAll(".pedal-catalog .led");
+
+  leds.forEach(led => {
+    const pedal = led.closest(".pedal-catalog");
+    const pedalName = pedal?.dataset.pedalName || "Pedale sconosciuto";
+    const controlLabel = led.dataset.controlLabel || "LED";
+
+    // Osserva modifiche allo stile del LED (cambio colore)
+    const observer = new MutationObserver(() => {
+      const color = getComputedStyle(led).backgroundColor;
+      console.log(`🎛️ ${pedalName} → ${controlLabel}: ${color}`);
+    });
+
+    observer.observe(led, {
+      attributes: true,
+      attributeFilter: ["style"]
+    });
+  });
+}
+
+// Avvia quando il documento è pronto o dopo aver caricato i pedali
+document.addEventListener("DOMContentLoaded", logLedColorChanges);
