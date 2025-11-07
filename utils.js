@@ -1274,6 +1274,13 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
         hasColoredLed = true;
       }
 
+      // 🔹 Log in console ogni volta che cambia colore
+      const prevColor = $(this).data('last-color');
+      if (prevColor !== hexColor) {
+        console.log(`🎛️ Pedal "${pedalName}" LED "${label}" color changed: ${prevColor || '(none)'} → ${colorName}`);
+        $(this).data('last-color', hexColor);
+      }
+
       // 🔹 Salva sempre il valore corretto (indice del colore)
       controlsArray.push({ [label]: matchedIndex });
     });
