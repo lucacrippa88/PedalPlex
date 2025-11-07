@@ -1270,31 +1270,50 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
     // });
 
 
-    // Process LEDs
+
+// Process LEDs (versione definitiva con più colori)
 $pedal.find('.led[data-control-label]').each(function () {
   const label = $(this).data('control-label');
   const bgColor = $(this).css('background-color').trim().toLowerCase();
 
-  // Converti in RGB numerico per confrontare davvero col nero
-  const match = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-  let isOn = false;
+  // Normalizza il colore in HEX a 6 cifre
+  const hexColor = rgbToHex(bgColor).toLowerCase();
 
-  if (match) {
-    const [r, g, b] = match.slice(1).map(Number);
-    // consideriamo spento solo se è praticamente nero
-    if (r > 5 || g > 5 || b > 5) isOn = true;
-  } else if (bgColor !== '#000000' && bgColor !== 'black' && bgColor !== 'transparent') {
-    // se non è esattamente nero o trasparente → acceso
-    isOn = true;
+  let matchedIndex = 0; // default = spento (0)
+
+  // Trova il pedale nel catalog
+  if (Array.isArray(window.catalog)) {
+    const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalName);
+    if (pedalData && Array.isArray(pedalData.controls)) {
+
+      for (const rowWrapper of pedalData.controls) {
+        if (!Array.isArray(rowWrapper.row)) continue;
+
+        const control = rowWrapper.row.find(c => c.label === label && Array.isArray(c.colors));
+        if (control) {
+          // Normalizza tutti i colori del catalogo
+          const catalogColors = control.colors.map(c => c.toLowerCase());
+          // Trova l'indice del colore attuale
+          const foundIndex = catalogColors.indexOf(hexColor);
+
+          if (foundIndex !== -1) {
+            matchedIndex = foundIndex;
+          }
+          break;
+        }
+      }
+    }
   }
 
-  if (isOn) {
+  // Se il LED è acceso (cioè colore diverso dallo "spento" = index 0), segna il pedale come attivo
+  if (matchedIndex > 0) {
     hasColoredLed = true;
   }
 
-  // aggiunge comunque il LED al preset
-  controlsArray.push({ [label]: isOn ? 1 : 0 });
+  // Salva sempre il valore (anche se spento)
+  controlsArray.push({ [label]: matchedIndex });
 });
+
 
 
 
