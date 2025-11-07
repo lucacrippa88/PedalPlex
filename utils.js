@@ -1276,65 +1276,37 @@ $pedal.find('.led[data-control-label]').each(function () {
   const bgColor = $(this).css('background-color');
   const hexColor = rgbToHex(bgColor).toLowerCase();
 
-  let matchedIndex = null;
-  const ledIsColored = hexColor !== '#000000' && hexColor !== '#000000ff'; // robust check
-  // If visually colored, mark pedal as having a colored LED immediately
-  if (ledIsColored) {
+  // Se il LED è acceso (non nero), il pedale va salvato
+  if (hexColor !== '#000000') {
     hasColoredLed = true;
   }
+
+  let matchedIndex = null;
 
   if (Array.isArray(window.catalog)) {
     const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalName);
     if (pedalData && Array.isArray(pedalData.controls)) {
-
-      // scan every row
       for (const rowWrapper of pedalData.controls) {
-        if (!Array.isArray(rowWrapper.row)) continue;
-
-        // find all catalog controls that match this label
-        const matchingControls = rowWrapper.row
-          .map((c, idx) => ({ control: c, idx })) // keep index to disambiguate duplicates
-          .filter(x => x.control && x.control.label === label && Array.isArray(x.control.colors));
-
-        // prefer a control whose colors array contains the exact hexColor
-        let found = false;
-        for (const { control, idx } of matchingControls) {
-          const catalogColors = control.colors.map(c => c.toLowerCase());
-          const index = catalogColors.indexOf(hexColor);
-          if (index !== -1) {
-            matchedIndex = index;
-            found = true;
-            break;
+        if (Array.isArray(rowWrapper.row)) {
+          for (const control of rowWrapper.row) {
+            if (control.label === label && Array.isArray(control.colors)) {
+              const catalogColors = control.colors.map(c => c.toLowerCase());
+              const index = catalogColors.indexOf(hexColor);
+              if (index !== -1) {
+                matchedIndex = index;
+                break;
+              }
+            }
           }
         }
-
-        // if none matched by color but there are multiple matching controls,
-        // try to disambiguate by DOM order: pick the N-th matching control where N is the
-        // occurrence index of this LED among siblings with same label
-        if (!found && matchingControls.length > 1) {
-          // determine occurrence index in DOM among LEDs with same label
-          const sameLabelSiblings = $pedal.find(`.led[data-control-label="${label}"]`);
-          const occurrence = sameLabelSiblings.index(this); // 0-based
-          const chosen = matchingControls[occurrence] || matchingControls[0];
-          // if chosen has colors, try to map closest (or set -1)
-          if (chosen && Array.isArray(chosen.control.colors)) {
-            const catalogColors = chosen.control.colors.map(c => c.toLowerCase());
-            const idxInCatalog = catalogColors.indexOf(hexColor);
-            matchedIndex = idxInCatalog !== -1 ? idxInCatalog : -1;
-          } else {
-            matchedIndex = -1;
-          }
-        }
-
-        // if a match by color was found, we can stop scanning rows
-        if (matchedIndex !== null && matchedIndex !== -1) break;
+        if (matchedIndex !== null) break;
       }
     }
   }
 
-  // push matchedIndex (could be number or -1/null if not found)
   controlsArray.push({ [label]: matchedIndex });
 });
+
 
 
 
