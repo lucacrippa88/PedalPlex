@@ -1270,42 +1270,43 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
     // });
 
 
-    // Process LEDs (patched)
-$pedal.find('.led[data-control-label]').each(function () {
-  const label = $(this).data('control-label');
-  const bgColor = $(this).css('background-color');
-  const hexColor = rgbToHex(bgColor).toLowerCase();
+    // Process LEDs
+    $pedal.find('.led[data-control-label]').each(function () {
+      const label = $(this).data('control-label');
+      const bgColor = $(this).css('background-color');
+      const hexColor = rgbToHex(bgColor).toLowerCase();
 
-  // Se il LED è acceso (non nero), il pedale va salvato
-  if (hexColor !== '#000000') {
-    hasColoredLed = true;
-  }
+      // Se il LED è acceso (non nero), il pedale va salvato
+      if (hexColor !== '#000000') {
+        hasColoredLed = true;
+      }
 
-  let matchedIndex = null;
+      let matchedIndex = null;
 
-  if (Array.isArray(window.catalog)) {
-    const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalName);
-    if (pedalData && Array.isArray(pedalData.controls)) {
-      for (const rowWrapper of pedalData.controls) {
-        if (Array.isArray(rowWrapper.row)) {
-          for (const control of rowWrapper.row) {
-            if (control.label === label && Array.isArray(control.colors)) {
-              const catalogColors = control.colors.map(c => c.toLowerCase());
-              const index = catalogColors.indexOf(hexColor);
-              if (index !== -1) {
-                matchedIndex = index;
-                break;
+      if (Array.isArray(window.catalog)) {
+        const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalName);
+        if (pedalData && Array.isArray(pedalData.controls)) {
+          for (const rowWrapper of pedalData.controls) {
+            if (Array.isArray(rowWrapper.row)) {
+              for (const control of rowWrapper.row) {
+                if (control.label === label && Array.isArray(control.colors)) {
+                  const catalogColors = control.colors.map(c => c.toLowerCase());
+                  const index = catalogColors.indexOf(hexColor);
+                  if (index !== -1) {
+                    matchedIndex = index;
+                    break;
+                  }
+                }
               }
             }
+            if (matchedIndex !== null) break;
           }
         }
-        if (matchedIndex !== null) break;
       }
-    }
-  }
 
-  controlsArray.push({ [label]: matchedIndex });
-});
+      controlsArray.push({ [label]: matchedIndex });
+    });
+
 
 
 
