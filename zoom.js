@@ -42,7 +42,7 @@ function loadZoom() {
   if (!id) return;
   const saved = localStorage.getItem(`zoom_${id}`);
   zoomLevel = saved ? parseFloat(saved) : 1.0;
-  console.log("Loaded zoom for", id, "=", zoomLevel);
+  // console.log("Loaded zoom for", id, "=", zoomLevel);
 }
 
 /**

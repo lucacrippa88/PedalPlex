@@ -1348,7 +1348,7 @@ function filterPedalsWithColoredLeds(pedalsObj) {
 // Render full pedalboard in preset page
 async function renderFullPedalboard() {
 
-  console.log("🎛️ [renderFullPedalboard] start — rendering pedals...");
+  // console.log("🎛️ [renderFullPedalboard] start — rendering pedals...");
 
   return new Promise((resolve) => {   // <-- 1️⃣ Avvolgiamo tutto nella Promise
 
@@ -1600,12 +1600,12 @@ async function renderFullPedalboard() {
 
       // Delay minimo per sicurezza
       setTimeout(() => {
-        console.log("✅ [renderFullPedalboard] complete — DOM ready");
+        // console.log("✅ [renderFullPedalboard] complete — DOM ready");
         resolve(); // ✅ chiusura certa
       }, 100);
 
     } catch (err) {
-      console.error("❌ [renderFullPedalboard] exception:", err);
+      // console.error("❌ [renderFullPedalboard] exception:", err);
       resolve(); // ✅ anche sugli errori
     }
   }); // fine Promise
