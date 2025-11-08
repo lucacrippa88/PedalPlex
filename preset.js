@@ -129,8 +129,8 @@ function initPreset() {
     window.catalogMap = {};
     catalog.forEach(p => window.catalogMap[p._id] = p);
 
-    console.log("Catalog IDs loaded:", Object.keys(window.catalogMap));
-    console.log("Pedal IDs requested:", idsArray);
+    // console.log("Catalog IDs loaded:", Object.keys(window.catalogMap));
+    // console.log("Pedal IDs requested:", idsArray);
 
     document.getElementById("pageLoader").style.display = "none";
 
