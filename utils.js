@@ -1271,6 +1271,7 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
 
       // 🔹 Se il LED è acceso (colore diverso da nero), segna il pedale come attivo
       if (hexColor !== '#000000') {
+        console.log(`LED ${label} is ON with color ${hexColor} (index ${matchedIndex})`);
         hasColoredLed = true;
       }
 
@@ -1281,6 +1282,7 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
 
     // Only save pedal if at least one LED is ON
     if (hasColoredLed) {
+      console.log(`Including pedal ${pedalName} in preset (LED active)`);
       pedals.push({
         id: pedalId,
         name: pedalName,
