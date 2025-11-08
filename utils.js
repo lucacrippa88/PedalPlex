@@ -1262,7 +1262,14 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
                   foundIndex = catalogColors.findIndex(c => short(c) === short(hexColor));
                 }
 
-                if (foundIndex !== -1) matchedIndex = foundIndex;
+                // if (foundIndex !== -1) matchedIndex = foundIndex;
+                if (foundIndex !== -1) {
+                  matchedIndex = foundIndex;
+                } else if (hexColor !== '#000000') {
+                  // Se il colore non è nero ma non è trovato nel catalogo, forzo l'indice a 1 (LED acceso)
+                  matchedIndex = 1;
+                }
+
               }
             }
           }
