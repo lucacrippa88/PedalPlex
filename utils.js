@@ -1271,9 +1271,9 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
                 }
 
                 // Inverti se il catalogo ha l'ordine invertito (rosso prima del nero)
-                if (Array.isArray(control.colors) && control.colors[0].toLowerCase() !== '#000000') {
-                  matchedIndex = matchedIndex === 0 ? 1 : 0;
-                }
+                // if (Array.isArray(control.colors) && control.colors[0].toLowerCase() !== '#000000') {
+                //   matchedIndex = matchedIndex === 0 ? 1 : 0;
+                // }
 
 
               }
