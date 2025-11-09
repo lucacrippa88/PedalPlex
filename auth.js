@@ -61,9 +61,9 @@ $('#authForm').on('submit', function (e) {
           buttonsStyling: false
         });
 
-        // Redirect after 2 seconds
+        // Redirect after 1 second
         setTimeout(function () {
-          window.location.href = 'pedalboard';
+          window.location.href = 'preset';
         }, 1000);
 
       } else if (!isLogin) {
