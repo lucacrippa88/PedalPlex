@@ -1163,6 +1163,146 @@ function getPedalTypeCss(pedal, baseCss, inside) {
  
 
 
+// // Get all active gears controls to save the preset
+// function collectPedalControlValues(presetName = "Untitled Preset") {
+//   const pedals = [];
+
+//   $('[data-pedal-name]').each(function () {
+//     const pedalName = $(this).data('pedal-name');
+//     const pedalId = $(this).data('pedal-id');
+
+//     const $pedal = $(this);
+//     const controlsArray = [];
+//     let hasColoredLed = false;
+
+//     // Process knobs
+//     $pedal.find('.knob').each(function () {
+//       const label = $(this).data('control-label');
+//       const $valueLabel = $(this).parent().find('.knob-value-label');
+
+//       let value;
+
+//       if ($valueLabel.length && $valueLabel.text().trim() !== '') {
+//         // 🔹 Discrete knob → take text directly
+//         value = $valueLabel.text().trim();
+//       } else {
+//         // 🔹 Continuous knob → calculate numeric value
+//         const transform = $(this).css('transform');
+//         let angle = 0;
+
+//         if (transform && transform !== 'none') {
+//           const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
+//           const a = parseFloat(values[0]);
+//           const b = parseFloat(values[1]);
+//           angle = Math.atan2(b, a) * (180 / Math.PI); // keep decimals
+//         } else {
+//           const style = $(this).attr('style');
+//           const match = style && style.match(/rotate\((-?\d+)deg\)/);
+//           angle = match ? parseInt(match[1], 10) : 0;
+//         }
+
+//         value = getValueFromRotation(angle);
+//       }
+
+//       // Save exactly as text if discrete, otherwise number
+//       controlsArray.push({
+//         [label]: isNaN(value) ? value : parseFloat(value)
+//       });
+//     });
+
+//     // Process dropdowns
+//     $pedal.find('select[data-control-label]').each(function () {
+//       const label = $(this).data('control-label');
+//       const value = $(this).val();
+//       controlsArray.push({ [label]: value });
+//     });
+
+//     // Process sliders
+//     $pedal.find('input[type="range"][data-control-label]').each(function () {
+//       const label = $(this).data('control-label');
+//       const value = $(this).val();
+//       controlsArray.push({ [label]: parseFloat(value) });
+//     });
+
+//     // Process LCDs
+//     $pedal.find('input[type="text"][data-control-label]').each(function () {
+//       const label = $(this).data('control-label');
+//       const value = $(this).val().trim();
+//       controlsArray.push({ [label]: value });
+//     });
+
+
+//     // Process LEDs (versione stabile e compatibile)
+//     $pedal.find('.led[data-control-label]').each(function () {
+//       const label = $(this).data('control-label');
+//       const bgColor = ($(this).css('background-color') || '').trim().toLowerCase();
+
+//       // Normalizza il colore in HEX a 6 cifre
+//       const hexColor = rgbToHex(bgColor).toLowerCase();
+
+//       let matchedIndex = 0; // default = spento (0)
+
+//       // Trova il pedale nel catalog
+//       if (Array.isArray(window.catalog)) {
+//         const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalName);
+//         if (pedalData && Array.isArray(pedalData.controls)) {
+//           // Scansiona tutti i controlli del catalogo, anche se il pedale ha una sola riga
+//           for (const rowWrapper of pedalData.controls) {
+//             if (!Array.isArray(rowWrapper.row)) continue;
+
+//             // Cerca tutti i controlli LED con la stessa label
+//             for (const control of rowWrapper.row) {
+//               if (control.label === label && Array.isArray(control.colors)) {
+//                 const catalogColors = control.colors.map(c => c.toLowerCase());
+//                 // Trova l'indice del colore attuale (tollerante a differenze minime)
+//                 let foundIndex = catalogColors.indexOf(hexColor);
+//                 if (foundIndex === -1) {
+//                   // correzione per variazioni tipo #f70000 vs #ff0000
+//                   const short = s => s.replace('#', '').substring(0, 4);
+//                   foundIndex = catalogColors.findIndex(c => short(c) === short(hexColor));
+//                 }
+
+//                 // if (foundIndex !== -1) matchedIndex = foundIndex;
+//                 if (foundIndex !== -1) {
+//                   matchedIndex = foundIndex;
+//                 }
+
+//               }
+//             }
+//           }
+//         }
+//       }
+
+//       // 🔹 Se il LED è acceso (colore diverso da nero), segna il pedale come attivo
+//       if (hexColor !== '#000000') {
+//         console.log(`LED ${label} is ON with color ${hexColor} (index ${matchedIndex})`);
+//         hasColoredLed = true;
+//       }
+
+//       // 🔹 Salva sempre il valore corretto (indice del colore)
+//       controlsArray.push({ [label]: matchedIndex });
+//     });
+
+
+//     // Only save pedal if at least one LED is ON
+//     if (hasColoredLed) {
+//       console.log(`Including pedal ${pedalName} in preset (LED active)`);
+//       pedals.push({
+//         id: pedalId,
+//         name: pedalName,
+//         controls: controlsArray
+//       });
+//     }
+//   });
+
+//   return {
+//     [presetName]: pedals
+//   };
+// }
+
+
+
+
 // Get all active gears controls to save the preset
 function collectPedalControlValues(presetName = "Untitled Preset") {
   const pedals = [];
@@ -1204,7 +1344,6 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
         value = getValueFromRotation(angle);
       }
 
-      // Save exactly as text if discrete, otherwise number
       controlsArray.push({
         [label]: isNaN(value) ? value : parseFloat(value)
       });
@@ -1231,60 +1370,67 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
       controlsArray.push({ [label]: value });
     });
 
-
-    // Process LEDs (versione stabile e compatibile)
+    // Process LEDs (robusto: matching colore con tolleranza)
     $pedal.find('.led[data-control-label]').each(function () {
       const label = $(this).data('control-label');
       const bgColor = ($(this).css('background-color') || '').trim().toLowerCase();
 
-      // Normalizza il colore in HEX a 6 cifre
+      // Usa la tua rgbToHex
       const hexColor = rgbToHex(bgColor).toLowerCase();
 
-      let matchedIndex = 0; // default = spento (0)
+      let matchedIndex = 0; // default = spento
 
-      // Trova il pedale nel catalog
       if (Array.isArray(window.catalog)) {
-        const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalName);
+        const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalId || p._id === pedalId);
         if (pedalData && Array.isArray(pedalData.controls)) {
-          // Scansiona tutti i controlli del catalogo, anche se il pedale ha una sola riga
+
           for (const rowWrapper of pedalData.controls) {
             if (!Array.isArray(rowWrapper.row)) continue;
 
-            // Cerca tutti i controlli LED con la stessa label
             for (const control of rowWrapper.row) {
               if (control.label === label && Array.isArray(control.colors)) {
                 const catalogColors = control.colors.map(c => c.toLowerCase());
-                // Trova l'indice del colore attuale (tollerante a differenze minime)
+
+                // 🔹 Match esatto
                 let foundIndex = catalogColors.indexOf(hexColor);
+
+                // 🔹 Se non c’è match esatto, cerca il colore più simile (tolleranza)
                 if (foundIndex === -1) {
-                  // correzione per variazioni tipo #f70000 vs #ff0000
-                  const short = s => s.replace('#', '').substring(0, 4);
-                  foundIndex = catalogColors.findIndex(c => short(c) === short(hexColor));
+                  const targetRgb = hexToRgb(hexColor);
+                  if (targetRgb) {
+                    let bestIdx = -1;
+                    let bestDist = Infinity;
+                    for (let i = 0; i < catalogColors.length; i++) {
+                      const cRgb = hexToRgb(catalogColors[i]);
+                      if (!cRgb) continue;
+                      const d = colorDistanceSq(targetRgb, cRgb);
+                      if (d < bestDist) {
+                        bestDist = d;
+                        bestIdx = i;
+                      }
+                    }
+                    // soglia di tolleranza (≈ ±50 per canale)
+                    if (bestDist < 2500) foundIndex = bestIdx;
+                  }
                 }
 
-                // if (foundIndex !== -1) matchedIndex = foundIndex;
-                if (foundIndex !== -1) {
-                  matchedIndex = foundIndex;
-                }
-
+                if (foundIndex !== -1) matchedIndex = foundIndex;
               }
             }
           }
         }
       }
 
-      // 🔹 Se il LED è acceso (colore diverso da nero), segna il pedale come attivo
+      // Se il LED è acceso (colore diverso da nero)
       if (hexColor !== '#000000') {
         console.log(`LED ${label} is ON with color ${hexColor} (index ${matchedIndex})`);
         hasColoredLed = true;
       }
 
-      // 🔹 Salva sempre il valore corretto (indice del colore)
       controlsArray.push({ [label]: matchedIndex });
     });
 
-
-    // Only save pedal if at least one LED is ON
+    // Solo se almeno un LED è acceso
     if (hasColoredLed) {
       console.log(`Including pedal ${pedalName} in preset (LED active)`);
       pedals.push({
@@ -1299,6 +1445,29 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
     [presetName]: pedals
   };
 }
+
+// --- Helper per il confronto colore ---
+function hexToRgb(hex) {
+  const clean = hex.replace('#', '');
+  if (clean.length === 3) {
+    const [r, g, b] = clean.split('').map(x => parseInt(x + x, 16));
+    return { r, g, b };
+  } else if (clean.length === 6) {
+    const r = parseInt(clean.slice(0, 2), 16);
+    const g = parseInt(clean.slice(2, 4), 16);
+    const b = parseInt(clean.slice(4, 6), 16);
+    return { r, g, b };
+  }
+  return null;
+}
+
+function colorDistanceSq(a, b) {
+  const dr = a.r - b.r;
+  const dg = a.g - b.g;
+  const db = a.b - b.b;
+  return dr * dr + dg * dg + db * db;
+}
+
 
 
 
