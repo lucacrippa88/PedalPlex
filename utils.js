@@ -1313,170 +1313,7 @@ function getPedalTypeCss(pedal, baseCss, inside) {
 
 
 
-// // Get all active gears controls to save the preset
-// function collectPedalControlValues(presetName = "Untitled Preset") {
-//   const pedals = [];
-
-//   $('[data-pedal-name]').each(function () {
-//     const pedalName = $(this).data('pedal-name');
-//     const pedalId = $(this).data('pedal-id');
-
-//     const $pedal = $(this);
-//     const controlsArray = [];
-//     let hasColoredLed = false;
-
-//     // --- Knobs ---
-//     $pedal.find('.knob').each(function () {
-//       const label = $(this).data('control-label');
-//       const $valueLabel = $(this).parent().find('.knob-value-label');
-
-//       let value;
-//       if ($valueLabel.length && $valueLabel.text().trim() !== '') {
-//         value = $valueLabel.text().trim();
-//       } else {
-//         const transform = $(this).css('transform');
-//         let angle = 0;
-//         if (transform && transform !== 'none') {
-//           const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
-//           const a = parseFloat(values[0]);
-//           const b = parseFloat(values[1]);
-//           angle = Math.atan2(b, a) * (180 / Math.PI);
-//         } else {
-//           const style = $(this).attr('style');
-//           const match = style && style.match(/rotate\((-?\d+)deg\)/);
-//           angle = match ? parseInt(match[1], 10) : 0;
-//         }
-//         value = getValueFromRotation(angle);
-//       }
-//       controlsArray.push({ [label]: isNaN(value) ? value : parseFloat(value) });
-//     });
-
-//     // --- Dropdowns ---
-//     $pedal.find('select[data-control-label]').each(function () {
-//       const label = $(this).data('control-label');
-//       controlsArray.push({ [label]: $(this).val() });
-//     });
-
-//     // --- Sliders ---
-//     $pedal.find('input[type="range"][data-control-label]').each(function () {
-//       const label = $(this).data('control-label');
-//       controlsArray.push({ [label]: parseFloat($(this).val()) });
-//     });
-
-//     // --- LCDs ---
-//     $pedal.find('input[type="text"][data-control-label]').each(function () {
-//       const label = $(this).data('control-label');
-//       controlsArray.push({ [label]: $(this).val().trim() });
-//     });
-
-//     // --- LEDs ---
-//     $pedal.find('.led[data-control-label]').each(function () {
-//       const label = $(this).data('control-label'); // case-sensitive
-//       const bgColor = ($(this).css('background-color') || '').trim();
-//       const hexColor = normalizeHex(bgColor); // mantiene maiuscole/minuscole
-
-//       let matchedIndex = 0;
-
-//       if (Array.isArray(window.catalog)) {
-//         const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalId || p._id === pedalId);
-
-//         if (pedalData && Array.isArray(pedalData.controls)) {
-//           outerLoop:
-//           for (const rowWrapper of pedalData.controls) {
-//             if (!Array.isArray(rowWrapper.row)) continue;
-
-//             for (const control of rowWrapper.row) {
-//               if (control.label === label && Array.isArray(control.colors)) {
-//                 const catalogColors = control.colors.map(c => normalizeHex(c));
-
-//                 // match diretto case-sensitive
-//                 let foundIndex = catalogColors.indexOf(hexColor);
-
-//                 // fallback tollerante a piccole differenze
-//                 if (foundIndex === -1) {
-//                   const targetRgb = hexToRgb(hexColor);
-//                   if (targetRgb) {
-//                     let bestIdx = -1;
-//                     let bestDist = Infinity;
-//                     for (let i = 0; i < catalogColors.length; i++) {
-//                       const cRgb = hexToRgb(catalogColors[i]);
-//                       if (!cRgb) continue;
-//                       const d = colorDistanceSq(targetRgb, cRgb);
-//                       if (d < bestDist) {
-//                         bestDist = d;
-//                         bestIdx = i;
-//                       }
-//                     }
-//                     if (bestDist < 2500) foundIndex = bestIdx;
-//                   }
-//                 }
-
-//                 if (foundIndex !== -1) {
-//                   matchedIndex = foundIndex;
-//                   break outerLoop; // esce solo se trovato colore valido
-//                 }
-//               }
-//             }
-//           }
-//         }
-//       }
-
-//       if (hexColor !== '#000000') {
-//         console.log(`LED ${label} is ON with color ${hexColor} (index ${matchedIndex})`);
-//         hasColoredLed = true;
-//       }
-
-//       controlsArray.push({ [label]: matchedIndex });
-//     });
-
-//     // --- Salva solo pedale con almeno un LED acceso ---
-//     if (hasColoredLed) {
-//       console.log(`Including pedal ${pedalName} in preset (LED active)`);
-//       pedals.push({ id: pedalId, name: pedalName, controls: controlsArray });
-//     }
-//   });
-
-//   return { [presetName]: pedals };
-// }
-
-
-// // --- helper per la normalizzazione colore ---
-// function normalizeHex(color) {
-//   if (!color) return '#000000';
-//   color = color.trim().toLowerCase();
-//   if (color.startsWith('rgb')) color = rgbToHex(color);
-//   color = color.replace(/[^#0-9a-f]/g, '');
-//   if (color.length === 4)
-//     color = '#' + color[1] + color[1] + color[2] + color[2] + color[3] + color[3];
-//   if (!/^#[0-9a-f]{6}$/.test(color)) return '#000000';
-//   return color;
-// }
-
-// function hexToRgb(hex) {
-//   const clean = hex.replace('#', '');
-//   if (clean.length === 3) {
-//     const [r, g, b] = clean.split('').map(x => parseInt(x + x, 16));
-//     return { r, g, b };
-//   } else if (clean.length === 6) {
-//     const r = parseInt(clean.slice(0, 2), 16);
-//     const g = parseInt(clean.slice(2, 4), 16);
-//     const b = parseInt(clean.slice(4, 6), 16);
-//     return { r, g, b };
-//   }
-//   return null;
-// }
-
-// function colorDistanceSq(a, b) {
-//   const dr = a.r - b.r;
-//   const dg = a.g - b.g;
-//   const db = a.b - b.b;
-//   return dr * dr + dg * dg + db * db;
-// }
-
-
-
-
-// --- MAIN FUNCTION ---
+// Get all active gears controls to save the preset
 function collectPedalControlValues(presetName = "Untitled Preset") {
   const pedals = [];
 
@@ -1533,43 +1370,79 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
     });
 
     // --- LEDs ---
-    $pedal.find('.led[data-control-label]').each(function () {
-      const label = $(this).data('control-label'); 
-      const bgColor = ($(this).css('background-color') || '').trim();
-      const hexColor = normalizeHex(bgColor); 
+$pedal.find('.led[data-control-label]').each(function () {
+  const label = $(this).data('control-label'); 
+  const bgColor = ($(this).css('background-color') || '').trim();
+  const hexColor = normalizeHex(bgColor); // colore DOM in hex
 
-      let matchedIndex = 0;
+  let matchedIndex = 0;
+  let catalogColorUsed = '#000000';
 
-      if (Array.isArray(window.catalog)) {
-        const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalId || p._id === pedalId);
+  if (Array.isArray(window.catalog)) {
+    const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalId || p._id === pedalId);
 
-        if (pedalData && Array.isArray(pedalData.controls)) {
-          outerLoop:
-          for (const rowWrapper of pedalData.controls) {
-            if (!Array.isArray(rowWrapper.row)) continue;
+    if (pedalData && Array.isArray(pedalData.controls)) {
+      outerLoop:
+      for (const rowWrapper of pedalData.controls) {
+        if (!Array.isArray(rowWrapper.row)) continue;
 
-            for (const control of rowWrapper.row) {
-              if (control.label === label && Array.isArray(control.colors)) {
-                matchedIndex = closestColorIndex(hexColor, control.colors);
-                break outerLoop;
+        for (const control of rowWrapper.row) {
+          if (control.label === label && Array.isArray(control.colors)) {
+            const catalogColors = control.colors.map(c => normalizeHex(c));
+
+            // match diretto
+            let foundIndex = catalogColors.indexOf(hexColor);
+
+            // fallback tollerante
+            if (foundIndex === -1) {
+              const targetRgb = hexToRgb(hexColor);
+              if (targetRgb) {
+                let bestIdx = -1;
+                let bestDist = Infinity;
+                for (let i = 0; i < catalogColors.length; i++) {
+                  const cRgb = hexToRgb(catalogColors[i]);
+                  if (!cRgb) continue;
+                  const d = colorDistanceSq(targetRgb, cRgb);
+                  if (d < bestDist) {
+                    bestDist = d;
+                    bestIdx = i;
+                  }
+                }
+                if (bestDist < 2500) foundIndex = bestIdx;
               }
+            }
+
+            if (foundIndex !== -1) {
+              matchedIndex = foundIndex;
+              catalogColorUsed = catalogColors[matchedIndex];
+              break outerLoop;
             }
           }
         }
       }
+    }
+  }
 
-      if (hexColor !== '#000000') hasColoredLed = true;
+  if (hexColor !== '#000000') hasColoredLed = true;
 
-      controlsArray.push({ [label]: matchedIndex });
-    });
+  console.log(`LED "${label}" -> colore DOM: ${bgColor}, convertito HEX: ${hexColor}, colore catalogo usato: ${catalogColorUsed}, indice: ${matchedIndex}`);
 
-    if (hasColoredLed) pedals.push({ id: pedalId, name: pedalName, controls: controlsArray });
+  controlsArray.push({ [label]: matchedIndex });
+});
+
+
+    // --- Salva solo pedale con almeno un LED acceso ---
+    if (hasColoredLed) {
+      console.log(`Including pedal ${pedalName} in preset (LED active)`);
+      pedals.push({ id: pedalId, name: pedalName, controls: controlsArray });
+    }
   });
 
   return { [presetName]: pedals };
 }
 
-// --- HELPER: normalize color to #rrggbb ---
+
+// --- helper per la normalizzazione colore ---
 function normalizeHex(color) {
   if (!color) return '#000000';
   color = color.trim().toLowerCase();
@@ -1581,47 +1454,27 @@ function normalizeHex(color) {
   return color;
 }
 
-// --- HELPER: RGB string to hex ---
-function rgbToHex(rgb) {
-  const m = rgb.match(/\d+/g);
-  if (!m || m.length < 3) return '#000000';
-  return '#' + m.slice(0,3).map(x => parseInt(x).toString(16).padStart(2,'0')).join('');
-}
-
-// --- HELPER: hex to {r,g,b} ---
 function hexToRgb(hex) {
-  const c = hex.replace('#','');
-  if (c.length === 3) return { r: parseInt(c[0]+c[0],16), g: parseInt(c[1]+c[1],16), b: parseInt(c[2]+c[2],16) };
-  if (c.length === 6) return { r: parseInt(c.slice(0,2),16), g: parseInt(c.slice(2,4),16), b: parseInt(c.slice(4,6),16) };
+  const clean = hex.replace('#', '');
+  if (clean.length === 3) {
+    const [r, g, b] = clean.split('').map(x => parseInt(x + x, 16));
+    return { r, g, b };
+  } else if (clean.length === 6) {
+    const r = parseInt(clean.slice(0, 2), 16);
+    const g = parseInt(clean.slice(2, 4), 16);
+    const b = parseInt(clean.slice(4, 6), 16);
+    return { r, g, b };
+  }
   return null;
 }
 
-// --- HELPER: squared distance between colors ---
-function colorDistanceSq(a,b) {
-  return (a.r-b.r)**2 + (a.g-b.g)**2 + (a.b-b.b)**2;
+function colorDistanceSq(a, b) {
+  const dr = a.r - b.r;
+  const dg = a.g - b.g;
+  const db = a.b - b.b;
+  return dr * dr + dg * dg + db * db;
 }
 
-// --- HELPER: find closest color index in catalogColors ---
-function closestColorIndex(hexColor, catalogColors) {
-  const targetRgb = hexToRgb(hexColor);
-  if (!targetRgb) return 0;
-
-  let bestIdx = 0;
-  let bestDist = Infinity;
-
-  catalogColors.forEach((c,i) => {
-    const cRgb = hexToRgb(normalizeHex(c));
-    if (!cRgb) return;
-    const dist = colorDistanceSq(targetRgb, cRgb);
-    if (dist < bestDist) {
-      bestDist = dist;
-      bestIdx = i;
-    }
-  });
-
-  // tolleranza: se troppo diverso, rimane 0
-  return bestDist < 2500 ? bestIdx : 0;
-}
 
 
 
