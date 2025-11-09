@@ -1370,65 +1370,80 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
       controlsArray.push({ [label]: value });
     });
 
-    // Process LEDs (robusto: matching colore con tolleranza)
-    $pedal.find('.led[data-control-label]').each(function () {
-      const label = $(this).data('control-label');
-      const bgColor = ($(this).css('background-color') || '').trim().toLowerCase();
+    // Process LEDs (versione robusta definitiva)
+$pedal.find('.led[data-control-label]').each(function () {
+  const label = $(this).data('control-label');
+  const bgColor = ($(this).css('background-color') || '').trim();
 
-      // Usa la tua rgbToHex
-      const hexColor = rgbToHex(bgColor).toLowerCase();
+  // 🔸 Normalizza completamente il colore in HEX a 6 cifre
+  const hexColor = normalizeHex(rgbToHex(bgColor));
 
-      let matchedIndex = 0; // default = spento
+  let matchedIndex = 0;
 
-      if (Array.isArray(window.catalog)) {
-        const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalId || p._id === pedalId);
-        if (pedalData && Array.isArray(pedalData.controls)) {
+  if (Array.isArray(window.catalog)) {
+    const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalId || p._id === pedalId);
+    if (pedalData && Array.isArray(pedalData.controls)) {
+      for (const rowWrapper of pedalData.controls) {
+        if (!Array.isArray(rowWrapper.row)) continue;
 
-          for (const rowWrapper of pedalData.controls) {
-            if (!Array.isArray(rowWrapper.row)) continue;
+        for (const control of rowWrapper.row) {
+          if (control.label === label && Array.isArray(control.colors)) {
+            const catalogColors = control.colors.map(c => normalizeHex(c));
 
-            for (const control of rowWrapper.row) {
-              if (control.label === label && Array.isArray(control.colors)) {
-                const catalogColors = control.colors.map(c => c.toLowerCase());
+            // ✅ match diretto
+            let foundIndex = catalogColors.indexOf(hexColor);
 
-                // 🔹 Match esatto
-                let foundIndex = catalogColors.indexOf(hexColor);
-
-                // 🔹 Se non c’è match esatto, cerca il colore più simile (tolleranza)
-                if (foundIndex === -1) {
-                  const targetRgb = hexToRgb(hexColor);
-                  if (targetRgb) {
-                    let bestIdx = -1;
-                    let bestDist = Infinity;
-                    for (let i = 0; i < catalogColors.length; i++) {
-                      const cRgb = hexToRgb(catalogColors[i]);
-                      if (!cRgb) continue;
-                      const d = colorDistanceSq(targetRgb, cRgb);
-                      if (d < bestDist) {
-                        bestDist = d;
-                        bestIdx = i;
-                      }
-                    }
-                    // soglia di tolleranza (≈ ±50 per canale)
-                    if (bestDist < 2500) foundIndex = bestIdx;
+            // ✅ fallback con tolleranza
+            if (foundIndex === -1) {
+              const targetRgb = hexToRgb(hexColor);
+              if (targetRgb) {
+                let bestIdx = -1;
+                let bestDist = Infinity;
+                for (let i = 0; i < catalogColors.length; i++) {
+                  const cRgb = hexToRgb(catalogColors[i]);
+                  if (!cRgb) continue;
+                  const d = colorDistanceSq(targetRgb, cRgb);
+                  if (d < bestDist) {
+                    bestDist = d;
+                    bestIdx = i;
                   }
                 }
-
-                if (foundIndex !== -1) matchedIndex = foundIndex;
+                if (bestDist < 2500) foundIndex = bestIdx;
               }
             }
+
+            if (foundIndex !== -1) matchedIndex = foundIndex;
           }
         }
       }
+    }
+  }
 
-      // Se il LED è acceso (colore diverso da nero)
-      if (hexColor !== '#000000') {
-        console.log(`LED ${label} is ON with color ${hexColor} (index ${matchedIndex})`);
-        hasColoredLed = true;
-      }
+  if (hexColor !== '#000000') {
+    console.log(`LED ${label} is ON with color ${hexColor} (index ${matchedIndex})`);
+    hasColoredLed = true;
+  }
 
-      controlsArray.push({ [label]: matchedIndex });
-    });
+  controlsArray.push({ [label]: matchedIndex });
+});
+
+// --- helper per la normalizzazione colore ---
+function normalizeHex(color) {
+  if (!color) return '#000000';
+  color = color.trim().toLowerCase();
+  // se è rgb(), converti
+  if (color.startsWith('rgb')) color = rgbToHex(color);
+  // rimuovi caratteri strani
+  color = color.replace(/[^#0-9a-f]/g, '');
+  // espandi shorthand tipo #f00
+  if (color.length === 4) {
+    color = '#' + color[1] + color[1] + color[2] + color[2] + color[3] + color[3];
+  }
+  // forza formato #rrggbb
+  if (!/^#[0-9a-f]{6}$/.test(color)) return '#000000';
+  return color;
+}
+
 
     // Solo se almeno un LED è acceso
     if (hasColoredLed) {
