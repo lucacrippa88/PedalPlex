@@ -1323,10 +1323,8 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
       let value;
 
       if ($valueLabel.length && $valueLabel.text().trim() !== '') {
-        // 🔹 Discrete knob → take text directly
         value = $valueLabel.text().trim();
       } else {
-        // 🔹 Continuous knob → calculate numeric value
         const transform = $(this).css('transform');
         let angle = 0;
 
@@ -1334,7 +1332,7 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
           const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
           const a = parseFloat(values[0]);
           const b = parseFloat(values[1]);
-          angle = Math.atan2(b, a) * (180 / Math.PI); // keep decimals
+          angle = Math.atan2(b, a) * (180 / Math.PI);
         } else {
           const style = $(this).attr('style');
           const match = style && style.match(/rotate\((-?\d+)deg\)/);
@@ -1370,80 +1368,63 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
       controlsArray.push({ [label]: value });
     });
 
-    // Process LEDs (versione robusta definitiva)
-$pedal.find('.led[data-control-label]').each(function () {
-  const label = $(this).data('control-label');
-  const bgColor = ($(this).css('background-color') || '').trim();
+    // Process LEDs (case-sensitive, sicuro)
+    $pedal.find('.led[data-control-label]').each(function () {
+      const label = $(this).data('control-label'); // case-sensitive
+      const bgColor = ($(this).css('background-color') || '').trim();
+      const hexColor = normalizeHex(rgbToHex(bgColor));
 
-  // 🔸 Normalizza completamente il colore in HEX a 6 cifre
-  const hexColor = normalizeHex(rgbToHex(bgColor));
+      let matchedIndex = 0;
 
-  let matchedIndex = 0;
+      if (Array.isArray(window.catalog)) {
+        const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalId || p._id === pedalId);
+        if (pedalData && Array.isArray(pedalData.controls)) {
 
-  if (Array.isArray(window.catalog)) {
-    const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalId || p._id === pedalId);
-    if (pedalData && Array.isArray(pedalData.controls)) {
-      for (const rowWrapper of pedalData.controls) {
-        if (!Array.isArray(rowWrapper.row)) continue;
+          outerLoop:
+          for (const rowWrapper of pedalData.controls) {
+            if (!Array.isArray(rowWrapper.row)) continue;
 
-        for (const control of rowWrapper.row) {
-          if (control.label === label && Array.isArray(control.colors)) {
-            const catalogColors = control.colors.map(c => normalizeHex(c));
+            for (const control of rowWrapper.row) {
+              if (control.label === label && Array.isArray(control.colors)) {
+                const catalogColors = control.colors.map(c => normalizeHex(c));
 
-            // ✅ match diretto
-            let foundIndex = catalogColors.indexOf(hexColor);
+                // match diretto
+                let foundIndex = catalogColors.indexOf(hexColor);
 
-            // ✅ fallback con tolleranza
-            if (foundIndex === -1) {
-              const targetRgb = hexToRgb(hexColor);
-              if (targetRgb) {
-                let bestIdx = -1;
-                let bestDist = Infinity;
-                for (let i = 0; i < catalogColors.length; i++) {
-                  const cRgb = hexToRgb(catalogColors[i]);
-                  if (!cRgb) continue;
-                  const d = colorDistanceSq(targetRgb, cRgb);
-                  if (d < bestDist) {
-                    bestDist = d;
-                    bestIdx = i;
+                // fallback tollerante
+                if (foundIndex === -1) {
+                  const targetRgb = hexToRgb(hexColor);
+                  if (targetRgb) {
+                    let bestIdx = -1;
+                    let bestDist = Infinity;
+                    for (let i = 0; i < catalogColors.length; i++) {
+                      const cRgb = hexToRgb(catalogColors[i]);
+                      if (!cRgb) continue;
+                      const d = colorDistanceSq(targetRgb, cRgb);
+                      if (d < bestDist) {
+                        bestDist = d;
+                        bestIdx = i;
+                      }
+                    }
+                    if (bestDist < 2500) foundIndex = bestIdx;
                   }
                 }
-                if (bestDist < 2500) foundIndex = bestIdx;
+
+                if (foundIndex !== -1) matchedIndex = foundIndex;
+                break outerLoop; // esce subito dopo aver trovato la label corretta
               }
             }
-
-            if (foundIndex !== -1) matchedIndex = foundIndex;
           }
         }
       }
-    }
-  }
 
-  if (hexColor !== '#000000') {
-    console.log(`LED ${label} is ON with color ${hexColor} (index ${matchedIndex})`);
-    hasColoredLed = true;
-  }
+      if (hexColor !== '#000000') {
+        console.log(`LED ${label} is ON with color ${hexColor} (index ${matchedIndex})`);
+        hasColoredLed = true;
+      }
 
-  controlsArray.push({ [label]: matchedIndex });
-});
-
-// --- helper per la normalizzazione colore ---
-function normalizeHex(color) {
-  if (!color) return '#000000';
-  color = color.trim().toLowerCase();
-  // se è rgb(), converti
-  if (color.startsWith('rgb')) color = rgbToHex(color);
-  // rimuovi caratteri strani
-  color = color.replace(/[^#0-9a-f]/g, '');
-  // espandi shorthand tipo #f00
-  if (color.length === 4) {
-    color = '#' + color[1] + color[1] + color[2] + color[2] + color[3] + color[3];
-  }
-  // forza formato #rrggbb
-  if (!/^#[0-9a-f]{6}$/.test(color)) return '#000000';
-  return color;
-}
-
+      controlsArray.push({ [label]: matchedIndex });
+    });
 
     // Solo se almeno un LED è acceso
     if (hasColoredLed) {
@@ -1461,7 +1442,18 @@ function normalizeHex(color) {
   };
 }
 
-// --- Helper per il confronto colore ---
+// --- helper per la normalizzazione colore ---
+function normalizeHex(color) {
+  if (!color) return '#000000';
+  color = color.trim().toLowerCase();
+  if (color.startsWith('rgb')) color = rgbToHex(color);
+  color = color.replace(/[^#0-9a-f]/g, '');
+  if (color.length === 4)
+    color = '#' + color[1] + color[1] + color[2] + color[2] + color[3] + color[3];
+  if (!/^#[0-9a-f]{6}$/.test(color)) return '#000000';
+  return color;
+}
+
 function hexToRgb(hex) {
   const clean = hex.replace('#', '');
   if (clean.length === 3) {
@@ -1482,6 +1474,7 @@ function colorDistanceSq(a, b) {
   const db = a.b - b.b;
   return dr * dr + dg * dg + db * db;
 }
+
 
 
 
