@@ -1370,7 +1370,6 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
     });
 
     // --- LEDs ---
-// --- LEDs ---
 $pedal.find('.led[data-control-label]').each(function () {
   const label = $(this).data('control-label'); // case-sensitive
   const bgColor = ($(this).css('background-color') || '').trim();
@@ -1378,6 +1377,7 @@ $pedal.find('.led[data-control-label]').each(function () {
 
   let matchedIndex = 0;
   let catalogColorUsed = '#000000';
+  let foundControl = null;
 
   if (Array.isArray(window.catalog)) {
     const pedalData = window.catalog.find(
@@ -1391,15 +1391,18 @@ $pedal.find('.led[data-control-label]').each(function () {
 
         for (const control of rowWrapper.row) {
           if (control.label === label && Array.isArray(control.colors)) {
+            foundControl = control;
             const catalogColors = control.colors.map(c => normalizeHex(c));
 
-            // match diretto case-insensitive
-            let foundIndex = catalogColors.findIndex(
-              c => c.toLowerCase() === hexColor.toLowerCase()
+            console.log(
+              `→ Controllo "${label}" trovato nel catalogo per pedale "${pedalName}". Colori disponibili:`,
+              catalogColors
             );
 
-            // fallback tollerante a piccole differenze
+            let foundIndex = catalogColors.indexOf(hexColor);
+
             if (foundIndex === -1) {
+              console.log(`⚠️ Nessuna corrispondenza diretta per ${hexColor}, provo distanza...`);
               const targetRgb = hexToRgb(hexColor);
               if (targetRgb) {
                 let bestIdx = -1;
@@ -1420,7 +1423,7 @@ $pedal.find('.led[data-control-label]').each(function () {
             if (foundIndex !== -1) {
               matchedIndex = foundIndex;
               catalogColorUsed = catalogColors[foundIndex];
-              break outerLoop; // esce solo se trovato colore valido
+              break outerLoop;
             }
           }
         }
@@ -1428,16 +1431,19 @@ $pedal.find('.led[data-control-label]').each(function () {
     }
   }
 
+  if (!foundControl) {
+    console.log(`❌ Nessun controllo trovato nel catalogo per label "${label}" nel pedale "${pedalName}"`);
+  }
+
   console.log(
     `LED "${label}" → colore DOM: ${bgColor}, convertito HEX: ${hexColor}, colore catalogo usato: ${catalogColorUsed}, indice: ${matchedIndex}`
   );
 
-  if (hexColor !== '#000000') {
-    hasColoredLed = true;
-  }
+  if (hexColor !== '#000000') hasColoredLed = true;
 
   controlsArray.push({ [label]: matchedIndex });
 });
+
 
 
 
