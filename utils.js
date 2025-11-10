@@ -1384,9 +1384,17 @@ $pedal.find('.led[data-control-label]').each(function () {
     //   p => p.name === pedalName || p.id === pedalId || p._id === pedalId
     // );
 
-    const pedalData = window.catalog.find(
-  p => p._id === pedalId || p.id === pedalId || p.name === pedalName
-);
+    const pedalData =
+      window.catalog.find(p => p._id === pedalId) ||
+      window.catalog.find(p => p.id === pedalId) ||
+      window.catalog.find(p => p.name === pedalName);
+
+
+if (pedalData) {
+  console.log(`✅ Catalog match: _id="${pedalData._id}" for DOM pedalId="${pedalId}"`);
+} else {
+  console.warn(`⚠️ Nessun pedalData trovato per "${pedalId}"`);
+}
 
     if (pedalData && Array.isArray(pedalData.controls)) {
       outerLoop:
