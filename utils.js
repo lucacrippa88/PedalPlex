@@ -1390,11 +1390,11 @@ $pedal.find('.led[data-control-label]').each(function () {
       window.catalog.find(p => p.name === pedalName);
 
 
-if (pedalData) {
-  console.log(`✅ Catalog match: _id="${pedalData._id}" for DOM pedalId="${pedalId}"`);
-} else {
-  console.warn(`⚠️ Nessun pedalData trovato per "${pedalId}"`);
-}
+// if (pedalData) {
+//   console.log(`✅ Catalog match: _id="${pedalData._id}" for DOM pedalId="${pedalId}"`);
+// } else {
+//   console.warn(`⚠️ Nessun pedalData trovato per "${pedalId}"`);
+// }
 
     if (pedalData && Array.isArray(pedalData.controls)) {
       outerLoop:
@@ -1406,15 +1406,15 @@ if (pedalData) {
             foundControl = control;
             const catalogColors = control.colors.map(c => normalizeHex(c));
 
-            console.log(
-              `→ Controllo "${label}" trovato nel catalogo per pedale "${pedalName}". Colori disponibili:`,
-              catalogColors
-            );
+            // console.log(
+            //   `→ Controllo "${label}" trovato nel catalogo per pedale "${pedalName}". Colori disponibili:`,
+            //   catalogColors
+            // );
 
             let foundIndex = catalogColors.indexOf(hexColor);
 
             if (foundIndex === -1) {
-              console.log(`⚠️ Nessuna corrispondenza diretta per ${hexColor}, provo distanza...`);
+              // console.log(`⚠️ Nessuna corrispondenza diretta per ${hexColor}, provo distanza...`);
               const targetRgb = hexToRgb(hexColor);
               if (targetRgb) {
                 let bestIdx = -1;
@@ -1443,13 +1443,13 @@ if (pedalData) {
     }
   }
 
-  if (!foundControl) {
-    console.log(`❌ Nessun controllo trovato nel catalogo per label "${label}" nel pedale "${pedalName}"`);
-  }
+  // if (!foundControl) {
+  //   console.log(`❌ Nessun controllo trovato nel catalogo per label "${label}" nel pedale "${pedalName}"`);
+  // }
 
-  console.log(
-    `LED "${label}" → colore DOM: ${bgColor}, convertito HEX: ${hexColor}, colore catalogo usato: ${catalogColorUsed}, indice: ${matchedIndex}`
-  );
+  // console.log(
+  //   `LED "${label}" → colore DOM: ${bgColor}, convertito HEX: ${hexColor}, colore catalogo usato: ${catalogColorUsed}, indice: ${matchedIndex}`
+  // );
 
   if (hexColor !== '#000000') hasColoredLed = true;
 
