@@ -1380,9 +1380,13 @@ $pedal.find('.led[data-control-label]').each(function () {
   let foundControl = null;
 
   if (Array.isArray(window.catalog)) {
+    // const pedalData = window.catalog.find(
+    //   p => p.name === pedalName || p.id === pedalId || p._id === pedalId
+    // );
+
     const pedalData = window.catalog.find(
-      p => p.name === pedalName || p.id === pedalId || p._id === pedalId
-    );
+  p => p._id === pedalId || p.id === pedalId || p.name === pedalName
+);
 
     if (pedalData && Array.isArray(pedalData.controls)) {
       outerLoop:
