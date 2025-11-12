@@ -2,17 +2,6 @@ const editMode = window.isEditMode
 
 
 // // HELPER
-// function rgbToHex(rgb) {
-//   const result = rgb.match(/\d+/g);
-//   if (!result || result.length < 3) return '#000000';
-//   const r = parseInt(result[0], 10);
-//   const g = parseInt(result[1], 10);
-//   const b = parseInt(result[2], 10);
-//   return "#" + ((1 << 24) + (r << 16) + (g << 8) + b)
-//     .toString(16)
-//     .slice(1)
-//     .toLowerCase();
-// }
 function rgbToHex(rgb) {
   const result = rgb.match(/\d+/g);
   if (!result || result.length < 3) return '#000000';
@@ -20,7 +9,7 @@ function rgbToHex(rgb) {
   const g = parseInt(result[1], 10);
   const b = parseInt(result[2], 10);
   const hex = ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-  return '#' + hex.padStart(6, '0').toLowerCase(); // SEMPRE 6 cifre
+  return '#' + hex.padStart(6, '0').toLowerCase(); // always 6 digits
 }
 
 
@@ -165,11 +154,10 @@ function renderPedalControls(pedal, $pedalDiv) {
                     .css("--indicator-color", knobIndicator)
                     .attr("data-control-label", control.label);
 
-                // Only create tooltip if not in edit mode
                 let $tooltip = null;
                 let $tooltipText = null;
 
-                if (!editMode) {
+                if (!editMode) { // Only create tooltip if not in edit mode
                     $tooltip = $("<div>")
                         .addClass("bx--tooltip bx--tooltip--top")
                         .attr("data-tooltip", "")
@@ -297,7 +285,6 @@ function renderPedalControls(pedal, $pedalDiv) {
                         return;
                     }
 
-
                     // Vertical adjustments
                     if (pos.includes("highest")) { $knobWrapper.css("margin-top", "-25px"); }
                     else if (pos.includes("higher")) { $knobWrapper.css("margin-top", "-10px"); }
@@ -317,7 +304,6 @@ function renderPedalControls(pedal, $pedalDiv) {
                     $row.append($knobWrapper);
 
                 } else { $row.append($knobWrapper); }
-
 
             }
 
@@ -462,8 +448,6 @@ function renderPedalControls(pedal, $pedalDiv) {
               $row.append($sliderWrapper);
             }
 
-
-
             // LCD
             if (control.type === "lcd") {
                 const $label = $("<div>").addClass("label-top");
@@ -547,8 +531,6 @@ function renderPedalControls(pedal, $pedalDiv) {
         
     }); 
 }
-
-
 
 
 // Edit gears in catalog page
@@ -650,7 +632,7 @@ function setupEditPedalHandler(pedals) {
 
           Swal.close();
 
-          // reopen editor with duplicated pedal
+          // Reopen editor with duplicated pedal
           setTimeout(() => {
             Swal.fire({
               title: `Duplicate of ${pedal._id}`,
@@ -717,7 +699,6 @@ function setupEditPedalHandler(pedals) {
                         canEdit: true
                       };
 
-                      // Add to global array
                       pedals.push(createdPedal);
 
                       // Render the new pedal
@@ -728,13 +709,8 @@ function setupEditPedalHandler(pedals) {
                       // Attach pedal id to the edit button
                       $pedalDiv.find(".edit-btn").attr("data-pedal-id", createdPedal._id);
 
-                      // Append to DOM
                       $("#catalog").append($pedalDiv);
-
-                      // Update pedal count
                       updatePedalCounts();
-
-                      // Re-bind edit handlers if needed
                       setupEditPedalHandler(pedals);
 
                       Swal.fire({
@@ -996,11 +972,6 @@ function sanitizePedalHTML(input) {
 
 
 
-
-
-
-
-
 // HELPER: render a gear in catalog and editor
 function renderPedal(pedal, userRole, pedalboardPage = false) {
   const pedalId = pedal._id || pedal.id;
@@ -1124,8 +1095,6 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
 }
 
 
-
-
 // HELPER: returns CSS depending on type + inside
 function getPedalTypeCss(pedal, baseCss, inside) {
   switch (pedal.type) {
@@ -1171,147 +1140,6 @@ function getPedalTypeCss(pedal, baseCss, inside) {
   return baseCss;
 }
  
-
-
-// // Get all active gears controls to save the preset
-// function collectPedalControlValues(presetName = "Untitled Preset") {
-//   const pedals = [];
-
-//   $('[data-pedal-name]').each(function () {
-//     const pedalName = $(this).data('pedal-name');
-//     const pedalId = $(this).data('pedal-id');
-
-//     const $pedal = $(this);
-//     const controlsArray = [];
-//     let hasColoredLed = false;
-
-//     // Process knobs
-//     $pedal.find('.knob').each(function () {
-//       const label = $(this).data('control-label');
-//       const $valueLabel = $(this).parent().find('.knob-value-label');
-
-//       let value;
-
-//       if ($valueLabel.length && $valueLabel.text().trim() !== '') {
-//         // 🔹 Discrete knob → take text directly
-//         value = $valueLabel.text().trim();
-//       } else {
-//         // 🔹 Continuous knob → calculate numeric value
-//         const transform = $(this).css('transform');
-//         let angle = 0;
-
-//         if (transform && transform !== 'none') {
-//           const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
-//           const a = parseFloat(values[0]);
-//           const b = parseFloat(values[1]);
-//           angle = Math.atan2(b, a) * (180 / Math.PI); // keep decimals
-//         } else {
-//           const style = $(this).attr('style');
-//           const match = style && style.match(/rotate\((-?\d+)deg\)/);
-//           angle = match ? parseInt(match[1], 10) : 0;
-//         }
-
-//         value = getValueFromRotation(angle);
-//       }
-
-//       // Save exactly as text if discrete, otherwise number
-//       controlsArray.push({
-//         [label]: isNaN(value) ? value : parseFloat(value)
-//       });
-//     });
-
-//     // Process dropdowns
-//     $pedal.find('select[data-control-label]').each(function () {
-//       const label = $(this).data('control-label');
-//       const value = $(this).val();
-//       controlsArray.push({ [label]: value });
-//     });
-
-//     // Process sliders
-//     $pedal.find('input[type="range"][data-control-label]').each(function () {
-//       const label = $(this).data('control-label');
-//       const value = $(this).val();
-//       controlsArray.push({ [label]: parseFloat(value) });
-//     });
-
-//     // Process LCDs
-//     $pedal.find('input[type="text"][data-control-label]').each(function () {
-//       const label = $(this).data('control-label');
-//       const value = $(this).val().trim();
-//       controlsArray.push({ [label]: value });
-//     });
-
-
-//     // Process LEDs (versione stabile e compatibile)
-//     $pedal.find('.led[data-control-label]').each(function () {
-//       const label = $(this).data('control-label');
-//       const bgColor = ($(this).css('background-color') || '').trim().toLowerCase();
-
-//       // Normalizza il colore in HEX a 6 cifre
-//       const hexColor = rgbToHex(bgColor).toLowerCase();
-
-//       let matchedIndex = 0; // default = spento (0)
-
-//       // Trova il pedale nel catalog
-//       if (Array.isArray(window.catalog)) {
-//         const pedalData = window.catalog.find(p => p.name === pedalName || p.id === pedalName);
-//         if (pedalData && Array.isArray(pedalData.controls)) {
-//           // Scansiona tutti i controlli del catalogo, anche se il pedale ha una sola riga
-//           for (const rowWrapper of pedalData.controls) {
-//             if (!Array.isArray(rowWrapper.row)) continue;
-
-//             // Cerca tutti i controlli LED con la stessa label
-//             for (const control of rowWrapper.row) {
-//               if (control.label === label && Array.isArray(control.colors)) {
-//                 const catalogColors = control.colors.map(c => c.toLowerCase());
-//                 // Trova l'indice del colore attuale (tollerante a differenze minime)
-//                 let foundIndex = catalogColors.indexOf(hexColor);
-//                 if (foundIndex === -1) {
-//                   // correzione per variazioni tipo #f70000 vs #ff0000
-//                   const short = s => s.replace('#', '').substring(0, 4);
-//                   foundIndex = catalogColors.findIndex(c => short(c) === short(hexColor));
-//                 }
-
-//                 // if (foundIndex !== -1) matchedIndex = foundIndex;
-//                 if (foundIndex !== -1) {
-//                   matchedIndex = foundIndex;
-//                 }
-
-//               }
-//             }
-//           }
-//         }
-//       }
-
-//       // 🔹 Se il LED è acceso (colore diverso da nero), segna il pedale come attivo
-//       if (hexColor !== '#000000') {
-//         console.log(`LED ${label} is ON with color ${hexColor} (index ${matchedIndex})`);
-//         hasColoredLed = true;
-//       }
-
-//       // 🔹 Salva sempre il valore corretto (indice del colore)
-//       controlsArray.push({ [label]: matchedIndex });
-//     });
-
-
-//     // Only save pedal if at least one LED is ON
-//     if (hasColoredLed) {
-//       console.log(`Including pedal ${pedalName} in preset (LED active)`);
-//       pedals.push({
-//         id: pedalId,
-//         name: pedalName,
-//         controls: controlsArray
-//       });
-//     }
-//   });
-
-//   return {
-//     [presetName]: pedals
-//   };
-// }
-
-
-
 
 // Get all active gears controls to save the preset
 function collectPedalControlValues(presetName = "Untitled Preset") {
@@ -1370,98 +1198,70 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
     });
 
     // --- LEDs ---
-$pedal.find('.led[data-control-label]').each(function () {
-  const label = $(this).data('control-label'); // case-sensitive
-  const bgColor = ($(this).css('background-color') || '').trim();
-  const hexColor = normalizeHex(bgColor); // DOM color convertito in HEX
+    $pedal.find('.led[data-control-label]').each(function () {
+      const label = $(this).data('control-label'); // case-sensitive
+      const bgColor = ($(this).css('background-color') || '').trim();
+      const hexColor = normalizeHex(bgColor); // DOM color convertito in HEX
 
-  let matchedIndex = 0;
-  let catalogColorUsed = '#000000';
-  let foundControl = null;
+      let matchedIndex = 0;
+      let catalogColorUsed = '#000000';
+      let foundControl = null;
 
-  if (Array.isArray(window.catalog)) {
-    // const pedalData = window.catalog.find(
-    //   p => p.name === pedalName || p.id === pedalId || p._id === pedalId
-    // );
+      if (Array.isArray(window.catalog)) {
 
-    const pedalData =
-      window.catalog.find(p => p._id === pedalId) ||
-      window.catalog.find(p => p.id === pedalId) ||
-      window.catalog.find(p => p.name === pedalName);
+        const pedalData =
+          window.catalog.find(p => p._id === pedalId) ||
+          window.catalog.find(p => p.id === pedalId) ||
+          window.catalog.find(p => p.name === pedalName);
 
+        if (pedalData && Array.isArray(pedalData.controls)) {
+          outerLoop:
+          for (const rowWrapper of pedalData.controls) {
+            if (!Array.isArray(rowWrapper.row)) continue;
 
-// if (pedalData) {
-//   console.log(`✅ Catalog match: _id="${pedalData._id}" for DOM pedalId="${pedalId}"`);
-// } else {
-//   console.warn(`⚠️ Nessun pedalData trovato per "${pedalId}"`);
-// }
+            for (const control of rowWrapper.row) {
+              if (control.label === label && Array.isArray(control.colors)) {
+                foundControl = control;
+                const catalogColors = control.colors.map(c => normalizeHex(c));
 
-    if (pedalData && Array.isArray(pedalData.controls)) {
-      outerLoop:
-      for (const rowWrapper of pedalData.controls) {
-        if (!Array.isArray(rowWrapper.row)) continue;
+                let foundIndex = catalogColors.indexOf(hexColor);
 
-        for (const control of rowWrapper.row) {
-          if (control.label === label && Array.isArray(control.colors)) {
-            foundControl = control;
-            const catalogColors = control.colors.map(c => normalizeHex(c));
-
-            // console.log(
-            //   `→ Controllo "${label}" trovato nel catalogo per pedale "${pedalName}". Colori disponibili:`,
-            //   catalogColors
-            // );
-
-            let foundIndex = catalogColors.indexOf(hexColor);
-
-            if (foundIndex === -1) {
-              // console.log(`⚠️ Nessuna corrispondenza diretta per ${hexColor}, provo distanza...`);
-              const targetRgb = hexToRgb(hexColor);
-              if (targetRgb) {
-                let bestIdx = -1;
-                let bestDist = Infinity;
-                for (let i = 0; i < catalogColors.length; i++) {
-                  const cRgb = hexToRgb(catalogColors[i]);
-                  if (!cRgb) continue;
-                  const d = colorDistanceSq(targetRgb, cRgb);
-                  if (d < bestDist) {
-                    bestDist = d;
-                    bestIdx = i;
+                if (foundIndex === -1) {
+                  const targetRgb = hexToRgb(hexColor);
+                  if (targetRgb) {
+                    let bestIdx = -1;
+                    let bestDist = Infinity;
+                    for (let i = 0; i < catalogColors.length; i++) {
+                      const cRgb = hexToRgb(catalogColors[i]);
+                      if (!cRgb) continue;
+                      const d = colorDistanceSq(targetRgb, cRgb);
+                      if (d < bestDist) {
+                        bestDist = d;
+                        bestIdx = i;
+                      }
+                    }
+                    if (bestDist < 2500) foundIndex = bestIdx;
                   }
                 }
-                if (bestDist < 2500) foundIndex = bestIdx;
-              }
-            }
 
-            if (foundIndex !== -1) {
-              matchedIndex = foundIndex;
-              catalogColorUsed = catalogColors[foundIndex];
-              break outerLoop;
+                if (foundIndex !== -1) {
+                  matchedIndex = foundIndex;
+                  catalogColorUsed = catalogColors[foundIndex];
+                  break outerLoop;
+                }
+              }
             }
           }
         }
       }
-    }
-  }
 
-  // if (!foundControl) {
-  //   console.log(`❌ Nessun controllo trovato nel catalogo per label "${label}" nel pedale "${pedalName}"`);
-  // }
-
-  // console.log(
-  //   `LED "${label}" → colore DOM: ${bgColor}, convertito HEX: ${hexColor}, colore catalogo usato: ${catalogColorUsed}, indice: ${matchedIndex}`
-  // );
-
-  if (hexColor !== '#000000') hasColoredLed = true;
-
-  controlsArray.push({ [label]: matchedIndex });
-});
+      if (hexColor !== '#000000') hasColoredLed = true;
+      controlsArray.push({ [label]: matchedIndex });
+    });
 
 
-
-
-    // --- Salva solo pedale con almeno un LED acceso ---
+    // Save pedal in preset only if at least a LED is turned on
     if (hasColoredLed) {
-      console.log(`Including pedal ${pedalName} in preset (LED active)`);
       pedals.push({ id: pedalId, name: pedalName, controls: controlsArray });
     }
   });
@@ -1470,7 +1270,7 @@ $pedal.find('.led[data-control-label]').each(function () {
 }
 
 
-// --- helper per la normalizzazione colore ---
+// HELPER
 function normalizeHex(color) {
   if (!color) return '#000000';
   color = color.trim().toLowerCase();
@@ -1482,6 +1282,7 @@ function normalizeHex(color) {
   return color;
 }
 
+// HELPER
 function hexToRgb(hex) {
   const clean = hex.replace('#', '');
   if (clean.length === 3) {
@@ -1496,16 +1297,13 @@ function hexToRgb(hex) {
   return null;
 }
 
+// HELPER
 function colorDistanceSq(a, b) {
   const dr = a.r - b.r;
   const dg = a.g - b.g;
   const db = a.b - b.b;
   return dr * dr + dg * dg + db * db;
 }
-
-
-
-
 
 
 
@@ -1556,25 +1354,21 @@ function filterPedalsWithColoredLeds(pedalsObj) {
 
 
 
-
-// ORIGINALE con Promise
 // Render full pedalboard in preset page
 async function renderFullPedalboard() {
 
-  // console.log("🎛️ [renderFullPedalboard] start — rendering pedals...");
-
-  return new Promise((resolve) => {   // <-- 1️⃣ Avvolgiamo tutto nella Promise
+  return new Promise((resolve) => {  
 
      try {
       if (!resultsDiv) {
         console.error("resultsDiv not initialized yet");
-        return resolve(); // ✅ sempre risolve
+        return resolve(); 
       }
 
       const container = document.getElementById('preset');
       if (!container) {
         console.warn('No #pedalboard container found');
-        return resolve(); // ✅ risolve sempre
+        return resolve(); 
       }
       container.innerHTML = '';
 
@@ -1588,7 +1382,7 @@ async function renderFullPedalboard() {
           } catch (e) {
             console.error('Failed to parse localStorage pedalboard', e);
             container.innerHTML = `<p style="text-align:center;margin-top:40px;">No pedalboard found.</p>`;
-            return resolve(); // ✅
+            return resolve();
           }
         } else {
           container.innerHTML = `
@@ -1602,7 +1396,7 @@ async function renderFullPedalboard() {
           document.getElementById('createBtn').addEventListener('click', () => {
             window.location.href = 'pedalboard.html';
           });
-          return resolve(); // ✅
+          return resolve();
         }
       }
 
@@ -1811,17 +1605,14 @@ async function renderFullPedalboard() {
   });
   window.currentPedalsOnBoard = pedalsOnBoard;
 
-      // Delay minimo per sicurezza
       setTimeout(() => {
-        // console.log("✅ [renderFullPedalboard] complete — DOM ready");
-        resolve(); // ✅ chiusura certa
+        resolve();
       }, 100);
 
     } catch (err) {
-      // console.error("❌ [renderFullPedalboard] exception:", err);
-      resolve(); // ✅ anche sugli errori
+      resolve();
     }
-  }); // fine Promise
+  }); // end Promise
 }
 
 
