@@ -31,6 +31,20 @@
   }
 </style>
 
+<style>
+/* Modalità stampa: colore perfetto + ignora tutto tranne l’iframe */
+@media print {
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body:not(.print-mode) * {
+    visibility: hidden !important;
+  }
+}
+</style>
+
+
 </head>
 <body>
 
@@ -308,82 +322,93 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 
-<button id="downloadPresetPDF" class="bx--btn bx--btn--primary" style="margin: 1rem 0;">
+
+
+
+<button id="downloadPDF" class="bx--btn bx--btn--primary" style="margin-top: 2rem;">
   Scarica PDF
 </button>
-<script src="https://cdn.jsdelivr.net/npm/dom-to-image-more@2.8.0/dist/dom-to-image-more.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
 <script>
-document.getElementById('downloadPresetPDF').addEventListener('click', async () => {
-    const { jsPDF } = window.jspdf;
-    const presetDiv = document.getElementById('preset');
-    if (!presetDiv) {
-        alert("Div #preset non trovato!");
-        return;
-    }
+function downloadDivPDF() {
+  const sourceDiv = document.getElementById("preset");
+  if (!sourceDiv) {
+    alert("Div #preset non trovato!");
+    return;
+  }
 
-    // Loader piccolo e discreto
-    const loader = document.createElement("div");
-    loader.textContent = "Generazione PDF...";
-    loader.style.position = "fixed";
-    loader.style.top = "50%";
-    loader.style.left = "50%";
-    loader.style.transform = "translate(-50%, -50%)";
-    loader.style.background = "rgba(255,255,255,0.9)";
-    loader.style.padding = "1rem 2rem";
-    loader.style.borderRadius = "8px";
-    loader.style.zIndex = "99999";
-    document.body.appendChild(loader);
+  // Clona il div
+  const clone = sourceDiv.cloneNode(true);
+  clone.style.position = "relative";
 
+  // Aggiungi watermark SOLO nel PDF
+  const wm = document.createElement("div");
+  wm.textContent = "WATERMARK";
+  wm.style.position = "absolute";
+  wm.style.top = "50%";
+  wm.style.left = "50%";
+  wm.style.transform = "translate(-50%, -50%) rotate(-30deg)";
+  wm.style.fontSize = "80px";
+  wm.style.opacity = "0.12";
+  wm.style.color = "#000";
+  wm.style.pointerEvents = "none";
+  wm.style.zIndex = "9999";
+  clone.appendChild(wm);
+
+  // crea iframe nascosto
+  const iframe = document.createElement("iframe");
+  iframe.style.position = "fixed";
+  iframe.style.right = "0";
+  iframe.style.bottom = "0";
+  iframe.style.width = "0";
+  iframe.style.height = "0";
+  iframe.style.border = "0";
+  document.body.appendChild(iframe);
+
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+  // copia i CSS originali della pagina (importantissimo!)
+  let cssText = "";
+  for (const sheet of document.styleSheets) {
     try {
-        // Screenshot perfetto del div (inclusi slider, input e elementi Carbon)
-        const dataUrl = await domtoimage.toPng(presetDiv, {
-            quality: 1,
-            bgcolor: "white",
-            style: {
-                transform: "scale(1)",
-                zoom: "1"
+      for (const rule of sheet.cssRules) cssText += rule.cssText;
+    } catch (e) {}
+  }
+
+  doc.open();
+  doc.write(`
+    <html>
+      <head>
+        <style>${cssText}</style>
+        <style>
+          @media print {
+            body {
+              margin: 0;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
             }
-        });
+          }
+        </style>
+      </head>
+      <body class="print-mode"></body>
+    </html>
+  `);
+  doc.close();
 
-        // Carica immagine risultante
-        const img = new Image();
-        img.src = dataUrl;
+  // Inserisci il clone del div
+  doc.body.appendChild(clone);
 
-        img.onload = () => {
-            const w = img.width;
-            const h = img.height;
+  // Aspetta il rendering
+  setTimeout(() => {
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+    document.body.removeChild(iframe);
+  }, 300);
+}
 
-            // PDF con le dimensioni del div → nessuna distorsione
-            const pdf = new jsPDF({
-                orientation: w > h ? "landscape" : "portrait",
-                unit: "px",
-                format: [w, h]
-            });
-
-            pdf.addImage(img, "PNG", 0, 0, w, h);
-
-            // Watermark diagonale
-            pdf.setFontSize(60);
-            pdf.setTextColor(150, 150, 150);
-            pdf.text("WATERMARK", w / 2, h / 2, {
-                angle: -30,
-                align: "center"
-            });
-
-            pdf.save("preset.pdf");
-            document.body.removeChild(loader);
-        };
-
-    } catch (err) {
-        console.error("Errore PDF:", err);
-        alert("Errore durante la generazione PDF.");
-        document.body.removeChild(loader);
-    }
-});
+document.getElementById("downloadPDF").addEventListener("click", downloadDivPDF);
 </script>
-
-
 
 
 </body>
