@@ -157,7 +157,7 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="utils.js"></script>
-  <script src="preset_test.js"></script>
+  <script src="preset.js"></script>
   <script src="fullscreen-menu.js"></script>
   <script src="folder.js"></script>
   <script src="nav-preset.js"></script>
@@ -306,6 +306,74 @@ document.addEventListener('DOMContentLoaded', () => {
   CarbonComponents.watch();
 });
 </script>
+
+
+
+<!-- Bottone per scaricare il PDF -->
+<button id="downloadPresetPDF" class="bx--btn bx--btn--primary" style="margin: 1rem;">Scarica PDF</button>
+
+<!-- Librerie per PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+document.getElementById('downloadPresetPDF').addEventListener('click', async () => {
+  const { jsPDF } = window.jspdf;
+  const div = document.getElementById('preset');
+
+  if (!div) {
+    alert('Div "preset" non trovato!');
+    return;
+  }
+
+  try {
+    // Mostra un loader opzionale
+    const loader = document.createElement('div');
+    loader.textContent = 'Generazione PDF...';
+    loader.style.position = 'fixed';
+    loader.style.top = '50%';
+    loader.style.left = '50%';
+    loader.style.transform = 'translate(-50%, -50%)';
+    loader.style.background = 'rgba(255,255,255,0.9)';
+    loader.style.padding = '1rem 2rem';
+    loader.style.borderRadius = '8px';
+    loader.style.zIndex = '9999';
+    document.body.appendChild(loader);
+
+    // Cattura il div come canvas
+    const canvas = await html2canvas(div, { scale: 2, useCORS: true });
+    const imgData = canvas.toDataURL('image/png');
+
+    // PDF con dimensioni uguali al canvas (rispettando proporzioni)
+    const pdf = new jsPDF({
+      orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+      unit: 'px',
+      format: [canvas.width, canvas.height]
+    });
+
+    // Aggiungi immagine del div
+    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+
+    // Aggiungi watermark diagonale
+    pdf.setFontSize(60);
+    pdf.setTextColor(150, 150, 150); // grigio chiaro
+    pdf.text("WATERMARK", canvas.width / 2, canvas.height / 2, {
+      align: 'center',
+      angle: -30
+    });
+
+    // Scarica PDF
+    pdf.save('preset.pdf');
+
+    // Rimuovi loader
+    document.body.removeChild(loader);
+  } catch (err) {
+    console.error('Errore generando PDF:', err);
+    alert('Errore generando PDF. Controlla console.');
+  }
+});
+</script>
+
 
 
 </body>
