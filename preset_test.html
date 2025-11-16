@@ -308,71 +308,81 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 
-
-<!-- Bottone per scaricare il PDF -->
-<button id="downloadPresetPDF" class="bx--btn bx--btn--primary" style="margin: 1rem;">Scarica PDF</button>
-
-<!-- Librerie per PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<button id="downloadPresetPDF" class="bx--btn bx--btn--primary" style="margin: 1rem 0;">
+  Scarica PDF
+</button>
+<script src="https://cdn.jsdelivr.net/npm/dom-to-image-more@2.8.0/dist/dom-to-image-more.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script>
 document.getElementById('downloadPresetPDF').addEventListener('click', async () => {
-  const { jsPDF } = window.jspdf;
-  const div = document.getElementById('preset');
+    const { jsPDF } = window.jspdf;
+    const presetDiv = document.getElementById('preset');
+    if (!presetDiv) {
+        alert("Div #preset non trovato!");
+        return;
+    }
 
-  if (!div) {
-    alert('Div "preset" non trovato!');
-    return;
-  }
-
-  try {
-    // Mostra un loader opzionale
-    const loader = document.createElement('div');
-    loader.textContent = 'Generazione PDF...';
-    loader.style.position = 'fixed';
-    loader.style.top = '50%';
-    loader.style.left = '50%';
-    loader.style.transform = 'translate(-50%, -50%)';
-    loader.style.background = 'rgba(255,255,255,0.9)';
-    loader.style.padding = '1rem 2rem';
-    loader.style.borderRadius = '8px';
-    loader.style.zIndex = '9999';
+    // Loader piccolo e discreto
+    const loader = document.createElement("div");
+    loader.textContent = "Generazione PDF...";
+    loader.style.position = "fixed";
+    loader.style.top = "50%";
+    loader.style.left = "50%";
+    loader.style.transform = "translate(-50%, -50%)";
+    loader.style.background = "rgba(255,255,255,0.9)";
+    loader.style.padding = "1rem 2rem";
+    loader.style.borderRadius = "8px";
+    loader.style.zIndex = "99999";
     document.body.appendChild(loader);
 
-    // Cattura il div come canvas
-    const canvas = await html2canvas(div, { scale: 2, useCORS: true });
-    const imgData = canvas.toDataURL('image/png');
+    try {
+        // Screenshot perfetto del div (inclusi slider, input e elementi Carbon)
+        const dataUrl = await domtoimage.toPng(presetDiv, {
+            quality: 1,
+            bgcolor: "white",
+            style: {
+                transform: "scale(1)",
+                zoom: "1"
+            }
+        });
 
-    // PDF con dimensioni uguali al canvas (rispettando proporzioni)
-    const pdf = new jsPDF({
-      orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
-      unit: 'px',
-      format: [canvas.width, canvas.height]
-    });
+        // Carica immagine risultante
+        const img = new Image();
+        img.src = dataUrl;
 
-    // Aggiungi immagine del div
-    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+        img.onload = () => {
+            const w = img.width;
+            const h = img.height;
 
-    // Aggiungi watermark diagonale
-    pdf.setFontSize(60);
-    pdf.setTextColor(150, 150, 150); // grigio chiaro
-    pdf.text("WATERMARK", canvas.width / 2, canvas.height / 2, {
-      align: 'center',
-      angle: -30
-    });
+            // PDF con le dimensioni del div → nessuna distorsione
+            const pdf = new jsPDF({
+                orientation: w > h ? "landscape" : "portrait",
+                unit: "px",
+                format: [w, h]
+            });
 
-    // Scarica PDF
-    pdf.save('preset.pdf');
+            pdf.addImage(img, "PNG", 0, 0, w, h);
 
-    // Rimuovi loader
-    document.body.removeChild(loader);
-  } catch (err) {
-    console.error('Errore generando PDF:', err);
-    alert('Errore generando PDF. Controlla console.');
-  }
+            // Watermark diagonale
+            pdf.setFontSize(60);
+            pdf.setTextColor(150, 150, 150);
+            pdf.text("WATERMARK", w / 2, h / 2, {
+                angle: -30,
+                align: "center"
+            });
+
+            pdf.save("preset.pdf");
+            document.body.removeChild(loader);
+        };
+
+    } catch (err) {
+        console.error("Errore PDF:", err);
+        alert("Errore durante la generazione PDF.");
+        document.body.removeChild(loader);
+    }
 });
 </script>
+
 
 
 
