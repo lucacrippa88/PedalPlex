@@ -1466,7 +1466,7 @@ async function initGuestMode() {
   // -----------------------------
   // GET PEDAL IDS & FETCH FROM SERVER
   // -----------------------------
-  const pedalIds = window.pedalboard.pedals.map(p => p.id);
+  const pedalIds = window.pedalboard.pedals.map(p => p.pedal_id);
 
   if (pedalIds.length > 0) {
     console.log("Fetching pedals via GET_PEDALS_BY_IDS (guest):", pedalIds);
