@@ -17,7 +17,7 @@ $(document).ready(function () {
 
 
 
-function initPreset() {
+async function initPreset() {
   const isGuest = !window.currentUser;
   const userId = window.currentUser?.userid;
   resultsDiv = document.getElementById("page-content");
@@ -29,52 +29,135 @@ function initPreset() {
   window.presetMap = {};
 
   if (isGuest) {
-    // Try loading guest board from localStorage
-    const guestRaw = localStorage.getItem('guestPedalboard');
-    let guestBoards = [];
-    if (guestRaw) {
-      try {
-        guestBoards = JSON.parse(guestRaw);
-      } catch (e) {
-        console.error('Invalid guestPedalboard JSON', e);
-      }
-    }
+  console.warn("Initializing Guest Mode");
 
-    if (Array.isArray(guestBoards) && guestBoards.length > 0) {
-      // Take the first saved guest board
-      const guestBoard = guestBoards[0];
-      window.pedalboard = {
-        _id: 'guest_board',
-        board_name: guestBoard.board_name || 'Guest Board',
-        pedals: guestBoard.pedals || []
-      };
-    } else {
-      // fallback if no guest board saved
-      window.pedalboard = {
-        _id: 'guest_board',
-        board_name: 'Guest Board',
-        pedals: []
-      };
-    }
+  // 1️⃣ Leggi il guest board dal localStorage
+  const raw = localStorage.getItem("guestPedalboard");
+  let guestBoards = [];
 
-    // Disable pedalboard select & preset/folder controls
-    ['pedalboardSelect', 'presetSelect', 'folderSelect', 'renamePresetBtn', 'savePstBtn', 'savePstBtnMobile', 'createPstBtn', 'createPstBtnMobile', 'addFolderBtn'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.disabled = true;
-        el.classList.add('btn-disabled');
-      }
-    });
-
-    // Render the guest pedalboard
-    renderFullPedalboard(window.pedalboard.pedals);
-
-    // No presets for guest → show empty dropdown
-    window.presets = [];
-    window.presetMap = {};
-    populatePresetDropdownByFolder('default');
-    return; // Skip DB fetches
+  try {
+    guestBoards = JSON.parse(raw) || [];
+  } catch (e) {
+    console.error("Invalid guestPedalboard JSON", e);
   }
+
+  const guestBoard = (guestBoards[0] || {
+    board_name: "Guest Board",
+    pedals: []
+  });
+
+  window.pedalboard = {
+    _id: "guest_board",
+    board_name: guestBoard.board_name,
+    pedals: guestBoard.pedals || []
+  };
+
+  // disabilita UI non disponibile per ospiti
+  [
+    "pedalboardSelect",
+    "presetSelect",
+    "folderSelect",
+    "renamePresetBtn",
+    "savePstBtn",
+    "savePstBtnMobile",
+    "createPstBtn",
+    "createPstBtnMobile",
+    "addFolderBtn"
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.disabled = true;
+      el.classList.add("btn-disabled");
+    }
+  });
+
+  // 2️⃣ Estrai gli ID pedali dal guest board
+  const ids = [...new Set((guestBoard.pedals || []).map(p => p.pedal_id))];
+
+  console.log("Fetching pedals via GET_PEDALS_BY_IDS (guest):", ids);
+
+  window.catalog = [];
+  window.catalogMap = {};
+
+  // 3️⃣ Scarica SOLO i pedali necessari
+  if (ids.length > 0) {
+    try {
+      const res = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids })
+      });
+
+      const json = await res.json();
+      const docs = Array.isArray(json.docs) ? json.docs : json;
+
+      window.catalog = docs;
+      window.catalogMap = {};
+      docs.forEach(p => window.catalogMap[p._id] = p);
+    } catch (err) {
+      console.error("Error fetching guest pedals:", err);
+    }
+  }
+
+  // 4️⃣ RENDER DELLA PEDALBOARD (esattamente come i loggati)
+  renderFullPedalboard(window.pedalboard.pedals);
+
+  // 5️⃣ Nessun preset per ospiti
+  window.presets = [];
+  window.presetMap = {};
+  populatePresetDropdownByFolder("default");
+
+  return; // IMPORTANTISSIMO → evita i fetch logged-in
+}
+
+
+  // if (isGuest) {
+  //   // Try loading guest board from localStorage
+  //   const guestRaw = localStorage.getItem('guestPedalboard');
+  //   let guestBoards = [];
+  //   if (guestRaw) {
+  //     try {
+  //       guestBoards = JSON.parse(guestRaw);
+  //     } catch (e) {
+  //       console.error('Invalid guestPedalboard JSON', e);
+  //     }
+  //   }
+
+  //   if (Array.isArray(guestBoards) && guestBoards.length > 0) {
+  //     // Take the first saved guest board
+  //     const guestBoard = guestBoards[0];
+  //     window.pedalboard = {
+  //       _id: 'guest_board',
+  //       board_name: guestBoard.board_name || 'Guest Board',
+  //       pedals: guestBoard.pedals || []
+  //     };
+  //   } else {
+  //     // fallback if no guest board saved
+  //     window.pedalboard = {
+  //       _id: 'guest_board',
+  //       board_name: 'Guest Board',
+  //       pedals: []
+  //     };
+  //   }
+
+  //   // Disable pedalboard select & preset/folder controls
+  //   ['pedalboardSelect', 'presetSelect', 'folderSelect', 'renamePresetBtn', 'savePstBtn', 'savePstBtnMobile', 'createPstBtn', 'createPstBtnMobile', 'addFolderBtn'].forEach(id => {
+  //     const el = document.getElementById(id);
+  //     if (el) {
+  //       el.disabled = true;
+  //       el.classList.add('btn-disabled');
+  //     }
+  //   });
+
+  //   // Render the guest pedalboard
+  //   renderFullPedalboard(window.pedalboard.pedals);
+
+  //   // No presets for guest → show empty dropdown
+  //   window.presets = [];
+  //   window.presetMap = {};
+  //   populatePresetDropdownByFolder('default');
+  //   return; // Skip DB fetches
+  // }
 
 
   // Show loader overlay
