@@ -1693,3 +1693,4 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(led, { attributes: true, attributeFilter: ["style"] });
   });
 });
+

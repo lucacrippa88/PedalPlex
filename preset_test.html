@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-BX9P5WN5HH');
-</script>
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -18,6 +9,16 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-BX9P5WN5HH');
+    </script>
+
 <style>
   .btn-disabled {
     opacity: 0.5;
@@ -310,47 +311,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+<button id="downloadPdf">Scarica PDF</button>
 
-<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
-<button onclick="downloadScreenshot()">Scarica Screenshot</button>
 <script>
-async function downloadScreenshot() {
-  const node = document.getElementById('preset');
-  if (!node) {
-    alert("Div #preset non trovato!");
-    return;
-  }
+document.getElementById('downloadPdf').addEventListener('click', () => {
+  const html = document.getElementById('preset').outerHTML;
+  const formData = new FormData();
+  formData.append('html', html);
 
-  // Applica watermark temporaneo
-  const wm = document.createElement("div");
-  wm.textContent = "WATERMARK";
-  wm.style.position = "absolute";
-  wm.style.top = "50%";
-  wm.style.left = "50%";
-  wm.style.transform = "translate(-50%, -50%) rotate(-30deg)";
-  wm.style.fontSize = "50px";
-  wm.style.opacity = "0.15";
-  wm.style.pointerEvents = "none";
-  wm.style.zIndex = 999999;
-  node.appendChild(wm);
-
-  try {
-    const dataUrl = await htmlToImage.toPng(node, {
-      quality: 1.0,
-      pixelRatio: 2,  // RISOLUZIONE ALTA
-      backgroundColor: '#ffffff'
-    });
-
-    const link = document.createElement('a');
-    link.download = 'screenshot.png';
-    link.href = dataUrl;
-    link.click();
-  } catch (error) {
-    console.error('Errore screenshot:', error);
-  } finally {
-    wm.remove();
-  }
-}
+  fetch('https://www.cineteatrosanluigi.it/plex/GENERATE_PEDALBOARD_IMAGE.php', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.blob())
+  .then(blob => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'preset.pdf';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  });
+});
 </script>
 
 
