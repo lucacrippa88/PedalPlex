@@ -1388,7 +1388,7 @@ async function initGuestMode() {
       }
     ];
     localStorage.setItem("guestPedalboard", JSON.stringify(boards));
-  }
+  } 
 
   window.allPedalboards = boards;
 
