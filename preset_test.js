@@ -1564,8 +1564,6 @@ async function initGuestMode() {
 
     window.allPedals = data;
 
-    // Update board with server values (same as logged users)
-    updatePedalsFromServer();
   }
 
   // -----------------------------
@@ -1592,62 +1590,6 @@ async function initGuestMode() {
 
 
 
-
-// function initGuestMode() {
-//   const stored = localStorage.getItem('guestPedalboard');
-//   if (!stored) return;
-
-//   let guestBoards;
-//   try {
-//     guestBoards = JSON.parse(stored);
-//   } catch (e) {
-//     console.error('Invalid guestPedalboard', e);
-//     return;
-//   }
-
-//   if (!Array.isArray(guestBoards) || guestBoards.length === 0) return;
-
-//   const firstBoard = guestBoards[0];
-
-//   // disable preset/folder controls as before
-//   const $pedalboardSelect = $('#pedalboardSelect');
-//   $pedalboardSelect.empty().append(
-//     $('<option>').val(0).text(firstBoard.board_name)
-//   );
-//   $pedalboardSelect.prop('disabled', false);
-
-//   $('#folderSelect, #presetSelect').empty().prop('disabled', true);
-//   $('#renameFolderBtn, #renamePresetBtn').prop('disabled', true).addClass('btn-disabled');
-//   ['savePstBtn', 'savePstBtnMobile', 'createPstBtn', 'createPstBtnMobile', 'addFolderBtn']
-//   .forEach(id => {
-//     const el = document.getElementById(id);
-//     if (el) {
-//       el.disabled = true;
-//       el.classList.add('btn-disabled');
-//     }
-//   });
-
-//   // ✅ Fetch catalog for guests too
-//   fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php')
-//     .then(res => res.json())
-//     .then(catalog => {
-//       window.catalog = catalog;
-//       window.catalogMap = {};
-//       catalog.forEach(p => window.catalogMap[p._id] = p);
-
-//       // now safe to render pedals
-//       const validPedals = (firstBoard.pedals || []).filter(p => {
-//         if (!window.catalogMap[p.pedal_id]) {
-//           console.warn("Skipping missing pedal:", p.pedal_id);
-//           return false;
-//         }
-//         return true;
-//       });
-
-//       renderFullPedalboard(validPedals);
-//     })
-//     .catch(err => console.error("Guest catalog fetch failed:", err));
-// }
 
 
 // --- Global function accessible everywhere ---

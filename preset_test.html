@@ -311,30 +311,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-<button id="downloadPdf">Scarica PDF</button>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<button id="downloadPresetPDF" class="bx--btn bx--btn--primary">Download PDF</button>
 <script>
-document.getElementById('downloadPdf').addEventListener('click', () => {
-  const html = document.getElementById('preset').outerHTML;
-  const formData = new FormData();
-  formData.append('html', html);
+    document.getElementById("downloadPresetPDF").addEventListener("click", function () {
+    
+    const preset = document.getElementById("preset");
 
-  fetch('https://www.cineteatrosanluigi.it/plex/GENERATE_PEDALBOARD_IMAGE.php', {
-    method: 'POST',
-    body: formData
-  })
-  .then(res => res.blob())
-  .then(blob => {
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'preset.pdf';
-    a.click();
-    window.URL.revokeObjectURL(url);
-  });
+    // Opzioni PDF
+    const options = {
+        margin:       0,
+        filename:     'preset.pdf',
+        image:        { type: 'png', quality: 1 },
+        html2canvas:  {
+            scale: 3,                    // ultra quality
+            useCORS: true
+        },
+        jsPDF:        {
+            unit: 'px',
+            format: 'a4',
+            orientation: 'portrait'
+        }
+    };
+
+    // Watermark dinamico
+    const watermark = document.createElement("div");
+    watermark.innerHTML = "WATERMARK";
+    watermark.style.position = "absolute";
+    watermark.style.top = "40%";
+    watermark.style.left = "50%";
+    watermark.style.transform = "translate(-50%, -50%) rotate(-30deg)";
+    watermark.style.opacity = "0.15";
+    watermark.style.fontSize = "120px";
+    watermark.style.fontWeight = "bold";
+    watermark.style.pointerEvents = "none";
+    watermark.style.color = "#000";
+
+    // Wrapper che contiene preset + watermark
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+    wrapper.appendChild(preset.cloneNode(true));
+    wrapper.appendChild(watermark);
+
+    html2pdf()
+        .from(wrapper)
+        .set(options)
+        .save();
 });
-</script>
 
+</script>
 
 
 </body>
