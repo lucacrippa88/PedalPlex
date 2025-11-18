@@ -385,8 +385,11 @@ function replaceControlsForRender(cloneRoot) {
       const wrapper = document.createElement('div');
       wrapper.className = 'pdf-range-replacement';
       wrapper.style.position = 'relative';
-      wrapper.style.width = (r.offsetWidth || 200) + 'px';
-      wrapper.style.height = (r.offsetHeight || 18) + 'px';
+      // wrapper.style.width = (r.offsetWidth || 200) + 'px';
+      // wrapper.style.height = (r.offsetHeight || 18) + 'px';
+      const cs = getComputedStyle(r);
+      wrapper.style.width = cs.width;
+      wrapper.style.height = cs.height !== "0px" ? cs.height : "20px";
       wrapper.style.display = 'inline-block';
       wrapper.style.padding = "20px";         // spazio per le ombre
       wrapper.style.background = "#fff";      // evita trasparenze
