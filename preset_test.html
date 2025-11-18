@@ -13,10 +13,10 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
     <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-BX9P5WN5HH');
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-BX9P5WN5HH');
     </script>
 
 <style>
@@ -501,13 +501,15 @@ document.getElementById('downloadPresetPDF').addEventListener('click', async fun
 
   // put wrapper off-screen to avoid flicker in UI
   wrapper.style.position = 'fixed';
-  wrapper.style.left = '-9999px';
+  wrapper.style.left = '0';
   wrapper.style.top = '0';
-  wrapper.style.zIndex = '99999';
+  wrapper.style.opacity = '0';
+  wrapper.style.pointerEvents = 'none';
+  wrapper.style.zIndex = '-1';
   document.body.appendChild(wrapper);
 
   // Inline computed styles (deep)
-  inlineComputedStyles(original, clone);
+  await inlineComputedStyles(original, clone);
 
   // replace interactive controls with visuals
   replaceControlsForRender(clone);
