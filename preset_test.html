@@ -312,54 +312,260 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <button id="downloadPresetPDF" class="bx--btn bx--btn--primary">Download PDF</button>
+
+
 <script>
-    document.getElementById("downloadPresetPDF").addEventListener("click", function () {
-    
-    const preset = document.getElementById("preset");
+async function inlineComputedStyles(sourceEl, targetEl) {
+  // copia stili calcolati dall'elemento source al target (deep)
+  const srcChildren = [sourceEl];
+  const tgtChildren = [targetEl];
+  while (srcChildren.length) {
+    const s = srcChildren.shift();
+    const t = tgtChildren.shift();
 
-    // Opzioni PDF
-    const options = {
-        margin:       0,
-        filename:     'preset.pdf',
-        image:        { type: 'png', quality: 1 },
-        html2canvas:  {
-            scale: 3,                    // ultra quality
-            useCORS: true
-        },
-        jsPDF:        {
-            unit: 'px',
-            format: 'a4',
-            orientation: 'portrait'
+    const cs = window.getComputedStyle(s);
+    // attributi principali da trasferire per fedeltà visiva
+    const props = [
+      'boxSizing','width','height','margin','padding','border','borderRadius',
+      'background','backgroundColor','backgroundImage','backgroundSize','backgroundPosition',
+      'color','font','fontSize','fontWeight','lineHeight','textAlign',
+      'boxShadow','filter','opacity','transform','transformOrigin','zIndex',
+      'display','flexDirection','justifyContent','alignItems',
+      'position','top','left','right','bottom','overflow','whiteSpace','wordBreak'
+    ];
+    for (let p of props) {
+      try { t.style[p] = cs.getPropertyValue(p) || cs[p] || ''; } catch(e){}
+    }
+
+    // inline immagini bg url as is — html2canvas handles crossOrigin if useCORS true
+    // copy attributes that affect layout
+    if (s.tagName === 'IMG') {
+      t.src = s.src;
+      t.alt = s.alt || '';
+      t.width = s.width;
+      t.height = s.height;
+    }
+
+    // push children
+    const sKids = Array.prototype.slice.call(s.childNodes || []);
+    for (let i = 0; i < sKids.length; i++) {
+      const sk = sKids[i];
+      const tk = t.childNodes[i];
+      if (sk && tk) {
+        if (sk.nodeType === 1) { // element
+          srcChildren.push(sk);
+          tgtChildren.push(tk);
+        } else {
+          // text nodes are already cloned
         }
-    };
+      }
+    }
+  }
+}
 
-    // Watermark dinamico
-    const watermark = document.createElement("div");
-    watermark.innerHTML = "WATERMARK";
-    watermark.style.position = "absolute";
-    watermark.style.top = "40%";
-    watermark.style.left = "50%";
-    watermark.style.transform = "translate(-50%, -50%) rotate(-30deg)";
-    watermark.style.opacity = "0.15";
-    watermark.style.fontSize = "120px";
-    watermark.style.fontWeight = "bold";
-    watermark.style.pointerEvents = "none";
-    watermark.style.color = "#000";
+// Replace interactive controls with visual representations (so html2canvas captures current state)
+function replaceControlsForRender(cloneRoot) {
+  // RANGES -> draw track + thumb via divs positioned according to value
+  const ranges = cloneRoot.querySelectorAll('input[type="range"]');
+  ranges.forEach(r => {
+    try {
+      const min = parseFloat(r.min || 0);
+      const max = parseFloat(r.max || 100);
+      const val = parseFloat(r.value || 0);
+      const pct = (val - min) / (max - min || 1);
+      // create visual wrapper
+      const wrapper = document.createElement('div');
+      wrapper.className = 'pdf-range-replacement';
+      wrapper.style.position = 'relative';
+      wrapper.style.width = (r.offsetWidth || 200) + 'px';
+      wrapper.style.height = (r.offsetHeight || 18) + 'px';
+      wrapper.style.display = 'inline-block';
+      // track
+      const track = document.createElement('div');
+      track.style.position = 'absolute';
+      track.style.left = '0';
+      track.style.right = '0';
+      track.style.top = '50%';
+      track.style.height = '6px';
+      track.style.transform = 'translateY(-50%)';
+      track.style.background = window.getComputedStyle(r).background || '#ddd';
+      track.style.borderRadius = '4px';
+      // filled
+      const filled = document.createElement('div');
+      filled.style.position = 'absolute';
+      filled.style.left = '0';
+      filled.style.top = '50%';
+      filled.style.height = '6px';
+      filled.style.transform = 'translateY(-50%)';
+      filled.style.width = (pct * 100) + '%';
+      // try to get accent color from input's CSS (if any)
+      filled.style.background = getComputedStyle(r).accentColor || '#1976d2';
+      filled.style.borderRadius = '4px';
+      // thumb
+      const thumb = document.createElement('div');
+      thumb.style.position = 'absolute';
+      thumb.style.top = '50%';
+      thumb.style.transform = 'translate(-50%,-50%)';
+      thumb.style.left = (pct * 100) + '%';
+      thumb.style.width = '18px';
+      thumb.style.height = '18px';
+      thumb.style.borderRadius = '50%';
+      thumb.style.background = '#fff';
+      thumb.style.boxShadow = '0 2px 6px rgba(0,0,0,0.35)';
+      thumb.style.border = '1px solid rgba(0,0,0,0.2)';
 
-    // Wrapper che contiene preset + watermark
-    const wrapper = document.createElement("div");
-    wrapper.style.position = "relative";
-    wrapper.appendChild(preset.cloneNode(true));
-    wrapper.appendChild(watermark);
+      wrapper.appendChild(track);
+      wrapper.appendChild(filled);
+      wrapper.appendChild(thumb);
 
-    html2pdf()
-        .from(wrapper)
-        .set(options)
-        .save();
+      r.parentNode.replaceChild(wrapper, r);
+    } catch (e) {
+      // fallback: hide control
+      r.style.display='none';
+    }
+  });
+
+  // CHECKBOX / RADIO -> show a styled box with checkmark if checked
+  const checks = cloneRoot.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+  checks.forEach(inp => {
+    const box = document.createElement('div');
+    box.style.display = 'inline-block';
+    box.style.width = (inp.offsetWidth || 16) + 'px';
+    box.style.height = (inp.offsetHeight || 16) + 'px';
+    box.style.border = '1px solid rgba(0,0,0,0.4)';
+    box.style.borderRadius = inp.type === 'radio' ? '50%' : '3px';
+    box.style.background = inp.checked ? '#1976d2' : '#fff';
+    if (inp.checked) {
+      const mark = document.createElement('div');
+      mark.style.width='60%'; mark.style.height='60%';
+      mark.style.background='#fff';
+      mark.style.margin='auto';
+      mark.style.marginTop = '10%';
+      mark.style.borderRadius = '2px';
+      box.appendChild(mark);
+    }
+    inp.parentNode.replaceChild(box, inp);
+  });
+
+  // SELECT -> replace with text showing selected option
+  const selects = cloneRoot.querySelectorAll('select');
+  selects.forEach(s => {
+    const sel = document.createElement('div');
+    sel.textContent = (s.options[s.selectedIndex] && s.options[s.selectedIndex].text) || '';
+    // copy basic computed styles
+    const cs = getComputedStyle(s);
+    sel.style.display = cs.display;
+    sel.style.font = cs.font;
+    s.parentNode.replaceChild(sel, s);
+  });
+
+  // INPUT TYPE TEXT / NUMBER -> replace with text node showing current value and mimic size
+  const texts = cloneRoot.querySelectorAll('input[type="text"], input[type="number"], textarea');
+  texts.forEach(i => {
+    const div = document.createElement('div');
+    div.textContent = i.value || '';
+    const cs = getComputedStyle(i);
+    div.style.minWidth = (i.offsetWidth || 50) + 'px';
+    div.style.minHeight = (i.offsetHeight || 18) + 'px';
+    div.style.font = cs.font;
+    div.style.color = cs.color;
+    div.style.background = cs.backgroundColor;
+    div.style.border = cs.border;
+    i.parentNode.replaceChild(div, i);
+  });
+}
+
+// main export function
+document.getElementById('downloadPresetPDF').addEventListener('click', async function () {
+  // ensure fonts are loaded
+  if (document.fonts && document.fonts.ready) {
+    try { await document.fonts.ready; } catch(e) {}
+  }
+
+  const original = document.getElementById('preset');
+  if (!original) {
+    alert('Div #preset non trovato');
+    return;
+  }
+
+  // clone deeply including text nodes
+  const clone = original.cloneNode(true);
+
+  // wrap in container so watermark can be absolute
+  const wrapper = document.createElement('div');
+  wrapper.style.position = 'relative';
+  wrapper.style.display = 'inline-block';
+  wrapper.appendChild(clone);
+
+  // put wrapper off-screen to avoid flicker in UI
+  wrapper.style.position = 'fixed';
+  wrapper.style.left = '-9999px';
+  wrapper.style.top = '0';
+  wrapper.style.zIndex = '99999';
+  document.body.appendChild(wrapper);
+
+  // Inline computed styles (deep)
+  inlineComputedStyles(original, clone);
+
+  // replace interactive controls with visuals
+  replaceControlsForRender(clone);
+
+  // add watermark overlay (diagonale, semi trasparente)
+  const watermark = document.createElement('div');
+  watermark.textContent = 'WATERMARK';
+  watermark.style.position = 'absolute';
+  watermark.style.top = '50%';
+  watermark.style.left = '50%';
+  watermark.style.transform = 'translate(-50%, -50%) rotate(-30deg)';
+  watermark.style.opacity = '0.12';
+  watermark.style.fontSize = '140px';
+  watermark.style.fontWeight = '700';
+  watermark.style.pointerEvents = 'none';
+  watermark.style.color = window.getComputedStyle(original).color || '#000';
+  wrapper.appendChild(watermark);
+
+  // measure size of the clone (in pixels)
+  const rect = clone.getBoundingClientRect();
+  const widthPx = Math.ceil(rect.width);
+  const heightPx = Math.ceil(rect.height);
+
+  // determine orientation
+  const orientation = (widthPx > heightPx) ? 'landscape' : 'portrait';
+
+  // html2pdf options: use high scale for better capture of shadows/glow
+  const opt = {
+    margin: 0,
+    filename: 'preset.pdf',
+    image: { type: 'png', quality: 1 },
+    html2canvas: {
+      scale: 3,            // increase quality (3x)
+      useCORS: true,
+      logging: false,
+      allowTaint: false,
+      backgroundColor: null
+    },
+    jsPDF: {
+      unit: 'px',                  // so we can pass px dimensions directly
+      format: [widthPx, heightPx],
+      orientation: orientation
+    }
+  };
+
+  try {
+    // run html2pdf on the wrapper (only the clone)
+    await html2pdf().set(opt).from(wrapper).save();
+  } catch (err) {
+    console.error('html2pdf error', err);
+    alert('Errore nella generazione PDF. Controlla console.');
+  } finally {
+    // cleanup
+    document.body.removeChild(wrapper);
+  }
 });
-
 </script>
+
 
 
 </body>
