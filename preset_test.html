@@ -9,9 +9,9 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
+<!-- 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>window.jsPDF = window.jspdf.jsPDF;</script>
 
@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
+<!-- 
 <button id="downloadPresetPDF" class="bx--btn bx--btn--primary">Download PDF</button>
 
 
@@ -827,9 +827,205 @@ pdf.save("preset.pdf");
 });
 
 </script>
+ -->
 
 
+<button id="downloadPresetPDF" class="bx--btn bx--btn--primary">Download PDF</button>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+async function inlineComputedStyles(sourceEl, targetEl) {
+  const queue = [[sourceEl, targetEl]];
+
+  while (queue.length) {
+    const [src, tgt] = queue.shift();
+    const cs = getComputedStyle(src);
+
+    [
+      "position","display","top","left","right","bottom",
+      "width","height","margin","padding","boxSizing",
+      "background","backgroundColor","backgroundImage","backgroundSize",
+      "border","borderRadius","boxShadow",
+      "transform","transformOrigin","filter","opacity","zIndex",
+      "color","font","fontSize","fontFamily","fontWeight","lineHeight",
+      "overflow","whiteSpace"
+    ].forEach(p => {
+      tgt.style[p] = cs.getPropertyValue(p);
+    });
+
+    tgt.style.overflow = "visible";
+    tgt.style.webkitMaskImage = "none";
+
+    if (src.tagName === "IMG") tgt.src = src.src;
+
+    const sKids = [...src.childNodes];
+    const tKids = [...tgt.childNodes];
+    for (let i = 0; i < sKids.length; i++) {
+      if (sKids[i].nodeType === 1) queue.push([sKids[i], tKids[i]]);
+    }
+    await Promise.resolve();
+  }
+}
+
+function replaceControlsForRender(cloneRoot) {
+  // RANGE SLIDERS
+  cloneRoot.querySelectorAll('input[type="range"]').forEach(r => {
+    const min = parseFloat(r.min || 0);
+    const max = parseFloat(r.max || 100);
+    const val = parseFloat(r.value || 0);
+    const pct = (val - min) / (max - min || 1);
+    const cs = getComputedStyle(r);
+    const W = r.offsetWidth || parseFloat(cs.width) || 180;
+    const H = r.offsetHeight || parseFloat(cs.height) || 24;
+
+    const wrap = document.createElement("div");
+    wrap.style.width = W + "px";
+    wrap.style.height = H + "px";
+    wrap.style.position = "relative";
+    wrap.style.display = "inline-block";
+    wrap.style.overflow = "visible";
+    wrap.style.padding = "8px 0";
+
+    const track = document.createElement("div");
+    track.style.position = "absolute";
+    track.style.left = "0";
+    track.style.top = "50%";
+    track.style.transform = "translateY(-50%)";
+    track.style.width = "100%";
+    track.style.height = "4px";
+    track.style.background = "#c6c6c6";
+    track.style.borderRadius = "2px";
+
+    const filled = document.createElement("div");
+    filled.style.position = "absolute";
+    filled.style.left = "0";
+    filled.style.top = "50%";
+    filled.style.transform = "translateY(-50%)";
+    filled.style.width = pct * 100 + "%";
+    filled.style.height = "4px";
+    filled.style.background = "#161616";
+    filled.style.borderRadius = "2px";
+
+    const thumb = document.createElement("div");
+    thumb.style.position = "absolute";
+    thumb.style.top = "50%";
+    thumb.style.left = pct * 100 + "%";
+    thumb.style.transform = "translate(-50%, -50%)";
+    thumb.style.width = "12px";
+    thumb.style.height = "12px";
+    thumb.style.borderRadius = "50%";
+    thumb.style.background = "#161616";
+    thumb.style.boxShadow = "0 2px 6px rgba(0,0,0,0.35)";
+
+    wrap.append(track, filled, thumb);
+    r.replaceWith(wrap);
+  });
+
+  // CHECKBOX / RADIO
+  cloneRoot.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(inp => {
+    const box = document.createElement('div');
+    box.style.display = 'inline-block';
+    box.style.width = (inp.offsetWidth || 16) + 'px';
+    box.style.height = (inp.offsetHeight || 16) + 'px';
+    box.style.border = '1px solid rgba(0,0,0,0.4)';
+    box.style.borderRadius = inp.type === 'radio' ? '50%' : '3px';
+    box.style.background = inp.checked ? '#1976d2' : '#fff';
+    if (inp.checked) {
+      const mark = document.createElement('div');
+      mark.style.width='60%'; mark.style.height='60%';
+      mark.style.background='#fff'; mark.style.margin='auto';
+      mark.style.marginTop = '10%'; mark.style.borderRadius = '2px';
+      box.appendChild(mark);
+    }
+    inp.replaceWith(box);
+  });
+
+  // SELECT
+  cloneRoot.querySelectorAll('select').forEach(s => {
+    const sel = document.createElement('div');
+    sel.textContent = (s.options[s.selectedIndex]?.text) || '';
+    const cs = getComputedStyle(s);
+    sel.style.display = cs.display;
+    sel.style.font = cs.font;
+    s.replaceWith(sel);
+  });
+
+  // INPUT TEXT / NUMBER / TEXTAREA
+  cloneRoot.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(i => {
+    const div = document.createElement('div');
+    div.textContent = i.value || '';
+    const cs = getComputedStyle(i);
+    div.style.minWidth = (i.offsetWidth || 50) + 'px';
+    div.style.minHeight = (i.offsetHeight || 18) + 'px';
+    div.style.font = cs.font;
+    div.style.color = cs.color;
+    div.style.background = cs.backgroundColor;
+    div.style.border = cs.border;
+    i.replaceWith(div);
+  });
+}
+
+document.getElementById('downloadPresetPDF').addEventListener('click', async function () {
+  try {
+    const original = document.getElementById('preset');
+    if (!original) { alert('Div #preset non trovato'); return; }
+
+    if (document.fonts) await document.fonts.ready;
+
+    const clone = original.cloneNode(true);
+    await inlineComputedStyles(original, clone);
+    replaceControlsForRender(clone);
+
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'fixed';
+    wrapper.style.left = '0';
+    wrapper.style.top = '0';
+    wrapper.style.opacity = '0';
+    wrapper.style.pointerEvents = 'none';
+    wrapper.style.zIndex = '999999';
+    wrapper.appendChild(clone);
+    document.body.appendChild(wrapper);
+
+    await new Promise(r => setTimeout(r, 30));
+
+    const rect = clone.getBoundingClientRect();
+    const width = Math.max(1, Math.ceil(rect.width));
+    const height = Math.max(1, Math.ceil(rect.height));
+
+    const canvas = await html2canvas(clone, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: '#ffffff',
+      foreignObjectRendering: false,
+      width,
+      height
+    });
+
+    const px = canvas.getContext('2d').getImageData(width/2|0, height/2|0, 1, 1).data;
+    if (px[3] === 0) { alert('Safari: html2canvas non vede la grafica. Canvas bianco.'); return; }
+
+    const { jsPDF } = window.jspdf;
+    const margin = 10; // mm
+    const pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const usableWidth = pageWidth - margin * 2;
+    const ratio = canvas.width / canvas.height;
+    const usableHeight = usableWidth / ratio;
+    const imgData = canvas.toDataURL("image/jpeg", 0.92);
+
+    pdf.addImage(imgData, "JPEG", margin, margin, usableWidth, usableHeight, "", "FAST");
+    pdf.save("preset.pdf");
+  } catch(e) {
+    console.error(e);
+    alert("Errore durante l'export PDF :(");
+  } finally {
+    document.querySelectorAll('.pdf-export-wrapper-temp').forEach(el => el.remove());
+  }
+});
+</script>
 
 
 
