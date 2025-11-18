@@ -388,6 +388,11 @@ function replaceControlsForRender(cloneRoot) {
       wrapper.style.width = (r.offsetWidth || 200) + 'px';
       wrapper.style.height = (r.offsetHeight || 18) + 'px';
       wrapper.style.display = 'inline-block';
+      wrapper.style.padding = "20px";         // spazio per le ombre
+      wrapper.style.background = "#fff";      // evita trasparenze
+      wrapper.style.overflow = "visible";     // NON tagliare ombre
+      wrapper.style.boxSizing = "border-box";
+
       // track
       const track = document.createElement('div');
       track.style.position = 'absolute';
@@ -761,14 +766,54 @@ document.getElementById('downloadPresetPDF').addEventListener('click', async fun
     }
 
     // CANVAS → JPEG → jsPDF
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    const pdf = new jsPDF({
-      orientation: width > height ? 'landscape' : 'portrait',
-      unit: 'px',
-      format: [width, height]
-    });
-    pdf.addImage(imgData, 'JPEG', 0, 0, width, height);
-    pdf.save('preset.pdf');
+    // const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    // const pdf = new jsPDF({
+    //   orientation: width > height ? 'landscape' : 'portrait',
+    //   unit: 'px',
+    //   format: [width, height]
+    // });
+    // pdf.addImage(imgData, 'JPEG', 0, 0, width, height);
+    // pdf.save('preset.pdf');
+
+    // -----------------------------------------
+// CREAZIONE PDF CON MARGINE BIANCO
+// -----------------------------------------
+const margin = 10; // mm
+
+// PDF A4 verticale
+const pdf = new jsPDF({
+    orientation: "p",
+    unit: "mm",
+    format: "a4",
+});
+
+// Calcolo dimensioni
+const pageWidth = pdf.internal.pageSize.getWidth();
+const pageHeight = pdf.internal.pageSize.getHeight();
+
+// Calcolo immagine in proporzione
+const ratio = canvas.width / canvas.height;
+const usableWidth = pageWidth - margin * 2;
+const usableHeight = usableWidth / ratio;
+
+// Converte la canvas in JPEG per Safari
+const imgData = canvas.toDataURL("image/jpeg", 0.92);
+
+// Disegna l’immagine centrata con margini bianchi
+pdf.addImage(
+    imgData,
+    "JPEG",
+    margin,
+    margin,
+    usableWidth,
+    usableHeight,
+    "",
+    "FAST"
+);
+
+// Salvataggio
+pdf.save("preset.pdf");
+
 
   } catch (e) {
     console.error("PDF export error:", e);
