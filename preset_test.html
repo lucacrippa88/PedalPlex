@@ -697,152 +697,84 @@ function waitForImages(root, timeout = 12000) {
   return Promise.all(promises);
 }
 
-/* Funzione principale: replace listener */
 document.getElementById('downloadPresetPDF').replaceWith(document.getElementById('downloadPresetPDF').cloneNode(true));
 document.getElementById('downloadPresetPDF').addEventListener('click', async function () {
   try {
-    // 0) quick diagnostics: è popolato #preset?
     const original = document.getElementById('preset');
-    if (!original) { alert('Div #preset non trovato'); return; }
-
-    console.log('>>> DEBUG: #preset children:', original.children.length);
-    console.log('>>> DEBUG: #preset innerHTML length:', (original.innerHTML || '').length);
-
-    // se è letteralmente vuoto -> stop e mostra diagnostica
-    if (original.children.length === 0 || (original.innerHTML || '').trim().length === 0) {
-      alert('Il div #preset è vuoto al momento del click. Controlla che renderFullPedalboard() o applyPresetToPedalboard() abbiano popolato il DOM prima di cliccare.');
-      // stampa stack e stato utili
-      console.log('State snapshot:', {
-        windowPedalboard: window.pedalboard,
-        windowCatalog: (window.catalog || []).length,
-        windowPresets: (window.presets || []).length,
-        currentPresetId, currentPresetName
-      });
+    if (!original) {
+      alert('Div #preset non trovato'); 
       return;
     }
 
-    // 1) aspetta fonts
-    if (document.fonts && document.fonts.ready) {
-      try { await document.fonts.ready; } catch(e){ console.warn('font ready error', e); }
+    // Aspetta font e immagini
+    if (document.fonts) {
+      try { await document.fonts.ready; } catch(e){}
     }
+    const imgs = original.querySelectorAll('img');
+    await Promise.all([...imgs].map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise(res => {
+        img.onload = img.onerror = () => res();
+      });
+    }));
 
-    // 2) CLONE and wrapper (visibile ma trasparente)
+    // CLONE STABILE (necessario per Safari)
     const clone = original.cloneNode(true);
 
     const wrapper = document.createElement('div');
-    wrapper.className = 'pdf-export-wrapper-temp';
-    // metti il wrapper nel flow, ma invisibile: questo evita problemi di 0x0
     wrapper.style.position = 'fixed';
     wrapper.style.left = '0';
     wrapper.style.top = '0';
     wrapper.style.opacity = '0';
     wrapper.style.pointerEvents = 'none';
-    wrapper.style.background = 'transparent';
     wrapper.style.zIndex = '999999';
-
     wrapper.appendChild(clone);
     document.body.appendChild(wrapper);
 
-    // 3) copia gli stili principali dal originale al clone (solo root e figli diretti utili)
-    copyBasicComputedStyles(original, clone);
+    // Forza layout
+    await new Promise(r => setTimeout(r, 30));
 
-    // copia anche per figli diretti (utile se la tua pedalboard è composta da blocchi)
-    const origChildren = Array.from(original.querySelectorAll('*'));
-    const cloneChildren = Array.from(clone.querySelectorAll('*'));
-    const n = Math.min(origChildren.length, cloneChildren.length);
-    for (let i = 0; i < n; i++) {
-      try { copyBasicComputedStyles(origChildren[i], cloneChildren[i]); } catch(e){}
-    }
-
-    // 4) aspetta immagini + un breve tick per il layout
-    await waitForImages(clone, 10000);
-    await wait(60); // lascia che il browser calcoli layout
-
-    // 5) misura e assicurati dimensioni > 0
     const rect = clone.getBoundingClientRect();
-    const widthPx = Math.max(1, Math.ceil(rect.width));
-    const heightPx = Math.max(1, Math.ceil(rect.height));
-    console.log('>>> DEBUG measured clone size:', widthPx, heightPx);
+    const width = Math.max(1, Math.ceil(rect.width));
+    const height = Math.max(1, Math.ceil(rect.height));
 
-    if (widthPx === 0 || heightPx === 0) {
-      // prova ad assegnare esplicitamente larghezza/altezza al clone come fallback
-      clone.style.width = (original.offsetWidth || 800) + 'px';
-      clone.style.height = (original.offsetHeight || 600) + 'px';
-      await wait(30);
-      const rect2 = clone.getBoundingClientRect();
-      console.log('>>> DEBUG after forcing size:', rect2.width, rect2.height);
-      if (rect2.width === 0 || rect2.height === 0) {
-        alert('Il clone risulta con dimensioni 0x0 — probabilmente stai usando trasformazioni CSS o contenuto in shadow DOM. Controlla il DOM o fornisci renderFullPedalboard().');
-        return;
-      }
-    }
-
-    // 6) DEBUG: genera prima il canvas con html2canvas e appendilo in pagina per vedere cosa "vede"
-    const html2canvasOptions = {
-      scale: 3,
+    // html2canvas STABILE (NO foreignObjectRendering)
+    const canvas = await html2canvas(clone, {
+      scale: 2,
       useCORS: true,
       allowTaint: false,
-      backgroundColor: null,
-      logging: true,
-      width: widthPx,
-      height: heightPx,
-      foreignObjectRendering: false
-    };
+      backgroundColor: '#ffffff',
+      foreignObjectRendering: false,
+      width,
+      height
+    });
 
-    console.log('>>> DEBUG calling html2canvas with options', html2canvasOptions);
-    const testCanvas = await html2canvas(wrapper, html2canvasOptions);
+    // Se fallisce → canvas bianco
+    const px = canvas.getContext('2d').getImageData(width/2|0, height/2|0, 1, 1).data;
+    if (px[3] === 0) {
+      alert('Safari: html2canvas non vede la grafica. Canvas bianco.');
+      console.log("Canvas center pixel:", px);
+      return;
+    }
 
-    // Append canvas for debug (rimuovilo dopo controllo)
-    testCanvas.style.position = 'fixed';
-    testCanvas.style.right = '10px';
-    testCanvas.style.bottom = '10px';
-    testCanvas.style.width = Math.min(window.innerWidth/3, 360) + 'px';
-    testCanvas.style.height = 'auto';
-    testCanvas.style.border = '2px solid rgba(0,0,0,0.2)';
-    testCanvas.id = 'pdf-debug-canvas';
-    testCanvas.dataset.generatedAt = new Date().toISOString();
-    document.body.appendChild(testCanvas);
+    // CANVAS → JPEG → jsPDF
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    const pdf = new jsPDF({
+      orientation: width > height ? 'landscape' : 'portrait',
+      unit: 'px',
+      format: [width, height]
+    });
+    pdf.addImage(imgData, 'JPEG', 0, 0, width, height);
+    pdf.save('preset.pdf');
 
-    console.log('>>> DEBUG: appended test canvas (#pdf-debug-canvas) to page. Is it blank or contains graphics?');
-
-    // if the canvas seems blank we stop here — user inspects visually. If not blank, proceed to pdf.
-    // quick pixel check: read a few center pixels to detect emptiness
-    try {
-      const ctx = testCanvas.getContext('2d');
-      const w = testCanvas.width, h = testCanvas.height;
-      const sample = ctx.getImageData(Math.floor(w/2), Math.floor(h/2), 1, 1).data;
-      const isWhite = sample[0] > 250 && sample[1] > 250 && sample[2] > 250 && sample[3] > 250;
-      console.log('>>> DEBUG sample center pixel rgba:', sample, 'isWhite?', isWhite);
-      if (isWhite) {
-        // not necessarily fatal (could be all-white design), but warn user
-        console.warn('DEBUG: center pixel sampled as nearly white — check if canvas shows your UI. If canvas is white, html2canvas does not see your content.');
-        // show alert so you know to inspect canvas
-        alert('DEBUG: canvas generato. Controlla il canvas in basso a destra. Se è bianco allora html2canvas non vede la tua pedalboard.');
-        // do not proceed to PDF automatically — allow user to inspect.
-        return;
-      }
-    } catch (e) { console.warn('Could not sample canvas pixels', e); }
-
-    // 7) se siamo arrivati qui, il canvas contiene grafica: converti in PDF con html2pdf
-    const opt = {
-      margin: 0,
-      filename: 'preset.pdf',
-      image: { type: 'png', quality: 1 },
-      html2canvas: html2canvasOptions,
-      jsPDF: { unit: 'px', format: [widthPx, heightPx], orientation: (widthPx>heightPx?'landscape':'portrait') }
-    };
-
-    await html2pdf().set(opt).from(wrapper).save();
-    // pulizia canvas debug (opzionale)
-    // const dbg = document.getElementById('pdf-debug-canvas'); if (dbg) dbg.remove();
-  } catch (err) {
-    console.error('Export error:', err);
-    alert('Errore durante export PDF — vedi console per dettagli.');
+  } catch (e) {
+    console.error("PDF export error:", e);
+    alert("Errore durante l'export PDF :(");
   } finally {
-    // rimuovi wrapper temporanei
     document.querySelectorAll('.pdf-export-wrapper-temp').forEach(el => el.remove());
   }
 });
+
 </script>
 
 
