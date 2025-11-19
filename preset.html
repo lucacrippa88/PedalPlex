@@ -313,58 +313,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-<button id="printPresetBtn" class="bx--btn bx--btn--primary">Stampa Preset</button>
+<!-- Pulsante stampa -->
+<button id="printPageBtn" class="bx--btn bx--btn--primary">Stampa Pagina</button>
 
-<script>
-function printDivAsPDF(divId) {
-    const div = document.getElementById(divId);
-    if (!div) return alert("Div non trovato");
+<style>
+/* Stampa */
+@media print {
+    @page {
+        size: A3 landscape; /* suggerimento A3 landscape */
+        margin: 15mm;       /* margini */
+    }
 
-    // Cattura tutti gli stili <style> e <link rel="stylesheet">
-    const headStyles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
-        .map(node => node.outerHTML)
-        .join('\n');
+    body {
+        -webkit-print-color-adjust: exact; /* Chrome/Safari */
+        print-color-adjust: exact;         /* Firefox */
+        zoom: 1;                           /* evita scaling indesiderato */
+    }
 
-    const printWindow = window.open('', '', 'width=1200,height=800');
+    /* Mantieni box-shadow, colori, font */
+    #preset {
+        box-shadow: none !important; /* rimuovi solo se vuoi evitare taglio margini */
+        transform: none !important;  /* reset eventuali zoom */
+    }
 
-    printWindow.document.open();
-    printWindow.document.write(`
-      <html>
-        <head>
-          ${headStyles}
-          <style>
-            @media print {
-              @page {
-                size: A3 landscape;
-                margin: 15mm;
-            }
-              body {
-                -webkit-print-color-adjust: exact; /* Chrome/Safari */
-                print-color-adjust: exact; /* Firefox */
-                margin:0; padding:0;
-                zoom: 1; /* no double-size */
-              }
-            }
-          </style>
-        </head>
-        <body>
-          ${div.outerHTML}
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-
-    printWindow.onload = function() {
-        printWindow.focus();
-        printWindow.print();
+    /* Eventuale reset overflow per stampare tutto */
+    html, body {
+        overflow: visible !important;
     }
 }
+</style>
 
-// Attach to button
-document.getElementById('printPresetBtn').addEventListener('click', () => {
-    printDivAsPDF('preset');
+<script>
+// Apri prompt di stampa
+document.getElementById('printPageBtn').addEventListener('click', function() {
+    window.print();
 });
 </script>
+
 
 
 
