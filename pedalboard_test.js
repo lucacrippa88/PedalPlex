@@ -63,147 +63,123 @@ function setupPedalboardDropdownAndRender() {
 
 
 function initPedalboard(userRole) {
-    console.log("Initializing pedalboard for user:", window.currentUser);
+    console.log("initPedalboard → userRole:", userRole);
 
-    const resultsDiv = document.getElementById("pedalboard");
-    resultsDiv.innerHTML = `
-        <div id="loaderContainer" style="position: relative; width: 100%; height: 100px;">
-          <div class="bx--loading-overlay">
-            <div data-loading class="bx--loading"></div>
-          </div>
-        </div>
-    `;
+    if (userRole === "guest") {
+        console.log("Guest mode → load pedalboard from localStorage");
 
-    // ────────────────────────────────────────────────
-    //      UTENTE LOGGATO → usa il database
-    // ────────────────────────────────────────────────
-    if (userRole !== "guest") {
+        const stored = localStorage.getItem("guestPedalboard");
+        let guestBoards = [];
 
-        const userId = window.currentUser?.userid;
-        if (!userId) {
-            console.error("User ID non trovato!");
-            resultsDiv.innerHTML = "<p style='color:red;'>User ID not found.</p>";
+        if (stored) {
+            try {
+                guestBoards = JSON.parse(stored);
+            } catch (err) {
+                console.error("Invalid guest pedalboard JSON");
+            }
+        }
+
+        if (guestBoards.length === 0) {
+            // Create empty pedalboard for guest
+            guestBoards = [{
+                id: "guest_default",
+                name: "My Pedalboard",
+                pedals: []
+            }];
+            localStorage.setItem("guestPedalboard", JSON.stringify(guestBoards));
+        }
+
+        window.allPedalboards = guestBoards;
+        window.pedalboard = structuredClone(guestBoards[0]);
+
+        const ids = window.pedalboard.pedals.map(p => p.pedal_id);
+
+        if (ids.length === 0) {
+            window.catalog = []; 
+            renderPedalboard();
+            $("#pedalboard-controls").hide();
             return;
         }
 
-        // 1️⃣ Recupera tutte le pedalboard dell’utente
-        fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: userId })
+        console.log("Guest → fetching pedal subset:", ids);
+
+        fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=" + ids.join(","), {
+            method: "GET"
         })
         .then(r => r.json())
-        .then(data => {
-
-            if (!data.docs || data.docs.length === 0) {
-                resultsDiv.innerHTML = "<p>No pedalboards found.</p>";
-                $("#pedalboard-controls").hide();
-                return;
-            }
-
-            // Pedalboards caricate
-            window.allPedalboards = data.docs;
-
-            // Determina l'ultima pedalboard usata
-            let lastId = localStorage.getItem("lastPedalboardId");
-            let index = 0;
-
-            if (lastId) {
-                let found = window.allPedalboards.findIndex(p => p._id === lastId);
-                if (found !== -1) index = found;
-            }
-
-            selectedBoardIndex = index;
-            window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
-
-            // 2️⃣ Estrai ID pedali della pedalboard corrente
-            const pedalIds = window.pedalboard.pedals.map(p => p.pedal_id);
-
-            if (pedalIds.length === 0) {
-                window.catalog = [];
-                setupPedalboardDropdownAndRender();
-                return;
-            }
-
-            // 3️⃣ Carica SOLO i pedali necessari alla board
-            return fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ids: pedalIds })
-            });
-        })
-        .then(r => r ? r.json() : null)
         .then(pedals => {
+            // 🔥 The important FIX
+            window.catalog = Array.isArray(pedals) ? pedals : pedals?.docs || [];
 
-            if (pedals) window.catalog = pedals;
-            else window.catalog = [];
-
-            // RENDER + Dropdown
-            setupPedalboardDropdownAndRender();
-
-            if (typeof onPedalboardLoaded === "function") {
-                setTimeout(onPedalboardLoaded, 100);
-            }
+            renderPedalboard();
+            $("#pedalboard-controls").hide();
         })
         .catch(err => {
-            console.error("Error:", err);
-            resultsDiv.innerHTML = `<p style="color:red;">Error loading pedalboards: ${err}</p>`;
+            console.error("Guest → Error loading pedals:", err);
+            window.catalog = [];
+            renderPedalboard();
         });
 
         return;
     }
 
-    // ────────────────────────────────────────────────
-    //      UTENTE GUEST → usa localStorage
-    // ────────────────────────────────────────────────
+    // ============================
+    //        LOGGED USER
+    // ============================
+    console.log("Logged user → loading pedalboards");
 
-    const saved = localStorage.getItem("guestPedalboard");
-    if (saved) {
-        try {
-            window.pedalboard = JSON.parse(saved);
-        } catch (e) {
-            console.error("Invalid guest pedalboard JSON:", e);
-            window.pedalboard = { pedals: [] };
-        }
-    } else {
-        window.pedalboard = { pedals: [] };
-    }
-
-    if (!window.pedalboard.pedals) {
-        window.pedalboard.pedals = [];
-    }
-
-    // 1️⃣ Estrai ID
-    const ids = window.pedalboard.pedals.map(p => p.pedal_id);
-
-    if (ids.length === 0) {
-        window.catalog = [];
-        renderPedalboard();
-        $("#pedalboard-controls").hide();
-        return;
-    }
-
-    // 2️⃣ Carica pedali tramite GET_PEDALS_BY_IDS.php per guest
-    fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids })
+    fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php", {
+        method: "GET",
+        headers: { "Authorization": "Bearer " + localStorage.getItem("authToken") }
     })
     .then(r => r.json())
-    .then(pedals => {
-        window.catalog = pedals;
-        renderPedalboard();
-        $("#pedalboard-controls").hide();
+    .then(boards => {
+        if (!Array.isArray(boards)) boards = [];
 
-        if (typeof onPedalboardLoaded === "function") {
-            setTimeout(onPedalboardLoaded, 100);
+        window.allPedalboards = boards;
+
+        if (boards.length === 0) {
+            console.log("User has no pedalboards → create empty display");
+            window.pedalboard = { id: null, name: "Empty", pedals: [] };
+            window.catalog = [];
+            setupPedalboardDropdownAndRender();
+            return;
         }
+
+        const selectedBoardIndex = 0;
+        window.pedalboard = structuredClone(boards[selectedBoardIndex]);
+
+        const ids = window.pedalboard.pedals.map(p => p.pedal_id);
+
+        if (ids.length === 0) {
+            console.log("Pedalboard has no pedals → no need to fetch");
+            window.catalog = [];
+            setupPedalboardDropdownAndRender();
+            return;
+        }
+
+        console.log("Logged → fetching pedal subset:", ids);
+
+        return fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=" + ids.join(","), {
+            method: "GET"
+        })
+        .then(r => r.json())
+        .then(pedals => {
+            // 🔥 The important FIX
+            window.catalog = Array.isArray(pedals) ? pedals : pedals?.docs || [];
+
+            setupPedalboardDropdownAndRender();
+        });
     })
     .catch(err => {
-        console.error("Error loading guest pedals:", err);
-        resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
+        console.error("Error loading pedalboards:", err);
+        window.allPedalboards = [];
+        window.catalog = [];
+        window.pedalboard = { id: null, name: "Empty", pedals: [] };
+        setupPedalboardDropdownAndRender();
     });
 }
+
 
 
 
