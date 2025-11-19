@@ -311,62 +311,58 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 
+<button onclick="printDiv()" class="bx--btn bx--btn--primary">Stampa Preset</button>
 
+<script>
+function printDiv() {
+  const presetDiv = document.getElementById('preset');
+  if (!presetDiv) {
+    alert('Div #preset non trovato!');
+    return;
+  }
 
-<button id="downloadPresetPNG" class="bx--btn bx--btn--primary">Download PNG</button>
+  // Clona il div per non alterare l'originale
+  const clone = presetDiv.cloneNode(true);
 
+  // Applica stili per stampa
+  const printWrapper = document.createElement('div');
+  printWrapper.style.position = 'absolute';
+  printWrapper.style.left = '0';
+  printWrapper.style.top = '0';
+  printWrapper.style.width = '100%';
+  printWrapper.style.background = '#fff';
+  printWrapper.style.padding = '20px';
+  printWrapper.appendChild(clone);
 
+  // Apri nuova finestra per stampa
+  const printWindow = window.open('', '_blank', 'width=1200,height=800');
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Stampa Preset</title>
+        <style>
+          body { margin: 0; font-family: inherit; }
+          /* Copia tutti gli stili principali se necessario */
+          .bx--btn, .bx--loading { display: none; } /* Nasconde pulsanti */
+        </style>
+      </head>
+      <body>
+      </body>
+    </html>
+  `);
 
+  printWindow.document.body.appendChild(printWrapper);
+  printWindow.document.close();
 
-<!-- Librerie -->
-  <script src="https://unpkg.com/dom-to-image-more/dist/dom-to-image-more.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  // Delay necessario per il rendering completo (font, shadows)
+  setTimeout(() => {
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  }, 200);
+}
+</script>
 
-  <!-- Inizializzazione Carbon -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => { CarbonComponents.watch(); });
-  </script>
-
-  <!-- Export 1:1 con dom-to-image-more -->
-  <script>
-    document.getElementById('downloadPresetPNG').addEventListener('click', async () => {
-      const node = document.getElementById('preset');
-      if (!node) { alert('Div #preset non trovato'); return; }
-
-      // aspetta che i font siano caricati
-      await document.fonts.ready;
-
-      try {
-        domtoimage.toPng(node, {
-          bgcolor: '#ffffff',              // sfondo bianco
-          width: node.scrollWidth,
-          height: node.scrollHeight,
-          scale: 2,                         // alta risoluzione
-          cacheBust: true,                  // evita problemi CORS con immagini
-          filter: (domNode) => true,       // puoi escludere elementi se vuoi
-          onclone: (clonedNode) => {
-            // eventuali aggiustamenti sul clone
-            clonedNode.style.transform = getComputedStyle(node).transform;
-          }
-        })
-        .then((dataUrl) => {
-          const a = document.createElement('a');
-          a.download = 'preset.png';
-          a.href = dataUrl;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        })
-        .catch((err) => {
-          console.error('Errore export dom-to-image:', err);
-          alert('Errore durante l’export. Guarda console per dettagli.');
-        });
-      } catch (err) {
-        console.error(err);
-        alert('Errore export 1:1');
-      }
-    });
-  </script>
 
 </body>
 </html>
