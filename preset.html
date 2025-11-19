@@ -313,42 +313,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-<!-- Pulsante stampa -->
-<button id="printPageBtn" class="bx--btn bx--btn--primary">Stampa Pagina</button>
-
-<style>
-/* Stampa */
-@media print {
-    @page {
-        size: A3 landscape; /* suggerimento A3 landscape */
-        margin: 15mm;       /* margini */
-    }
-
-    body {
-        -webkit-print-color-adjust: exact; /* Chrome/Safari */
-        print-color-adjust: exact;         /* Firefox */
-        zoom: 1;                           /* evita scaling indesiderato */
-    }
-
-    /* Mantieni box-shadow, colori, font */
-    #preset {
-        box-shadow: none !important; /* rimuovi solo se vuoi evitare taglio margini */
-        transform: none !important;  /* reset eventuali zoom */
-    }
-
-    /* Eventuale reset overflow per stampare tutto */
-    html, body {
-        overflow: visible !important;
-    }
-}
-</style>
+<button id="printPresetBtn" class="bx--btn bx--btn--primary">Stampa Preset</button>
 
 <script>
-// Apri prompt di stampa
-document.getElementById('printPageBtn').addEventListener('click', function() {
-    window.print();
+document.getElementById('printPresetBtn').addEventListener('click', function() {
+    const preset = document.getElementById('preset');
+    if (!preset) return alert("Div #preset non trovato");
+
+    // Clona il div
+    const clone = preset.cloneNode(true);
+
+    // Copia stili inline (per semplicità: mantiene font, colori, etc.)
+    const computedStyles = getComputedStyle(preset);
+    clone.style.cssText = computedStyles.cssText;
+
+    // Apri nuova finestra
+    const printWindow = window.open('', '', 'width=1200,height=800');
+    if (!printWindow) return alert('Popup bloccato, abilita finestre pop-up');
+
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Stampa Preset</title>
+            <style>
+                body {
+                    margin: 0;
+                    padding: 20px;
+                    background: #ffffff;
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+                @media print {
+                    @page { size: A3 landscape; margin: 15mm; }
+                }
+                #logo {
+                    width: 200px;
+                    margin-bottom: 20px;
+                }
+            </style>
+        </head>
+        <body>
+            <img id="logo" src="logo.png" alt="PedalPlex Logo">
+        </body>
+        </html>
+    `);
+
+    // Appendi il clone e apri prompt di stampa
+    printWindow.document.body.appendChild(clone);
+
+    // Piccola pausa per permettere al layout di stabilizzarsi
+    setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+        // Optional: chiude la finestra dopo la stampa
+        // printWindow.close();
+    }, 200);
 });
 </script>
+
 
 
 
