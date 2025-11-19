@@ -75,7 +75,7 @@ function initPedalboard(userRole) {
             try {
                 guestBoards = JSON.parse(stored);
             } catch (err) {
-                console.error("Invalid guest pedalboard JSON");
+                console.error("Invalid guest pedalboard JSON:", err);
             }
         }
 
@@ -95,9 +95,11 @@ function initPedalboard(userRole) {
         const ids = window.pedalboard.pedals.map(p => p.pedal_id);
 
         if (ids.length === 0) {
-            window.catalog = []; 
+            window.catalog = [];
             renderPedalboard();
             $("#pedalboard-controls").hide();
+            console.log("Guest → pedalboard empty, catalog:", window.catalog);
+            console.log("Guest → pedalboard:", window.pedalboard);
             return;
         }
 
@@ -108,16 +110,17 @@ function initPedalboard(userRole) {
         })
         .then(r => r.json())
         .then(pedals => {
-            // 🔥 The important FIX
             window.catalog = Array.isArray(pedals) ? pedals : pedals?.docs || [];
-
             renderPedalboard();
             $("#pedalboard-controls").hide();
+            console.log("Guest → catalog loaded:", window.catalog);
+            console.log("Guest → pedalboard:", window.pedalboard);
         })
         .catch(err => {
             console.error("Guest → Error loading pedals:", err);
             window.catalog = [];
             renderPedalboard();
+            console.log("Guest → catalog fallback empty:", window.catalog);
         });
 
         return;
@@ -143,6 +146,7 @@ function initPedalboard(userRole) {
             window.pedalboard = { id: null, name: "Empty", pedals: [] };
             window.catalog = [];
             setupPedalboardDropdownAndRender();
+            console.log("Logged → pedalboard empty, catalog:", window.catalog);
             return;
         }
 
@@ -155,6 +159,7 @@ function initPedalboard(userRole) {
             console.log("Pedalboard has no pedals → no need to fetch");
             window.catalog = [];
             setupPedalboardDropdownAndRender();
+            console.log("Logged → pedalboard empty, catalog:", window.catalog);
             return;
         }
 
@@ -165,10 +170,10 @@ function initPedalboard(userRole) {
         })
         .then(r => r.json())
         .then(pedals => {
-            // 🔥 The important FIX
             window.catalog = Array.isArray(pedals) ? pedals : pedals?.docs || [];
-
             setupPedalboardDropdownAndRender();
+            console.log("Logged → catalog loaded:", window.catalog);
+            console.log("Logged → pedalboard:", window.pedalboard);
         });
     })
     .catch(err => {
@@ -177,8 +182,10 @@ function initPedalboard(userRole) {
         window.catalog = [];
         window.pedalboard = { id: null, name: "Empty", pedals: [] };
         setupPedalboardDropdownAndRender();
+        console.log("Logged → fallback pedalboard empty, catalog:", window.catalog);
     });
 }
+
 
 
 
