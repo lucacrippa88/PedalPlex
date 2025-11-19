@@ -311,57 +311,65 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 
-<button onclick="printDiv()" class="bx--btn bx--btn--primary">Stampa Preset</button>
+<button onclick="printDiv('preset')">Stampa Preset</button>
 
 <script>
-function printDiv() {
-  const presetDiv = document.getElementById('preset');
-  if (!presetDiv) {
-    alert('Div #preset non trovato!');
+function printDiv(divId) {
+  const div = document.getElementById(divId);
+  if (!div) {
+    console.error("Div non trovato:", divId);
     return;
   }
 
-  // Clona il div per non alterare l'originale
-  const clone = presetDiv.cloneNode(true);
-
-  // Applica stili per stampa
-  const printWrapper = document.createElement('div');
-  printWrapper.style.position = 'absolute';
-  printWrapper.style.left = '0';
-  printWrapper.style.top = '0';
-  printWrapper.style.width = '100%';
-  printWrapper.style.background = '#fff';
-  printWrapper.style.padding = '20px';
-  printWrapper.appendChild(clone);
-
-  // Apri nuova finestra per stampa
+  // Apri nuova finestra
   const printWindow = window.open('', '_blank', 'width=1200,height=800');
+
+  // Copia tutti gli stili della pagina corrente
+  let styles = '';
+  for (const styleSheet of document.styleSheets) {
+    try {
+      if (styleSheet.cssRules) {
+        for (const rule of styleSheet.cssRules) {
+          styles += rule.cssText;
+        }
+      }
+    } catch (e) {
+      // evita CORS error per fogli esterni
+      console.warn('StyleSheet non accessibile', e);
+    }
+  }
+
+  // Costruisci contenuto da stampare
+  printWindow.document.open();
   printWindow.document.write(`
     <html>
       <head>
-        <title>Stampa Preset</title>
+        <title>Stampa Div</title>
         <style>
-          body { margin: 0; font-family: inherit; }
-          /* Copia tutti gli stili principali se necessario */
-          .bx--btn, .bx--loading { display: none; } /* Nasconde pulsanti */
+          ${styles}
+          body {
+            margin: 0;
+            padding: 0;
+          }
         </style>
       </head>
       <body>
+        ${div.outerHTML}
       </body>
     </html>
   `);
-
-  printWindow.document.body.appendChild(printWrapper);
   printWindow.document.close();
 
-  // Delay necessario per il rendering completo (font, shadows)
-  setTimeout(() => {
+  // Attendi che la finestra finisca di renderizzare
+  printWindow.onload = function() {
     printWindow.focus();
     printWindow.print();
-    printWindow.close();
-  }, 200);
+    // opzionale: chiudi la finestra dopo stampa
+    // printWindow.close();
+  }
 }
 </script>
+
 
 
 </body>
