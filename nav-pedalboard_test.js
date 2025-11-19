@@ -69,101 +69,129 @@ function initNavPedalboard(userRole) {
   //   console.log("Filtering pedals by:", filterValue);
   // });
   // Ricerca lato server
-  $("#pedalFilterInput").on("input", async function () {
-    const query = $(this).val().trim().toLowerCase();
+  // Assicurati che il container per il dropdown esista
+if (!document.getElementById('pedalAddDropdownContainer')) {
+  $("#pedalFilterInput").after('<div id="pedalAddDropdownContainer"></div>');
+}
+const dropdownContainer = document.getElementById('pedalAddDropdownContainer');
+dropdownContainer.style.position = 'absolute';
+dropdownContainer.style.background = 'white';
+dropdownContainer.style.maxHeight = '200px';
+dropdownContainer.style.overflowY = 'auto';
+dropdownContainer.style.width = $("#pedalFilterInput").outerWidth() + 'px';
+dropdownContainer.style.display = 'none';
+dropdownContainer.style.zIndex = 1000;
+dropdownContainer.style.borderRadius = '4px';
 
-    if (window._searchTimeout) clearTimeout(window._searchTimeout);
+// Funzioni di utilità
+function clearDropdown() {
+  dropdownContainer.innerHTML = '';
+  dropdownContainer.style.display = 'none';
+}
 
-    window._searchTimeout = setTimeout(async () => {
+function positionDropdown() {
+  const rect = $("#pedalFilterInput")[0].getBoundingClientRect();
+  dropdownContainer.style.top = (window.scrollY + rect.bottom + 5) + 'px';
+  dropdownContainer.style.left = (window.scrollX + rect.left) + 'px';
+  dropdownContainer.style.width = rect.width + 'px';
+}
 
-        const dropdownContainer = document.getElementById('pedalAddDropdownContainer');
-        dropdownContainer.innerHTML = '';
-        dropdownContainer.style.display = 'none';
+function createAddButton(pedal) {
+  const btn = document.createElement('button');
+  btn.classList.add('bx--btn','bx--btn--primary','bx--btn--sm');
+  btn.style.padding = '2px 6px';
+  btn.innerHTML = '+';
+  btn.addEventListener('click', async () => {
+    const { value: rotationStr } = await Swal.fire({
+      title: 'Enter rotation',
+      input: 'select',
+      inputOptions: { 0:'0°',90:'90°',180:'180°',270:'270°' },
+      inputValue: '0',
+      showCancelButton: true
+    });
+    if (rotationStr === undefined) return;
+    const rotation = parseInt(rotationStr,10);
 
-        if (query.length === 0) return;
+    const { value: rowStr } = await Swal.fire({
+      title: 'Enter row',
+      input: 'number',
+      inputValue: '1',
+      inputAttributes: { min: 1, step: 1 },
+      showCancelButton: true
+    });
+    if (rowStr === undefined) return;
+    const row = parseInt(rowStr,10);
 
-        try {
-            const response = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?search=${encodeURIComponent(query)}`, {
-                method: "GET",
-                headers: { "Content-Type": "application/json" }
-            });
+    window.pedalboard.pedals.push({
+      pedal_id: pedal._id,
+      rotation,
+      row
+    });
+    renderPedalboard();
+    $("#pedalFilterInput").val('');
+    clearDropdown();
+  });
+  return btn;
+}
 
-            const data = await response.json();
-            if (!data || !Array.isArray(data)) return;
+// Evento input search
+$("#pedalFilterInput").on("input", function() {
+  const query = $(this).val().trim().toLowerCase();
 
-            if (data.length === 0) {
-                const noResult = document.createElement('div');
-                noResult.textContent = 'No pedals found';
-                noResult.style.padding = '6px';
-                dropdownContainer.appendChild(noResult);
-                dropdownContainer.style.display = 'block';
-                return;
-            }
+  if (window._searchTimeout) clearTimeout(window._searchTimeout);
+  window._searchTimeout = setTimeout(async () => {
+    if (!query) { clearDropdown(); return; }
 
-            // Populate dropdown
-            data.forEach(pedal => {
-                const item = document.createElement('div');
-                item.style.display = 'flex';
-                item.style.justifyContent = 'space-between';
-                item.style.alignItems = 'center';
-                item.style.padding = '6px';
+    try {
+      const res = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?search=${encodeURIComponent(query)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
 
-                const label = document.createElement('span');
-                label.textContent = pedal._id;
-                label.style.color = 'black';
-                item.appendChild(label);
+      // Popola dropdown
+      dropdownContainer.innerHTML = '';
+      if (!data.docs || data.docs.length === 0) {
+        const noRes = document.createElement('div');
+        noRes.textContent = 'No pedals found';
+        noRes.style.padding = '6px';
+        dropdownContainer.appendChild(noRes);
+      } else {
+        data.docs.forEach(pedal => {
+          const item = document.createElement('div');
+          item.style.display = 'flex';
+          item.style.justifyContent = 'space-between';
+          item.style.alignItems = 'center';
+          item.style.padding = '6px';
 
-                // Add button
-                const btn = document.createElement('button');
-                btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm');
-                btn.style.padding = '2px 6px';
-                btn.innerHTML = `
-                    <svg focusable="false" preserveAspectRatio="xMidYMid meet" 
-                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" 
-                        width="8" height="8" viewBox="0 0 16 16" aria-hidden="true">
-                        <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>`;
-                
-                btn.addEventListener('click', async () => {
-                    const { value: rotationStr } = await Swal.fire({
-                        title: 'Enter rotation',
-                        input: 'select',
-                        inputOptions: {0:'0°',90:'90°',180:'180°',270:'270°'},
-                        inputValue: '0',
-                        showCancelButton: true
-                    });
-                    if (rotationStr === undefined) return;
-                    const rotation = parseInt(rotationStr, 10);
+          const label = document.createElement('span');
+          label.textContent = pedal._id;
+          label.style.color = 'black';
+          item.appendChild(label);
 
-                    const { value: rowStr } = await Swal.fire({
-                        title: 'Enter row number',
-                        input: 'number',
-                        inputAttributes: { min: 1, step: 1 },
-                        inputValue: '1',
-                        showCancelButton: true
-                    });
-                    if (rowStr === undefined) return;
-                    const row = parseInt(rowStr, 10);
+          const addBtn = createAddButton(pedal);
+          item.appendChild(addBtn);
 
-                    window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation, row });
-                    renderPedalboard();
-                    $(this).val('');
-                    dropdownContainer.innerHTML = '';
-                    dropdownContainer.style.display = 'none';
-                });
+          dropdownContainer.appendChild(item);
+        });
+      }
+      dropdownContainer.style.display = 'block';
+      positionDropdown();
 
-                item.appendChild(btn);
-                dropdownContainer.appendChild(item);
-            });
-
-            dropdownContainer.style.display = 'block';
-
-        } catch (err) {
-            console.error("Search error:", err);
-        }
-
-    }, 300);
+    } catch (err) {
+      console.error('Search error:', err);
+      clearDropdown();
+    }
+  }, 300);
 });
+
+// Aggiorna posizione al scroll/resize
+window.addEventListener('scroll', () => { if(dropdownContainer.style.display==='block') positionDropdown(); });
+window.addEventListener('resize', () => { if(dropdownContainer.style.display==='block') positionDropdown(); });
+
+// Clic fuori chiude dropdown
+document.addEventListener('click', (e) => {
+  if (!dropdownContainer.contains(e.target) && e.target.id !== 'pedalFilterInput') clearDropdown();
+});
+
 
 
 
