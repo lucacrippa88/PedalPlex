@@ -240,7 +240,7 @@ html { box-sizing: content-box !important; }
 
 
 /* Pedal dropdowns, catalog */
-#pedalAddDropdownContainer { background: white; max-height: 300px; overflow-y: auto; width: 200px; z-index: 1000; }
+#pedalAddDropdownContainer { background: white; max-height: 300px; overflow-y: auto; width: 200px; z-index: 3000; border-radius: 4px}
 #catalog, #selected-pedals { margin-top: 1rem; min-height: 2rem; }
 #preset { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 100vw; white-space: normal; }
 #catalog { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 100vw; white-space: normal; }
