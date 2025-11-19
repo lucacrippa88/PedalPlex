@@ -317,59 +317,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <script>
 document.getElementById('printPresetBtn').addEventListener('click', function() {
-    const preset = document.getElementById('preset');
-    if (!preset) return alert("Div #preset non trovato");
+    // Crea uno style temporaneo per la stampa
+    const printStyle = document.createElement('style');
+    printStyle.id = 'printPresetStyle';
+    printStyle.textContent = `
+        @media print {
+            @page {
+                size: A3 landscape; /* dimensione e orientamento */
+                margin: 1cm;
+            }
+            body * {
+                visibility: hidden; /* nasconde tutto */
+            }
+            #preset, #preset * {
+                visibility: visible; /* mostra solo preset */
+            }
+            #preset {
+                position: absolute;
+                top: 50px;
+                left: 50px;
+                background: #ffffff;
+            }
+            #printLogo {
+                display: block;
+                width: 200px;
+                margin-bottom: 20px;
+                visibility: visible;
+                position: absolute;
+                top: 10px;
+                left: 50px;
+            }
+        }
+    `;
+    document.head.appendChild(printStyle);
 
-    // Clona il div
-    const clone = preset.cloneNode(true);
+    // Aggiungi logo temporaneo
+    let logo = document.getElementById('printLogo');
+    if (!logo) {
+        logo = document.createElement('img');
+        logo.id = 'printLogo';
+        logo.src = 'logo.png';
+        logo.alt = 'PedalPlex Logo';
+        document.body.appendChild(logo);
+    }
 
-    // Copia stili inline (per semplicità: mantiene font, colori, etc.)
-    const computedStyles = getComputedStyle(preset);
-    clone.style.cssText = computedStyles.cssText;
+    // Apri finestra di stampa
+    window.print();
 
-    // Apri nuova finestra
-    const printWindow = window.open('', '', 'width=1200,height=800');
-    if (!printWindow) return alert('Popup bloccato, abilita finestre pop-up');
-
-    printWindow.document.write(`
-        <html>
-        <head>
-            <title>Stampa Preset</title>
-            <style>
-                body {
-                    margin: 0;
-                    padding: 20px;
-                    background: #ffffff;
-                    -webkit-print-color-adjust: exact;
-                    print-color-adjust: exact;
-                }
-                @media print {
-                    @page { size: A3 landscape; margin: 15mm; }
-                }
-                #logo {
-                    width: 200px;
-                    margin-bottom: 20px;
-                }
-            </style>
-        </head>
-        <body>
-            <img id="logo" src="logo.png" alt="PedalPlex Logo">
-        </body>
-        </html>
-    `);
-
-    // Appendi il clone e apri prompt di stampa
-    printWindow.document.body.appendChild(clone);
-
-    // Piccola pausa per permettere al layout di stabilizzarsi
+    // Rimuovi logo e stile dopo la stampa
     setTimeout(() => {
-        printWindow.focus();
-        printWindow.print();
-        // Optional: chiude la finestra dopo la stampa
-        // printWindow.close();
-    }, 200);
+        if (logo) logo.remove();
+        const style = document.getElementById('printPresetStyle');
+        if (style) style.remove();
+    }, 500);
 });
 </script>
+
 
 
 
