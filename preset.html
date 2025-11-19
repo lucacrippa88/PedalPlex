@@ -312,30 +312,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
 <button id="printPresetBtn" class="bx--btn bx--btn--primary">Stampa Preset</button>
 
 <script>
-function cloneDivWithValues(div) {
+document.getElementById('printPresetBtn').addEventListener('click', () => {
+    const div = document.getElementById('preset');
+    if (!div) return alert("Div non trovato");
+
+    // Clona il div
     const clone = div.cloneNode(true);
 
-    // copia valori degli input
-    const inputs = div.querySelectorAll('input, textarea, select');
-    inputs.forEach(orig => {
-        const c = clone.querySelector(`[name="${orig.name}"]`) || clone.querySelector(`#${orig.id}`);
+    // Copia valori di input, textarea e select
+    div.querySelectorAll('input, textarea, select').forEach(orig => {
+        let c = clone.querySelector(`#${orig.id}`) || clone.querySelector(`[name="${orig.name}"]`);
         if (!c) return;
 
         if (orig.tagName === 'INPUT') {
             if (orig.type === 'checkbox' || orig.type === 'radio') {
                 c.checked = orig.checked;
             } else if (orig.type === 'range') {
-                // sostituisci slider con un div visuale
-                const rangeWrapper = document.createElement('div');
-                rangeWrapper.style.position = 'relative';
-                rangeWrapper.style.width = orig.offsetWidth + 'px';
-                rangeWrapper.style.height = '8px';
-                rangeWrapper.style.background = '#ccc';
-                rangeWrapper.style.borderRadius = '4px';
+                // Sostituisci slider con rappresentazione visiva
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'relative';
+                wrapper.style.width = orig.offsetWidth + 'px';
+                wrapper.style.height = '8px';
+                wrapper.style.background = '#ccc';
+                wrapper.style.borderRadius = '4px';
                 
                 const filled = document.createElement('div');
                 const pct = (orig.value - (orig.min || 0)) / ((orig.max || 100) - (orig.min || 0));
@@ -343,9 +345,22 @@ function cloneDivWithValues(div) {
                 filled.style.height = '100%';
                 filled.style.background = '#1976d2';
                 filled.style.borderRadius = '4px';
-                rangeWrapper.appendChild(filled);
-                
-                c.parentNode.replaceChild(rangeWrapper, c);
+                wrapper.appendChild(filled);
+
+                // thumb
+                const thumb = document.createElement('div');
+                thumb.style.position = 'absolute';
+                thumb.style.top = '-4px';
+                thumb.style.left = `calc(${pct * 100}% - 6px)`;
+                thumb.style.width = '16px';
+                thumb.style.height = '16px';
+                thumb.style.borderRadius = '50%';
+                thumb.style.background = '#fff';
+                thumb.style.border = '2px solid #1976d2';
+                thumb.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+                wrapper.appendChild(thumb);
+
+                c.parentNode.replaceChild(wrapper, c);
             } else {
                 c.value = orig.value;
             }
@@ -356,75 +371,54 @@ function cloneDivWithValues(div) {
         }
     });
 
-    return clone;
-}
-
-function printDivAsPDF(divId) {
-    const div = document.getElementById(divId);
-    if (!div) return alert("Div non trovato");
-
-    // cattura stili
-    const headStyles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
-        .map(node => node.outerHTML)
-        .join('\n');
-
-    // clona il div con valori
-    const clone = cloneDivWithValues(div);
-
+    // Apri nuova finestra
     const printWindow = window.open('', '', 'width=1200,height=800');
+    if (!printWindow) return alert("Bloccato popup? Permetti l'apertura della finestra.");
 
-    printWindow.document.open();
-    printWindow.document.write(`
-      <html>
-        <head>
-          ${headStyles}
-          <style>
-            body {
-                background: #ffffff;
-                margin: 0;
-                padding: 0;
-            }
-            .print-wrapper {
-                background: #ffffff;
-                padding: 20px;
-                box-sizing: border-box;
-            }
-            @media print {
-              @page {
+    // Copia stili head
+    Array.from(document.querySelectorAll('style, link[rel="stylesheet"]')).forEach(node => {
+        printWindow.document.head.appendChild(node.cloneNode(true));
+    });
+
+    // Stili aggiuntivi per stampa
+    const style = printWindow.document.createElement('style');
+    style.innerHTML = `
+        body {
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+        .print-wrapper {
+            background: #ffffff;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        @media print {
+            @page {
                 size: A3 landscape;
                 margin: 15mm;
-              }
-              body {
+            }
+            body {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
-              }
             }
-          </style>
-        </head>
-        <body>
-          <div class="print-wrapper">
-            ${clone.outerHTML}
-          </div>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
+        }
+    `;
+    printWindow.document.head.appendChild(style);
 
+    // Inserisci clone
+    const wrapper = printWindow.document.createElement('div');
+    wrapper.className = 'print-wrapper';
+    wrapper.appendChild(clone);
+    printWindow.document.body.appendChild(wrapper);
+
+    // Forza redraw e apri prompt stampa
     printWindow.onload = function() {
         printWindow.focus();
         printWindow.print();
-    }
-}
-
-document.getElementById('printPresetBtn').addEventListener('click', () => {
-    printDivAsPDF('preset');
+    };
 });
-
 </script>
-
-
-
-
 
 
 
