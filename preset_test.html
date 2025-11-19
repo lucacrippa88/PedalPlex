@@ -319,336 +319,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+<!-- Librerie -->
+  <script src="https://unpkg.com/dom-to-image-more/dist/dom-to-image-more.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>const { jsPDF } = window.jspdf;</script>
+  <!-- Inizializzazione Carbon -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => { CarbonComponents.watch(); });
+  </script>
 
+  <!-- Export 1:1 con dom-to-image-more -->
+  <script>
+    document.getElementById('downloadPresetPNG').addEventListener('click', async () => {
+      const node = document.getElementById('preset');
+      if (!node) { alert('Div #preset non trovato'); return; }
 
-<script>
-/*
-  Export migliorato per #preset
-  - copia computed styles (incl. box-shadow)
-  - copia pseudo-elements ::before/::after (semplice)
-  - sostituisce range (vertical/horizontal) con visual accurate
-  - wrapper off-screen con sfondo bianco + padding (margini)
-  - opzionale: outline bianco per .pedal-catalog
-*/
+      // aspetta che i font siano caricati
+      await document.fonts.ready;
 
-async function waitForFontsAndImages(root, timeout = 15000) {
-  if (document.fonts && document.fonts.ready) {
-    try { await document.fonts.ready; } catch(e) { console.warn('fonts.ready err', e); }
-  }
-  const imgs = Array.from(root.querySelectorAll('img'));
-  await Promise.all(imgs.map(img => {
-    if (!img.src) return Promise.resolve();
-    if (img.complete && img.naturalWidth !== 0) return Promise.resolve();
-    return new Promise(res => {
-      const t = setTimeout(() => res('timeout'), timeout);
-      img.addEventListener('load', () => { clearTimeout(t); res('loaded'); }, { once: true });
-      img.addEventListener('error', () => { clearTimeout(t); res('error'); }, { once: true });
-    });
-  }));
-}
-
-// copy computed styles from source -> target element (shallow for each node)
-function copyComputedStylesSingle(source, target) {
-  const cs = getComputedStyle(source);
-  // copia tutte le proprietà utili (incluso boxShadow)
-  const props = [
-    'display','position','top','left','right','bottom',
-    'width','height','minWidth','minHeight','maxWidth','maxHeight',
-    'margin','padding','boxSizing','border','borderWidth','borderStyle','borderColor','borderRadius',
-    'background','backgroundColor','backgroundImage','backgroundSize','backgroundPosition','backgroundRepeat',
-    'color','font','fontFamily','fontSize','fontWeight','lineHeight','textAlign',
-    'boxShadow','filter','opacity','transform','transformOrigin','zIndex',
-    'overflow','whiteSpace','wordBreak','verticalAlign','outline'
-  ];
-  props.forEach(p => {
-    try {
-      const v = cs.getPropertyValue(p) || cs[p];
-      if (v) target.style.setProperty(p, v, 'important');
-    } catch (e) {}
-  });
-  // inline images for <img>
-  if (source.tagName === 'IMG') {
-    if (source.src) target.src = source.src;
-    if (source.alt) target.alt = source.alt;
-    target.width = source.width || target.width;
-    target.height = source.height || target.height;
-  }
-  // copy inline SVG background-image urls (if any) are kept by backgroundImage property
-}
-
-// copy pseudo-elements ::before and ::after into real nodes (simple textual copy)
-function copyPseudoElements(source, target) {
-  ['::before','::after'].forEach(pseudo => {
-    try {
-      const cs = getComputedStyle(source, pseudo);
-      const content = cs.getPropertyValue('content');
-      if (!content || content === 'none' || content === '""' || content === "''") return;
-      // create element
-      const el = document.createElement('span');
-      // remove surrounding quotes if present
-      const raw = content.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
-      el.textContent = raw;
-      const props = ['position','display','top','left','right','bottom','color','font','fontSize','width','height','transform','opacity','zIndex','pointerEvents','whiteSpace'];
-      props.forEach(p => {
-        try { const v = cs.getPropertyValue(p) || cs[p]; if (v) el.style.setProperty(p, v, 'important'); } catch(e){}
-      });
-      el.classList.add('pdf-pseudo-clone');
-      // for ::before we prepend, for ::after we append
-      if (pseudo === '::before') target.insertBefore(el, target.firstChild);
-      else target.appendChild(el);
-    } catch (e) {}
-  });
-}
-
-// deep-clone node tree AND inline computed styles & pseudo-elements
-function cloneAndInline(sourceRoot) {
-  const cloneRoot = sourceRoot.cloneNode(true);
-
-  const srcQueue = [sourceRoot];
-  const tgtQueue = [cloneRoot];
-
-  while (srcQueue.length) {
-    const s = srcQueue.shift();
-    const t = tgtQueue.shift();
-    copyComputedStylesSingle(s, t);
-    copyPseudoElements(s, t);
-
-    // OPTIONAL: if you want a white outline around each pedal, uncomment:
-    // if (s.classList && s.classList.contains('pedal-catalog')) {
-    //   t.style.outline = '4px solid #ffffff';
-    //   t.style.outlineOffset = '0px';
-    // }
-
-    const sChildren = Array.from(s.children || []);
-    const tChildren = Array.from(t.children || []);
-    for (let i = 0; i < sChildren.length; i++) {
-      const sc = sChildren[i];
-      const tc = tChildren[i];
-      if (sc && tc) {
-        srcQueue.push(sc);
-        tgtQueue.push(tc);
+      try {
+        domtoimage.toPng(node, {
+          bgcolor: '#ffffff',              // sfondo bianco
+          width: node.scrollWidth,
+          height: node.scrollHeight,
+          scale: 2,                         // alta risoluzione
+          cacheBust: true,                  // evita problemi CORS con immagini
+          filter: (domNode) => true,       // puoi escludere elementi se vuoi
+          onclone: (clonedNode) => {
+            // eventuali aggiustamenti sul clone
+            clonedNode.style.transform = getComputedStyle(node).transform;
+          }
+        })
+        .then((dataUrl) => {
+          const a = document.createElement('a');
+          a.download = 'preset.png';
+          a.href = dataUrl;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        })
+        .catch((err) => {
+          console.error('Errore export dom-to-image:', err);
+          alert('Errore durante l’export. Guarda console per dettagli.');
+        });
+      } catch (err) {
+        console.error(err);
+        alert('Errore export 1:1');
       }
-    }
-  }
-  return cloneRoot;
-}
-
-// Replace <input type=range> with faithful visual representation (supports vertical/horizontal)
-function replaceRangesWithVisual(root) {
-  const ranges = Array.from(root.querySelectorAll('input[type="range"]'));
-  ranges.forEach(r => {
-    try {
-      const cs = getComputedStyle(r);
-      const min = parseFloat(r.min || 0);
-      const max = parseFloat(r.max || 100);
-      const val = parseFloat(r.value || 0);
-      const pct = (val - min) / (max - min || 1);
-
-      // Determine orientation: class 'vertical' or computed writing-mode
-      const isVertical = r.classList.contains('vertical') || cs.getPropertyValue('writing-mode').includes('vertical');
-
-      const wrapper = document.createElement('div');
-      wrapper.className = 'pdf-range-replacement';
-      wrapper.style.display = 'inline-flex';
-      wrapper.style.alignItems = 'center';
-      wrapper.style.justifyContent = 'center';
-      wrapper.style.boxSizing = 'border-box';
-      wrapper.style.pointerEvents = 'none'; // non interactive
-      // size fallback from computed style if present
-      const w = cs.getPropertyValue('width');
-      const h = cs.getPropertyValue('height');
-      if (!isVertical) wrapper.style.width = (w && w !== '0px') ? w : (r.offsetWidth ? r.offsetWidth + 'px' : '120px');
-      else wrapper.style.height = (h && h !== '0px') ? h : (r.offsetHeight ? r.offsetHeight + 'px' : '100px');
-
-      // create track + filled + thumb
-      const track = document.createElement('div');
-      const filled = document.createElement('div');
-      const thumb = document.createElement('div');
-
-      // common styles
-      track.style.position = filled.style.position = thumb.style.position = 'absolute';
-      track.style.borderRadius = filled.style.borderRadius = '4px';
-      thumb.style.borderRadius = '50%';
-      thumb.style.boxShadow = '0 2px 6px rgba(0,0,0,0.35)';
-      thumb.style.border = '1px solid rgba(0,0,0,0.2)';
-      thumb.style.background = '#fff';
-
-      // use accent color if available
-      const accent = cs.getPropertyValue('accent-color') || '#1976d2';
-      filled.style.background = accent;
-
-      // orientation specific layout
-      if (!isVertical) {
-        // horizontal
-        wrapper.style.height = h && h !== '0px' ? h : '28px';
-        wrapper.style.minWidth = '60px';
-        // create container to position children
-        const rel = document.createElement('div');
-        rel.style.position = 'relative';
-        rel.style.width = '100%';
-        rel.style.height = '10px';
-        rel.style.margin = '8px 0';
-        rel.style.boxSizing = 'border-box';
-        // track
-        track.style.left = '0'; track.style.right = '0';
-        track.style.top = '50%'; track.style.height = '6px'; track.style.transform = 'translateY(-50%)';
-        // filled
-        filled.style.left = '0'; filled.style.top = '50%'; filled.style.height = '6px'; filled.style.transform = 'translateY(-50%)';
-        filled.style.width = (pct * 100) + '%';
-        // thumb
-        thumb.style.top = '50%'; thumb.style.transform = 'translate(-50%, -50%)';
-        thumb.style.left = (pct * 100) + '%';
-        thumb.style.width = '18px'; thumb.style.height = '18px';
-        // append
-        rel.appendChild(track);
-        rel.appendChild(filled);
-        rel.appendChild(thumb);
-        wrapper.appendChild(rel);
-      } else {
-        // vertical: stack with track height and thumb positioned from bottom
-        wrapper.style.width = w && w !== '0px' ? w : '32px';
-        const rel = document.createElement('div');
-        rel.style.position = 'relative';
-        rel.style.width = '18px';
-        rel.style.height = '120px';
-        rel.style.display = 'flex';
-        rel.style.alignItems = 'center';
-        rel.style.justifyContent = 'center';
-        // track
-        track.style.left = '50%'; track.style.top = '0'; track.style.bottom = '0';
-        track.style.width = '6px'; track.style.transform = 'translateX(-50%)';
-        // filled: from bottom to pct
-        filled.style.left = '50%'; filled.style.bottom = '0';
-        filled.style.width = '6px'; filled.style.transform = 'translateX(-50%)';
-        filled.style.height = (pct * 100) + '%';
-        // thumb
-        thumb.style.left = '50%'; thumb.style.transform = 'translate(-50%,-50%)';
-        thumb.style.bottom = (pct * 100) + '%';
-        thumb.style.width = '14px'; thumb.style.height = '14px';
-        rel.appendChild(track);
-        rel.appendChild(filled);
-        rel.appendChild(thumb);
-        wrapper.appendChild(rel);
-      }
-
-      // make wrapper position:relative container so absolute children work
-      wrapper.style.position = 'relative';
-      // ensure shadows not cropped
-      wrapper.style.overflow = 'visible';
-
-      // replace input
-      r.parentNode.replaceChild(wrapper, r);
-    } catch (err) {
-      try { r.style.display = 'none'; } catch(e) {}
-    }
-  });
-}
-
-// optional: replace selects / inputs etc (we already do in clone step if needed)
-// but keep them simple to avoid layout drift
-
-// main handler
-document.getElementById('downloadPresetPDF').addEventListener('click', async function () {
-  try {
-    const original = document.getElementById('preset');
-    if (!original) { alert('Div #preset non trovato'); return; }
-
-    // wait fonts/images
-    await waitForFontsAndImages(original);
-
-    // clone and inline styles
-    const clone = cloneAndInline(original);
-
-    // replace interactive controls (ranges) with visuals BEFORE adding wrapper
-    replaceRangesWithVisual(clone);
-
-    // create off-screen wrapper but VISIBLE (opacity 1) — html2canvas likes visible elements for shadows
-    const wrapper = document.createElement('div');
-    wrapper.className = 'pdf-export-wrapper-temp';
-    wrapper.style.position = 'fixed';
-    wrapper.style.left = '-10000px';   // off-screen but rendered
-    wrapper.style.top = '0';
-    wrapper.style.background = '#ffffff'; // white background
-    wrapper.style.padding = '18px';       // margin / white border around whole content
-    wrapper.style.zIndex = '2147483647'; // very high
-    wrapper.style.boxSizing = 'border-box';
-    wrapper.style.overflow = 'visible';
-
-    // OPTIONAL: add white stroke around each pedal-catalog for clearer contour.
-    // uncomment the next block if you want that per-element white border.
-    /*
-    Array.from(clone.querySelectorAll('.pedal-catalog')).forEach(el => {
-      el.style.outline = '3px solid #ffffff';
-      el.style.outlineOffset = '0px';
-      // ensure outline doesn't collapse box-shadow by giving small padding
-      el.style.boxSizing = 'border-box';
     });
-    */
-
-    wrapper.appendChild(clone);
-    document.body.appendChild(wrapper);
-
-    // small tick to allow layout
-    await new Promise(r => setTimeout(r, 40));
-
-    // measure cloned area
-    const rect = clone.getBoundingClientRect();
-    const width = Math.max(2, Math.ceil(rect.width));
-    const height = Math.max(2, Math.ceil(rect.height));
-
-    // run html2canvas with settings to better preserve shadows/filters
-    const canvas = await html2canvas(clone, {
-      scale: Math.min(3, Math.max(1, window.devicePixelRatio || 1)), // good quality, avoid huge memory
-      useCORS: true,
-      allowTaint: false,
-      backgroundColor: '#ffffff',
-      logging: false,
-      width: width,
-      height: height,
-      windowWidth: document.documentElement.clientWidth,
-      windowHeight: document.documentElement.clientHeight,
-      foreignObjectRendering: false
-    });
-
-    // sanity check: if transparent center pixel -> likely failed
-    try {
-      const ctx = canvas.getContext('2d');
-      const px = ctx.getImageData((canvas.width/2)|0, (canvas.height/2)|0, 1, 1).data;
-      if (px[3] === 0) {
-        console.warn('Canvas center transparent px:', px);
-        alert('Export: canvas risultato trasparente. Controlla la preview. (Safari potrebbe richiedere html2canvas different config)');
-        // allow user to inspect appended wrapper (off-screen) if needed
-      }
-    } catch(e){ console.warn('pixel check failed', e); }
-
-    // create final PNG and trigger download
-    const dataUrl = canvas.toDataURL('image/png');
-
-    // build download link
-    const a = document.createElement('a');
-    a.href = dataUrl;
-    a.download = 'preset.png';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-  } catch (err) {
-    console.error('Export error:', err);
-    alert('Errore durante l\'export. Guarda console per dettagli.');
-  } finally {
-    // cleanup wrapper
-    document.querySelectorAll('.pdf-export-wrapper-temp').forEach(el => el.remove());
-  }
-});
-</script>
-
-
-
+  </script>
 
 </body>
 </html>
