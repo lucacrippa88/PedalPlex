@@ -92,7 +92,7 @@ async function loadPedalsByIds(ids) {
 
 
 async function initPedalboard() {
-  const resultsDiv = document.getElementById("results");
+  const resultsDiv = document.getElementById("pedalboard");
   resultsDiv.innerHTML = `<div class="bx--loading-overlay"><div class="bx--loading" role="status"><svg class="bx--loading__svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14"></circle></svg></div></div>`;
 
   const userRole = window.currentUser?.role || "guest";
