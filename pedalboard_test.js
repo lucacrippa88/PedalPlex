@@ -61,123 +61,125 @@ function setupPedalboardDropdownAndRender() {
 }
 
 
-function initPedalboard(userRole, userId) {
-    console.log("initPedalboard → userRole:", userRole);
 
-    if (userRole === "guest") {
-        console.log("Guest mode → load pedalboard from localStorage");
-
-        const stored = localStorage.getItem("guestPedalboard");
-        let guestBoards = [];
-
-        if (stored) {
-            try {
-                guestBoards = JSON.parse(stored);
-            } catch (err) {
-                console.error("Invalid guest pedalboard JSON");
-            }
-        }
-
-        if (guestBoards.length === 0) {
-            guestBoards = [{
-                id: "guest_default",
-                name: "My Pedalboard",
-                pedals: []
-            }];
-            localStorage.setItem("guestPedalboard", JSON.stringify(guestBoards));
-        }
-
-        window.allPedalboards = guestBoards;
-        window.pedalboard = structuredClone(guestBoards[0]);
-
-        const ids = window.pedalboard.pedals.map(p => p.pedal_id);
-
-        if (ids.length === 0) {
-            window.catalog = [];
-            renderPedalboard();
-            $("#pedalboard-controls").hide();
-            return;
-        }
-
-        console.log("Guest → fetching pedal subset:", ids);
-
-        fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=" + ids.join(","), {
-            method: "GET"
-        })
-        .then(r => r.json())
-        .then(pedals => {
-            window.catalog = Array.isArray(pedals) ? pedals : pedals?.docs || [];
-            renderPedalboard();
-            $("#pedalboard-controls").hide();
-        })
-        .catch(err => {
-            console.error("Guest → Error loading pedals:", err);
-            window.catalog = [];
-            renderPedalboard();
-        });
-
-        return;
-    }
-
-    // ============================
-    //        LOGGED USER
-    // ============================
-    console.log("Logged user → loading pedalboards");
-
-    fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ user_id: userId })
-    })
-    .then(r => r.json())
-    .then(boards => {
-        if (!Array.isArray(boards)) boards = [];
-
-        window.allPedalboards = boards;
-
-        if (boards.length === 0) {
-            console.log("User has no pedalboards → create empty display");
-            window.pedalboard = { id: null, name: "Empty", pedals: [] };
-            window.catalog = [];
-            setupPedalboardDropdownAndRender();
-            return;
-        }
-
-        const selectedBoardIndex = 0;
-        window.pedalboard = structuredClone(boards[selectedBoardIndex]);
-
-        const ids = window.pedalboard.pedals.map(p => p.pedal_id);
-
-        if (ids.length === 0) {
-            console.log("Pedalboard has no pedals → no need to fetch");
-            window.catalog = [];
-            setupPedalboardDropdownAndRender();
-            return;
-        }
-
-        console.log("Logged → fetching pedal subset:", ids);
-
-        return fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=" + ids.join(","), {
-            method: "GET"
-        })
-        .then(r => r.json())
-        .then(pedals => {
-            window.catalog = Array.isArray(pedals) ? pedals : pedals?.docs || [];
-            setupPedalboardDropdownAndRender();
-        });
-    })
-    .catch(err => {
-        console.error("Error loading pedalboards:", err);
-        window.allPedalboards = [];
-        window.catalog = [];
-        window.pedalboard = { id: null, name: "Empty", pedals: [] };
-        setupPedalboardDropdownAndRender();
+// Fetch pedali by ids
+async function loadPedalsByIds(ids) {
+  if (!ids || ids.length === 0) return;
+  try {
+    const token = localStorage.getItem('authToken') || '';
+    const response = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token ? 'Bearer ' + token : ''
+      },
+      body: JSON.stringify({ pedal_ids: ids })
     });
+    const data = await response.json();
+    if (!Array.isArray(data)) throw new Error('Invalid pedal data');
+
+    window.catalog = data; // update catalog only with needed pedali
+  } catch (err) {
+    console.error('Error fetching pedals:', err);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error loading pedals',
+      text: err.message || 'Failed to fetch pedals'
+    });
+  }
 }
 
 
+
+async function initPedalboard() {
+  const resultsDiv = document.getElementById("results");
+  resultsDiv.innerHTML = `<div class="bx--loading-overlay"><div class="bx--loading" role="status"><svg class="bx--loading__svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14"></circle></svg></div></div>`;
+
+  const userRole = window.currentUser?.role || "guest";
+
+  if (userRole === "guest") {
+    const savedBoard = localStorage.getItem('guestPedalboard');
+
+    if (!savedBoard) {
+      resultsDiv.innerHTML = `
+        You don't have any pedalboard yet.<br><br>
+        <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary" type="button" aria-label="Create New Pedalboard" style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <g transform="rotate(90 16 16)">
+              <path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"></path>
+              <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
+            </g>
+          </svg>
+          Create pedalboard
+        </button>
+      `;
+      $("#pedalboard-controls").hide();
+      return;
+    }
+
+    const boards = JSON.parse(savedBoard);
+    window.allPedalboards = boards;
+    window.pedalboard = structuredClone(boards[0]);
+
+    // Carica solo i pedali della pedalboard
+    await loadPedalsByIds(window.pedalboard.pedals.map(p => p.pedal_id));
+
+    setupPedalboardDropdownAndRender();
+    $("#pedalboard-controls").css("display", "inline-flex");
+    $("#viewPreset").css("display", "inline-flex");
+    resultsDiv.innerHTML = '';
+    return;
+  }
+
+  // --- UTENTI LOGGATI ---
+  try {
+    const userId = window.currentUser?.userid;
+    const pedalboardRes = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId })
+    });
+    const pedalboardData = await pedalboardRes.json();
+
+    if (!pedalboardData.docs || pedalboardData.docs.length === 0) {
+      resultsDiv.innerHTML = `
+        You don't have any pedalboard yet.<br><br>
+        <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary" type="button" aria-label="Create New Pedalboard" style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <g transform="rotate(90 16 16)">
+              <path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"></path>
+              <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
+            </g>
+          </svg>
+          Create pedalboard
+        </button>
+      `;
+      $("#pedalboard-controls").hide();
+      return;
+    }
+
+    pedalboardData.docs.sort((a, b) => (a.board_name || '').toLowerCase().localeCompare((b.board_name || '').toLowerCase()));
+    window.allPedalboards = pedalboardData.docs;
+
+    const defaultIndex = window.allPedalboards.findIndex(b => b._id === localStorage.getItem('lastPedalboardId')) || 0;
+    selectedBoardIndex = defaultIndex;
+    window.pedalboard = structuredClone(window.allPedalboards[selectedBoardIndex]);
+
+    // Carica solo i pedali della pedalboard selezionata
+    await loadPedalsByIds(window.pedalboard.pedals.map(p => p.pedal_id));
+
+    setupPedalboardDropdownAndRender();
+    $("#pedalboard-controls").css("display", "inline-flex");
+    $("#pedalboardSelect").css("display", "inline-flex");
+    $("#renameBoardBtn").css("display", "inline-flex");
+    $("#viewPreset").css("display", "inline-flex");
+    resultsDiv.innerHTML = '';
+
+  } catch (err) {
+    console.error('Error initializing pedalboard:', err);
+    resultsDiv.innerHTML = `<p style="color:red;">Error loading pedalboards: ${err.message}</p>`;
+  }
+}
 
 
 
