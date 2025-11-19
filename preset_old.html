@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BX9P5WN5HH');
+</script>
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -9,17 +18,6 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-BX9P5WN5HH');
-    </script>
-
 <style>
   .btn-disabled {
     opacity: 0.5;
@@ -32,7 +30,6 @@
     zoom: 1; /* default zoom level */
   }
 </style>
-
 
 </head>
 <body>
@@ -160,10 +157,10 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="utils.js"></script>
-  <script src="preset_test.js"></script>
+  <script src="preset.js"></script>
   <script src="fullscreen-menu.js"></script>
   <script src="folder.js"></script>
-  <script src="nav-preset_test.js"></script>
+  <script src="nav-preset.js"></script>
   <script src="zoom.js"></script>
   
 
@@ -309,67 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
   CarbonComponents.watch();
 });
 </script>
-
-
-<button onclick="printDiv('preset')">Stampa Preset</button>
-
-<script>
-function printDiv(divId) {
-  const div = document.getElementById(divId);
-  if (!div) {
-    console.error("Div non trovato:", divId);
-    return;
-  }
-
-  // Apri nuova finestra
-  const printWindow = window.open('', '_blank', 'width=1200,height=800');
-
-  // Copia tutti gli stili della pagina corrente
-  let styles = '';
-  for (const styleSheet of document.styleSheets) {
-    try {
-      if (styleSheet.cssRules) {
-        for (const rule of styleSheet.cssRules) {
-          styles += rule.cssText;
-        }
-      }
-    } catch (e) {
-      // evita CORS error per fogli esterni
-      console.warn('StyleSheet non accessibile', e);
-    }
-  }
-
-  // Costruisci contenuto da stampare
-  printWindow.document.open();
-  printWindow.document.write(`
-    <html>
-      <head>
-        <title>Stampa Div</title>
-        <style>
-          ${styles}
-          body {
-            margin: 0;
-            padding: 0;
-          }
-        </style>
-      </head>
-      <body>
-        ${div.outerHTML}
-      </body>
-    </html>
-  `);
-  printWindow.document.close();
-
-  // Attendi che la finestra finisca di renderizzare
-  printWindow.onload = function() {
-    printWindow.focus();
-    printWindow.print();
-    // opzionale: chiudi la finestra dopo stampa
-    // printWindow.close();
-  }
-}
-</script>
-
 
 
 </body>
