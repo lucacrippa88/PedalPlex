@@ -69,17 +69,134 @@ function initNavPedalboard(userRole) {
   //   console.log("Filtering pedals by:", filterValue);
   // });
   // Ricerca lato server
-  $("#pedalFilterInput").on("input", async function () {
+//   $("#pedalFilterInput").on("input", async function () {
+//     const query = $(this).val().trim().toLowerCase();
+
+//     if (window._searchTimeout) clearTimeout(window._searchTimeout);
+
+//     window._searchTimeout = setTimeout(async () => {
+
+//         const dropdownContainer = document.getElementById('pedalAddDropdownContainer');
+//         dropdownContainer.innerHTML = '';
+//         dropdownContainer.style.display = 'none';
+
+//         if (query.length === 0) return;
+
+//         try {
+//             const response = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?search=${encodeURIComponent(query)}`, {
+//                 method: "GET",
+//                 headers: { "Content-Type": "application/json" }
+//             });
+
+//             const data = await response.json();
+//             if (!data || !Array.isArray(data)) return;
+
+//             if (data.length === 0) {
+//                 const noResult = document.createElement('div');
+//                 noResult.textContent = 'No pedals found';
+//                 noResult.style.padding = '6px';
+//                 dropdownContainer.appendChild(noResult);
+//                 dropdownContainer.style.display = 'block';
+//                 return;
+//             }
+
+//             // Populate dropdown
+//             data.forEach(pedal => {
+//                 const item = document.createElement('div');
+//                 item.style.display = 'flex';
+//                 item.style.justifyContent = 'space-between';
+//                 item.style.alignItems = 'center';
+//                 item.style.padding = '6px';
+
+//                 const label = document.createElement('span');
+//                 label.textContent = pedal._id;
+//                 label.style.color = 'black';
+//                 item.appendChild(label);
+
+//                 // Add button
+//                 const btn = document.createElement('button');
+//                 btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm');
+//                 btn.style.padding = '2px 6px';
+//                 btn.innerHTML = `
+//                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" 
+//                         xmlns="http://www.w3.org/2000/svg" fill="currentColor" 
+//                         width="8" height="8" viewBox="0 0 16 16" aria-hidden="true">
+//                         <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+//                     </svg>`;
+                
+//                 btn.addEventListener('click', async () => {
+//                     const { value: rotationStr } = await Swal.fire({
+//                         title: 'Enter rotation',
+//                         input: 'select',
+//                         inputOptions: {0:'0°',90:'90°',180:'180°',270:'270°'},
+//                         inputValue: '0',
+//                         showCancelButton: true
+//                     });
+//                     if (rotationStr === undefined) return;
+//                     const rotation = parseInt(rotationStr, 10);
+
+//                     const { value: rowStr } = await Swal.fire({
+//                         title: 'Enter row number',
+//                         input: 'number',
+//                         inputAttributes: { min: 1, step: 1 },
+//                         inputValue: '1',
+//                         showCancelButton: true
+//                     });
+//                     if (rowStr === undefined) return;
+//                     const row = parseInt(rowStr, 10);
+
+//                     window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation, row });
+//                     renderPedalboard();
+//                     $(this).val('');
+//                     dropdownContainer.innerHTML = '';
+//                     dropdownContainer.style.display = 'none';
+//                 });
+
+//                 item.appendChild(btn);
+//                 dropdownContainer.appendChild(item);
+//             });
+
+//             dropdownContainer.style.display = 'block';
+
+//         } catch (err) {
+//             console.error("Search error:", err);
+//         }
+
+//     }, 300);
+// });
+$("#pedalFilterInput").on("input", async function () {
     const query = $(this).val().trim().toLowerCase();
 
     if (window._searchTimeout) clearTimeout(window._searchTimeout);
 
     window._searchTimeout = setTimeout(async () => {
 
-        const dropdownContainer = document.getElementById('pedalAddDropdownContainer');
+        // --- setup dropdown container ---
+        let dropdownContainer = document.getElementById('pedalAddDropdownContainer');
+        if (!dropdownContainer) {
+            dropdownContainer = document.createElement('div');
+            dropdownContainer.id = 'pedalAddDropdownContainer';
+            dropdownContainer.style.position = 'absolute';
+            dropdownContainer.style.background = 'white';
+            dropdownContainer.style.border = '1px solid #ccc';
+            dropdownContainer.style.borderRadius = '4px';
+            dropdownContainer.style.maxHeight = '200px';
+            dropdownContainer.style.overflowY = 'auto';
+            dropdownContainer.style.display = 'none';
+            dropdownContainer.style.zIndex = 1000;
+            document.body.appendChild(dropdownContainer);
+        }
+
+        function positionDropdown() {
+            const input = document.getElementById('pedalFilterInput');
+            const rect = input.getBoundingClientRect();
+            dropdownContainer.style.top = window.scrollY + rect.bottom + 'px';
+            dropdownContainer.style.left = window.scrollX + rect.left + 'px';
+            dropdownContainer.style.width = rect.width + 'px';
+        }
+
         dropdownContainer.innerHTML = '';
         dropdownContainer.style.display = 'none';
-
         if (query.length === 0) return;
 
         try {
@@ -87,7 +204,6 @@ function initNavPedalboard(userRole) {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
-
             const data = await response.json();
             if (!data || !Array.isArray(data)) return;
 
@@ -97,10 +213,11 @@ function initNavPedalboard(userRole) {
                 noResult.style.padding = '6px';
                 dropdownContainer.appendChild(noResult);
                 dropdownContainer.style.display = 'block';
+                positionDropdown();
                 return;
             }
 
-            // Populate dropdown
+            // --- populate dropdown ---
             data.forEach(pedal => {
                 const item = document.createElement('div');
                 item.style.display = 'flex';
@@ -113,7 +230,6 @@ function initNavPedalboard(userRole) {
                 label.style.color = 'black';
                 item.appendChild(label);
 
-                // Add button
                 const btn = document.createElement('button');
                 btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm');
                 btn.style.padding = '2px 6px';
@@ -123,8 +239,9 @@ function initNavPedalboard(userRole) {
                         width="8" height="8" viewBox="0 0 16 16" aria-hidden="true">
                         <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>`;
-                
+
                 btn.addEventListener('click', async () => {
+                    // Step 1: chiedi rotazione
                     const { value: rotationStr } = await Swal.fire({
                         title: 'Enter rotation',
                         input: 'select',
@@ -135,6 +252,7 @@ function initNavPedalboard(userRole) {
                     if (rotationStr === undefined) return;
                     const rotation = parseInt(rotationStr, 10);
 
+                    // Step 2: chiedi row
                     const { value: rowStr } = await Swal.fire({
                         title: 'Enter row number',
                         input: 'number',
@@ -145,9 +263,25 @@ function initNavPedalboard(userRole) {
                     if (rowStr === undefined) return;
                     const row = parseInt(rowStr, 10);
 
+                    // Step 3: assicurati che il pedale sia nel catalogo locale
+                    let pedalData = window.catalog.find(p => p._id === pedal._id);
+                    if (!pedalData) {
+                        const res = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=${encodeURIComponent(pedal._id)}`);
+                        const result = await res.json();
+                        if (result?.docs?.length > 0) {
+                            pedalData = result.docs[0];
+                            window.catalog.push(pedalData);
+                        } else {
+                            console.error("Pedal not found on server:", pedal._id);
+                            return;
+                        }
+                    }
+
+                    // Step 4: aggiungi al pedalboard e renderizza
                     window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation, row });
                     renderPedalboard();
-                    $(this).val('');
+
+                    $("#pedalFilterInput").val('');
                     dropdownContainer.innerHTML = '';
                     dropdownContainer.style.display = 'none';
                 });
@@ -157,12 +291,17 @@ function initNavPedalboard(userRole) {
             });
 
             dropdownContainer.style.display = 'block';
+            positionDropdown();
+
+            // Aggiorna posizione on scroll e resize
+            window.addEventListener('scroll', positionDropdown);
+            window.addEventListener('resize', positionDropdown);
 
         } catch (err) {
             console.error("Search error:", err);
         }
 
-    }, 300);
+    }, 300); // debounce
 });
 
 
