@@ -316,62 +316,56 @@ document.addEventListener('DOMContentLoaded', () => {
 <button id="printPresetBtn" class="bx--btn bx--btn--primary">Stampa Preset</button>
 
 <script>
-document.getElementById('printPresetBtn').addEventListener('click', function() {
-    // Crea uno style temporaneo per la stampa
-    const printStyle = document.createElement('style');
-    printStyle.id = 'printPresetStyle';
-    printStyle.textContent = `
-        @media print {
-            @page {
-                size: A3 landscape; /* dimensione e orientamento */
-                margin: 1cm;
-            }
-            body * {
-                visibility: hidden; /* nasconde tutto */
-            }
-            #preset, #preset * {
-                visibility: visible; /* mostra solo preset */
-            }
-            #preset {
-                position: absolute;
-                top: 50px;
-                left: 50px;
-                background: #ffffff;
-            }
-            #printLogo {
-                display: block;
-                width: 200px;
-                margin-bottom: 20px;
-                visibility: visible;
-                position: absolute;
-                top: 10px;
-                left: 50px;
-            }
-        }
-    `;
-    document.head.appendChild(printStyle);
+function printDivAsPDF(divId) {
+    const div = document.getElementById(divId);
+    if (!div) return alert("Div non trovato");
 
-    // Aggiungi logo temporaneo
-    let logo = document.getElementById('printLogo');
-    if (!logo) {
-        logo = document.createElement('img');
-        logo.id = 'printLogo';
-        logo.src = 'logo.png';
-        logo.alt = 'PedalPlex Logo';
-        document.body.appendChild(logo);
+    // Cattura tutti gli stili <style> e <link rel="stylesheet">
+    const headStyles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+        .map(node => node.outerHTML)
+        .join('\n');
+
+    const printWindow = window.open('', '', 'width=1200,height=800');
+
+    printWindow.document.open();
+    printWindow.document.write(`
+      <html>
+        <head>
+          ${headStyles}
+          <style>
+            @media print {
+              @page {
+                size: A3 landscape;
+                margin: 15mm;
+            }
+              body {
+                -webkit-print-color-adjust: exact; /* Chrome/Safari */
+                print-color-adjust: exact; /* Firefox */
+                margin:0; padding:0;
+                zoom: 1; /* no double-size */
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${div.outerHTML}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+
+    printWindow.onload = function() {
+        printWindow.focus();
+        printWindow.print();
     }
+}
 
-    // Apri finestra di stampa
-    window.print();
-
-    // Rimuovi logo e stile dopo la stampa
-    setTimeout(() => {
-        if (logo) logo.remove();
-        const style = document.getElementById('printPresetStyle');
-        if (style) style.remove();
-    }, 500);
+// Attach to button
+document.getElementById('printPresetBtn').addEventListener('click', () => {
+    printDivAsPDF('preset');
 });
 </script>
+
 
 
 
