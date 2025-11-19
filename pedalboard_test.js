@@ -62,35 +62,10 @@ function setupPedalboardDropdownAndRender() {
 
 
 
-// Fetch pedali by ids
-async function loadPedalsByIds(ids) {
-  if (!ids || ids.length === 0) return;
-  try {
-    const token = localStorage.getItem('authToken') || '';
-    const response = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token ? 'Bearer ' + token : ''
-      },
-      body: JSON.stringify({ pedal_ids: ids })
-    });
-    const data = await response.json();
-    if (!Array.isArray(data)) throw new Error('Invalid pedal data');
 
-    window.catalog = data; // update catalog only with needed pedali
-  } catch (err) {
-    console.error('Error fetching pedals:', err);
-    Swal.fire({
-      icon: 'error',
-      title: 'Error loading pedals',
-      text: err.message || 'Failed to fetch pedals'
-    });
-  }
-}
-
-
-
+// ------------------------
+// --- INIT PEDALBOARD ----
+// ------------------------
 function initPedalboard(userRole) {
   const resultsDiv = document.getElementById("pedalboard");
   const userId = window.currentUser?.userid;
@@ -99,64 +74,51 @@ function initPedalboard(userRole) {
   window.pedalboard = { pedals: [] };
   window.allPedalboards = [];
 
-  // Loader
-  if (resultsDiv) {
-    resultsDiv.innerHTML = `
-      <div class="bx--loading-overlay">
-        <div class="bx--loading" role="status">
-          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-          </svg>
-        </div>
-      </div>`;
-  }
+  if (!resultsDiv) return;
 
-  // ------------------------
-  // --- UTENTE GUEST ------
-  // ------------------------
+  // Loader
+  resultsDiv.innerHTML = `
+    <div class="bx--loading-overlay">
+      <div class="bx--loading" role="status">
+        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+        </svg>
+      </div>
+    </div>`;
+
+  // UTENTE GUEST
   if (userRole === "guest") {
     const savedBoard = localStorage.getItem("guestPedalboard");
     if (!savedBoard) {
-      if (resultsDiv) resultsDiv.innerHTML = `You don't have any pedalboard yet.<br><br>
+      resultsDiv.innerHTML = `You don't have any pedalboard yet.<br><br>
         <button id="createBtn" class="bx--btn bx--btn--secondary">Create pedalboard</button>`;
       return;
     }
 
-    const guestBoard = JSON.parse(savedBoard);
-    window.allPedalboards = [guestBoard];
-    window.pedalboard = structuredClone(guestBoard);
+    try {
+      const guestBoard = JSON.parse(savedBoard);
+      window.allPedalboards = [guestBoard];
+      window.pedalboard = structuredClone(guestBoard);
 
-    const pedalIds = guestBoard.pedals.map(p => p.pedal_id);
+      const pedalIds = guestBoard.pedals?.map(p => p.pedal_id) || [];
 
-    if (pedalIds.length === 0) {
-      window.catalog = [];
-      renderPedalboard();
-      return;
+      if (pedalIds.length === 0) {
+        window.catalog = [];
+        renderPedalboard();
+        return;
+      }
+
+      fetchPedalsByIds(pedalIds);
+    } catch (e) {
+      console.error("Error parsing guest pedalboard:", e);
+      resultsDiv.innerHTML = `<p style="color:red;">Error loading guest pedalboard</p>`;
     }
-
-    // Fetch pedal details
-    fetch('GET_PEDALS_BY_IDS.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ids: pedalIds })
-    })
-    .then(res => res.json())
-    .then(pedals => {
-      window.catalog = pedals;
-      renderPedalboard();
-    })
-    .catch(err => {
-      console.error("Error loading pedals for guest:", err);
-      if (resultsDiv) resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
-    });
 
     return;
   }
 
-  // ------------------------
-  // --- UTENTE LOGGATO ----
-  // ------------------------
+  // UTENTE LOGGATO
   fetch('GET_PEDALBOARD.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -164,19 +126,15 @@ function initPedalboard(userRole) {
   })
   .then(res => res.json())
   .then(data => {
-    if (!data.docs || data.docs.length === 0) {
-      if (resultsDiv) resultsDiv.innerHTML = `You don't have any pedalboard yet.<br><br>
+    if (!data?.docs || data.docs.length === 0) {
+      resultsDiv.innerHTML = `You don't have any pedalboard yet.<br><br>
         <button id="createBtn" class="bx--btn bx--btn--secondary">Create pedalboard</button>`;
       return;
     }
 
-    // Salva in memoria
     window.allPedalboards = data.docs;
-    const selectedIndex = 0; // o logica localStorage per lastPedalboardId
-    window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
-
-    // Ottieni tutti i pedal IDs
-    const pedalIds = window.pedalboard.pedals.map(p => p.pedal_id);
+    window.pedalboard = structuredClone(window.allPedalboards[0]);
+    const pedalIds = window.pedalboard.pedals?.map(p => p.pedal_id) || [];
 
     if (pedalIds.length === 0) {
       window.catalog = [];
@@ -184,27 +142,34 @@ function initPedalboard(userRole) {
       return;
     }
 
-    // Fetch pedal details
-    return fetch('GET_PEDALS_BY_IDS.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ids: pedalIds })
-    });
-  })
-  .then(res => res ? res.json() : [])
-  .then(pedals => {
-    if (pedals && pedals.length > 0) window.catalog = pedals;
-    renderPedalboard();
+    fetchPedalsByIds(pedalIds);
   })
   .catch(err => {
     console.error("Error loading pedalboards:", err);
-    if (resultsDiv) resultsDiv.innerHTML = `<p style="color:red;">Error loading pedalboards: ${err}</p>`;
+    resultsDiv.innerHTML = `<p style="color:red;">Error loading pedalboards: ${err}</p>`;
   });
 }
 
-
-
-
+// ------------------------
+// --- FETCH PEDALS BY IDS -
+// ------------------------
+function fetchPedalsByIds(ids) {
+  fetch('GET_PEDALS_BY_IDS.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids })
+  })
+  .then(res => res.json())
+  .then(pedals => {
+    window.catalog = pedals || [];
+    setupPedalboardDropdownAndRender();
+  })
+  .catch(err => {
+    console.error("Error fetching pedals by IDs:", err);
+    const resultsDiv = document.getElementById("pedalboard");
+    if (resultsDiv) resultsDiv.innerHTML = `<p style="color:red;">Error fetching pedals</p>`;
+  });
+}
 
 
 
