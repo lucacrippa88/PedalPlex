@@ -85,7 +85,7 @@ function initNavPedalboard(userRole) {
         console.log("Searching server for:", query);
 
         try {
-            const response = await fetch(`/GET_CATALOG.php?search=${encodeURIComponent(query)}`, {
+            const response = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?search=${encodeURIComponent(query)}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
