@@ -327,86 +327,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 <script>
-document.getElementById("downloadPresetPDF").addEventListener("click", exportPresetPDF);
+document.getElementById("downloadPresetPDF").addEventListener("click", exportPresetPNG);
 
-async function exportPresetPDF() {
+async function exportPresetPNG() {
   const target = document.querySelector("#preset");
   if (!target) {
-    console.error("❌ #preset non trovato");
+    alert("Div #preset non trovato");
     return;
   }
 
-  // --- 1) Clonazione DOM fedele ---
+  // wrapper invisibile per Safari
   const clone = target.cloneNode(true);
+  const w = document.createElement("div");
+  w.style.position = "fixed";
+  w.style.left = "-99999px";
+  w.style.top = "0";
+  w.style.background = "white";
+  w.style.padding = "40px";
+  w.appendChild(clone);
+  document.body.appendChild(w);
 
-  const wrapper = document.createElement("div");
-  wrapper.style.position = "fixed";
-  wrapper.style.left = "-99999px";
-  wrapper.style.top = "0";
-  wrapper.style.background = "white";
-  wrapper.style.padding = "40px";
-  wrapper.style.zIndex = "-1";
-  wrapper.appendChild(clone);
-  document.body.appendChild(wrapper);
-
-  // --- 2) Copia TUTTI gli stili computati ---
-  function copyStyles(source, dest) {
-    const computed = window.getComputedStyle(source);
-    for (let prop of computed) {
-      try {
-        dest.style[prop] = computed.getPropertyValue(prop);
-      } catch (e) {}
+  // copia stili (necessario per Safari)
+  function copyStyles(src, dst) {
+    const cs = getComputedStyle(src);
+    for (let p of cs) {
+      try { dst.style[p] = cs.getPropertyValue(p); } catch (e) {}
     }
   }
-
-  function deepCopyStyles(srcNode, dstNode) {
+  (function applyStyles(srcNode, dstNode) {
     copyStyles(srcNode, dstNode);
-
     const srcChildren = srcNode.children;
     const dstChildren = dstNode.children;
-
     for (let i = 0; i < srcChildren.length; i++) {
-      deepCopyStyles(srcChildren[i], dstChildren[i]);
+      applyStyles(srcChildren[i], dstChildren[i]);
     }
-  }
+  })(target, clone);
 
-  deepCopyStyles(target, clone);
-
-  // --- 3) Fix Safari ---
-  wrapper.querySelectorAll('input[type="range"]').forEach(r => {
-    r.style.webkitAppearance = "none";
-    r.style.appearance = "none";
-    r.style.overflow = "visible";
-  });
-
-  // --- 4) Render html2canvas (NO foreignObject = FIX Safari) ---
+  // render
   const canvas = await html2canvas(clone, {
     backgroundColor: "#ffffff",
-    scale: window.devicePixelRatio * 2,
+    scale: window.devicePixelRatio * 2, // super HD
     useCORS: true,
-    allowTaint: false,
     foreignObjectRendering: false,
-    logging: false
   });
 
-  document.body.removeChild(wrapper);
+  document.body.removeChild(w);
 
-  // --- 5) Crea PDF centrato e proporzionato ---
-  const imgData = canvas.toDataURL("image/png");
-  const pdf = new jsPDF("p", "mm", "a4");
-
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
-
-  const imgWidth = pageWidth - 20;
-  const imgRatio = canvas.height / canvas.width;
-  const imgHeight = imgWidth * imgRatio;
-
-  const yPos = (pageHeight - imgHeight) / 2;
-
-  pdf.addImage(imgData, "PNG", 10, yPos, imgWidth, imgHeight, undefined, "FAST");
-  pdf.save("preset.pdf");
+  // salva PNG
+  const link = document.createElement("a");
+  link.download = "preset.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
 }
+
 </script>
 
 
