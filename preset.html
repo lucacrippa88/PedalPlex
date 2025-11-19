@@ -333,22 +333,32 @@ function printDivAsPDF(divId) {
         <head>
           ${headStyles}
           <style>
+            body {
+                background: #ffffff;  /* sfondo bianco */
+                margin: 0;
+                padding: 0;
+            }
+            .print-wrapper {
+                background: #ffffff;  /* sfondo del contenuto */
+                padding: 20px;        /* margine bianco attorno */
+                box-sizing: border-box;
+            }
             @media print {
               @page {
                 size: A3 landscape;
                 margin: 15mm;
-            }
+              }
               body {
                 -webkit-print-color-adjust: exact; /* Chrome/Safari */
                 print-color-adjust: exact; /* Firefox */
-                margin:0; padding:0;
-                zoom: 1; /* no double-size */
               }
             }
           </style>
         </head>
         <body>
-          ${div.outerHTML}
+          <div class="print-wrapper">
+            ${div.outerHTML}
+          </div>
         </body>
       </html>
     `);
@@ -365,6 +375,7 @@ document.getElementById('printPresetBtn').addEventListener('click', () => {
     printDivAsPDF('preset');
 });
 </script>
+
 
 
 
