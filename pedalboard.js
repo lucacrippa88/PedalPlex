@@ -1094,6 +1094,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
 
                   if (window.allPedalboards.length > 0) {
                     selectedBoardIndex = 0;
+                    setupPedalboardDropdownAndRender();
                     window.pedalboard = structuredClone(window.allPedalboards[0]);
                     renderPedalboard(window.pedalboard);
                     dropdown.selectedIndex = 0;
