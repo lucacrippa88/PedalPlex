@@ -66,35 +66,195 @@ function initNavPedalboard(userRole) {
   });
 
 
-$("#pedalFilterInput").on("keydown", async function (e) {
-    if (e.key !== "Enter") return; // Cerca solo se l'utente preme Invio
-    e.preventDefault();
+// $("#pedalFilterInput").on("keydown", async function (e) {
+//     if (e.key !== "Enter") return; // Cerca solo se l'utente preme Invio
+//     e.preventDefault();
 
+//     const query = $(this).val().trim().toLowerCase();
+//     if (!query) return;
+
+//     // --- setup dropdown container ---
+//     let dropdownContainer = document.getElementById('pedalAddDropdownContainer');
+//     if (!dropdownContainer) {
+//         dropdownContainer = document.createElement('div');
+//         dropdownContainer.id = 'pedalAddDropdownContainer';
+//         dropdownContainer.style.position = 'absolute';
+//         dropdownContainer.style.background = 'white';
+//         dropdownContainer.style.border = '1px solid #ccc';
+//         dropdownContainer.style.borderRadius = '4px';
+//         dropdownContainer.style.maxHeight = '200px';
+//         dropdownContainer.style.overflowY = 'auto';
+//         dropdownContainer.style.display = 'none';
+//         dropdownContainer.style.zIndex = 3000; // Modifica richiesta
+//         document.body.appendChild(dropdownContainer);
+//     }
+
+//     function positionDropdown() {
+//         const input = document.getElementById('pedalFilterInput');
+//         const rect = input.getBoundingClientRect();
+//         dropdownContainer.style.top = window.scrollY + rect.bottom + 'px';
+//         dropdownContainer.style.left = window.scrollX + rect.left + 'px';
+//         dropdownContainer.style.width = rect.width + 'px';
+//     }
+
+//     // Mostra spinner loader Carbon
+//     dropdownContainer.innerHTML = `
+//         <div style="padding: 10px; display: flex; justify-content: center;">
+//             <div class="bx--loading bx--loading--small bx--loading--active" role="alert" aria-live="assertive" aria-label="Active loading indicator">
+//                 <svg class="bx--loading__svg" viewBox="0 0 100 100">
+//                     <circle cx="50" cy="50" r="44" stroke-width="8" />
+//                 </svg>
+//             </div>
+//         </div>
+//     `;
+//     dropdownContainer.style.display = 'block';
+//     positionDropdown();
+
+//     try {
+//         const response = await fetch(
+//             `https://www.cineteatrosanluigi.it/plex/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`
+//         );
+//         const data = await response.json();
+//         dropdownContainer.innerHTML = ''; // rimuovi spinner
+
+//         if (!data || !Array.isArray(data) || data.length === 0) {
+//             const noResult = document.createElement('div');
+//             noResult.textContent = 'No pedals found';
+//             noResult.style.padding = '6px';
+//             dropdownContainer.appendChild(noResult);
+//             positionDropdown();
+//             return;
+//         }
+
+//         // --- populate dropdown ---
+//         data.forEach(pedal => {
+//             const item = document.createElement('div');
+//             item.style.display = 'flex';
+//             item.style.justifyContent = 'space-between';
+//             item.style.alignItems = 'center';
+//             item.style.padding = '6px';
+
+//             const label = document.createElement('span');
+//             label.textContent = pedal._id;
+//             label.style.color = 'black';
+//             item.appendChild(label);
+
+//             const btn = document.createElement('button');
+//             btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm');
+//             btn.style.padding = '2px 6px';
+//             btn.innerHTML = `
+//                 <svg focusable="false" preserveAspectRatio="xMidYMid meet" 
+//                     xmlns="http://www.w3.org/2000/svg" fill="currentColor" 
+//                     width="8" height="8" viewBox="0 0 16 16" aria-hidden="true">
+//                     <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+//                 </svg>`;
+
+//             btn.addEventListener('click', async () => {
+//                 const { value: rotationStr } = await Swal.fire({
+//                     title: 'Enter rotation',
+//                     input: 'select',
+//                     inputOptions: {0:'0°',90:'90°',180:'180°',270:'270°'},
+//                     inputValue: '0',
+//                     showCancelButton: true
+//                 });
+//                 if (rotationStr === undefined) return;
+//                 const rotation = parseInt(rotationStr, 10);
+
+//                 const { value: rowStr } = await Swal.fire({
+//                     title: 'Enter row number',
+//                     input: 'number',
+//                     inputAttributes: { min: 1, step: 1 },
+//                     inputValue: '1',
+//                     showCancelButton: true
+//                 });
+//                 if (rowStr === undefined) return;
+//                 const row = parseInt(rowStr, 10);
+
+//                 // Aggiungi pedale al catalogo locale se mancante
+//                 let pedalData = window.catalog.find(p => p._id === pedal._id);
+//                 if (!pedalData) {
+//                     const res = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=${encodeURIComponent(pedal._id)}`);
+//                     const result = await res.json();
+//                     if (result?.docs?.length > 0) {
+//                         pedalData = result.docs[0];
+//                         window.catalog.push(pedalData);
+//                     } else {
+//                         console.error("Pedal not found on server:", pedal._id);
+//                         return;
+//                     }
+//                 }
+
+//                 window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation, row });
+//                 renderPedalboard();
+
+//                 $("#pedalFilterInput").val('');
+//                 dropdownContainer.innerHTML = '';
+//                 dropdownContainer.style.display = 'none';
+//             });
+
+//             item.appendChild(btn);
+//             dropdownContainer.appendChild(item);
+//         });
+
+//         dropdownContainer.style.display = 'block';
+//         positionDropdown();
+//         window.addEventListener('scroll', positionDropdown);
+//         window.addEventListener('resize', positionDropdown);
+
+//     } catch (err) {
+//         console.error("Search error:", err);
+//         dropdownContainer.innerHTML = '';
+//         dropdownContainer.style.display = 'none';
+//     }
+// });
+
+// // Nascondi dropdown se il campo viene svuotato
+// $("#pedalFilterInput").on("input", function () {
+//     const dropdown = document.getElementById("pedalAddDropdownContainer");
+//     if (!dropdown) return;
+//     if ($(this).val().trim() === "") {
+//         dropdown.style.display = "none";
+//     }
+// });
+
+// // Nascondi dropdown cliccando fuori
+// document.addEventListener("click", function (e) {
+//     const input = document.getElementById("pedalFilterInput");
+//     const dropdown = document.getElementById("pedalAddDropdownContainer");
+
+//     if (!dropdown || dropdown.style.display === "none") return;
+
+//     const clickedInsideInput = input.contains(e.target);
+//     const clickedInsideDropdown = dropdown.contains(e.target);
+
+//     if (!clickedInsideInput && !clickedInsideDropdown) {
+//         dropdown.style.display = "none";
+//     }
+// });
+
+// --- Setup debounce helper ---
+function debounce(func, wait) {
+    let timeout;
+    return function() {
+        const context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            func.apply(context, args);
+        }, wait);
+    };
+}
+
+$("#pedalFilterInput").attr("placeholder", "Search pedals..."); // placeholder
+
+$("#pedalFilterInput").on("input", debounce(async function() {
     const query = $(this).val().trim().toLowerCase();
-    if (!query) return;
+    const dropdownContainer = document.getElementById('pedalAddDropdownContainer');
+    if (!dropdownContainer) return;
 
-    // --- setup dropdown container ---
-    let dropdownContainer = document.getElementById('pedalAddDropdownContainer');
-    if (!dropdownContainer) {
-        dropdownContainer = document.createElement('div');
-        dropdownContainer.id = 'pedalAddDropdownContainer';
-        dropdownContainer.style.position = 'absolute';
-        dropdownContainer.style.background = 'white';
-        dropdownContainer.style.border = '1px solid #ccc';
-        dropdownContainer.style.borderRadius = '4px';
-        dropdownContainer.style.maxHeight = '200px';
-        dropdownContainer.style.overflowY = 'auto';
+    // Se campo vuoto, nascondi dropdown e termina
+    if (!query) {
         dropdownContainer.style.display = 'none';
-        dropdownContainer.style.zIndex = 3000; // Modifica richiesta
-        document.body.appendChild(dropdownContainer);
-    }
-
-    function positionDropdown() {
-        const input = document.getElementById('pedalFilterInput');
-        const rect = input.getBoundingClientRect();
-        dropdownContainer.style.top = window.scrollY + rect.bottom + 'px';
-        dropdownContainer.style.left = window.scrollX + rect.left + 'px';
-        dropdownContainer.style.width = rect.width + 'px';
+        return;
     }
 
     // Mostra spinner loader Carbon
@@ -111,14 +271,7 @@ $("#pedalFilterInput").on("keydown", async function (e) {
     positionDropdown();
 
     try {
-        // const response = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`, {
-        //     method: "GET",
-        //     headers: { "Content-Type": "application/json" }
-        // });
-        // const data = await response.json();
-        const response = await fetch(
-            `https://www.cineteatrosanluigi.it/plex/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`
-        );
+        const response = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`);
         const data = await response.json();
         dropdownContainer.innerHTML = ''; // rimuovi spinner
 
@@ -175,7 +328,6 @@ $("#pedalFilterInput").on("keydown", async function (e) {
                 if (rowStr === undefined) return;
                 const row = parseInt(rowStr, 10);
 
-                // Aggiungi pedale al catalogo locale se mancante
                 let pedalData = window.catalog.find(p => p._id === pedal._id);
                 if (!pedalData) {
                     const res = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=${encodeURIComponent(pedal._id)}`);
@@ -193,7 +345,6 @@ $("#pedalFilterInput").on("keydown", async function (e) {
                 renderPedalboard();
 
                 $("#pedalFilterInput").val('');
-                dropdownContainer.innerHTML = '';
                 dropdownContainer.style.display = 'none';
             });
 
@@ -203,16 +354,41 @@ $("#pedalFilterInput").on("keydown", async function (e) {
 
         dropdownContainer.style.display = 'block';
         positionDropdown();
-        window.addEventListener('scroll', positionDropdown);
-        window.addEventListener('resize', positionDropdown);
-
     } catch (err) {
         console.error("Search error:", err);
-        dropdownContainer.innerHTML = '';
         dropdownContainer.style.display = 'none';
+    }
+}, 300)); // 300ms debounce
+
+// Nascondi dropdown se clicchi fuori
+document.addEventListener("click", function (e) {
+    const input = document.getElementById("pedalFilterInput");
+    const dropdown = document.getElementById("pedalAddDropdownContainer");
+
+    if (!dropdown || dropdown.style.display === "none") return;
+
+    const clickedInsideInput = input.contains(e.target);
+    const clickedInsideDropdown = dropdown.contains(e.target);
+
+    if (!clickedInsideInput && !clickedInsideDropdown) {
+        dropdown.style.display = "none";
     }
 });
 
+// Posizionamento dropdown
+function positionDropdown() {
+    const input = document.getElementById('pedalFilterInput');
+    const dropdown = document.getElementById('pedalAddDropdownContainer');
+    if (!dropdown) return;
+    const rect = input.getBoundingClientRect();
+    dropdown.style.top = window.scrollY + rect.bottom + 'px';
+    dropdown.style.left = window.scrollX + rect.left + 'px';
+    dropdown.style.width = rect.width + 'px';
+}
+
+// Aggiorna posizione on scroll/resize
+window.addEventListener('scroll', positionDropdown);
+window.addEventListener('resize', positionDropdown);
 
 
 
