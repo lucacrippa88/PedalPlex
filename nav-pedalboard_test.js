@@ -117,7 +117,7 @@ $("#pedalFilterInput").on("keydown", async function (e) {
         // });
         // const data = await response.json();
         const response = await fetch(
-            `https://www.cineteatrosanluigi.it/plex/get_catalog_ids.php?search=${encodeURIComponent(query)}`
+            `https://www.cineteatrosanluigi.it/plex/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`
         );
         const data = await response.json();
         dropdownContainer.innerHTML = ''; // rimuovi spinner
