@@ -1,21 +1,20 @@
 // === nav-catalog + catalog lazy loading ===
 
-// === GLOBALS ===
-let catalogData = [];      // tutti i pedali scaricati finora
-let displayedCount = 0;    // quanti pedali sono renderizzati sullo schermo
-const PAGE_SIZE = 200;      // quanti pedali per pagina (lazy)
-let currentFilter = 'all';
-let currentSearch = '';
+// --- GLOBAL STATE ---
+let catalogMeta = null;     // metadata globali (totali veri da server)
+let catalogData = [];       // pedali realmente scaricati (lazy)
+let displayedCount = 0;     // quanti pedali sono stati renderizzati
+let lazyPage = 0;           // pagina lazy per GET_CATALOG_LAZY.php
+let hasMore = true;         // se il server dice "continua c'è ancora roba"
 
-let lazyPage = 0;          // pagina attuale del lazy loader
-let hasMore = true;        // se il server ha ancora pagine
-let isLoading = false;     // evita duplicati durante scroll
+const PAGE_SIZE = 200;      // QUANTI pedali scaricare per pagina
+let currentFilter = 'all';  // filtro corrente (all / draft / private / ecc.)
+let currentSearch = '';     // testo della ricerca local client-side
 
-
-// === NAV CATALOG HEADER ===
+//------------------------------------------------------------
+// 1. INIT NAV BAR
+//------------------------------------------------------------
 function initNavCatalog(userRole) {
-  const isAdmin = (userRole === "admin");
-
   const navHtml = `
   <header style="display: flex; align-items: center; justify-content: space-between;">
     <div style="display: flex; align-items: center; gap: 1rem;">
@@ -51,7 +50,7 @@ function initNavCatalog(userRole) {
   `;
   $("body").prepend(navHtml);
 
-  // toggle search input
+  // toggle search visibility
   $("#toggleFilterBtn").on("click", function () {
     const input = $("#pedalFilterInput");
     if (input.is(":visible")) input.hide().val("");
@@ -63,158 +62,183 @@ function initNavCatalog(userRole) {
     displayedCount = 0;
     $("#catalog").empty();
     renderNextBatch();
-    updatePedalCounts();
+    updatePedalCounts(currentFilter);
   });
 }
 
+//------------------------------------------------------------
+// 2. FETCH METADATA (contatori globali reali)
+//------------------------------------------------------------
+function fetchCatalogMeta(userRole) {
+  const token = localStorage.getItem('authToken');
+  const roleParam = userRole === "guest" ? "guest" : userRole;
+  const usernameParam = window.currentUser?.username || "";
 
-// === FETCH LAZY (pagina per pagina) ===
+  return fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_META.php?role=${roleParam}&username=${usernameParam}`, {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+  .then(res => res.json())
+  .then(meta => {
+    catalogMeta = meta;        // memorizza metadata globali veri
+    updatePedalCounts();       // mostra subito i contatori corretti
+  })
+  .catch(err => {
+    console.error("Error fetching meta:", err);
+    catalogMeta = null;
+  });
+}
+
+//------------------------------------------------------------
+// 3. FETCH PEDALI (LAZY PAGINATO)
+//------------------------------------------------------------
 function fetchCatalogLazy(userRole) {
-  if (isLoading || !hasMore) return Promise.resolve();
-  isLoading = true;
+  if (!hasMore) return Promise.resolve();
 
   const token = localStorage.getItem('authToken');
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
 
-  return fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_LAZY.php?page=${lazyPage}&limit=${PAGE_SIZE}&role=${roleParam}&username=${usernameParam}`, {
+  return fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_LAZY.php?role=${roleParam}&username=${usernameParam}&page=${lazyPage}&pageSize=${PAGE_SIZE}&filter=${currentFilter}`, {
     headers: { 'Authorization': 'Bearer ' + token }
   })
   .then(res => res.json())
   .then(result => {
 
     if (!result || !Array.isArray(result.items)) {
-      console.error("Invalid lazy result", result);
-      isLoading = false;
+      console.error("Invalid response from GET_CATALOG_LAZY.php", result);
       return;
     }
 
-    // Aggiungi nuovi pedali al dataset globale
+    // aggiungi i nuovi pedali scaricati
     catalogData = catalogData.concat(result.items);
 
-    // Ordina sempre tutto
+    // ordina globalmente
     catalogData.sort((a,b)=> (a._id || "").localeCompare(b._id || ""));
 
-    // Renderizza un altro blocco se serve
-    renderNextBatch();
-
-    // Aggiorna lazy loader
     hasMore = !!result.hasMore;
     lazyPage++;
-    isLoading = false;
 
-    updatePedalCounts();
-
+    renderNextBatch();   // renderizza la parte visiva
   })
-  .catch(err => {
-    console.error("Lazy loading error:", err);
-    isLoading = false;
-  });
+  .catch(err => console.error("Error fetching pedals:", err));
 }
 
-
-// === RENDER BATCH ===
+//------------------------------------------------------------
+// 4. RENDER BATCH (client-side)
+//------------------------------------------------------------
 function renderNextBatch() {
   const resultsDiv = $("#catalog");
-
   const filtered = catalogData.filter(p => {
-    let keep = true;
+
+    let ok = true;
+
+    // filtro server-side già fatto: client-side è solo una sicurezza
     if (currentFilter !== 'all') {
-      const pub = (p.published||'draft').toLowerCase();
-      const author = (p.author||'').toLowerCase();
-      const currentUsername = (window.currentUser?.username || '').toLowerCase();
-      switch(currentFilter){
-        case 'draft': keep = pub==='draft'; break;
-        case 'private': keep = pub==='private'; break;
-        case 'reviewing': keep = pub==='reviewing'; break;
-        case 'publicByMe': keep = pub==='public' && author===currentUsername; break;
-        case 'user': keep = pub==='public' && author!=='admin'; break;
-      }
+      const pub = (p.published || '').toLowerCase();
+      const author = (p.author || '').toLowerCase();
+      const me = (window.currentUser?.username || '').toLowerCase();
+
+      if (currentFilter === 'draft') ok = pub === 'draft';
+      else if (currentFilter === 'private') ok = pub === 'private';
+      else if (currentFilter === 'reviewing') ok = pub === 'reviewing';
+      else if (currentFilter === 'publicByMe') ok = pub === 'public' && author === me;
+      else if (currentFilter === 'user') ok = pub === 'public' && author !== 'admin';
     }
-    if (currentSearch) keep = keep && (p._id||p.id||'').toLowerCase().includes(currentSearch);
-    return keep;
+
+    if (currentSearch) {
+      ok = ok && (p._id || "").toLowerCase().includes(currentSearch);
+    }
+
+    return ok;
   });
 
-  const nextBatch = filtered.slice(displayedCount, displayedCount + PAGE_SIZE);
-  nextBatch.forEach(pedal => {
-    const $pedalDiv = renderPedal(pedal, window.currentUser?.role || 'guest', false);
-    resultsDiv.append($pedalDiv);
+  const next = filtered.slice(displayedCount, displayedCount + PAGE_SIZE);
+
+  next.forEach(pedal => {
+    const div = renderPedal(pedal, window.currentUser?.role || 'guest', false);
+    resultsDiv.append(div);
   });
 
-  displayedCount += nextBatch.length;
+  displayedCount += next.length;
 }
 
-
-// === INFINITE SCROLL ===
+//------------------------------------------------------------
+// 5. INFINITE SCROLL
+//------------------------------------------------------------
 function setupInfiniteScroll(userRole) {
   $(window).on("scroll", function() {
+    if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200) {
 
-    const nearBottom = $(window).scrollTop() + $(window).height() >= $(document).height() - 300;
-
-    if (!nearBottom) return;
-
-    if (displayedCount < catalogData.length) {
-      // Ho ancora pedali locali da renderizzare
-      renderNextBatch();
-      return;
+      // serve nuova pagina?
+      if (displayedCount >= catalogData.length) {
+        if (hasMore) {
+          fetchCatalogLazy(userRole);
+        }
+      } else {
+        renderNextBatch();
+      }
     }
-
-    // Non ho più pedali locali → carico una nuova pagina dal server
-    fetchCatalogLazy(userRole);
   });
 }
 
-
-// === UPDATE COUNTS ===
+//------------------------------------------------------------
+// 6. CONTATORI (USANO SOLO catalogMeta)
+//------------------------------------------------------------
 function updatePedalCounts(activeFilter = null) {
-  const currentUsername = (window.currentUser?.username || '').toLowerCase();
-  const totalAbsolute = catalogData.length;
+  if (!catalogMeta) return;
 
-  const statusCounts = { draft:0, private:0, reviewing:0, publicByMe:0, user:0 };
-  catalogData.forEach(p => {
-    const status = (p.published||'draft').toLowerCase();
-    const author = (p.author||'').toLowerCase();
-    if(statusCounts.hasOwnProperty(status)) statusCounts[status]++;
-    if(status==='public' && author===currentUsername) statusCounts.publicByMe++;
-    if(author && author!=='admin') statusCounts.user++;
-  });
+  let countsHtml = `(All: <span class="status-filter ${activeFilter==='all'?'active-filter':''}" data-filter="all">${catalogMeta.total}</span>`;
 
-  let countsHtml = `(All: <span class="status-filter ${activeFilter==='all'?'active-filter':''}" data-filter="all">${totalAbsolute}</span>`;
-  if(window.currentUser?.role!=='guest') {
-    countsHtml += `, Draft: <span class="status-filter ${activeFilter==='draft'?'active-filter':''}" data-filter="draft">${statusCounts.draft}</span>`;
-    countsHtml += `, Private: <span class="status-filter ${activeFilter==='private'?'active-filter':''}" data-filter="private">${statusCounts.private}</span>`;
-    countsHtml += `, Reviewing: <span class="status-filter ${activeFilter==='reviewing'?'active-filter':''}" data-filter="reviewing">${statusCounts.reviewing}</span>`;
-    countsHtml += `, Public by me: <span class="status-filter ${activeFilter==='publicByMe'?'active-filter':''}" data-filter="publicByMe">${statusCounts.publicByMe}</span>`;
-    if(window.currentUser?.role==='admin') {
-      countsHtml += `, Published by Users: <span class="status-filter ${activeFilter==='user'?'active-filter':''}" data-filter="user">${statusCounts.user}</span>`;
+  if (window.currentUser?.role !== 'guest') {
+    countsHtml += `, Draft: <span class="status-filter ${activeFilter==='draft'?'active-filter':''}" data-filter="draft">${catalogMeta.draft}</span>`;
+    countsHtml += `, Private: <span class="status-filter ${activeFilter==='private'?'active-filter':''}" data-filter="private">${catalogMeta.private}</span>`;
+    countsHtml += `, Reviewing: <span class="status-filter ${activeFilter==='reviewing'?'active-filter':''}" data-filter="reviewing">${catalogMeta.reviewing}</span>`;
+    countsHtml += `, Public by me: <span class="status-filter ${activeFilter==='publicByMe'?'active-filter':''}" data-filter="publicByMe">${catalogMeta.publicByMe}</span>`;
+
+    if (window.currentUser?.role === 'admin') {
+      countsHtml += `, Published by Users: <span class="status-filter ${activeFilter==='user'?'active-filter':''}" data-filter="user">${catalogMeta.userCreated}</span>`;
     }
   }
+
   countsHtml += `)`;
   $("#pedalCount").html(countsHtml);
 
+  // --- click sui contatori ---
   $(".status-filter").off("click").on("click", function(){
     currentFilter = $(this).data("filter");
+
+    // reset completo
+    catalogData = [];
     displayedCount = 0;
+    lazyPage = 0;
+    hasMore = true;
+
     $("#catalog").empty();
-    renderNextBatch();
+
+    fetchCatalogLazy(window.currentUser?.role || "guest").then(() => {
+      renderNextBatch();
+    });
+
     updatePedalCounts(currentFilter);
   });
 }
 
-
-// === INIT CATALOG ===
+//------------------------------------------------------------
+// 7. INIT CATALOG (chiamato dopo metadata!)
+//------------------------------------------------------------
 function initCatalog(userRole) {
-  const resultsDiv = $("#catalog");
-  if(resultsDiv.length===0) $("body").append('<div id="catalog"></div>');
-  resultsDiv.html('<div class="bx--loading-overlay">Loading...</div>');
+  if ($("#catalog").length === 0) $("body").append('<div id="catalog"></div>');
 
-  fetchCatalogLazy(userRole).then(()=> {
+  $("#catalog").html('<div class="bx--loading-overlay">Loading...</div>');
+
+  fetchCatalogLazy(userRole).then(() => {
     setupInfiniteScroll(userRole);
   });
 }
 
-
-// === CSS inject ===
+//------------------------------------------------------------
+// CSS (solo per contatori)
+//------------------------------------------------------------
 const style = document.createElement("style");
 style.textContent = `
 .status-filter { cursor:pointer; text-decoration: underline; color:#ddd; }
