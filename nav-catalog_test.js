@@ -347,7 +347,8 @@ async function initCatalog(userRole) {
                 headers: {'Content-Type':'application/json'},
                 body: JSON.stringify({ids: batchIds})
             });
-            const details = await res.json(); // array con dettagli completi
+            const detailsRes = await res.json();
+            const details = detailsRes.docs || [];
 
             // Aggiorna i pedali già renderizzati
             details.forEach(pedal => updatePedalDetails(pedal));
