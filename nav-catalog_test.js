@@ -290,97 +290,31 @@ document.head.appendChild(style);
 //   });
    
 // }
+function initCatalog(userRole) {
+    const resultsDiv = $("#catalog");
+    resultsDiv.empty();
 
-async function initCatalog(userRole) {
+    const evtSource = new EventSource("https://www.cineteatrosanluigi.it/plex/GET_CATALOG_STREAM.php");
 
-  const resultsDiv = document.getElementById("catalog");
+    let count = 0;
 
-  resultsDiv.innerHTML = `
-      <div id="catalog-loader" class="bx--loading-overlay">
-        <div class="bx--loading" role="status">
-          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-          </svg>
-        </div>     
-      </div>`;
+    evtSource.onmessage = (e) => {
+        const pedal = JSON.parse(e.data);
 
-  const loaderEl = document.getElementById("catalog-loader");
-
-  const roleParam = userRole === "guest" ? "guest" : userRole;
-  const usernameParam = window.currentUser?.username || "";
-  const token = localStorage.getItem("authToken");
-
-  console.log("STREAM → Avvio connessione…");
-
-  const response = await fetch(
-    `https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`,
-    { headers: { "Authorization": "Bearer " + token } }
-  );
-
-  if (!response.ok) {
-    resultsDiv.innerHTML = `<p style="color:red;">Error loading catalog</p>`;
-    return;
-  }
-
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-
-  // Rimuovi spinner SUBITO
-  loaderEl.remove();
-
-  let pedalCount = 0;
-
-  console.log("STREAM → Connessione ok, inizio lettura…");
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    buffer += decoder.decode(value, { stream: true });
-
-    let boundary = buffer.lastIndexOf("}");
-    if (boundary === -1) continue;
-
-    const chunk = buffer.slice(0, boundary + 1);
-    buffer = buffer.slice(boundary + 1);
-
-    const objects = chunk
-      .replace(/^\[/, "")
-      .replace(/\]$/, "")
-      .split("},");
-
-    objects.forEach(obj => {
-      obj = obj.trim();
-      if (!obj) return;
-
-      if (!obj.endsWith("}")) obj += "}";
-
-      try {
-        const pedal = JSON.parse(obj);
-        pedalCount++;
-
-        // 🟦 LOG ogni 50 pedali
-        if (pedalCount % 50 === 0) {
-          console.log(`STREAM → Arrivati ${pedalCount} pedali…`);
-        }
+        count++;
+        if (count % 50 === 0) console.log("Arrivati:", count);
 
         const $pedalDiv = renderPedal(pedal, userRole);
-        $pedalDiv.attr("data-author", pedal.author || "");
-        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-        $(resultsDiv).append($pedalDiv);
+        resultsDiv.append($pedalDiv);
+    };
 
-      } catch (e) {
-        // JSON incompleto → ignoriamo
-      }
+    evtSource.addEventListener("end", () => {
+        evtSource.close();
+        console.log("Stream completato. Totale:", count);
+        $("#pedalCount").text(count + " gears");
+        updatePedalCounts();
     });
-  }
-
-  console.log(`STREAM → Fine. Totale pedali ricevuti: ${pedalCount}`);
-
-  updatePedalCounts();
-  if (userRole !== "guest") setupEditPedalHandler();
 }
+
 
 
