@@ -310,7 +310,7 @@ async function initCatalog(userRole) {
 
     async function loadNextChunk() {
         const url = new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG_PAGED.php");
-        url.searchParams.set("limit", 100);
+        url.searchParams.set("limit", 200);
         if (bookmark) url.searchParams.set("bookmark", bookmark);
 
         let res;
