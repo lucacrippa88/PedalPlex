@@ -290,31 +290,45 @@ document.head.appendChild(style);
 //   });
    
 // }
-function initCatalog(userRole) {
-    const resultsDiv = $("#catalog");
-    resultsDiv.empty();
+async function initCatalog(userRole){
+  const resultsDiv = document.getElementById("catalog");
+  resultsDiv.innerHTML = `<p>Loading pedals...</p>`;
+  
+  const roleParam = userRole === "guest" ? "guest" : userRole;
+  const usernameParam = ""; // non serve login per ora
 
-    const evtSource = new EventSource("https://www.cineteatrosanluigi.it/plex/GET_CATALOG_STREAM.php");
+  const res = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_STREAM.php?role=${roleParam}&username=${usernameParam}`);
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let count = 0;
 
-    let count = 0;
+  resultsDiv.innerHTML = ''; // pulisci messaggio loading
 
-    evtSource.onmessage = (e) => {
-        const pedal = JSON.parse(e.data);
+  while(true){
+      const { value, done } = await reader.read();
+      if(done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop(); // ultimo pezzo incompleto
+      for(const line of lines){
+          if(!line.trim()) continue;
+          const pedal = JSON.parse(line);
+          const $pedalDiv = renderPedal(pedal, userRole);
+          $pedalDiv.attr("data-author", pedal.author || "");
+          $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+          $(resultsDiv).append($pedalDiv);
 
-        count++;
-        if (count % 50 === 0) console.log("Arrivati:", count);
+          count++;
+          if(count % 50 === 0) console.log("Pedals loaded:", count);
+      }
+  }
+  console.log("All pedals loaded:", count);
 
-        const $pedalDiv = renderPedal(pedal, userRole);
-        resultsDiv.append($pedalDiv);
-    };
-
-    evtSource.addEventListener("end", () => {
-        evtSource.close();
-        console.log("Stream completato. Totale:", count);
-        $("#pedalCount").text(count + " gears");
-        updatePedalCounts();
-    });
+  if(userRole !== "guest") setupEditPedalHandler(); // se necessario
+  updatePedalCounts(); // aggiorna contatori alla fine
 }
+
 
 
 
