@@ -90,6 +90,36 @@ function initPedalboard(userRole) {
 
 
   // --- LOGGED-IN USERS ---
+  // Check if guest pedalboard exists
+  const savedGuestBoards = JSON.parse(localStorage.getItem("guestPedalboard") || "[]");
+  if (savedGuestBoards.length > 0) {
+    Swal.fire({
+      title: "Import local pedalboard?",
+      text: "You have a pedalboard saved locally. Do you want to import it into your account?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, import",
+      cancelButtonText: "No, skip",
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary',
+        cancelButton: 'bx--btn bx--btn--secondary'
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        importGuestPedalboard(savedGuestBoards[0])
+          .then(() => {
+            localStorage.removeItem("guestPedalboard");
+            initPedalboard(userRole); // reload after import
+          })
+          .catch(err => console.error("Import failed:", err));
+        return;
+      } else {
+        localStorage.removeItem("guestPedalboard");
+        initLoggedInPedalboards(userRole); // continue normally
+      }
+    });
+    return;
+  } else {
   // Fetch pedalboard first
   fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
     method: 'POST',
@@ -181,6 +211,7 @@ function initPedalboard(userRole) {
       console.error('Error:', error.message || error);
       resultsDiv.innerHTML = `<p style="color:red;">Error loading pedalboard: ${error}</p>`;
     });
+  }
 }
 
 
