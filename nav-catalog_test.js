@@ -3,7 +3,7 @@
 // === GLOBALS ===
 let catalogData = [];      // tutti i pedali scaricati finora
 let displayedCount = 0;    // quanti pedali sono renderizzati sullo schermo
-const PAGE_SIZE = 50;      // quanti pedali per pagina (lazy)
+const PAGE_SIZE = 200;      // quanti pedali per pagina (lazy)
 let currentFilter = 'all';
 let currentSearch = '';
 
