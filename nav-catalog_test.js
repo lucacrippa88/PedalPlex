@@ -291,12 +291,13 @@ document.head.appendChild(style);
    
 // }
 
-
 async function initCatalog(userRole) {
 
   const resultsDiv = document.getElementById("catalog");
+
+  // Mostra subito loader visivo
   resultsDiv.innerHTML = `
-      <div class="bx--loading-overlay">
+      <div id="catalog-loader" class="bx--loading-overlay">
         <div class="bx--loading" role="status">
           <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
             <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
@@ -304,6 +305,8 @@ async function initCatalog(userRole) {
           </svg>
         </div>     
       </div>`;
+
+  const loaderEl = document.getElementById("catalog-loader");
 
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
@@ -319,15 +322,14 @@ async function initCatalog(userRole) {
     return;
   }
 
-  // --- STREAMING SETUP ---
+  // --- STREAMING ---
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  let firstPedal = true;
 
-  // rimuove loader
-  resultsDiv.innerHTML = "";
-
-  let firstChunk = true;
+  // Remove loader spinner
+  loaderEl.remove();
 
   while (true) {
     const { done, value } = await reader.read();
@@ -335,44 +337,49 @@ async function initCatalog(userRole) {
 
     buffer += decoder.decode(value, { stream: true });
 
-    // parse gli oggetti completati
+    // Trova oggetti JSON completi fino alla chiusura di }
     let boundary = buffer.lastIndexOf("}");
     if (boundary === -1) continue;
 
     const chunk = buffer.slice(0, boundary + 1);
     buffer = buffer.slice(boundary + 1);
 
-    // Split oggetti JSON separati da virgole
+    // pulizia simboli array
     const objects = chunk
       .replace(/^\[/, "")
       .replace(/\]$/, "")
       .split("},");
 
     objects.forEach((obj, i) => {
-      if (!obj.trim()) return;
+      obj = obj.trim();
+      if (!obj) return;
 
       if (!obj.endsWith("}")) obj += "}";
 
       try {
         const pedal = JSON.parse(obj);
 
-        // --- RENDER IMMEDIATO ---
+        // PRIMO PEDALE → rimuove completamente overlay se esiste
+        if (firstPedal) {
+          firstPedal = false;
+        }
+
         const $pedalDiv = renderPedal(pedal, userRole);
         $pedalDiv.attr("data-author", pedal.author || "");
-        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+        $pedalDiv.attr(
+          "data-published",
+          (pedal.published || "draft").toLowerCase()
+        );
         $(resultsDiv).append($pedalDiv);
 
       } catch (e) {
-        console.warn("Partial JSON not ready:", obj);
+        console.warn("Partial JSON not parseable:", obj);
       }
     });
   }
 
-  // quando tutto è finito → contatori, edit, ecc
   updatePedalCounts();
-
   if (userRole !== "guest") {
-    // devi ricostruire pedali[] se ti serve
-    setupEditPedalHandler(); 
+    setupEditPedalHandler();
   }
 }
