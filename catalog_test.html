@@ -55,6 +55,8 @@
 
     if (typeof initNavCatalog === 'function') initNavCatalog('guest');
     if (typeof initCatalog === 'function') initCatalog('guest');
+    if (typeof startCatalog === 'function') startCatalog('guest');
+
 
     return;
   }
@@ -73,6 +75,7 @@
 
       if (typeof initNavCatalog === 'function') initNavCatalog(userFromServer.role);
       if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
+      if (typeof startCatalog === 'function') startCatalog(userFromServer.role);
     },
     error: function(xhr) {
       console.error('Auth check failed:', xhr.status, xhr.responseText);
