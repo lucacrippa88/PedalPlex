@@ -290,46 +290,82 @@ document.head.appendChild(style);
 //   });
    
 // }
-function initCatalog(userRole){
-  const resultsDiv = document.getElementById("catalog");
-  resultsDiv.innerHTML = `<div class="bx--loading-overlay">
-      <div class="bx--loading" role="status">
-        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-        </svg>
-      </div>
-    </div>`;
-  resultsDiv.innerHTML = '';
+async function initCatalog(userRole) {
+    const resultsDiv = document.getElementById("catalog");
 
-  const roleParam = userRole === "guest" ? "guest" : userRole;
-  const source = new EventSource(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_STREAM.php?role=${roleParam}`);
+    // Loader iniziale (visibile solo per il primo chunk)
+    resultsDiv.innerHTML = `
+        <div class="bx--loading-overlay">
+            <div class="bx--loading" role="status">
+                <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+                    <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+                    <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+                </svg>
+            </div>     
+        </div>`;
 
-  let count = 0;
-  source.onmessage = function(event){
-    if(!event.data) return;
-    const pedal = JSON.parse(event.data);
-    const $pedalDiv = renderPedal(pedal, userRole);
-    $pedalDiv.attr("data-author", pedal.author || "");
-    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-    $(resultsDiv).append($pedalDiv);
+    let bookmark = null;
+    let totalLoaded = 0;
+    let firstChunk = true;
 
-    count++;
-    if(count % 50 === 0) console.log("Pedals loaded:", count);
-  };
+    async function loadNextChunk() {
+        const url = new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG_PAGED.php");
+        url.searchParams.set("limit", 100);
+        if (bookmark) url.searchParams.set("bookmark", bookmark);
 
-  source.addEventListener('done', function(){
-    console.log("All pedals loaded:", count);
-    if(userRole !== "guest") setupEditPedalHandler();
-    updatePedalCounts();
-    source.close();
-  });
+        let res;
+        try {
+            res = await fetch(url);
+        } catch (err) {
+            console.error("Network error:", err);
+            resultsDiv.innerHTML = `<p style="color:red;">Network error loading catalog.</p>`;
+            return;
+        }
 
-  source.addEventListener('error', function(e){
-    console.error("SSE error", e);
-    source.close();
-  });
+        let json;
+        try {
+            json = await res.json();
+        } catch (err) {
+            console.error("JSON parse error:", err);
+            resultsDiv.innerHTML = `<p style="color:red;">Invalid server response.</p>`;
+            return;
+        }
+
+        const docs = json.docs || [];
+        bookmark = json.bookmark || null;
+
+        // Rimuovi loader dopo il primo batch
+        if (firstChunk) {
+            resultsDiv.innerHTML = "";
+            firstChunk = false;
+        }
+
+        // Renderizza pedali appena arrivano
+        docs.forEach(pedal => {
+            const $pedalDiv = renderPedal(pedal, userRole);
+            $pedalDiv.attr("data-author", pedal.author || "");
+            $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+            resultsDiv.appendChild($pedalDiv[0]);
+        });
+
+        totalLoaded += docs.length;
+        console.log("Loaded:", totalLoaded);
+
+        // Se non ci sono altri pedali → FINITO
+        if (!bookmark) {
+            $("#pedalCount").text(`${totalLoaded} gears`);
+            updatePedalCounts();
+            if (userRole !== "guest") setupEditPedalHandler([]); 
+            return;
+        }
+
+        // Carica il prossimo batch
+        setTimeout(loadNextChunk, 30);
+    }
+
+    loadNextChunk();
 }
+
 
 
 
