@@ -135,7 +135,7 @@ function initCatalog(userRole) {
   const usernameParam = window.currentUser?.username || "";
   const token = localStorage.getItem('authToken');
 
-  fetch(`GET_CATALOG_META.php?role=${roleParam}&username=${usernameParam}`, {
+  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_META.php?role=${roleParam}&username=${usernameParam}`, {
     headers: { 'Authorization': 'Bearer ' + token }
   })
   .then(res => res.json())
@@ -163,7 +163,7 @@ function loadMorePedals(userRole) {
   const usernameParam = window.currentUser?.username || "";
   const token = localStorage.getItem('authToken');
 
-  const url = `GET_CATALOG_LAZY.php?role=${roleParam}&username=${usernameParam}&offset=${lazyOffset}&limit=${lazyLimit}&filter=${encodeURIComponent(activeServerFilter || "")}&search=${encodeURIComponent(activeSearch || "")}`;
+  const url = `https://www.cineteatrosanluigi.it/plex/GET_CATALOG_LAZY.php?role=${roleParam}&username=${usernameParam}&offset=${lazyOffset}&limit=${lazyLimit}&filter=${encodeURIComponent(activeServerFilter || "")}&search=${encodeURIComponent(activeSearch || "")}`;
 
   fetch(url, { headers: { 'Authorization': 'Bearer ' + token }})
     .then(res => res.json())
