@@ -449,9 +449,9 @@ async function initCatalog(userRole) {
 
     let bookmark = null;
     let firstChunk = true;
-    let allMetadata = []; // terrà tutti i metadati per search/filter
+    const allMetadata = []; // terrà tutti i metadati per filtri/search
 
-    // --- funzione per caricare metadati ---
+    // --- funzione per caricare metadati a chunk ---
     async function loadMetadataChunk() {
         const url = new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG_METADATA.php");
         url.searchParams.set("limit", 200);
@@ -463,7 +463,7 @@ async function initCatalog(userRole) {
             json = await res.json();
         } catch (err) {
             console.error("Error fetching metadata:", err);
-            resultsDiv.innerHTML = `<p style="color:red;">Error loading catalog metadata.</p>`;
+            resultsDiv.innerHTML = `<p style="color:red;">Errore caricamento metadati catalogo.</p>`;
             return;
         }
 
@@ -477,27 +477,18 @@ async function initCatalog(userRole) {
 
         metadata.forEach(pedal => {
             allMetadata.push(pedal);
-
-            // crea skeleton con dimensioni corrette
-            const $pedalDiv = renderPedalSkeleton(pedal);
-            $pedalDiv.attr("data-id", pedal._id);
-            $pedalDiv[0].style.width = pedal.width + "px";
-            $pedalDiv[0].style.height = pedal.height + "px";
+            const $pedalDiv = renderPedalSkeleton(pedal, userRole);
             resultsDiv.appendChild($pedalDiv[0]);
         });
 
         console.log("Metadata loaded:", allMetadata.length);
 
-        // continua con prossimo chunk
         if (bookmark) {
+            // piccolo delay per fluidità
             setTimeout(loadMetadataChunk, 30);
         } else {
-            // Aggiorna subito contatori e filtri basati su metadati
-            $("#pedalCount").text(`${allMetadata.length} gears`);
-            updatePedalCounts();
+            // finiti i metadati → setup filtri e search
             setupFilterAndSearch(allMetadata);
-
-            // finiti i metadati → avvia caricamento dettagli
             loadDetailsBatch();
         }
     }
@@ -520,19 +511,16 @@ async function initCatalog(userRole) {
 
             const details = json.docs || [];
 
-            // aggiorna i skeleton con i dettagli completi
-            details.forEach(pedal => {
-                const $div = resultsDiv.querySelector(`[data-id="${pedal._id}"]`);
-                if ($div) updatePedalDetails($div, pedal, userRole);
-            });
+            details.forEach(pedal => updatePedalDetails(pedal, userRole));
 
             console.log("Details loaded:", Math.min(i + batchSize, allMetadata.length));
 
-            // piccola pausa per non bloccare il rendering
-            await new Promise(r => setTimeout(r, 50));
+            await new Promise(r => setTimeout(r, 50)); // piccolo delay
         }
 
-        // fine caricamento → setup edit handler
+        // Fine caricamento → contatori e edit
+        $("#pedalCount").text(`${allMetadata.length} gears`);
+        updatePedalCounts();
         if (userRole !== "guest") setupEditPedalHandler(allMetadata);
     }
 
@@ -540,28 +528,128 @@ async function initCatalog(userRole) {
 }
 
 /**
- * Renderizza un "pedal scheletro" basato solo su metadata
+ * Renderizza un "pedal scheletro" basato sui metadata
  */
-function renderPedalSkeleton(pedal) {
-    const div = document.createElement("div");
-    div.className = "pedal-catalog";
-    div.style.width = pedal.width + "px";
-    div.style.height = pedal.height + "px";
-    div.style.backgroundColor = pedal.color || "#333";
-    div.innerHTML = `<div class="pedal-skeleton">Loading...</div>`;
-    return $(div);
+function renderPedalSkeleton(pedalMeta, userRole) {
+    const pedalId = pedalMeta._id;
+    const width  = getPedalWidth(pedalMeta.width || 80);
+    const height = getPedalHeight(pedalMeta.height || 120);
+    const color = pedalMeta.color || "#333";
+    const fontColor = pedalMeta["font-color"] || "#fff";
+
+    const insideColorRaw = pedalMeta["inside-color"] || "";
+    let inside = "";
+    let colorOnly = insideColorRaw;
+    const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
+    if (isImage) {
+        inside = "full";
+    } else {
+        const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+        if (match) { colorOnly = match[1]; inside = match[2] || ""; }
+    }
+
+    const baseCss = {
+        border: `5px solid ${color}`,
+        borderRadius: '10px',
+        color: fontColor,
+        width: width,
+        height: height,
+        marginBottom: '10px',
+        display: 'inline-block',
+        opacity: 0.4,
+        ...(pedalMeta["inside-border"] && { boxShadow: `inset 0 0 0 3px ${pedalMeta["inside-border"]}` }),
+        ...(isImage ? { backgroundImage: `url("${insideColorRaw}")`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: colorOnly })
+    };
+
+    const $div = $("<div>")
+        .addClass("pedal-catalog skeleton")
+        .attr("data-pedal-id", pedalId)
+        .attr("data-pedal-type", pedalMeta.type || "pedal")
+        .attr("data-author", pedalMeta.author || "")
+        .attr("data-published", (pedalMeta.published || "draft").toLowerCase())
+        .css(baseCss);
+
+    $div.html(`<div class="pedal-skeleton">Loading...</div>`);
+    return $div;
 }
 
 /**
  * Aggiorna il pedal già renderizzato con i dettagli completi
  */
-function updatePedalDetails($div, pedal, userRole = "guest") {
-    // Sostituisce solo il contenuto interno ma mantiene attributi e eventi
-    $div.innerHTML = renderPedal(pedal, userRole)[0].innerHTML;
-    $div.setAttribute("data-author", pedal.author || "");
-    $div.setAttribute("data-published", (pedal.published || "draft").toLowerCase());
+function updatePedalDetails(pedal, userRole) {
+    const $div = $(`.pedal-catalog[data-pedal-id="${pedal._id}"]`);
+    if ($div.length) {
+        $div.html(renderPedal(pedal, userRole)[0].innerHTML);
+        $div.attr("data-author", pedal.author || "");
+        $div.attr("data-published", (pedal.published || "draft").toLowerCase());
+        $div.removeClass("skeleton").css("opacity", 1);
+    }
 }
 
+/**
+ * Setup filtri/search basati sui metadata
+ */
+function setupFilterAndSearch(metadata) {
+    $("#pedalFilterInput").on("input", function() {
+        const filterValue = $(this).val().toLowerCase();
+        $(".pedal-catalog").each(function() {
+            const id = $(this).data("pedal-id") || "";
+            $(this).toggle(id.toLowerCase().includes(filterValue));
+        });
+    });
+
+    $(".status-filter").off("click").on("click", function() {
+        const filter = $(this).data("filter");
+        $(".pedal-catalog").each(function() {
+            const status = ($(this).data("published") || "").toLowerCase();
+            const author = ($(this).data("author") || "").toLowerCase();
+            const currentUsername = (window.currentUser?.username || "").toLowerCase();
+            let show = false;
+
+            switch(filter){
+                case "all": show = true; break;
+                case "draft": case "private": case "reviewing": show = status === filter; break;
+                case "publicByMe": show = status === "public" && author === currentUsername; break;
+                case "user": show = status === "public" && author && author !== "admin"; break;
+            }
+            $(this).toggle(show);
+        });
+        updatePedalCounts(filter);
+    });
+}
+
+
+/**
+ * Setup filtri/search basati sui metadata
+ */
+function setupFilterAndSearch(metadata) {
+    $("#pedalFilterInput").on("input", function() {
+        const filterValue = $(this).val().toLowerCase();
+        $(".pedal-catalog").each(function() {
+            const id = $(this).data("pedal-id") || "";
+            $(this).toggle(id.toLowerCase().includes(filterValue));
+        });
+    });
+
+    $(".status-filter").off("click").on("click", function() {
+        const filter = $(this).data("filter");
+        $(".pedal-catalog").each(function() {
+            const status = ($(this).data("published") || "").toLowerCase();
+            const author = ($(this).data("author") || "").toLowerCase();
+            const currentUsername = (window.currentUser?.username || "").toLowerCase();
+            let show = false;
+
+            switch(filter){
+                case "all": show = true; break;
+                case "draft": case "private": case "reviewing": show = status === filter; break;
+                case "publicByMe": show = status === "public" && author === currentUsername; break;
+                case "user": show = status === "public" && author && author !== "admin"; break;
+            }
+            $(this).toggle(show);
+        });
+        updatePedalCounts(filter);
+    });
+}
 
 
 
