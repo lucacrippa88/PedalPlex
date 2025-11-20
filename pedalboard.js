@@ -1088,23 +1088,36 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
                     showConfirmButton: false
                   });
 
+                  // window.allPedalboards.splice(selectedBoardIndex, 1);
+                  // const dropdown = document.getElementById('pedalboardSelect');
+                  // dropdown.remove(selectedBoardIndex);
+
+                  // if (window.allPedalboards.length > 0) {
+                  //   selectedBoardIndex = 0;
+                  //   window.pedalboard = structuredClone(window.allPedalboards[0]);
+                  //   renderPedalboard(window.pedalboard);
+                  //   dropdown.selectedIndex = 0;
+                  // } else {
+                  //   selectedBoardIndex = -1;
+                  //   window.pedalboard = null;
+                  //   const contentEl = document.getElementById('pedalboard');
+                  //   if (contentEl) contentEl.innerHTML = '';
+                  //   location.reload();                
+                  // }
                   window.allPedalboards.splice(selectedBoardIndex, 1);
                   const dropdown = document.getElementById('pedalboardSelect');
                   dropdown.remove(selectedBoardIndex);
 
                   if (window.allPedalboards.length > 0) {
                     selectedBoardIndex = 0;
-                    setupPedalboardDropdownAndRender();
-                    window.pedalboard = structuredClone(window.allPedalboards[0]);
-                    renderPedalboard(window.pedalboard);
-                    dropdown.selectedIndex = 0;
+                    setupPedalboardDropdownAndRender(); // fetch dei pedali incluso, render corretto
                   } else {
                     selectedBoardIndex = -1;
                     window.pedalboard = null;
-                    const contentEl = document.getElementById('pedalboard');
-                    if (contentEl) contentEl.innerHTML = '';
+                    document.getElementById('pedalboard').innerHTML = '';
                     location.reload();                
                   }
+
                 } else {
                   Swal.fire('Error', data.error || 'Failed to delete pedalboard.', 'error');
                 }
@@ -1233,6 +1246,56 @@ function saveSelectedBoardToLocalStorage() {
 }
 
 // HELPER
+// function setupPedalboardDropdownAndRender() {
+//   const dropdown = document.getElementById('pedalboardSelect');
+//   if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
+
+//   dropdown.innerHTML = '';
+
+//   // Populate dropdown
+//   window.allPedalboards.forEach((board, index) => {
+//     const option = document.createElement('option');
+//     option.value = index;
+//     option.setAttribute('value-id', board._id);
+//     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
+//     dropdown.appendChild(option);
+//   });
+
+//   let selectedIndex = 0;
+
+//   if (window.currentUser?.role === 'guest') {
+//     // Guests: always select first board
+//     selectedIndex = 0;
+//   } else {
+//     // Logged-in users: select lastPedalboardId from localStorage if it exists
+//     const lastId = localStorage.getItem('lastPedalboardId');
+//     if (lastId) {
+//       const idx = window.allPedalboards.findIndex(b => b._id === lastId);
+//       if (idx !== -1) selectedIndex = idx;
+//     }
+//   }
+
+//   // Set the selected board in memory and render, but DO NOT save to localStorage yet
+//   dropdown.selectedIndex = selectedIndex;
+//   window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
+//   renderPedalboard();
+
+//   // Restore zoom once board is loaded
+//   if (typeof onPedalboardLoaded === "function") {
+//     setTimeout(onPedalboardLoaded, 100);
+//   }
+
+//   // Only save to localStorage when user manually changes the dropdown
+//   dropdown.addEventListener('change', (e) => {
+//     selectedIndex = parseInt(e.target.value, 10);
+//     window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
+//     renderPedalboard();
+
+//     // Save selection persistently now
+//     saveSelectedBoardToLocalStorage();
+//   });
+// }
+
 function setupPedalboardDropdownAndRender() {
   const dropdown = document.getElementById('pedalboardSelect');
   if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
@@ -1248,40 +1311,56 @@ function setupPedalboardDropdownAndRender() {
     dropdown.appendChild(option);
   });
 
+  // Selezione di default
   let selectedIndex = 0;
-
-  if (window.currentUser?.role === 'guest') {
-    // Guests: always select first board
-    selectedIndex = 0;
-  } else {
-    // Logged-in users: select lastPedalboardId from localStorage if it exists
+  if (window.currentUser?.role !== 'guest') {
     const lastId = localStorage.getItem('lastPedalboardId');
     if (lastId) {
       const idx = window.allPedalboards.findIndex(b => b._id === lastId);
       if (idx !== -1) selectedIndex = idx;
     }
   }
-
-  // Set the selected board in memory and render, but DO NOT save to localStorage yet
   dropdown.selectedIndex = selectedIndex;
-  window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
-  renderPedalboard();
+  const selectedBoard = structuredClone(window.allPedalboards[selectedIndex]);
+  window.pedalboard = selectedBoard;
 
-  // Restore zoom once board is loaded
-  if (typeof onPedalboardLoaded === "function") {
-    setTimeout(onPedalboardLoaded, 100);
-  }
+  // --- FETCH PEDALS ---
+  const pedalIds = selectedBoard.pedals.map(p => p.pedal_id);
+  fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ids: pedalIds })
+  })
+  .then(res => res.json())
+  .then(result => {
+    window.catalog = result.docs || [];
+    renderPedalboard();
+    if (typeof onPedalboardLoaded === "function") setTimeout(onPedalboardLoaded, 100);
+  })
+  .catch(err => console.error("Error fetching pedals:", err));
 
-  // Only save to localStorage when user manually changes the dropdown
+  // Cambiamento dropdown
   dropdown.addEventListener('change', (e) => {
     selectedIndex = parseInt(e.target.value, 10);
-    window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
-    renderPedalboard();
+    const newBoard = structuredClone(window.allPedalboards[selectedIndex]);
+    window.pedalboard = newBoard;
 
-    // Save selection persistently now
-    saveSelectedBoardToLocalStorage();
+    const pedalIds = newBoard.pedals.map(p => p.pedal_id);
+    fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids: pedalIds })
+    })
+    .then(res => res.json())
+    .then(result => {
+      window.catalog = result.docs || [];
+      renderPedalboard();
+      saveSelectedBoardToLocalStorage();
+    })
+    .catch(err => console.error("Error fetching pedals on change:", err));
   });
 }
+
 
 // HELPER
 function extractColorFromLogo(logoCss) {
