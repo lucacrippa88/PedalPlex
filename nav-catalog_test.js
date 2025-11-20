@@ -292,8 +292,9 @@ document.head.appendChild(style);
 // }
 async function initCatalog(userRole) {
     const resultsDiv = document.getElementById("catalog");
+    const pedalCountEl = document.getElementById("pedalCount");
 
-    // Loader iniziale (visibile solo per il primo chunk)
+    // Loader iniziale
     resultsDiv.innerHTML = `
         <div class="bx--loading-overlay">
             <div class="bx--loading" role="status">
@@ -301,70 +302,124 @@ async function initCatalog(userRole) {
                     <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
                     <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
                 </svg>
-            </div>     
+            </div>
         </div>`;
+    pedalCountEl.innerHTML = `<div class="bx--loading bx--loading--small"></div>`;
 
-    let bookmark = null;
-    let totalLoaded = 0;
-    let firstChunk = true;
-
-    async function loadNextChunk() {
-        const url = new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG_PAGED.php");
-        url.searchParams.set("limit", 200);
-        if (bookmark) url.searchParams.set("bookmark", bookmark);
-
-        let res;
-        try {
-            res = await fetch(url);
-        } catch (err) {
-            console.error("Network error:", err);
-            resultsDiv.innerHTML = `<p style="color:red;">Network error loading catalog.</p>`;
-            return;
-        }
-
-        let json;
-        try {
-            json = await res.json();
-        } catch (err) {
-            console.error("JSON parse error:", err);
-            resultsDiv.innerHTML = `<p style="color:red;">Invalid server response.</p>`;
-            return;
-        }
-
-        const docs = json.docs || [];
-        bookmark = json.bookmark || null;
-
-        // Rimuovi loader dopo il primo batch
-        if (firstChunk) {
-            resultsDiv.innerHTML = "";
-            firstChunk = false;
-        }
-
-        // Renderizza pedali appena arrivano
-        docs.forEach(pedal => {
-            const $pedalDiv = renderPedal(pedal, userRole);
-            $pedalDiv.attr("data-author", pedal.author || "");
-            $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-            resultsDiv.appendChild($pedalDiv[0]);
-        });
-
-        totalLoaded += docs.length;
-        console.log("Loaded:", totalLoaded);
-
-        // Se non ci sono altri pedali → FINITO
-        if (!bookmark) {
-            $("#pedalCount").text(`${totalLoaded} gears`);
-            updatePedalCounts();
-            if (userRole !== "guest") setupEditPedalHandler([]); 
-            return;
-        }
-
-        // Carica il prossimo batch
-        setTimeout(loadNextChunk, 30);
+    // 1️⃣ Fetch metadata (leggero)
+    let metadata = [];
+    try {
+        const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG_METADATA.php');
+        metadata = await res.json(); // Array di {_id, width, height, color}
+    } catch(e) {
+        console.error("Error fetching metadata", e);
+        resultsDiv.innerHTML = `<p style="color:red;">Error loading catalog metadata</p>`;
+        return;
     }
 
-    loadNextChunk();
+    // Aggiorna contatore totale
+    pedalCountEl.textContent = `${metadata.length} gears`;
+
+    // Render pedali scheletro
+    resultsDiv.innerHTML = "";
+    metadata.forEach(pedal => {
+        const $pedalDiv = renderPedalSkeleton(pedal); // solo preview
+        $pedalDiv.attr("data-id", pedal._id);
+        $pedalDiv.attr("data-author", pedal.author || "");
+        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+        resultsDiv.appendChild($pedalDiv[0]);
+    });
+
+    // Setup filtri/search subito basati su metadata
+    updatePedalCounts(); // contatori visibili subito
+    setupFilterAndSearch(metadata); // funzione che filtra su metadata
+
+    // 2️⃣ Fetch dettagli in batch (lazy)
+    const batchSize = 50;
+    for(let i = 0; i < metadata.length; i += batchSize) {
+        const batchIds = metadata.slice(i, i + batchSize).map(p => p._id);
+
+        try {
+            const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG_DETAILS.php', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ids: batchIds})
+            });
+            const details = await res.json(); // array con dettagli completi
+
+            // Aggiorna i pedali già renderizzati
+            details.forEach(pedal => updatePedalDetails(pedal));
+
+            console.log(`Loaded details: ${Math.min(i + batchSize, metadata.length)}/${metadata.length}`);
+        } catch(e) {
+            console.error("Error fetching pedal details", e);
+        }
+
+        // Piccola pausa per non bloccare il thread UI
+        await new Promise(r => setTimeout(r, 20));
+    }
+
+    // Setup edit handler
+    if(userRole !== "guest") setupEditPedalHandler(metadata);
 }
+
+/**
+ * Renderizza un "pedal scheletro" basato solo su metadata
+ */
+function renderPedalSkeleton(pedal) {
+    const div = document.createElement("div");
+    div.className = "pedal-catalog";
+    div.style.width = pedal.width + "px";
+    div.style.height = pedal.height + "px";
+    div.style.backgroundColor = pedal.color || "#333";
+    div.innerHTML = `<div class="pedal-skeleton">Loading...</div>`;
+    return $(div);
+}
+
+/**
+ * Aggiorna il pedal già renderizzato con i dettagli completi
+ */
+function updatePedalDetails(pedal) {
+    const $div = $(`.pedal-catalog[data-id="${pedal._id}"]`);
+    if ($div.length) {
+        $div.html(renderPedal(pedal, window.currentUser?.role || "guest")[0].innerHTML);
+        $div.attr("data-author", pedal.author || "");
+        $div.attr("data-published", (pedal.published || "draft").toLowerCase());
+    }
+}
+
+/**
+ * Imposta filtri e ricerca basati sui metadata
+ */
+function setupFilterAndSearch(metadata) {
+    $("#pedalFilterInput").on("input", function() {
+        const filterValue = $(this).val().toLowerCase();
+        $(".pedal-catalog").each(function() {
+            const id = $(this).data("id") || "";
+            $(this).toggle(id.toLowerCase().includes(filterValue));
+        });
+    });
+
+    $(".status-filter").off("click").on("click", function() {
+        const filter = $(this).data("filter");
+        $(".pedal-catalog").each(function() {
+            const status = ($(this).data("published") || "").toLowerCase();
+            const author = ($(this).data("author") || "").toLowerCase();
+            const currentUsername = (window.currentUser?.username || "").toLowerCase();
+            let show = false;
+
+            switch(filter){
+                case "all": show = true; break;
+                case "draft": case "private": case "reviewing": show = status === filter; break;
+                case "publicByMe": show = status === "public" && author === currentUsername; break;
+                case "user": show = status === "public" && author && author !== "admin"; break;
+            }
+            $(this).toggle(show);
+        });
+        updatePedalCounts(filter);
+    });
+}
+
 
 
 
