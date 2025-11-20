@@ -1087,23 +1087,6 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
                     timer: 1000,
                     showConfirmButton: false
                   });
-
-                  // window.allPedalboards.splice(selectedBoardIndex, 1);
-                  // const dropdown = document.getElementById('pedalboardSelect');
-                  // dropdown.remove(selectedBoardIndex);
-
-                  // if (window.allPedalboards.length > 0) {
-                  //   selectedBoardIndex = 0;
-                  //   window.pedalboard = structuredClone(window.allPedalboards[0]);
-                  //   renderPedalboard(window.pedalboard);
-                  //   dropdown.selectedIndex = 0;
-                  // } else {
-                  //   selectedBoardIndex = -1;
-                  //   window.pedalboard = null;
-                  //   const contentEl = document.getElementById('pedalboard');
-                  //   if (contentEl) contentEl.innerHTML = '';
-                  //   location.reload();                
-                  // }
                   window.allPedalboards.splice(selectedBoardIndex, 1);
                   const dropdown = document.getElementById('pedalboardSelect');
                   dropdown.remove(selectedBoardIndex);
@@ -1246,56 +1229,6 @@ function saveSelectedBoardToLocalStorage() {
 }
 
 // HELPER
-// function setupPedalboardDropdownAndRender() {
-//   const dropdown = document.getElementById('pedalboardSelect');
-//   if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
-
-//   dropdown.innerHTML = '';
-
-//   // Populate dropdown
-//   window.allPedalboards.forEach((board, index) => {
-//     const option = document.createElement('option');
-//     option.value = index;
-//     option.setAttribute('value-id', board._id);
-//     option.textContent = board.board_name || `Pedalboard ${index + 1}`;
-//     dropdown.appendChild(option);
-//   });
-
-//   let selectedIndex = 0;
-
-//   if (window.currentUser?.role === 'guest') {
-//     // Guests: always select first board
-//     selectedIndex = 0;
-//   } else {
-//     // Logged-in users: select lastPedalboardId from localStorage if it exists
-//     const lastId = localStorage.getItem('lastPedalboardId');
-//     if (lastId) {
-//       const idx = window.allPedalboards.findIndex(b => b._id === lastId);
-//       if (idx !== -1) selectedIndex = idx;
-//     }
-//   }
-
-//   // Set the selected board in memory and render, but DO NOT save to localStorage yet
-//   dropdown.selectedIndex = selectedIndex;
-//   window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
-//   renderPedalboard();
-
-//   // Restore zoom once board is loaded
-//   if (typeof onPedalboardLoaded === "function") {
-//     setTimeout(onPedalboardLoaded, 100);
-//   }
-
-//   // Only save to localStorage when user manually changes the dropdown
-//   dropdown.addEventListener('change', (e) => {
-//     selectedIndex = parseInt(e.target.value, 10);
-//     window.pedalboard = structuredClone(window.allPedalboards[selectedIndex]);
-//     renderPedalboard();
-
-//     // Save selection persistently now
-//     saveSelectedBoardToLocalStorage();
-//   });
-// }
-
 function setupPedalboardDropdownAndRender() {
   const dropdown = document.getElementById('pedalboardSelect');
   if (!dropdown || !window.allPedalboards || window.allPedalboards.length === 0) return;
