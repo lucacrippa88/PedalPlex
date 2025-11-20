@@ -306,16 +306,24 @@ async function initCatalog(userRole) {
 
     let bookmark = null;
     let firstChunk = true;
-    let allMetadata = []; // terrà tutti i metadati per search/filter
+    const allMetadata = []; // terrà tutti i metadati per filtri/search
 
-    // --- funzione per caricare metadati ---
+    // --- funzione per caricare metadati a chunk ---
     async function loadMetadataChunk() {
         const url = new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG_METADATA.php");
         url.searchParams.set("limit", 200);
         if (bookmark) url.searchParams.set("bookmark", bookmark);
 
-        let res = await fetch(url);
-        let json = await res.json();
+        let res, json;
+        try {
+            res = await fetch(url);
+            json = await res.json();
+        } catch (err) {
+            console.error("Error fetching metadata:", err);
+            resultsDiv.innerHTML = `<p style="color:red;">Errore caricamento metadati catalogo.</p>`;
+            return;
+        }
+
         const metadata = json.docs || [];
         bookmark = json.bookmark || null;
 
@@ -326,22 +334,18 @@ async function initCatalog(userRole) {
 
         metadata.forEach(pedal => {
             allMetadata.push(pedal);
-
-            // crea skeleton con dimensioni corrette
-            const $pedalDiv = renderPedalSkeleton(pedal); 
-            $pedalDiv.attr("data-id", pedal._id);
-            $pedalDiv.style.width = pedal.width + "px";
-            $pedalDiv.style.height = pedal.height + "px";
+            const $pedalDiv = renderPedalSkeleton(pedal, userRole);
             resultsDiv.appendChild($pedalDiv[0]);
         });
 
         console.log("Metadata loaded:", allMetadata.length);
 
-        // continua con prossimo chunk
         if (bookmark) {
+            // piccolo delay per fluidità
             setTimeout(loadMetadataChunk, 30);
         } else {
-            // finiti i metadati → avvia caricamento dettagli
+            // finiti i metadati → setup filtri e search
+            setupFilterAndSearch(allMetadata);
             loadDetailsBatch();
         }
     }
@@ -352,21 +356,26 @@ async function initCatalog(userRole) {
             const ids = allMetadata.slice(i, i + batchSize).map(p => p._id);
             const url = new URL("https://www.cineteatrosanluigi.it/plex/GET_CATALOG_DETAILS.php");
             url.searchParams.set("ids", ids.join(","));
-            let res = await fetch(url);
-            let json = await res.json();
+
+            let res, json;
+            try {
+                res = await fetch(url);
+                json = await res.json();
+            } catch (err) {
+                console.error("Error fetching pedal details:", err);
+                continue;
+            }
+
             const details = json.docs || [];
 
-            // aggiorna i skeleton con i dettagli completi
-            details.forEach(pedal => {
-                const $div = resultsDiv.querySelector(`[data-id="${pedal._id}"]`);
-                if ($div) updatePedalDetails($div, pedal);
-            });
+            details.forEach(pedal => updatePedalDetails(pedal, userRole));
 
             console.log("Details loaded:", Math.min(i + batchSize, allMetadata.length));
-            await new Promise(r => setTimeout(r, 50)); // piccola pausa per fluidità
+
+            await new Promise(r => setTimeout(r, 50)); // piccolo delay
         }
 
-        // fine caricamento → aggiorna contatori e filtri
+        // Fine caricamento → contatori e edit
         $("#pedalCount").text(`${allMetadata.length} gears`);
         updatePedalCounts();
         if (userRole !== "guest") setupEditPedalHandler(allMetadata);
@@ -375,40 +384,73 @@ async function initCatalog(userRole) {
     loadMetadataChunk();
 }
 
-
 /**
- * Renderizza un "pedal scheletro" basato solo su metadata
+ * Renderizza un "pedal scheletro" basato sui metadata
  */
-function renderPedalSkeleton(pedal) {
-    const div = document.createElement("div");
-    div.className = "pedal-catalog";
-    div.style.width = pedal.width + "px";
-    div.style.height = pedal.height + "px";
-    div.style.backgroundColor = pedal.color || "#333";
-    div.innerHTML = `<div class="pedal-skeleton">Loading...</div>`;
-    return $(div);
+function renderPedalSkeleton(pedalMeta, userRole) {
+    const pedalId = pedalMeta._id;
+    const width  = getPedalWidth(pedalMeta.width || 80);
+    const height = getPedalHeight(pedalMeta.height || 120);
+    const color = pedalMeta.color || "#333";
+    const fontColor = pedalMeta["font-color"] || "#fff";
+
+    const insideColorRaw = pedalMeta["inside-color"] || "";
+    let inside = "";
+    let colorOnly = insideColorRaw;
+    const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
+    if (isImage) {
+        inside = "full";
+    } else {
+        const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+        if (match) { colorOnly = match[1]; inside = match[2] || ""; }
+    }
+
+    const baseCss = {
+        border: `5px solid ${color}`,
+        borderRadius: '10px',
+        color: fontColor,
+        width: width,
+        height: height,
+        marginBottom: '10px',
+        display: 'inline-block',
+        opacity: 0.4,
+        ...(pedalMeta["inside-border"] && { boxShadow: `inset 0 0 0 3px ${pedalMeta["inside-border"]}` }),
+        ...(isImage ? { backgroundImage: `url("${insideColorRaw}")`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: colorOnly })
+    };
+
+    const $div = $("<div>")
+        .addClass("pedal-catalog skeleton")
+        .attr("data-pedal-id", pedalId)
+        .attr("data-pedal-type", pedalMeta.type || "pedal")
+        .attr("data-author", pedalMeta.author || "")
+        .attr("data-published", (pedalMeta.published || "draft").toLowerCase())
+        .css(baseCss);
+
+    $div.html(`<div class="pedal-skeleton">Loading...</div>`);
+    return $div;
 }
 
 /**
  * Aggiorna il pedal già renderizzato con i dettagli completi
  */
-function updatePedalDetails(pedal) {
-    const $div = $(`.pedal-catalog[data-id="${pedal._id}"]`);
+function updatePedalDetails(pedal, userRole) {
+    const $div = $(`.pedal-catalog[data-pedal-id="${pedal._id}"]`);
     if ($div.length) {
-        $div.html(renderPedal(pedal, window.currentUser?.role || "guest")[0].innerHTML);
+        $div.html(renderPedal(pedal, userRole)[0].innerHTML);
         $div.attr("data-author", pedal.author || "");
         $div.attr("data-published", (pedal.published || "draft").toLowerCase());
+        $div.removeClass("skeleton").css("opacity", 1);
     }
 }
 
 /**
- * Imposta filtri e ricerca basati sui metadata
+ * Setup filtri/search basati sui metadata
  */
 function setupFilterAndSearch(metadata) {
     $("#pedalFilterInput").on("input", function() {
         const filterValue = $(this).val().toLowerCase();
         $(".pedal-catalog").each(function() {
-            const id = $(this).data("id") || "";
+            const id = $(this).data("pedal-id") || "";
             $(this).toggle(id.toLowerCase().includes(filterValue));
         });
     });
@@ -432,6 +474,7 @@ function setupFilterAndSearch(metadata) {
         updatePedalCounts(filter);
     });
 }
+
 
 
 
