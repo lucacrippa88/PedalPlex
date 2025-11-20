@@ -290,44 +290,47 @@ document.head.appendChild(style);
 //   });
    
 // }
-async function initCatalog(userRole){
+function initCatalog(userRole){
   const resultsDiv = document.getElementById("catalog");
-  resultsDiv.innerHTML = `<p>Loading pedals...</p>`;
-  
+  resultsDiv.innerHTML = `<div class="bx--loading-overlay">
+      <div class="bx--loading" role="status">
+        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+        </svg>
+      </div>
+    </div>`;
+  resultsDiv.innerHTML = '';
+
   const roleParam = userRole === "guest" ? "guest" : userRole;
-  const usernameParam = ""; // non serve login per ora
+  const source = new EventSource(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_STREAM.php?role=${roleParam}`);
 
-  const res = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_STREAM.php?role=${roleParam}&username=${usernameParam}`);
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
   let count = 0;
+  source.onmessage = function(event){
+    if(!event.data) return;
+    const pedal = JSON.parse(event.data);
+    const $pedalDiv = renderPedal(pedal, userRole);
+    $pedalDiv.attr("data-author", pedal.author || "");
+    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+    $(resultsDiv).append($pedalDiv);
 
-  resultsDiv.innerHTML = ''; // pulisci messaggio loading
+    count++;
+    if(count % 50 === 0) console.log("Pedals loaded:", count);
+  };
 
-  while(true){
-      const { value, done } = await reader.read();
-      if(done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop(); // ultimo pezzo incompleto
-      for(const line of lines){
-          if(!line.trim()) continue;
-          const pedal = JSON.parse(line);
-          const $pedalDiv = renderPedal(pedal, userRole);
-          $pedalDiv.attr("data-author", pedal.author || "");
-          $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-          $(resultsDiv).append($pedalDiv);
+  source.addEventListener('done', function(){
+    console.log("All pedals loaded:", count);
+    if(userRole !== "guest") setupEditPedalHandler();
+    updatePedalCounts();
+    source.close();
+  });
 
-          count++;
-          if(count % 50 === 0) console.log("Pedals loaded:", count);
-      }
-  }
-  console.log("All pedals loaded:", count);
-
-  if(userRole !== "guest") setupEditPedalHandler(); // se necessario
-  updatePedalCounts(); // aggiorna contatori alla fine
+  source.addEventListener('error', function(e){
+    console.error("SSE error", e);
+    source.close();
+  });
 }
+
 
 
 
