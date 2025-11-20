@@ -84,17 +84,30 @@ function fetchCatalogLazy(userRole) {
     headers: { 'Authorization': 'Bearer ' + token }
   })
   .then(res => res.json())
-  .then(list => {
-    if (!Array.isArray(list)) {
-      console.warn("GET_CATALOG_LAZY.php returned not an array:", list);
-      list = list.docs || []; // prova a recuperare dal campo 'docs'
+  .then(result => {
+
+    // result = { hasMore: true|false, items: [...] }
+    if (!result || !Array.isArray(result.items)) {
+      console.error("Invalid response from GET_CATALOG_LAZY.php", result);
+      return;
     }
-    catalogData = list.sort((a,b) => (a._id||'').localeCompare(b._id||''));
-    displayedCount = 0;
-    $("#catalog").empty();
+
+    // Aggiungi i nuovi pedali in coda al catalogo completo
+    catalogData = catalogData.concat(result.items);
+
+    // Ordina sempre l’intero catalogo
+    catalogData.sort((a,b)=> (a._id || "").localeCompare(b._id || ""));
+
+    // Renderizza il prossimo batch
     renderNextBatch();
+
+    // Aggiorna l’indicatore se ci sono ancora pagine
+    hasMore = !!result.hasMore;
+
+    // aggiorna contatori globali
     updatePedalCounts();
   })
+
   .catch(err => { console.error("Error fetching pedals:", err); });
 }
 
