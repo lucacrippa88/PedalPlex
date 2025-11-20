@@ -376,4 +376,66 @@ async function initCatalog(userRole) {
 }
 
 
+/**
+ * Renderizza un "pedal scheletro" basato solo su metadata
+ */
+function renderPedalSkeleton(pedal) {
+    const div = document.createElement("div");
+    div.className = "pedal-catalog";
+    div.style.width = pedal.width + "px";
+    div.style.height = pedal.height + "px";
+    div.style.backgroundColor = pedal.color || "#333";
+    div.innerHTML = `<div class="pedal-skeleton">Loading...</div>`;
+    return $(div);
+}
+
+/**
+ * Aggiorna il pedal già renderizzato con i dettagli completi
+ */
+function updatePedalDetails(pedal) {
+    const $div = $(`.pedal-catalog[data-id="${pedal._id}"]`);
+    if ($div.length) {
+        $div.html(renderPedal(pedal, window.currentUser?.role || "guest")[0].innerHTML);
+        $div.attr("data-author", pedal.author || "");
+        $div.attr("data-published", (pedal.published || "draft").toLowerCase());
+    }
+}
+
+/**
+ * Imposta filtri e ricerca basati sui metadata
+ */
+function setupFilterAndSearch(metadata) {
+    $("#pedalFilterInput").on("input", function() {
+        const filterValue = $(this).val().toLowerCase();
+        $(".pedal-catalog").each(function() {
+            const id = $(this).data("id") || "";
+            $(this).toggle(id.toLowerCase().includes(filterValue));
+        });
+    });
+
+    $(".status-filter").off("click").on("click", function() {
+        const filter = $(this).data("filter");
+        $(".pedal-catalog").each(function() {
+            const status = ($(this).data("published") || "").toLowerCase();
+            const author = ($(this).data("author") || "").toLowerCase();
+            const currentUsername = (window.currentUser?.username || "").toLowerCase();
+            let show = false;
+
+            switch(filter){
+                case "all": show = true; break;
+                case "draft": case "private": case "reviewing": show = status === filter; break;
+                case "publicByMe": show = status === "public" && author === currentUsername; break;
+                case "user": show = status === "public" && author && author !== "admin"; break;
+            }
+            $(this).toggle(show);
+        });
+        updatePedalCounts(filter);
+    });
+}
+
+
+
+
+
+
 
