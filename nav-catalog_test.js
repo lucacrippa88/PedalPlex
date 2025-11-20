@@ -1,12 +1,18 @@
 // === nav-catalog + catalog lazy loading ===
 
-let catalogData = [];      // tutti i pedali dal server
-let displayedCount = 0;    // quante pedali sono già renderizzati
-const PAGE_SIZE = 50;      // quanti pedali renderizzare per scroll
+// === GLOBALS ===
+let catalogData = [];      // tutti i pedali scaricati finora
+let displayedCount = 0;    // quanti pedali sono renderizzati sullo schermo
+const PAGE_SIZE = 50;      // quanti pedali per pagina (lazy)
 let currentFilter = 'all';
 let currentSearch = '';
 
-// --- Initialize navigation catalog ---
+let lazyPage = 0;          // pagina attuale del lazy loader
+let hasMore = true;        // se il server ha ancora pagine
+let isLoading = false;     // evita duplicati durante scroll
+
+
+// === NAV CATALOG HEADER ===
 function initNavCatalog(userRole) {
   const isAdmin = (userRole === "admin");
 
@@ -61,59 +67,56 @@ function initNavCatalog(userRole) {
   });
 }
 
-// --- Fetch catalog meta (totals / counts) ---
-function fetchCatalogMeta(userRole) {
-  const token = localStorage.getItem('authToken');
-  const roleParam = userRole === "guest" ? "guest" : userRole;
-  const usernameParam = window.currentUser?.username || "";
 
-  return fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_META.php?role=${roleParam}&username=${usernameParam}`, {
-    headers: { 'Authorization': 'Bearer ' + token }
-  })
-  .then(res => res.json())
-  .catch(err => { console.error("Error fetching meta:", err); return {}; });
-}
-
-// --- Fetch all pedals (lazy) ---
+// === FETCH LAZY (pagina per pagina) ===
 function fetchCatalogLazy(userRole) {
+  if (isLoading || !hasMore) return Promise.resolve();
+  isLoading = true;
+
   const token = localStorage.getItem('authToken');
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
 
-  return fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_LAZY.php?role=${roleParam}&username=${usernameParam}`, {
+  return fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_LAZY.php?page=${lazyPage}&limit=${PAGE_SIZE}&role=${roleParam}&username=${usernameParam}`, {
     headers: { 'Authorization': 'Bearer ' + token }
   })
   .then(res => res.json())
   .then(result => {
 
-    // result = { hasMore: true|false, items: [...] }
     if (!result || !Array.isArray(result.items)) {
-      console.error("Invalid response from GET_CATALOG_LAZY.php", result);
+      console.error("Invalid lazy result", result);
+      isLoading = false;
       return;
     }
 
-    // Aggiungi i nuovi pedali in coda al catalogo completo
+    // Aggiungi nuovi pedali al dataset globale
     catalogData = catalogData.concat(result.items);
 
-    // Ordina sempre l’intero catalogo
+    // Ordina sempre tutto
     catalogData.sort((a,b)=> (a._id || "").localeCompare(b._id || ""));
 
-    // Renderizza il prossimo batch
+    // Renderizza un altro blocco se serve
     renderNextBatch();
 
-    // Aggiorna l’indicatore se ci sono ancora pagine
+    // Aggiorna lazy loader
     hasMore = !!result.hasMore;
+    lazyPage++;
+    isLoading = false;
 
-    // aggiorna contatori globali
     updatePedalCounts();
-  })
 
-  .catch(err => { console.error("Error fetching pedals:", err); });
+  })
+  .catch(err => {
+    console.error("Lazy loading error:", err);
+    isLoading = false;
+  });
 }
 
-// --- Render next batch for lazy loading ---
+
+// === RENDER BATCH ===
 function renderNextBatch() {
   const resultsDiv = $("#catalog");
+
   const filtered = catalogData.filter(p => {
     let keep = true;
     if (currentFilter !== 'all') {
@@ -137,22 +140,35 @@ function renderNextBatch() {
     const $pedalDiv = renderPedal(pedal, window.currentUser?.role || 'guest', false);
     resultsDiv.append($pedalDiv);
   });
+
   displayedCount += nextBatch.length;
 }
 
-// --- Infinite scroll handler ---
-function setupInfiniteScroll() {
+
+// === INFINITE SCROLL ===
+function setupInfiniteScroll(userRole) {
   $(window).on("scroll", function() {
-    if ($(window).scrollTop() + $(window).height() > $(document).height() - 200) {
-      if (displayedCount < catalogData.length) renderNextBatch();
+
+    const nearBottom = $(window).scrollTop() + $(window).height() >= $(document).height() - 300;
+
+    if (!nearBottom) return;
+
+    if (displayedCount < catalogData.length) {
+      // Ho ancora pedali locali da renderizzare
+      renderNextBatch();
+      return;
     }
+
+    // Non ho più pedali locali → carico una nuova pagina dal server
+    fetchCatalogLazy(userRole);
   });
 }
 
-// --- Update pedal counts (all based on catalogData) ---
+
+// === UPDATE COUNTS ===
 function updatePedalCounts(activeFilter = null) {
-  const totalAbsolute = catalogData.length;
   const currentUsername = (window.currentUser?.username || '').toLowerCase();
+  const totalAbsolute = catalogData.length;
 
   const statusCounts = { draft:0, private:0, reviewing:0, publicByMe:0, user:0 };
   catalogData.forEach(p => {
@@ -185,18 +201,20 @@ function updatePedalCounts(activeFilter = null) {
   });
 }
 
-// --- Initialize catalog (meta + lazy) ---
+
+// === INIT CATALOG ===
 function initCatalog(userRole) {
   const resultsDiv = $("#catalog");
   if(resultsDiv.length===0) $("body").append('<div id="catalog"></div>');
   resultsDiv.html('<div class="bx--loading-overlay">Loading...</div>');
 
   fetchCatalogLazy(userRole).then(()=> {
-    setupInfiniteScroll();
+    setupInfiniteScroll(userRole);
   });
 }
 
-// --- CSS for counters / active filter ---
+
+// === CSS inject ===
 const style = document.createElement("style");
 style.textContent = `
 .status-filter { cursor:pointer; text-decoration: underline; color:#ddd; }
