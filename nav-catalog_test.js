@@ -232,7 +232,68 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Initialize catalog loader
-function initCatalog(userRole) {
+// function initCatalog(userRole) {
+//   const resultsDiv = document.getElementById("catalog");
+//   resultsDiv.innerHTML = `
+//       <div class="bx--loading-overlay">
+//         <div class="bx--loading" role="status">
+//           <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+//             <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+//             <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+//           </svg>
+//         </div>     
+//       </div>`;
+
+//   const roleParam = userRole === "guest" ? "guest" : userRole;
+//   const usernameParam = window.currentUser?.username || "";
+
+//   const token = localStorage.getItem('authToken');
+
+//   fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
+//     headers: {
+//         'Authorization': 'Bearer ' + token
+//       }
+//     }) 
+//     .then(async res => {
+//     if (!res.ok) {
+//       const text = await res.text();
+//       console.error("Server error:", text);
+//       throw new Error("Network error");
+//     }
+
+//     try {
+//       return await res.json();
+//     } catch (e) {
+//       const text = await res.text();
+//       console.error("Invalid JSON response:", text);
+//       throw new Error("Invalid JSON from server");
+//     }
+//   })
+//   .then(pedals => {
+//     resultsDiv.innerHTML = "";
+//     $("#pedalCount").text(`${pedals.length} gears`);
+
+//     pedals.sort((a,b) => a._id.localeCompare(b._id));
+//     pedals.forEach(pedal => {
+//       const $pedalDiv = renderPedal(pedal, userRole);
+//       $pedalDiv.attr("data-author", pedal.author || "");
+//       $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+//       $(resultsDiv).append($pedalDiv);
+//     });
+
+//     updatePedalCounts();
+//     if (userRole !== "guest") setupEditPedalHandler(pedals);
+//   })
+//   .catch(err => {
+//     console.error("Error fetching pedals:", err);
+//     resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err.message}</p>`;
+//   });
+   
+// }
+
+
+async function initCatalog(userRole) {
+
   const resultsDiv = document.getElementById("catalog");
   resultsDiv.innerHTML = `
       <div class="bx--loading-overlay">
@@ -246,67 +307,72 @@ function initCatalog(userRole) {
 
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
+  const token = localStorage.getItem("authToken");
 
-  const token = localStorage.getItem('authToken');
+  const response = await fetch(
+    `https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`,
+    { headers: { "Authorization": "Bearer " + token } }
+  );
 
-  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
-    headers: {
-        'Authorization': 'Bearer ' + token
-      }
-    }) 
-    .then(async res => {
-  if (!res.ok) {
-    const text = await res.text();
-    console.error("Server error:", text);
-    throw new Error("Network error");
+  if (!response.ok) {
+    resultsDiv.innerHTML = `<p style="color:red;">Error loading catalog</p>`;
+    return;
   }
 
-  try {
-    return await res.json();
-  } catch (e) {
-    const text = await res.text();
-    console.error("Invalid JSON response:", text);
-    throw new Error("Invalid JSON from server");
-  }
-})
-.then(pedals => {
+  // --- STREAMING SETUP ---
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  // rimuove loader
   resultsDiv.innerHTML = "";
-  $("#pedalCount").text(`${pedals.length} gears`);
 
-  pedals.sort((a,b) => a._id.localeCompare(b._id));
-  pedals.forEach(pedal => {
-    const $pedalDiv = renderPedal(pedal, userRole);
-    $pedalDiv.attr("data-author", pedal.author || "");
-    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-    $(resultsDiv).append($pedalDiv);
-  });
+  let firstChunk = true;
 
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+
+    // parse gli oggetti completati
+    let boundary = buffer.lastIndexOf("}");
+    if (boundary === -1) continue;
+
+    const chunk = buffer.slice(0, boundary + 1);
+    buffer = buffer.slice(boundary + 1);
+
+    // Split oggetti JSON separati da virgole
+    const objects = chunk
+      .replace(/^\[/, "")
+      .replace(/\]$/, "")
+      .split("},");
+
+    objects.forEach((obj, i) => {
+      if (!obj.trim()) return;
+
+      if (!obj.endsWith("}")) obj += "}";
+
+      try {
+        const pedal = JSON.parse(obj);
+
+        // --- RENDER IMMEDIATO ---
+        const $pedalDiv = renderPedal(pedal, userRole);
+        $pedalDiv.attr("data-author", pedal.author || "");
+        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+        $(resultsDiv).append($pedalDiv);
+
+      } catch (e) {
+        console.warn("Partial JSON not ready:", obj);
+      }
+    });
+  }
+
+  // quando tutto è finito → contatori, edit, ecc
   updatePedalCounts();
-  if (userRole !== "guest") setupEditPedalHandler(pedals);
-})
-.catch(err => {
-  console.error("Error fetching pedals:", err);
-  resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err.message}</p>`;
-});
-   
-    // .then(res => res.ok ? res.json() : Promise.reject("Network error"))
-    // .then(pedals => {
-    //   resultsDiv.innerHTML = "";
-    //   $("#pedalCount").text(`${pedals.length} gears`);
 
-    //   pedals.sort((a,b) => a._id - b._id);
-    //   pedals.forEach(pedal => {
-    //     const $pedalDiv = renderPedal(pedal, userRole);
-    //     $pedalDiv.attr("data-author", pedal.author || "");
-    //     $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-    //     $(resultsDiv).append($pedalDiv);
-    //   });
-
-    //   updatePedalCounts();
-    //   if (userRole !== "guest") setupEditPedalHandler(pedals);
-    // })
-    // .catch(err => {
-    //   console.error("Error fetching pedals:", err);
-    //   resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
-    // });
+  if (userRole !== "guest") {
+    // devi ricostruire pedali[] se ti serve
+    setupEditPedalHandler(); 
+  }
 }
