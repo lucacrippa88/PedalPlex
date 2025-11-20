@@ -310,7 +310,9 @@ async function initCatalog(userRole) {
     let metadata = [];
     try {
         const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_CATALOG_METADATA.php');
-        metadata = await res.json(); // Array di {_id, width, height, color}
+        const metadataRes = await res.json();
+        metadata = metadataRes.docs || [];
+        console.log("Metadata raw response:", metadataRes);
     } catch(e) {
         console.error("Error fetching metadata", e);
         resultsDiv.innerHTML = `<p style="color:red;">Error loading catalog metadata</p>`;
