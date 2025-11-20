@@ -85,7 +85,11 @@ function fetchCatalogLazy(userRole) {
   })
   .then(res => res.json())
   .then(list => {
-    catalogData = list.sort((a,b)=> a._id.localeCompare(b._id));
+    if (!Array.isArray(list)) {
+      console.warn("GET_CATALOG_LAZY.php returned not an array:", list);
+      list = list.docs || []; // prova a recuperare dal campo 'docs'
+    }
+    catalogData = list.sort((a,b) => (a._id||'').localeCompare(b._id||''));
     displayedCount = 0;
     $("#catalog").empty();
     renderNextBatch();
