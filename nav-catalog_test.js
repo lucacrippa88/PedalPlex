@@ -7,7 +7,7 @@ let displayedCount = 0;     // quanti pedali sono stati renderizzati
 let lazyPage = 0;           // pagina lazy per GET_CATALOG_LAZY.php
 let hasMore = true;         // se il server dice "continua c'è ancora roba"
 
-const PAGE_SIZE = 200;      // QUANTI pedali scaricare per pagina
+const PAGE_SIZE = 200;      // quanti pedali scaricare per pagina
 let currentFilter = 'all';  // filtro corrente (all / draft / private / ecc.)
 let currentSearch = '';     // testo della ricerca local client-side
 
@@ -103,7 +103,6 @@ function fetchCatalogLazy(userRole) {
   })
   .then(res => res.json())
   .then(result => {
-
     if (!result || !Array.isArray(result.items)) {
       console.error("Invalid response from GET_CATALOG_LAZY.php", result);
       return;
@@ -203,7 +202,7 @@ function updatePedalCounts(activeFilter = null) {
   countsHtml += `)`;
   $("#pedalCount").html(countsHtml);
 
-  // --- click sui contatori ---
+  // click sui contatori
   $(".status-filter").off("click").on("click", function(){
     currentFilter = $(this).data("filter");
 
@@ -212,7 +211,6 @@ function updatePedalCounts(activeFilter = null) {
     displayedCount = 0;
     lazyPage = 0;
     hasMore = true;
-
     $("#catalog").empty();
 
     fetchCatalogLazy(window.currentUser?.role || "guest").then(() => {
@@ -228,7 +226,6 @@ function updatePedalCounts(activeFilter = null) {
 //------------------------------------------------------------
 function initCatalog(userRole) {
   if ($("#catalog").length === 0) $("body").append('<div id="catalog"></div>');
-
   $("#catalog").html('<div class="bx--loading-overlay">Loading...</div>');
 
   fetchCatalogLazy(userRole).then(() => {
@@ -237,7 +234,16 @@ function initCatalog(userRole) {
 }
 
 //------------------------------------------------------------
-// CSS (solo per contatori)
+// 8. START FLOW COMPLETO
+//------------------------------------------------------------
+function startCatalog(userRole) {
+  fetchCatalogMeta(userRole).then(() => {
+    initCatalog(userRole);
+  });
+}
+
+//------------------------------------------------------------
+// 9. CSS (solo per contatori)
 //------------------------------------------------------------
 const style = document.createElement("style");
 style.textContent = `
