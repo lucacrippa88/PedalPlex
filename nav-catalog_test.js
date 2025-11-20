@@ -295,7 +295,6 @@ async function initCatalog(userRole) {
 
   const resultsDiv = document.getElementById("catalog");
 
-  // Mostra subito loader visivo
   resultsDiv.innerHTML = `
       <div id="catalog-loader" class="bx--loading-overlay">
         <div class="bx--loading" role="status">
@@ -311,6 +310,8 @@ async function initCatalog(userRole) {
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
   const token = localStorage.getItem("authToken");
+
+  console.log("STREAM → Avvio connessione…");
 
   const response = await fetch(
     `https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`,
@@ -328,8 +329,12 @@ async function initCatalog(userRole) {
   let buffer = "";
   let firstPedal = true;
 
-  // Remove loader spinner
+  console.log("STREAM → Connessione ok, inizio lettura…");
+
+  // Remove spinner
   loaderEl.remove();
+
+  let pedalCount = 0;
 
   while (true) {
     const { done, value } = await reader.read();
@@ -337,14 +342,14 @@ async function initCatalog(userRole) {
 
     buffer += decoder.decode(value, { stream: true });
 
-    // Trova oggetti JSON completi fino alla chiusura di }
+    // Trova il punto fino a cui abbiamo JSON completo
     let boundary = buffer.lastIndexOf("}");
     if (boundary === -1) continue;
 
     const chunk = buffer.slice(0, boundary + 1);
     buffer = buffer.slice(boundary + 1);
 
-    // pulizia simboli array
+    // Spezza potenziali oggetti
     const objects = chunk
       .replace(/^\[/, "")
       .replace(/\]$/, "")
@@ -358,28 +363,27 @@ async function initCatalog(userRole) {
 
       try {
         const pedal = JSON.parse(obj);
+        pedalCount++;
 
-        // PRIMO PEDALE → rimuove completamente overlay se esiste
-        if (firstPedal) {
-          firstPedal = false;
-        }
+        // Progressive log
+        console.log(`STREAM → Pedal #${pedalCount} arrivato:`, pedal);
 
         const $pedalDiv = renderPedal(pedal, userRole);
         $pedalDiv.attr("data-author", pedal.author || "");
-        $pedalDiv.attr(
-          "data-published",
-          (pedal.published || "draft").toLowerCase()
-        );
+        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
         $(resultsDiv).append($pedalDiv);
 
       } catch (e) {
-        console.warn("Partial JSON not parseable:", obj);
+        console.warn("STREAM → JSON parziale (non decodificato):", obj);
       }
     });
   }
+
+  console.log("STREAM → Fine dello stream. Totale pedali:", pedalCount);
 
   updatePedalCounts();
   if (userRole !== "guest") {
     setupEditPedalHandler();
   }
 }
+
