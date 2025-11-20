@@ -323,18 +323,16 @@ async function initCatalog(userRole) {
     return;
   }
 
-  // --- STREAMING ---
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
-  let firstPedal = true;
 
-  console.log("STREAM → Connessione ok, inizio lettura…");
-
-  // Remove spinner
+  // Rimuovi spinner SUBITO
   loaderEl.remove();
 
   let pedalCount = 0;
+
+  console.log("STREAM → Connessione ok, inizio lettura…");
 
   while (true) {
     const { done, value } = await reader.read();
@@ -342,20 +340,18 @@ async function initCatalog(userRole) {
 
     buffer += decoder.decode(value, { stream: true });
 
-    // Trova il punto fino a cui abbiamo JSON completo
     let boundary = buffer.lastIndexOf("}");
     if (boundary === -1) continue;
 
     const chunk = buffer.slice(0, boundary + 1);
     buffer = buffer.slice(boundary + 1);
 
-    // Spezza potenziali oggetti
     const objects = chunk
       .replace(/^\[/, "")
       .replace(/\]$/, "")
       .split("},");
 
-    objects.forEach((obj, i) => {
+    objects.forEach(obj => {
       obj = obj.trim();
       if (!obj) return;
 
@@ -365,8 +361,10 @@ async function initCatalog(userRole) {
         const pedal = JSON.parse(obj);
         pedalCount++;
 
-        // Progressive log
-        console.log(`STREAM → Pedal #${pedalCount} arrivato:`, pedal);
+        // 🟦 LOG ogni 50 pedali
+        if (pedalCount % 50 === 0) {
+          console.log(`STREAM → Arrivati ${pedalCount} pedali…`);
+        }
 
         const $pedalDiv = renderPedal(pedal, userRole);
         $pedalDiv.attr("data-author", pedal.author || "");
@@ -374,16 +372,15 @@ async function initCatalog(userRole) {
         $(resultsDiv).append($pedalDiv);
 
       } catch (e) {
-        console.warn("STREAM → JSON parziale (non decodificato):", obj);
+        // JSON incompleto → ignoriamo
       }
     });
   }
 
-  console.log("STREAM → Fine dello stream. Totale pedali:", pedalCount);
+  console.log(`STREAM → Fine. Totale pedali ricevuti: ${pedalCount}`);
 
   updatePedalCounts();
-  if (userRole !== "guest") {
-    setupEditPedalHandler();
-  }
+  if (userRole !== "guest") setupEditPedalHandler();
 }
+
 
