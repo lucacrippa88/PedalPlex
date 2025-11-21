@@ -375,17 +375,15 @@ function initCatalog(userRole) {
 
       // === ⏳ Loader inline Carbon Design finché non arriva il fetch completo ===
       const $loaderInline = $(`
-        <div class="bx--inline-loading" role="alert" aria-live="assertive"
-            style="margin-top: 8px;">
-          <div class="bx--inline-loading__animation">
-            <div class="bx--inline-loading__loading">
-              <svg class="bx--inline-loading__svg" viewBox="0 0 100 100">
-                <path d="M0 0h100v100H0z" class="bx--inline-loading__background"></path>
-                <path d="M0 0h100v100H0z" class="bx--inline-loading__stroke"></path>
-              </svg>
-            </div>
+        <div class="bx--progress bx--progress--indeterminate" style="margin-top: 10px;">
+          <div class="bx--progress-step bx--progress-step--incomplete">
+            <svg class="bx--progress__arrow" viewBox="0 0 16 16"></svg>
+            <p class="bx--progress-label">Caricamento…</p>
           </div>
-          <p class="bx--inline-loading__text">Load controls...</p>
+          <div class="bx--progress-bar">
+            <div class="bx--progress-bar__track"></div>
+            <div class="bx--progress-bar__indicator"></div>
+          </div>
         </div>
       `);
 
