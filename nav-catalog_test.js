@@ -411,6 +411,7 @@ function initCatalog(userRole) {
     });
 
     updatePedalCounts();
+    if (userRole !== "guest") setupEditPedalHandler(pedals);
   });
 
   // --- 2️⃣ Fetch catalogo completo ---
