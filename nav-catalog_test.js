@@ -332,7 +332,7 @@ function initCatalog(userRole) {
   // === 🌀 Overlay spinner Carbon Design (mostrato finché non arrivano i metadati) ===
   const globalSpinner = $(`
     <div id="catalog-global-loader" class="bx--loading-overlay" 
-         style="position:relative; height:120px;">
+         style="position:relative; height:120px; top 50%">
       <div class="bx--loading" role="status">
         <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
           <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
