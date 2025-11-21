@@ -548,48 +548,48 @@ function setupEditPedalHandler(pedals) {
     }
 
     // --- ✅ Se mancano i controlli, aggiorniamo al volo ---
-    if (!pedal.controls || pedal.controls.length === 0) {
-      const token = localStorage.getItem('authToken');
+    // --- ✅ Se mancano i controlli, aggiorniamo al volo ---
+if (!pedal.controls || pedal.controls.length === 0) {
+  const token = localStorage.getItem('authToken');
 
-      fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({ ids: [pedal._id] })
-      })
-      .then(res => res.json())
-      .then(fullPedalRes => {
-        if (!fullPedalRes.docs || fullPedalRes.docs.length === 0) {
-          console.warn("GET_PEDALS_BY_IDS returned empty or invalid response for pedal:", pedal._id);
-          return;
-        }
-
-        const fullPedal = fullPedalRes.docs[0];
-
-        // Aggiorna l'oggetto nell'array pedals
-        const idx = pedals.findIndex(p => p._id === fullPedal._id);
-        if (idx !== -1) pedals[idx] = fullPedal;
-        pedal = fullPedal;
-
-        // Aggiorna il div
-        const $newPedalDiv = renderPedal(pedal, window.currentUser.role || "user");
-        $newPedalDiv.attr("data-author", pedal.author || "");
-        $newPedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-        $newPedalDiv.find(".edit-btn").data("pedal", pedal);
-
-        pedalDiv.replaceWith($newPedalDiv);
-
-        // Ri-triggera il click sul nuovo div per eseguire la logica originale
-        setTimeout(() => {
-          $newPedalDiv.find(".edit-btn").trigger("click");
-        }, 50); // 50ms bastano
-      })
-      .catch(err => console.error("Error loading pedal:", pedal._id, err));
-
-      return; // Esci fino a quando il fetch non termina
+  fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({ ids: [pedal._id] })
+  })
+  .then(res => res.json())
+  .then(fullPedalRes => {
+    if (!fullPedalRes.docs || fullPedalRes.docs.length === 0) {
+      console.warn("GET_PEDALS_BY_IDS returned empty or invalid response for pedal:", pedal._id);
+      return;
     }
+
+    const fullPedal = fullPedalRes.docs[0];
+
+    // Aggiorna l'oggetto nell'array pedals
+    const idx = pedals.findIndex(p => p._id === fullPedal._id);
+    if (idx !== -1) pedals[idx] = fullPedal;
+    pedal = fullPedal;
+
+    // Aggiorna il div
+    const $newPedalDiv = renderPedal(pedal, window.currentUser.role || "user");
+    $newPedalDiv.attr("data-author", pedal.author || "");
+    $newPedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+    $newPedalDiv.find(".edit-btn").data("pedal", pedal);
+
+    pedalDiv.replaceWith($newPedalDiv);
+
+    // ✅ Continua l’esecuzione originale senza triggerare click
+    // Qui pedal ha già i controlli aggiornati, quindi il codice che segue aprirà il modal correttamente
+  })
+  .catch(err => console.error("Error loading pedal:", pedal._id, err));
+
+  return; // Esci fino a quando il fetch non termina
+}
+
 
 
 
