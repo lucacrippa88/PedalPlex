@@ -76,8 +76,8 @@ header {
 .pedalplex-logo {
   width: 25px;
   height: 25px;
-  mask-image: url('logos/pedalplex_logo_white.png');
-  -webkit-mask-image: url('logos/pedalplex_logo_white.png');
+  mask-image: url('../logos/pedalplex_logo_white.png');
+  -webkit-mask-image: url('../logos/pedalplex_logo_white.png');
   mask-repeat: no-repeat;
   -webkit-mask-repeat: no-repeat;
   mask-size: contain;
@@ -96,8 +96,8 @@ header {
 .pedalplex-logo-fullscreen-menu {
   width: 100px;
   height: 100px;
-  mask-image: url('logos/pedalplex_logo_white.png');
-  -webkit-mask-image: url('logos/pedalplex_logo_white.png');
+  mask-image: url('../logos/pedalplex_logo_white.png');
+  -webkit-mask-image: url('../logos/pedalplex_logo_white.png');
   mask-repeat: no-repeat;
   -webkit-mask-repeat: no-repeat;
   mask-size: contain;
