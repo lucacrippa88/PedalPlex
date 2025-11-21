@@ -51,16 +51,13 @@
       // Guest mode
       $('#loadingMessage').hide();
       $('#page-content').show();
-
       window.currentUser = { role: 'guest' };
-
       if (typeof initNavCatalog === 'function') initNavCatalog('guest');
       if (typeof initCatalog === 'function') initCatalog('guest');
-
       return;
     }
 
-    // Existing auth check
+    // Auth check
     $.ajax({
       url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
       method: 'GET',
@@ -69,30 +66,52 @@
       success: function(userFromServer) {
         $('#loadingMessage').hide(); 
         $('#page-content').show();
-
         window.currentUser = userFromServer;
-
         if (typeof initNavCatalog === 'function') initNavCatalog(userFromServer.role);
         if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
       },
       error: function(xhr) {
         console.error('Auth check failed:', xhr.status, xhr.responseText);
-        // Se il token è scaduto o non valido, entra in modalità guest
+
         if (xhr.status === 401) {
           localStorage.removeItem('authToken');
-          // Mostriamo la pagina come guest invece di reindirizzare
-          $('#loadingMessage').hide();
-          $('#page-content').show();
-          window.currentUser = { role: 'guest' };
 
-          if (typeof initNavCatalog === 'function') initNavCatalog('guest');
-          if (typeof initCatalog === 'function') initCatalog('guest');
+          // Mostriamo swal2 con opzioni
+          Swal.fire({
+            title: 'Session expired',
+            text: 'Your session is expired. Do you want to log-in again or continue as a Guest?',
+            icon: 'warning',
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: 'Login',
+            denyButtonText: 'Be our Guest',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary',
+              denyButton: 'bx--btn bx--btn--tertiary'
+            },
+            allowOutsideClick: false,
+            allowEscapeKey: false
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Vai a login
+              window.location.href = 'login';
+            } else if (result.isDenied) {
+              // Continua come guest
+              $('#loadingMessage').hide();
+              $('#page-content').show();
+              window.currentUser = { role: 'guest' };
+              if (typeof initNavCatalog === 'function') initNavCatalog('guest');
+              if (typeof initCatalog === 'function') initCatalog('guest');
+            }
+          });
+
         } else {
           alert('Failed to verify authentication. Please try again.');
         }
       }
     });
   });
+
   </script>
 
 
