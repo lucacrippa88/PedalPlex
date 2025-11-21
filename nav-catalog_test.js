@@ -414,33 +414,33 @@ function initCatalog(userRole) {
     if (userRole !== "guest") setupEditPedalHandler(pedals);
   });
 
-  // // --- 2️⃣ Fetch catalogo completo ---
-  // const fullFetch = fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
-  //   headers: { 'Authorization': 'Bearer ' + token }
-  // })
-  // .then(res => res.json())
-  // .then(fullPedals => {
+  // --- 2️⃣ Fetch catalogo completo ---
+  const fullFetch = fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+  .then(res => res.json())
+  .then(fullPedals => {
 
-  //   // 🔄 Rimpiazziamo tutti i preview con la versione completa
-  //   resultsDiv.empty();
+    // 🔄 Rimpiazziamo tutti i preview con la versione completa
+    resultsDiv.empty();
 
-  //   fullPedals.sort((a,b) => a._id.localeCompare(b._id));
-  //   fullPedals.forEach(pedal => {
-  //     const $pedalDiv = renderPedal(pedal, userRole); // full
-  //     $pedalDiv.attr("data-author", pedal.author || "");
-  //     $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-  //     resultsDiv.append($pedalDiv);
-  //   });
+    fullPedals.sort((a,b) => a._id.localeCompare(b._id));
+    fullPedals.forEach(pedal => {
+      const $pedalDiv = renderPedal(pedal, userRole); // full
+      $pedalDiv.attr("data-author", pedal.author || "");
+      $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+      resultsDiv.append($pedalDiv);
+    });
 
-  //   updatePedalCounts();
-  //   if (userRole !== "guest") setupEditPedalHandler(fullPedals);
-  // });
+    updatePedalCounts();
+    if (userRole !== "guest") setupEditPedalHandler(fullPedals);
+  });
 
-  // // Entrambe in parallelo
-  // return Promise.all([metadataFetch, fullFetch]).catch(err => {
-  //   console.error("Error fetching pedals:", err);
-  //   resultsDiv.html(`<p style="color:red;">Error loading pedals: ${err.message}</p>`);
-  // });
+  // Entrambe in parallelo
+  return Promise.all([metadataFetch, fullFetch]).catch(err => {
+    console.error("Error fetching pedals:", err);
+    resultsDiv.html(`<p style="color:red;">Error loading pedals: ${err.message}</p>`);
+  });
 }
 
 
