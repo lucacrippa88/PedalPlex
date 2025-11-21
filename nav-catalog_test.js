@@ -265,6 +265,23 @@ function initCatalog(userRole) {
       const $pedalDiv = renderPedal(pedal, userRole);
       $pedalDiv.attr("data-author", pedal.author || "");
       $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+
+      // 1️⃣ Aggiungi spinner overlay ai controlli
+      const $spinnerOverlay = $(`
+        <div class="bx--loading-overlay" style="
+          position:absolute; top:0; left:0; width:100%; height:100%;
+          display:flex; align-items:center; justify-content:center;
+          background:rgba(255,255,255,0.8); z-index:1;">
+          <div class="bx--loading" role="status">
+            <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+              <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+              <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+            </svg>
+          </div>
+        </div>
+      `);
+      $pedalDiv.append($spinnerOverlay);
+
       $(resultsDiv).append($pedalDiv);
     });
 
@@ -286,6 +303,9 @@ function initCatalog(userRole) {
             fullPedal.logo && $el.data('logo', fullPedal.logo);
             fullPedal.controls && $el.data('controls', fullPedal.controls);
 
+            // 2️⃣ Rimuovi spinner overlay
+            $el.find('.bx--loading-overlay').remove();
+
             // Renderizza controlli aggiornati
             renderPedalControls(fullPedal, $el);
           }
@@ -299,3 +319,4 @@ function initCatalog(userRole) {
     resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err.message}</p>`;
   });
 }
+
