@@ -539,13 +539,6 @@ function renderPedalControls(pedal, $pedalDiv) {
 function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
 
-    // const pedal = $(this).data("pedal");
-    // if (!pedal) {
-    //   console.error("Pedal data not found!");
-    //   return;
-    // }
-
-    // All'inizio del click handler
     let pedal = $(this).data("pedal");
     const pedalDiv = $(this).closest(".pedal");
 
@@ -554,27 +547,15 @@ function setupEditPedalHandler(pedals) {
       return;
     }
 
-    // ✅ Se mancano i controlli, aggiorniamo al volo con POST
+    // --- ✅ Se mancano i controlli, aggiorniamo al volo ---
     if (!pedal.controls || pedal.controls.length === 0) {
       const token = localStorage.getItem('authToken');
-      console.log("Selected pedal _id:", pedal?._id);
 
-
-      fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({ ids: [pedal._id] })
+      fetch(`https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=${pedal._id}`, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
       .then(res => res.json())
       .then(fullPedalArr => {
-        if (!fullPedalArr || !Array.isArray(fullPedalArr) || fullPedalArr.length === 0) {
-          console.error("GET_PEDALS_BY_IDS returned empty or invalid response for pedal:", pedal._id);
-          return;
-        }
-
         const fullPedal = fullPedalArr[0];
 
         // Aggiorna l'oggetto nell'array pedals
@@ -590,13 +571,14 @@ function setupEditPedalHandler(pedals) {
 
         pedalDiv.replaceWith($newPedalDiv);
 
-        // Ri-triggera il click sul nuovo div
+        // Ri-triggera il click sul nuovo div per eseguire la logica originale
         $newPedalDiv.find(".edit-btn").trigger("click");
       })
       .catch(err => console.error("Error loading pedal:", err));
 
-      return;
+      return; // Esci fino a quando il fetch non termina
     }
+
 
 
 
