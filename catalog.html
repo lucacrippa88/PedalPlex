@@ -18,6 +18,8 @@
   <link rel="dns-prefetch" href="https://1.www.s81c.com">
   <link rel="preconnect" href="https://1.www.s81c.com" crossorigin>
   <link rel="stylesheet" href="https://unpkg.com/carbon-components/css/carbon-components.min.css" />
+  <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
+
   <link rel="stylesheet" href="style.css" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
@@ -78,7 +80,7 @@
       console.error('Auth check failed:', xhr.status, xhr.responseText);
       if (xhr.status === 401) {
         localStorage.removeItem('authToken');
-        window.location.href = 'login';
+        window.location.href = '';
       } else {
         alert('Failed to verify authentication. Please try again.');
       }
