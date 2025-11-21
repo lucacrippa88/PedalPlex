@@ -375,11 +375,7 @@ function initCatalog(userRole) {
 
       // === ⏳ Loader inline Carbon Design finché non arriva il fetch completo ===
       const $loaderInline = $(`
-        <div class="bx--progress bx--progress--indeterminate" style="margin-top: 10px;">
-          <div class="bx--progress-step bx--progress-step--incomplete">
-            <svg class="bx--progress__arrow" viewBox="0 0 16 16"></svg>
-            <p class="bx--progress-label">Caricamento…</p>
-          </div>
+        <div class="bx--progress bx--progress--indeterminate" style="max-width:120px; margin:8px auto;">
           <div class="bx--progress-bar">
             <div class="bx--progress-bar__track"></div>
             <div class="bx--progress-bar__indicator"></div>
