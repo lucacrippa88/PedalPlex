@@ -168,66 +168,86 @@
 
   <script>
   // Check user authentication
-  $(document).ready(function() {
-    if (window.location.protocol === 'file:') {
-      alert('Please run this app via a local HTTP server for full functionality.');
+$(document).ready(function() {
+  if (window.location.protocol === 'file:') {
+    alert('Please run this app via a local HTTP server for full functionality.');
+    $('#loadingMessage, #page-content, #preset-controls').hide();
+    return;
+  }
 
+  const token = localStorage.getItem('authToken');
+
+  if (!token) {
+    console.warn('No auth token found — initializing guest mode.');
+    window.currentUser = null; // guest
+    $('#loadingMessage').hide();
+    $('#page-content, #preset-controls').show();
+    $('#preset-controls').html("<p>Login to organise your Presets in folders and save them!</p>");
+    if (typeof initNavPreset === 'function') initNavPreset();
+    if (typeof initPreset === 'function') initPreset();
+    $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn, #zoomIn, #zoomOut, #zoomReset')
+      .prop('disabled', true)
+      .addClass('btn-disabled');
+    return;
+  }
+
+  // Attempt server auth
+  $.ajax({
+    url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
+    method: 'GET',
+    dataType: 'json',
+    headers: { 'Authorization': 'Bearer ' + token },
+    success: function(userFromServer) {
       $('#loadingMessage').hide();
-      $('#page-content').hide();
-      $('#preset-controls').hide();
-      return;
-    }
-
-    const token = localStorage.getItem('authToken');
-
-    if (!token) {
-      console.warn('No auth token found — initializing guest mode.');
-
-      window.currentUser = null; // no user
-      $('#loadingMessage').hide();
-      $('#page-content').show();        // show the page
-      $('#preset-controls').show()     // show controls
-      $('#preset-controls').html("<p>Login to organise your Presets in folders and save them!</p>");
+      $('#page-content, #preset-controls').show();
+      window.currentUser = userFromServer;
       if (typeof initNavPreset === 'function') initNavPreset();
       if (typeof initPreset === 'function') initPreset();
+    },
+    error: function(xhr) {
+      console.error('Auth check failed:', xhr.status, xhr.responseText);
 
-      // disable save/create/add folder buttons
-      $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn, #zoomIn, #zoomOut, #zoomReset').prop('disabled', true).addClass('btn-disabled');
+      if (xhr.status === 401) {
+        localStorage.removeItem('authToken');
 
-      return;
-    }
-
-
-    // Only attempt server auth if token exists
-    if (token) {
-      $.ajax({
-        url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
-        method: 'GET',
-        dataType: 'json',
-        headers: {
-          'Authorization': 'Bearer ' + token
-        },
-        success: function(userFromServer) {
-          $('#loadingMessage').hide();
-          $('#page-content').show();
-          window.currentUser = userFromServer;
-
-          if (typeof initNavPreset === 'function') initNavPreset();
-          if (typeof initPreset === 'function') initPreset();
-        },
-        error: function(xhr) {
-          console.error('Auth check failed:', xhr.status, xhr.responseText);
-          if (xhr.status === 401) {
-            localStorage.removeItem('authToken');
+        // Swal2 con scelta Login / Continua come ospite
+        Swal.fire({
+          title: 'Sessione scaduta',
+          text: 'Your session is expired. Do you want to Login again or continue as a Guest?',
+          icon: 'warning',
+          showDenyButton: true,
+          showCancelButton: false,
+          confirmButtonText: 'Login',
+          denyButtonText: 'Be our Guest',
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--primary',
+            denyButton: 'bx--btn bx--btn--tertiary'
+          },
+          allowOutsideClick: false,
+          allowEscapeKey: false
+        }).then((result) => {
+          if (result.isConfirmed) {
             window.location.href = 'login';
-          } else {
-            alert('Failed to verify authentication. Please try again.');
+          } else if (result.isDenied) {
+            // Continua come guest
+            window.currentUser = null;
+            $('#loadingMessage').hide();
+            $('#page-content, #preset-controls').show();
+            $('#preset-controls').html("<p>Login to organise your Presets in folders and save them!</p>");
+            if (typeof initNavPreset === 'function') initNavPreset();
+            if (typeof initPreset === 'function') initPreset();
+            $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn, #zoomIn, #zoomOut, #zoomReset')
+              .prop('disabled', true)
+              .addClass('btn-disabled');
           }
-        }
-      });
+        });
+      } else {
+        alert('Failed to verify authentication. Please try again.');
+      }
     }
-    
   });
+});
+
   </script>
 
 
