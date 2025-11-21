@@ -546,7 +546,7 @@ function setupEditPedalHandler(pedals) {
       console.error("Pedal data not found!");
       return;
     }
-    
+
     // --- ✅ Se mancano i controlli, aggiorniamo al volo ---
     if (!pedal.controls || pedal.controls.length === 0) {
       const token = localStorage.getItem('authToken');
@@ -582,7 +582,9 @@ function setupEditPedalHandler(pedals) {
         pedalDiv.replaceWith($newPedalDiv);
 
         // Ri-triggera il click sul nuovo div per eseguire la logica originale
-        $newPedalDiv.find(".edit-btn").trigger("click");
+        setTimeout(() => {
+          $newPedalDiv.find(".edit-btn").trigger("click");
+        }, 50); // 50ms bastano
       })
       .catch(err => console.error("Error loading pedal:", pedal._id, err));
 
