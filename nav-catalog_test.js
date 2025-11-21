@@ -389,19 +389,21 @@ function initCatalog(userRole) {
             height: 100%;
             background-color: #0f62fe;
             position: absolute;
-            left: -40%;
+            transform: translateX(-100%);
             animation: progressAnim 1s linear infinite;
+            will-change: transform;
           "></div>
         </div>
 
         <style>
           @keyframes progressAnim {
-            0% { left: -40%; }
-            50% { left: 100%; }
-            100% { left: 100%; }
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
           }
         </style>
       `);
+
 
 
       $pedalDiv.append($loaderInline);
