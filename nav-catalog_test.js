@@ -329,48 +329,69 @@ function initCatalog(userRole) {
   const usernameParam = window.currentUser?.username || "";
   const token = localStorage.getItem('authToken');
 
-  // --- 1️⃣ Fetch veloce metadati con preview + spinner ---
+  // === 🌀 Overlay spinner Carbon Design (mostrato finché non arrivano i metadati) ===
+  const globalSpinner = $(`
+    <div id="catalog-global-loader" class="bx--loading-overlay" 
+         style="position:relative; height:120px;">
+      <div class="bx--loading" role="status">
+        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+        </svg>
+      </div>
+    </div>
+  `);
+
+  resultsDiv.append(globalSpinner);
+
+  // --- 1️⃣ Fetch veloce metadati con preview ---
   const metadataFetch = fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_METADATA.php?role=${roleParam}&username=${usernameParam}`, {
     headers: { 'Authorization': 'Bearer ' + token }
   })
   .then(res => res.json())
   .then(pedals => {
+
+    // Rimuoviamo lo spinner globale
+    $("#catalog-global-loader").remove();
+
+    // Mostriamo i pedals in versione "light"
     pedals.sort((a,b) => a._id.localeCompare(b._id));
     pedals.forEach(pedal => {
-      const $pedalDiv = renderPedal(pedal, userRole); // pedale leggero
+      const $pedalDiv = renderPedal(pedal, userRole); // preview
       $pedalDiv.attr("data-author", pedal.author || "");
       $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
 
-      // Inserisci loader inline
-      const $loader = $(`
-        <div class="bx--loading bx--loading--small" role="status" 
-            style="display:flex; justify-content:center; align-items:center; height:60px;">
+      // === ⏳ Loader inline Carbon Design finché non arriva il fetch completo ===
+      const $loaderInline = $(`
+        <div class="bx--loading bx--loading--small" role="status"
+             style="display:flex; justify-content:center; align-items:center; height:60px; margin-top:8px;">
           <svg class="bx--loading__svg" viewBox="0 0 32 32">
             <circle class="bx--loading__background" cx="16" cy="16" r="14"></circle>
             <circle class="bx--loading__stroke" cx="16" cy="16" r="14"></circle>
           </svg>
         </div>
       `);
-      $pedalDiv.append($loader);
 
+      $pedalDiv.append($loaderInline);
       resultsDiv.append($pedalDiv);
     });
+
     updatePedalCounts();
   });
 
-  // --- 2️⃣ Fetch catalogo completo in parallelo ---
+  // --- 2️⃣ Fetch catalogo completo ---
   const fullFetch = fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
     headers: { 'Authorization': 'Bearer ' + token }
   })
   .then(res => res.json())
   .then(fullPedals => {
-    fullPedals.sort((a,b) => a._id.localeCompare(b._id));
 
-    // Sovrascrive di netto i div esistenti
+    // 🔄 Rimpiazziamo tutti i preview con la versione completa
     resultsDiv.empty();
 
+    fullPedals.sort((a,b) => a._id.localeCompare(b._id));
     fullPedals.forEach(pedal => {
-      const $pedalDiv = renderPedal(pedal, userRole); // pedale completo
+      const $pedalDiv = renderPedal(pedal, userRole); // full
       $pedalDiv.attr("data-author", pedal.author || "");
       $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
       resultsDiv.append($pedalDiv);
@@ -380,11 +401,13 @@ function initCatalog(userRole) {
     if (userRole !== "guest") setupEditPedalHandler(fullPedals);
   });
 
-  // Entrambe le fetch in parallelo
+  // Entrambe in parallelo
   return Promise.all([metadataFetch, fullFetch]).catch(err => {
     console.error("Error fetching pedals:", err);
     resultsDiv.html(`<p style="color:red;">Error loading pedals: ${err.message}</p>`);
   });
 }
+
+
 
 
