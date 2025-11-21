@@ -904,6 +904,7 @@ window.setupEditPedalHandler = setupEditPedalHandler;
 
 
 
+
 // HELPER
 function safeLogoStyle(inputStyle) {
   if (!inputStyle) return "";
