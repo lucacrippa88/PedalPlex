@@ -240,7 +240,7 @@ function initCatalog(userRole) {
   // resultsDiv.html(""); // puliamo
 
   const resultsDiv = $("#catalog");
-  resultsDiv.innerHTML = `
+  resultsDiv.html = `
       <div class="bx--loading-overlay">
         <div class="bx--loading" role="status">
           <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
