@@ -545,7 +545,7 @@ function setupEditPedalHandler(pedals) {
     //   return;
     // }
 
-
+    // All'inizio del click handler
     let pedal = $(this).data("pedal");
     const pedalDiv = $(this).closest(".pedal");
 
@@ -554,12 +554,17 @@ function setupEditPedalHandler(pedals) {
       return;
     }
 
-    // --- ✅ Se mancano i controlli, aggiorniamo al volo ---
+    // ✅ Se mancano i controlli, aggiorniamo al volo con POST
     if (!pedal.controls || pedal.controls.length === 0) {
       const token = localStorage.getItem('authToken');
 
-      fetch(`https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=${pedal._id}`, {
-        headers: { 'Authorization': 'Bearer ' + token }
+      fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ ids: [pedal._id] })
       })
       .then(res => res.json())
       .then(fullPedalArr => {
@@ -585,6 +590,7 @@ function setupEditPedalHandler(pedals) {
 
       return; // Esci fino a quando il fetch non termina
     }
+
 
     // SECURITY: rely only on server-provided flag
     if (!pedal.canEdit) {
