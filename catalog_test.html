@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PedalPlex</title>
@@ -9,18 +10,19 @@
   <link rel="dns-prefetch" href="https://1.www.s81c.com">
   <link rel="preconnect" href="https://1.www.s81c.com" crossorigin>
   <link rel="stylesheet" href="css/carbon-components.min.css" />
-  <link rel="stylesheet" href="css/style.css" />
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-BX9P5WN5HH');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BX9P5WN5HH');
   </script>
 
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
   
@@ -30,9 +32,9 @@
     <!-- Load scripts after content is visible -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="utils.js"></script>
-    <script src="catalog_old.js"></script>
+    <script src="catalog_test.js"></script>
     <script src="fullscreen-menu.js"></script>
-    <script src="nav-catalog_old.js"></script>
+    <script src="nav-catalog_test.js"></script>
   </div>
 
   <script>
@@ -79,7 +81,7 @@
       console.error('Auth check failed:', xhr.status, xhr.responseText);
       if (xhr.status === 401) {
         localStorage.removeItem('authToken');
-        window.location.href = 'login';
+        window.location.href = '';
       } else {
         alert('Failed to verify authentication. Please try again.');
       }
