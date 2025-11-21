@@ -383,6 +383,7 @@ function initCatalog(userRole) {
           border-radius: 3px;
           overflow: hidden;
           position: relative;
+          top: 30px;
         ">
           <div class="loader-bar"></div>
         </div>
