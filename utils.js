@@ -539,10 +539,51 @@ function renderPedalControls(pedal, $pedalDiv) {
 function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
 
-    const pedal = $(this).data("pedal");
+    // const pedal = $(this).data("pedal");
+    // if (!pedal) {
+    //   console.error("Pedal data not found!");
+    //   return;
+    // }
+
+
+    let pedal = $(this).data("pedal");
+    const pedalDiv = $(this).closest(".pedal");
+
     if (!pedal) {
       console.error("Pedal data not found!");
       return;
+    }
+
+    // --- ✅ Se mancano i controlli, aggiorniamo al volo ---
+    if (!pedal.controls || pedal.controls.length === 0) {
+      const token = localStorage.getItem('authToken');
+
+      fetch(`https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=${pedal._id}`, {
+        headers: { 'Authorization': 'Bearer ' + token }
+      })
+      .then(res => res.json())
+      .then(fullPedalArr => {
+        const fullPedal = fullPedalArr[0];
+
+        // Aggiorna l'oggetto nell'array pedals
+        const idx = pedals.findIndex(p => p._id === fullPedal._id);
+        if (idx !== -1) pedals[idx] = fullPedal;
+        pedal = fullPedal;
+
+        // Aggiorna il div
+        const $newPedalDiv = renderPedal(pedal, window.currentUser.role || "user");
+        $newPedalDiv.attr("data-author", pedal.author || "");
+        $newPedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+        $newPedalDiv.find(".edit-btn").data("pedal", pedal);
+
+        pedalDiv.replaceWith($newPedalDiv);
+
+        // Ri-triggera il click sul nuovo div per eseguire la logica originale
+        $newPedalDiv.find(".edit-btn").trigger("click");
+      })
+      .catch(err => console.error("Error loading pedal:", err));
+
+      return; // Esci fino a quando il fetch non termina
     }
 
     // SECURITY: rely only on server-provided flag
