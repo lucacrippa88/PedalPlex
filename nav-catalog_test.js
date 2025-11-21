@@ -266,21 +266,17 @@ function initCatalog(userRole) {
       $pedalDiv.attr("data-author", pedal.author || "");
       $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
 
-      // 🌀 Aggiungi loader minimale centrato (solo area controlli)
-      const $spinner = $(`
-        <div class="pedal-spinner" style="
-          display:flex; align-items:center; justify-content:center;
-          position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);
-          width:40px; height:40px;">
-          <div class="bx--loading" role="status">
-            <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-              <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
-              <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
-            </svg>
-          </div>
+      // 🌀 Spinner inline nei controlli
+      const $controlsContainer = $('<div class="controls-placeholder" style="display:flex; justify-content:center; align-items:center; height:60px;"></div>');
+      $controlsContainer.html(`
+        <div class="bx--loading bx--loading--small" role="status">
+          <svg class="bx--loading__svg" viewBox="-37.5 -37.5 75 75">
+            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+          </svg>
         </div>
       `);
-      $pedalDiv.append($spinner);
+      $pedalDiv.append($controlsContainer);
 
       $(resultsDiv).append($pedalDiv);
     });
@@ -298,18 +294,17 @@ function initCatalog(userRole) {
         fullPedals.forEach(fullPedal => {
           const $el = $(`[data-pedal-id="${fullPedal._id}"]`);
           if ($el.length) {
-            // Aggiorna campi mancanti
             fullPedal.name && $el.attr('data-pedal-name', fullPedal.name);
             fullPedal.logo && $el.data('logo', fullPedal.logo);
             fullPedal.controls && $el.data('controls', fullPedal.controls);
 
-            // 2️⃣ Rimuovi spinner overlay
-            $el.find('.bx--loading-overlay').remove();
+            // Rimuovi spinner prima di renderizzare controlli
+            $el.find('.controls-placeholder').remove();
 
-            // Renderizza controlli aggiornati
             renderPedalControls(fullPedal, $el);
           }
         });
+
       })
       .catch(err => console.error("Error fetching full pedal details:", err));
     }
