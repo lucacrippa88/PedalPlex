@@ -140,116 +140,120 @@
   <script src="zoom.js"></script>
 
   <script>
-  // Check user authentication
   $(document).ready(function() {
-    if (window.location.protocol === 'file:') {
-      alert('Please run this app via a local HTTP server for full functionality.');
+  if (window.location.protocol === 'file:') {
+    alert('Please run this app via a local HTTP server for full functionality.');
+    $('#loadingMessage, #page-content').hide();
+    return;
+  }
 
-      $('#loadingMessage').hide();
-      $('#page-content').hide();
-      return;
-    }
+  const token = localStorage.getItem('authToken');
 
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      // Guest mode
+  if (!token) {
+    // Guest mode
+    $('#loadingMessage').hide();
+    $('#page-content').show();
+    $('#pedalboard-controls').append("<p>Login to consistently save your Pedalboards!</p>");
+    $('#pedalboardSelect, #renameBoardBtn').hide();
+    $('#zoomIn, #zoomOut, #zoomReset').prop('disabled', true).addClass('btn-disabled');
+    window.currentUser = { role: 'guest', username: 'guest' };
+
+    if (typeof initNavPedalboard === 'function') initNavPedalboard('guest');
+    if (typeof initPedalboard === 'function') initPedalboard('guest');
+    return;
+  }
+
+  // Attempt server auth
+  $.ajax({
+    url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
+    method: 'GET',
+    dataType: 'json',
+    headers: { 'Authorization': 'Bearer ' + token },
+    success: function(userFromServer) {
       $('#loadingMessage').hide();
       $('#page-content').show();
-      $('#pedalboard-controls').append("<p>Login to consistently save your Pedalboards!</p>");
-      $('#pedalboardSelect').hide();
-      $('#renameBoardBtn').hide();
+      window.currentUser = userFromServer;
 
-      $('#zoomIn, #zoomOut, #zoomReset').prop('disabled', true).addClass('btn-disabled');
-
-      window.currentUser = { role: 'guest', username: 'guest' };
-
-      if (typeof initNavPedalboard === 'function') initNavPedalboard('guest');
-      if (typeof initPedalboard === 'function') initPedalboard('guest');
-
-      return;
-    }
-
-    $.ajax({
-      url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
-      method: 'GET',
-      dataType: 'json',
-      headers: {
-        'Authorization': 'Bearer ' + token
-      },
-      success: function(userFromServer) {
-        $('#loadingMessage').hide();
-        $('#page-content').show();
-        window.currentUser = userFromServer;
-
-        // 1. Check for guest pedalboards in localStorage
-        const guestBoards = localStorage.getItem("guestPedalboard");
-        if (guestBoards) {
-          const parsed = JSON.parse(guestBoards);
-          if (parsed.length > 0) {
-            Swal.fire({
-              title: "Import last saved Guest Pedalboard?",
-              text: "We found a pedalboard you created as a guest. Do you want to import it into your account?",
-              icon: "question",
-              showCancelButton: true,
-              confirmButtonText: "Yes, import",
-              cancelButtonText: "No, discard",
-              customClass: {
-                confirmButton: "bx--btn bx--btn--primary",
-                cancelButton: "bx--btn bx--btn--secondary"
-              }
-            }).then((result) => {
-              if (result.isConfirmed) {
-                // Import sequentially
-                const promises = parsed.map(b => importGuestPedalboard(b, userFromServer.id));
-                Promise.all(promises)
-                  .then(() => {
-                    localStorage.removeItem("guestPedalboard");
-                      Swal.fire({
-                        title: "Imported!",
-                        text: "Your guest pedalboard is now in your account.",
-                        icon: "success",
-                        confirmButtonText: "Ok",
-                        customClass: {
-                          confirmButton: "bx--btn bx--btn--primary",
-                          cancelButton: "bx--btn bx--btn--secondary"
-                        },
-                        showCancelButton: false
-                      })
-                      .then(() => {
-                        if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
-                        if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
-                      });
-                  })
-                  .catch(err => {
-                    Swal.fire("Error", "Guest pedalboard could not be imported.", "error");
-                  });
-              } else {
-                  localStorage.removeItem("guestPedalboard"); // discard
-                  // Initialize pedalboard for logged-in user
-                  if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
-                  if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
-              }
-            });
-            return;
-          }
-        }
-
-        // 2. Normal initialization if no guest boards
-        if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
-        if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
-      },
-
-      error: function(xhr) {
-        console.error('Auth check failed:', xhr.status, xhr.responseText);
-        if (xhr.status === 401) {
-          localStorage.removeItem('authToken');
-          window.location.href = 'login';
-        } else {
-          alert('Failed to verify authentication. Please try again.');
+      // Recupera eventuali pedalboard guest
+      const guestBoardsRaw = localStorage.getItem("guestPedalboard");
+      let guestBoards = [];
+      if (guestBoardsRaw) {
+        try {
+          guestBoards = JSON.parse(guestBoardsRaw);
+        } catch(e) {
+          console.error("Errore parsing guestPedalboard:", e);
+          localStorage.removeItem("guestPedalboard");
         }
       }
-    });
+
+      if (guestBoards.length > 0) {
+        // Prompt per import
+        Swal.fire({
+          title: "Import last saved Guest Pedalboard?",
+          text: "We found a pedalboard you created as a guest. Do you want to import it into your account?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes, import",
+          cancelButtonText: "No, discard",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          customClass: {
+            confirmButton: "bx--btn bx--btn--primary",
+            cancelButton: "bx--btn bx--btn--secondary"
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Importa tutti i guest boards
+            const promises = guestBoards.map(b => importGuestPedalboard(b, userFromServer.id));
+            Promise.all(promises)
+              .then(() => {
+                localStorage.removeItem("guestPedalboard");
+                Swal.fire({
+                  title: "Imported!",
+                  text: "Your guest pedalboard is now in your account.",
+                  icon: "success",
+                  confirmButtonText: "Ok",
+                  showCancelButton: false,
+                  customClass: { confirmButton: "bx--btn bx--btn--primary" }
+                }).finally(() => {
+                  // Inizializzazione finale
+                  if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
+                  if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
+                });
+              })
+              .catch(err => {
+                console.error(err);
+                Swal.fire("Error", "Guest pedalboard could not be imported.", "error")
+                  .finally(() => {
+                    if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
+                    if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
+                  });
+              });
+          } else {
+            // L’utente sceglie di scartare i guest board
+            localStorage.removeItem("guestPedalboard");
+            if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
+            if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
+          }
+        });
+      } else {
+        // Nessun guest board: inizializzazione normale
+        if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
+        if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
+      }
+    },
+    error: function(xhr) {
+      console.error('Auth check failed:', xhr.status, xhr.responseText);
+      if (xhr.status === 401) {
+        localStorage.removeItem('authToken');
+        window.location.href = 'login';
+      } else {
+        alert('Failed to verify authentication. Please try again.');
+      }
+    }
   });
+});
+
   </script>
 
 
