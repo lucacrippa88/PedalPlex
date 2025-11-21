@@ -331,8 +331,19 @@ function initCatalog(userRole) {
 
   // === 🌀 Overlay spinner Carbon Design (mostrato finché non arrivano i metadati) ===
   const globalSpinner = $(`
-    <div id="catalog-global-loader" class="bx--loading-overlay" 
-         style="position:relative; height:120px; top: 50%">
+    <div id="catalog-global-loader" class="bx--loading-overlay"
+        style="
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 9999;
+          width: 120px;
+          height: 120px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        ">
       <div class="bx--loading" role="status">
         <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
           <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
@@ -341,6 +352,7 @@ function initCatalog(userRole) {
       </div>
     </div>
   `);
+
 
   resultsDiv.append(globalSpinner);
 
@@ -363,14 +375,17 @@ function initCatalog(userRole) {
 
       // === ⏳ Loader inline Carbon Design finché non arriva il fetch completo ===
       const $loaderInline = $(`
-        <div class="bx--loading bx--loading--small" role="status"
-             style="display:flex; justify-content:center; align-items:center; height:60px; margin-top:8px;">
-          <svg class="bx--loading__svg" viewBox="0 0 32 32">
-            <circle class="bx--loading__background" cx="16" cy="16" r="14"></circle>
-            <circle class="bx--loading__stroke" cx="16" cy="16" r="14"></circle>
-          </svg>
+        <div class="bx--inline-loading" style="margin-top: 8px;">
+          <div class="bx--loading bx--loading--small" role="status">
+            <svg class="bx--loading__svg" viewBox="0 0 32 32">
+              <circle class="bx--loading__background" cx="16" cy="16" r="14"></circle>
+              <circle class="bx--loading__stroke" cx="16" cy="16" r="14"></circle>
+            </svg>
+          </div>
+          <p class="bx--inline-loading__text">Caricamento…</p>
         </div>
       `);
+
 
       $pedalDiv.append($loaderInline);
       resultsDiv.append($pedalDiv);
