@@ -322,8 +322,19 @@ document.head.appendChild(style);
 
 
 function initCatalog(userRole) {
-  const resultsDiv = $("#catalog");
-  resultsDiv.html(""); // puliamo
+  // const resultsDiv = $("#catalog");
+  // resultsDiv.html(""); // puliamo
+
+  const resultsDiv = document.getElementById("catalog");
+  resultsDiv.innerHTML = `
+      <div class="bx--loading-overlay">
+        <div class="bx--loading" role="status">
+          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+          </svg>
+        </div>     
+      </div>`;
 
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
