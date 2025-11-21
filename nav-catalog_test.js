@@ -235,59 +235,57 @@ document.head.appendChild(style);
 
 
 // Initialize catalog with spinners and dual fetch
-function initCatalog(userRole) {
+async function initCatalog(userRole) {
   const resultsDiv = document.getElementById("catalog");
+
+  // 1️⃣ Mostra spinner globale subito
   resultsDiv.innerHTML = `
-    <div class="bx--loading-overlay">
-      <div class="bx--loading" role="status">
-        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-        </svg>
-      </div>     
+    <div class="bx--loading-overlay" style="display:flex; justify-content:center; align-items:center; height:200px;">
+      <div class="bx--loading" role="status"></div>
     </div>`;
+
+  // Lascia al browser il tempo di fare il paint
+  await new Promise(resolve => requestAnimationFrame(resolve));
 
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
   const token = localStorage.getItem('authToken');
 
-  // --- Fetch veloce metadati con loader ---
-  const metadataFetch = fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_METADATA.php?role=${roleParam}&username=${usernameParam}`, {
-    headers: { 'Authorization': 'Bearer ' + token }
-  })
-  .then(res => res.json())
-  .then(pedals => {
-    pedals.sort((a,b) => a._id.localeCompare(b._id));
-    pedals.forEach(pedal => {
+  try {
+    // --- 1️⃣ Fetch veloce metadati ---
+    const metadataRes = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_METADATA.php?role=${roleParam}&username=${usernameParam}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const metadataPedals = await metadataRes.json();
+
+    metadataPedals.sort((a, b) => a._id.localeCompare(b._id));
+
+    // Mostra i pedali con loader inline Carbon
+    metadataPedals.forEach(pedal => {
       const pedalDiv = renderPedal(pedal, userRole); // ritorna DOM element
       pedalDiv.setAttribute("data-author", pedal.author || "");
       pedalDiv.setAttribute("data-published", (pedal.published || "draft").toLowerCase());
 
-      // Loader inline
+      // Loader inline Carbon
       const loader = document.createElement("div");
       loader.className = "bx--loading bx--loading--small";
-      loader.style.cssText = "display:flex; justify-content:center; align-items:center; height:60px;";
-      loader.innerHTML = `
-        <svg class="bx--loading__svg" viewBox="0 0 32 32">
-          <circle class="bx--loading__background" cx="16" cy="16" r="14"></circle>
-          <circle class="bx--loading__stroke" cx="16" cy="16" r="14"></circle>
-        </svg>`;
+      loader.setAttribute("role", "status");
       pedalDiv.appendChild(loader);
 
       resultsDiv.appendChild(pedalDiv);
     });
+
     updatePedalCounts();
-  });
 
-  // --- Fetch catalogo completo ---
-  const fullFetch = fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
-    headers: { 'Authorization': 'Bearer ' + token }
-  })
-  .then(res => res.json())
-  .then(fullPedals => {
-    fullPedals.sort((a,b) => a._id.localeCompare(b._id));
+    // --- 2️⃣ Fetch catalogo completo ---
+    const fullRes = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const fullPedals = await fullRes.json();
 
-    // Rimuove spinner
+    fullPedals.sort((a, b) => a._id.localeCompare(b._id));
+
+    // Rimuove spinner globale e pedali temporanei
     resultsDiv.innerHTML = "";
 
     fullPedals.forEach(pedal => {
@@ -298,14 +296,17 @@ function initCatalog(userRole) {
     });
 
     updatePedalCounts();
-    if (userRole !== "guest") setupEditPedalHandler(fullPedals);
-  });
 
-  return Promise.all([metadataFetch, fullFetch]).catch(err => {
+    if (userRole !== "guest") {
+      setupEditPedalHandler(fullPedals);
+    }
+
+  } catch (err) {
     console.error("Error fetching pedals:", err);
     resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err.message}</p>`;
-  });
+  }
 }
+
 
 
 
