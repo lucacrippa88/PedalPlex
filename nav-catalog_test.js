@@ -343,8 +343,7 @@ function initCatalog(userRole) {
 
       // Inserisci loader inline
       const $loader = $(`
-        <div class="bx--loading bx--loading--small" role="status" 
-            style="display:flex; justify-content:center; align-items:center; height:60px;">
+        <div class="bx--loading bx--loading--small" role="status" style="display:flex; justify-content:center; align-items:center; height:60px;">
           <svg class="bx--loading__svg" viewBox="0 0 32 32">
             <circle class="bx--loading__background" cx="16" cy="16" r="14"></circle>
             <circle class="bx--loading__stroke" cx="16" cy="16" r="14"></circle>
