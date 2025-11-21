@@ -546,17 +546,27 @@ function setupEditPedalHandler(pedals) {
       console.error("Pedal data not found!");
       return;
     }
-
+    
     // --- ✅ Se mancano i controlli, aggiorniamo al volo ---
     if (!pedal.controls || pedal.controls.length === 0) {
       const token = localStorage.getItem('authToken');
 
-      fetch(`https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=${pedal._id}`, {
-        headers: { 'Authorization': 'Bearer ' + token }
+      fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ ids: [pedal._id] })
       })
       .then(res => res.json())
-      .then(fullPedalArr => {
-        const fullPedal = fullPedalArr[0];
+      .then(fullPedalRes => {
+        if (!fullPedalRes.docs || fullPedalRes.docs.length === 0) {
+          console.warn("GET_PEDALS_BY_IDS returned empty or invalid response for pedal:", pedal._id);
+          return;
+        }
+
+        const fullPedal = fullPedalRes.docs[0];
 
         // Aggiorna l'oggetto nell'array pedals
         const idx = pedals.findIndex(p => p._id === fullPedal._id);
@@ -574,10 +584,11 @@ function setupEditPedalHandler(pedals) {
         // Ri-triggera il click sul nuovo div per eseguire la logica originale
         $newPedalDiv.find(".edit-btn").trigger("click");
       })
-      .catch(err => console.error("Error loading pedal:", err));
+      .catch(err => console.error("Error loading pedal:", pedal._id, err));
 
       return; // Esci fino a quando il fetch non termina
     }
+
 
 
 
