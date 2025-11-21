@@ -122,6 +122,8 @@ function getPedalHeight(height) {
 // Function to render pedal controls dynamically
 function renderPedalControls(pedal, $pedalDiv) {
 
+    if (!pedal.controls || !Array.isArray(pedal.controls)) return; // <--- metadata only protection
+
     const editMode = window.isEditMode; 
 
     pedal.controls.forEach(controlRow => {
