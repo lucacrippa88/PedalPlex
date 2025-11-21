@@ -246,48 +246,56 @@ function initCatalog(userRole) {
 
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
-
   const token = localStorage.getItem('authToken');
 
+  // 1️⃣ Fetch metadati light
   fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_METADATA.php?role=${roleParam}&username=${usernameParam}`, {
-    headers: {
-        'Authorization': 'Bearer ' + token
-      }
-    }) 
-    .then(async res => {
-  if (!res.ok) {
-    const text = await res.text();
-    console.error("Server error:", text);
-    throw new Error("Network error");
-  }
-
-  try {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+  .then(async res => {
+    if (!res.ok) throw new Error(`Network error: ${res.status}`);
     return await res.json();
-  } catch (e) {
-    const text = await res.text();
-    console.error("Invalid JSON response:", text);
-    throw new Error("Invalid JSON from server");
-  }
-})
-.then(pedals => {
-  resultsDiv.innerHTML = "";
-  $("#pedalCount").text(`${pedals.length} gears`);
+  })
+  .then(pedals => {
+    resultsDiv.innerHTML = "";
+    $("#pedalCount").text(`${pedals.length} gears`);
+    pedals.sort((a,b) => a._id.localeCompare(b._id));
 
-  pedals.sort((a,b) => a._id.localeCompare(b._id));
-  pedals.forEach(pedal => {
-    const $pedalDiv = renderPedal(pedal, userRole);
-    $pedalDiv.attr("data-author", pedal.author || "");
-    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-    $(resultsDiv).append($pedalDiv);
+    pedals.forEach(pedal => {
+      const $pedalDiv = renderPedal(pedal, userRole);
+      $pedalDiv.attr("data-author", pedal.author || "");
+      $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+      $(resultsDiv).append($pedalDiv);
+    });
+
+    updatePedalCounts();
+    if (userRole !== "guest") setupEditPedalHandler(pedals);
+
+    // 2️⃣ Fetch dettagli completi in background
+    if (userRole !== "guest") {
+      fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_FULL.php?role=${roleParam}&username=${usernameParam}`, {
+        headers: { 'Authorization': 'Bearer ' + token }
+      })
+      .then(res => res.json())
+      .then(fullPedals => {
+        fullPedals.forEach(fullPedal => {
+          const $el = $(`[data-pedal-id="${fullPedal._id}"]`);
+          if ($el.length) {
+            // Aggiorna campi mancanti
+            fullPedal.name && $el.attr('data-pedal-name', fullPedal.name);
+            fullPedal.logo && $el.data('logo', fullPedal.logo);
+            fullPedal.controls && $el.data('controls', fullPedal.controls);
+
+            // Renderizza controlli aggiornati
+            renderPedalControls(fullPedal, $el);
+          }
+        });
+      })
+      .catch(err => console.error("Error fetching full pedal details:", err));
+    }
+  })
+  .catch(err => {
+    console.error("Error fetching pedals:", err);
+    resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err.message}</p>`;
   });
-
-  updatePedalCounts();
-  if (userRole !== "guest") setupEditPedalHandler(pedals);
-})
-.catch(err => {
-  console.error("Error fetching pedals:", err);
-  resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err.message}</p>`;
-});
-   
-
 }
