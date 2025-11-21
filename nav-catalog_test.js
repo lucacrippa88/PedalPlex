@@ -358,7 +358,7 @@ function initCatalog(userRole) {
   });
 
   // --- 2️⃣ Fetch catalogo completo in parallelo ---
-  const fullFetch = fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
+  const fullFetch = fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_FULL.php?role=${roleParam}&username=${usernameParam}`, {
     headers: { 'Authorization': 'Bearer ' + token }
   })
   .then(res => res.json())
@@ -385,4 +385,5 @@ function initCatalog(userRole) {
     resultsDiv.html(`<p style="color:red;">Error loading pedals: ${err.message}</p>`);
   });
 }
+
 
