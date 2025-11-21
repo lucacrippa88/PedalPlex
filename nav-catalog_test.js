@@ -375,8 +375,34 @@ function initCatalog(userRole) {
 
       // === ⏳ Loader inline Carbon Design finché non arriva il fetch completo ===
       const $loaderInline = $(`
-        <div class="bx--busy-indicator sm" aria-label="Loading" style="margin:6px auto;"></div>
+        <div style="
+          width: 80px;
+          height: 6px;
+          margin: 6px auto;
+          background-color: #e0e0e0;
+          border-radius: 3px;
+          overflow: hidden;
+          position: relative;
+        ">
+          <div style="
+            width: 40%;
+            height: 100%;
+            background-color: #0f62fe;
+            position: absolute;
+            left: -40%;
+            animation: progressAnim 1s linear infinite;
+          "></div>
+        </div>
+
+        <style>
+          @keyframes progressAnim {
+            0% { left: -40%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+          }
+        </style>
       `);
+
 
       $pedalDiv.append($loaderInline);
       resultsDiv.append($pedalDiv);
