@@ -171,56 +171,57 @@
       dataType: 'json',
       headers: { 'Authorization': 'Bearer ' + token },
       success: function(userFromServer) {
-        $('#loadingMessage').hide();
-        $('#page-content').show();
-        window.currentUser = userFromServer;
+  $('#loadingMessage').hide();
+  $('#page-content').show();
+  window.currentUser = userFromServer;
 
-        // Check for guest pedalboards
-        const guestBoards = localStorage.getItem("guestPedalboard");
-        if (guestBoards && JSON.parse(guestBoards).length > 0) {
-          Swal.fire({
-            title: "Import last saved Guest Pedalboard?",
-            text: "We found a pedalboard you created as a guest. Do you want to import it into your account?",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Yes, import",
-            cancelButtonText: "No, discard",
-            customClass: {
-              confirmButton: "bx--btn bx--btn--primary",
-              cancelButton: "bx--btn bx--btn--secondary"
-            }
-          }).then((result) => {
-            if (result.isConfirmed) {
-              const parsed = JSON.parse(guestBoards);
-              const promises = parsed.map(b => importGuestPedalboard(b, userFromServer.id));
-              Promise.all(promises)
-                .then(() => {
-                  localStorage.removeItem("guestPedalboard");
-                  Swal.fire({
-                    title: "Imported!",
-                    text: "Your guest pedalboard is now in your account.",
-                    icon: "success",
-                    confirmButtonText: "Ok",
-                    customClass: { confirmButton: "bx--btn bx--btn--primary" },
-                    showCancelButton: false
-                  }).then(() => {
-                    if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
-                    if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
-                  });
-                })
-                .catch(err => Swal.fire("Error", "Guest pedalboard could not be imported.", "error"));
-            } else {
-              localStorage.removeItem("guestPedalboard");
+  // Parse una volta sola
+  const guestBoards = localStorage.getItem("guestPedalboard");
+  const parsedGuestBoards = guestBoards ? JSON.parse(guestBoards) : [];
+
+  if (parsedGuestBoards.length > 0) {
+    Swal.fire({
+      title: "Import last saved Guest Pedalboard?",
+      text: "We found a pedalboard you created as a guest. Do you want to import it into your account?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, import",
+      cancelButtonText: "No, discard",
+      customClass: {
+        confirmButton: "bx--btn bx--btn--primary",
+        cancelButton: "bx--btn bx--btn--secondary"
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const promises = parsedGuestBoards.map(b => importGuestPedalboard(b, userFromServer.id));
+        Promise.all(promises)
+          .then(() => {
+            localStorage.removeItem("guestPedalboard");
+            Swal.fire({
+              title: "Imported!",
+              text: "Your guest pedalboard is now in your account.",
+              icon: "success",
+              confirmButtonText: "Ok",
+              customClass: { confirmButton: "bx--btn bx--btn--primary" },
+              showCancelButton: false
+            }).then(() => {
               if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
               if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
-            }
-          });
-          return;
-        }
-
+            });
+          })
+          .catch(err => Swal.fire("Error", "Guest pedalboard could not be imported.", "error"));
+      } else {
+        localStorage.removeItem("guestPedalboard");
         if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
         if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
-      },
+      }
+    });
+  } else {
+    // Nessun guest board: init normale
+    if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
+    if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
+  }
+},
       error: function(xhr) {
         console.error('Auth check failed:', xhr.status, xhr.responseText);
         if (xhr.status === 401) {
