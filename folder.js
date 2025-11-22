@@ -19,7 +19,9 @@ async function updateFolderOnServer(folder) {
       // Forbidden characters: $ % * \ | ( ) [ ] { } ^ £ ; < >
       const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
       // Remove emojis using Unicode property escapes
-      str = str.replace(/[\p{So}\p{Cn}]/gu, '');
+      // str = str.replace(/[\p{So}\p{Cn}]/gu, '');
+      // Remove emojis only (no symbols like apostrophes)
+      str = str.replace(/[\p{Emoji}]/gu, '');
       // Remove explicitly forbidden chars
       str = str.replace(forbiddenRegex, '');
       // Collapse multiple spaces and trim
