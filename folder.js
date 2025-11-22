@@ -1,38 +1,44 @@
 // ---------------------------
-// folder.js (robust)
+// folder.js (robust, unified sanitization)
 // ---------------------------
 
-// Store folders locally (synchronised with window.folders)
-let folders = []; // kept for backwards compatibility but use window.folders as source-of-truth
+// Store folders locally (synchronized with window.folders)
+let folders = [];
 window.folders = window.folders || [];
 
 // ---------------------------
-// Update folder on server helper (with sanitization)
+// Global sanitization function
+// ---------------------------
+function sanitizeFolderName(str) {
+  if (!str) return '';
+  // Convert smart single quotes to ASCII '
+  str = str.replace(/[\u2018\u2019\u201A\u201B\u2032]/g, "'");
+  // Convert smart double quotes to ASCII "
+  str = str.replace(/[\u201C\u201D\u201E\u201F\u2033]/g, '"');
+  // Remove explicitly forbidden chars
+  const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
+  str = str.replace(forbiddenRegex, '');
+  // Collapse whitespace and trim
+  str = str.replace(/\s+/g, ' ').trim();
+  return str;
+}
+
+// ---------------------------
+// Update folder on server helper
 // ---------------------------
 async function updateFolderOnServer(folder) {
   try {
     const folderId = folder.id || folder._id;
     if (!folderId) throw new Error('Missing folder id for updateFolderOnServer');
 
-    // --- Sanitization function (reuse same rules as creation) ---
-    function removeForbiddenChars(str) {
-      // Remove explicitly forbidden chars
-      const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
-      return str.replace(forbiddenRegex, '').replace(/\s+/g, ' ').trim();
-    }
-
-
-    // Sanitize folder name if present
-    let sanitizedName = folder.name ? removeForbiddenChars(folder.name) : '';
+    const sanitizedName = folder.name ? sanitizeFolderName(folder.name) : '';
 
     if (folder.name && sanitizedName !== folder.name) {
       Swal.fire({
         title: 'Invalid characters',
         text: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
         icon: 'error',
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--primary',
-        },
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false,
       });
       return { ok: false, error: 'Folder name contains forbidden characters' };
@@ -53,17 +59,12 @@ async function updateFolderOnServer(folder) {
       body: formData.toString()
     });
 
-    const json = await res.json();
-    return json;
-
+    return await res.json();
   } catch (err) {
     console.error('[folders] updateFolderOnServer error:', err);
     return { ok: false, error: err.message || String(err) };
   }
 }
-
-
-// Expose to global so preset.js can call it
 window.updateFolderOnServer = updateFolderOnServer;
 
 // ---------------------------
@@ -72,34 +73,28 @@ window.updateFolderOnServer = updateFolderOnServer;
 function populateFolderDropdown() {
   const folderSelect = document.getElementById('folderSelect');
   if (!folderSelect) return;
-
   folderSelect.innerHTML = '';
 
-  // Always add a synthetic "Default" entry at the top
+  // Default option
   const defaultOption = document.createElement("option");
   defaultOption.value = "default";
   defaultOption.textContent = "Default (unassigned)";
   folderSelect.appendChild(defaultOption);
 
-  // Sort folders alphabetically by name (case-insensitive)
-  const sortedFolders = (window.folders || []).slice().sort(function(a, b) {
+  const sortedFolders = (window.folders || []).slice().sort((a, b) => {
     const nameA = (a.name || '').toLowerCase();
     const nameB = (b.name || '').toLowerCase();
-    if (nameA < nameB) return -1;
-    if (nameA > nameB) return 1;
-    return 0;
+    return nameA.localeCompare(nameB);
   });
 
   if (sortedFolders.length === 0) {
-    // Show a disabled placeholder if no folders exist
     const noFoldersOption = document.createElement("option");
     noFoldersOption.value = "";
     noFoldersOption.textContent = "-- No folders --";
     noFoldersOption.disabled = true;
     folderSelect.appendChild(noFoldersOption);
-    folderSelect.value = "default"; // make Default selected
+    folderSelect.value = "default";
   } else {
-    // Add all real folders
     sortedFolders.forEach(f => {
       if (!f) return;
       const opt = document.createElement('option');
@@ -107,8 +102,6 @@ function populateFolderDropdown() {
       opt.textContent = decodeHTMLEntities(f.name || '(Untitled folder)');
       folderSelect.appendChild(opt);
     });
-
-    // Optional placeholder at the end
     const placeholder = document.createElement('option');
     placeholder.value = '';
     placeholder.textContent = '-- Select Folder --';
@@ -116,7 +109,6 @@ function populateFolderDropdown() {
     folderSelect.appendChild(placeholder);
   }
 
-  // ✅ Auto-apply first preset when folder changes
   folderSelect.onchange = (e) => {
     const folderId = e.target.value;
     populatePresetDropdownByFolder(folderId);
@@ -133,68 +125,38 @@ function populateFolderDropdown() {
   };
 }
 
-
-
 // ---------------------------
 // Save folder to DB
 // ---------------------------
 async function saveFolderToDB(folder, explicitBoardId) {
-  // Input field element (replace '#folderNameInput' with your actual input ID)
   const folderInput = document.querySelector('#folderNameInput');
-  
-  // --- Validation for folder name ---
-  function removeForbiddenChars(str) {
-    // Remove explicitly forbidden chars
-    const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
-    return str.replace(forbiddenRegex, '').replace(/\s+/g, ' ').trim();
-  }
-
-
-  const sanitizedName = removeForbiddenChars(folder.name);
+  const sanitizedName = sanitizeFolderName(folder.name);
 
   if (sanitizedName !== folder.name) {
-    // Highlight input in red if invalid characters exist
     if (folderInput) folderInput.style.border = '2px solid red';
-
     Swal.fire({
       title: 'Invalid characters',
       text: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
       icon: 'error',
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--primary',
-      },
+      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false,
     });
-
     return null;
   } else {
-    // Reset border if valid
     if (folderInput) folderInput.style.border = '';
   }
 
   try {
     const boardId = explicitBoardId || (window.pedalboard && window.pedalboard._id);
     if (!boardId) {
-      Swal.fire({
-        title: 'Error',
-        text: 'No pedalboard selected. Please select one before creating a folder.',
-        icon: 'error',
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--primary',
-        },
-        buttonsStyling: false,
-      });
+      Swal.fire({ title: 'Error', text: 'No pedalboard selected.', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
       return null;
     }
 
     const token = localStorage.getItem('authToken');
-
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_FOLDER.php', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({
         user_id: window.currentUser.userid,
         board_id: boardId,
@@ -209,30 +171,19 @@ async function saveFolderToDB(folder, explicitBoardId) {
       title: 'Error',
       text: 'Could not save folder: ' + (result.error || 'Unknown error'),
       icon: 'error',
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--primary',
-      },
+      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false,
     });
     return null;
   } catch (err) {
     console.error(err);
-    Swal.fire({
-      title: 'Error',
-      text: 'Network or server error',
-      icon: 'error',
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--primary',
-      },
-      buttonsStyling: false,
-    });
+    Swal.fire({ title: 'Error', text: 'Network or server error', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
     return null;
   }
 }
 
-
 // ---------------------------
-// Add Folder (dropdown-selected pedalboard only)
+// Add Folder Listener
 // ---------------------------
 function attachAddFolderListener() {
   const addFolderBtn = document.getElementById('addFolderBtn');
@@ -240,34 +191,16 @@ function attachAddFolderListener() {
 
   addFolderBtn.addEventListener('click', async () => {
     const pedalboardSelect = document.getElementById('pedalboardSelect');
-    if (!pedalboardSelect || !pedalboardSelect.value) {
-      Swal.fire({
-        title: 'Select Board',
-        text: 'Please select a pedalboard before creating a folder.',
-        icon: 'info',
-        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-        buttonsStyling: false,
-      });
+    if (!pedalboardSelect?.value) {
+      Swal.fire({ title: 'Select Board', text: 'Please select a pedalboard.', icon: 'info', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
       return;
     }
 
-    // Get the selected pedalboard by _id
     const selectedBoardId = pedalboardSelect.value;
     const board = window.allPedalboards.find(b => b._id === selectedBoardId || b.id === selectedBoardId);
-
-    if (!board) {
-      Swal.fire({
-        title: 'Select Board',
-        text: 'Could not find the selected pedalboard.',
-        icon: 'error',
-        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-        buttonsStyling: false,
-      });
-      return;
-    }
+    if (!board) return Swal.fire({ title: 'Error', text: 'Board not found', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
 
     const boardName = board.board_name || 'Unnamed Pedalboard';
-
     const { value: folderName, isConfirmed } = await Swal.fire({
       title: `New Folder for "${boardName}"`,
       input: 'text',
@@ -276,19 +209,12 @@ function attachAddFolderListener() {
       inputPlaceholder: 'Enter folder name',
       showCancelButton: true,
       buttonsStyling: false,
-      customClass: {
-        confirmButton: "bx--btn bx--btn--primary",
-        cancelButton: "bx--btn bx--btn--secondary"
-      },
-      inputValidator: (v) => !v.trim() && 'Folder name cannot be empty'
+      customClass: { confirmButton: "bx--btn bx--btn--primary", cancelButton: "bx--btn bx--btn--secondary" },
+      inputValidator: v => !v.trim() && 'Folder name cannot be empty'
     });
 
-    if (isConfirmed && folderName && folderName.trim()) {
-      const newFolder = {
-        name: folderName.trim(),
-        preset_ids: []
-      };
-
+    if (isConfirmed && folderName?.trim()) {
+      const newFolder = { name: folderName.trim(), preset_ids: [] };
       const saved = await saveFolderToDB(newFolder, board._id);
       if (saved) {
         await loadFoldersForCurrentPedalboard();
@@ -297,23 +223,14 @@ function attachAddFolderListener() {
           folderSelect.value = saved.id || saved._id;
           populatePresetDropdownByFolder(folderSelect.value, null, true);
         }
-
-        Swal.fire({
-          title: 'Success',
-          text: `Folder "${newFolder.name}" created for "${boardName}"`,
-          icon: 'success',
-          customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-          buttonsStyling: false,
-        });
+        Swal.fire({ title: 'Success', text: `Folder "${newFolder.name}" created.`, icon: 'success', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
       }
     }
   });
 }
 
-
-
 // ---------------------------
-// Rename/Delete Folder (consistent UX)
+// Rename/Delete Folder Listener
 // ---------------------------
 function attachRenameFolderListener() {
   const renameFolderBtn = document.getElementById('renameFolderBtn');
@@ -321,29 +238,11 @@ function attachRenameFolderListener() {
 
   renameFolderBtn.addEventListener('click', async () => {
     const folderSelect = document.getElementById('folderSelect');
-    if (!folderSelect || !folderSelect.value) {
-      Swal.fire({
-        title: 'Select Folder',
-        text: 'Please select a folder to rename or delete.',
-        icon: 'info',
-        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-        buttonsStyling: false,
-      });
-      return;
-    }
+    if (!folderSelect?.value) return Swal.fire({ title: 'Select Folder', text: 'Select a folder.', icon: 'info', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
 
     const folderId = folderSelect.value;
     const folder = (window.folders || []).find(f => (f._id || f.id) === folderId);
-    if (!folder) {
-      Swal.fire({
-        title: 'Error',
-        text: 'Selected folder not found.',
-        icon: 'error',
-        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-        buttonsStyling: false,
-      });
-      return;
-    }
+    if (!folder) return Swal.fire({ title: 'Error', text: 'Folder not found.', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
 
     const boardName = decodeHTMLEntities(window.pedalboard?.board_name || 'Unnamed Folder');
     const { value: newName, isConfirmed, isDenied } = await Swal.fire({
@@ -352,15 +251,11 @@ function attachRenameFolderListener() {
       inputLabel: 'New folder name',
       confirmButtonText: "Rename",
       denyButtonText: "Delete",
-      inputValue: decodeHTMLEntities(folder.name), // decode here
+      inputValue: decodeHTMLEntities(folder.name),
       showCancelButton: true,
       showDenyButton: true,
       inputValidator: v => !v.trim() && 'Folder name cannot be empty',
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--primary',
-        cancelButton: 'bx--btn bx--btn--secondary',
-        denyButton: 'bx--btn bx--btn--danger',
-      },
+      customClass: { confirmButton: 'bx--btn bx--btn--primary', cancelButton: 'bx--btn bx--btn--secondary', denyButton: 'bx--btn bx--btn--danger' },
       buttonsStyling: false,
     });
 
@@ -368,175 +263,81 @@ function attachRenameFolderListener() {
     if (isDenied) {
       const confirmDelete = await Swal.fire({
         title: 'Are you sure?',
-        text: `This will permanently delete "${folder.name}".`,
+        text: `Permanently delete "${folder.name}"?`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, delete it',
+        confirmButtonText: 'Yes, delete',
         cancelButtonText: 'Cancel',
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--danger',
-          cancelButton: 'bx--btn bx--btn--secondary',
-        },
+        customClass: { confirmButton: 'bx--btn bx--btn--danger', cancelButton: 'bx--btn bx--btn--secondary' },
         buttonsStyling: false,
       });
-
       if (!confirmDelete.isConfirmed) return;
 
-      Swal.fire({
-        title: 'Deleting...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-
+      Swal.fire({ title: 'Deleting...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
       try {
         const formData = new URLSearchParams();
         formData.append('folder_id', folderId);
         formData.append('folder_rev', folder._rev || '');
-
         const token = localStorage.getItem("authToken");
-        if (!token) {
-          Swal.fire({
-            icon: "error",
-            title: "Authentication error",
-            text: "You must be logged in to delete a folder.",
-          });
-          return;
-        }
+        if (!token) return Swal.fire({ icon: "error", title: "Authentication error", text: "You must be logged in." });
 
         const res = await fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FOLDER.php', {
           method: 'POST',
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": "Bearer " + token,  // ✅ attach JWT
-          },
+          headers: { "Content-Type": "application/x-www-form-urlencoded", "Authorization": "Bearer " + token },
           body: formData.toString()
         });
-
         const result = await res.json();
-
         if (result.success) {
           window.folders = (window.folders || []).filter(f => (f._id || f.id) !== folderId);
           populateFolderDropdown();
-
-          Swal.fire({
-            title: 'Deleted!',
-            text: `"${folder.name}" has been removed.`,
-            icon: 'success',
-            timer: 1000,
-            showConfirmButton: false
-          });
-        } else {
-          Swal.fire({
-            title: 'Error',
-            text: result.error || 'Could not delete folder.',
-            icon: 'error',
-            customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-            buttonsStyling: false,
-          });
-        }
+          Swal.fire({ title: 'Deleted!', text: `"${folder.name}" removed.`, icon: 'success', timer: 1000, showConfirmButton: false });
+        } else Swal.fire({ title: 'Error', text: result.error || 'Could not delete folder.', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
       } catch (err) {
         console.error('[folders] delete error:', err);
-        Swal.fire({
-          title: 'Error',
-          text: 'Network or server error while deleting.',
-          icon: 'error',
-          customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-          buttonsStyling: false,
-        });
+        Swal.fire({ title: 'Error', text: 'Network/server error deleting folder.', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
       }
       return;
     }
 
-  
     // ---- RENAME ----
     if (isConfirmed) {
-  // --- Sanitization function ---
-  function removeForbiddenChars(str) {
-    // Remove explicitly forbidden chars
-    const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
-    return str.replace(forbiddenRegex, '').replace(/\s+/g, ' ').trim();
-  }
-
-  const sanitizedName = removeForbiddenChars(newName.trim());
-
-  // Validate before showing loading modal
-  if (sanitizedName !== newName.trim()) {
-    Swal.fire({
-      title: 'Invalid characters',
-      html: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
-      icon: 'error',
-      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-      buttonsStyling: false,
-      allowOutsideClick: true
-    });
-    return; // stop execution
-  }
-
-  // Name is valid — now show loading modal
-  Swal.fire({
-    title: 'Renaming...',
-    allowOutsideClick: false,
-    didOpen: () => Swal.showLoading()
-  });
-
-  try {
-    const token = localStorage.getItem('authToken');
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Bearer ' + token
-      },
-      body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(sanitizedName)}`
-    });
-
-    const result = await res.json();
-
-    if (result.ok) {
-      await loadFoldersForCurrentPedalboard();
-      const folderSelect = document.getElementById('folderSelect');
-      if (folderSelect) folderSelect.value = folderId;
-
-      Swal.fire({
-        title: 'Success',
-        text: `Folder renamed to "${decodeHTMLEntities(sanitizedName)}"`,
-        icon: 'success',
-        timer: 1000,
-        showConfirmButton: false
-      });
-    } else {
-      Swal.fire({
-        title: 'Error',
-        text: result.error || 'Could not rename folder.',
+      const sanitizedName = sanitizeFolderName(newName.trim());
+      if (sanitizedName !== newName.trim()) return Swal.fire({
+        title: 'Invalid characters',
+        html: 'Folder name contains forbidden special characters.',
         icon: 'error',
         customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-        buttonsStyling: false,
+        buttonsStyling: false
       });
-    }
-  } catch (err) {
-    console.error('[folders] rename error:', err);
-    Swal.fire({
-      title: 'Error',
-      text: 'Network or server error while renaming.',
-      icon: 'error',
-      customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-      buttonsStyling: false,
-    });
-  }
-}
 
+      Swal.fire({ title: 'Renaming...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      try {
+        const token = localStorage.getItem('authToken');
+        const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': 'Bearer ' + token },
+          body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(sanitizedName)}`
+        });
+        const result = await res.json();
+        if (result.ok) {
+          await loadFoldersForCurrentPedalboard();
+          const folderSelect = document.getElementById('folderSelect');
+          if (folderSelect) folderSelect.value = folderId;
+          Swal.fire({ title: 'Success', text: `Folder renamed to "${decodeHTMLEntities(sanitizedName)}"`, icon: 'success', timer: 1000, showConfirmButton: false });
+        } else Swal.fire({ title: 'Error', text: result.error || 'Could not rename folder.', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
+      } catch (err) {
+        console.error('[folders] rename error:', err);
+        Swal.fire({ title: 'Error', text: 'Network/server error while renaming.', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
+      }
+    }
   });
 }
 
-
 // ---------------------------
-// Fetch folders for the current pedalboard
-// Returns window.folders (promise resolves when done)
+// Load folders for current pedalboard
 // ---------------------------
 async function loadFoldersForCurrentPedalboard(forSwal = false) {
-  const pedalboardSelect = document.getElementById('pedalboardSelect');
-  const boardId = pedalboardSelect?.value;
-
+  const boardId = document.getElementById('pedalboardSelect')?.value;
   if (!window.currentUser || !boardId) {
     console.warn('[folders] Missing currentUser or selected pedalboard — aborting loadFoldersForCurrentPedalboard');
     window.folders = [];
@@ -553,49 +354,34 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
   }
 
   try {
-    const payload = {
-      user_id: window.currentUser.userid,
-      board_id: boardId
-    };
-
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_FOLDERS.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ user_id: window.currentUser.userid, board_id: boardId })
     });
-
     const text = await res.text();
     let data;
-    try { data = text ? JSON.parse(text) : null; } 
-    catch (parseErr) { console.error('[folders] Failed to parse JSON:', parseErr); data = null; }
+    try { data = text ? JSON.parse(text) : null; } catch { data = null; }
 
-    if (!data) { window.folders = [];
-    } else if (Array.isArray(data.folders)) { window.folders = data.folders;
-    } else if (Array.isArray(data.docs)) { window.folders = data.docs;
-    } else if (Array.isArray(data)) { window.folders = data;
-    } else if (data.error) { console.error('[folders] Server error:', data.error); window.folders = [];
-    } else { 
+    if (!data) window.folders = [];
+    else if (Array.isArray(data.folders)) window.folders = data.folders;
+    else if (Array.isArray(data.docs)) window.folders = data.docs;
+    else if (Array.isArray(data)) window.folders = data;
+    else {
       const possible = data.folders || data.docs || Object.values(data).find(v => Array.isArray(v));
       window.folders = Array.isArray(possible) ? possible : [];
     }
 
-    window.folders = window.folders.map((f, idx) => {
-      if (typeof f === 'string') return { id: `folder_${idx}`, name: f, preset_ids: [], _rev: null };
-      return {
-        id: f._id || f.id || f['_id'] || `folder_${idx}`,
-        _id: f._id || f.id || f['_id'] || `folder_${idx}`,
-        _rev: f._rev || f.rev || null,
-        name: f.name || f.folder_name || f.title || `(Folder ${idx + 1})`,
-        preset_ids: Array.isArray(f.preset_ids)
-          ? f.preset_ids
-          : (Array.isArray(f.presets) ? f.presets : [])
-      };
-    });
+    window.folders = window.folders.map((f, idx) => ({
+      id: f._id || f.id || f['_id'] || `folder_${idx}`,
+      _id: f._id || f.id || f['_id'] || `folder_${idx}`,
+      _rev: f._rev || f.rev || null,
+      name: f.name || f.folder_name || f.title || `(Folder ${idx + 1})`,
+      preset_ids: Array.isArray(f.preset_ids) ? f.preset_ids : (Array.isArray(f.presets) ? f.presets : [])
+    }));
 
     if (!forSwal) populateFolderDropdown();
-
     return window.folders;
-
   } catch (err) {
     console.error('[folders] Error fetching folders:', err);
     window.folders = [];
@@ -609,10 +395,11 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
   }
 }
 
-
-
-// Expose globally (keep your existing API)
+// ---------------------------
+// Expose globally
+// ---------------------------
 window.attachAddFolderListener = attachAddFolderListener;
 window.attachRenameFolderListener = attachRenameFolderListener;
 window.loadFoldersForCurrentPedalboard = loadFoldersForCurrentPedalboard;
 window.populateFolderDropdown = populateFolderDropdown;
+window.sanitizeFolderName = sanitizeFolderName;
