@@ -101,7 +101,7 @@ const songQuotes = [
 // Fullscreen menu HTML
 // ==========================
 window.fullscreenMenuHtml = `
-<div class="fullscreen-menu" id="fullscreenMenu">
+<div class="fullscreen-menu" id="fullscreenMenu"><br>
   <div class="fullscreen-header" style="display: flex; justify-content: space-between; align-items: center;">
     <button class="close-btn" id="closeMenu" aria-label="Close menu" style="background: none; border: none; cursor: pointer;">
       <svg class="close-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -118,9 +118,37 @@ window.fullscreenMenuHtml = `
     <a href="pedalboard">Manage pedalboards</a>
     <a href="catalog">View gears catalog</a>
     <br><br>
+    <span class="showMobile" style="color:#161616">
+      Visit desktop website<br>to access all editing features
+    </span>
+    <span id="guestLoginMessage" style="color:#161616; font-size:0.875rem; display:none;">
+      Login to access all features
+    </span>
+    <br><br>
 
-    <button id="logoutBtn" class="bx--btn bx--btn--primary" style="display:none;">
+    <button id="profileBtn" class="bx--btn bx--btn--secondary" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+        <path d="M16 4a5 5 0 11-5 5 5 5 0 015-5m0-2a7 7 0 107 7A7 7 0 0016 2zM26 30H24V25a5 5 0 00-5-5H13a5 5 0 00-5 5v5H6V25a7 7 0 017-7h6a7 7 0 017 7z"/>
+      </svg>
+      Your profile
+    </button>
+
+    <br><br>
+
+    <button id="logoutBtn" class="bx--btn bx--btn--primary" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+        <path d="M6,30H18a2.0023,2.0023,0,0,0,2-2V25H18v3H6V4H18V7h2V4a2.0023,2.0023,0,0,0-2-2H6A2.0023,2.0023,0,0,0,4,4V28A2.0023,2.0023,0,0,0,6,30Z"/>
+        <path d="M20.586 20.586L24.172 17 10 17 10 15 24.172 15 20.586 11.414 22 10 28 16 22 22 20.586 20.586z"/>
+      </svg>
       Logout
+    </button>
+
+    <button id="loginFullscreenBtn" class="bx--btn bx--btn--primary" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+        <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2 2V28A2,2,0,0,1,26,30Z"/>
+        <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
+      </svg>
+      Login
     </button>
   </div>
 
@@ -136,39 +164,108 @@ window.fullscreenMenuHtml = `
 `;
 
 // ==========================
-// Inject menu and bind events
+// Helper: update fullscreen menu buttons
+// ==========================
+function updateFullscreenMenu() {
+  if (!window.currentUser || window.currentUser.role === "guest") {
+    $("#loginFullscreenBtn, #guestLoginMessage").show();
+    $("#profileBtn, #logoutBtn").hide();
+  } else {
+    $("#loginFullscreenBtn, #guestLoginMessage").hide();
+    $("#profileBtn, #logoutBtn").show();
+  }
+}
+
+// ==========================
+// DOM Ready
 // ==========================
 $(document).ready(function () {
+  // Inject menu HTML if missing
   if (!$("#fullscreenMenu").length) $("body").append(window.fullscreenMenuHtml);
 
-  $("#menuToggle").on("click", function() {
+  // Close fullscreen menu
+  $(document).on('click', '#closeMenu', function () {
+    $('#fullscreenMenu').removeClass('active');
+  });
+
+  // Open menu and display random quote
+  $(document).on('click', '#menuToggle', function () {
     const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
     $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
-    $("#fullscreenMenu").addClass("active");
+    $('#fullscreenMenu').addClass('active');
   });
 
-  $("#closeMenu").on("click", function() {
-    $("#fullscreenMenu").removeClass("active");
+  // Wait for currentUser to be set, then update menu
+  const checkUserInterval = setInterval(() => {
+    if (window.currentUser !== undefined) {
+      clearInterval(checkUserInterval);
+      updateFullscreenMenu();
+    }
+  }, 100);
+
+  // Profile button
+  $(document).on('click', '#profileBtn', function () {
+    if (window.currentUser && window.currentUser.role !== "guest") {
+      window.location.href = 'profile';
+    } else {
+      Swal.fire({
+        icon: 'info',
+        title: 'Guest mode',
+        text: 'Please log in to access your profile.',
+        confirmButtonText: 'OK'
+      });
+    }
   });
 
-  $("#logoutBtn").on("click", function() {
-    localStorage.removeItem('authToken');
-    window.location.href = '/PedalPlex/';
+  // Logout button
+  $(document).on('click', '#logoutBtn', function () {
+    if (window.currentUser && window.currentUser.role !== "guest") {
+      Swal.fire({
+        title: 'Are you sure you want to logout?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Logout',
+        cancelButtonText: 'Cancel',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary',
+          cancelButton: 'bx--btn bx--btn--secondary'
+        },
+        buttonsStyling: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem('authToken');
+          window.currentUser = { role: 'guest', username: 'guest' }; // reset state
+          updateFullscreenMenu(); // immediately update buttons
+          window.location.href = '/PedalPlex/';
+        }
+      });
+    }
   });
 
-  // Dynamic year helper
-  const startYear = 2025;
-  const currentYear = new Date().getFullYear();
-  $("#year-range").text(currentYear > startYear ? `${startYear}–${currentYear}` : `${startYear}`);
-});
+  // Login button for guest
+  $(document).on('click', '#loginFullscreenBtn', function () {
+    window.location.href = 'login';
+  });
 
-// ==========================
-// Exposed function to show logout if logged in
-// ==========================
-window.showLogoutButton = function(isLoggedIn) {
-  if (isLoggedIn) {
-    $("#logoutBtn").show();
-  } else {
-    $("#logoutBtn").hide();
+  // -- dynamic year helper --
+  function setYearRangeIfReady() {
+    const startYear = 2025;
+    const currentYear = new Date().getFullYear();
+    const yearText = (currentYear > startYear) ? `${startYear}–${currentYear}` : `${startYear}`;
+    const $yr = $("#year-range");
+    if ($yr.length) {
+      $yr.text(yearText);
+      return true;
+    }
+    return false;
   }
-};
+
+  if (!setYearRangeIfReady()) {
+    let retries = 0;
+    const maxRetries = 30;
+    const pollId = setInterval(() => {
+      retries++;
+      if (setYearRangeIfReady() || retries >= maxRetries) clearInterval(pollId);
+    }, 100);
+  }
+});
