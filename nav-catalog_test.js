@@ -101,7 +101,7 @@ function initNavCatalog(userRole) {
   }
 
   // Fullscreen menu
-  $("body").append(window.fullscreenMenuHtml);
+  // $("body").append(window.fullscreenMenuHtml);
 
   $("#menuToggle").on("click", function () {
     const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
