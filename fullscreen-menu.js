@@ -81,59 +81,49 @@ window.fullscreenMenuHtml = `
 `;
 
 // ==========================
-// Update fullscreen menu buttons
-// ==========================
-function updateFullscreenMenu(userRole) {
-  const isGuest = (userRole === "guest");
-  if (isGuest) {
-    $("#loginFullscreenBtn, #guestLoginMessage").show();
-    $("#profileBtn, #logoutBtn").hide();
-  } else {
-    $("#loginFullscreenBtn, #guestLoginMessage").hide();
-    $("#profileBtn, #logoutBtn").show();
-  }
-}
-
-// ==========================
 // DOM Ready
 // ==========================
 $(document).ready(function () {
-  // Inject menu HTML if missing
+  // --- Inject menu HTML if missing ---
   if (!$("#fullscreenMenu").length) $("body").append(window.fullscreenMenuHtml);
 
-  // Close/open menu
-  $("#menuToggle").on("click", function() {
-    const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
-    $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
-    $("#fullscreenMenu").addClass("active");
-  });
-  $("#closeMenu").on("click", function() {
-    $("#fullscreenMenu").removeClass("active");
-  });
-
   // --- Buttons actions ---
-  $("#profileBtn").on("click", function() {
-    window.location.href = "profile";
-  });
-
+  $("#profileBtn").on("click", function() { window.location.href = "profile"; });
   $("#logoutBtn").on("click", function() {
     localStorage.removeItem('authToken');
     // Aggiorna menu a guest dopo logout
     $(document).trigger('userRoleChanged', ['guest']);
     window.location.href = '/PedalPlex/';
   });
+  $("#loginFullscreenBtn").on("click", function() { window.location.href = "login"; });
 
-  $("#loginFullscreenBtn").on("click", function() {
-    window.location.href = "login";
+  // --- Menu toggle ---
+  $("#menuToggle").on("click", function() {
+    const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
+    $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
+    $("#fullscreenMenu").addClass("active");
   });
+  $("#closeMenu").on("click", function() { $("#fullscreenMenu").removeClass("active"); });
 
   // --- Dynamic year helper ---
   const startYear = 2025;
   const currentYear = new Date().getFullYear();
   $("#year-range").text(currentYear > startYear ? `${startYear}–${currentYear}` : `${startYear}`);
 
-  // --- Ascolta evento userRoleChanged ---
+  // --- Aggiorna pulsanti in base a ruolo ---
   $(document).on('userRoleChanged', function(e, role) {
-    updateFullscreenMenu(role);
+    const isGuest = (role === 'guest');
+    // Nascondi tutto prima
+    $("#loginFullscreenBtn, #guestLoginMessage, #profileBtn, #logoutBtn").hide();
+
+    if (isGuest) {
+      $("#loginFullscreenBtn, #guestLoginMessage").show();
+    } else {
+      $("#profileBtn, #logoutBtn").show();
+    }
   });
+
+  // --- Trigger iniziale dopo DOM ready ---
+  const initialRole = window.currentUser?.role || 'guest';
+  $(document).trigger('userRoleChanged', [initialRole]);
 });
