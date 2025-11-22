@@ -11,8 +11,8 @@ window.folders = window.folders || [];
 // ---------------------------
 function sanitizeFolderName(str) {
   if (!str) return '';
-  // Convert smart single quotes to ASCII '
-  str = str.replace(/[\u2018\u2019\u201A\u201B\u2032]/g, "'");
+  // Rimuove tutti gli apostrofi (inclusi smart single quotes)
+  str = str.replace(/['\u2018\u2019\u201A\u201B\u2032]/g, '');
   // Convert smart double quotes to ASCII "
   str = str.replace(/[\u201C\u201D\u201E\u201F\u2033]/g, '"');
   // Remove explicitly forbidden chars
