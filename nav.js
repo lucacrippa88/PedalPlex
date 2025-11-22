@@ -11,7 +11,7 @@ $(document).ready(function () {
       </div>
 
       <!-- Right: login button placeholder -->
-      // <div id="navRight"></div>
+      <!-- <div id="navRight"></div> -->
     </header>
   `;
 

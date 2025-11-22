@@ -1417,7 +1417,8 @@ async function renderFullPedalboard() {
       }
 
       // Mostra controlli
-      $("#preset-controls").css("display", "inline-flex");
+      // $("#preset-controls").css("display", "inline-flex");
+      $("#preset-controls").css("display", "flex");
 
   // Organize pedals by row
   const rowsMap = {};
