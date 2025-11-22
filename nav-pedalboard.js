@@ -52,7 +52,7 @@ function initNavPedalboard(userRole) {
   `;
 
   $("body").prepend(navHtml);
-  $("body").append(window.fullscreenMenuHtml);
+  // $("body").append(window.fullscreenMenuHtml);
 
   $("#menuToggle").on("click", function () {
     const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];

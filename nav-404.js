@@ -17,7 +17,7 @@ function initNav404() {
   $("body").prepend(navHtml);
 
   // Add fullscreen menu HTML from external file
-  $("body").append(window.fullscreenMenuHtml);
+  // $("body").append(window.fullscreenMenuHtml);
 
   // Fullscreen menu toggle with quote
   $("#menuToggle").on("click", function () {

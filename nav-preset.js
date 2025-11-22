@@ -64,7 +64,7 @@ function initNavPreset() {
 `;
 
   $("body").prepend(navHtml);
-  $("body").append(window.fullscreenMenuHtml);
+  // $("body").append(window.fullscreenMenuHtml);
 
     // Disable Save/Create/Folder buttons and add Login for guests
     if (isGuest) {
