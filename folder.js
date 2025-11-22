@@ -151,21 +151,27 @@ async function saveFolderToDB(folder, explicitBoardId) {
   const folderInput = document.querySelector('#folderNameInput');
   
   // --- Validation for folder name ---
+  // function removeForbiddenChars(str) {
+  //   // Forbidden characters: $ % * \ | ( ) [ ] { } ^ £ ; < >
+  //   const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
+
+  //   // Remove emojis using Unicode property escapes
+  //   str = str.replace(/[\p{So}\p{Cn}]/gu, '');
+
+  //   // Remove explicitly forbidden chars
+  //   str = str.replace(forbiddenRegex, '');
+
+  //   // Collapse multiple spaces and trim
+  //   str = str.replace(/\s+/g, ' ').trim();
+
+  //   return str;
+  // }
   function removeForbiddenChars(str) {
-    // Forbidden characters: $ % * \ | ( ) [ ] { } ^ £ ; < >
-    const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
-
-    // Remove emojis using Unicode property escapes
-    str = str.replace(/[\p{So}\p{Cn}]/gu, '');
-
     // Remove explicitly forbidden chars
-    str = str.replace(forbiddenRegex, '');
-
-    // Collapse multiple spaces and trim
-    str = str.replace(/\s+/g, ' ').trim();
-
-    return str;
+    const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
+    return str.replace(forbiddenRegex, '').replace(/\s+/g, ' ').trim();
   }
+
 
   const sanitizedName = removeForbiddenChars(folder.name);
 
