@@ -118,8 +118,8 @@ $(document).ready(function () {
 
   $("#logoutBtn").on("click", function() {
     localStorage.removeItem('authToken');
-    // Aggiorna stato utente immediatamente
-    updateFullscreenMenu('guest');
+    // Aggiorna menu a guest dopo logout
+    $(document).trigger('userRoleChanged', ['guest']);
     window.location.href = '/PedalPlex/';
   });
 
@@ -127,12 +127,13 @@ $(document).ready(function () {
     window.location.href = "login";
   });
 
-  // --- Set initial user state immediately ---
-  const role = window.currentUser?.role || 'guest';
-  updateFullscreenMenu(role);
-
   // --- Dynamic year helper ---
   const startYear = 2025;
   const currentYear = new Date().getFullYear();
   $("#year-range").text(currentYear > startYear ? `${startYear}–${currentYear}` : `${startYear}`);
+
+  // --- Ascolta evento userRoleChanged ---
+  $(document).on('userRoleChanged', function(e, role) {
+    updateFullscreenMenu(role);
+  });
 });

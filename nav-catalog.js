@@ -288,25 +288,5 @@ function initCatalog(userRole) {
   console.error("Error fetching pedals:", err);
   resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err.message}</p>`;
 });
-   
-    // .then(res => res.ok ? res.json() : Promise.reject("Network error"))
-    // .then(pedals => {
-    //   resultsDiv.innerHTML = "";
-    //   $("#pedalCount").text(`${pedals.length} gears`);
-
-    //   pedals.sort((a,b) => a._id - b._id);
-    //   pedals.forEach(pedal => {
-    //     const $pedalDiv = renderPedal(pedal, userRole);
-    //     $pedalDiv.attr("data-author", pedal.author || "");
-    //     $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-    //     $(resultsDiv).append($pedalDiv);
-    //   });
-
-    //   updatePedalCounts();
-    //   if (userRole !== "guest") setupEditPedalHandler(pedals);
-    // })
-    // .catch(err => {
-    //   console.error("Error fetching pedals:", err);
-    //   resultsDiv.innerHTML = `<p style="color:red;">Error loading pedals: ${err}</p>`;
-    // });
+  
 }
