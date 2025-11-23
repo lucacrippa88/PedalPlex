@@ -11,17 +11,14 @@ window.folders = window.folders || [];
 // ---------------------------
 function sanitizeFolderName(str) {
   if (!str) return '';
-  // Rimuove tutti gli apostrofi (inclusi smart single quotes)
-  str = str.replace(/['\u2018\u2019\u201A\u201B\u2032]/g, '');
-  // Convert smart double quotes to ASCII "
-  str = str.replace(/[\u201C\u201D\u201E\u201F\u2033]/g, '"');
-  // Remove explicitly forbidden chars
-  const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
-  str = str.replace(forbiddenRegex, '');
-  // Collapse whitespace and trim
-  str = str.replace(/\s+/g, ' ').trim();
-  return str;
+
+  // Permessi: A-Z, a-z, 0-9, -, _
+  // Rimuove tutto ciò che NON è permesso
+  str = str.replace(/[^A-Za-z0-9\-_]/g, '');
+
+  return str.trim();
 }
+
 
 // ---------------------------
 // Update folder on server helper
@@ -36,7 +33,7 @@ async function updateFolderOnServer(folder) {
     if (folder.name && sanitizedName !== folder.name) {
       Swal.fire({
         title: 'Invalid characters',
-        text: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+        text: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (-, _).',
         icon: 'error',
         customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false,
@@ -136,7 +133,7 @@ async function saveFolderToDB(folder, explicitBoardId) {
     if (folderInput) folderInput.style.border = '2px solid red';
     Swal.fire({
       title: 'Invalid characters',
-      text: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+      text: 'Folder name contained forbidden special characters. Allowed: letters, numbers, spaces, and safe punctuation (-, _).',
       icon: 'error',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false,
