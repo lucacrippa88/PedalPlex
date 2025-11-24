@@ -49,33 +49,18 @@
 
 
 
-.dnd-placeholder {
-  box-sizing: border-box;
-  border: 2px dashed rgba(0,0,0,0.2);
-  border-radius: 6px;
-  margin: 0 6px;
-  background: rgba(0,0,0,0.02);
-  flex: 0 0 auto;
+.drag-ghost {
+    opacity: 0.4;
 }
-.dnd-ghost {
-  position: fixed;
-  pointer-events: none;
-  z-index: 99999;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-  opacity: 0.95;
+
+.drag-chosen {
+    transform: scale(1.05);
 }
-.pedal-wrapper,
-.pedal-catalog {
-  transition: transform 180ms ease, box-shadow 120ms ease;
-  will-change: transform;
+
+.drag-active {
+    cursor: grabbing;
 }
-.pedal-wrapper.dnd-dragging,
-.pedal-catalog.dnd-dragging {
-  opacity: 0.85;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
-  transform-origin: center center;
-}
+
 
 
   </style>
@@ -150,6 +135,7 @@
     <script src="pedalboard.js"></script>
     <script src="fullscreen-menu.js"></script>
     <script src="nav-pedalboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="pedalboard-dnd.js"></script>
   </div>
 
