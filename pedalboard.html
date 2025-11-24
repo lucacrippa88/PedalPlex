@@ -50,6 +50,33 @@
 
 
 
+.dnd-placeholder {
+  box-sizing: border-box;
+  border: 2px dashed rgba(0,0,0,0.2);
+  border-radius: 6px;
+  margin: 0 6px;
+  background: rgba(0,0,0,0.02);
+  flex: 0 0 auto;
+}
+.dnd-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  opacity: 0.95;
+}
+.pedal-wrapper,
+.pedal-catalog {
+  transition: transform 180ms ease, box-shadow 120ms ease;
+  will-change: transform;
+}
+.pedal-wrapper.dnd-dragging,
+.pedal-catalog.dnd-dragging {
+  opacity: 0.85;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  transform-origin: center center;
+}
 
 
 
