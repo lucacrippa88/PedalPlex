@@ -1,148 +1,199 @@
-// -------------------------------------------------------
-//  PEDALBOARD DRAG & DROP – SortableJS
-//  Supports: reorder inside row + move to any row
-//  Auto-create new row + cleanup empty rows
-// -------------------------------------------------------
+(function () {
 
-window.initPedalboardDND = function () {
-    console.log("Initializing drag & drop…");
+    let dragged = null;
+    let placeholder = null;
+    let startRow = null;
+    let startIndex = null;
+    let isDragging = false;
 
-    const board = document.getElementById("pedalboard");
-    if (!board) return;
+    // stile placeholder
+    const createPlaceholder = () => {
+        const ph = document.createElement("div");
+        ph.className = "pedal-placeholder";
+        ph.style.width = "80px";
+        ph.style.height = "120px";
+        ph.style.border = "2px dashed #aaa";
+        ph.style.borderRadius = "6px";
+        ph.style.boxSizing = "border-box";
+        return ph;
+    };
 
-    // Trova tutte le righe (create da renderPedalboard)
-    const rows = board.querySelectorAll(".pedal-row");
-
-    rows.forEach((row) => makeRowSortable(row));
-
-    // Aggiungi una "zona drop" finale per creare nuove righe
-    ensureAddRowZone();
-};
-
-// -------------------------------------------------------
-//   CREAZIONE SORTABLE PER OGNI RIGA
-// -------------------------------------------------------
-function makeRowSortable(rowEl) {
-
-    Sortable.create(rowEl, {
-        group: "pedals",          // permette di spostare tra righe
-        animation: 150,
-        ghostClass: "drag-ghost",
-        dragClass: "drag-active",
-        chosenClass: "drag-chosen",
-
-        onStart() {
-            // Mostra la zona nuova riga quando inizi a trascinare
-            document.getElementById("add-row-zone").style.display = "block";
-        },
-
-        onEnd(evt) {
-            // Nasconde zona nuova riga quando finito
-            document.getElementById("add-row-zone").style.display = "none";
-
-            cleanupEmptyRows();
-            rebuildPedalboardModel();
-            renderPedalboard(); // ridisegna tutto in modo coerente
-        }
-    });
-}
-
-// -------------------------------------------------------
-//  CREA / AGGIORNA LA ZONA PER AGGIUNGERE UNA NUOVA RIGA
-// -------------------------------------------------------
-function ensureAddRowZone() {
-    let zone = document.getElementById("add-row-zone");
-    if (!zone) {
-        zone = document.createElement("div");
-        zone.id = "add-row-zone";
-        zone.style.border = "2px dashed #888";
-        zone.style.margin = "20px 0";
-        zone.style.padding = "20px";
-        zone.style.textAlign = "center";
-        zone.style.color = "#777";
-        zone.style.fontSize = "14px";
-        zone.textContent = "Drop here to create a new row";
-        zone.style.display = "none";
-        document.getElementById("pedalboard").appendChild(zone);
+    // disattiva click mentre trascino
+    function disableClicks() {
+        document.querySelectorAll(".pedal-item, .pedal-catalog").forEach(el => {
+            el.style.pointerEvents = "none";
+        });
     }
 
-    // Rende droppabile
-    Sortable.create(zone, {
-        group: "pedals",
-        animation: 150,
+    function enableClicks() {
+        document.querySelectorAll(".pedal-item, .pedal-catalog").forEach(el => {
+            el.style.pointerEvents = "auto";
+        });
+    }
 
-        onAdd(evt) {
-            // Crea una nuova riga
-            const newRow = document.createElement("div");
-            newRow.className = "pedal-row";
-            newRow.style.display = "flex";
-            newRow.style.gap = "12px";
-            newRow.style.marginBottom = "20px";
+    // trova riga sotto il cursore
+    function getRowUnderPointer(x, y) {
+        const rows = Array.from(document.querySelectorAll(".pedal-row"));
+        return rows.find(r => {
+            const rect = r.getBoundingClientRect();
+            return y >= rect.top && y <= rect.bottom;
+        });
+    }
 
-            // Inserisci il pedale dentro la riga nuova
-            newRow.appendChild(evt.item);
-
-            // Inserisci la riga prima della zona
-            zone.before(newRow);
-
-            // Rende la nuova riga sortable
-            makeRowSortable(newRow);
-
-            cleanupEmptyRows();
-            rebuildPedalboardModel();
-            renderPedalboard();
+    // trova posizione nella riga
+    function getInsertPosition(row, x) {
+        const items = Array.from(row.children).filter(el => el !== dragged && el !== placeholder);
+        for (let i = 0; i < items.length; i++) {
+            const rect = items[i].getBoundingClientRect();
+            if (x < rect.left + rect.width / 2) return i;
         }
-    });
-}
+        return items.length;
+    }
 
-// -------------------------------------------------------
-//  ELIMINA LE RIGHE VUOTE
-// -------------------------------------------------------
-function cleanupEmptyRows() {
-    document.querySelectorAll(".pedal-row").forEach(row => {
-        if (row.children.length === 0) row.remove();
-    });
-}
+    // aggiorna il modello dati in window.pedalboard
+    function updateModel() {
+        const rows = document.querySelectorAll(".pedal-row");
+        const updated = [];
+        let rowNum = 1;
 
-// -------------------------------------------------------
-//  RICOSTRUISCE window.pedalboard.pedals IN MODO COERENTE
-// -------------------------------------------------------
-function rebuildPedalboardModel() {
-    const rows = document.querySelectorAll(".pedal-row");
-    const newList = [];
-
-    let rowIndex = 1;
-
-    rows.forEach(row => {
-        const pedals = row.querySelectorAll(".pedal-catalog, .pedal-item");
-
-        pedals.forEach((pedalEl, idx) => {
-            const pedalId = pedalEl.dataset.pedalId;
-            const rotation = parseInt(pedalEl.dataset.rotation || "0");
-
-            newList.push({
-                pedal_id: pedalId,
-                rotation,
-                row: rowIndex,
-                position: idx,
+        rows.forEach(row => {
+            const items = Array.from(row.children).filter(el => el.classList.contains("pedal-item") || el.classList.contains("pedal-catalog"));
+            items.forEach((el, idx) => {
+                updated.push({
+                    pedal_id: el.dataset.pedalId,
+                    rotation: parseInt(el.dataset.rotation || "0"),
+                    row: rowNum,
+                    position: idx
+                });
             });
+            rowNum++;
+        });
+        window.pedalboard.pedals = updated;
+    }
+
+    // ricrea righe vuote
+    function cleanupEmptyRows() {
+        document.querySelectorAll(".pedal-row").forEach(row => {
+            if (row.children.length === 0) row.remove();
+        });
+    }
+
+    // MAIN INIT chiamato dopo renderPedalboard()
+    window.initPedalboardDND = function () {
+
+        // pulizia eventuali duplicati
+        document.querySelectorAll(".pedal-item, .pedal-catalog").forEach(el => {
+            el.onmousedown = null;
+            el.ontouchstart = null;
         });
 
-        rowIndex++;
-    });
-
-    window.pedalboard.pedals = newList;
-}
-
-// -------------------------------------------------------
-//  CHIAMA initPedalboardDND() OGNI VOLTA CHE REDRAW
-// -------------------------------------------------------
-document.addEventListener("DOMContentLoaded", () => {
-    // Hook automatico dopo ogni render
-    const origRender = window.renderPedalboard;
-
-    window.renderPedalboard = function () {
-        origRender();
-        setTimeout(() => initPedalboardDND(), 10); // assicura che il DOM sia pronto
+        // setup drag su ogni pedale
+        document.querySelectorAll(".pedal-item, .pedal-catalog").forEach(el => {
+            el.addEventListener("mousedown", startDrag);
+            el.addEventListener("touchstart", startDrag, { passive: false });
+        });
     };
-});
+
+    // --------------------------
+    //         DRAG START
+    // --------------------------
+    function startDrag(e) {
+        e.preventDefault();
+
+        dragged = e.target.closest(".pedal-item, .pedal-catalog");
+        if (!dragged) return;
+
+        disableClicks();
+        isDragging = true;
+
+        const rect = dragged.getBoundingClientRect();
+
+        const pageX = e.touches ? e.touches[0].pageX : e.pageX;
+        const pageY = e.touches ? e.touches[0].pageY : e.pageY;
+
+        dragged._offsetX = pageX - rect.left;
+        dragged._offsetY = pageY - rect.top;
+
+        startRow = dragged.parentElement;
+        startIndex = Array.from(startRow.children).indexOf(dragged);
+
+        // placeholder
+        placeholder = createPlaceholder();
+        startRow.insertBefore(placeholder, dragged.nextSibling);
+
+        // posizione assoluta per trascinamento
+        dragged.style.position = "absolute";
+        dragged.style.zIndex = 9999;
+        dragged.style.pointerEvents = "none";
+        dragged.style.width = rect.width + "px";
+        dragged.style.height = rect.height + "px";
+
+        moveDragged(pageX, pageY);
+
+        document.addEventListener("mousemove", duringDrag);
+        document.addEventListener("touchmove", duringDrag, { passive: false });
+        document.addEventListener("mouseup", endDrag);
+        document.addEventListener("touchend", endDrag);
+    }
+
+    // --------------------------
+    //        DRAG MOVE
+    // --------------------------
+    function duringDrag(e) {
+        if (!isDragging) return;
+
+        const pageX = e.touches ? e.touches[0].pageX : e.pageX;
+        const pageY = e.touches ? e.touches[0].pageY : e.pageY;
+
+        moveDragged(pageX, pageY);
+
+        const row = getRowUnderPointer(pageX, pageY);
+        if (!row) return;
+
+        const pos = getInsertPosition(row, pageX);
+
+        if (placeholder.parentElement !== row || Array.from(row.children).indexOf(placeholder) !== pos) {
+            row.insertBefore(placeholder, row.children[pos] || null);
+        }
+    }
+
+    function moveDragged(x, y) {
+        dragged.style.left = (x - dragged._offsetX) + "px";
+        dragged.style.top = (y - dragged._offsetY) + "px";
+    }
+
+    // --------------------------
+    //         DRAG END
+    // --------------------------
+    function endDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+
+        enableClicks();
+
+        // rimetto il pedale dove c'è il placeholder
+        placeholder.parentElement.insertBefore(dragged, placeholder);
+
+        // pulizia
+        dragged.style.position = "";
+        dragged.style.zIndex = "";
+        dragged.style.left = "";
+        dragged.style.top = "";
+        dragged.style.pointerEvents = "";
+        dragged.style.width = "";
+        dragged.style.height = "";
+
+        placeholder.remove();
+        placeholder = null;
+
+        cleanupEmptyRows();
+        updateModel();
+        renderPedalboard(); // ridisegna tutto
+
+        document.removeEventListener("mousemove", duringDrag);
+        document.removeEventListener("touchmove", duringDrag);
+        document.removeEventListener("mouseup", endDrag);
+        document.removeEventListener("touchend", endDrag);
+    }
+
+})();
