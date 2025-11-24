@@ -1,11 +1,17 @@
 /**
- * pedalboard-dnd.js
- * Drag & Drop (grid rows/columns) — mouse + touch (pointer events)
- * - Dynamic rows: dragging under last row creates a new row; empty rows removed
- * - Works with elements: .pedal-row (container) and .pedal-wrapper (item)
- * - Fallback: works if items are .pedal-catalog (uses data-pedal-id)
+ * pedalboard-dnd-v2.js
+ * Grid DnD (rows/columns) with animated shifting (FLIP) + pointer/touch support
  *
- * Include AFTER pedalboard.js and after renderPedalboard() is available.
+ * - Requires rows: .pedal-row (data-rowNum attribute optional)
+ * - Items: .pedal-wrapper (preferred) OR .pedal-catalog (fallback)
+ * - Updates window.pedalboard.pedals (row + order) and calls renderPedalboard() after drop
+ *
+ * Features:
+ * - Placeholder that receives insert position
+ * - FLIP animation for smooth shifting of items
+ * - Ghost that follows pointer (so original can be removed from flow)
+ * - Dynamic rows creation/removal
+ * - Mouse + Touch via Pointer Events
  */
 
 (function () {
@@ -13,62 +19,117 @@
     board: '#pedalboard',
     row: '.pedal-row',
     wrapper: '.pedal-wrapper',
-    fallbackItem: '.pedal-catalog' // in case wrapper class isn't present
+    fallbackItem: '.pedal-catalog'
   };
 
-  // Small utilities
-  const $ = (s, root = document) => Array.from(root.querySelectorAll(s));
-  const el = id => document.getElementById(id);
+  // small helpers
+  const $ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const one = (sel, root = document) => root.querySelector(sel);
 
-  // State during a drag
+  // state
   let state = {
-    draggingEl: null,      // actual DOM element being dragged (wrapper or pedal-catalog)
-    draggingId: null,      // pedal_id (string)
-    placeholder: null,
-    originRowEl: null,
-    originIndexAbsolute: null,
+    draggingEl: null,    // original wrapper element removed-from-flow (kept for reinsertion)
+    ghost: null,         // visual ghost following pointer
+    placeholder: null,   // placeholder inside rows for insertion
+    originAbsIndex: null,
+    originRowNum: null,
+    draggingId: null,
+    isDragging: false,
     pointerId: null,
-    isDragging: false
+    lastTargetRow: null,
+    lastAfterEl: null,
+    lastRects: null // for FLIP animate
   };
 
-  // Create a visible placeholder that matches dragged element size
+  // CSS that we will inject (transitions + classes)
+  const injectedCSS = `
+/* DnD helper styles (injected by script) */
+.dnd-placeholder {
+  box-sizing: border-box;
+  border: 2px dashed rgba(0,0,0,0.2);
+  border-radius: 6px;
+  margin: 0 6px;
+  background: rgba(0,0,0,0.02);
+  flex: 0 0 auto;
+}
+.dnd-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  opacity: 0.95;
+}
+.pedal-wrapper,
+.pedal-catalog {
+  transition: transform 180ms ease, box-shadow 120ms ease;
+  will-change: transform;
+}
+.pedal-wrapper.dnd-dragging,
+.pedal-catalog.dnd-dragging {
+  opacity: 0.85;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  transform-origin: center center;
+}
+`;
+
+  // inject CSS once
+  function ensureCSS() {
+    if (document.getElementById('pedalboard-dnd-v2-css')) return;
+    const s = document.createElement('style');
+    s.id = 'pedalboard-dnd-v2-css';
+    s.textContent = injectedCSS;
+    document.head.appendChild(s);
+  }
+
+  // create placeholder sized like sourceRect
   function makePlaceholder(sourceRect) {
     const ph = document.createElement('div');
     ph.className = 'dnd-placeholder';
-    ph.style.boxSizing = 'border-box';
-    ph.style.border = '2px dashed rgba(0,0,0,0.25)';
-    ph.style.borderRadius = '6px';
     ph.style.width = sourceRect.width + 'px';
     ph.style.height = sourceRect.height + 'px';
-    ph.style.margin = '0 5px';
-    ph.style.flex = '0 0 auto';
     return ph;
   }
 
-  // Find pedal id from element
-  function getPedalIdFromElement(wrapperOrCatalog) {
-    if (!wrapperOrCatalog) return null;
-    // wrapper might contain child .pedal-catalog
-    const catalog = wrapperOrCatalog.closest ? wrapperOrCatalog.querySelector('.pedal-catalog') : null;
-    if (catalog && catalog.dataset && (catalog.dataset.pedalId || catalog.dataset.pedalId === '')) {
-      return catalog.dataset.pedalId || catalog.getAttribute('data-pedal-id');
-    }
-    // fallback to dataset on wrapper itself
-    if (wrapperOrCatalog.dataset && (wrapperOrCatalog.dataset.pedalId || wrapperOrCatalog.dataset.pedalId === '')) {
-      return wrapperOrCatalog.dataset.pedalId || wrapperOrCatalog.getAttribute('data-pedal-id');
-    }
-    // try data-pedal-id attribute directly
-    return wrapperOrCatalog.getAttribute && wrapperOrCatalog.getAttribute('data-pedal-id');
+  // create ghost node (clone visual) that follows pointer
+  function makeGhost(sourceEl) {
+    const g = sourceEl.cloneNode(true);
+    g.classList.add('dnd-ghost');
+    // remove any interactive attributes
+    g.removeAttribute('id');
+    g.style.width = sourceEl.getBoundingClientRect().width + 'px';
+    g.style.height = sourceEl.getBoundingClientRect().height + 'px';
+    g.style.pointerEvents = 'none';
+    // optional minor scale
+    g.style.transform = 'translate(-50%, -50%) scale(1.02)';
+    document.body.appendChild(g);
+    return g;
   }
 
-  // Determine row element under a point (x,y)
-  function findRowUnderPoint(x, y) {
+  // get pedal id from element
+  function getPedalId(el) {
+    if (!el) return null;
+    const catalog = el.matches('.pedal-catalog') ? el : el.querySelector('.pedal-catalog');
+    if (catalog) {
+      return catalog.getAttribute('data-pedal-id') || catalog.dataset.pedalId;
+    }
+    return el.getAttribute('data-pedal-id') || el.dataset.pedalId || null;
+  }
+
+  // find absolute index in window.pedalboard.pedals by pedal_id; returns first match
+  function findAbsIndexById(pedalId) {
+    if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals)) return -1;
+    return window.pedalboard.pedals.findIndex(p => String(p.pedal_id) === String(pedalId));
+  }
+
+  // pick candidate row under point
+  function rowUnderPoint(x, y) {
     const rows = $(SELECTORS.row);
     for (const r of rows) {
       const rect = r.getBoundingClientRect();
       if (y >= rect.top && y <= rect.bottom) return r;
     }
-    // If not found, but y below last row -> return last row
+    // fallback: if y below last row, return last row (for new row creation)
     if (rows.length) {
       const last = rows[rows.length - 1].getBoundingClientRect();
       if (y > last.bottom) return rows[rows.length - 1];
@@ -77,165 +138,194 @@
     return null;
   }
 
-  // Given a row element and an x coordinate, find the sibling element after which we should insert
-  function getAfterElementForRow(rowEl, clientX) {
-    // consider only non-placeholder wrappers
-    const candidates = Array.from(rowEl.querySelectorAll(`${SELECTORS.wrapper}:not(.dnd-dragging), .pedal-catalog:not(.dnd-dragging)`));
-    for (const child of candidates) {
-      const rect = child.getBoundingClientRect();
+  // find next element to insert before in a given row based on clientX
+  function afterElementInRow(row, clientX) {
+    const candidates = Array.from(row.querySelectorAll(`${SELECTORS.wrapper}:not(.dnd-dragging), ${SELECTORS.fallbackItem}:not(.dnd-dragging)`));
+    for (const c of candidates) {
+      const rect = c.getBoundingClientRect();
       const mid = rect.left + rect.width / 2;
-      if (clientX < mid) return child;
+      if (clientX < mid) return c;
     }
     return null;
   }
 
-  // Convert absolute pedalboard array index -> absolute index of a pedal object in window.pedalboard.pedals
-  // We will use matching by pedal_id (the pedal_id should be unique or near-unique in a board)
-  function findAbsoluteIndexByPedalId(pedalId) {
-    if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals)) return -1;
-    return window.pedalboard.pedals.findIndex(p => String(p.pedal_id) === String(pedalId));
+  // FLIP helpers
+  function recordRects(rootSelector) {
+    const nodes = Array.from(document.querySelectorAll(`${SELECTORS.wrapper}, ${SELECTORS.fallbackItem}`));
+    const map = new Map();
+    nodes.forEach(n => {
+      map.set(n, n.getBoundingClientRect());
+    });
+    return map;
   }
 
-  // Compute absolute insertion index in window.pedalboard.pedals for a drop into targetRow at position targetPosition (0..n)
-  function computeAbsoluteInsertIndex(targetRowNum, targetPositionInRow) {
-    const arr = window.pedalboard.pedals;
-    // collect indices of pedals who belong to targetRowNum
-    const indices = [];
-    for (let i = 0; i < arr.length; i++) {
-      if ((arr[i].row || 1) === targetRowNum) indices.push(i);
-    }
-    if (indices.length === 0) {
-      // no items in that row: insertion at end (after all items with row < targetRowNum)
-      let idx = arr.length;
-      // But better place after all items with row < targetRowNum
-      for (let i = 0; i < arr.length; i++) {
-        if ((arr[i].row || 1) > targetRowNum) {
-          idx = i;
-          break;
-        }
+  function playFLIP(prevRects) {
+    const nodes = Array.from(document.querySelectorAll(`${SELECTORS.wrapper}, ${SELECTORS.fallbackItem}`));
+    nodes.forEach(node => {
+      const prev = prevRects.get(node);
+      const next = node.getBoundingClientRect();
+      if (!prev) return;
+      const dx = prev.left - next.left;
+      const dy = prev.top - next.top;
+      if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+        node.style.transition = 'none';
+        node.style.transform = `translate(${dx}px, ${dy}px)`;
+        requestAnimationFrame(() => {
+          node.style.transition = 'transform 200ms ease';
+          node.style.transform = '';
+          // cleanup after transition
+          const cleanup = () => {
+            node.style.transition = '';
+            node.removeEventListener('transitionend', cleanup);
+          };
+          node.addEventListener('transitionend', cleanup);
+        });
       }
-      return idx;
-    }
-    if (targetPositionInRow <= 0) return indices[0];
-    if (targetPositionInRow >= indices.length) return indices[indices.length - 1] + 1;
-    return indices[targetPositionInRow];
+    });
   }
 
-  // Remove a row element if it has no pedal children
+  // remove empty rows (rows without wrappers or fallback items)
   function cleanupEmptyRows() {
     const rows = $(SELECTORS.row);
-    for (const r of rows) {
-      const hasPedals = r.querySelector(SELECTORS.wrapper) || r.querySelector(SELECTORS.fallbackItem);
-      if (!hasPedals) {
-        r.remove();
+    rows.forEach(r => {
+      const has = r.querySelector(SELECTORS.wrapper) || r.querySelector(SELECTORS.fallbackItem);
+      if (!has) {
+        r.parentElement && r.remove();
       }
-    }
+    });
   }
 
-  // Create a new empty row after last row and return it
-  function createNewRow(afterRowEl = null) {
+  // create new empty row after last
+  function createNewRow(afterEl = null) {
     const board = document.querySelector(SELECTORS.board);
     if (!board) return null;
     const newRow = document.createElement('div');
-    newRow.className = (board.classList.contains('pedalboard-grid') ? 'pedal-row' : 'pedal-row');
-    // set dataset row number as max existing + 1
+    newRow.className = 'pedal-row';
+    // compute new row number
     const rows = $(SELECTORS.row);
-    let maxRow = 0;
-    for (const r of rows) {
-      const rn = parseInt(r.dataset.rowNum || r.dataset.row || r.getAttribute('data-row') || r.dataset.rownum || 0, 10) || 0;
-      if (rn > maxRow) maxRow = rn;
-    }
-    const newRowNum = maxRow + 1 || 1;
-    newRow.dataset.rowNum = newRowNum;
+    let max = 0;
+    rows.forEach(r => {
+      const n = parseInt(r.dataset.rowNum || r.dataset.row || r.getAttribute('data-row') || 0, 10) || 0;
+      if (n > max) max = n;
+    });
+    newRow.dataset.rowNum = (max + 1) || 1;
     newRow.style.display = 'flex';
     newRow.style.flexWrap = 'nowrap';
     newRow.style.gap = '10px';
     newRow.style.minHeight = '60px';
-    if (afterRowEl && afterRowEl.parentNode === board) {
-      afterRowEl.parentNode.insertBefore(newRow, afterRowEl.nextSibling);
+    if (afterEl && afterEl.parentNode === board) {
+      afterEl.parentNode.insertBefore(newRow, afterEl.nextSibling);
     } else {
       board.appendChild(newRow);
     }
     return newRow;
   }
 
-  // Attach pointer listeners to items (delegation style)
-  function attachDelegatedListeners() {
+  // Ensure at least one row exists (normalize)
+  function ensureRows() {
     const board = document.querySelector(SELECTORS.board);
     if (!board) return;
-
-    // Remove previous handler to avoid double-binding
-    board.removeEventListener('pointerdown', onPointerDown);
-    board.addEventListener('pointerdown', onPointerDown, { passive: false });
+    let rows = $(SELECTORS.row);
+    if (!rows.length) {
+      // try: direct children that are flex containers
+      const children = Array.from(board.children);
+      children.forEach((c, i) => {
+        const style = window.getComputedStyle(c);
+        if (style.display.indexOf('flex') !== -1) {
+          c.classList.add('pedal-row');
+          c.dataset.rowNum = c.dataset.rowNum || (i + 1);
+        }
+      });
+    }
+    // if still none, create one
+    if ($(SELECTORS.row).length === 0) createNewRow();
   }
 
-  // When pointerdown occurs, detect the item and start drag
+  // main pointerdown start
   function onPointerDown(e) {
-    // Only left button or touch
+    // only left clicks/touches
     if (e.pointerType === 'mouse' && e.button !== 0) return;
 
-    const candidate = e.target.closest(SELECTORS.wrapper) || e.target.closest(SELECTORS.fallbackItem);
-    if (!candidate) return;
+    const target = e.target.closest(SELECTORS.wrapper) || e.target.closest(SELECTORS.fallbackItem);
+    if (!target) return;
 
     e.preventDefault();
-    candidate.setPointerCapture && candidate.setPointerCapture(e.pointerId);
+    target.setPointerCapture && target.setPointerCapture(e.pointerId);
 
-    const wrapper = candidate.closest(SELECTORS.wrapper) || candidate; // prefer wrapper if nested
-    state.draggingEl = wrapper;
-    state.draggingId = getPedalIdFromElement(wrapper) || getPedalIdFromElement(candidate);
+    ensureCSS();
+
+    // compute IDs and indices
+    const pedalId = getPedalId(target);
+    const absIdx = findAbsIndexById(pedalId);
+
+    // store pre-rects for FLIP before we remove element from flow
+    const prevRects = recordRects();
+
+    state.originAbsIndex = absIdx;
+    state.originRowNum = parseInt((target.closest(SELECTORS.row) || {}).dataset.rowNum || (target.closest(SELECTORS.row) || {}).getAttribute('data-row') || 1, 10) || 1;
+    state.draggingEl = target.closest(SELECTORS.wrapper) || target;
+    state.draggingId = pedalId;
     state.isDragging = true;
     state.pointerId = e.pointerId;
+    state.lastRects = prevRects;
 
-    // compute original absolute index (to remove later)
-    state.originIndexAbsolute = findAbsoluteIndexByPedalId(state.draggingId);
-    state.originRowEl = wrapper.closest(SELECTORS.row);
-
-    // prepare placeholder sized like element
-    const srcRect = wrapper.getBoundingClientRect();
+    // create placeholder sized like element
+    const srcRect = state.draggingEl.getBoundingClientRect();
     state.placeholder = makePlaceholder(srcRect);
 
-    // add dragging class
-    wrapper.classList.add('dnd-dragging');
-    wrapper.style.width = srcRect.width + 'px';
-    wrapper.style.height = srcRect.height + 'px';
-    wrapper.style.position = 'absolute';
-    wrapper.style.left = srcRect.left + 'px';
-    wrapper.style.top = srcRect.top + 'px';
-    wrapper.style.zIndex = 9999;
-    wrapper.style.pointerEvents = 'none';
+    // create ghost and hide original from flow
+    state.ghost = makeGhost(state.draggingEl);
+    positionGhost(state.ghost, e.clientX, e.clientY);
 
-    // insert placeholder where original was
-    const parentRow = wrapper.parentElement;
-    if (parentRow) parentRow.insertBefore(state.placeholder, wrapper.nextSibling);
+    // mark dragging element and remove it from normal flow so others reflow
+    state.draggingEl.classList.add('dnd-dragging');
+    // keep size so layout doesn't collapse
+    state.draggingEl.style.width = srcRect.width + 'px';
+    state.draggingEl.style.height = srcRect.height + 'px';
+    // place absolute to follow pointer visually (we use ghost for following, but keep original absolute to avoid jump)
+    const docScrollTop = window.scrollY || document.documentElement.scrollTop;
+    state.draggingEl.style.position = 'absolute';
+    state.draggingEl.style.left = srcRect.left + 'px';
+    state.draggingEl.style.top = (srcRect.top + docScrollTop) + 'px';
+    state.draggingEl.style.zIndex = 99998;
+    state.draggingEl.style.pointerEvents = 'none';
 
-    // listen movement & up globally
-    document.addEventListener('pointermove', onPointerMove);
+    // insert placeholder where original was (so others shift)
+    const parentRow = state.draggingEl.parentElement;
+    if (parentRow) parentRow.insertBefore(state.placeholder, state.draggingEl.nextSibling);
+
+    // remove original from parent flow (we keep it absolute over page)
+    // NOTE: we keep original in DOM, but absolute so placeholder holds its place
+    // attach listeners
+    document.addEventListener('pointermove', onPointerMove, { passive: false });
     document.addEventListener('pointerup', onPointerUp);
-
-    // ensure rows exist even if none (if user has no rows, create one)
-    if ($(SELECTORS.row).length === 0) {
-      createNewRow();
-    }
   }
 
+  // update ghost position
+  function positionGhost(ghost, clientX, clientY) {
+    if (!ghost) return;
+    ghost.style.left = clientX + 'px';
+    ghost.style.top = clientY + 'px';
+  }
+
+  // pointermove: move ghost, detect row and placeholder insertion; do FLIP animation when placeholder changes
   function onPointerMove(e) {
-    if (!state.isDragging || !state.draggingEl) return;
+    if (!state.isDragging) return;
     e.preventDefault();
 
     const x = e.clientX;
     const y = e.clientY;
 
-    // move the dragged element following pointer (account for page scroll)
-    state.draggingEl.style.left = (x - state.draggingEl.offsetWidth / 2) + 'px';
-    state.draggingEl.style.top = (y - state.draggingEl.offsetHeight / 2) + 'px';
+    // move ghost
+    if (state.ghost) positionGhost(state.ghost, x, y);
 
-    // find row under pointer
-    let targetRow = findRowUnderPoint(x, y);
-    // if user is below last row by some margin, create a new row
+    // detect row under pointer
+    let targetRow = rowUnderPoint(x, y);
     const rows = $(SELECTORS.row);
     if (!targetRow && rows.length) {
+      // if pointer is below last row by a margin, create new row
       const lastRect = rows[rows.length - 1].getBoundingClientRect();
-      if (y > lastRect.bottom + 20) {
+      if (y > lastRect.bottom + 30) {
         targetRow = createNewRow(rows[rows.length - 1]);
       } else {
         targetRow = rows[rows.length - 1];
@@ -244,194 +334,207 @@
 
     if (!targetRow) return;
 
-    // compute where to insert placeholder based on X
-    const afterEl = getAfterElementForRow(targetRow, x);
-    if (!afterEl) {
-      targetRow.appendChild(state.placeholder);
-    } else {
-      // If afterEl is placeholder itself ignore
-      if (afterEl !== state.placeholder) targetRow.insertBefore(state.placeholder, afterEl);
-    }
-  }
+    // find afterElement
+    const afterEl = afterElementInRow(targetRow, x);
 
-  function onPointerUp(e) {
-    if (!state.isDragging || !state.draggingEl) return;
-    e.preventDefault();
-
-    // Stop listening
-    document.removeEventListener('pointermove', onPointerMove);
-    document.removeEventListener('pointerup', onPointerUp);
-
-    // finalize: determine target row and position
-    const placeholder = state.placeholder;
-    if (!placeholder || !placeholder.parentElement) {
-      // cancel: restore original
-      cleanupAfterCancel();
+    // if placeholder is already at the right spot, do nothing
+    if (state.lastTargetRow === targetRow && state.lastAfterEl === afterEl) {
       return;
     }
 
-    const targetRow = placeholder.parentElement;
-    const targetRowNum = parseInt(targetRow.dataset.rowNum || targetRow.dataset.row || targetRow.getAttribute('data-row') || targetRow.dataset.rownum || 1, 10) || 1;
+    // record rects for FLIP BEFORE DOM change
+    const beforeRects = state.lastRects || recordRects();
 
-    // compute position in row (index among pedal wrappers)
-    const siblings = Array.from(targetRow.querySelectorAll(`${SELECTORS.wrapper}, ${SELECTORS.fallbackItem}`)).filter(n => n !== placeholder);
-    const positionInRow = siblings.indexOf(state.draggingEl);
-    // but since we haven't yet inserted draggingEl, we should compute position by looking where placeholder sits:
-    const children = Array.from(targetRow.querySelectorAll(`${SELECTORS.wrapper}, ${SELECTORS.fallbackItem}, .dnd-placeholder`));
-    const phIndex = children.indexOf(placeholder);
-    let posInRow = 0;
-    if (phIndex <= 0) posInRow = 0;
-    else {
-      // count how many actual pedal items are before placeholder
-      posInRow = children.slice(0, phIndex).filter(c => !c.classList.contains('dnd-placeholder')).length;
+    // insert placeholder
+    if (!afterEl) {
+      targetRow.appendChild(state.placeholder);
+    } else {
+      targetRow.insertBefore(state.placeholder, afterEl);
     }
 
-    // Remove dragging element visually
-    state.draggingEl.classList.remove('dnd-dragging');
-    state.draggingEl.style.position = '';
-    state.draggingEl.style.left = '';
-    state.draggingEl.style.top = '';
-    state.draggingEl.style.zIndex = '';
-    state.draggingEl.style.width = '';
-    state.draggingEl.style.height = '';
-    state.draggingEl.style.pointerEvents = '';
+    // then play FLIP from beforeRects to current
+    const currentRects = recordRects();
+    playFLIP(beforeRects);
 
-    // Insert element at placeholder position
-    placeholder.parentElement.insertBefore(state.draggingEl, placeholder);
-    // remove placeholder
-    placeholder.remove();
+    // update last trackers
+    state.lastTargetRow = targetRow;
+    state.lastAfterEl = afterEl;
+    state.lastRects = currentRects;
+  }
 
-    // Now update window.pedalboard.pedals (array)
+  // pointerup: finalize drop, update data model and re-render once
+  function onPointerUp(e) {
+    if (!state.isDragging) return;
+    e.preventDefault();
+
+    document.removeEventListener('pointermove', onPointerMove);
+    document.removeEventListener('pointerup', onPointerUp);
+
+    // compute final target
+    const ph = state.placeholder;
+    if (!ph || !ph.parentElement) {
+      // cancel: restore original
+      restoreOriginal();
+      cleanupState();
+      return;
+    }
+
+    const targetRowEl = ph.parentElement;
+    const targetRowNum = parseInt(targetRowEl.dataset.rowNum || targetRowEl.dataset.row || targetRowEl.getAttribute('data-row') || 1, 10) || 1;
+
+    // determine position index in that row (count real items before placeholder)
+    const children = Array.from(targetRowEl.querySelectorAll(`${SELECTORS.wrapper}, ${SELECTORS.fallbackItem}`));
+    const phIndex = children.indexOf(ph);
+    let positionInRow = 0;
+    if (phIndex <= 0) positionInRow = 0;
+    else positionInRow = children.slice(0, phIndex).filter(n => !n.classList.contains('dnd-placeholder')).length;
+
+    // remove original (source) from window.pedalboard.pedals (by abs index)
+    let removed = null;
     if (window.pedalboard && Array.isArray(window.pedalboard.pedals)) {
       const pid = state.draggingId;
-      let sourceAbsIdx = state.originIndexAbsolute;
-      if (sourceAbsIdx === -1 || sourceAbsIdx === null) {
-        // Try to find by pedal_id again
-        sourceAbsIdx = findAbsoluteIndexByPedalId(pid);
-      }
-      // Remove source item (if found)
-      let removed = null;
-      if (sourceAbsIdx !== -1 && sourceAbsIdx !== null) {
-        removed = window.pedalboard.pedals.splice(sourceAbsIdx, 1)[0];
+      let srcIdx = state.originAbsIndex;
+      if (srcIdx == null || srcIdx === -1) srcIdx = findAbsIndexById(pid);
+      if (srcIdx !== -1 && srcIdx != null) {
+        removed = window.pedalboard.pedals.splice(srcIdx, 1)[0];
       } else {
-        // If not found, try to match by object reference inside DOM order (last-resort)
-        // Nothing to remove
-      }
-
-      // set row on removed item
-      if (!removed) {
-        // create minimal object if none (shouldn't normally happen)
-        removed = { pedal_id: pid, rotation: 0, row: targetRowNum };
+        // fallback create minimal object
+        removed = { pedal_id: state.draggingId, rotation: 0, row: targetRowNum };
       }
       removed.row = targetRowNum;
 
       // compute absolute insert index
-      const insertAt = computeAbsoluteInsertIndex(targetRowNum, posInRow);
-
-      // insert
-      if (insertAt >= 0 && insertAt <= window.pedalboard.pedals.length) {
-        window.pedalboard.pedals.splice(insertAt, 0, removed);
+      // collect indices of items belonging to target row
+      const indices = [];
+      for (let i = 0; i < window.pedalboard.pedals.length; i++) {
+        if ((window.pedalboard.pedals[i].row || 1) === targetRowNum) indices.push(i);
+      }
+      let insertAt = window.pedalboard.pedals.length;
+      if (indices.length === 0) {
+        // insert before first item with row greater than targetRowNum, else end
+        insertAt = window.pedalboard.pedals.length;
+        for (let i = 0; i < window.pedalboard.pedals.length; i++) {
+          if ((window.pedalboard.pedals[i].row || 1) > targetRowNum) { insertAt = i; break; }
+        }
       } else {
-        window.pedalboard.pedals.push(removed);
+        if (positionInRow <= 0) insertAt = indices[0];
+        else if (positionInRow >= indices.length) insertAt = indices[indices.length - 1] + 1;
+        else insertAt = indices[positionInRow];
       }
 
-      // cleanup empty rows
-      cleanupEmptyRows();
-
-      // re-render once to ensure DOM/indices consistent
-      // call renderPedalboard if available, else just save
-      if (typeof renderPedalboard === 'function') {
-        // slight timeout to let DOM settle if needed
-        setTimeout(() => {
-          renderPedalboard();
-          // after render, attempt to persist: guest/local or just saveSelectedBoardToLocalStorage
-          if (typeof saveGuestPedalboard === 'function' && window.currentUser?.role === 'guest') {
-            try { saveGuestPedalboard(); } catch (e) { /* ignore */ }
-          } else {
-            try { saveSelectedBoardToLocalStorage(); } catch (e) { /* ignore */ }
-          }
-        }, 30);
+      // insert removed at insertAt
+      if (insertAt < 0 || insertAt > window.pedalboard.pedals.length) {
+        window.pedalboard.pedals.push(removed);
       } else {
-        // persist if possible
-        if (typeof saveGuestPedalboard === 'function' && window.currentUser?.role === 'guest') {
-          try { saveGuestPedalboard(); } catch (e) { /* ignore */ }
-        } else {
-          try { saveSelectedBoardToLocalStorage(); } catch (e) { /* ignore */ }
-        }
+        window.pedalboard.pedals.splice(insertAt, 0, removed);
       }
     }
 
-    // reset state
+    // remove placeholder and put original element in place (we'll re-render to be safe)
+    try {
+      if (state.ghost && state.ghost.parentElement) state.ghost.remove();
+    } catch (e) {}
+    // remove the absolute original from DOM (we will re-render)
+    if (state.draggingEl && state.draggingEl.parentElement) {
+      state.draggingEl.remove();
+    }
+
+    // cleanup empty rows
+    cleanupEmptyRows();
+
+    // re-render once (renderPedalboard should recreate DOM properly)
+    if (typeof renderPedalboard === 'function') {
+      setTimeout(() => {
+        renderPedalboard();
+        // persist
+        if (typeof saveGuestPedalboard === 'function' && window.currentUser?.role === 'guest') {
+          try { saveGuestPedalboard(); } catch (e) {}
+        } else {
+          try { saveSelectedBoardToLocalStorage(); } catch (e) {}
+        }
+      }, 30);
+    } else {
+      // if no render, we attempted to remove original from DOM and inserted placeholder; do nothing else
+    }
+
+    // cleanup
+    cleanupState();
+  }
+
+  function restoreOriginal() {
+    // place original back where placeholder was (if exists)
+    try {
+      if (state.placeholder && state.draggingEl) {
+        state.placeholder.parentElement && state.placeholder.parentElement.insertBefore(state.draggingEl, state.placeholder);
+        state.placeholder.remove();
+      }
+      if (state.ghost) state.ghost.remove();
+      // reset styles
+      if (state.draggingEl) {
+        state.draggingEl.classList.remove('dnd-dragging');
+        state.draggingEl.style.position = '';
+        state.draggingEl.style.left = '';
+        state.draggingEl.style.top = '';
+        state.draggingEl.style.width = '';
+        state.draggingEl.style.height = '';
+        state.draggingEl.style.zIndex = '';
+        state.draggingEl.style.pointerEvents = '';
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  function cleanupState() {
     state.draggingEl = null;
-    state.draggingId = null;
+    state.ghost = null;
     state.placeholder = null;
-    state.originRowEl = null;
-    state.originIndexAbsolute = null;
+    state.originAbsIndex = null;
+    state.originRowNum = null;
+    state.draggingId = null;
     state.isDragging = false;
     state.pointerId = null;
+    state.lastTargetRow = null;
+    state.lastAfterEl = null;
+    state.lastRects = null;
   }
 
-  function cleanupAfterCancel() {
-    if (!state.draggingEl) return;
-    state.draggingEl.classList.remove('dnd-dragging');
-    state.draggingEl.style.position = '';
-    state.draggingEl.style.left = '';
-    state.draggingEl.style.top = '';
-    state.draggingEl.style.zIndex = '';
-    state.draggingEl.style.width = '';
-    state.draggingEl.style.height = '';
-    state.draggingEl.style.pointerEvents = '';
-    if (state.placeholder && state.placeholder.parentElement) state.placeholder.remove();
-    state.draggingEl = null;
-    state.placeholder = null;
-    state.isDragging = false;
-    document.removeEventListener('pointermove', onPointerMove);
-    document.removeEventListener('pointerup', onPointerUp);
-  }
-
-  // MutationObserver: when pedalboard DOM changes, ensure rows have data-rowNum set and attach listeners
+  // observe board to ensure rows exist and normalize dataset row numbers
   function observeBoard() {
     const board = document.querySelector(SELECTORS.board);
     if (!board) return;
-    // ensure rows have dataset.rowNum
-    function normalizeRows() {
+    function normalize() {
       const rows = $(SELECTORS.row);
       if (rows.length === 0) {
-        // try to detect row-like divs (fallback) - direct children of board with display:flex
-        const directChildren = Array.from(board.children);
-        directChildren.forEach((c, i) => {
+        // try to set first-level flex children as rows
+        const children = Array.from(board.children);
+        children.forEach((c, idx) => {
           const style = window.getComputedStyle(c);
-          if (style.display === 'flex') {
+          if (style.display.includes('flex')) {
             c.classList.add('pedal-row');
-            c.dataset.rowNum = c.dataset.rowNum || i + 1;
-          }
-        });
-      } else {
-        rows.forEach((r, idx) => {
-          if (!r.dataset.rowNum) {
-            r.dataset.rowNum = r.dataset.row || (idx + 1);
+            c.dataset.rowNum = c.dataset.rowNum || (idx + 1);
           }
         });
       }
+      // ensure row numbers
+      $(SELECTORS.row).forEach((r, i) => {
+        if (!r.dataset.rowNum) r.dataset.rowNum = r.dataset.row || (i + 1);
+      });
     }
-    normalizeRows();
-
-    const mo = new MutationObserver((mutations) => {
-      // whenever DOM under board changes, re-normalize rows; we don't reattach listeners per item (we use delegation)
-      normalizeRows();
-    });
-
+    normalize();
+    const mo = new MutationObserver(() => normalize());
     mo.observe(board, { childList: true, subtree: true });
   }
 
-  // Initialization
+  // attach delegated pointerdown on board
   function init() {
-    // Attach delegated listener to board
-    attachDelegatedListeners();
+    ensureCSS();
+    const board = document.querySelector(SELECTORS.board);
+    if (!board) return;
+    board.removeEventListener('pointerdown', onPointerDown);
+    board.addEventListener('pointerdown', onPointerDown, { passive: false });
     observeBoard();
   }
 
-  // auto-init after short delay (allow pedalboard.js to run)
+  // auto-init after load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => setTimeout(init, 50));
   } else {
@@ -439,9 +542,5 @@
   }
 
   // expose for debugging
-  window.PedalboardDND = {
-    init,
-    makePlaceholder,
-    cleanupAfterCancel
-  };
+  window.PedalboardDNDv2 = { init, makePlaceholder, makeGhost, cleanupState };
 })();
