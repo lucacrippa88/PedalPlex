@@ -1658,3 +1658,75 @@ function decodeHTMLEntities(str) {
   txt.innerHTML = str;
   return txt.value;
 }
+
+
+
+// HELPER: Session timeout warning modal with countdown
+// --- Configurazione ---
+const SESSION_WARNING_THRESHOLD = 5 * 60 * 1000; // 5 minuti in ms
+let sessionWarningShown = false;
+let countdownInterval;
+
+// --- Funzione di controllo sessione ---
+function checkSessionTime() {
+    if (!window.sessionExpires) return;
+
+    const now = Date.now();
+    const remaining = window.sessionExpires - now;
+
+    // Se rimangono meno di 5 minuti e non abbiamo ancora mostrato il modal
+    if (remaining <= SESSION_WARNING_THRESHOLD && !sessionWarningShown) {
+        sessionWarningShown = true;
+        showSessionWarningModal(remaining);
+    }
+}
+
+// --- Funzione per mostrare il modal con countdown ---
+function showSessionWarningModal(initialRemaining) {
+    let remaining = Math.floor(initialRemaining / 1000); // in secondi
+
+    Swal.fire({
+        title: 'Sessione in scadenza',
+        html: `La tua sessione scadrà tra <strong id="swal-countdown">${formatTime(remaining)}</strong>.<br>Vuoi fare il login per continuare senza perdere i dati?`,
+        icon: 'warning',
+        showCancelButton: true,
+        focusConfirm: false,
+        confirmButtonText: 'Login',
+        cancelButtonText: 'Chiudi',
+        customClass: {
+            confirmButton: 'bx--btn bx--btn--primary',   // Carbon primary button
+            cancelButton: 'bx--btn bx--btn--secondary'   // Carbon secondary button
+        },
+        didOpen: () => {
+            const countdownEl = Swal.getHtmlContainer().querySelector('#swal-countdown');
+
+            countdownInterval = setInterval(() => {
+                remaining -= 1;
+                if (remaining <= 0) {
+                    clearInterval(countdownInterval);
+                    Swal.close();
+                    window.location.href = '/login'; // forza redirect quando scade
+                } else {
+                    countdownEl.textContent = formatTime(remaining);
+                }
+            }, 1000);
+        },
+        willClose: () => {
+            clearInterval(countdownInterval);
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '/login';
+        }
+    });
+}
+
+// --- Helper: formatta i secondi in mm:ss ---
+function formatTime(seconds) {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+}
+
+// --- Check periodico ogni 30 secondi ---
+setInterval(checkSessionTime, 30000);
