@@ -12,12 +12,16 @@ window.folders = window.folders || [];
 function sanitizeFolderName(str) {
   if (!str) return '';
 
-  // Permessi: A-Z, a-z, 0-9, -, _
+  // Permessi: A-Z, a-z, 0-9, -, _, spazio
   // Rimuove tutto ciò che NON è permesso
-  str = str.replace(/[^A-Za-z0-9\-_]/g, '');
+  str = str.replace(/[^A-Za-z0-9\-_ ]/g, '');
 
-  return str.trim();
+  // Rimuove eventuali spazi multipli consecutivi e trim
+  str = str.replace(/\s+/g, ' ').trim();
+
+  return str;
 }
+
 
 
 // ---------------------------
