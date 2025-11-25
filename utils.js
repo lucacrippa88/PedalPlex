@@ -1670,9 +1670,11 @@ let countdownInterval;
 // --- Funzione di controllo sessione ---
 function checkSessionTime() {
     if (!window.sessionExpires) return;
+    console.log("Checking session time...");
 
     const now = Date.now();
     const remaining = window.sessionExpires - now;
+    console.log(remaining + " ms remaining");
 
     // Se rimangono meno di 5 minuti e non abbiamo ancora mostrato il modal
     if (remaining <= SESSION_WARNING_THRESHOLD && !sessionWarningShown) {
