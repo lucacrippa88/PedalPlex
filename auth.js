@@ -206,7 +206,7 @@ function onGoogleLogin(response) {
                     timer: 1000,
                     showConfirmButton: false
                 }).then(() => {
-                    window.location.href = "/preset";
+                    window.location.href = "PedalPlex/preset";
                 });
             } else {
                 Swal.fire("Errore login Google", res.error || "", "error");
