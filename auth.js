@@ -191,15 +191,35 @@ function onGoogleLogin(response) {
     const id_token = response.credential;
 
     $.ajax({
-        url: "https://yourserver.com/USER_LOGIN_GOOGLE.php",
+        url: "https://www.cineteatrosanluigi.it/plex/USER_LOGIN_GOOGLE.php",
         method: "POST",
         contentType: "application/json",
+        dataType: "json",
         data: JSON.stringify({ id_token }),
+        xhrFields: { withCredentials: true }, // se usi cookie, altrimenti puoi rimuoverlo
         success: function(res) {
             if (res.token) {
-                localStorage.setItem("jwt", res.token);
-                window.location.href = "app.html";
+                localStorage.setItem("authToken", res.token);
+                Swal.fire({
+                    icon: "success",
+                    title: "Login effettuato",
+                    timer: 1000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = "/preset";
+                });
+            } else {
+                Swal.fire("Errore login Google", res.error || "", "error");
             }
+        },
+        error: function(xhr) {
+            let msg = "Errore server";
+            try {
+                const json = JSON.parse(xhr.responseText);
+                if (json.error) msg = json.error;
+            } catch {}
+            Swal.fire("Errore", msg, "error");
         }
     });
 }
+
