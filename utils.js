@@ -1661,22 +1661,47 @@ function decodeHTMLEntities(str) {
 
 
 
-// HELPER: Session timeout warning modal with countdown
+// ======================================================================
+// SESSION TIMEOUT WARNING (JWT-based)
+// ======================================================================
+
 // --- Configurazione ---
-const SESSION_WARNING_THRESHOLD = 5 * 60 * 1000; // 5 minuti in ms
+const SESSION_WARNING_THRESHOLD = 5 * 60 * 1000; // 5 minuti
 let sessionWarningShown = false;
 let countdownInterval;
 
+// --- Legge & decodifica JWT dal localStorage ---
+(function initSessionExpiration() {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        console.log("Nessun token presente → nessun controllo sessione");
+        return;
+    }
+
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp) {
+            // exp è in secondi → converti in millisecondi
+            window.sessionExpires = payload.exp * 1000;
+            console.log("Session expires at:", new Date(window.sessionExpires));
+        } else {
+            console.warn("Il JWT non contiene exp → impossibile calcolare la scadenza");
+        }
+    } catch (e) {
+        console.error("Errore nel decodificare il JWT:", e);
+    }
+})();
+
 // --- Funzione di controllo sessione ---
 function checkSessionTime() {
-    if (!window.sessionExpires) return;
+    if (!window.sessionExpires) return; // nessun token valido
     console.log("Checking session time...");
 
     const now = Date.now();
     const remaining = window.sessionExpires - now;
     console.log(remaining + " ms remaining");
 
-    // Se rimangono meno di 5 minuti e non abbiamo ancora mostrato il modal
+    // Mostra warning quando rimangono meno di 5 minuti
     if (remaining <= SESSION_WARNING_THRESHOLD && !sessionWarningShown) {
         sessionWarningShown = true;
         showSessionWarningModal(remaining);
@@ -1685,7 +1710,7 @@ function checkSessionTime() {
 
 // --- Funzione per mostrare il modal con countdown ---
 function showSessionWarningModal(initialRemaining) {
-    let remaining = Math.floor(initialRemaining / 1000); // in secondi
+    let remaining = Math.floor(initialRemaining / 1000); // secondi
 
     Swal.fire({
         title: 'Sessione in scadenza',
@@ -1696,18 +1721,19 @@ function showSessionWarningModal(initialRemaining) {
         confirmButtonText: 'Login',
         cancelButtonText: 'Chiudi',
         customClass: {
-            confirmButton: 'bx--btn bx--btn--primary',   // Carbon primary button
-            cancelButton: 'bx--btn bx--btn--secondary'   // Carbon secondary button
+            confirmButton: 'bx--btn bx--btn--primary',
+            cancelButton: 'bx--btn bx--btn--secondary'
         },
         didOpen: () => {
             const countdownEl = Swal.getHtmlContainer().querySelector('#swal-countdown');
 
             countdownInterval = setInterval(() => {
                 remaining -= 1;
+
                 if (remaining <= 0) {
                     clearInterval(countdownInterval);
                     Swal.close();
-                    window.location.href = '/login'; // forza redirect quando scade
+                    window.location.href = '/login';
                 } else {
                     countdownEl.textContent = formatTime(remaining);
                 }
@@ -1730,5 +1756,6 @@ function formatTime(seconds) {
     return `${m}:${s}`;
 }
 
-// --- Check periodico ogni 30 secondi ---
-setInterval(checkSessionTime, 30000);
+// --- Check periodico ogni 2 secondi ---
+setInterval(checkSessionTime, 2000);
+
