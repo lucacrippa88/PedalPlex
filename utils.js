@@ -1733,7 +1733,7 @@ function showSessionWarningModal(initialRemaining) {
                 if (remaining <= 0) {
                     clearInterval(countdownInterval);
                     Swal.close();
-                    window.location.href = '/login';
+                    window.location.href = 'login';
                 } else {
                     countdownEl.textContent = formatTime(remaining);
                 }
