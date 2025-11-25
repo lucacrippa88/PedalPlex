@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PedalPlex</title>
   <link rel="stylesheet" href="https://unpkg.com/carbon-components/css/carbon-components.min.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -14,9 +16,7 @@
     
     <h2>Change Password</h2><br><br>
     <form id="changePasswordForm" style="max-width: 400px; margin: auto;">
-    
-
-      <!-- Password with toggle -->
+      <!-- Old Password -->
       <div style="position: relative; margin-bottom: 10px;">
         <input type="password" id="oldPassword" placeholder="Old Password" required class="bx--text-input"
             style="width: 100%;" />
@@ -28,7 +28,7 @@
         </button>
       </div>
 
-      <!-- Password with toggle -->
+      <!-- New Password -->
       <div style="position: relative; margin-bottom: 10px;">
         <input type="password" id="newPassword" placeholder="New Password" required class="bx--text-input"
             style="width: 100%;" />
@@ -45,21 +45,23 @@
       <button class="bx--btn bx--btn--primary" type="submit" style="width: 100%;">Change Password</button>
     </form>
 
-  </div>
+    <br><br>
+    <h2>Link Google Account</h2>
+    <button id="linkGoogleBtn" class="bx--btn bx--btn--secondary" style="width: 100%;">
+      Collega account Google
+    </button>
 
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="fullscreen-menu.js"></script>
   <script src="nav.js"></script>
-
 
   <script>
   // Check user authentication
   $(document).ready(function() {
     if (window.location.protocol === 'file:') {
       alert('Please run this app via a local HTTP server for full functionality.');
-
-      $('#loadingMessage').hide();
       $('#page-content').hide();
       return;
     }
@@ -74,108 +76,91 @@
       url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
       method: 'GET',
       dataType: 'json',
-      headers: {
-        'Authorization': 'Bearer ' + token
-      },
+      headers: { 'Authorization': 'Bearer ' + token },
       success: function(userFromServer) {
-        $('#loadingMessage').hide();
         $('#page-content').show();
-
         window.currentUser = userFromServer;
-
-        if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
       },
       error: function(xhr) {
-        console.error('Auth check failed:', xhr.status, xhr.responseText);
         if (xhr.status === 401) {
           localStorage.removeItem('authToken');
           window.location.href = 'login';
         } else {
-          alert('Failed to verify authentication. Please try again.');
+          alert('Failed to verify authentication.');
         }
       }
     });
   });
   </script>
 
-
-
   <script>
+    // Toggle password visibility
+    const toggleOld = document.getElementById('togglePasswordOld');
+    const toggleNew = document.getElementById('togglePasswordNew');
+    const oldInput = document.getElementById('oldPassword');
+    const newInput = document.getElementById('newPassword');
+
+    toggleOld.addEventListener('click', () => { oldInput.type = oldInput.type === 'password' ? 'text' : 'password'; });
+    toggleNew.addEventListener('click', () => { newInput.type = newInput.type === 'password' ? 'text' : 'password'; });
+
+    // Change password form submission
     $('#changePasswordForm').submit(function (e) {
       e.preventDefault();
-
       const token = localStorage.getItem('authToken');
 
       $.ajax({
         url: 'https://www.cineteatrosanluigi.it/plex/USER_CHANGE_PASSWORD.php',
         type: 'POST',
         contentType: 'application/json',
-        headers: {
-          'Authorization': 'Bearer ' + token
-        },
-        dataType: 'json',
-        xhrFields: {
-          withCredentials: true
-        },
+        headers: { 'Authorization': 'Bearer ' + token },
         data: JSON.stringify({
           oldPassword: $('#oldPassword').val(),
           newPassword: $('#newPassword').val()
         }),
-        success: function (res) {
-          Swal.fire({
-            title: 'Password changed!',
-            text: 'You will be redirected shortly.',
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false,
-            allowOutsideClick: false,
-            allowEscapeKey: false
-          });
-
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
+        success: function () {
+          Swal.fire({ title: 'Password changed!', icon: 'success', timer: 2000, showConfirmButton: false });
+          setTimeout(() => window.location.reload(), 2000);
         },
         error: function (res) {
           let errorMsg = "Unknown error";
-          try {
-            const json = JSON.parse(res.responseText);
-            errorMsg = json.error || errorMsg;
-          } catch (e) {
-            errorMsg = res.statusText || errorMsg;
-          }
-
-          Swal.fire({
-            icon: 'error',
-            title: 'Change Failed',
-            text: errorMsg,
-            confirmButtonText: 'OK',
-            customClass: {
-              confirmButton: 'bx--btn bx--btn--danger'
-            }
-          });
+          try { const json = JSON.parse(res.responseText); errorMsg = json.error || errorMsg; } catch(e){ }
+          Swal.fire({ icon: 'error', title: 'Change Failed', text: errorMsg });
         }
       });
     });
+
+    // Google linking
+    document.getElementById('linkGoogleBtn').addEventListener('click', () => {
+      google.accounts.id.initialize({
+        client_id: 'TUO_CLIENT_ID_GOOGLE',
+        callback: handleGoogleLink
+      });
+      google.accounts.id.prompt(); // mostra il popup
+    });
+
+    function handleGoogleLink(response) {
+      const id_token = response.credential;
+      const token = localStorage.getItem('authToken'); // JWT utente
+
+      $.ajax({
+        url: 'https://www.cineteatrosanluigi.it/plex/USER_LINK_GOOGLE.php',
+        type: 'POST',
+        contentType: 'application/json',
+        headers: { 'Authorization': 'Bearer ' + token },
+        data: JSON.stringify({ id_token }),
+        success: function(res){
+          if(res.success){
+            Swal.fire('Collegato!', 'Il tuo account Google è stato collegato.', 'success');
+          } else {
+            Swal.fire('Errore', res.error || 'Impossibile collegare Google', 'error');
+          }
+        },
+        error: function(){
+          Swal.fire('Errore server', 'Riprova più tardi', 'error');
+        }
+      });
+    }
   </script>
-
-<script>
-  // View password icon
-  const toggleOld = document.getElementById('togglePasswordOld');
-  const toggleNew = document.getElementById('togglePasswordNew');
-  const oldInput = document.getElementById('oldPassword');
-  const newInput = document.getElementById('newPassword');
-
-  toggleOld.addEventListener('click', () => {
-    oldInput.type = oldInput.type === 'password' ? 'text' : 'password';
-  });
-
-  toggleNew.addEventListener('click', () => {
-    newInput.type = newInput.type === 'password' ? 'text' : 'password';
-  });
-</script>
-
-
 
 </body>
 </html>
