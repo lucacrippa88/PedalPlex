@@ -181,3 +181,25 @@ $(document).ready(function () {
     });
   });
 });
+
+
+
+
+
+
+function onGoogleLogin(response) {
+    const id_token = response.credential;
+
+    $.ajax({
+        url: "https://yourserver.com/USER_LOGIN_GOOGLE.php",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ id_token }),
+        success: function(res) {
+            if (res.token) {
+                localStorage.setItem("jwt", res.token);
+                window.location.href = "app.html";
+            }
+        }
+    });
+}
