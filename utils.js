@@ -1695,11 +1695,11 @@ let countdownInterval;
 // --- Funzione di controllo sessione ---
 function checkSessionTime() {
     if (!window.sessionExpires) return; // nessun token valido
-    console.log("Checking session time...");
+    // console.log("Checking session time...");
 
     const now = Date.now();
     const remaining = window.sessionExpires - now;
-    console.log(remaining + " ms remaining");
+    // console.log(remaining + " ms remaining");
 
     // Mostra warning quando rimangono meno di 5 minuti
     if (remaining <= SESSION_WARNING_THRESHOLD && !sessionWarningShown) {
@@ -1756,6 +1756,6 @@ function formatTime(seconds) {
     return `${m}:${s}`;
 }
 
-// --- Check periodico ogni 2 secondi ---
-setInterval(checkSessionTime, 2000);
+// --- Check periodico ogni 30 secondi ---
+setInterval(checkSessionTime, 30000);
 
