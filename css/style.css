@@ -237,6 +237,13 @@ html { box-sizing: content-box !important; }
 }
 
 
+#preset {
+  display: flex;
+  justify-content: center; /* centra orizzontalmente */
+  align-items: center;     /* centra verticalmente (se necessario) */
+  flex-wrap: wrap;         /* mantiene la griglia se ci sono tanti pedali */
+}
+
 
 
 /* Pedal dropdowns, catalog */
