@@ -709,3 +709,35 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 .features p {
   color: #666;
 }
+
+
+
+
+
+
+
+
+.loader-inline-container {
+  width: 80px;
+  height: 6px;
+  margin: 6px auto;
+  background-color: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+  top: 30px;
+}
+
+.loader-bar {
+  width: 40%;
+  height: 100%;
+  background-color: #0f62fe;
+  position: absolute;
+  left: -40%;
+  animation: progressAnim 1s linear infinite;
+}
+
+@keyframes progressAnim {
+  0% { left: -40%; }
+  100% { left: 100%; }
+}
