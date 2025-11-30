@@ -1694,19 +1694,20 @@ let countdownInterval;
 
 // --- Funzione di controllo sessione ---
 function checkSessionTime() {
-    if (!window.sessionExpires) return; // nessun token valido
-    // console.log("Checking session time...");
-
+    if (!window.sessionExpires) return; // guest → nessun controllo
     const now = Date.now();
     const remaining = window.sessionExpires - now;
-    // console.log(remaining + " ms remaining");
 
-    // Mostra warning quando rimangono meno di 5 minuti
     if (remaining <= SESSION_WARNING_THRESHOLD && !sessionWarningShown) {
         sessionWarningShown = true;
         showSessionWarningModal(remaining);
     }
+
+    if (remaining <= 0) {
+        window.location.href = '/login';
+    }
 }
+
 
 // --- Funzione per mostrare il modal con countdown ---
 function showSessionWarningModal(initialRemaining) {
@@ -1743,10 +1744,17 @@ function showSessionWarningModal(initialRemaining) {
             clearInterval(countdownInterval);
         }
     }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = '/login';
-        }
-    });
+    if (result.isConfirmed) {
+        // login
+        window.location.href = '/login';
+    } else {
+        // L’utente vuole continuare come guest → rimuovi token e disattiva controllo
+        localStorage.removeItem('authToken');
+        window.sessionExpires = null;
+        sessionWarningShown = false;
+        console.log("Sessione gestita come guest: nessun timeout forzato.");
+    }
+});
 }
 
 // --- Helper: formatta i secondi in mm:ss ---
