@@ -260,7 +260,7 @@ html { box-sizing: content-box !important; }
 .row > div { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 0px; min-width: 40px; }
 .row.lowest-row > div { min-width: 0px; }
 .row > div > select { margin-bottom: 10px; }
-#pedalboardSelect, #presetSelect, #folderSelect, #folderSelectInput, #selectFolder { height: 40px; font-size: initial; max-width: 11rem; }
+#categoryFilter, #pedalboardSelect, #presetSelect, #folderSelect, #folderSelectInput, #selectFolder { height: 40px; font-size: initial; max-width: 11rem; }
 #pedalFilterInput { height: 13px; }
 .lower-row { position: relative; top: 50px; }
 .lowest-row { position: relative; top: 85px; }
