@@ -1719,7 +1719,7 @@ function showSessionWarningModal(initialRemaining) {
         showCancelButton: true,
         focusConfirm: false,
         confirmButtonText: 'Login',
-        cancelButtonText: 'Chiudi',
+        cancelButtonText: 'Continue as Guest',
         customClass: {
             confirmButton: 'bx--btn bx--btn--primary',
             cancelButton: 'bx--btn bx--btn--secondary'
