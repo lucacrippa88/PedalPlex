@@ -537,7 +537,6 @@ function renderPedalControls(pedal, $pedalDiv) {
 
 
 
-
 // Edit gears in catalog page
 function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
@@ -1704,7 +1703,7 @@ function checkSessionTime() {
     }
 
     if (remaining <= 0) {
-        window.location.href = '/login';
+        window.location.href = 'login';
     }
 }
 
@@ -1714,8 +1713,8 @@ function showSessionWarningModal(initialRemaining) {
     let remaining = Math.floor(initialRemaining / 1000); // secondi
 
     Swal.fire({
-        title: 'Sessione in scadenza',
-        html: `La tua sessione scadrà tra <strong id="swal-countdown">${formatTime(remaining)}</strong>.<br>Vuoi fare il login per continuare senza perdere i dati?`,
+        title: 'Session is expiring',
+        html: `Your session wil expire in <strong id="swal-countdown">${formatTime(remaining)}</strong>.<br>Do you want to login again?`,
         icon: 'warning',
         showCancelButton: true,
         focusConfirm: false,
@@ -1746,7 +1745,7 @@ function showSessionWarningModal(initialRemaining) {
     }).then((result) => {
     if (result.isConfirmed) {
         // login
-        window.location.href = '/login';
+        window.location.href = 'login';
     } else {
         // L’utente vuole continuare come guest → rimuovi token e disattiva controllo
         localStorage.removeItem('authToken');
