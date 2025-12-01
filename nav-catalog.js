@@ -1,23 +1,5 @@
 // nav-catalog.js
 
-
-// Category keywords → accepted variants
-const pedalCategoryMap = {
-  distortion: ["distortion", "dist", "distort"],
-  overdrive: ["overdrive", "drive", "od"],
-  fuzz: ["fuzz"],
-  delay: ["delay", "dly"],
-  reverb: ["reverb", "verb", "rvb"],
-  chorus: ["chorus", "cho"],
-  flanger: ["flanger", "flg"],
-  phaser: ["phaser", "phase", "pha"],
-  compressor: ["compressor", "comp"],
-  eq: ["eq", "equalizer", "equaliser"]
-};
-
-
-
-
 // Initialize navigation catalog
 function initNavCatalog(userRole) {
   const isAdmin = (userRole === "admin");
@@ -63,38 +45,6 @@ function initNavCatalog(userRole) {
   `;
 
   $("body").prepend(navHtml);
-
-
-
-
-
-
-
-
-// === CATEGORY FILTER LOGIC ===
-$(document).on("change", "#categoryFilter", function () {
-  const selected = $(this).val();
-
-  if (selected === "all") {
-    $(".pedal-catalog").show();
-    updatePedalCounts();
-    return;
-  }
-
-  const variants = pedalCategoryMap[selected] || [];
-  
-  $(".pedal-catalog").each(function() {
-    const id = ($(this).data("pedal-id") || "").toLowerCase();
-
-    const matches = variants.some(keyword => id.includes(keyword));
-
-    $(this).toggle(matches);
-  });
-
-  updatePedalCounts();
-});
-
-
 
 
 
