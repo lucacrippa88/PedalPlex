@@ -1,5 +1,23 @@
 // nav-catalog.js
 
+
+// Category keywords → accepted variants
+const pedalCategoryMap = {
+  distortion: ["distortion", "dist", "distort"],
+  overdrive: ["overdrive", "drive", "od"],
+  fuzz: ["fuzz"],
+  delay: ["delay", "dly"],
+  reverb: ["reverb", "verb", "rvb"],
+  chorus: ["chorus", "cho"],
+  flanger: ["flanger", "flg"],
+  phaser: ["phaser", "phase", "pha"],
+  compressor: ["compressor", "comp"],
+  eq: ["eq", "equalizer", "equaliser"]
+};
+
+
+
+
 // Initialize navigation catalog
 function initNavCatalog(userRole) {
   const isAdmin = (userRole === "admin");
@@ -45,6 +63,78 @@ function initNavCatalog(userRole) {
   `;
 
   $("body").prepend(navHtml);
+
+
+
+
+
+
+
+  // === CATEGORY FILTER DROPDOWN (placed below navbar) ===
+const categoryFilterHtml = `
+  <div id="categoryFilterContainer" style="
+    display:flex;
+    gap:1rem;
+    align-items:center;
+    padding:10px 16px;
+    background:#111;
+    border-bottom:1px solid #333;
+  ">
+    <label for="categoryFilter" style="color:#ccc; font-size:0.9rem;">
+      Filter by category:
+    </label>
+
+    <select id="categoryFilter" style="
+      padding:6px 10px;
+      background:#1a1a1a;
+      color:white;
+      border:1px solid #555;
+      border-radius:4px;
+    ">
+      <option value="all">All</option>
+      <option value="distortion">Distortion</option>
+      <option value="overdrive">Overdrive</option>
+      <option value="fuzz">Fuzz</option>
+      <option value="delay">Delay</option>
+      <option value="reverb">Reverb</option>
+      <option value="chorus">Chorus</option>
+      <option value="flanger">Flanger</option>
+      <option value="phaser">Phaser</option>
+      <option value="compressor">Compressor</option>
+      <option value="eq">EQ</option>
+    </select>
+  </div>
+`;
+
+$(categoryFilterHtml).insertAfter("header");
+
+
+// === CATEGORY FILTER LOGIC ===
+$(document).on("change", "#categoryFilter", function () {
+  const selected = $(this).val();
+
+  if (selected === "all") {
+    $(".pedal-catalog").show();
+    updatePedalCounts();
+    return;
+  }
+
+  const variants = pedalCategoryMap[selected] || [];
+  
+  $(".pedal-catalog").each(function() {
+    const id = ($(this).data("pedal-id") || "").toLowerCase();
+
+    const matches = variants.some(keyword => id.includes(keyword));
+
+    $(this).toggle(matches);
+  });
+
+  updatePedalCounts();
+});
+
+
+
+
 
   // Hide Add Gear button for guests
   if (userRole === "guest") {
@@ -233,129 +323,6 @@ document.head.appendChild(style);
 
 
 
-
-// function initCatalog(userRole) {
-//   const resultsDiv = $("#catalog");
-//   resultsDiv.html(""); // puliamo
-
-//   const roleParam = userRole === "guest" ? "guest" : userRole;
-//   const usernameParam = window.currentUser?.username || "";
-//   const token = localStorage.getItem('authToken');
-
-//   // === 🌀 Overlay spinner Carbon Design (mostrato finché non arrivano i metadati) ===
-//   const globalSpinner = $(`
-//     <div id="catalog-global-loader" class="bx--loading-overlay"
-//         style="
-//           position: fixed;
-//           top: 50%;
-//           left: 50%;
-//           transform: translate(-50%, -50%);
-//           z-index: 9999;
-//           width: 120px;
-//           height: 120px;
-//           display: flex;
-//           justify-content: center;
-//           align-items: center;
-//         ">
-//       <div class="bx--loading" role="status">
-//         <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-//           <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
-//           <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
-//         </svg>
-//       </div>
-//     </div>
-//   `);
-
-
-//   resultsDiv.append(globalSpinner);
-
-//   // --- 1️⃣ Fetch veloce metadati con preview ---
-//   const metadataFetch = fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_METADATA.php?role=${roleParam}&username=${usernameParam}`, {
-//     headers: { 'Authorization': 'Bearer ' + token }
-//   })
-//   .then(res => res.json())
-//   .then(pedals => {
-
-//     // Rimuoviamo lo spinner globale
-//     $("#catalog-global-loader").remove();
-
-//     // Mostriamo i pedals in versione "light"
-//     pedals.sort((a,b) => a._id.localeCompare(b._id));
-//     pedals.forEach(pedal => {
-//       const $pedalDiv = renderPedal(pedal, userRole); // preview
-//       $pedalDiv.attr("data-author", pedal.author || "");
-//       $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-
-//       // === ⏳ Loader inline Carbon Design finché non arriva il fetch completo ===
-//       const $loaderInline = $(`
-//         <div style="
-//           width: 80px;
-//           height: 6px;
-//           margin: 6px auto;
-//           background-color: #e0e0e0;
-//           border-radius: 3px;
-//           overflow: hidden;
-//           position: relative;
-//           top: 30px;
-//         ">
-//           <div class="loader-bar"></div>
-//         </div>
-
-//         <style>
-//         .loader-bar {
-//           width: 40%;
-//           height: 100%;
-//           background-color: #0f62fe;
-//           position: absolute;
-//           left: -40%;
-//           animation: progressAnim 1s linear infinite;
-//         }
-
-//         @keyframes progressAnim {
-//           0%   { left: -40%; }
-//           100% { left: 100%; }
-//         }
-//         </style>
-//       `);
-
-
-
-//       $pedalDiv.append($loaderInline);
-//       resultsDiv.append($pedalDiv);
-//     });
-
-//     updatePedalCounts();
-//     if (userRole !== "guest") setupEditPedalHandler(pedals);
-//   });
-
-//   // --- 2️⃣ Fetch catalogo completo ---
-//   const fullFetch = fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
-//     headers: { 'Authorization': 'Bearer ' + token }
-//   })
-//   .then(res => res.json())
-//   .then(fullPedals => {
-
-//     // 🔄 Rimpiazziamo tutti i preview con la versione completa
-//     resultsDiv.empty();
-
-//     fullPedals.sort((a,b) => a._id.localeCompare(b._id));
-//     fullPedals.forEach(pedal => {
-//       const $pedalDiv = renderPedal(pedal, userRole); // full
-//       $pedalDiv.attr("data-author", pedal.author || "");
-//       $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-//       resultsDiv.append($pedalDiv);
-//     });
-
-//     updatePedalCounts();
-//     if (userRole !== "guest") setupEditPedalHandler(fullPedals);
-//   });
-
-//   // Entrambe in parallelo
-//   return Promise.all([metadataFetch, fullFetch]).catch(err => {
-//     console.error("Error fetching pedals:", err);
-//     resultsDiv.html(`<p style="color:red;">Error loading pedals: ${err.message}</p>`);
-//   });
-// }
 
 
 
