@@ -27,12 +27,13 @@
 <body>
   
   <div id="page-content" style="display: none;">
-      <div id="categoryFilterContainer">
-    <label for="categoryFilter">
+      <!-- <div id="categoryFilterContainer"> -->
+    <!-- <label for="categoryFilter">
       Filter by category:
-    </label>
+    </label> -->
 
     <select id="categoryFilter">
+      <option value="" disabled="">-- Select a category --</option>
       <option value="all">All</option>
       <option value="distortion">Distortion</option>
       <option value="overdrive">Overdrive</option>
@@ -45,7 +46,7 @@
       <option value="compressor">Compressor</option>
       <option value="eq">EQ</option>
     </select>
-  </div>
+  <!-- </div> -->
 
     <div id="catalog"></div>
 
