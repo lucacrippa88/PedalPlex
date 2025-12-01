@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PedalPlex</title>
+  <!-- Anticipate Carbon Design load -->
+  <link rel="dns-prefetch" href="https://1.www.s81c.com">
+  <link rel="preconnect" href="https://1.www.s81c.com" crossorigin>
+  <link rel="stylesheet" href="css/carbon-components.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-BX9P5WN5HH');
+  </script>
+
+</head>
+<body>
+  
+  <div id="page-content" style="display: none;">
+    <div id="catalog"></div>
+
+    <!-- Load scripts after content is visible -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="utils.js"></script>
+    <script src="catalog.js"></script>
+    <script src="fullscreen-menu.js"></script>
+    <script src="nav-catalog.js"></script>
+  </div>
+
+  <script>
+  // Check user authentication
+  $(document).ready(function() {
+    if (window.location.protocol === 'file:') {
+      alert('Please run this app via a local HTTP server for full functionality.');
+      $('#loadingMessage').hide();
+      $('#page-content').hide();
+      return;
+    }
+
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+      // Guest mode
+      $('#loadingMessage').hide();
+      $('#page-content').show();
+      window.currentUser = { role: 'guest' };
+      if (typeof initNavCatalog === 'function') initNavCatalog('guest');
+      if (typeof initCatalog === 'function') initCatalog('guest');
+      return;
+    }
+
+    // Auth check
+    $.ajax({
+      url: 'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
+      method: 'GET',
+      dataType: 'json',
+      headers: { 'Authorization': 'Bearer ' + token },
+      success: function(userFromServer) {
+        $('#loadingMessage').hide(); 
+        $('#page-content').show();
+        window.currentUser = userFromServer;
+        if (typeof initNavCatalog === 'function') initNavCatalog(userFromServer.role);
+        if (typeof initCatalog === 'function') initCatalog(userFromServer.role);
+      },
+      error: function(xhr) {
+        console.error('Auth check failed:', xhr.status, xhr.responseText);
+
+        if (xhr.status === 401) {
+          localStorage.removeItem('authToken');
+
+          // Mostriamo swal2 con opzioni
+          Swal.fire({
+            title: 'Session expired',
+            text: 'Your session is expired. Do you want to Login again or continue as a Guest?',
+            icon: 'warning',
+            showCancelButton: false,
+            showDenyButton: true,
+            confirmButtonText: 'Login',
+            denyButtonText: 'Be our Guest',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary',
+              denyButton: 'bx--btn bx--btn--tertiary'
+            },
+            allowOutsideClick: false,
+            allowEscapeKey: false
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Vai a login
+              window.location.href = 'login';
+            } else if (result.isDenied) {
+              // Continua come guest
+              $('#loadingMessage').hide();
+              $('#page-content').show();
+              window.currentUser = { role: 'guest' };
+              if (typeof initNavCatalog === 'function') initNavCatalog('guest');
+              if (typeof initCatalog === 'function') initCatalog('guest');
+            }
+          });
+
+        } else {
+          alert('Failed to verify authentication. Please try again.');
+        }
+      }
+    });
+  });
+
+  </script>
+
+
+</body>
+</html>
