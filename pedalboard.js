@@ -420,7 +420,7 @@ function renderPedalboard() {
   container.innerHTML = '';
 
   if (!window.pedalboard?.pedals || window.pedalboard.pedals.length === 0) {
-    container.textContent = "No pedals found.";
+    container.textContent = "No gears found. Add them from the search bar above!";
     return;
   }
 
