@@ -355,7 +355,7 @@ function setupFilterUI(pedals) {
 
     if (filtered.length === 0) {
       const noResult = document.createElement('div');
-      noResult.textContent = 'No pedals found';
+      noResult.textContent = 'No gears found. Add them from the search bar above!';
       noResult.style.padding = '6px';
       dropdownContainer.appendChild(noResult);
       dropdownContainer.style.display = 'block';
