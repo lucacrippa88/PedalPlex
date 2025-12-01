@@ -27,6 +27,26 @@
 <body>
   
   <div id="page-content" style="display: none;">
+      <div id="categoryFilterContainer">
+    <label for="categoryFilter">
+      Filter by category:
+    </label>
+
+    <select id="categoryFilter">
+      <option value="all">All</option>
+      <option value="distortion">Distortion</option>
+      <option value="overdrive">Overdrive</option>
+      <option value="fuzz">Fuzz</option>
+      <option value="delay">Delay</option>
+      <option value="reverb">Reverb</option>
+      <option value="chorus">Chorus</option>
+      <option value="flanger">Flanger</option>
+      <option value="phaser">Phaser</option>
+      <option value="compressor">Compressor</option>
+      <option value="eq">EQ</option>
+    </select>
+  </div>
+
     <div id="catalog"></div>
 
     <!-- Load scripts after content is visible -->

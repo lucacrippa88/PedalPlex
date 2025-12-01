@@ -70,44 +70,6 @@ function initNavCatalog(userRole) {
 
 
 
-  // === CATEGORY FILTER DROPDOWN (placed below navbar) ===
-const categoryFilterHtml = `
-  <div id="categoryFilterContainer" style="
-    display:flex;
-    gap:1rem;
-    align-items:center;
-    padding:10px 16px;
-    background:#111;
-    border-bottom:1px solid #333;
-  ">
-    <label for="categoryFilter" style="color:#ccc; font-size:0.9rem;">
-      Filter by category:
-    </label>
-
-    <select id="categoryFilter" style="
-      padding:6px 10px;
-      background:#1a1a1a;
-      color:white;
-      border:1px solid #555;
-      border-radius:4px;
-    ">
-      <option value="all">All</option>
-      <option value="distortion">Distortion</option>
-      <option value="overdrive">Overdrive</option>
-      <option value="fuzz">Fuzz</option>
-      <option value="delay">Delay</option>
-      <option value="reverb">Reverb</option>
-      <option value="chorus">Chorus</option>
-      <option value="flanger">Flanger</option>
-      <option value="phaser">Phaser</option>
-      <option value="compressor">Compressor</option>
-      <option value="eq">EQ</option>
-    </select>
-  </div>
-`;
-
-$(categoryFilterHtml).insertAfter("header");
-
 
 // === CATEGORY FILTER LOGIC ===
 $(document).on("change", "#categoryFilter", function () {
