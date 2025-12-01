@@ -47,46 +47,56 @@
       pointer-events: none; /* children cannot receive pointer events */
     }
 
+    #pedalboard-controls {
+      display: flex !important;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    #guestSaveMsg {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+    }
 
+    /* Drag and drop style */
+    .dnd-placeholder {
+      box-sizing: border-box;
+      border: 2px dashed rgba(0,0,0,0.2);
+      border-radius: 6px;
+      margin: 0 6px;
+      background: rgba(0,0,0,0.02);
+      flex: 0 0 auto;
+    }
+    .dnd-ghost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      opacity: 0.95;
+    }
+    .pedal-wrapper,
+    .pedal-catalog {
+      transition: transform 180ms ease, box-shadow 120ms ease;
+      will-change: transform;
+    }
+    .pedal-wrapper.dnd-dragging,
+    .pedal-catalog.dnd-dragging {
+      opacity: 0.85;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+      transform-origin: center center;
+    }
 
-
-.dnd-placeholder {
-  box-sizing: border-box;
-  border: 2px dashed rgba(0,0,0,0.2);
-  border-radius: 6px;
-  margin: 0 6px;
-  background: rgba(0,0,0,0.02);
-  flex: 0 0 auto;
-}
-.dnd-ghost {
-  position: fixed;
-  pointer-events: none;
-  z-index: 99999;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-  opacity: 0.95;
-}
-.pedal-wrapper,
-.pedal-catalog {
-  transition: transform 180ms ease, box-shadow 120ms ease;
-  will-change: transform;
-}
-.pedal-wrapper.dnd-dragging,
-.pedal-catalog.dnd-dragging {
-  opacity: 0.85;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
-  transform-origin: center center;
-}
-
-.pedalboard-dnd-placeholder {
-  box-sizing: border-box;
-  border: 3px dashed rgba(50,50,200,0.7);
-  border-radius: 8px;
-  background: rgba(50,50,200,0.1);
-  margin: 0 8px;
-  flex: 0 0 auto;
-  transition: height 100ms ease, width 100ms ease;
-}
+    .pedalboard-dnd-placeholder {
+      box-sizing: border-box;
+      border: 3px dashed rgba(50,50,200,0.7);
+      border-radius: 8px;
+      background: rgba(50,50,200,0.1);
+      margin: 0 8px;
+      flex: 0 0 auto;
+      transition: height 100ms ease, width 100ms ease;
+    }
 
 
 
@@ -199,7 +209,7 @@
       // Guest mode
       $('#loadingMessage').hide();
       $('#page-content').show();
-      $('#pedalboard-controls').append("<p>Login to consistently save your Pedalboards!</p>");
+      $('#pedalboard-controls').prepend('<p id="guestSaveMsg">Login to consistently save your Pedalboards!</p>');
       $('#pedalboardSelect, #renameBoardBtn').hide();
       $('#zoomIn, #zoomOut, #zoomReset').prop('disabled', true).addClass('btn-disabled');
       window.currentUser = { role: 'guest', username: 'guest' };
