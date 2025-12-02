@@ -183,7 +183,7 @@ const pedalCategoryMap = {
   reverb: ["reverb", "verb", "rvb", "shimmer", "shim"],
   vibrato: ["tremolo", "trem","rotary", "rotovibe", "roto-vibe", "vibrato", "vibe", "vib"],
   synth: ["spectrum", "enhancer", "spec", "sampler", "sample", "samp", "formant", "lfo", "synth", "synthesizer", "synthesiser", "slicer", "processor", "organ", "bitcrusher", "bit crusher", "crusher", "lofi", "lo-fi"],
-  utility: ["buffer", "bfr", "buff", "switcher", "switch", "sw", "footswitch", "loop switcher", "ab switcher", "aby", "dibox", "di box", "direct box", "utility", "util", "misc", "miscellaneous", "tuner", "tunr", "tnr", "noisegate", "ng", "noise gate", "suppressor"],
+  utility: ["buffer", "bfr", "buff", "switcher", "switch", "footswitch", "loop switcher", "ab switcher", "aby", "dibox", "di box", "direct box", "utility", "util", "misc", "miscellaneous", "tuner", "tunr", "tnr", "noisegate", "noise gate", "suppressor"],
   vocoder: ["vocoder", "voco", "vokoder", "talk box"],
   wah: ["wah", "wah-wah"]
 };
