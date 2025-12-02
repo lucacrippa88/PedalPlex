@@ -163,7 +163,7 @@ const pedalCategoryMap = {
   // wah: ["wah", "wah-wah"]
   acoustic: ["acoustic", "acoustic simulator", "ac sim", "simulator", "sim"],
   ambient: ["ambient", "ambi", "amb", "dimension", "space"],
-  ampli: ["combo", "all-in-one", "all in one", "amplifier head", "amp head", "head", "amped"],
+  ampli: ["combo", "all-in-one", "all in one", "amplifier head", "amp head", "head", "amped", "marshall"],
   boost: ["boost", "blst", "bst"],
   chorus: ["chorus", "cho"],
   compressor: ["compressor", "comp", "compr", "sustainer", "sustain"],
