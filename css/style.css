@@ -366,7 +366,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 .modal-footer { display: block; margin: auto; position: relative; padding-bottom: 40px; }
 
 /* Fonts (all preserved) */
-@font-face { font-family: infinite; src: url("../fonts/Infinite.ttf"); }
+@font-face { font-family: infinit; src: url("../fonts/Infinit.ttf"); }
 @font-face { font-family: urban; src: url("../fonts/Urban\ Heroes.ttf"); }
 @font-face { font-family: bigmuff; src: url("../fonts/ITC\ Pioneer\ Regular.otf"); }
 @font-face { font-family: pioneer; src: url("../fonts/ITC\ Pioneer\ Regular.otf"); }
