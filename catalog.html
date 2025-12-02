@@ -65,10 +65,25 @@
           <path d="M14 26L15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26z"/>
         </svg>   
       </a>  
-      
+
     </div>
 
     <div id="catalog"></div>
+
+
+
+
+<button id="backToTop" class="bx--btn bx--btn--primary" type="button" 
+  style="position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: none; border-radius: 50%; width: 48px; height: 48px; padding: 0; min-height: 48px;">
+  <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+      xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+      width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+    <path d="M16,6l-8,8l1.4141,1.4141L15,9.8281V26h2V9.8281l5.5859,5.5859L24,14Z"/>
+  </svg>
+</button>
+
+
+
 
     <!-- Load scripts after content is visible -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -131,6 +146,25 @@
 });
 
 </script>
+
+
+<script>
+  // Back to top
+  const backToTopBtn = document.getElementById("backToTop");
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 200) {
+      backToTopBtn.style.display = "flex";
+    } else {
+      backToTopBtn.style.display = "none";
+    }
+  });
+
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+</script>
+
 
 
 </body>
