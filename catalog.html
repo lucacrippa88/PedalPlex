@@ -28,41 +28,45 @@
   
   <div id="page-content" style="display: none;">
 
-    <select id="categoryFilter">
-      <option value="all" selected>All categories</option>
-      <option value="acoustic">Acoustic</option>
-      <option value="ambient">Ambient</option>
-      <option value="ampli">Amplifier</option>
-      <option value="boost">Boost</option>
-      <option value="chorus">Chorus</option>
-      <option value="compressor">Compressor/Sustainer</option>
-      <option value="delay">Delay/Echo</option>
-      <option value="distortion">Distortion/Overdrive</option>
-      <option value="drup">Drum sequencer/Pad</option>
-      <option value="eq">Equalizer/Filter</option>
-      <option value="expression">Expression/Volume/Swell</option>
-      <option value="flanger">Flanger</option>
-      <option value="fuzz">Fuzz/Muff</option>
-      <option value="looper">Looper</option>
-      <option value="modulation">Modulation</option>
-      <option value="multifx">Multi FX</option>
-      <option value="octaver">Octaver</option>
-      <option value="phaser">Phaser</option>
-      <option value="pitchshifter">Pitch Shifter</option>
-      <option value="preamp">Preamp/IR Loader</option>
-      <option value="reverb">Reverb/Shimmer</option>
-      <option value="vibrato">Vibrato/Tremolo/Rotary</option>
-      <option value="synth">Synth/Sampler/Bit Crusher</option>
-      <option value="utility">Utility (Buffer/Tuner/DI/Noise Gate)</option>
-      <option value="vocoder">Vocoder/Talk Box</option>
-      <option value="wah">Wah</option>
-    </select>
+    <div id="pedalboard-controls" style="display: flex; align-items: center; gap: 8px; width: 100%;">
 
-    <a href="pedalboard" class="showDesktop bx--btn bx--btn--primary" type="button" style="margin-left: auto!important; max-width:500px!important;">Back to Pedalboards
-      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-        <path d="M14 26L15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26z"/>
-      </svg>   
-    </a>  
+      <select id="categoryFilter">
+        <option value="all" selected>All categories</option>
+        <option value="acoustic">Acoustic</option>
+        <option value="ambient">Ambient</option>
+        <option value="ampli">Amplifier</option>
+        <option value="boost">Boost</option>
+        <option value="chorus">Chorus</option>
+        <option value="compressor">Compressor/Sustainer</option>
+        <option value="delay">Delay/Echo</option>
+        <option value="distortion">Distortion/Overdrive</option>
+        <option value="drup">Drum sequencer/Pad</option>
+        <option value="eq">Equalizer/Filter</option>
+        <option value="expression">Expression/Volume/Swell</option>
+        <option value="flanger">Flanger</option>
+        <option value="fuzz">Fuzz/Muff</option>
+        <option value="looper">Looper</option>
+        <option value="modulation">Modulation</option>
+        <option value="multifx">Multi FX</option>
+        <option value="octaver">Octaver</option>
+        <option value="phaser">Phaser</option>
+        <option value="pitchshifter">Pitch Shifter</option>
+        <option value="preamp">Preamp/IR Loader</option>
+        <option value="reverb">Reverb/Shimmer</option>
+        <option value="vibrato">Vibrato/Tremolo/Rotary</option>
+        <option value="synth">Synth/Sampler/Bit Crusher</option>
+        <option value="utility">Utility (Buffer/Tuner/DI/Noise Gate)</option>
+        <option value="vocoder">Vocoder/Talk Box</option>
+        <option value="wah">Wah</option>
+      </select>
+
+      <a href="pedalboard" class="showDesktop bx--btn bx--btn--primary" type="button" style="margin-left: auto!important; max-width:500px!important;">Back to Pedalboards
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M14 26L15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26z"/>
+        </svg>   
+      </a>  
+      
+    </div>
 
     <div id="catalog"></div>
 
