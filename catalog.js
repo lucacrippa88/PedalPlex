@@ -169,6 +169,7 @@ const pedalCategoryMap = {
   compressor: ["compressor", "comp", "compr", "sustainer", "sustain"],
   delay: ["delay", "dly", "del", "echo", "ech"],
   distortion: ["distortion", "dist", "distort", "metal", "heavy", "dark", "feedbacker", "feedback", "overdrive", "drive", "od", "drv", "driving"],
+  drum: ["drum machine", "drum", "rhythm", "beat", "pad"],
   eq: ["equal", "equalizer", "equaliser", "filter", "filt",],
   expression: ["expression", "expr", "exp", "volume", "volum", "swell", "volume swell", "swl", "slow"],
   flanger: ["flanger", "flg", "flange"],
