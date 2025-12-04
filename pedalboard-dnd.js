@@ -270,6 +270,78 @@
     }
   }
 
+  // function onPointerUp(e) {
+  //   if (!state.isDragging || !state.draggingEl) return;
+  //   e.preventDefault();
+
+  //   document.removeEventListener('pointermove', onPointerMove);
+  //   document.removeEventListener('pointerup', onPointerUp);
+
+  //   if (!state.placeholder || !state.placeholder.parentElement) {
+  //     restoreDraggedElement();
+  //     resetState();
+  //     return;
+  //   }
+
+  //   const targetRow = state.placeholder.parentElement;
+  //   const targetRowNum = parseInt(targetRow.dataset.row || 1, 10) || 1;
+
+  //   const nodes = Array.from(targetRow.querySelectorAll(`${SELECT.WRAPPER}, ${SELECT.FALLBACK}, .pedalboard-dnd-placeholder`));
+  //   const phIndex = nodes.indexOf(state.placeholder);
+  //   let positionInRow = 0;
+  //   if (phIndex > 0) positionInRow = nodes.slice(0, phIndex).filter(n => !n.classList.contains('pedalboard-dnd-placeholder')).length;
+
+  //   state.placeholder.parentElement.insertBefore(state.draggingEl, state.placeholder);
+  //   state.draggingEl.classList.remove('dnd-dragging');
+  //   state.draggingEl.style.position = '';
+  //   state.draggingEl.style.left = '';
+  //   state.draggingEl.style.top = '';
+  //   state.draggingEl.style.width = '';
+  //   state.draggingEl.style.height = '';
+  //   state.draggingEl.style.zIndex = '';
+  //   state.draggingEl.style.pointerEvents = '';
+
+  //   state.placeholder.remove();
+
+  //   if (window.pedalboard && Array.isArray(window.pedalboard.pedals)) {
+  //     const pid = state.draggingId;
+  //     let srcIdx = state.originAbsIndex;
+  //     if (srcIdx == null || srcIdx === -1) srcIdx = findAbsIndex(pid);
+
+  //     let removed = null;
+  //     if (srcIdx !== -1 && srcIdx != null) {
+  //       removed = window.pedalboard.pedals.splice(srcIdx, 1)[0];
+  //     } else {
+  //       removed = { pedal_id: pid, rotation: 0, row: targetRowNum };
+  //     }
+  //     removed.row = targetRowNum;
+
+  //     const insertAt = computeAbsoluteInsertIndex(targetRowNum, positionInRow);
+  //     if (insertAt >= 0 && insertAt <= window.pedalboard.pedals.length) {
+  //       window.pedalboard.pedals.splice(insertAt, 0, removed);
+  //     } else {
+  //       window.pedalboard.pedals.push(removed);
+  //     }
+  //   }
+
+  //   cleanupEmptyRows();
+
+  //   if (typeof renderPedalboard === 'function') {
+  //     setTimeout(() => {
+  //       renderPedalboard();
+  //       if (typeof saveGuestPedalboard === 'function' && window.currentUser?.role === 'guest') {
+  //         try { saveGuestPedalboard(); } catch (err) {}
+  //       } 
+  //       // else {
+  //       //   try { saveSelectedBoardToLocalStorage(); } catch (err) {}
+  //       // }
+  //     }, 30);
+  //   }
+
+  //   resetState();
+  // }
+
+
   function onPointerUp(e) {
     if (!state.isDragging || !state.draggingEl) return;
     e.preventDefault();
@@ -278,9 +350,9 @@
     document.removeEventListener('pointerup', onPointerUp);
 
     if (!state.placeholder || !state.placeholder.parentElement) {
-      restoreDraggedElement();
-      resetState();
-      return;
+        restoreDraggedElement();
+        resetState();
+        return;
     }
 
     const targetRow = state.placeholder.parentElement;
@@ -289,8 +361,11 @@
     const nodes = Array.from(targetRow.querySelectorAll(`${SELECT.WRAPPER}, ${SELECT.FALLBACK}, .pedalboard-dnd-placeholder`));
     const phIndex = nodes.indexOf(state.placeholder);
     let positionInRow = 0;
-    if (phIndex > 0) positionInRow = nodes.slice(0, phIndex).filter(n => !n.classList.contains('pedalboard-dnd-placeholder')).length;
+    if (phIndex > 0) {
+        positionInRow = nodes.slice(0, phIndex).filter(n => !n.classList.contains('pedalboard-dnd-placeholder')).length;
+    }
 
+    // Inserisce l'elemento nella posizione del placeholder
     state.placeholder.parentElement.insertBefore(state.draggingEl, state.placeholder);
     state.draggingEl.classList.remove('dnd-dragging');
     state.draggingEl.style.position = '';
@@ -301,45 +376,44 @@
     state.draggingEl.style.zIndex = '';
     state.draggingEl.style.pointerEvents = '';
 
+    // Rimuove il placeholder
     state.placeholder.remove();
 
+    // Aggiorna array di pedals in memoria
     if (window.pedalboard && Array.isArray(window.pedalboard.pedals)) {
-      const pid = state.draggingId;
-      let srcIdx = state.originAbsIndex;
-      if (srcIdx == null || srcIdx === -1) srcIdx = findAbsIndex(pid);
+        const pid = state.draggingId;
+        let srcIdx = state.originAbsIndex;
+        if (srcIdx == null || srcIdx === -1) srcIdx = findAbsIndex(pid);
 
-      let removed = null;
-      if (srcIdx !== -1 && srcIdx != null) {
-        removed = window.pedalboard.pedals.splice(srcIdx, 1)[0];
-      } else {
-        removed = { pedal_id: pid, rotation: 0, row: targetRowNum };
-      }
-      removed.row = targetRowNum;
+        let removed = null;
+        if (srcIdx !== -1 && srcIdx != null) {
+            removed = window.pedalboard.pedals.splice(srcIdx, 1)[0];
+        } else {
+            removed = { pedal_id: pid, rotation: 0, row: targetRowNum };
+        }
+        removed.row = targetRowNum;
 
-      const insertAt = computeAbsoluteInsertIndex(targetRowNum, positionInRow);
-      if (insertAt >= 0 && insertAt <= window.pedalboard.pedals.length) {
-        window.pedalboard.pedals.splice(insertAt, 0, removed);
-      } else {
-        window.pedalboard.pedals.push(removed);
-      }
+        const insertAt = computeAbsoluteInsertIndex(targetRowNum, positionInRow);
+        if (insertAt >= 0 && insertAt <= window.pedalboard.pedals.length) {
+            window.pedalboard.pedals.splice(insertAt, 0, removed);
+        } else {
+            window.pedalboard.pedals.push(removed);
+        }
     }
 
+    // Pulizia righe vuote
     cleanupEmptyRows();
 
+    // Rende la pedalboard aggiornata senza salvare
     if (typeof renderPedalboard === 'function') {
-      setTimeout(() => {
-        renderPedalboard();
-        if (typeof saveGuestPedalboard === 'function' && window.currentUser?.role === 'guest') {
-          try { saveGuestPedalboard(); } catch (err) {}
-        } 
-        // else {
-        //   try { saveSelectedBoardToLocalStorage(); } catch (err) {}
-        // }
-      }, 30);
+        setTimeout(() => {
+            renderPedalboard();
+        }, 30);
     }
 
     resetState();
-  }
+}
+
 
   function restoreDraggedElement() {
     try {

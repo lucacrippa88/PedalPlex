@@ -12,20 +12,11 @@ function initPedalboard(userRole) {
   window.pedalboard = { pedals: [] };
 
   // Loader
-  resultsDiv.innerHTML = `
-    <div class="bx--loading-overlay">
-      <div class="bx--loading" role="status">
-        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-        </svg>
-      </div>
-    </div>`;
+  resultsDiv.innerHTML = `<div class="bx--loading-overlay"><div class="bx--loading" role="status"><svg class="bx--loading__svg" viewBox="-75 -75 150 150"><circle class="bx--loading__background" cx="0" cy="0" r="37.5"/><circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/></svg></div></div>`;
 
   // --- GUEST USER ---
   if (userRole === "guest") {
-  // Recupera eventuale pedalboard guest dal localStorage
-  const savedBoard = localStorage.getItem("guestPedalboard");
+  const savedBoard = localStorage.getItem("guestPedalboard");   // Recupera eventuale pedalboard guest dal localStorage
   const boards = savedBoard ? JSON.parse(savedBoard) : [];
 
   if (boards.length === 0) {
@@ -215,7 +206,6 @@ function initPedalboard(userRole) {
 }
 
 
-
 // ------------------------------------------------------------------------------
 // Capire se serve ancora
 function setupFilterUI(pedals) {
@@ -254,12 +244,7 @@ function setupFilterUI(pedals) {
     // Reduce padding to make button smaller
     btn.style.padding = '2px 6px';
 
-    btn.innerHTML = `
-      <svg focusable="false" preserveAspectRatio="xMidYMid meet" 
-        xmlns="http://www.w3.org/2000/svg" fill="currentColor" 
-        width="8" height="8" viewBox="0 0 16 16" aria-hidden="true">
-        <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>`;
+    btn.innerHTML = `<svg focusable="false" preserveAspectRatio="xMidYMid meet"  xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="8" height="8" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
 
     btn.addEventListener('click', async () => {
       // Rotation Swal
@@ -918,13 +903,9 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
       }
       // Sanitize newName
       let sanitizedName = newName;
-      // Remove forbidden characters
       sanitizedName = sanitizedName.replace(forbiddenRegex, '');
-      // Remove emojis
       sanitizedName = removeEmojis(sanitizedName);
-      // Collapse multiple spaces and trim
       sanitizedName = sanitizedName.replace(/\s+/g, ' ').trim();
-      // If sanitized name differs from original, show error and stop
       if (sanitizedName !== newName) {
         Swal.fire({
           title: 'Invalid board name',
@@ -939,7 +920,6 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
         // Do NOT update dropdown
         return;
       }
-
 
       // ✅ Name is valid, update dropdown and internal data
       window.allPedalboards[selectedBoardIndex].board_name = newName;
@@ -1293,7 +1273,6 @@ function setupPedalboardDropdownAndRender() {
     .catch(err => console.error("Error fetching pedals on change:", err));
   });
 }
-
 
 // HELPER
 function extractColorFromLogo(logoCss) {
