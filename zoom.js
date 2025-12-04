@@ -143,26 +143,56 @@ function hideZoomSpinner() {
   if (spinner) spinner.style.display = "none";
 }
 
+// /**
+//  * Compute a mobile-safe zoom that prevents overflow
+//  */
+// function getMobileSafeZoom() {
+//   const zoomTarget =
+//     document.getElementById("preset") || document.getElementById("pedalboard");
+
+//   if (!zoomTarget) return 1.0;
+
+//   const rect = zoomTarget.getBoundingClientRect();
+//   const screenWidth = window.innerWidth;
+//   const screenHeight = window.innerHeight;
+
+//   const margin = 36; // safety margin in pixels
+
+//   const contentWidth = rect.width / zoomLevel;
+//   const contentHeight = rect.height / zoomLevel;
+
+//   const maxScaleWidth = (screenWidth - margin * 2) / contentWidth;
+//   const maxScaleHeight = (screenHeight - margin * 2) / contentHeight;
+
+//   return Math.min(zoomLevel, maxScaleWidth, maxScaleHeight, maxZoom);
+// }
+
+
 /**
- * Compute a mobile-safe zoom that prevents overflow
- */
-function getMobileSafeZoom() {
+
+* Calcola uno zoom sicuro per mobile che garantisce
+* che l'intero contenuto rientri nello schermo
+* senza generare micro-zoom.
+  */
+  function getMobileSafeZoom() {
   const zoomTarget =
-    document.getElementById("preset") || document.getElementById("pedalboard");
+  document.getElementById("preset") || document.getElementById("pedalboard");
 
-  if (!zoomTarget) return 1.0;
+if (!zoomTarget) return 1;
 
-  const rect = zoomTarget.getBoundingClientRect();
-  const screenWidth = window.innerWidth;
-  const screenHeight = window.innerHeight;
+const rect = zoomTarget.getBoundingClientRect();
 
-  const margin = 36; // safety margin in pixels
+const screenWidth = window.innerWidth;
+const screenHeight = window.innerHeight;
 
-  const contentWidth = rect.width / zoomLevel;
-  const contentHeight = rect.height / zoomLevel;
+const margin = 24; // margine di sicurezza
 
-  const maxScaleWidth = (screenWidth - margin * 2) / contentWidth;
-  const maxScaleHeight = (screenHeight - margin * 2) / contentHeight;
+// Calcolo fattori di scala basati solo su dimensioni reali (niente zoomLevel!)
+const scaleX = (screenWidth - margin * 2) / rect.width;
+const scaleY = (screenHeight - margin * 2) / rect.height;
 
-  return Math.min(zoomLevel, maxScaleWidth, maxScaleHeight, maxZoom);
+// Lo zoom deve essere <= 1 (mai ingrandire su mobile)
+const mobileZoom = Math.min(scaleX, scaleY, 1);
+
+return mobileZoom;
 }
