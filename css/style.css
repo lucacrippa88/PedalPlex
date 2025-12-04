@@ -751,3 +751,28 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
+/* Contenitore scrollabile per mobile */
+@media (max-width: 768px) {
+#preset {
+display: flex;
+flex-direction: row; /* elementi in fila */
+flex-wrap: nowrap;   /* non vanno a capo */
+overflow-x: auto;    /* scroll orizzontale */
+-webkit-overflow-scrolling: touch; /* scroll fluido su iOS */
+gap: 1rem;           /* margine tra elementi */
+padding: 0.5rem;
+}
+#preset > * {
+flex: 0 0 auto; /* larghezza fissa dei figli */
+}
+}
+
+/* Layout griglia per tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+#preset {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+gap: 1rem;
+padding: 0.5rem;
+}
+}
