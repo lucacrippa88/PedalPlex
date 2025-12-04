@@ -170,6 +170,9 @@
 
   // --- DRAG LOGIC WITH THRESHOLD ---
   function onPointerDown(e) {
+
+    window.__blockAutoSave = true;   // Blocca autosave durante il drag
+
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     const candidate = e.target.closest(SELECT.WRAPPER) || e.target.closest(SELECT.FALLBACK);
     if (!candidate) return;
