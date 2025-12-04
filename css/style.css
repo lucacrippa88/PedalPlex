@@ -748,74 +748,43 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
-/* ============================================================
-   RESPONSIVE — NON ALTERA IL DESKTOP
-   ============================================================ */
 
-/* ===== TABLET (max-width: 992px) ===== */
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===== MOBILE & TABLET: griglia scrollabile ===== */
 @media (max-width: 992px) {
 
     #catalog {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 12px;
-    }
-
-    .pedal-catalog {
-        width: 45% !important;      /* 2 colonne */
-        height: auto !important;     /* evita tagli */
-        margin: 10px auto !important;
-    }
-
-    /* Mantieni tutto uguale ma più compatto */
-    .row {
-        transform: scale(0.85);
-        transform-origin: top center;
-    }
-
-    .pedal-name {
-        font-size: 36px !important;
-        left: 50% !important;
-        transform: translateX(-50%);
-        white-space: nowrap;
-    }
-}
-
-/* ===== MOBILE (max-width: 600px) ===== */
-@media (max-width: 600px) {
-
-    #catalog {
+        display: flex !important;
+        flex-wrap: nowrap !important;     /* fila unica */
+        overflow-x: auto !important;       /* scroll orizzontale */
         gap: 14px;
+        padding: 10px;
+        scroll-snap-type: x mandatory;     /* scorrimento fluido */
+    }
+
+    #catalog::-webkit-scrollbar {
+        height: 6px;
+    }
+    #catalog::-webkit-scrollbar-thumb {
+        background: #555;
+        border-radius: 10px;
     }
 
     .pedal-catalog {
-        width: 92% !important;       /* 1 colonna */
-        height: auto !important;
-        margin: 14px auto !important;
-    }
-
-    .row {
-        transform: scale(0.75);
-        transform-origin: top center;
-    }
-
-    .pedal-name {
-        font-size: 28px !important;
-        top: 12px !important;
-        left: 50% !important;
-        transform: translateX(-50%);
+        flex: 0 0 auto !important;         /* mantiene la dimensione fissa */
+        scroll-snap-align: start;
+        margin: 0;
     }
 }
 
-/* ===== TELEFONI PICCOLI (max-width: 400px) ===== */
-@media (max-width: 400px) {
-
-    .row {
-        transform: scale(0.65);
-    }
-
-    .pedal-name {
-        font-size: 22px !important;
-    }
-}
