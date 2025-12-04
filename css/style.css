@@ -750,6 +750,23 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
+@media (max-width: 768px) {
+  #preset, #pedalboard {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem;
+    overflow: visible !important;
+    transform: none !important;
+    zoom: 1 !important;
+    width: 100% !important;
+  }
+  #preset > *, #pedalboard > * {
+    width: 100% !important;
+  }
+}
+
+
+
 /* @media (max-width: 768px) {
   #preset {
     display: flex;

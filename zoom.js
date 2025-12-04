@@ -48,6 +48,28 @@ function loadZoom() {
 /**
  * Apply zoom to #preset and/or #pedalboard if they exist
  */
+// function applyZoom() {
+//   const zoomTargets = [
+//     document.getElementById("preset"),
+//     document.getElementById("pedalboard"),
+//   ].filter(Boolean);
+
+//   if (zoomTargets.length === 0) return;
+
+//   showZoomSpinner();
+
+//   // On mobile, limit zoom so pedals never overflow
+//   if (window.innerWidth <= 768) {
+//     zoomLevel = getMobileSafeZoom();
+//   }
+
+//   zoomTargets.forEach((zoomTarget) => {
+//     zoomTarget.style.zoom = zoomLevel;
+//   });
+
+//   saveZoom();
+//   setTimeout(hideZoomSpinner, 300);
+// }
 function applyZoom() {
   const zoomTargets = [
     document.getElementById("preset"),
@@ -58,18 +80,36 @@ function applyZoom() {
 
   showZoomSpinner();
 
-  // On mobile, limit zoom so pedals never overflow
+  // MOBILE: nessuno zoom, layout naturale
   if (window.innerWidth <= 768) {
-    zoomLevel = getMobileSafeZoom();
+    zoomTargets.forEach((zoomTarget) => {
+      zoomTarget.style.zoom = "1";
+      zoomTarget.style.transform = "none";
+      zoomTarget.style.transformOrigin = "top left";
+      zoomTarget.style.width = "100%";
+      zoomTarget.style.overflow = "visible";
+    });
+
+    setTimeout(hideZoomSpinner, 200);
+    return;
   }
 
+  // DESKTOP / TABLET: uso normale dello zoom
   zoomTargets.forEach((zoomTarget) => {
     zoomTarget.style.zoom = zoomLevel;
+    zoomTarget.style.transform = "";
+    zoomTarget.style.width = "";
+    zoomTarget.style.overflow = "";
   });
 
   saveZoom();
   setTimeout(hideZoomSpinner, 300);
 }
+
+
+
+
+
 
 /**
  * Zoom controls
@@ -168,31 +208,31 @@ function hideZoomSpinner() {
 // }
 
 
-/**
+// /**
 
-* Calcola uno zoom sicuro per mobile che garantisce
-* che l'intero contenuto rientri nello schermo
-* senza generare micro-zoom.
-  */
-  function getMobileSafeZoom() {
-  const zoomTarget =
-  document.getElementById("preset") || document.getElementById("pedalboard");
+// * Calcola uno zoom sicuro per mobile che garantisce
+// * che l'intero contenuto rientri nello schermo
+// * senza generare micro-zoom.
+//   */
+//   function getMobileSafeZoom() {
+//   const zoomTarget =
+//   document.getElementById("preset") || document.getElementById("pedalboard");
 
-if (!zoomTarget) return 1;
+// if (!zoomTarget) return 1;
 
-const rect = zoomTarget.getBoundingClientRect();
+// const rect = zoomTarget.getBoundingClientRect();
 
-const screenWidth = window.innerWidth;
-const screenHeight = window.innerHeight;
+// const screenWidth = window.innerWidth;
+// const screenHeight = window.innerHeight;
 
-const margin = 24; // margine di sicurezza
+// const margin = 24; // margine di sicurezza
 
-// Calcolo fattori di scala basati solo su dimensioni reali (niente zoomLevel!)
-const scaleX = (screenWidth - margin * 2) / rect.width;
-const scaleY = (screenHeight - margin * 2) / rect.height;
+// // Calcolo fattori di scala basati solo su dimensioni reali (niente zoomLevel!)
+// const scaleX = (screenWidth - margin * 2) / rect.width;
+// const scaleY = (screenHeight - margin * 2) / rect.height;
 
-// Lo zoom deve essere <= 1 (mai ingrandire su mobile)
-const mobileZoom = Math.min(scaleX, scaleY, 1);
+// // Lo zoom deve essere <= 1 (mai ingrandire su mobile)
+// const mobileZoom = Math.min(scaleX, scaleY, 1);
 
-return mobileZoom;
-}
+// return mobileZoom;
+// }
