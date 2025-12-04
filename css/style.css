@@ -750,24 +750,24 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
-
-/* Contenitore scrollabile per mobile */
+/* MOBILE: scroll orizzontale reale senza zoom */
 @media (max-width: 768px) {
 #preset {
 display: flex;
-flex-direction: row; /* elementi in fila */
-flex-wrap: nowrap;   /* non vanno a capo */
-overflow-x: auto;    /* scroll orizzontale */
--webkit-overflow-scrolling: touch; /* scroll fluido su iOS */
-gap: 1rem;           /* margine tra elementi */
+flex-direction: row;
+flex-wrap: nowrap;
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
+gap: 1rem;
 padding: 0.5rem;
+width: 100%; /* lascia che la larghezza dei figli superi la viewport */
 }
 #preset > * {
-flex: 0 0 auto; /* larghezza fissa dei figli */
+flex: 0 0 auto; /* larghezza naturale dei figli */
 }
 }
 
-/* Layout griglia per tablet */
+/* TABLET: griglia adattiva */
 @media (min-width: 769px) and (max-width: 1024px) {
 #preset {
 display: grid;
