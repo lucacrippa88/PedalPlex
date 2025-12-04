@@ -750,7 +750,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
-/* @media (max-width: 768px) {
+@media (max-width: 768px) {
   #preset, #pedalboard {
     display: flex !important;
     flex-direction: column !important;
@@ -763,26 +763,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   #preset > *, #pedalboard > * {
     width: 100% !important;
   }
-} */
-
-@media (max-width: 768px) {
-  #preset, #pedalboard {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important; 
-    justify-content: flex-start;
-    gap: 12px;
-    width: 100% !important;
-    overflow: visible !important;
-    transform: none !important;
-    zoom: 1 !important;
-  }
-
-  #preset > *, #pedalboard > * {
-    width: auto !important;  /* <-- IMPORTANTE: permette il centramento */
-    margin: 0 auto;
-  }
 }
+
 
 
 
