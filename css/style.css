@@ -748,84 +748,74 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
+/* ============================================================
+   RESPONSIVE — NON ALTERA IL DESKTOP
+   ============================================================ */
 
-
-
-/* ========== GENERAL GRID FIX ========== */
-#catalog {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-}
-
-/* Cards di base (desktop unchanged) */
-.pedal-catalog {
-    width: 190px;
-    height: 160px;
-    margin: 8px;
-    position: relative;
-}
-
-/* ========== TABLET (max 992px) ========== */
+/* ===== TABLET (max-width: 992px) ===== */
 @media (max-width: 992px) {
+
+    #catalog {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .pedal-catalog {
+        width: 45% !important;      /* 2 colonne */
+        height: auto !important;     /* evita tagli */
+        margin: 10px auto !important;
+    }
+
+    /* Mantieni tutto uguale ma più compatto */
+    .row {
+        transform: scale(0.85);
+        transform-origin: top center;
+    }
+
+    .pedal-name {
+        font-size: 36px !important;
+        left: 50% !important;
+        transform: translateX(-50%);
+        white-space: nowrap;
+    }
+}
+
+/* ===== MOBILE (max-width: 600px) ===== */
+@media (max-width: 600px) {
 
     #catalog {
         gap: 14px;
     }
 
     .pedal-catalog {
-        width: 45%;              /* due colonne */
-        height: auto;            /* elimina altezza fissa */
-        min-height: 160px;
-    }
-
-    .pedal-name {
-        font-size: 38px !important;  
-        left: 50% !important;
-        transform: translateX(-50%);
-        white-space: nowrap;
+        width: 92% !important;       /* 1 colonna */
+        height: auto !important;
+        margin: 14px auto !important;
     }
 
     .row {
-        scale: 0.85;             /* riduce knobs leggermente */
+        transform: scale(0.75);
         transform-origin: top center;
     }
-}
-
-/* ========== MOBILE (max 600px) ========== */
-@media (max-width: 600px) {
-
-    .pedal-catalog {
-        width: 92%;              /* una colonna */
-        margin: 12px auto;
-        height: auto;
-    }
 
     .pedal-name {
-        font-size: 30px !important;
-        top: 10px !important;
+        font-size: 28px !important;
+        top: 12px !important;
         left: 50% !important;
         transform: translateX(-50%);
     }
-
-    .row {
-        scale: 0.75;
-    }
-
-    .edit-btn.showDesktop {
-        display: none;           /* bottone nascosto su mobile */
-    }
 }
 
-/* ========== ULTRA SMALL (max 400px) ========== */
+/* ===== TELEFONI PICCOLI (max-width: 400px) ===== */
 @media (max-width: 400px) {
 
-    .pedal-name {
-        font-size: 24px !important;
+    .row {
+        transform: scale(0.65);
     }
 
-    .row {
-        scale: 0.70;
+    .pedal-name {
+        font-size: 22px !important;
     }
 }
