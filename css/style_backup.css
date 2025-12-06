@@ -304,7 +304,6 @@ html { box-sizing: content-box !important; }
 .align-right { position: absolute; right: 12px; }
 .align-bottom { margin-top: 25px; }
 .align-top { margin-top: -15px; }
-.align-top-er { margin-top: -25px; }
 .align-top-est { margin-top: -125px; }
 
 /* Slider containers */
@@ -432,10 +431,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 @font-face { font-family: minecraft; src: url("../fonts/Minecraft.ttf"); }
 @font-face { font-family: ducky; src: url("../fonts/jd_ducky.ttf"); }
 @font-face { font-family: godmother; src: url("../fonts/fairy_godmother.otf"); }
-@font-face { font-family: moderna; src: url("../fonts/moderna.TTF"); }
-@font-face { font-family: abang; src: url("../fonts/Abang.otf"); }
-@font-face { font-family: designer; src: url("../fonts/DESIGNER.otf"); }
-@font-face { font-family: woodcutter; src: url("../fonts/woodcutter.ttf"); }
+
 
 /* Diamond plate */
 .diamond-plate {

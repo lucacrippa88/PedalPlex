@@ -503,6 +503,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 else if (control.position === "right") { $wrapper.addClass("align-right"); } 
                 else if (control.position === "lower") { $wrapper.addClass("align-bottom"); } 
                 else if (control.position === "higher") { $wrapper.addClass("align-top"); } 
+                else if (control.position === "higher+") { $wrapper.addClass("align-top-er"); } 
                 else if (control.position === "highest") { $wrapper.addClass("align-top-est"); } 
                 else if (typeof control.position === "string" && control.position.startsWith("margin-right:")) {
                     const match = control.position.match(/margin-right:\s*(\d+)px/);
