@@ -142,7 +142,7 @@ function updatePedalCounts(activeFilter = null) {
   const totalVisible = visiblePedals.length;
   const totalAbsolute = allPedals.length;
 
-  const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0 };
+  const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0, template: 0 };
   let userPedalsCount = 0;
   const currentUsername = (window.currentUser?.username || "").toLowerCase();
 
@@ -151,6 +151,7 @@ function updatePedalCounts(activeFilter = null) {
     const author = ($(this).data("author") || "").toLowerCase();
     if (status in statusCounts) statusCounts[status]++;
     if (status === "public" && author === currentUsername) statusCounts.publicByMe++;
+    if (status === "template") statusCounts.template++;
     if (author && author !== "admin") userPedalsCount++;
   });
 
