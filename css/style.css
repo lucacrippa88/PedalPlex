@@ -444,7 +444,9 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 6px;
+  left: 100%;
+  position: absolute;
+  top: -5px;
 }
 
 .verified-icon {
