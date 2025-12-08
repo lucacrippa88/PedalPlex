@@ -1102,7 +1102,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     $authorDiv.append($authorText);
 
     // Se verificato → aggiungi badge a scudo blu con V bianca
-    if (pedal.verified = "true") {
+    if (pedal.verified == "true") {
       const $verifiedBadge = $(`
         <span class="verified-badge">
           <svg viewBox="0 0 24 24" class="verified-icon">
