@@ -1793,17 +1793,21 @@ function showSessionWarningModal(initialRemaining) {
             clearInterval(countdownInterval);
         }
     }).then((result) => {
+
     if (result.isConfirmed) {
         // login
         window.location.href = 'login';
-    } else {
-        // L’utente vuole continuare come guest → rimuovi token e disattiva controllo
-        localStorage.removeItem('authToken');
-        window.sessionExpires = null;
-        sessionWarningShown = false;
-        console.log("Sessione gestita come guest: nessun timeout forzato.");
+        return;
     }
+
+    // ❗ Guest, click fuori, ESC → NON deve più ripresentarsi
+    localStorage.removeItem('authToken');
+    window.sessionExpires = null;
+    sessionWarningShown = true;
+
+    console.log("Sessione gestita come guest o popup chiuso: nessun nuovo prompt.");
 });
+
 }
 
 // --- Helper: formatta i secondi in mm:ss ---
