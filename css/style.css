@@ -363,7 +363,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 .bx--text-input { border-radius: 8px; }
 .bx--btn { margin-left: 8px!important; min-height: 0.5rem; border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.3) 0px 8px 16px; max-width: 8rem!important; }
 
-.pedal-author { font-size: 0.7em; color: #aaa; text-align: right; position: absolute; pointer-events: none; user-select: none; bottom: -14px; left: -3px; }
+.pedal-author { font-size: 0.7em; color: #aaa; text-align: right; position: absolute; pointer-events: none; user-select: none; bottom: -14px; left: -3px; flex-direction: row;}
 .modal-footer { display: block; margin: auto; position: relative; padding-bottom: 40px; }
 
 /* Fonts (all preserved) */
