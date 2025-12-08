@@ -271,6 +271,11 @@ function renderPedalControls(pedal, $pedalDiv) {
                     }
 
                     // align-top logic
+                    if (pos.includes("align-top-clearest") && $row.children().length > 0) {
+                        const $prev = $row.children().last();
+                        $prev.append($("<div>").css("margin-top", "15px").append($label, $container));
+                        return;
+                    }
                     if (pos.includes("align-top-clearer") && $row.children().length > 0) {
                         const $prev = $row.children().last();
                         $prev.append($("<div>").css("margin-top", "0px").append($label, $container));
