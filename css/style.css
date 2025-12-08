@@ -436,6 +436,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 @font-face { font-family: abang; src: url("../fonts/Abang.otf"); }
 @font-face { font-family: designer; src: url("../fonts/DESIGNER.otf"); }
 @font-face { font-family: woodcutter; src: url("../fonts/woodcutter.ttf"); }
+@font-face { font-family: thebold; src: url("../fonts/thebold.ttf"); }
 
 /* Diamond plate */
 .diamond-plate {
