@@ -177,7 +177,7 @@ function updatePedalCounts(activeFilter = null) {
      Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${statusCounts.private}</span>, 
      Review: ${reviewingBadge}, 
      By me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>;
-     Template: <span class="status-filter ${activeFilter === "template" ? "active-filter" : ""}" data-filter="template">${statusCounts.publicByMe}</span>`;
+     Template: <span class="status-filter ${activeFilter === "template" ? "active-filter" : ""}" data-filter="template">${statusCounts.template}</span>`;
 
     if (window.currentUser?.role === "admin") {
       countsHtml += `, By Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${userPedalsCount}</span>`;
