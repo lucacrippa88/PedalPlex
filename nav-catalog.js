@@ -168,18 +168,19 @@ function updatePedalCounts(activeFilter = null) {
     : `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">0</span>`;
 
   let countsHtml =
-    `${totalVisible} gear${totalVisible === 1 ? "" : "s"} available ` +
+    `${totalVisible} gear${totalVisible === 1 ? "" : "s"} ` +
     `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalAbsolute}</span>`;
 
   // Only show these if not a guest
   if (window.currentUser?.role !== "guest") {
     countsHtml += `, Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
      Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${statusCounts.private}</span>, 
-     Reviewing: ${reviewingBadge}, 
-     Published by me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>`;
-    
+     Review: ${reviewingBadge}, 
+     By me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>;
+     Template: <span class="status-filter ${activeFilter === "template" ? "active-filter" : ""}" data-filter="template">${statusCounts.publicByMe}</span>`;
+
     if (window.currentUser?.role === "admin") {
-      countsHtml += `, Published by Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${userPedalsCount}</span>`;
+      countsHtml += `, By Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${userPedalsCount}</span>`;
     }
   }
 
