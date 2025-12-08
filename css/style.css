@@ -438,6 +438,23 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 @font-face { font-family: woodcutter; src: url("../fonts/woodcutter.ttf"); }
 @font-face { font-family: thebold; src: url("../fonts/thebold.ttf"); }
 
+
+
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+}
+
+.verified-icon {
+  width: 18px;
+  height: 18px;
+  fill: #1d7bf0; /* Blu scudo */
+}
+
+
+
 /* Diamond plate */
 .diamond-plate {
   display: block;
