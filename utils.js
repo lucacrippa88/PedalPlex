@@ -1106,7 +1106,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
         $authorDiv.append($authorText);
 
         // → Aggiungi badge "V" solo se il campo è popolato
-        if (pedal.verified) {
+        if (pedal.verified == "true") {
           const $verifiedBadge = $("<span>")
             .addClass("verified-badge")
             .text(" V ")     // puoi cambiare con un'icona, es: "✔️"
