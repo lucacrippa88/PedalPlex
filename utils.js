@@ -1075,19 +1075,57 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
 
+    // if (isAdmin || isAuthor) {
+    //   const authorText = isAdmin
+    //     ? `by: ${pedal.author}, ${pedal.published}` // admin sees all
+    //     : `by: ${pedal.author}, ${pedal.published}`; // regular user sees their own
+
+    //   // Add this info only if not in pedalboard page
+    //   if (pedalboardPage == false) {
+    //     const $authorDiv = $("<div>")
+    //       .addClass("pedal-author")
+    //       .text(authorText);
+    //     $pedalDiv.prepend($authorDiv);
+    //   }
+    // }
+
+
     if (isAdmin || isAuthor) {
       const authorText = isAdmin
-        ? `by: ${pedal.author}, ${pedal.published}` // admin sees all
-        : `by: ${pedal.author}, ${pedal.published}`; // regular user sees their own
+        ? `by: ${pedal.author}, ${pedal.published}`
+        : `by: ${pedal.author}, ${pedal.published}`;
 
-      // Add this info only if not in pedalboard page
       if (pedalboardPage == false) {
         const $authorDiv = $("<div>")
-          .addClass("pedal-author")
+          .addClass("pedal-author");
+
+        // → Inserisci il testo autore
+        const $authorText = $("<span>")
           .text(authorText);
+
+        $authorDiv.append($authorText);
+
+        // → Aggiungi badge "V" solo se il campo è popolato
+        if (pedal.verified) {
+          const $verifiedBadge = $("<span>")
+            .addClass("verified-badge")
+            .text(" V ")     // puoi cambiare con un'icona, es: "✔️"
+            .css({
+              "font-size": "1em",
+              "font-weight": "bold",
+              "margin-left": "4px",
+              "color": "#2a9df4" // opzionale, togli se vuoi ereditare lo stile
+            });
+
+          $authorDiv.append($verifiedBadge);
+        }
+
         $pedalDiv.prepend($authorDiv);
       }
     }
+
+
+
   }
 
   // Add edit button if admin OR current user is the author. Disable for author if status is reviewing or public
