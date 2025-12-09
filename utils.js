@@ -142,7 +142,10 @@ function renderPedalControls(pedal, $pedalDiv) {
                 const knobColor = control["knob-color"] ?? pedal["knobs-color"];
                 const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
                 const knobIndicator = control["knob-indicator"] ?? pedal["knobs-indicator"];
+                const labelColor = control["label-color"] ?? pedal["font-color"];
+                const labelBackground = control["label-background"] ?? null;
                 const isThick = control.border === "thick";
+                const isLabelInverted = control["label-inverted"] === "yes";
 
                 const knob = $("<div>")
                     .addClass(isSmall ? "smallknob" : "knob")
@@ -154,7 +157,9 @@ function renderPedalControls(pedal, $pedalDiv) {
                         border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}`
                     })
                     .css("--indicator-color", knobIndicator)
-                    .attr("data-control-label", control.label);
+                    .attr("data-control-label", control.label)
+                    .css("data-control-label", labelColor)
+                    .css("data-control-label", labelBackground);
 
                 let $tooltip = null;
                 let $tooltipText = null;
