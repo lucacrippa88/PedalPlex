@@ -134,6 +134,8 @@ function renderPedalControls(pedal, $pedalDiv) {
 
         controlRow.row.forEach(control => {
             // Knobs
+            console.log("control label:", control.label, "labelBackground:", labelBackground);
+
             if (["knob", "smallknob", "largeknob", "xlargeknob"].includes(control.type)) {
                 const isSmall = control.type === "smallknob";
                 const isLarge = control.type === "largeknob";
