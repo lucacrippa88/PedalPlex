@@ -578,12 +578,12 @@ $("#add-led").on("click", addLedControl);
             $(this).siblings(".ctrl-knob-indicator").prop("disabled", !this.checked);
             buildJSON();
         });
-        $("#controls").on("change", ".ctrl-label-color-enable", function () {
-            $(this).siblings(".ctrl-label-color").prop("disabled", !this.checked);
+        $("#controls").on("change", ".ctrl-knob-label-color-enable", function () {
+            $(this).siblings(".ctrl-knob-label-color").prop("disabled", !this.checked);
             buildJSON();
         });
-        $("#controls").on("change", ".ctrl-label-background-enable", function () {
-            $(this).siblings(".ctrl-label-background").prop("disabled", !this.checked);
+        $("#controls").on("change", ".ctrl-knob-label-background-enable", function () {
+            $(this).siblings(".ctrl-knob-label-background").prop("disabled", !this.checked);
             buildJSON();
         });
 
