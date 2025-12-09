@@ -640,7 +640,7 @@ function syncUIFromJSON(pedal) {
                         $ctrl.find(".ctrl-knob-label-background").prop("disabled", false).val(ctrl["knob-label-background"]);
                     }
                     if (ctrl.labelPos === "inverted") {
-                        $ctrl.find(".knob-label-inverted").prop("checked", true);
+                        $ctrl.find(".ctrl-knob-label-inverted").prop("checked", true);
                     }
 
                     applyPosition($ctrl, ctrl);
