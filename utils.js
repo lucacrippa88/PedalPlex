@@ -238,7 +238,21 @@ function renderPedalControls(pedal, $pedalDiv) {
 
                 knob.on("mousedown touchstart", startDrag);
 
+                // let $label;
+                // if (control.position === "under-top" && control.type === "smallknob") {
+                //     $label = $("<div>").css({
+                //         position: "absolute",
+                //         "margin-left": "4px",
+                //         "margin-top": "45px",
+                //         transform: "translateY(-50%)",
+                //         "white-space": "nowrap",
+                //         "font-size": "10px"
+                //     }).text(control.label);
+                // } else {
+                //     $label = $("<div>").addClass("label-top").text(control.label);
+                // }
                 let $label;
+
                 if (control.position === "under-top" && control.type === "smallknob") {
                     $label = $("<div>").css({
                         position: "absolute",
@@ -251,6 +265,20 @@ function renderPedalControls(pedal, $pedalDiv) {
                 } else {
                     $label = $("<div>").addClass("label-top").text(control.label);
                 }
+
+                // 🔥 Applica colore e background in entrambi i casi
+                if (labelColor) {
+                    $label.css("color", labelColor);
+                }
+
+                if (labelBackground) {
+                    $label.css({
+                        "background-color": labelBackground,
+                        "padding": "2px 4px",
+                        "border-radius": "3px"
+                    });
+                }
+
 
                 const $container = $("<div>")
                     .addClass("knob-container")
