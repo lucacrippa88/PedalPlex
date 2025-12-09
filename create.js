@@ -109,9 +109,9 @@ function buildJSON() {
                 if ($(this).find(".ctrl-knob-border-enable").is(":checked")) ctrl["knob-border"] = $(this).find(".ctrl-knob-border").val();
                 if ($(this).find(".ctrl-knob-indicator-enable").is(":checked")) ctrl["knob-indicator"] = $(this).find(".ctrl-knob-indicator").val();
                 if ($(this).find(".ctrl-knob-thick").is(":checked")) ctrl.border = "thick";
-                if ($(this).find(".ctrl-label-color-enable").is(":checked")) ctrl["label-color"] = $(this).find(".ctrl-label-color").val();
-                if ($(this).find(".ctrl-label-background-enable").is(":checked")) ctrl["label-background"] = $(this).find(".ctrl-label-background").val();
-                if ($(this).find(".ctrl-label-inverted").is(":checked")) ctrl["label-inverted"] = "yes";
+                if ($(this).find(".ctrl-knob-label-color-enable").is(":checked")) ctrl["knob-label-color"] = $(this).find(".ctrl-knob-label-color").val();
+                if ($(this).find(".ctrl-knob-label-background-enable").is(":checked")) ctrl["knob-abel-background"] = $(this).find(".ctrl-knob-label-background").val();
+                if ($(this).find(".ctrl-knob-label-inverted").is(":checked")) ctrl["knob-label-inverted"] = "yes";
                 const sizeVal = $(this).find(".ctrl-size").val();
                 ctrl.type = sizeVal === "regular" ? "knob" : sizeVal;
                 // const pos = getPosition($(this));
