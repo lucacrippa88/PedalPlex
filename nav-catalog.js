@@ -135,7 +135,7 @@ function initNavCatalog(userRole) {
   }
 }
 
-// Updates pedal counts including draft/private/reviewing/public-by-me
+// Updates pedal counts including draft/private/template/reviewing/public-by-me
 function updatePedalCounts(activeFilter = null) {
   const visiblePedals = $(".pedal-catalog:visible");
   const allPedals = $(".pedal-catalog");
