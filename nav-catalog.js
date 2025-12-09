@@ -151,7 +151,6 @@ function updatePedalCounts(activeFilter = null) {
     const author = ($(this).data("author") || "").toLowerCase();
     if (status in statusCounts) statusCounts[status]++;
     if (status === "public" && author === currentUsername) statusCounts.publicByMe++;
-    if (status === "template") statusCounts.template++;
     if (author && author !== "admin") userPedalsCount++;
   });
 
