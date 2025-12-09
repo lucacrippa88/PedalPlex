@@ -110,7 +110,7 @@ function buildJSON() {
                 if ($(this).find(".ctrl-knob-indicator-enable").is(":checked")) ctrl["knob-indicator"] = $(this).find(".ctrl-knob-indicator").val();
                 if ($(this).find(".ctrl-knob-thick").is(":checked")) ctrl.border = "thick";
                 if ($(this).find(".ctrl-knob-label-color-enable").is(":checked")) ctrl["knob-label-color"] = $(this).find(".ctrl-knob-label-color").val();
-                if ($(this).find(".ctrl-knob-label-background-enable").is(":checked")) ctrl["knob-abel-background"] = $(this).find(".ctrl-knob-label-background").val();
+                if ($(this).find(".ctrl-knob-label-background-enable").is(":checked")) ctrl["knob-label-background"] = $(this).find(".ctrl-knob-label-background").val();
                 if ($(this).find(".ctrl-knob-label-inverted").is(":checked")) ctrl["knob-label-inverted"] = "yes";
                 const sizeVal = $(this).find(".ctrl-size").val();
                 ctrl.type = sizeVal === "regular" ? "knob" : sizeVal;
@@ -632,15 +632,15 @@ function syncUIFromJSON(pedal) {
                         $ctrl.find(".ctrl-knob-thick").prop("checked", true);
                     }
                     if (ctrl["label-color"]) {
-                        $ctrl.find(".ctrl-label-color-enable").prop("checked", true);
-                        $ctrl.find(".ctrl-label-color").prop("disabled", false).val(ctrl["label-color"]);
+                        $ctrl.find(".ctrl-knob-label-color-enable").prop("checked", true);
+                        $ctrl.find(".ctrl-knob-label-color").prop("disabled", false).val(ctrl["knob-label-color"]);
                     }
                     if (ctrl["label-background"]) {
-                        $ctrl.find(".ctrl-label-background-enable").prop("checked", true);
-                        $ctrl.find(".ctrl-label-background").prop("disabled", false).val(ctrl["label-background"]);
+                        $ctrl.find(".ctrl-knob-label-background-enable").prop("checked", true);
+                        $ctrl.find(".ctrl-knob-label-background").prop("disabled", false).val(ctrl["knob-label-background"]);
                     }
-                    if (ctrl["label-inverted"] === "yes") {
-                        $ctrl.find(".label-inverted").prop("checked", true);
+                    if (ctrl["knob-label-inverted"] === "yes") {
+                        $ctrl.find(".knob-label-inverted").prop("checked", true);
                     }
 
                     applyPosition($ctrl, ctrl);
