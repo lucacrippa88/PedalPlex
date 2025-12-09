@@ -134,8 +134,6 @@ function renderPedalControls(pedal, $pedalDiv) {
 
         controlRow.row.forEach(control => {
             // Knobs
-            console.log("control label:", control.label, "labelBackground:", labelBackground);
-
             if (["knob", "smallknob", "largeknob", "xlargeknob"].includes(control.type)) {
                 const isSmall = control.type === "smallknob";
                 const isLarge = control.type === "largeknob";
@@ -254,6 +252,8 @@ function renderPedalControls(pedal, $pedalDiv) {
                 } else {
                     $label = $("<div>").addClass("label-top").text(control.label);
                 }
+
+                console.log("control label:", control.label, "labelBackground:", labelBackground);
 
                 // 🔥 Applica colore e background in entrambi i casi
                 if (labelColor) {
