@@ -290,14 +290,11 @@ html { box-sizing: content-box !important; }
 /* Knob labels */
 .knob-value-label { font-size: 12px; font-weight: bold; color: inherit; user-select: none; text-align: center; }
 .label-top { display: inline-block; text-align: center; font-size: 12px; margin-bottom: 2px; z-index: 100; }
-.knob-wrapper.label-under {
-  flex-direction: column; /* già di default, ma puoi aggiustare */
+.knob-wrapper.label-under { flex-direction: column; }
+.knob-wrapper.label-over { flex-direction: column-reverse; }
+.knob-wrapper.label-under .knob-container {
+  margin-bottom: -8px; /* aggiusta il valore fino a che va bene */
 }
-
-.knob-wrapper.label-over {
-  flex-direction: column-reverse; /* se vuoi invertire ordine */
-}
-
 
 
 /* Knob tooltips */
