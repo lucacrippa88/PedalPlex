@@ -279,7 +279,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 
                 let $knobWrapper
 
-                if (isLabelInverted == "yes"){
+                if (isLabelInverted === "yes"){
                   $knobWrapper = $("<div>").append($container);
                 } else {
                   $knobWrapper = $("<div>").append($label, $container);
