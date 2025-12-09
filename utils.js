@@ -277,13 +277,22 @@ function renderPedalControls(pedal, $pedalDiv) {
                 $container.append($label);
                 if (!editMode && $valueLabel) $container.append($valueLabel); // Avoid appending knob value in edit mode
                 
-                let $knobWrapper
+                // let $knobWrapper
 
-                if (isLabelInverted === "yes"){
-                  $knobWrapper = $("<div>").append($container);
-                } else {
-                  $knobWrapper = $("<div>").append($label, $container);
-                }
+                // if (isLabelInverted === "yes"){
+                //   $knobWrapper = $("<div>").append($container);
+                // } else {
+                //   $knobWrapper = $("<div>").append($label, $container);
+                // }
+
+                let $knobWrapper = $("<div>").css({ display: "flex", flexDirection: "column", alignItems: "center" });
+
+if (isLabelInverted === "yes") {
+    $knobWrapper.append($container, $label); // label sotto il knob
+} else {
+    $knobWrapper.append($label, $container); // label sopra il knob
+}
+
                 
                 if (typeof control.position === "string") {
                     const pos = control.position;
