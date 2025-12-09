@@ -264,33 +264,32 @@ function renderPedalControls(pedal, $pedalDiv) {
                     $label.css("background-color", labelBackground);
                 }
 
-const $container = $("<div>")
-  .addClass("knob-container")
-  .css({ position: "relative" })
-  .append(knob);
+                // Knob label positioning
+                const $container = $("<div>")
+                  .addClass("knob-container")
+                  .css({ position: "relative" })
+                  .append(knob);
 
-if (!editMode && $tooltip) {
-  $container.append($tooltip);
-}
+                if (!editMode && $tooltip) {
+                  $container.append($tooltip);
+                }
 
-let $knobWrapper = $("<div>")
-  .addClass("knob-wrapper") // aggiungi classe per gestione CSS
-  .css({ display: "flex", flexDirection: "column", alignItems: "center" });
+                let $knobWrapper = $("<div>")
+                  .addClass("knob-wrapper") // aggiungi classe per gestione CSS
+                  .css({ display: "flex", flexDirection: "column", alignItems: "center" });
 
-// qui controlli la posizione del label
-if (control.labelPos === "inverted") {
-  $knobWrapper.addClass("label-under"); // classe CSS per label sotto
-  $knobWrapper.append($container, $label); // label sotto il knob
-} else {
-  $knobWrapper.addClass("label-over"); // classe CSS per label sopra
-  $knobWrapper.append($label, $container); // label sopra il knob
-}
+                // qui controlli la posizione del label
+                if (control.labelPos === "inverted") {
+                  $knobWrapper.addClass("label-under"); // classe CSS per label sotto
+                  $knobWrapper.append($container, $label); // label sotto il knob
+                } else {
+                  $knobWrapper.addClass("label-over"); // classe CSS per label sopra
+                  $knobWrapper.append($label, $container); // label sopra il knob
+                }
 
-if (!editMode && $valueLabel) $knobWrapper.append($valueLabel);
+                if (!editMode && $valueLabel) $knobWrapper.append($valueLabel);
+                // ---------------------
 
-
-
-                
                 if (typeof control.position === "string") {
                     const pos = control.position;
 
