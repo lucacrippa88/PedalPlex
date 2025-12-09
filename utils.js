@@ -253,8 +253,6 @@ function renderPedalControls(pedal, $pedalDiv) {
                     $label = $("<div>").addClass("label-top").text(control.label);
                 }
 
-                console.log("control label:", control.label, "labelBackground:", labelBackground);
-
                 // 🔥 Applica colore e background in entrambi i casi
                 if (labelColor) {
                     $label.css("color", labelColor);
@@ -263,7 +261,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 if (labelBackground) {
                     $label.css("padding", "2px 4px");
                     $label.css("border-radius", "3px");
-                    $label[0].style.setProperty("background-color", labelBackground, "important");
+                    $label.css("background-color", labelBackground);
                 }
 
 
