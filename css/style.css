@@ -289,7 +289,7 @@ html { box-sizing: content-box !important; }
 
 /* Knob labels */
 .knob-value-label { font-size: 12px; font-weight: bold; color: inherit; user-select: none; text-align: center; }
-.label-top { text-align: center; font-size: 12px; margin-bottom: 2px; z-index: 100; }
+.label-top { display: inline-block; text-align: center; font-size: 12px; margin-bottom: 2px; z-index: 100; }
 
 /* Knob tooltips */
 .bx--tooltip__label { text-align: center; width: 100%; display: block!important; color:#ffffff }
