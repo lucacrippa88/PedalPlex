@@ -308,6 +308,17 @@
         <label>
             <input type="checkbox" class="ctrl-knob-thick"> Thick Border
         </label>
+        <label>
+            <input type="checkbox" class="ctrl-knob-label-color-enable"> Label color
+            <input type="color" class="ctrl-knob-label-color" disabled>
+        </label>
+        <label>
+            <input type="checkbox" class="ctrl-knob-label-background-enable"> Label background
+            <input type="color" class="ctrl-knob-label-background" disabled>
+        </label>
+         <label>
+            <input type="checkbox" class="ctrl-knob-label-inverted"> Label inverted
+        </label>
         <span class="numeric-fields">
             <label>Min <input type="number" class="ctrl-num ctrl-min" value="7"></label>
             <label>Max <input type="number" class="ctrl-num ctrl-max" value="17"></label>
@@ -565,6 +576,14 @@ $("#add-led").on("click", addLedControl);
         });
         $("#controls").on("change", ".ctrl-knob-indicator-enable", function () {
             $(this).siblings(".ctrl-knob-indicator").prop("disabled", !this.checked);
+            buildJSON();
+        });
+        $("#controls").on("change", ".ctrl-label-color-enable", function () {
+            $(this).siblings(".ctrl-label-color").prop("disabled", !this.checked);
+            buildJSON();
+        });
+        $("#controls").on("change", ".ctrl-label-background-enable", function () {
+            $(this).siblings(".ctrl-label-background").prop("disabled", !this.checked);
             buildJSON();
         });
 

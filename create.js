@@ -109,6 +109,9 @@ function buildJSON() {
                 if ($(this).find(".ctrl-knob-border-enable").is(":checked")) ctrl["knob-border"] = $(this).find(".ctrl-knob-border").val();
                 if ($(this).find(".ctrl-knob-indicator-enable").is(":checked")) ctrl["knob-indicator"] = $(this).find(".ctrl-knob-indicator").val();
                 if ($(this).find(".ctrl-knob-thick").is(":checked")) ctrl.border = "thick";
+                if ($(this).find(".ctrl-label-color-enable").is(":checked")) ctrl["label-color"] = $(this).find(".ctrl-label-color").val();
+                if ($(this).find(".ctrl-label-background-enable").is(":checked")) ctrl["label-background"] = $(this).find(".ctrl-label-background").val();
+                if ($(this).find(".ctrl-label-inverted").is(":checked")) ctrl["label-inverted"] = "yes";
                 const sizeVal = $(this).find(".ctrl-size").val();
                 ctrl.type = sizeVal === "regular" ? "knob" : sizeVal;
                 // const pos = getPosition($(this));
@@ -627,6 +630,17 @@ function syncUIFromJSON(pedal) {
                     }
                     if (ctrl.border === "thick") {
                         $ctrl.find(".ctrl-knob-thick").prop("checked", true);
+                    }
+                    if (ctrl["label-color"]) {
+                        $ctrl.find(".ctrl-label-color-enable").prop("checked", true);
+                        $ctrl.find(".ctrl-label-color").prop("disabled", false).val(ctrl["label-color"]);
+                    }
+                    if (ctrl["label-background"]) {
+                        $ctrl.find(".ctrl-label-background-enable").prop("checked", true);
+                        $ctrl.find(".ctrl-label-background").prop("disabled", false).val(ctrl["label-background"]);
+                    }
+                    if (ctrl["label-inverted"] === "yes") {
+                        $ctrl.find(".label-inverted").prop("checked", true);
                     }
 
                     applyPosition($ctrl, ctrl);
