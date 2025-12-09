@@ -276,7 +276,9 @@ function renderPedalControls(pedal, $pedalDiv) {
 
                 $container.append($label);
                 if (!editMode && $valueLabel) $container.append($valueLabel); // Avoid appending knob value in edit mode
-                const $knobWrapper = $("<div>").append($label, $container);
+                // const $knobWrapper = $("<div>").append($label, $container);
+                const $knobWrapper = $("<div>").append($container);
+
 
                 if (typeof control.position === "string") {
                     const pos = control.position;
