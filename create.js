@@ -707,7 +707,7 @@ function syncUIFromJSON(pedal) {
 
 // --- Published (custom dropdown) ---
 if ($("#pedal-published-button").length) {
-    const validStatuses = ["draft", "private", "reviewing", "public"];
+    const validStatuses = ["draft", "private", "reviewing", "template", "public"];
     const status = validStatuses.includes(pedal.published) ? pedal.published : "draft";
 
     // Set the button text to reflect the current status
@@ -715,7 +715,7 @@ if ($("#pedal-published-button").length) {
 
     // Remove li elements entirely for regular users if status is reviewing or public
     const userRole = parent?.window?.currentUser?.role || "user";
-    if (userRole !== "admin" && (status === "reviewing" || status === "public")) {
+    if (userRole !== "admin" && (status === "reviewing" || status === "template" || status === "public")) {
         $("#pedal-published-options li").remove();
         $("#request-publication").remove(); // also hide the Ask Publication button
     }
