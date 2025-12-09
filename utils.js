@@ -145,7 +145,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 const labelColor = control["knob-label-color"] ?? pedal["font-color"];
                 const labelBackground = control["knob-label-background"] ?? null;
                 const isThick = control.border === "thick";
-                const isLabelInverted = control["knob-label-inverted"] === "yes";
+                const isLabelInverted = control.labelPos === "inverted";
 
                 const knob = $("<div>")
                     .addClass(isSmall ? "smallknob" : "knob")
@@ -157,9 +157,9 @@ function renderPedalControls(pedal, $pedalDiv) {
                         border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}`
                     })
                     .css("--indicator-color", knobIndicator)
-                    .attr("data-control-label", control.label)
-                    .css("label-top", labelColor)
-                    .css("label-top", labelBackground);
+                    .attr("data-control-label", control.label);
+                    // .css("label-top", labelColor)
+                    // .css("label-top", labelBackground);
 
                 let $tooltip = null;
                 let $tooltipText = null;
@@ -264,46 +264,30 @@ function renderPedalControls(pedal, $pedalDiv) {
                     $label.css("background-color", labelBackground);
                 }
 
-
-                // const $container = $("<div>")
-                //     .addClass("knob-container")
-                //     .css({ position: "relative" })
-                //     .append(knob);
-
-                // if (!editMode && $tooltip) {
-                //     $container.append($tooltip);
-                // }
-
-                // $container.append($label);
-                // if (!editMode && $valueLabel) $container.append($valueLabel); // Avoid appending knob value in edit mode
-                
-                // let $knobWrapper = $("<div>").css({ display: "flex", flexDirection: "column", alignItems: "center" });
-
-                // if (isLabelInverted === "yes") {
-                //     $knobWrapper.append($container, $label); // label sotto il knob
-                // } else {
-                //     $knobWrapper.append($label, $container); // label sopra il knob
-                // }
-
-
-                const $container = $("<div>")
-    .addClass("knob-container")
-    .css({ position: "relative" })
-    .append(knob); // <-- solo il knob, niente $label qui
+const $container = $("<div>")
+  .addClass("knob-container")
+  .css({ position: "relative" })
+  .append(knob);
 
 if (!editMode && $tooltip) {
-    $container.append($tooltip);
+  $container.append($tooltip);
 }
 
-let $knobWrapper = $("<div>").css({ display: "flex", flexDirection: "column", alignItems: "center" });
+let $knobWrapper = $("<div>")
+  .addClass("knob-wrapper") // aggiungi classe per gestione CSS
+  .css({ display: "flex", flexDirection: "column", alignItems: "center" });
 
-if (isLabelInverted === "yes") {
-    $knobWrapper.append($container, $label); // label sotto il knob
+// qui controlli la posizione del label
+if (control.labelPos === "inverted") {
+  $knobWrapper.addClass("label-under"); // classe CSS per label sotto
+  $knobWrapper.append($container, $label); // label sotto il knob
 } else {
-    $knobWrapper.append($label, $container); // label sopra il knob
+  $knobWrapper.addClass("label-over"); // classe CSS per label sopra
+  $knobWrapper.append($label, $container); // label sopra il knob
 }
 
-if (!editMode && $valueLabel) $knobWrapper.append($valueLabel); // opzionale
+if (!editMode && $valueLabel) $knobWrapper.append($valueLabel);
+
 
 
                 
