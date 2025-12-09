@@ -631,11 +631,11 @@ function syncUIFromJSON(pedal) {
                     if (ctrl.border === "thick") {
                         $ctrl.find(".ctrl-knob-thick").prop("checked", true);
                     }
-                    if (ctrl["label-color"]) {
+                    if (ctrl["knob-label-color"]) {
                         $ctrl.find(".ctrl-knob-label-color-enable").prop("checked", true);
                         $ctrl.find(".ctrl-knob-label-color").prop("disabled", false).val(ctrl["knob-label-color"]);
                     }
-                    if (ctrl["label-background"]) {
+                    if (ctrl["knob-label-background"]) {
                         $ctrl.find(".ctrl-knob-label-background-enable").prop("checked", true);
                         $ctrl.find(".ctrl-knob-label-background").prop("disabled", false).val(ctrl["knob-label-background"]);
                     }
