@@ -158,8 +158,8 @@ function renderPedalControls(pedal, $pedalDiv) {
                     })
                     .css("--indicator-color", knobIndicator)
                     .attr("data-control-label", control.label)
-                    .css("data-control-label", labelColor)
-                    .css("data-control-label", labelBackground);
+                    .css("label-top", labelColor)
+                    .css("label-top", labelBackground);
 
                 let $tooltip = null;
                 let $tooltipText = null;
