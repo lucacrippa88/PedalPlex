@@ -259,7 +259,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 }
 
                 if (labelBackground) {
-                    $label.css("padding", "2px 4px");
+                    $label.css("padding", "0px 4px");
                     $label.css("border-radius", "3px");
                     $label.css("background-color", labelBackground);
                 }
