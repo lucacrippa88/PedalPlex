@@ -177,7 +177,7 @@ function buildJSON() {
 
     // Published: editable via custom select (defaults to draft if not set)
     const selectedText = $("#pedal-published-button").text().trim().toLowerCase();
-    const validStatuses = ["draft", "private", "reviewing", "public"];
+    const validStatuses = ["draft", "private", "reviewing", "template", "public"];
     pedal.published = validStatuses.includes(selectedText) ? selectedText : "draft";
 
 
