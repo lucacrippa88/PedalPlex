@@ -183,9 +183,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 knob.css("transform", `rotate(${rotation}deg)`);
 
                 let $valueLabel = null;
-                // if (!editMode && control.values && Array.isArray(control.values)) {
-                //     $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
-                // }
+
                 if (control.values && Array.isArray(control.values)) {
                     $valueLabel = $("<div>")
                         .addClass("knob-value-label")
@@ -287,16 +285,35 @@ function renderPedalControls(pedal, $pedalDiv) {
                   .addClass("knob-wrapper") // aggiungi classe per gestione CSS
                   .css({ display: "flex", flexDirection: "column", alignItems: "center" });
 
-                // qui controlli la posizione del label
-                if (control.labelPos === "inverted") {
-                  $knobWrapper.addClass("label-under"); // classe CSS per label sotto
-                  $knobWrapper.append($container, $label); // label sotto il knob
+                // Qui controllo la posizione del label (se sopra o sotto, più il margine se sotto)
+                // if (isLabelInverted === "inverted") {
+                //   $knobWrapper.addClass("label-under"); // classe CSS per label sotto
+                //   $knobWrapper.append($container, $label); // label sotto il knob
+                // } else {
+                //   $knobWrapper.addClass("label-over"); // classe CSS per label sopra
+                //   $knobWrapper.append($label, $container); // label sopra il knob
+                // }
+
+                if (isLabelInverted === "inverted") {
+                    $knobWrapper.addClass("label-under");
+
+                    // Calcola margine top dinamico in base alla dimensione del knob
+                    let labelMarginTop = isSmall ? "5px" : isLarge ? "10px" : isXLarge ? "15px" : "8px";
+
+                    $label.css({
+                        "margin-top": labelMarginTop,
+                        "text-align": "center"
+                    });
+
+                    $knobWrapper.append($container, $label); // label sotto il knob
                 } else {
-                  $knobWrapper.addClass("label-over"); // classe CSS per label sopra
-                  $knobWrapper.append($label, $container); // label sopra il knob
+                    $knobWrapper.addClass("label-over");
+                    $knobWrapper.append($label, $container); // label sopra
                 }
 
-                if (!editMode && $valueLabel) $knobWrapper.append($valueLabel);
+
+                // if (!editMode && $valueLabel) $knobWrapper.append($valueLabel);
+                if ($valueLabel) $knobWrapper.append($valueLabel);
                 // ---------------------
 
                 if (typeof control.position === "string") {
