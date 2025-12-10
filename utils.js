@@ -248,18 +248,33 @@ function renderPedalControls(pedal, $pedalDiv) {
  
                 let $label;
 
+                // if (control.position === "under-top" && control.type === "smallknob") {
+                //     $label = $("<div>").css({
+                //         position: "absolute",
+                //         "margin-left": "4px",
+                //         "margin-top": "45px",
+                //         transform: "translateY(-50%)",
+                //         "white-space": "nowrap",
+                //         "font-size": "10px"
+                //     }).text(control.label);
+                // } else {
+                //     $label = $("<div>").addClass("label-top").text(control.label);
+                // }
                 if (control.position === "under-top" && control.type === "smallknob") {
                     $label = $("<div>").css({
                         position: "absolute",
-                        "margin-left": "4px",
-                        "margin-top": "45px",
-                        transform: "translateY(-50%)",
+                        top: "45px",          // distanza verticale sotto il knob
+                        left: "50%",          // centro orizzontale del knob
+                        transform: "translateX(-50%)",
                         "white-space": "nowrap",
-                        "font-size": "10px"
+                        "font-size": "10px",
+                        color: labelColor     // applica il colore del label se definito
                     }).text(control.label);
                 } else {
                     $label = $("<div>").addClass("label-top").text(control.label);
+                    if (labelColor) $label.css("color", labelColor);
                 }
+
 
                 // 🔥 Applica colore e background in entrambi i casi
                 if (labelColor) {
@@ -280,6 +295,11 @@ function renderPedalControls(pedal, $pedalDiv) {
 
                 if (!editMode && $tooltip) {
                   $container.append($tooltip);
+                }
+
+                // Se è under-top e smallknob, appendo anche il label qui dentro
+                if (control.position === "under-top" && control.type === "smallknob") {
+                    $container.append($label);
                 }
 
                 let $knobWrapper = $("<div>")
