@@ -295,22 +295,12 @@ function renderPedalControls(pedal, $pedalDiv) {
                 // }
 
                 if (isLabelInverted === "inverted") {
-                    $knobWrapper.addClass("label-under");
-
-                    // Calcola margine top dinamico in base alla dimensione del knob
-                    let labelMarginTop = isSmall ? "5px" : isLarge ? "10px" : isXLarge ? "15px" : "8px";
-
-                    $label.css({
-                        "margin-top": labelMarginTop,
-                        "text-align": "center"
-                    });
-
-                    $knobWrapper.append($container, $label); // label sotto il knob
+                  $knobWrapper.addClass("label-under"); // classe CSS per label sotto
+                  $knobWrapper.append($container, $label); // label sotto il knob
                 } else {
-                    $knobWrapper.addClass("label-over");
-                    $knobWrapper.append($label, $container); // label sopra
+                  $knobWrapper.addClass("label-over"); // classe CSS per label sopra
+                  $knobWrapper.append($label, $container); // label sopra il knob
                 }
-
 
                 // if (!editMode && $valueLabel) $knobWrapper.append($valueLabel);
                 if ($valueLabel) $knobWrapper.append($valueLabel);
