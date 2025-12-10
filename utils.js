@@ -293,34 +293,76 @@ function renderPedalControls(pedal, $pedalDiv) {
                 if (typeof control.position === "string") {
                     const pos = control.position;
 
-                    // under-top logic
-                    if (pos.includes("under-top") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append($("<div>").css("margin-top", "-53px").append($label, $container));
-                        return;
-                    }
+                    // // under-top logic
+                    // if (pos.includes("under-top") && $row.children().length > 0) {
+                    //     const $prev = $row.children().last();
+                    //     $prev.append($("<div>").css("margin-top", "-53px").append($label, $container));
+                    //     return;
+                    // }
 
-                    // align-top logic
-                    if (pos.includes("align-top-clearest") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append($("<div>").css("margin-top", "15px").append($label, $container));
-                        return;
-                    }
-                    if (pos.includes("align-top-clearer") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append($("<div>").css("margin-top", "0px").append($label, $container));
-                        return;
-                    }
-                    if (pos.includes("align-top-clear") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append($("<div>").css("margin-top", "-14px").append($label, $container));
-                        return;
-                    }
-                    if (pos.includes("align-top") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append($("<div>").css("margin-top", "-23px").append($label, $container));
-                        return;
-                    }
+                    // // align-top logic
+                    // if (pos.includes("align-top-clearest") && $row.children().length > 0) {
+                    //     const $prev = $row.children().last();
+                    //     $prev.append($("<div>").css("margin-top", "15px").append($label, $container));
+                    //     return;
+                    // }
+                    // if (pos.includes("align-top-clearer") && $row.children().length > 0) {
+                    //     const $prev = $row.children().last();
+                    //     $prev.append($("<div>").css("margin-top", "0px").append($label, $container));
+                    //     return;
+                    // }
+                    // if (pos.includes("align-top-clear") && $row.children().length > 0) {
+                    //     const $prev = $row.children().last();
+                    //     $prev.append($("<div>").css("margin-top", "-14px").append($label, $container));
+                    //     return;
+                    // }
+                    // if (pos.includes("align-top") && $row.children().length > 0) {
+                    //     const $prev = $row.children().last();
+                    //     $prev.append($("<div>").css("margin-top", "-23px").append($label, $container));
+                    //     return;
+                    // }
+                    // funzione helper per creare il wrapper corretto
+function makeWrapper(marginTop) {
+    return $("<div>").css({
+        "margin-top": marginTop,
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center"
+    });
+}
+
+// under-top logic
+if (pos.includes("under-top") && $row.children().length > 0) {
+    const $prev = $row.children().last();
+    $prev.append(makeWrapper("-53px").append($label, $container));
+    return;
+}
+
+// align-top logic
+if (pos.includes("align-top-clearest") && $row.children().length > 0) {
+    const $prev = $row.children().last();
+    $prev.append(makeWrapper("15px").append($label, $container));
+    return;
+}
+
+if (pos.includes("align-top-clearer") && $row.children().length > 0) {
+    const $prev = $row.children().last();
+    $prev.append(makeWrapper("0px").append($label, $container));
+    return;
+}
+
+if (pos.includes("align-top-clear") && $row.children().length > 0) {
+    const $prev = $row.children().last();
+    $prev.append(makeWrapper("-14px").append($label, $container));
+    return;
+}
+
+if (pos.includes("align-top") && $row.children().length > 0) {
+    const $prev = $row.children().last();
+    $prev.append(makeWrapper("-23px").append($label, $container));
+    return;
+}
+
 
                     // Vertical adjustments
                     if (pos.includes("highest")) { $knobWrapper.css("margin-top", "-25px"); }
@@ -1104,21 +1146,6 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
   if (window.currentUser && pedal.author) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
-
-    // if (isAdmin || isAuthor) {
-    //   const authorText = isAdmin
-    //     ? `by: ${pedal.author}, ${pedal.published}` // admin sees all
-    //     : `by: ${pedal.author}, ${pedal.published}`; // regular user sees their own
-
-    //   // Add this info only if not in pedalboard page
-    //   if (pedalboardPage == false) {
-    //     const $authorDiv = $("<div>")
-    //       .addClass("pedal-author")
-    //       .text(authorText);
-    //     $pedalDiv.prepend($authorDiv);
-    //   }
-    // }
-
 
     if (isAdmin || isAuthor) {
       const authorText = isAdmin
