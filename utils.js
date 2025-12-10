@@ -177,7 +177,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                     $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
                     $tooltip.append($caret, $tooltipText);
                 }
-
+ 
                 const rotation = getRotationFromValue(control, control.value);
                 knob.data("rotation", rotation);
                 knob.css("transform", `rotate(${rotation}deg)`);
