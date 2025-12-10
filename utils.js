@@ -158,8 +158,6 @@ function renderPedalControls(pedal, $pedalDiv) {
                     })
                     .css("--indicator-color", knobIndicator)
                     .attr("data-control-label", control.label);
-                    // .css("label-top", labelColor)
-                    // .css("label-top", labelBackground);
 
                 let $tooltip = null;
                 let $tooltipText = null;
@@ -185,9 +183,20 @@ function renderPedalControls(pedal, $pedalDiv) {
                 knob.css("transform", `rotate(${rotation}deg)`);
 
                 let $valueLabel = null;
-                if (!editMode && control.values && Array.isArray(control.values)) {
-                    $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
+                // if (!editMode && control.values && Array.isArray(control.values)) {
+                //     $valueLabel = $("<div>").addClass("knob-value-label").text(control.value);
+                // }
+                if (control.values && Array.isArray(control.values)) {
+                    $valueLabel = $("<div>")
+                        .addClass("knob-value-label")
+                        .text(control.value)
+                        .css({
+                            textAlign: "center",
+                            fontSize: isSmall ? "10px" : isLarge ? "14px" : isXLarge ? "18px" : "12px", // dimensione in base al tipo
+                            marginTop: "4px" // distanza dal knob
+                        });
                 }
+
 
 
                 // Drag handler
@@ -293,87 +302,58 @@ function renderPedalControls(pedal, $pedalDiv) {
                 if (typeof control.position === "string") {
                     const pos = control.position;
 
-                    // // under-top logic
-                    // if (pos.includes("under-top") && $row.children().length > 0) {
-                    //     const $prev = $row.children().last();
-                    //     $prev.append($("<div>").css("margin-top", "-53px").append($label, $container));
-                    //     return;
-                    // }
+                    // wrapper standard (centrato)
+                    function makeWrapper(marginTop) {
+                        return $("<div>").css({
+                            "margin-top": marginTop,
+                            "display": "flex",
+                            "flex-direction": "column",
+                            "align-items": "center"
+                        });
+                    }
 
-                    // // align-top logic
-                    // if (pos.includes("align-top-clearest") && $row.children().length > 0) {
-                    //     const $prev = $row.children().last();
-                    //     $prev.append($("<div>").css("margin-top", "15px").append($label, $container));
-                    //     return;
-                    // }
-                    // if (pos.includes("align-top-clearer") && $row.children().length > 0) {
-                    //     const $prev = $row.children().last();
-                    //     $prev.append($("<div>").css("margin-top", "0px").append($label, $container));
-                    //     return;
-                    // }
-                    // if (pos.includes("align-top-clear") && $row.children().length > 0) {
-                    //     const $prev = $row.children().last();
-                    //     $prev.append($("<div>").css("margin-top", "-14px").append($label, $container));
-                    //     return;
-                    // }
-                    // if (pos.includes("align-top") && $row.children().length > 0) {
-                    //     const $prev = $row.children().last();
-                    //     $prev.append($("<div>").css("margin-top", "-23px").append($label, $container));
-                    //     return;
-                    // }
-                    // funzione helper per creare il wrapper corretto
-// wrapper standard (centrato)
-function makeWrapper(marginTop) {
-    return $("<div>").css({
-        "margin-top": marginTop,
-        "display": "flex",
-        "flex-direction": "column",
-        "align-items": "center"
-    });
-}
-
-// wrapper speciale per under-top (NO align-items)
-function makeWrapperUnderTop(marginTop) {
-    return $("<div>").css({
-        "margin-top": marginTop,
-        "display": "flex",
-        "flex-direction": "column"
-        // niente align-items:center
-    });
-}
+                    // wrapper speciale per under-top (NO align-items)
+                    function makeWrapperUnderTop(marginTop) {
+                        return $("<div>").css({
+                            "margin-top": marginTop,
+                            "display": "flex",
+                            "flex-direction": "column"
+                            // niente align-items:center
+                        });
+                    }
 
 
-// under-top logic (NO ALIGN, come richiesto)
-if (pos.includes("under-top") && $row.children().length > 0) {
-    const $prev = $row.children().last();
-    $prev.append(makeWrapperUnderTop("-53px").append($label, $container));
-    return;
-}
+                    // under-top logic (NO ALIGN, come richiesto)
+                    if (pos.includes("under-top") && $row.children().length > 0) {
+                        const $prev = $row.children().last();
+                        $prev.append(makeWrapperUnderTop("-53px").append($label, $container));
+                        return;
+                    }
 
-// align-top logic (tutti gli altri *centrati*)
-if (pos.includes("align-top-clearest") && $row.children().length > 0) {
-    const $prev = $row.children().last();
-    $prev.append(makeWrapper("15px").append($label, $container));
-    return;
-}
+                    // align-top logic (tutti gli altri *centrati*)
+                    if (pos.includes("align-top-clearest") && $row.children().length > 0) {
+                        const $prev = $row.children().last();
+                        $prev.append(makeWrapper("15px").append($label, $container));
+                        return;
+                    }
 
-if (pos.includes("align-top-clearer") && $row.children().length > 0) {
-    const $prev = $row.children().last();
-    $prev.append(makeWrapper("0px").append($label, $container));
-    return;
-}
+                    if (pos.includes("align-top-clearer") && $row.children().length > 0) {
+                        const $prev = $row.children().last();
+                        $prev.append(makeWrapper("0px").append($label, $container));
+                        return;
+                    }
 
-if (pos.includes("align-top-clear") && $row.children().length > 0) {
-    const $prev = $row.children().last();
-    $prev.append(makeWrapper("-14px").append($label, $container));
-    return;
-}
+                    if (pos.includes("align-top-clear") && $row.children().length > 0) {
+                        const $prev = $row.children().last();
+                        $prev.append(makeWrapper("-14px").append($label, $container));
+                        return;
+                    }
 
-if (pos.includes("align-top") && $row.children().length > 0) {
-    const $prev = $row.children().last();
-    $prev.append(makeWrapper("-23px").append($label, $container));
-    return;
-}
+                    if (pos.includes("align-top") && $row.children().length > 0) {
+                        const $prev = $row.children().last();
+                        $prev.append(makeWrapper("-23px").append($label, $container));
+                        return;
+                    }
 
 
 
