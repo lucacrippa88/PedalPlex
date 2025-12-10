@@ -286,15 +286,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                   .css({ display: "flex", flexDirection: "column", alignItems: "center" });
 
                 // Qui controllo la posizione del label (se sopra o sotto, più il margine se sotto)
-                // if (isLabelInverted === "inverted") {
-                //   $knobWrapper.addClass("label-under"); // classe CSS per label sotto
-                //   $knobWrapper.append($container, $label); // label sotto il knob
-                // } else {
-                //   $knobWrapper.addClass("label-over"); // classe CSS per label sopra
-                //   $knobWrapper.append($label, $container); // label sopra il knob
-                // }
-
-                if (isLabelInverted === "inverted") {
+                if (control.labelPos === "inverted") {
                   $knobWrapper.addClass("label-under"); // classe CSS per label sotto
                   $knobWrapper.append($container, $label); // label sotto il knob
                 } else {
