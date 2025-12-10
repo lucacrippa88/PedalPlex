@@ -192,7 +192,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                         .text(control.value)
                         .css({
                             textAlign: "center",
-                            marginTop: isSmall ? "10px" : isLarge ? "14px" : isXLarge ? "18px" : "12px", // dimensione in base al tipo
+                            marginTop: isSmall ? "-28px" : isLarge ? "0px" : isXLarge ? "22px" : "-13px", // margine in base al tipo
                         });
                 }
 
