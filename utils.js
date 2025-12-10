@@ -322,6 +322,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                     //     return;
                     // }
                     // funzione helper per creare il wrapper corretto
+// wrapper standard (centrato)
 function makeWrapper(marginTop) {
     return $("<div>").css({
         "margin-top": marginTop,
@@ -331,14 +332,25 @@ function makeWrapper(marginTop) {
     });
 }
 
-// under-top logic
+// wrapper speciale per under-top (NO align-items)
+function makeWrapperUnderTop(marginTop) {
+    return $("<div>").css({
+        "margin-top": marginTop,
+        "display": "flex",
+        "flex-direction": "column"
+        // niente align-items:center
+    });
+}
+
+
+// under-top logic (NO ALIGN, come richiesto)
 if (pos.includes("under-top") && $row.children().length > 0) {
     const $prev = $row.children().last();
-    $prev.append(makeWrapper("-53px").append($label, $container));
+    $prev.append(makeWrapperUnderTop("-53px").append($label, $container));
     return;
 }
 
-// align-top logic
+// align-top logic (tutti gli altri *centrati*)
 if (pos.includes("align-top-clearest") && $row.children().length > 0) {
     const $prev = $row.children().last();
     $prev.append(makeWrapper("15px").append($label, $container));
@@ -362,6 +374,7 @@ if (pos.includes("align-top") && $row.children().length > 0) {
     $prev.append(makeWrapper("-23px").append($label, $container));
     return;
 }
+
 
 
                     // Vertical adjustments
