@@ -264,12 +264,6 @@ function renderPedalControls(pedal, $pedalDiv) {
                 if (labelColor) {
                     $label.css("color", labelColor);
                 }
-
-                // if (control.labelPos === "inverted") {
-                //   let labelMarginTop = isSmall ? "5px" : isLarge ? "10px" : isXLarge ? "15px" : "8px";
-                //   $label.css("margin-top", labelMarginTop)
-                // }
-
                 if (labelBackground) {
                     $label.css("padding", "0px 4px");
                     $label.css("border-radius", "3px");
@@ -293,8 +287,9 @@ function renderPedalControls(pedal, $pedalDiv) {
                 let labelMarginTop
 
                 // Qui controllo la posizione del label (se sopra o sotto, più il margine se sotto)
+                // MANCA DA GESTIRE IL BORDO THICK ======================================================
                 if (control.labelPos === "inverted") {
-                  labelMarginTop = isSmall ? "5px" : isLarge ? "10px" : isXLarge ? "15px" : "8px";
+                  labelMarginTop = isSmall ? "-13px" : isLarge ? "12px" : isXLarge ? "36px" : "0px";
                   $label.css("margin-top", labelMarginTop)
                   $knobWrapper.addClass("label-under"); // classe CSS per label sotto
                   $knobWrapper.append($container, $label); // label sotto il knob
