@@ -81,14 +81,18 @@ function getRotationFromValue(control, value) {
   let angleRange, angleOffset;
 
   switch (control.span) {
-  case "all": angleRange = 360; angleOffset = 0; break;
-  case "three-quarters": angleRange = 270; angleOffset = -135; break;
-  case "half": angleRange = 180; angleOffset = 180; break;
-  case "half-shift": angleRange = -180; angleOffset = 30; break;
-  case "half-shift-inverted": angleRange = 180; angleOffset = 150; break;
-  case "quarter": angleRange = -90; angleOffset = 30; break;
-  case "tenToTwo": angleRange = 120; angleOffset = 300; break;
-  default: angleRange = 270; angleOffset = -135;
+    case "all": angleRange = 360; angleOffset = 0; break;
+    case "three-quarters": angleRange = 270; angleOffset = -135; break;
+    case "half": angleRange = 180; angleOffset = 180; break;
+    case "half-shift": angleRange = -180; angleOffset = 30; break;
+    case "half-shift-inverted": angleRange = 180; angleOffset = 150; break;
+    case "quarter": angleRange = -90; angleOffset = 30; break;
+    case "tenToTwo": angleRange = 120; angleOffset = 300; break;
+    case "twelveToSix": angleRange = 180; angleOffset = 0; break;
+    case "tenToEight": angleRange = -60; angleOffset = 300; break;
+    case "sevenToEleven": angleRange = 120; angleOffset = 210; break;
+    case "oneToFive": angleRange = 120; angleOffset = 30; break;
+    default: angleRange = 270; angleOffset = -135;
   }
 
   const ratio = (index - min) / range;
