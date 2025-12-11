@@ -136,8 +136,21 @@ $("#pedalFilterInput").on("input", debounce(async function() {
     positionDropdown();
 
     try {
-        const res = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`);
+        // const res = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`);
+        // const data = await res.json();
+        const authToken = localStorage.getItem('authToken');
+
+        const res = await fetch(
+            `https://www.cineteatrosanluigi.it/plex/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + authToken // <--- Passiamo il JWT
+                }
+            }
+        );
         const data = await res.json();
+
         dropdown.innerHTML = '';
 
         if (!data || !Array.isArray(data) || data.length === 0) {
