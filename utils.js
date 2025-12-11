@@ -290,7 +290,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 if (control.labelPos === "inverted") {
                   // Set different margin for different knob sizes and presence of thick border
                   if (control.border === "thick") { 
-                    labelMarginTop = isSmall ? "-3px" : isLarge ? "22px" : isXLarge ? "46px" : "10px";
+                    labelMarginTop = isSmall ? "1px" : isLarge ? "28px" : isXLarge ? "52px" : "15px";
                   } else { 
                     labelMarginTop = isSmall ? "-13px" : isLarge ? "12px" : isXLarge ? "36px" : "0px";
                   }
