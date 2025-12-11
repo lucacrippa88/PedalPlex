@@ -295,7 +295,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 // Qui controllo la posizione del label (se sopra o sotto, più il margine se sotto)
                 if (control.labelPos === "inverted") {
                   labelMarginTop = isSmall ? "5px" : isLarge ? "10px" : isXLarge ? "15px" : "8px";
-                  $knobWrapper.css("margin-top", labelMarginTop)
+                  $label.css("margin-top", labelMarginTop)
                   $knobWrapper.addClass("label-under"); // classe CSS per label sotto
                   $knobWrapper.append($container, $label); // label sotto il knob
                 } else {
