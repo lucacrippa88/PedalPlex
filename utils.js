@@ -90,7 +90,7 @@ function getRotationFromValue(control, value) {
     case "tenToTwo": angleRange = 120; angleOffset = 300; break;
     case "twelveToSix": angleRange = 180; angleOffset = 0; break;
     case "elevenToSeven": angleRange = -120; angleOffset = 330; break;
-    case "sevenToEleven": angleRange = 120; angleOffset = 210; break;
+    case "elevenToNineteen": angleRange = -240; angleOffset = 330; break;
     case "oneToFive": angleRange = 120; angleOffset = 30; break;
     default: angleRange = 270; angleOffset = -135;
   }
