@@ -185,8 +185,8 @@ function renderPedalControls(pedal, $pedalDiv) {
                 let $valueLabel = null;
 
                 if (control.values && Array.isArray(control.values)) {
-                  if (control.labelPos === "inverted") {
-                    if (control.border === "thick") {
+                  if (control.labelPos === "inverted") { // inverted
+                    if (control.border === "thick") { // thick border
                       $valueLabel = $("<div>")
                           .addClass("knob-value-label")
                           .text(control.value)
@@ -194,7 +194,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                               textAlign: "center",
                               marginTop: isSmall ? "-76px" : isLarge ? "-108px" : isXLarge ? "-132px" : "-95px", // margine in base al tipo
                           });
-                    } else if (control.border !== "thick"){
+                    } else if (control.border !== "thick") { // non thick border
                       $valueLabel = $("<div>")
                           .addClass("knob-value-label")
                           .text(control.value)
@@ -202,15 +202,15 @@ function renderPedalControls(pedal, $pedalDiv) {
                               textAlign: "center",
                               marginTop: isSmall ? "-67px" : isLarge ? "-93px" : isXLarge ? "-116px" : "-79px", // margine in base al tipo
                           });
-                    } else {
-                      $valueLabel = $("<div>")
-                          .addClass("knob-value-label")
-                          .text(control.value)
-                          .css({
-                              textAlign: "center",
-                              marginTop: isSmall ? "-28px" : isLarge ? "0px" : isXLarge ? "22px" : "-13px", // margine in base al tipo
-                          });
                     }
+                  } else { // not inveted
+                    $valueLabel = $("<div>")
+                        .addClass("knob-value-label")
+                        .text(control.value)
+                        .css({
+                            textAlign: "center",
+                            marginTop: isSmall ? "-28px" : isLarge ? "0px" : isXLarge ? "22px" : "-13px", // margine in base al tipo
+                        });
                   }
                 }
 
