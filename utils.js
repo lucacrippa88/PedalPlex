@@ -197,7 +197,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                           .text(control.value)
                           .css({
                               textAlign: "center",
-                              marginTop: isSmall ? "-76px" : isLarge ? "-108px" : isXLarge ? "-132px" : "-93px", // margine in base al tipo
+                              marginTop: isSmall ? "-76px" : isLarge ? "-108px" : isXLarge ? "-132px" : "-89px", // margine in base al tipo
                           });
                     } else if (control.border !== "thick") { // non thick border
                       $valueLabel = $("<div>")
