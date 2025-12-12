@@ -1167,28 +1167,61 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
   } 
 
 
-  // Add author label below pedal based on userRole
-  if (window.currentUser && pedal.author) {
-    const isAdmin = userRole === 'admin';
-    const isAuthor = window.currentUser.username === pedal.author;
+  // // Add author label below pedal based on userRole
+  // if (window.currentUser && pedal.author) {
+  //   const isAdmin = userRole === 'admin';
+  //   const isAuthor = window.currentUser.username === pedal.author;
 
-    if (isAdmin || isAuthor) {
-      const authorText = isAdmin
-        ? `by: ${pedal.author}, ${pedal.published}`
-        : `by: ${pedal.author}, ${pedal.published}`;
+  //   if (isAdmin || isAuthor) {
+  //     const authorText = isAdmin
+  //       ? `by: ${pedal.author}, ${pedal.published}`
+  //       : `by: ${pedal.author}, ${pedal.published}`;
 
-      if (pedalboardPage == false) {
-        const $authorDiv = $("<div>").addClass("pedal-author");
+  //     if (pedalboardPage == false) {
+  //       const $authorDiv = $("<div>").addClass("pedal-author");
         
-        const $authorText = $("<span>").text(authorText);
+  //       // Se verificato → aggiungi badge a scudo blu con V bianca
+  //       if (pedal.verified == "true") {
+  //         const $verifiedBadge = $(`
+  //           <span class="verified-badge">
+  //             <svg viewBox="0 0 24 24" class="verified-icon">
+  //               <path d="
+  //                 M12 1.5
+  //                 L3 6
+  //                 V12
+  //                 C3 17 7 21 12 22.5
+  //                 C17 21 21 17 21 12
+  //                 V6
+  //                 L12 1.5
+  //                 Z
+  //               "></path>
+  //               <text x="12" y="15" text-anchor="middle" font-size="10" fill="white" font-weight="bold">V</text>
+  //             </svg>
+  //           </span>
+  //         `);
 
-        $authorDiv.append($authorText);
+  //         $authorDiv.append($verifiedBadge);
+  //       }
 
-        $pedalDiv.prepend($authorDiv);
-      }
-    }
-  }
-  
+  //       const $authorText = $("<span>").text(authorText);
+
+  //       $authorDiv.append($authorText);
+
+  //       $pedalDiv.prepend($authorDiv);
+  //     }
+  //   }
+
+  // }
+
+  // Add author label below pedal (visible to all users)
+if (pedal.author && pedalboardPage == false) {
+  // Testo autore + stato pubblicazione
+  const authorText = pedal.published
+    ? `by: ${pedal.author}, ${pedal.published}`
+    : `by: ${pedal.author}`;
+
+  const $authorDiv = $("<div>").addClass("pedal-author");
+
   // Se verificato → aggiungi badge a scudo blu con V bianca
   if (pedal.verified == "true") {
     const $verifiedBadge = $(`
@@ -1208,9 +1241,15 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
         </svg>
       </span>
     `);
-
     $authorDiv.append($verifiedBadge);
   }
+
+  const $authorText = $("<span>").text(authorText);
+  $authorDiv.append($authorText);
+
+  $pedalDiv.prepend($authorDiv);
+}
+
 
   // Add edit button if admin OR current user is the author. Disable for author if status is reviewing or public
   if (window.currentUser) {
