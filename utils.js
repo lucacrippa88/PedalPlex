@@ -209,13 +209,23 @@ function renderPedalControls(pedal, $pedalDiv) {
                           });
                     }
                   } else { // not inveted
-                    $valueLabel = $("<div>")
-                        .addClass("knob-value-label")
-                        .text(control.value)
-                        .css({
-                            textAlign: "center",
-                            marginTop: isSmall ? "-28px" : isLarge ? "0px" : isXLarge ? "22px" : "-13px", // margine in base al tipo
-                        });
+                    if (control.border === "thick") { // thick border
+                      $valueLabel = $("<div>")
+                          .addClass("knob-value-label")
+                          .text(control.value)
+                          .css({
+                              textAlign: "center",
+                              marginTop: isSmall ? "-28px" : isLarge ? "0px" : isXLarge ? "22px" : "-13px", // margine in base al tipo
+                          });
+                    } else {
+                      $valueLabel = $("<div>")
+                          .addClass("knob-value-label")
+                          .text(control.value)
+                          .css({
+                              textAlign: "center",
+                              marginTop: isSmall ? "-12px" : isLarge ? "13px" : isXLarge ? "37px" : "2px", // margine in base al tipo
+                          });
+                    }
                   }
                 }
 
