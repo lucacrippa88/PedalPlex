@@ -215,7 +215,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                           .text(control.value)
                           .css({
                               textAlign: "center",
-                              marginTop: isSmall ? "-28px" : isLarge ? "0px" : isXLarge ? "22px" : "-13px", // margine in base al tipo
+                              marginTop: isSmall ? "-12px" : isLarge ? "13px" : isXLarge ? "37px" : "2px", // margine in base al tipo
                           });
                     } else {
                       $valueLabel = $("<div>")
@@ -223,7 +223,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                           .text(control.value)
                           .css({
                               textAlign: "center",
-                              marginTop: isSmall ? "-12px" : isLarge ? "13px" : isXLarge ? "37px" : "2px", // margine in base al tipo
+                              marginTop: isSmall ? "-28px" : isLarge ? "0px" : isXLarge ? "22px" : "-13px", // margine in base al tipo
                           });
                     }
                   }
