@@ -1224,7 +1224,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
   // }
 
 // =======================================================
-// AUTHOR + VERIFIED + PUBLISHED (policy finale corretta)
+// AUTHOR + VERIFIED + PUBLISHED (FIX DEFINITIVO)
 // =======================================================
 if (pedalboardPage === false && pedal.author && pedal.authorId) {
 
@@ -1259,41 +1259,37 @@ if (pedalboardPage === false && pedal.author && pedal.authorId) {
   let showAuthor = false;
 
   if (isAdminUser) {
-    // admin vede sempre l'autore
     showAuthor = true;
-  } else {
-    // non admin vede l'autore solo se NON è admin
-    if (!authorIsAdmin) {
-      showAuthor = true;
-    }
+  } else if (!authorIsAdmin) {
+    showAuthor = true;
   }
 
-  // Se non c'è nulla da mostrare, esci
-  if (!$verifiedBadge && !showAuthor) {
-    return;
-  }
+  // CREA IL CONTAINER SOLO SE SERVE
+  if ($verifiedBadge || showAuthor) {
 
-  const $authorDiv = $("<div>").addClass("pedal-author");
+    const $authorDiv = $("<div>").addClass("pedal-author");
 
-  // Badge prima del testo
-  if ($verifiedBadge) {
-    $authorDiv.append($verifiedBadge);
-  }
-
-  // Testo autore (+ published solo per admin)
-  if (showAuthor) {
-    let authorText = `By: ${pedal.author}`;
-
-    if (isAdminUser && pedal.published) {
-      authorText += `, ${pedal.published}`;
+    // Badge prima del testo
+    if ($verifiedBadge) {
+      $authorDiv.append($verifiedBadge);
     }
 
-    const $authorText = $("<span>").text(authorText);
-    $authorDiv.append($authorText);
-  }
+    // Testo autore (+ published solo per admin)
+    if (showAuthor) {
+      let authorText = `By: ${pedal.author}`;
 
-  $pedalDiv.prepend($authorDiv);
+      if (isAdminUser && pedal.published) {
+        authorText += `, ${pedal.published}`;
+      }
+
+      const $authorText = $("<span>").text(authorText);
+      $authorDiv.append($authorText);
+    }
+
+    $pedalDiv.prepend($authorDiv);
+  }
 }
+
 
 
 
