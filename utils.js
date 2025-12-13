@@ -1223,16 +1223,19 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
 
   // }
 
-  // =======================================================
-// AUTHOR + VERIFIED (stessa riga)
 // =======================================================
-if (pedalboardPage === false && pedal.author) {
+// AUTHOR + VERIFIED (stessa riga, policy finale)
+// =======================================================
+if (pedalboardPage === false && pedal.author && pedal.authorId) {
 
-  const ADMIN_USERNAME = 'user_admin';
+  const ADMIN_AUTHOR_ID = 'user_admin';
 
   const isAdminUser  = userRole === 'admin';
-  const isAuthorUser = window.currentUser && window.currentUser.username === pedal.author;
-  const authorIsAdmin = pedal.author === ADMIN_USERNAME;
+  const isAuthorUser =
+    window.currentUser &&
+    window.currentUser.username === pedal.authorId;
+
+  const authorIsAdmin = pedal.authorId === ADMIN_AUTHOR_ID;
 
   let showAuthor = false;
 
@@ -1280,6 +1283,7 @@ if (pedalboardPage === false && pedal.author) {
     $pedalDiv.prepend($authorDiv);
   }
 }
+
 
 
 
