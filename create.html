@@ -735,7 +735,7 @@ $("#editor, #controls").on("input change keyup", "input, select, textarea", func
 // Handle moderation flow
 $(function() {
   let userRole = parent?.window?.currentUser?.role || "user";
-  const allowedForUser = userRole === "admin" ? ["draft","private","reviewing","template","public"] : ["draft","private"];
+  const allowedForUser = userRole === "admin" ? ["draft", "private", "reviewing", "template", "public"] : ["draft", "private"];
 
 
   $("#pedal-published-options li").each(function() {

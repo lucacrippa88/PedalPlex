@@ -676,7 +676,7 @@ function setupEditPedalHandler(pedals) {
       }
 
       // Optional: disable certain buttons for "locked" pedals
-      const isLockedStatus = ["reviewing", "public"].includes((pedal.published || "").toLowerCase());
+      const isLockedStatus = ["template", "reviewing", "public"].includes((pedal.published || "").toLowerCase());
       let boolConfirmBtn = true;
       let boolDenyBtn = true;
       let boolCancelBtn = true;
@@ -1177,134 +1177,78 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
   } 
 
 
-  // Add author label below pedal based on userRole
-  // if (window.currentUser && pedal.author) {
-  //   const isAdmin = userRole === 'admin';
-  //   const isAuthor = window.currentUser.username === pedal.author;
+  // =======================================================
+  // AUTHOR + VERIFIED + PUBLISHED (FIX DEFINITIVO)
+  // =======================================================
+  if (pedalboardPage === false && pedal.author && pedal.authorId) {
 
-  //   if (isAdmin || isAuthor) {
-  //     const authorText = isAdmin
-  //       ? `by: ${pedal.author}, ${pedal.published}`
-  //       : `by: ${pedal.author}, ${pedal.published}`;
+    const ADMIN_AUTHOR_ID = 'user_admin';
+    const isAdminUser = userRole === 'admin';
+    const authorIsAdmin = pedal.authorId === ADMIN_AUTHOR_ID;
 
-  //     if (pedalboardPage == false) { // non sono in pedalboard, ma in catalog (preset ha un'altra funzione di rendering)
-  //       const $authorDiv = $("<div>").addClass("pedal-author");
-        
-  //       // Se verificato → aggiungi badge a scudo blu con V bianca
-  //       if (pedal.verified == "true") {
-  //         const $verifiedBadge = $(`
-  //           <span class="verified-badge">
-  //             <svg viewBox="0 0 24 24" class="verified-icon">
-  //               <path d="
-  //                 M12 1.5
-  //                 L3 6
-  //                 V12
-  //                 C3 17 7 21 12 22.5
-  //                 C17 21 21 17 21 12
-  //                 V6
-  //                 L12 1.5
-  //                 Z
-  //               "></path>
-  //               <text x="12" y="15" text-anchor="middle" font-size="10" fill="white" font-weight="bold">V</text>
-  //             </svg>
-  //           </span>
-  //         `);
-
-  //         $authorDiv.append($verifiedBadge);
-  //       }
-
-  //       const $authorText = $("<span>").text(authorText);
-
-  //       $authorDiv.append($authorText);
-
-  //       $pedalDiv.prepend($authorDiv);
-  //     }
-  //   }
-
-  // }
-
-// =======================================================
-// AUTHOR + VERIFIED + PUBLISHED (FIX DEFINITIVO)
-// =======================================================
-if (pedalboardPage === false && pedal.author && pedal.authorId) {
-
-  const ADMIN_AUTHOR_ID = 'user_admin';
-  const isAdminUser = userRole === 'admin';
-  const authorIsAdmin = pedal.authorId === ADMIN_AUTHOR_ID;
-
-  // BADGE VERIFIED → sempre visibile se esiste
-  let $verifiedBadge = null;
-  if (pedal.verified == "true") {
-    $verifiedBadge = $(`
-      <span class="verified-badge">
-        <svg viewBox="0 0 24 24" class="verified-icon">
-          <path d="
-            M12 1.5
-            L3 6
-            V12
-            C3 17 7 21 12 22.5
-            C17 21 21 17 21 12
-            V6
-            L12 1.5
-            Z
-          "></path>
-          <text x="12" y="15" text-anchor="middle"
-                font-size="10" fill="white" font-weight="bold">V</text>
-        </svg>
-      </span>
-    `);
-  }
-
-  // DECIDE SE MOSTRARE L'AUTORE
-  let showAuthor = false;
-
-  if (isAdminUser) {
-    showAuthor = true;
-  } else if (!authorIsAdmin) {
-    showAuthor = true;
-  }
-
-  // CREA IL CONTAINER SOLO SE SERVE
-  if ($verifiedBadge || showAuthor) {
-
-    const $authorDiv = $("<div>").addClass("pedal-author");
-
-    // Badge prima del testo
-    if ($verifiedBadge) {
-      $authorDiv.append($verifiedBadge);
+    // BADGE VERIFIED → sempre visibile se esiste
+    let $verifiedBadge = null;
+    if (pedal.verified == "true") {
+      $verifiedBadge = $(`
+        <span class="verified-badge">
+          <svg viewBox="0 0 24 24" class="verified-icon">
+            <path d="
+              M12 1.5
+              L3 6
+              V12
+              C3 17 7 21 12 22.5
+              C17 21 21 17 21 12
+              V6
+              L12 1.5
+              Z
+            "></path>
+            <text x="12" y="15" text-anchor="middle"
+                  font-size="10" fill="white" font-weight="bold">V</text>
+          </svg>
+        </span>
+      `);
     }
 
-    // Testo autore (+ published solo per admin)
-    if (showAuthor) {
-      // let authorText = `By: ${pedal.author}`;
+    // DECIDE SE MOSTRARE L'AUTORE
+    let showAuthor = false;
 
-      // if (isAdminUser && pedal.published) {
-      //   authorText += `, ${pedal.published}`;
-      // }
-      let authorText = `By: ${pedal.author}`;
+    if (isAdminUser) {
+      showAuthor = true;
+    } else if (!authorIsAdmin) {
+      showAuthor = true;
+    }
 
-      const published = (pedal.published || '').toLowerCase();
-      const showPublishedStatuses = ['private', 'draft', 'reviewing', 'template'];
+    // CREA IL CONTAINER SOLO SE SERVE
+    if ($verifiedBadge || showAuthor) {
 
-      if (showPublishedStatuses.indexOf(published) !== -1) {
-        authorText += `, ${published}`;
+      const $authorDiv = $("<div>").addClass("pedal-author");
+
+      // Badge prima del testo
+      if ($verifiedBadge) {
+        $authorDiv.append($verifiedBadge);
       }
 
+      // Testo autore (+ published solo per admin)
+      if (showAuthor) {
+        let authorText = `By: ${pedal.author}`;
 
-      const $authorText = $("<span>").text(authorText);
-      $authorDiv.append($authorText);
+        const published = (pedal.published || '').toLowerCase();
+        const showPublishedStatuses = ['private', 'draft', 'reviewing', 'template'];
+
+        if (showPublishedStatuses.indexOf(published) !== -1) {
+          authorText += `, ${published}`;
+        }
+
+        const $authorText = $("<span>").text(authorText);
+        $authorDiv.append($authorText);
+      }
+
+      $pedalDiv.prepend($authorDiv);
     }
-
-    $pedalDiv.prepend($authorDiv);
   }
-}
 
 
-
-
-
-
-  // Add edit button if admin OR current user is the author. Disable for author if status is reviewing or public
+  // Add edit button if admin OR current user is the author
   if (window.currentUser) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
