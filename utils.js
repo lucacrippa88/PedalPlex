@@ -1248,14 +1248,15 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
   }
 
 
-  // Add edit button if admin OR current user is the author
+  // Add edit button if admin OR current user is the author OR is a template
   if (window.currentUser) {
     const isAdmin = userRole === 'admin';
     const isAuthor = window.currentUser.username === pedal.author;
+    const isTemplate = (pedal.published || '').toLowerCase() === 'template';
 
     // Show these only if not in pedalboard page
     if (pedalboardPage == false) {
-      if (isAdmin || isAuthor) {
+      if (isAdmin || isAuthor || isTemplate) {
         const $editBtn = $("<button>")
           .addClass("edit-btn showDesktop")
           .attr("title", "Edit pedal JSON")
