@@ -663,8 +663,22 @@ function setupEditPedalHandler(pedals) {
     }
 
     const openSwal = () => {
-      // SECURITY: rely only on server-provided flag
-      if (!pedal.canEdit) {
+      // // SECURITY: rely only on server-provided flag
+      // if (!pedal.canEdit) {
+      //   Swal.fire({
+      //     title: 'Permission denied',
+      //     text: 'You are not allowed to edit this gear.',
+      //     icon: 'error',
+      //     confirmButtonText: 'OK',
+      //     customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+      //   });
+      //   return;
+      // }
+      const isAdmin = window.currentUser && window.currentUser.role === 'admin';
+      const isAuthor = window.currentUser && window.currentUser.username === pedal.author;
+      const isTemplate = (pedal.published || '').toLowerCase() === 'template';
+
+      if (!(isAdmin || isAuthor || isTemplate)) {
         Swal.fire({
           title: 'Permission denied',
           text: 'You are not allowed to edit this gear.',
@@ -674,6 +688,7 @@ function setupEditPedalHandler(pedals) {
         });
         return;
       }
+
 
       // Optional: disable certain buttons for "locked" pedals
       const isLockedStatus = ["template", "reviewing", "public"].includes((pedal.published || "").toLowerCase());
