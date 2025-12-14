@@ -1276,11 +1276,20 @@ if (pedalboardPage === false && pedal.author && pedal.authorId) {
 
     // Testo autore (+ published solo per admin)
     if (showAuthor) {
+      // let authorText = `By: ${pedal.author}`;
+
+      // if (isAdminUser && pedal.published) {
+      //   authorText += `, ${pedal.published}`;
+      // }
       let authorText = `By: ${pedal.author}`;
 
-      if (isAdminUser && pedal.published) {
-        authorText += `, ${pedal.published}`;
+      const published = (pedal.published || '').toLowerCase();
+      const showPublishedStatuses = ['private', 'draft', 'reviewing', 'template'];
+
+      if (showPublishedStatuses.indexOf(published) !== -1) {
+        authorText += `, ${published}`;
       }
+
 
       const $authorText = $("<span>").text(authorText);
       $authorDiv.append($authorText);
