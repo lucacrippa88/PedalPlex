@@ -21,6 +21,12 @@ function buildJSON() {
         controls: []
     };
 
+    // --- SAFETY: _id / _rev normalization (required for template duplicate) ---
+    if (!pedal._id && pedal._rev) {
+        delete pedal._rev;
+    }
+
+
     // --- Inside color logic ---
     const insideType = $("#inside-type-select").val();
     if (insideType === "color") {
