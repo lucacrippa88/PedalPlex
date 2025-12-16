@@ -374,7 +374,7 @@ function initCatalog(userRole) {
         $div.attr("data-published", (pedal.published || "draft").toLowerCase());
 
         // 🔒 nascondi i template di default
-        if (published === "template") { $div.hide(); }
+        if (pedal.published === "template") { $div.hide(); }
 
         resultsDiv.append($div);
       });
