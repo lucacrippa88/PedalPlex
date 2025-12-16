@@ -195,20 +195,52 @@ function updatePedalCounts(activeFilter = null) {
 }
 
 // Unified filtering function
+// function filterPedalsByStatus(filter) {
+//   const currentUsername = (window.currentUser?.username || "").toLowerCase();
+//   $(".pedal-catalog").each(function() {
+//     const status = ($(this).data("published") || "").toLowerCase();
+//     const author = ($(this).data("author") || "").toLowerCase();
+//     const isMine = (status === "public" && author === currentUsername);
+//     const isUserCreated = author && author !== "admin";
+//     if (filter === "all") $(this).show();
+//     else if (filter === "publicByMe") $(this).toggle(isMine);
+//     else if (filter === "user") $(this).toggle(isUserCreated);
+//     else $(this).toggle(status === filter);
+//   });
+//   updatePedalCounts(filter);
+// }
 function filterPedalsByStatus(filter) {
   const currentUsername = (window.currentUser?.username || "").toLowerCase();
-  $(".pedal-catalog").each(function() {
+
+  $(".pedal-catalog").each(function () {
     const status = ($(this).data("published") || "").toLowerCase();
     const author = ($(this).data("author") || "").toLowerCase();
+
     const isMine = (status === "public" && author === currentUsername);
     const isUserCreated = author && author !== "admin";
-    if (filter === "all") $(this).show();
-    else if (filter === "publicByMe") $(this).toggle(isMine);
-    else if (filter === "user") $(this).toggle(isUserCreated);
-    else $(this).toggle(status === filter);
+
+    if (filter === "all") {
+      // ❌ escludi i template
+      $(this).toggle(status !== "template");
+    }
+    else if (filter === "template") {
+      // ✅ mostra SOLO template
+      $(this).toggle(status === "template");
+    }
+    else if (filter === "publicByMe") {
+      $(this).toggle(isMine);
+    }
+    else if (filter === "user") {
+      $(this).toggle(isUserCreated);
+    }
+    else {
+      $(this).toggle(status === filter);
+    }
   });
+
   updatePedalCounts(filter);
 }
+
 
 // CSS for link look + active highlight + mobile hide counters except total
 const style = document.createElement("style");
@@ -340,6 +372,9 @@ function initCatalog(userRole) {
 
         $div.attr("data-author", pedal.author || "");
         $div.attr("data-published", (pedal.published || "draft").toLowerCase());
+
+        // 🔒 nascondi i template di default
+        if (published === "template") { $div.hide(); }
 
         resultsDiv.append($div);
       });
