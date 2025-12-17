@@ -320,7 +320,7 @@ function initCatalog(userRole) {
 
       $("#catalog-global-loader").remove();
 
-      // pedals.sort((a, b) => a._id.localeCompare(b._id));
+      pedals.sort((a, b) => a._id.localeCompare(b._id));
 
       pedals.forEach(pedal => {
         const $pedalDiv = renderPedal(pedal, userRole);
@@ -365,7 +365,7 @@ function initCatalog(userRole) {
       // RENDER COMPLETO (override totale e sicuro)
       resultsDiv.empty();
 
-      // fullPedals.sort((a, b) => a._id.localeCompare(b._id));
+      fullPedals.sort((a, b) => a._id.localeCompare(b._id));
 
       fullPedals.forEach(pedal => {
         const $div = renderPedal(pedal, userRole);
