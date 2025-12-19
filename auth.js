@@ -202,14 +202,14 @@ function onGoogleLogin(response) {
                 localStorage.setItem("authToken", res.token);
                 Swal.fire({
                     icon: "success",
-                    title: "Login effettuato",
+                    title: "You are logged in!",
                     timer: 1000,
                     showConfirmButton: false
                 }).then(() => {
                     window.location.href = "preset";
                 });
             } else {
-                Swal.fire("Errore login Google", res.error || "", "error");
+                Swal.fire("Login error", res.error || "", "error");
             }
         },
         error: function(xhr) {
