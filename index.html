@@ -92,18 +92,17 @@
 
 
   
-<!-- Assicurati di avere il CSS/JS di Carbon già incluso (come nel tuo index.html) -->
-
 <section style="margin:5rem auto; max-width:800px; text-align:center;">
   <h2 style="font-size:2rem; margin-bottom:2rem; color:#fff;">Why Sign Up for Free?</h2>
 
   <!-- Glow border container -->
   <div style="
     border-radius: 12px;
-    padding: 8px;
+    padding: 10px; /* thickness of glow */
     background: linear-gradient(45deg, rgb(70, 41, 100), rgb(156, 84, 213), rgb(94, 226, 240));
     box-shadow: 0 0 15px rgba(94, 226, 240, 0.6), 0 0 25px rgba(156, 84, 213, 0.4);
   ">
+    <!-- Actual table -->
     <table class="bx--data-table bx--data-table--zebra" style="
       width:100%; 
       text-align:center; 
@@ -122,31 +121,24 @@
       <tbody>
         <tr style="border-top:1px solid #555;">
           <td style="padding:12px;">Pedalboards Saved</td>
-          <td style="padding:12px;">
-            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="#da1e28" width="20" height="20" viewBox="0 0 16 16" class="bx--btn__icon">
-              <path d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 11-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
-            </svg> 1 local
-          </td>
-          <td style="padding:12px;">
-            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="#24a148" width="20" height="20" viewBox="0 0 16 16" class="bx--btn__icon">
-              <path d="M6.003 10.803l-3.28-3.28a.75.75 0 111.06-1.06l2.22 2.22 4.72-4.72a.75.75 0 111.06 1.06l-5.25 5.25a.75.75 0 01-1.06 0z"></path>
-            </svg> Unlimited
-          </td>
+          <td style="padding:12px;"><span style="color:rgb(156, 84, 213); font-size:1.2rem;">&#10060;</span> 1 local</td>
+          <td style="padding:12px;"><span style="color:rgb(94, 226, 240); font-size:1.2rem;">&#10003;</span> Unlimited</td>
         </tr>
         <tr style="border-top:1px solid #555;">
           <td style="padding:12px;">Presets Created</td>
-          <td style="padding:12px;">
-            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="#da1e28" width="20" height="20" viewBox="0 0 16 16">
-              <path d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 11-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
-            </svg> 1 preset (not saved)
-          </td>
-          <td style="padding:12px;">
-            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="#24a148" width="20" height="20" viewBox="0 0 16 16">
-              <path d="M6.003 10.803l-3.28-3.28a.75.75 0 111.06-1.06l2.22 2.22 4.72-4.72a.75.75 0 111.06 1.06l-5.25 5.25a.75.75 0 01-1.06 0z"></path>
-            </svg> Unlimited, fully saved
-          </td>
+          <td style="padding:12px;"><span style="color:rgb(156, 84, 213); font-size:1.2rem;">&#10060;</span> 1 preset (not saved)</td>
+          <td style="padding:12px;"><span style="color:rgb(94, 226, 240); font-size:1.2rem;">&#10003;</span> Unlimited, fully saved</td>
         </tr>
-        <!-- Aggiungi altre righe come necessario -->
+        <tr style="border-top:1px solid #555;">
+          <td style="padding:12px;">Access Across Devices</td>
+          <td style="padding:12px;"><span style="color:rgb(156, 84, 213); font-size:1.2rem;">&#10060;</span> Local only</td>
+          <td style="padding:12px;"><span style="color:rgb(94, 226, 240); font-size:1.2rem;">&#10003;</span> Sync across devices</td>
+        </tr>
+        <tr style="border-top:1px solid #555;">
+          <td style="padding:12px;">Future Features</td>
+          <td style="padding:12px;"><span style="color:rgb(156, 84, 213); font-size:1.2rem;">&#10060;</span> Limited</td>
+          <td style="padding:12px;"><span style="color:rgb(94, 226, 240); font-size:1.2rem;">&#10003;</span> All upcoming free features</td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -156,7 +148,6 @@
     <a href="catalog" class="bx--btn bx--btn--secondary">Continue as Guest</a>
   </div>
 </section>
-
 
 
 
