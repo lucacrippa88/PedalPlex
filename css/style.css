@@ -797,3 +797,32 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
+
+
+.pedalplex-glow {
+  position: relative;
+  border-radius: 14px;
+  padding: 10px; /* distanza tra glow e tabella */
+  z-index: 0;
+}
+
+/* Glow layer */
+.pedalplex-glow::before {
+  content: "";
+  position: absolute;
+  inset: -14px; /* estensione glow */
+  border-radius: 18px;
+
+  background: linear-gradient(
+    90deg,
+    rgb(70, 41, 100),
+    rgb(156, 84, 213),
+    rgb(94, 226, 240)
+  );
+
+  filter: blur(20px);
+  opacity: 0.8;
+
+  z-index: -1;
+  pointer-events: none;
+}
