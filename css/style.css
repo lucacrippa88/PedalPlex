@@ -810,7 +810,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 .pedalplex-glow::before {
   content: "";
   position: absolute;
-  inset: -14px; /* estensione glow */
+  inset: -8px; /* estensione glow */
   border-radius: 18px;
 
   background: linear-gradient(
@@ -820,7 +820,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     rgb(94, 226, 240)
   );
 
-  filter: blur(20px);
+  filter: blur(8px);
   opacity: 0.8;
 
   z-index: -1;
