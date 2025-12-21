@@ -884,25 +884,55 @@ function applyPresetToPedalboard(presetDoc) {
 }
 
 
+
+
+      <a href="preset_catalog" class="showDesktop bx--btn bx--btn--primary" type="button" style="margin-left: auto!important; max-width:500px!important;">Back to Rigs
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M26 30H24V20H12V30H10V20a2.0021 2.0021 0 012-2H24a2.0021 2.0021 0 012 2zM5.17 16L2 19.17 3.411 20.589 8 16 3.42 11.42 2 12.83 5.17 16zM24 14H12a2.0021 2.0021 0 01-2-2V2h2V12H24V2h2V12A2.0021 2.0021 0 0124 14z"></path>
+        </svg>   
+      </a>  
+
 // Create preset function
 async function createPreset() {
   // -------------------------------
   // 1. Prompt for preset name
   // -------------------------------
-  const {
-    value: presetName
-  } = await Swal.fire({
+  // const {
+  //   value: presetName
+  // } = await Swal.fire({
+  //   title: 'Enter new Plex name',
+  //   input: 'text',
+  //   inputLabel: 'Plex Name',
+  //   inputPlaceholder: 'Type your new Plex name here',
+  //   showCancelButton: true,
+  //   customClass: {
+  //     confirmButton: "bx--btn bx--btn--primary",
+  //     cancelButton: "bx--btn bx--btn--secondary"
+  //   },
+  //   inputValidator: value => !value && 'You must enter a Plex name!'
+  // });
+
+  const { value: presetName, isConfirmed, isDenied } = await Swal.fire({
     title: 'Enter new Plex name',
     input: 'text',
     inputLabel: 'Plex Name',
     inputPlaceholder: 'Type your new Plex name here',
     showCancelButton: true,
+    showDenyButton: true,
+    confirmButtonText: 'Save',
+    denyButtonText: 'Browse Plex catalog',
     customClass: {
       confirmButton: "bx--btn bx--btn--primary",
-      cancelButton: "bx--btn bx--btn--secondary"
+      cancelButton: "bx--btn bx--btn--secondary",
+      denyButton: "bx--btn bx--btn--tertiary"
     },
     inputValidator: value => !value && 'You must enter a Plex name!'
   });
+
+  if (isDenied) {
+    // Redirect alla nuova pagina
+    window.location.href = 'preset-catalog';
+  }
 
   if (!presetName) return; // Cancelled
 
