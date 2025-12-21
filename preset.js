@@ -126,7 +126,7 @@ async function initPreset() {
     })
   })
   .then(res => {
-    if (!res.ok) throw new Error(`Pedalboard fetch failed: ${res.status}`);
+    if (!res.ok) throw new Error(`Rig fetch failed: ${res.status}`);
     return res.json();
   })
   .then(async data => {

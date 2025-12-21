@@ -201,7 +201,7 @@ function attachAddFolderListener() {
     const board = window.allPedalboards.find(b => b._id === selectedBoardId || b.id === selectedBoardId);
     if (!board) return Swal.fire({ title: 'Error', text: 'Board not found', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
 
-    const boardName = board.board_name || 'Unnamed Pedalboard';
+    const boardName = board.board_name || 'Unnamed Rig';
     const { value: folderName, isConfirmed } = await Swal.fire({
       title: `New Folder for "${boardName}"`,
       input: 'text',
