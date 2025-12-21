@@ -126,7 +126,7 @@ function initPedalboard(userRole) {
         $("#pedalboard-controls").css("display", "none");
         resultsDiv.innerHTML = `You don't have any Rig yet.<br><br>
           <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary" type="button" aria-label="Create New Pedalboard">
-            Create pedalboard
+            Create Rig
           </button>`;
         return;
       }

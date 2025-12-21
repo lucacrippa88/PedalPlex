@@ -302,13 +302,13 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
       })
     });
 
-    if (!res.ok) throw new Error('Failed to fetch presets');
+    if (!res.ok) throw new Error('Failed to fetch Plexes');
 
     const data = await res.json();
     hidePresetLoader();
 
     if (data.error) {
-      console.error('Error fetching presets:', data.error);
+      console.error('Error fetching Plexes:', data.error);
       if (callback) callback();
       return;
     }
@@ -353,8 +353,8 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
   if (!currentPresetId) {
     Swal.fire({
       icon: "warning",
-      title: "No Preset Selected",
-      text: "Please select a preset to rename or assign to a folder.",
+      title: "No Plex Selected",
+      text: "Please select a Plex to rename or assign to a folder.",
       confirmButtonText: "Ok",
       customClass: {
         confirmButton: "bx--btn bx--btn--primary"
@@ -365,7 +365,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
   const preset = Object.values(window.presetMap).find(p => p._id === currentPresetId);
   if (!preset || !currentPresetRev) {
-    Swal.fire("Error", "Missing revision (_rev) info for the preset.", "error");
+    Swal.fire("Error", "Missing revision (_rev) info for the Plex.", "error");
     return;
   }
 
@@ -402,14 +402,14 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
 
   const htmlContent = `
-    <input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="Preset Name" value="${currentPresetName}">
+    <input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="Plex Name" value="${currentPresetName}">
     ${folderSelectHtml}
   `;
 
 
 
   const result = await Swal.fire({
-    title: "Edit Preset name and folder",
+    title: "Edit Plex name and folder",
     html: htmlContent,
     showCancelButton: true,
     showDenyButton: true,
@@ -421,7 +421,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       const newName = document.getElementById("presetNameInput").value.trim();
       const folderId = document.getElementById("folderSelectInput").value;
       if (!newName) {
-        Swal.showValidationMessage("Preset name cannot be empty!");
+        Swal.showValidationMessage("Plex name cannot be empty!");
         return false;
       }
       return {
@@ -450,14 +450,14 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
           const folderId = document.getElementById("folderSelectInput").value;
 
           if (!newName) {
-            Swal.showValidationMessage("Preset name cannot be empty!");
+            Swal.showValidationMessage("Plex name cannot be empty!");
             return;
           }
 
           // Get the preset object at modal open time
           const presetObj = window.presetMap[currentPresetId]; // use the modal's current preset
           if (!presetObj) {
-            Swal.fire("Error", "Preset not found", "error");
+            Swal.fire("Error", "Plex not found", "error");
             return;
           }
 
@@ -512,13 +512,13 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     if (data.success) {
       Swal.fire({
           icon: "success",
-          title: "Preset Deleted",
+          title: "Plex Deleted",
           timer: 1000,
           showConfirmButton: false
         })
         .then(() => location.reload());
     } else {
-      Swal.fire("Error", data.error || "Failed to delete preset", "error");
+      Swal.fire("Error", data.error || "Failed to delete Plex", "error");
     }
     return;
   }
@@ -533,8 +533,8 @@ if (result.value) {
   if (!newName || sanitizedName !== newName) {
     await Swal.fire({
       icon: 'error',
-      title: 'Invalid preset name',
-      text: 'Preset name cannot be empty and cannot contain forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+      title: 'Invalid Plex name',
+      text: 'Plex name cannot be empty and cannot contain forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
@@ -557,7 +557,7 @@ if (result.value) {
       await Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Preset name rejected by server. Please use only allowed characters.',
+        text: 'Plex name rejected by server. Please use only allowed characters.',
         customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false
       });
@@ -571,7 +571,7 @@ if (result.value) {
       await Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Failed to update folder assignment for preset.',
+        text: 'Failed to update folder assignment for Plex.',
         customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false
       });
@@ -591,8 +591,8 @@ if (result.value) {
 
     await Swal.fire({
       icon: "success",
-      title: "Preset Updated",
-      text: `Preset "${sanitizedName}" saved and assigned to folder.`,
+      title: "Plex Updated",
+      text: `Plex "${sanitizedName}" saved and assigned to folder.`,
       timer: 1000,
       showConfirmButton: false
     });
@@ -602,12 +602,12 @@ if (result.value) {
 
   } catch (err) {
     Swal.close();
-    console.error("Preset save error:", err);
+    console.error("Plex save error:", err);
 
     await Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: err.message || 'Unexpected error occurred while saving preset.',
+      text: err.message || 'Unexpected error occurred while saving Plex.',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
@@ -680,7 +680,7 @@ async function duplicatePreset(presetId, newName, folderId) {
     if (!original) {
       Swal.fire({
         title: 'Error',
-        text: 'Preset not found',
+        text: 'Plex not found',
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary'
@@ -692,7 +692,7 @@ async function duplicatePreset(presetId, newName, folderId) {
 
     // Show loading UI
     Swal.fire({
-      title: 'Duplicating preset...',
+      title: 'Duplicating Plex...',
       allowOutsideClick: false,
       didOpen: () => Swal.showLoading()
     });
@@ -706,7 +706,7 @@ async function duplicatePreset(presetId, newName, folderId) {
       Swal.close();
       Swal.fire({
         title: 'Error',
-        text: 'No pedalboard selected',
+        text: 'No Rig selected',
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary'
@@ -732,7 +732,7 @@ async function duplicatePreset(presetId, newName, folderId) {
       Swal.close();
       Swal.fire({
         title: 'Error',
-        text: 'Could not duplicate preset',
+        text: 'Could not duplicate Plex',
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary'
@@ -765,8 +765,8 @@ async function duplicatePreset(presetId, newName, folderId) {
     // Show success briefly (auto-closes), await it, then reload
     await Swal.fire({
       icon: 'success',
-      title: 'Preset Duplicated',
-      text: `Preset duplicated as "${duplicated.preset_name}"`,
+      title: 'Plex Duplicated',
+      text: `Plex duplicated as "${duplicated.preset_name}"`,
       timer: 1000,
       showConfirmButton: false,
       allowOutsideClick: false
@@ -780,7 +780,7 @@ async function duplicatePreset(presetId, newName, folderId) {
     Swal.close();
     Swal.fire({
       title: 'Error',
-      text: 'Unexpected error duplicating preset',
+      text: 'Unexpected error duplicating Plex.',
       icon: 'error',
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary'
@@ -804,7 +804,7 @@ function applyPresetToPedalboard(presetDoc) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: `Missing pedal on pedalboard: ${presetPedalId}`,
+        text: `Missing gear on Rig: ${presetPedalId}`,
         confirmButtonText: 'Ok',
         customClass: {
           confirmButton: 'bx--btn bx--btn--danger'
@@ -892,16 +892,16 @@ async function createPreset() {
   const {
     value: presetName
   } = await Swal.fire({
-    title: 'Enter new preset name',
+    title: 'Enter new Plex name',
     input: 'text',
-    inputLabel: 'Preset Name',
-    inputPlaceholder: 'Type your new preset name here',
+    inputLabel: 'Plex Name',
+    inputPlaceholder: 'Type your new Plex name here',
     showCancelButton: true,
     customClass: {
       confirmButton: "bx--btn bx--btn--primary",
       cancelButton: "bx--btn bx--btn--secondary"
     },
-    inputValidator: value => !value && 'You must enter a preset name!'
+    inputValidator: value => !value && 'You must enter a Plex name!'
   });
 
   if (!presetName) return; // Cancelled
@@ -926,7 +926,7 @@ async function createPreset() {
   const {
     value: selectedFolderId
   } = await Swal.fire({
-    title: 'Select folder for this preset',
+    title: 'Select folder for this Plex',
     html: folderHtml,
     showCancelButton: true,
     customClass: {
@@ -948,7 +948,7 @@ async function createPreset() {
   if (!selectedBoardId) {
     Swal.fire({
       title: 'Error',
-      text: 'No pedalboard selected',
+      text: 'No Rig selected',
       icon: 'error',
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary'
@@ -968,8 +968,8 @@ async function createPreset() {
   const sanitizedBoardName = removeForbiddenChars(selectedBoardName);
   if (sanitizedBoardName !== selectedBoardName) {
     Swal.fire({
-      title: 'Invalid preset name',
-      text: 'Board name contained forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+      title: 'Invalid Rig name',
+      text: 'Rig name contained forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
       icon: 'error',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
@@ -981,8 +981,8 @@ async function createPreset() {
   const sanitizedPresetName = removeForbiddenChars(presetName);
   if (sanitizedPresetName !== presetName) {
     Swal.fire({
-      title: 'Invalid preset name',
-      text: 'Preset name contained forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+      title: 'Invalid Plex name',
+      text: 'Plex name contained forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
       icon: 'error',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
@@ -1018,7 +1018,7 @@ async function createPreset() {
     if (!res.ok || !data.ok) {
       Swal.fire({
         title: 'Error',
-        text: 'Failed to create preset: ' + (data.error || 'Unknown error'),
+        text: 'Failed to create Plex: ' + (data.error || 'Unknown error'),
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary'
@@ -1050,7 +1050,7 @@ async function createPreset() {
   if (selectedFolderId) {
     const moveResult = await movePresetToFolder(newPresetId, selectedFolderId || null);
     if (!moveResult || moveResult.ok !== true) {
-      console.error('Failed to assign newly created preset to folder', moveResult);
+      console.error('Failed to assign newly created Plex to folder', moveResult);
     }
   }
 
@@ -1071,7 +1071,7 @@ async function createPreset() {
   // -------------------------------
   Swal.fire({
     title: 'Success',
-    text: `Preset "${presetName}" created${selectedFolderId ? ' and added to folder.' : '.'}`,
+    text: `Plex "${presetName}" created${selectedFolderId ? ' and added to folder.' : '.'}`,
     icon: 'success',
     customClass: {
       confirmButton: 'bx--btn bx--btn--primary',
@@ -1213,7 +1213,7 @@ function savePedalboard() {
     // Save pedalboard state keyed by board ID
     localStorage.setItem(`pedalboard_state_${boardId}`, JSON.stringify(window.pedalboard));
   } catch (err) {
-    console.error("Failed to save pedalboard:", err);
+    console.error("Failed to save Rig:", err);
   }
 }
 
@@ -1295,7 +1295,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
   filteredPresets.forEach(p => {
     const opt = document.createElement('option');
     opt.value = p._id;
-    opt.textContent = p.preset_name || 'Untitled Preset';
+    opt.textContent = p.preset_name || 'Untitled Plex';
     presetSelect.appendChild(opt);
   });
 
@@ -1304,7 +1304,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     // Nessun preset disponibile
     const placeholder = document.createElement('option');
     placeholder.value = '';
-    placeholder.textContent = '-- No presets --';
+    placeholder.textContent = '-- No Plexes --';
     placeholder.disabled = true;
     placeholder.selected = true;
     presetSelect.innerHTML = '';
@@ -1334,7 +1334,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     if (selectedPreset.board_id === window.pedalboard._id) {
       applyPresetToPedalboard(selectedPreset);
     } else {
-      console.warn('Selected preset does not belong to current pedalboard:', selectedPreset);
+      console.warn('Selected Plex does not belong to current Rig:', selectedPreset);
       renderFullPedalboard(window.pedalboard.pedals);
       currentPresetId = null;
       currentPresetName = null;
@@ -1371,7 +1371,7 @@ async function createPresetOnServer(presetData) {
     const data = await res.json();
 
     if (!res.ok || !data.ok) { // check 'ok' from PHP
-      console.error("Failed to create preset:", data);
+      console.error("Failed to create Plex:", data);
       return null;
     }
 
@@ -1417,7 +1417,7 @@ async function initGuestMode() {
     boards = [
       {
         _id: "guest_board_1",
-        board_name: "Guest Board",
+        board_name: "Guest Rig",
         pedals: []
       }
     ];
@@ -1503,7 +1503,7 @@ async function initGuestMode() {
   const pedalIds = window.pedalboard.pedals.map(p => p.pedal_id);
 
   if (pedalIds.length > 0) {
-    console.log("Fetching pedals via GET_PEDALS_BY_IDS (guest):", pedalIds);
+    console.log("Fetching gears via GET_PEDALS_BY_IDS (guest):", pedalIds);
 
     const response = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
       method: "POST",
@@ -1535,7 +1535,6 @@ async function initGuestMode() {
     });
   }
 
-  console.log("Guest mode initialized with GET_PEDALS_BY_IDS support.");
 }
 
 

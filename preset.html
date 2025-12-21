@@ -96,7 +96,7 @@
               </svg>
             </div>
           </div>
-          <p data-inline-loading-text-active class="bx--inline-loading__text">Loading presets...</p>
+          <p data-inline-loading-text-active class="bx--inline-loading__text">Loading Plexes...</p>
         </div>
       </div>
       <button id="renamePresetBtn" class="showDesktop bx--btn bx--btn--secondary" type="button">Edit
@@ -145,7 +145,7 @@
   <!-- Fallback content -->
   <div id="noPedalboardsContainer" style="display: none; text-align: center; margin-top: 7em;">
     <p style="font-size: 1.25em;">No pedalboards found.</p>
-    <a href="pedalboard.html" class="bx--btn bx--btn--primary" style="margin-top: 1em;">Manage Pedalboard</a>
+    <a href="pedalboard.html" class="bx--btn bx--btn--primary" style="margin-top: 1em;">Manage Rigs</a>
   </div>
 
   <!-- Scripts -->
@@ -175,7 +175,7 @@ $(document).ready(function() {
     window.currentUser = null; // guest
     $('#loadingMessage').hide();
     $('#page-content, #preset-controls').show();
-    $('#preset-controls').html("<p>Login to organise your Presets in folders and save them!</p>");
+    $('#preset-controls').html("<p>Login to organise your Plexes in folders and save them!</p>");
     if (typeof initNavPreset === 'function') initNavPreset();
     if (typeof initPreset === 'function') initPreset();
     $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn, #zoomIn, #zoomOut, #zoomReset')
@@ -226,7 +226,7 @@ $(document).ready(function() {
             window.currentUser = null;
             $('#loadingMessage').hide();
             $('#page-content, #preset-controls').show();
-            $('#preset-controls').html("<p>Login to organise your Presets in folders and save them!</p>");
+            $('#preset-controls').html("<p>Login to organise your Plexes in folders and save them!</p>");
             if (typeof initNavPreset === 'function') initNavPreset();
             if (typeof initPreset === 'function') initPreset();
             $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn, #zoomIn, #zoomOut, #zoomReset')

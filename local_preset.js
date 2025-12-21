@@ -61,7 +61,7 @@ function importGuestPresets(jsonStr) {
     localStorage.setItem("guestPresets", JSON.stringify(presets));
     return true;
   } catch (err) {
-    console.error("Errore import preset guest:", err);
+    console.error("Errore import Plex guest:", err);
     return false;
   }
 }
