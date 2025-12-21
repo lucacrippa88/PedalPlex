@@ -193,13 +193,13 @@ function attachAddFolderListener() {
   addFolderBtn.addEventListener('click', async () => {
     const pedalboardSelect = document.getElementById('pedalboardSelect');
     if (!pedalboardSelect?.value) {
-      Swal.fire({ title: 'Select Board', text: 'Please select a pedalboard.', icon: 'info', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
+      Swal.fire({ title: 'Select Rig', text: 'Please select a Rig.', icon: 'info', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
       return;
     }
 
     const selectedBoardId = pedalboardSelect.value;
     const board = window.allPedalboards.find(b => b._id === selectedBoardId || b.id === selectedBoardId);
-    if (!board) return Swal.fire({ title: 'Error', text: 'Board not found', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
+    if (!board) return Swal.fire({ title: 'Error', text: 'Rig not found', icon: 'error', customClass: { confirmButton: 'bx--btn bx--btn--primary' }, buttonsStyling: false });
 
     const boardName = board.board_name || 'Unnamed Rig';
     const { value: folderName, isConfirmed } = await Swal.fire({

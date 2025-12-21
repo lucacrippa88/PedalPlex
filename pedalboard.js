@@ -28,9 +28,9 @@ function initPedalboard(userRole) {
     resultsDiv.innerHTML = `
       <div style="text-align: center; margin-top: 40px;">
         <p style="font-size: 1.1em; margin-bottom: 20px;">
-          No pedalboard found. Create a new one!
+          No Rigs found. Create a new one!
         </p>
-        <button id="createBtn" class="bx--btn bx--btn--secondary">Create pedalboard</button>
+        <button id="createBtn" class="bx--btn bx--btn--secondary">Create a Rig</button>
       </div>`;
     window.allPedalboards = [];
     return;
