@@ -174,7 +174,7 @@ async function initPreset() {
       // Placeholder
       const placeholderOption = document.createElement('option');
       placeholderOption.value = '';
-      placeholderOption.textContent = '-- Select a pedalboard --';
+      placeholderOption.textContent = '-- Select a Rig --';
       placeholderOption.disabled = true;
       dropdown.appendChild(placeholderOption);
 
@@ -182,7 +182,7 @@ async function initPreset() {
       window.allPedalboards.forEach(pb => {
         const option = document.createElement('option');
         option.value = pb._id;
-        option.textContent = pb.board_name || 'Untitled Pedalboard';
+        option.textContent = pb.board_name || 'Untitled Rig';
         dropdown.appendChild(option);
       });
 
