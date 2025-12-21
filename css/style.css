@@ -802,7 +802,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 .pedalplex-glow {
   position: relative;
   border-radius: 14px;
-  padding: 10px; /* distanza tra glow e tabella */
+  padding: 8px; /* distanza tra glow e tabella */
   z-index: 0;
 }
 
@@ -810,7 +810,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 .pedalplex-glow::before {
   content: "";
   position: absolute;
-  inset: -8px; /* estensione glow */
+  inset: -5px; /* estensione glow */
   border-radius: 18px;
 
   background: linear-gradient(
