@@ -10,25 +10,25 @@ function initNavPreset() {
       <div class="pedalplex-logo"></div>
     </button>
     <a href="/PedalPlex/" style="text-decoration:none;" class="title">PedalPlex</a>
-    <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Presets</span>
+    <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Plexes</span>
   </div>
 
   <!-- Right: buttons -->
   <div class="rightButtons showDesktop" style="display: flex; align-items: center; gap: 1rem;">
 
-    <button id="savePstBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save preset" disabled
+    <button id="savePstBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Plex" disabled
       style="display: flex; align-items: center; gap: 0.5rem;">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
         <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
       </svg>
       Save
     </button>
-    <button id="createPstBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Preset"
+    <button id="createPstBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Plex"
       style="display: flex; align-items: center; gap: 0.5rem;">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
         <path d="M30 6L26 6 26 2 24 2 24 6 20 6 20 8 24 8 24 12 26 12 26 8 30 8 30 6zM24 15v7.5562A3.9552 3.9552 0 0022 22a4 4 0 104 4V15zM22 28a2 2 0 112-2A2.0027 2.0027 0 0122 28zM17 6H10A2.002 2.002 0 008 8V22.5562A3.9557 3.9557 0 006 22a4 4 0 104 4V8h7zM6 28a2 2 0 112-2A2.0023 2.0023 0 016 28z" stroke="currentColor"/>
       </svg>
-      Add preset
+      Add Plex
     </button>
         <button id="addFolderBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Folder"
       style="display: flex; align-items: center; gap: 0.5rem;">
@@ -43,14 +43,14 @@ function initNavPreset() {
 
   <div class="showMobile" style="display: flex; align-items: center; gap: 1rem;">
 
-    <button id="savePstBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save preset" disabled
+    <button id="savePstBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Plex" disabled
       style="display: flex; align-items: center; gap: 0.5rem;">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
         <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
       </svg>
       Save
     </button>
-    <button id="createPstBtnMobile" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Preset"
+    <button id="createPstBtnMobile" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Plex"
       style="display: flex; align-items: center; gap: 0.5rem;">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
         <path d="M30 6L26 6 26 2 24 2 24 6 20 6 20 8 24 8 24 12 26 12 26 8 30 8 30 6zM24 15v7.5562A3.9552 3.9552 0 0022 22a4 4 0 104 4V15zM22 28a2 2 0 112-2A2.0027 2.0027 0 0122 28zM17 6H10A2.002 2.002 0 008 8V22.5562A3.9557 3.9557 0 006 22a4 4 0 104 4V8h7zM6 28a2 2 0 112-2A2.0023 2.0023 0 016 28z" stroke="currentColor"/>
@@ -97,7 +97,7 @@ function initNavPreset() {
             el.disabled = true;
             el.classList.add('btn-disabled');
             el.addEventListener('click', () => {
-                Swal.fire("Guest Mode", "Preset editing is disabled in guest mode.", "info");
+                Swal.fire("Guest Mode", "Plex editing is disabled in guest mode.", "info");
             });
         }
     });
@@ -138,7 +138,7 @@ function initNavPreset() {
 
   // Save preset
   $('#savePstBtn, #savePstBtnMobile').on('click', async () => {
-    const presetName = $('#presetSelect option:selected').text().trim() || "Untitled Preset";
+    const presetName = $('#presetSelect option:selected').text().trim() || "Untitled Plex";
     const result = collectPedalControlValues(presetName);
     const pedalArray = result[presetName];
 
@@ -155,7 +155,7 @@ function initNavPreset() {
       pedalsObject[pedal.id] = { controls: flatControls };
     }
 
-    Swal.fire({ title: "Saving preset...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+    Swal.fire({ title: "Saving Plex...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
 
     const success = await savePreset(currentPresetId, {
       preset_name: presetName,
@@ -164,10 +164,10 @@ function initNavPreset() {
 
     if (success) {
       Swal.close()
-      Swal.fire({ icon: "success", title: "Preset Saved", text: `Preset "${presetName}" was successfully updated.`, timer: 1000, showConfirmButton: false })
+      Swal.fire({ icon: "success", title: "Plex Saved", text: `Plex "${presetName}" was successfully updated.`, timer: 1000, showConfirmButton: false })
       .then(() => location.reload());
     } else {
-      Swal.fire("Error", "Failed to save preset", "error");
+      Swal.fire("Error", "Failed to save Plex", "error");
     }
   });
 

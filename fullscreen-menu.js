@@ -114,8 +114,8 @@ window.fullscreenMenuHtml = `
 
   <div class="fullscreen-nav">
     <a href='/PedalPlex/' class="pedalplex-logo-fullscreen-menu"></a><br>
-    <a href="preset">Edit your presets</a>
-    <a href="pedalboard">Manage pedalboards</a>
+    <a href="preset">Edit your Plexes</a>
+    <a href="pedalboard">Manage Rigs</a>
     <a href="catalog">View gears catalog</a>
     <br><br>
     <span class="showMobile" style="color:#161616">

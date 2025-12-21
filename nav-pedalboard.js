@@ -45,7 +45,7 @@ function initNavPedalboard(userRole) {
               <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
             </g>
           </svg>
-          Create pedalboard
+          Create Rig
         </button>
       </div>
     </header>
