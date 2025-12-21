@@ -8,7 +8,7 @@ function initNavPedalboard(userRole) {
           <div class="pedalplex-logo"></div>
         </button>
         <a href="/PedalPlex/" style="text-decoration:none;" class="title">PedalPlex</a>
-        <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Pedalboards</span>
+        <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Rigs</span>
       </div>
       <div style="display: flex; align-items: center; gap: 1rem;">
         <span class="showDesktop" style="font-size: 0.75rem; opacity: 0.7;">Add gears</span>
@@ -37,7 +37,7 @@ function initNavPedalboard(userRole) {
           Save
         </button>
 
-        <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Pedalboard"
+        <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Rig"
                 style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <g transform="rotate(90 16 16)">

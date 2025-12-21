@@ -59,7 +59,7 @@ function initPedalboard(userRole) {
       dropdown.innerHTML = '';
       const option = document.createElement("option");
       option.value = 0;
-      option.textContent = window.pedalboard.board_name || "Guest Pedalboard";
+      option.textContent = window.pedalboard.board_name || "Guest Rig";
       dropdown.appendChild(option);
 
       renderPedalboard();
@@ -72,7 +72,7 @@ function initPedalboard(userRole) {
       });
     })
     .catch(err => {
-      console.error("Guest pedals fetch failed:", err);
+      console.error("Guest gears fetch failed:", err);
       resultsDiv.innerHTML = `<p style="color:red;">Error loading guest pedals: ${err}</p>`;
     });
 
@@ -118,13 +118,13 @@ function initPedalboard(userRole) {
     body: JSON.stringify({ user_id: userId })
   })
     .then(res => {
-      if (!res.ok) throw new Error(`Pedalboard fetch failed: ${res.status}`);
+      if (!res.ok) throw new Error(`Rig fetch failed: ${res.status}`);
       return res.json();
     })
     .then(data => {
       if (!data.docs || !Array.isArray(data.docs) || data.docs.length === 0) {
         $("#pedalboard-controls").css("display", "none");
-        resultsDiv.innerHTML = `You don't have any pedalboard yet.<br><br>
+        resultsDiv.innerHTML = `You don't have any Rig yet.<br><br>
           <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary" type="button" aria-label="Create New Pedalboard">
             Create pedalboard
           </button>`;
@@ -687,7 +687,7 @@ function savePedalboard() {
   .then(data => {
     Swal.fire({
       icon: 'success',
-      title: 'Pedalboard saved!',
+      title: 'Rig saved!',
       timer: 1500,
       showConfirmButton: false,
       willClose: () => {
@@ -698,7 +698,7 @@ function savePedalboard() {
   .catch(err => {
     Swal.fire({
       icon: 'error',
-      title: 'Error saving pedalboard',
+      title: 'Error saving Rig',
       text: err.message || err,
     });
   });
@@ -708,9 +708,9 @@ function savePedalboard() {
 $(document).ready(function () {
   $(document).on('click', '#createBtn', function () {
     Swal.fire({
-      title: 'Enter new pedalboard name',
+      title: 'Enter new Rig name',
       input: 'text',
-      inputPlaceholder: 'Pedalboard name...',
+      inputPlaceholder: 'Rig name...',
       showCancelButton: true,
       confirmButtonText: 'Create',
       cancelButtonText: 'Cancel',
@@ -720,7 +720,7 @@ $(document).ready(function () {
       },
       inputValidator: (value) => {
         if (!value) {
-          return 'You need to enter a board name!';
+          return 'You need to enter a Rig name!';
         }
       }
     }).then((result) => {
@@ -743,8 +743,8 @@ $(document).ready(function () {
 
     if (sanitizedBoardName !== boardName) {
       Swal.fire({
-        title: 'Invalid board name',
-        text: 'Board name contains forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+        title: 'Invalid Rig name',
+        text: 'Rig name contains forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary',
@@ -765,7 +765,7 @@ $(document).ready(function () {
 
     Swal.fire({
       icon: 'success',
-      title: 'Pedalboard created locally!',
+      title: 'Rig created locally!',
       timer: 1200,
       showConfirmButton: false
     });
@@ -802,8 +802,8 @@ $(document).ready(function () {
             boardNameInput.value = sanitizedBoardName;
           }
           Swal.fire({
-            title: 'Invalid board name',
-            text: 'Board name contains forbidden characters.  Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+            title: 'Invalid Rig name',
+            text: 'Rig name contains forbidden characters.  Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
             icon: 'error',
             customClass: {
               confirmButton: 'bx--btn bx--btn--primary',
@@ -831,8 +831,8 @@ $(document).ready(function () {
             if (data.ok) {
               Swal.fire({
                 icon: 'success',
-                title: 'Pedalboard Created',
-                text: `Pedalboard "${boardName}" has been created successfully.`,
+                title: 'Rig Created',
+                text: `Rig "${boardName}" has been created successfully.`,
                 timer: 1000,
                 showConfirmButton: false,
                 willClose: () => {
@@ -864,15 +864,15 @@ $(document).ready(function () {
 // Handle pedalboard rename
 document.getElementById('renameBoardBtn').addEventListener('click', () => {
   if (window.allPedalboards.length === 0) {
-    Swal.fire('No pedalboard to rename');
+    Swal.fire('No Rigs to rename');
     return;
   }
 
   const currentBoard = window.allPedalboards[selectedBoardIndex];
-  const currentName = currentBoard.board_name || `Pedalboard ${selectedBoardIndex + 1}`;
+  const currentName = currentBoard.board_name || `Rig ${selectedBoardIndex + 1}`;
 
   Swal.fire({
-    title: 'Rename pedalboard',
+    title: 'Rename Rig',
     input: 'text',
     inputValue: currentName,
     showCancelButton: true,
@@ -908,8 +908,8 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
       sanitizedName = sanitizedName.replace(/\s+/g, ' ').trim();
       if (sanitizedName !== newName) {
         Swal.fire({
-          title: 'Invalid board name',
-          text: 'Board name contains forbidden characters.  Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+          title: 'Invalid Rig name',
+          text: 'Rig name contains forbidden characters.  Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
           icon: 'error',
           customClass: {
             confirmButton: 'bx--btn bx--btn--primary',
@@ -941,7 +941,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
         // Confirm deletion for guest
         Swal.fire({
           title: `Delete "${currentBoard.board_name}"?`,
-          text: 'This will remove the pedalboard locally and cannot be undone.',
+          text: 'This will remove the Rig locally and cannot be undone.',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonText: 'Yes, delete it',
@@ -970,14 +970,14 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
 
               // Clear UI and show create button
               const container = document.getElementById('pedalboard');
-              container.innerHTML = `You don't have any pedalboard yet.<br><br><button id="createBtn" class="showDesktop bx--btn bx--btn--secondary" type="button" aria-label="Create New Pedalboard" style="display: flex; align-items: center; gap: 0.5rem;">
+              container.innerHTML = `You don't have any Rigs yet.<br><br><button id="createBtn" class="showDesktop bx--btn bx--btn--secondary" type="button" aria-label="Create New Pedalboard" style="display: flex; align-items: center; gap: 0.5rem;">
                 <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
                   <g transform="rotate(90 16 16)">
                     <path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"></path>
                     <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
                   </g>
                 </svg>
-                Create pedalboard
+                Create a Rig
               </button>`;
 
               $("#pedalboard-controls").hide();
@@ -985,7 +985,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
 
             Swal.fire({
               title: 'Deleted!',
-              text: 'Your local pedalboard has been removed.',
+              text: 'Your local Rig has been removed.',
               icon: 'success',
               timer: 1200,
               showConfirmButton: false
@@ -1016,7 +1016,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
         if (check.has_presets) {
           Swal.fire({
             title: 'Cannot delete',
-            text: 'This pedalboard has linked presets and cannot be deleted.',
+            text: 'This Rig has linked Plexes and cannot be deleted.',
             icon: 'warning',
             confirmButtonText: 'OK',
             customClass: {
@@ -1062,7 +1062,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
                 if (data.ok) {
                   Swal.fire({
                     title: 'Deleted!',
-                    text: 'The pedalboard has been deleted.',
+                    text: 'Rig has been deleted.',
                     icon: 'success',
                     timer: 1000,
                     showConfirmButton: false
@@ -1094,7 +1094,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
         }
       })
       .catch(() => {
-        Swal.fire('Error', 'Failed to check for related presets.', 'error');
+        Swal.fire('Error', 'Failed to check for related Plexes.', 'error');
       });
     }
   });
@@ -1109,7 +1109,7 @@ function getCurrentPedalboard() {
 
   // For guests: ensure we have something to return
   if (!window.pedalboard) {
-    return { board_name: "Guest Board", pedals: [] };
+    return { board_name: "Guest Rig", pedals: [] };
   }
 
   return window.pedalboard;
@@ -1133,7 +1133,7 @@ function saveGuestPedalboard() {
 // Import guest pedalboard from local storage
 function importGuestPedalboard(board, userFromServer) {
   return new Promise((resolve, reject) => {
-    const boardName = board.board_name || "Untitled Board";
+    const boardName = board.board_name || "Untitled Rig";
     const pedals = board.pedals || [];
     const userId = window.currentUser?.userid;
 
@@ -1161,7 +1161,7 @@ function importGuestPedalboard(board, userFromServer) {
     if (sanitizedBoardName !== boardName) {
       Swal.fire({
         title: 'Invalid board name',
-        text: 'Board name contains forbidden characters.  Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+        text: 'Rig name contains forbidden characters.  Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary',
@@ -1188,11 +1188,11 @@ function importGuestPedalboard(board, userFromServer) {
         pedals: JSON.stringify(pedals)   // pass pedals too
       },
       success: function(resp) {
-        console.log("Imported guest board:", resp);
+        console.log("Imported guest Rig:", resp);
         resolve(resp);
       },
       error: function(err) {
-        console.error("Failed to import guest board:", err);
+        console.error("Failed to import guest Rig:", err);
         reject(err);
       }
     });
@@ -1220,7 +1220,7 @@ function setupPedalboardDropdownAndRender() {
     const option = document.createElement('option');
     option.value = index;
     option.setAttribute('value-id', board._id);
-    option.textContent = board.board_name || `Pedalboard ${index + 1}`;
+    option.textContent = board.board_name || `Rig ${index + 1}`;
     dropdown.appendChild(option);
   });
 

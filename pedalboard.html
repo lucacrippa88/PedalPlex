@@ -185,7 +185,7 @@
       // Guest mode
       $('#loadingMessage').hide();
       $('#page-content').show();
-      $('#pedalboard-controls').prepend('<p>Login to consistently save your Pedalboards!</p>');
+      $('#pedalboard-controls').prepend('<p>Login to consistently save your Rigs!</p>');
       $('#pedalboardSelect, #renameBoardBtn').hide();
       $('#zoomIn, #zoomOut, #zoomReset').prop('disabled', true).addClass('btn-disabled');
       window.currentUser = { role: 'guest', username: 'guest' };
@@ -221,8 +221,8 @@
         if (guestBoards.length > 0) {
           // Prompt per import
           Swal.fire({
-            title: "Import last saved Guest Pedalboard?",
-            text: "We found a pedalboard you created as a guest. Do you want to import it into your account?",
+            title: "Import last saved Guest Rig?",
+            text: "We found a Rig you created as a guest. Do you want to import it into your account?",
             icon: "question",
             showCancelButton: true,
             confirmButtonText: "Yes, import",
@@ -241,7 +241,7 @@
                   localStorage.removeItem("guestPedalboard");
                   Swal.fire({
                     title: "Imported!",
-                    text: "Your guest pedalboard is now in your account.",
+                    text: "Your guest Rig is now in your account.",
                     icon: "success",
                     confirmButtonText: "Ok",
                     showCancelButton: false,
@@ -300,7 +300,7 @@
               window.currentUser = { role: 'guest', username: 'guest' };
               $('#loadingMessage').hide();
               $('#page-content').show();
-              $('#pedalboard-controls').append("<p>Login to consistently save your Pedalboards!</p>");
+              $('#pedalboard-controls').append("<p>Login to consistently save your Rigs!</p>");
               $('#pedalboardSelect, #renameBoardBtn').hide();
               $('#zoomIn, #zoomOut, #zoomReset').prop('disabled', true).addClass('btn-disabled');
 
