@@ -1822,7 +1822,7 @@ const $presetContainer = $(`
 $wrapper.append($presetContainer);
 
 /* 🔒 CHIUSURA FORZATA DI DEFAULT */
-$presetContainer.find(".preset-dropdown").hide();
+$presetContainer.find(".preset-dropdown-wrapper").hide();
 
 /* Toggle controllato */
 $presetContainer.find(".preset-icon").on("click", function (e) {

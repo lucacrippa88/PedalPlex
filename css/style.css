@@ -863,62 +863,13 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
-
-/* DROPDOWN */
-.preset-dropdown-wrapper {
-  position: absolute;
-  top: 25px;
-  right: 4px; /* apre verso sinistra */
-  width: 160px;
-  background: #444;
-  border-radius: 8px;
-  list-style: none;
-  margin: 0;
-  padding: 6px 0;
-}
-
-/* 🌈 GLOW */
-.preset-dropdown::before {
-  content: "";
-  position: absolute;
-  inset: -8px;
-  border-radius: 8px;
-  background: linear-gradient(
-    90deg,
-    rgb(70, 41, 100),
-    rgb(156, 84, 213),
-    rgb(94, 226, 240)
-  );
-  filter: blur(2px);
-  opacity: 0.8;
-  z-index: -1;
-  pointer-events: none;
-}
-
-/* ITEMS */
-.preset-dropdown li {
-  padding: 8px 14px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.preset-dropdown li:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-
-
-
-
-
-
 /* CONTENITORE GLOW */
 .preset-dropdown-wrapper {
   position: absolute;
   top: 25px;
   right: 4px; /* apertura verso sinistra */
   width: 180px;
-  border-radius: 18px;
+  border-radius: 8px;
   /* z-index: 30; */
 }
 
@@ -927,7 +878,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   content: "";
   position: absolute;
   inset: -8px; /* estensione glow */
-  border-radius: 18px;
+  border-radius: 8px;
   background: linear-gradient(
     90deg,
     rgb(70, 41, 100),
