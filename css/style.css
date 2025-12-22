@@ -836,43 +836,52 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
-.pedal-catalog .preset-container .preset-dropdown {
-  display: none; /* chiuso inizialmente */
+
+
+
+
+
+
+
+
+
+.preset-container {
   position: absolute;
-  top: 0; /* allineato in verticale con l'icona */
-  right: 32px; /* si apre verso sinistra rispetto all'icona */
-  width: 150px;
-  background-color: #555;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  border-radius: 4px;
-  max-height: 150px;
-  overflow-y: auto;
-  z-index: 11;
+  top: -20px;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  z-index: 20;
 }
 
-.pedal-catalog .preset-container .preset-dropdown li {
-  padding: 8px;
+.preset-icon {
+  width: 32px;
+  height: 32px;
   cursor: pointer;
-  font-size: 14px;
-  text-align: left;
+  fill: white;
 }
 
+/* DROPDOWN */
 .preset-dropdown {
-  background-color: rgb(46, 46, 46);
-  padding: 5px;
-  min-width: 200px;
-  text-align: right;
-  position: relative;
-  left: -180px;
-  border-radius: 8px;
+  position: absolute;
+  top: 0;
+  right: 36px; /* apre verso sinistra */
+  width: 160px;
+
+  background: #444;
+  border-radius: 18px;
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+
+  z-index: 30;
 }
 
+/* 🌈 GLOW */
 .preset-dropdown::before {
   content: "";
   position: absolute;
-  inset: -5px; /* estensione glow */
+  inset: -5px;
   border-radius: 18px;
 
   background: linear-gradient(
@@ -889,15 +898,13 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   pointer-events: none;
 }
 
-.pedal-catalog .preset-container .preset-dropdown li:hover {
-  background-color: #777;
-}
-
-.pedal-catalog .preset-container .preset-icon {
-  width: 32px;
-  height: 32px;
-  fill: #fff;
+/* ITEMS */
+.preset-dropdown li {
+  padding: 8px 14px;
+  font-size: 14px;
   cursor: pointer;
-  display: block;
 }
 
+.preset-dropdown li:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
