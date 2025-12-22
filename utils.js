@@ -1791,68 +1791,55 @@ async function renderFullPedalboard() {
 
 
 
-
-
 // Dopo aver creato $wrapper e aggiunto $pedalDiv
-$wrapper.css("position", "relative"); // necessario per posizionamento assoluto dell'icona
+$wrapper.css("position", "relative"); // serve per posizionamento assoluto
 
-// Crea container icona
-const $iconContainer = $("<div>")
-  .addClass("preset-icon-container")
-  .css({
-    position: "absolute",
-    width: "32px",
-    height: "32px",
-    cursor: "pointer",
-  })
-  .append(`
-    <svg class="preset-icon" focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="8" cy="16" r="2"></circle>
-      <circle cx="16" cy="16" r="2"></circle>
-      <circle cx="24" cy="16" r="2"></circle>
-      <title>Overflow menu horizontal</title>
-    </svg>
-    <ul class="preset-dropdown" style="display:none; position:absolute; bottom:40px; right:0; width:150px; background-color:#555; list-style:none; padding:0; margin:0; border-radius:4px; max-height:150px; overflow-y:auto; z-index:10;">
-      <li data-preset="Preset 1">Preset 1</li>
-      <li data-preset="Preset 2">Preset 2</li>
-      <li data-preset="Preset 3">Preset 3</li>
-    </ul>
-  `);
+const $presetBtn = $("<button>")
+  .addClass("preset-btn")
+  .html(`<svg viewBox="0 0 32 32"><circle cx="8" cy="16" r="2"></circle><circle cx="16" cy="16" r="2"></circle><circle cx="24" cy="16" r="2"></circle></svg>`);
 
-// Calcola posizione basata sul bounding box del pedale
+const $dropdown = $(`
+  <ul class="preset-dropdown">
+    <li data-preset="Preset 1">Preset 1</li>
+    <li data-preset="Preset 2">Preset 2</li>
+    <li data-preset="Preset 3">Preset 3</li>
+  </ul>
+`);
+
+$wrapper.append($presetBtn);
+$wrapper.append($dropdown);
+
+// Posiziona il pulsante sotto il pedale ruotato
 const pedalRect = $pedalDiv[0].getBoundingClientRect();
 const wrapperRect = $wrapper[0].getBoundingClientRect();
-const offsetTop = pedalRect.bottom - wrapperRect.top + 4; // 4px di margine
-const offsetRight = 0; // allineata a destra
-
-$iconContainer.css({
+const offsetTop = pedalRect.bottom - wrapperRect.top + 4; // 4px sotto il pedale
+$presetBtn.css({
   top: offsetTop + "px",
-  right: offsetRight + "px"
+  right: "0px"
+});
+$dropdown.css({
+  right: "0px"
 });
 
-$wrapper.append($iconContainer);
-
-// Event listener per toggle dropdown
-$iconContainer.find(".preset-icon").on("click", function (e) {
+// Toggle dropdown
+$presetBtn.on("click", function (e) {
   e.stopPropagation();
-  const $dropdown = $iconContainer.find(".preset-dropdown");
   $dropdown.toggle();
 });
 
 // Selezione preset
-$iconContainer.find(".preset-dropdown li").on("click", function () {
+$dropdown.find("li").on("click", function () {
   const selectedPreset = $(this).data("preset");
   console.log(`Pedale "${pedal.name}" caricato con preset: ${selectedPreset}`);
-  $iconContainer.find(".preset-dropdown").hide();
+  $dropdown.hide();
 });
 
 // Click esterno chiude dropdown
 $(document).on("click", function (e) {
-  if (!$(e.target).closest($iconContainer).length) {
-    $iconContainer.find(".preset-dropdown").hide();
+  if (!$(e.target).closest($presetBtn).length && !$(e.target).closest($dropdown).length) {
+    $dropdown.hide();
   }
 });
-
 
 
 
