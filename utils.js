@@ -1822,8 +1822,8 @@ $wrapper.append($presetContainer);
 
 const glowEl = $presetContainer.find(".preset-dropdown-wrapper")[0]; // prende l'elemento nativo
 if (glowEl) {
-  let angle = 0;
-  const speed = 0.5;
+  let angle = 65;
+  const speed = 0.3;
 
   function animateGlow() {
     angle += speed;

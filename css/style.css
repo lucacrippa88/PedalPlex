@@ -907,7 +907,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   border-radius: 8px;
 
   /* gradient con angolo variabile tramite CSS variable */
-  background: conic-gradient(from var(--gradient-angle, 0deg),
+  /* background: conic-gradient(from var(--gradient-angle, 0deg), */
+  background: linear-gradient(var(--gradient-angle, 65deg),
     rgb(70, 41, 100),
     rgb(156, 84, 213),
     rgb(94, 226, 240));
