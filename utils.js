@@ -1783,7 +1783,9 @@ async function renderFullPedalboard() {
           });
         }
 
-        const $wrapper = $("<div>").css(wrapperStyles).append($pedalDiv);
+        const $wrapper = $("<div>")
+          .addClass("pedal-wrapper") // serve per hover mouse menu catalog preset
+          .css(wrapperStyles).append($pedalDiv);
 
 
 

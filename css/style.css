@@ -927,3 +927,17 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 .preset-dropdown li:hover {
   background: rgba(255, 255, 255, 0.12);
 }
+
+
+/* icona preset nascosta di default */
+.preset-container {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+/* DESKTOP: mostra icona al hover del pedale */
+.pedal-wrapper:hover .preset-container {
+  opacity: 1;
+  pointer-events: auto;
+}
