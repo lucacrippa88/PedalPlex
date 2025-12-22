@@ -1851,6 +1851,8 @@ $(document).on("click", function () {
 
 
 
+
+
         rowDiv.appendChild($wrapper[0]);
 
       } catch (err) {
@@ -2017,3 +2019,18 @@ function formatTime(seconds) {
 // --- Check periodico ogni 30 secondi ---
 setInterval(checkSessionTime, 30000);
 
+
+// Animate AI dropdown glow
+const glowEl = document.querySelector(".preset-dropdown-wrapper");
+let angle = 0;
+const speed = 0.5; // gradi per frame, puoi cambiare
+
+function animateGlow() {
+  angle += speed;
+  if (angle >= 360) angle -= 360;
+
+  glowEl.style.setProperty("--gradient-angle", angle + "deg");
+  requestAnimationFrame(animateGlow);
+}
+
+animateGlow();

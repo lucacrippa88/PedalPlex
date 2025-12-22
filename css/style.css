@@ -900,25 +900,24 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   z-index: -1;
   pointer-events: none;
 } */
- @keyframes rotate-glow {
-  0%   { background: conic-gradient(from 0deg, rgb(70, 41, 100), rgb(156, 84, 213), rgb(94, 226, 240)); }
-  100% { background: conic-gradient(from 360deg, rgb(70, 41, 100), rgb(156, 84, 213), rgb(94, 226, 240)); }
-}
-
 .preset-dropdown-wrapper::before {
   content: "";
   position: absolute;
   inset: -8px;
   border-radius: 8px;
 
-  background: conic-gradient(from 0deg, rgb(70, 41, 100), rgb(156, 84, 213), rgb(94, 226, 240));
+  /* gradient con angolo variabile tramite CSS variable */
+  background: conic-gradient(from var(--gradient-angle, 0deg),
+    rgb(70, 41, 100),
+    rgb(156, 84, 213),
+    rgb(94, 226, 240));
+
   filter: blur(2px);
   opacity: 0.8;
   z-index: -1;
   pointer-events: none;
-
-  animation: rotate-glow 6s linear infinite;
 }
+
 
 
 /* AREA SCROLLABILE */
