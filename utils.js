@@ -1806,13 +1806,16 @@ const $presetContainer = $(`
       <circle cx="24" cy="16" r="2"></circle>
     </svg>
 
-    <ul class="preset-dropdown">
-      <li>Warm Clean Glide</li>
-      <li>Boosted Crunch Solo</li>
-      <li>Warm Analog Repeat</li>
-      <li>Ultra Jet</li>
-      <li>Bright Spark Crunch</li>
-    </ul>
+    <div class="preset-dropdown-wrapper">
+      <ul class="preset-dropdown">
+        <li>Warm Clean Glide</li>
+        <li>Boosted Crunch Solo</li>
+        <li>Warm Analog Repeat</li>
+        <li>Ultra Jet</li>
+        <li>Bright Spark Crunch</li>
+      </ul>
+    </div>
+
   </div>
 `);
 
