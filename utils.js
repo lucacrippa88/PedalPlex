@@ -1828,19 +1828,19 @@ $presetContainer.find(".preset-dropdown-wrapper").hide();
 $presetContainer.find(".preset-icon").on("click", function (e) {
   e.stopPropagation();
 
-  const $dropdown = $presetContainer.find(".preset-dropdown");
+  const $dropdown = $presetContainer.find(".preset-dropdown-wrapper");
 
   if ($dropdown.is(":visible")) {
     $dropdown.hide();
   } else {
-    $(".preset-dropdown").hide(); // chiude tutti gli altri
+    $(".preset-dropdown-wrapper").hide(); // chiude tutti gli altri
     $dropdown.show();
   }
 });
 
 /* Click esterno → chiude */
 $(document).on("click", function () {
-  $(".preset-dropdown").hide();
+  $(".preset-dropdown-wrapper").hide();
 });
 
 
