@@ -1791,55 +1791,56 @@ async function renderFullPedalboard() {
 
 
 
-// Dopo aver creato $wrapper e aggiunto $pedalDiv
-$wrapper.css("position", "relative"); // serve per posizionamento assoluto
+// Assicurati che il wrapper sia relativo
+$wrapper.css("position", "relative");
 
-const $presetBtn = $("<button>")
-  .addClass("preset-btn")
-  .html(`<svg viewBox="0 0 32 32"><circle cx="8" cy="16" r="2"></circle><circle cx="16" cy="16" r="2"></circle><circle cx="24" cy="16" r="2"></circle></svg>`);
+// Contenitore icona + dropdown
+const $presetContainer = $("<div>")
+  .addClass("preset-container")
+  .css({
+    position: "absolute",
+    bottom: "-4px", // leggermente sotto il pedale
+    right: "0px",
+    width: "32px",
+    height: "32px",
+    cursor: "pointer",
+    "z-index": 10
+  })
+  .html(`
+    <svg class="preset-icon" focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="8" cy="16" r="2"></circle>
+      <circle cx="16" cy="16" r="2"></circle>
+      <circle cx="24" cy="16" r="2"></circle>
+    </svg>
+    <ul class="preset-dropdown">
+      <li data-preset="Preset 1">Preset 1</li>
+      <li data-preset="Preset 2">Preset 2</li>
+      <li data-preset="Preset 3">Preset 3</li>
+    </ul>
+  `);
 
-const $dropdown = $(`
-  <ul class="preset-dropdown">
-    <li data-preset="Preset 1">Preset 1</li>
-    <li data-preset="Preset 2">Preset 2</li>
-    <li data-preset="Preset 3">Preset 3</li>
-  </ul>
-`);
+$wrapper.append($presetContainer);
 
-$wrapper.append($presetBtn);
-$wrapper.append($dropdown);
-
-// Posiziona il pulsante sotto il pedale ruotato
-const pedalRect = $pedalDiv[0].getBoundingClientRect();
-const wrapperRect = $wrapper[0].getBoundingClientRect();
-const offsetTop = pedalRect.bottom - wrapperRect.top + 4; // 4px sotto il pedale
-$presetBtn.css({
-  top: offsetTop + "px",
-  right: "0px"
-});
-$dropdown.css({
-  right: "0px"
-});
-
-// Toggle dropdown
-$presetBtn.on("click", function (e) {
+// Toggle dropdown al click sull'icona
+$presetContainer.find(".preset-icon").on("click", function(e) {
   e.stopPropagation();
-  $dropdown.toggle();
+  $presetContainer.find(".preset-dropdown").toggle();
 });
 
 // Selezione preset
-$dropdown.find("li").on("click", function () {
+$presetContainer.find(".preset-dropdown li").on("click", function() {
   const selectedPreset = $(this).data("preset");
   console.log(`Pedale "${pedal.name}" caricato con preset: ${selectedPreset}`);
-  $dropdown.hide();
+  $presetContainer.find(".preset-dropdown").hide();
 });
 
 // Click esterno chiude dropdown
-$(document).on("click", function (e) {
-  if (!$(e.target).closest($presetBtn).length && !$(e.target).closest($dropdown).length) {
-    $dropdown.hide();
+$(document).on("click", function(e) {
+  if (!$(e.target).closest($presetContainer).length) {
+    $presetContainer.find(".preset-dropdown").hide();
   }
 });
+
 
 
 
