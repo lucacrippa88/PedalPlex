@@ -1790,7 +1790,6 @@ async function renderFullPedalboard() {
 
 
 
-
 // Assicurati che il wrapper sia relativo
 $wrapper.css("position", "relative");
 
@@ -1799,7 +1798,7 @@ const $presetContainer = $("<div>")
   .addClass("preset-container")
   .css({
     position: "absolute",
-    top: "-20px", // poco sopra il pedale
+    top: "-20px", // sopra il pedale
     right: "0px",
     width: "32px",
     height: "32px",
@@ -1824,7 +1823,7 @@ $wrapper.append($presetContainer);
 // Toggle dropdown al click sull'icona
 $presetContainer.find(".preset-icon").on("click", function(e) {
   e.stopPropagation();
-  $presetContainer.find(".preset-dropdown").toggle();
+  $presetContainer.find(".preset-dropdown").toggle(); // si apre/chiude solo al click
 });
 
 // Selezione preset
@@ -1840,7 +1839,6 @@ $(document).on("click", function(e) {
     $presetContainer.find(".preset-dropdown").hide();
   }
 });
-
 
 
 
