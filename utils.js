@@ -1789,18 +1789,20 @@ async function renderFullPedalboard() {
 
 
 
-        
 
-// Dopo aver creato $wrapper e aggiunto $pedalDiv al rowDiv
+
+
+
+// Dopo aver creato $wrapper e aggiunto $pedalDiv
+$wrapper.css("position", "relative"); // necessario per posizionamento assoluto dell'icona
+
+// Crea container icona
 const $iconContainer = $("<div>")
   .addClass("preset-icon-container")
   .css({
     position: "absolute",
-    bottom: "0",
-    right: "0",
     width: "32px",
     height: "32px",
-    marginTop: "5px",
     cursor: "pointer",
   })
   .append(`
@@ -1817,7 +1819,17 @@ const $iconContainer = $("<div>")
     </ul>
   `);
 
-$wrapper.css("position", "relative"); // necessario per posizionamento assoluto dell'icona
+// Calcola posizione basata sul bounding box del pedale
+const pedalRect = $pedalDiv[0].getBoundingClientRect();
+const wrapperRect = $wrapper[0].getBoundingClientRect();
+const offsetTop = pedalRect.bottom - wrapperRect.top + 4; // 4px di margine
+const offsetRight = 0; // allineata a destra
+
+$iconContainer.css({
+  top: offsetTop + "px",
+  right: offsetRight + "px"
+});
+
 $wrapper.append($iconContainer);
 
 // Event listener per toggle dropdown
@@ -1827,7 +1839,7 @@ $iconContainer.find(".preset-icon").on("click", function (e) {
   $dropdown.toggle();
 });
 
-// Event listener per selezione preset
+// Selezione preset
 $iconContainer.find(".preset-dropdown li").on("click", function () {
   const selectedPreset = $(this).data("preset");
   console.log(`Pedale "${pedal.name}" caricato con preset: ${selectedPreset}`);
@@ -1840,6 +1852,7 @@ $(document).on("click", function (e) {
     $iconContainer.find(".preset-dropdown").hide();
   }
 });
+
 
 
 
