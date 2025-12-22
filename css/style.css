@@ -882,7 +882,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   content: "";
   position: absolute;
   inset: -5px;
-  border-radius: 18px;
+  border-radius: 8px;
 
   background: linear-gradient(
     90deg,
@@ -891,7 +891,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     rgb(94, 226, 240)
   );
 
-  filter: blur(8px);
+  filter: blur(4px);
   opacity: 0.8;
 
   z-index: -1;
