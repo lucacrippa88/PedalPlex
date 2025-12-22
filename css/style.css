@@ -837,10 +837,10 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 .pedal-catalog .preset-container .preset-dropdown {
-  display: none; /* chiuso all'inizio */
+  display: none; /* chiuso inizialmente */
   position: absolute;
-  bottom: -36px; /* apre verso il basso se vuoi modificare */
-  right: 0;
+  top: 0; /* allineato in verticale con l'icona */
+  right: 32px; /* si apre verso sinistra rispetto all'icona */
   width: 150px;
   background-color: #555;
   list-style: none;
@@ -870,3 +870,4 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   cursor: pointer;
   display: block;
 }
+

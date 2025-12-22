@@ -1799,7 +1799,7 @@ const $presetContainer = $("<div>")
   .addClass("preset-container")
   .css({
     position: "absolute",
-    top: "-36px", // poco sopra il pedale
+    top: "-20px", // poco sopra il pedale
     right: "0px",
     width: "32px",
     height: "32px",
@@ -1840,6 +1840,7 @@ $(document).on("click", function(e) {
     $presetContainer.find(".preset-dropdown").hide();
   }
 });
+
 
 
 
