@@ -870,12 +870,23 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 }
 
 .preset-dropdown::before {
+  content: "";
+  position: absolute;
+  inset: -5px; /* estensione glow */
+  border-radius: 18px;
+
   background: linear-gradient(
-  90deg,
-  rgb(70, 41, 100),
-  rgb(156, 84, 213),
-  rgb(94, 226, 240)
+    90deg,
+    rgb(70, 41, 100),
+    rgb(156, 84, 213),
+    rgb(94, 226, 240)
   );
+
+  filter: blur(8px);
+  opacity: 0.8;
+
+  z-index: -1;
+  pointer-events: none;
 }
 
 .pedal-catalog .preset-container .preset-dropdown li:hover {
