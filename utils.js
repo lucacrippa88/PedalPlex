@@ -1815,33 +1815,34 @@ const $presetContainer = $(`
         <li>Bright Spark Crunch</li>
       </ul>
     </div>
-
   </div>
 `);
 
 $wrapper.append($presetContainer);
 
-/* 🔒 CHIUSURA FORZATA DI DEFAULT */
-$presetContainer.find(".preset-dropdown-wrapper").hide();
+/* riferimento wrapper dropdown */
+const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
 
-/* Toggle controllato */
+/* 🔒 STATO INIZIALE: CHIUSO (via CSS, NON JS) */
+// NON usare .hide() / .show()
+
+/* Toggle SAFE per Safari */
 $presetContainer.find(".preset-icon").on("click", function (e) {
   e.stopPropagation();
 
-  const $dropdown = $presetContainer.find(".preset-dropdown-wrapper");
-
-  if ($dropdown.is(":visible")) {
-    $dropdown.hide();
+  if ($dropdownWrapper.hasClass("is-open")) {
+    $dropdownWrapper.removeClass("is-open");
   } else {
-    $(".preset-dropdown-wrapper").hide(); // chiude tutti gli altri
-    $dropdown.show();
+    $(".preset-dropdown-wrapper").removeClass("is-open");
+    $dropdownWrapper.addClass("is-open");
   }
 });
 
 /* Click esterno → chiude */
 $(document).on("click", function () {
-  $(".preset-dropdown-wrapper").hide();
+  $(".preset-dropdown-wrapper").removeClass("is-open");
 });
+
 
 
 
