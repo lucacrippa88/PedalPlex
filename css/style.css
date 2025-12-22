@@ -846,15 +846,15 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 .preset-container {
   position: absolute;
   top: -20px;
-  right: 0;
+  right: -12px;
   width: 32px;
   height: 32px;
   z-index: 20;
 }
 
 .preset-icon {
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
   cursor: pointer;
   fill: white;
 }
@@ -884,25 +884,42 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 }
 
 /* 🌈 BLUR / GLOW */
-.preset-dropdown-wrapper::before {
+/* .preset-dropdown-wrapper::before {
   content: "";
   position: absolute;
   inset: -8px;
   border-radius: 8px;
-
   background: linear-gradient(
     65deg,
     rgb(70, 41, 100),
     rgb(156, 84, 213),
     rgb(94, 226, 240)
   );
-
   filter: blur(2px);
   opacity: 0.8;
-
   z-index: -1;
   pointer-events: none;
+} */
+ @keyframes rotate-glow {
+  0%   { background: conic-gradient(from 0deg, rgb(70, 41, 100), rgb(156, 84, 213), rgb(94, 226, 240)); }
+  100% { background: conic-gradient(from 360deg, rgb(70, 41, 100), rgb(156, 84, 213), rgb(94, 226, 240)); }
 }
+
+.preset-dropdown-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 8px;
+
+  background: conic-gradient(from 0deg, rgb(70, 41, 100), rgb(156, 84, 213), rgb(94, 226, 240));
+  filter: blur(2px);
+  opacity: 0.8;
+  z-index: -1;
+  pointer-events: none;
+
+  animation: rotate-glow 6s linear infinite;
+}
+
 
 /* AREA SCROLLABILE */
 .preset-dropdown {
