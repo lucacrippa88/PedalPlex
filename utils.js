@@ -1807,9 +1807,11 @@ const $presetContainer = $(`
     </svg>
 
     <ul class="preset-dropdown">
-      <li>Preset 1</li>
-      <li>Preset 2</li>
-      <li>Preset 3</li>
+      <li>Warm Clean Glide</li>
+      <li>Boosted Crunch Solo</li>
+      <li>Warm Analog Repeat</li>
+      <li>Ultra Jet</li>
+      <li>Bright Spark Crunch</li>
     </ul>
   </div>
 `);
