@@ -1789,57 +1789,54 @@ async function renderFullPedalboard() {
 
 
 
-
-// Assicurati che il wrapper sia relativo
 $wrapper.css("position", "relative");
 
-// Contenitore icona + dropdown
-const $presetContainer = $("<div>")
-  .addClass("preset-container")
-  .css({
-    position: "absolute",
-    top: "-20px", // sopra il pedale
-    right: "0px",
-    width: "32px",
-    height: "32px",
-    cursor: "pointer",
-    "z-index": 10
-  })
-  .html(`
-    <svg class="preset-icon" focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+const $presetContainer = $(`
+  <div class="preset-container">
+    <svg class="preset-icon"
+      focusable="false"
+      preserveAspectRatio="xMidYMid meet"
+      fill="currentColor"
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      xmlns="http://www.w3.org/2000/svg">
       <circle cx="8" cy="16" r="2"></circle>
       <circle cx="16" cy="16" r="2"></circle>
       <circle cx="24" cy="16" r="2"></circle>
     </svg>
+
     <ul class="preset-dropdown">
-      <li data-preset="Preset 1">Preset 1</li>
-      <li data-preset="Preset 2">Preset 2</li>
-      <li data-preset="Preset 3">Preset 3</li>
+      <li>Preset 1</li>
+      <li>Preset 2</li>
+      <li>Preset 3</li>
     </ul>
-  `);
+  </div>
+`);
 
 $wrapper.append($presetContainer);
 
-// Toggle dropdown al click sull'icona
-$presetContainer.find(".preset-icon").on("click", function(e) {
+/* 🔒 CHIUSURA FORZATA DI DEFAULT */
+$presetContainer.find(".preset-dropdown").hide();
+
+/* Toggle controllato */
+$presetContainer.find(".preset-icon").on("click", function (e) {
   e.stopPropagation();
-  $presetContainer.find(".preset-dropdown").toggle(); // si apre/chiude solo al click
-});
 
-// Selezione preset
-$presetContainer.find(".preset-dropdown li").on("click", function() {
-  const selectedPreset = $(this).data("preset");
-  console.log(`Pedale "${pedal.name}" caricato con preset: ${selectedPreset}`);
-  $presetContainer.find(".preset-dropdown").hide();
-});
+  const $dropdown = $presetContainer.find(".preset-dropdown");
 
-// Click esterno chiude dropdown
-$(document).on("click", function(e) {
-  if (!$(e.target).closest($presetContainer).length) {
-    $presetContainer.find(".preset-dropdown").hide();
+  if ($dropdown.is(":visible")) {
+    $dropdown.hide();
+  } else {
+    $(".preset-dropdown").hide(); // chiude tutti gli altri
+    $dropdown.show();
   }
 });
 
+/* Click esterno → chiude */
+$(document).on("click", function () {
+  $(".preset-dropdown").hide();
+});
 
 
 
