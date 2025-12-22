@@ -827,3 +827,66 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   z-index: -1;
   pointer-events: none;
 }
+
+
+
+
+
+
+
+/* Pulsante preset sotto il pedale */
+.pedal-catalog .preset-btn {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
+  background-size: 150% 150%;
+  background-position: 0% 50%;
+  transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.pedal-catalog .preset-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: white;
+  pointer-events: none;
+}
+
+.pedal-catalog .preset-btn:hover {
+  background-position: 100% 50%;
+}
+
+/* Dropdown menu */
+.pedal-catalog .preset-dropdown {
+  display: none;
+  position: absolute;
+  bottom: 40px; /* sopra il pulsante */
+  right: 0;
+  width: 150px;
+  background-color: #555;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 11;
+}
+
+.pedal-catalog .preset-dropdown li {
+  padding: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+}
+
+.pedal-catalog .preset-dropdown li:hover {
+  background-color: #777;
+}
