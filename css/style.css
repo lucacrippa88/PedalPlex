@@ -866,6 +866,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   text-align: right;
   position: relative;
   left: -180px;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 8px, rgb(30, 30, 30) 0px -36px 0px 0px inset;
 }
 
 .pedal-catalog .preset-container .preset-dropdown li:hover {
