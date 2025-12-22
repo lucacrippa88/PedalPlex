@@ -843,8 +843,6 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
-
-
 .preset-container {
   position: absolute;
   top: -20px;
@@ -861,41 +859,57 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   fill: white;
 }
 
-
-
 /* CONTENITORE GLOW */
 .preset-dropdown-wrapper {
   position: absolute;
   top: 25px;
-  right: 4px; /* apertura verso sinistra */
+  right: 4px;
   width: 180px;
   border-radius: 8px;
-  /* z-index: 30; */
+
+  /* 🔒 STATO CHIUSO DI DEFAULT */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition: opacity 0.15s ease;
+  transform: translateZ(0); /* FIX Safari */
+}
+
+/* STATO APERTO */
+.preset-dropdown-wrapper.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 /* 🌈 BLUR / GLOW */
 .preset-dropdown-wrapper::before {
   content: "";
   position: absolute;
-  inset: -8px; /* estensione glow */
+  inset: -8px;
   border-radius: 8px;
+
   background: linear-gradient(
-    90deg,
+    65deg,
     rgb(70, 41, 100),
     rgb(156, 84, 213),
     rgb(94, 226, 240)
   );
+
   filter: blur(2px);
   opacity: 0.8;
+
   z-index: -1;
   pointer-events: none;
 }
 
 /* AREA SCROLLABILE */
 .preset-dropdown {
-  height: 140px;           /* ALTEZZA FISSA */
-  overflow-y: auto;        /* SCROLL */
+  height: 140px;
+  overflow-y: auto;
   overflow-x: hidden;
+
   background: #444;
   border-radius: 8px;
   list-style: none;
