@@ -859,6 +859,15 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   text-align: left;
 }
 
+.preset-drpdown {
+  background-color: rgb(46, 46, 46);
+  padding: 5px;
+  min-width: 200px;
+  text-align: right;
+  position: relative;
+  left: -180px;
+}
+
 .pedal-catalog .preset-container .preset-dropdown li:hover {
   background-color: #777;
 }
