@@ -1820,6 +1820,23 @@ const $presetContainer = $(`
 
 $wrapper.append($presetContainer);
 
+const glowEl = $presetContainer.find(".preset-dropdown-wrapper")[0]; // prende l'elemento nativo
+if (glowEl) {
+  let angle = 0;
+  const speed = 0.5;
+
+  function animateGlow() {
+    angle += speed;
+    if (angle >= 360) angle -= 360;
+
+    glowEl.style.setProperty("--gradient-angle", angle + "deg");
+    requestAnimationFrame(animateGlow);
+  }
+
+  animateGlow();
+}
+
+
 /* riferimento wrapper dropdown */
 const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
 
@@ -2020,17 +2037,3 @@ function formatTime(seconds) {
 setInterval(checkSessionTime, 30000);
 
 
-// Animate AI dropdown glow
-const glowEl = document.querySelector(".preset-dropdown-wrapper");
-let angle = 0;
-const speed = 0.5; // gradi per frame, puoi cambiare
-
-function animateGlow() {
-  angle += speed;
-  if (angle >= 360) angle -= 360;
-
-  glowEl.style.setProperty("--gradient-angle", angle + "deg");
-  requestAnimationFrame(animateGlow);
-}
-
-animateGlow();
