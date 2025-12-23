@@ -1926,6 +1926,11 @@ function renderPresetList($ul, pedalId, presets) {
     $titleRow.append($name, $tooltip);
     $li.append($titleRow);
 
+    // Inizializza Carbon tooltip dinamico
+    if (typeof CarbonComponents !== "undefined") {
+      new CarbonComponents.Tooltip($tooltip[0]);
+    }
+
     /* ===============================
        STYLE TAGS
     =============================== */
