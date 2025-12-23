@@ -1904,30 +1904,44 @@ function renderPresetList($ul, pedalId, presets) {
   presets.forEach(preset => {
     const $li = $("<li>").addClass("preset-item");
 
-    /* ===============================
-       TITLE ROW: name + info tooltip
-    =============================== */
     const description = preset.description || "No description available";
-
     const $titleRow = $("<div>").addClass("preset-title-row");
 
-    const $name = $("<span>")
-      .addClass("preset-name")
-      .text(preset.presetName || preset._id);
+    const $name = $("<span>").addClass("preset-name").text(preset.presetName || preset._id);
 
-    // Tooltip CSS-only
-    const $tooltip = $(`
-      <span class="preset-tooltip">ℹ
-        <span class="preset-tooltip-text">${description}</span>
-      </span>
-    `);
+    // ℹ icon with tooltip event
+    const $info = $("<span>").addClass("preset-info").text("ℹ");
+    $info.on("mouseenter", (e) => {
+      const $tooltip = $(`<div class="preset-tooltip-popup">${description}</div>`);
+      $("body").append($tooltip);
 
-    $titleRow.append($name, $tooltip);
+      const offset = $info.offset();
+      $tooltip.css({
+        position: "absolute",
+        top: offset.top - $tooltip.outerHeight() - 5,
+        left: offset.left,
+        zIndex: 2000,
+        maxWidth: "250px",
+        backgroundColor: "rgba(0,0,0,0.85)",
+        color: "#fff",
+        padding: "6px 8px",
+        borderRadius: "4px",
+        fontSize: "0.85rem",
+        pointerEvents: "none"
+      });
+
+      $info.data("tooltipEl", $tooltip);
+    });
+
+    $info.on("mouseleave", () => {
+      const $tooltip = $info.data("tooltipEl");
+      if ($tooltip) $tooltip.remove();
+    });
+
+    $titleRow.append($name, $info);
     $li.append($titleRow);
 
-    /* ===============================
-       STYLE TAGS
-    =============================== */
+    // Style tags
     if (Array.isArray(preset.style)) {
       preset.style.forEach(style => {
         const color = STYLE_TAG_MAP[style] || "gray";
@@ -1939,12 +1953,9 @@ function renderPresetList($ul, pedalId, presets) {
       });
     }
 
-    /* ===============================
-       CLICK HANDLER
-    =============================== */
+    // Click handler
     $li.on("click", function (e) {
       e.stopPropagation();
-
       applyCatalogPresetToSinglePedal(pedalId, preset);
       $(".preset-dropdown-wrapper").removeClass("is-open");
     });
@@ -1952,6 +1963,7 @@ function renderPresetList($ul, pedalId, presets) {
     $ul.append($li);
   });
 }
+
 
 
 
