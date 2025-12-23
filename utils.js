@@ -2051,12 +2051,14 @@ $(document).on("click", function () {
 async function buildPresetDropdown($ul, pedalId) {
   $ul.empty().append("<li class='loading'>Loading presets…</li>");
 
+  const token = localStorage.getItem('authToken');
+
   try {
     const res = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PRESETS_BY_PEDAL.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + window.authToken
+        "Authorization": "Bearer " + token
       },
       body: JSON.stringify({ pedalId })
     });
@@ -2071,7 +2073,7 @@ async function buildPresetDropdown($ul, pedalId) {
 
     data.presets.forEach(preset => {
       const $li = $("<li>").addClass("preset-item");
-      $li.append(`<span class="preset-name">${preset.name || preset._id}</span>`);
+      $li.append(`<span class="preset-name">${preset.presetName || preset._id}</span>`);
 
       if (Array.isArray(preset.style)) {
         preset.style.forEach(style => {
