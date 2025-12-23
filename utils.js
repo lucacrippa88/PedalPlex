@@ -1788,11 +1788,11 @@ async function renderFullPedalboard() {
           .css(wrapperStyles).append($pedalDiv);
 
 
+        $wrapper.css("position", "relative");
 
         // ============== AI DROPDOWN PRESET ===============
 
         if (window.currentUser.role != "guest") {
-          $wrapper.css("position", "relative");
 
           const $presetContainer = $(`
             <div class="preset-container">
@@ -1897,7 +1897,7 @@ async function renderFullPedalboard() {
           $(document).on("click", function () {
             $(".preset-dropdown-wrapper").removeClass("is-open");
           });
-          
+
         }
 
         // ================================================
