@@ -1808,7 +1808,12 @@ async function renderFullPedalboard() {
 
             <div class="preset-dropdown-wrapper">
               <ul class="preset-dropdown">
-                <li>Warm Clean Glide <button class="bx--tag bx--tag--cyan"><span class="bx--tag__label">Clean</span></button><button class="bx--tag bx--tag--green"><span class="bx--tag__label">Ambient</span></button></li>
+                <li>Warm Clean Glide 
+                  <button class="bx--tag bx--tag--cyan"><span class="bx--tag__label">Clean</span></button>
+                  <button class="bx--tag bx--tag--green"><span class="bx--tag__label">Warm</span></button>
+                  <button class="bx--tag bx--tag--green"><span class="bx--tag__label">Ambient</span></button>
+                  <button class="bx--tag bx--tag--green"><span class="bx--tag__label">Reverb</span></button>
+                </li>
                 <li>Boosted Crunch Solo</li>
                 <li>Warm Analog Repeat</li>
                 <li>Ultra Jet</li>
