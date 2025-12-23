@@ -2073,7 +2073,7 @@ async function buildPresetDropdown($ul, pedalId) {
 
     data.presets.forEach(preset => {
       const $li = $("<li>").addClass("preset-item");
-      $li.append(`<span class="preset-name">${preset.presetName || preset._id}</span>`);
+      $li.append(`<span class="preset-name">${preset.presetName || preset._id}</span><br>`);
 
       if (Array.isArray(preset.style)) {
         preset.style.forEach(style => {
