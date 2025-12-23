@@ -24181,6 +24181,18 @@ a.bx--tabs__nav-link:active {
     background-color: #9ef0f0;
     color: #004144
 }
+.bx--tag--black {
+    background-color: #000000;
+    color: #ffffff
+}
+.bx--tag--yellow {
+    background-color: #e0ca1f;
+    color: #7a6f17
+}
+.bx--tag--orange {
+    background-color: #f5961b;
+    color: #825821
+}
 
 .bx--tag--teal.bx--tag--interactive:hover,
 .bx--tag--teal .bx--tag__close-icon:hover {
