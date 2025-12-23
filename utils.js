@@ -1792,7 +1792,7 @@ async function renderFullPedalboard() {
 
         // ============== AI DROPDOWN PRESET ===============
 
-        if (window.currentUser != null) {
+        if (window.currentUser == "admin" || window.currentUser == "luca.crippa") {
 
           const $presetContainer = $(`
             <div class="preset-container">
