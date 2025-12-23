@@ -24182,15 +24182,15 @@ a.bx--tabs__nav-link:active {
     color: #004144
 }
 .bx--tag--black {
-    background-color: #5e5e5e;
+    background-color: #454545;
     color: #949494
 }
 .bx--tag--yellow {
-    background-color: #f2f194;
-    color: #a3a239
+    background-color: #f0efaa;
+    color: #999846
 }
 .bx--tag--orange {
-    background-color: #ebc26c;
+    background-color: #e6c37a;
     color: #997323
 }
 
@@ -24220,7 +24220,7 @@ a.bx--tabs__nav-link:active {
 }
 
 .bx--tag--cool-gray {
-    background-color: #dde1e6;
+    background-color: #aab5bf;
     color: #343a3f
 }
 
@@ -24230,7 +24230,7 @@ a.bx--tabs__nav-link:active {
 }
 
 .bx--tag--warm-gray {
-    background-color: #e5e0df;
+    background-color: #ebeae1;
     color: #3c3838
 }
 
