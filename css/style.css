@@ -926,7 +926,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   height: 140px;
   overflow-y: auto;
   overflow-x: hidden;
-
+  opacity: 0.8;
   background: #444;
   border-radius: 8px;
   list-style: none;
@@ -980,7 +980,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   background-color: rgba(0,0,0,0.8);
   color: #fff;
   text-align: left;
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 6px 8px;
   position: absolute;
   z-index: 1000;
