@@ -1809,8 +1809,17 @@ async function renderFullPedalboard() {
             <div class="preset-dropdown-wrapper">
               <ul class="preset-dropdown">
                 <li>Warm Clean Glide 
-                  <button class="bx--tag bx--tag--cyan"><span class="bx--tag__label">Clean</span></button>
-                  <button class="bx--tag bx--tag--green"><span class="bx--tag__label">Ambient</span></button>
+                  <button class="bx--tag bx--tag--cyan"><span class="bx--tag__label">altern</span></button>
+                  <button class="bx--tag bx--tag--cool-gray><span class="bx--tag__label">grunge</span></button>
+                  <button class="bx--tag bx--tag—-blue”><span class="bx--tag__label">blues</span></button>
+                  <button class="bx--tag bx--tag—-red”><span class="bx--tag__label">rock</span></button>
+                  <button class="bx--tag bx--tag—-green”><span class="bx--tag__label">funk</span></button>
+                  <button class="bx--tag bx--tag—-magenta”><span class="bx--tag__label">ambient</span></button>
+                  <button class="bx--tag bx--tag—-black”><span class="bx--tag__label">metal</span></button>
+                  <button class="bx--tag bx--tag—-teal”><span class="bx--tag__label">surf</span></button>
+                  <button class="bx--tag bx--tag—-gray”><span class="bx--tag__label">jazz</span></button>
+                  <button class="bx--tag bx--tag—-warm-gray”><span class="bx--tag__label">pop</span></button>
+                  <button class="bx--tag bx--tag—-purple”><span class="bx--tag__label">prog</span></button>
                 </li>
                 <li>Boosted Crunch Solo</li>
                 <li>Warm Analog Repeat</li>
