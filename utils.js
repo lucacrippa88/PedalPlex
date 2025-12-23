@@ -1847,16 +1847,31 @@ async function renderFullPedalboard() {
           if (glowEl) stopGlow = startGlow(glowEl);
 
           // Toggle dropdown
+          // $presetContainer.find(".preset-icon").on("click", function (e) {
+          //   e.stopPropagation();
+
+          //   if ($dropdownWrapper.hasClass("is-open")) {
+          //     $dropdownWrapper.removeClass("is-open");
+          //   } else {
+          //     $(".preset-dropdown-wrapper").removeClass("is-open");
+          //     $dropdownWrapper.addClass("is-open");
+          //   }
+          // });
           $presetContainer.find(".preset-icon").on("click", function (e) {
             e.stopPropagation();
 
-            if ($dropdownWrapper.hasClass("is-open")) {
-              $dropdownWrapper.removeClass("is-open");
-            } else {
-              $(".preset-dropdown-wrapper").removeClass("is-open");
+            const isOpen = $dropdownWrapper.hasClass("is-open");
+
+            $(".preset-dropdown-wrapper").removeClass("is-open");
+
+            if (!isOpen) {
               $dropdownWrapper.addClass("is-open");
+
+              // ✅ FETCH + render SOLO QUI, SOLO AL CLICK
+              buildPresetDropdown($ul, pedal._id);
             }
           });
+
 
         }
         // ================================================
@@ -1892,6 +1907,46 @@ async function renderFullPedalboard() {
 
 
 
+function renderPresetList($ul, pedalId, presets) {
+  $ul.empty();
+
+  if (!presets.length) {
+    $ul.append("<li class='empty'>No presets found</li>");
+    return;
+  }
+
+  presets.forEach(preset => {
+    const $li = $("<li>").addClass("preset-item");
+
+    $li.append(
+      `<span class="preset-name">${preset.presetName || preset._id}</span><br>`
+    );
+
+    if (Array.isArray(preset.style)) {
+      preset.style.forEach(style => {
+        const color = STYLE_TAG_MAP[style] || "gray";
+        $li.append(`
+          <button class="bx--tag bx--tag--${color}">
+            <span class="bx--tag__label">${style}</span>
+          </button>
+        `);
+      });
+    }
+
+    $li.on("click", function (e) {
+      e.stopPropagation();
+
+      // ⚠️ SOLO logica locale
+      applyCatalogPresetToSinglePedal(pedalId, preset);
+
+      $(".preset-dropdown-wrapper").removeClass("is-open");
+    });
+
+    $ul.append($li);
+  });
+}
+
+
 
 // HELPER
 function getBoxShadow(pedal, inside, insetIfNotFull) {
@@ -1909,6 +1964,8 @@ function getBoxShadow(pedal, inside, insetIfNotFull) {
 }
 
 
+window.presetCatalogCache = window.presetCatalogCache || {};
+
 
 // HELPER FUNCTIONS AI PRESET DROPDOWN =======
 $(document).on("click", function () {
@@ -1916,76 +1973,114 @@ $(document).on("click", function () {
 });
 
 // Build Preset from AI Catalog
-async function buildPresetDropdown($ul, pedalId) {
-  $ul.empty().append("<li class='loading'>Loading presets…</li>");
+// async function buildPresetDropdown($ul, pedalId) {
+//   $ul.empty().append("<li class='loading'>Loading presets…</li>");
 
-  const token = localStorage.getItem('authToken');
+//   const token = localStorage.getItem('authToken');
+
+//   try {
+//     const res = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PRESETS_BY_PEDAL.php", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         "Authorization": "Bearer " + token
+//       },
+//       body: JSON.stringify({ pedalId })
+//     });
+
+//     const data = await res.json();
+//     $ul.empty();
+
+//     if (!data.presets || !data.presets.length) {
+//       $ul.append("<li class='empty'>No presets found</li>");
+//       return;
+//     }
+
+//     data.presets.forEach(preset => {
+//       const $li = $("<li>").addClass("preset-item");
+//       $li.append(`<span class="preset-name">${preset.presetName || preset._id}</span><br>`);
+
+//       // Mostra i tag colorati per gli style
+//       if (Array.isArray(preset.style)) {
+//         preset.style.forEach(style => {
+//           const color = STYLE_TAG_MAP[style] || "gray";
+//           $li.append(`
+//             <button class="bx--tag bx--tag--${color}">
+//               <span class="bx--tag__label">${style}</span>
+//             </button>
+//           `);
+//         });
+//       }
+
+//       // Click sul preset → costruisce l’oggetto compatibile con applyPresetToPedalboard
+//         $li.on('click', function (e) {
+//           e.stopPropagation();
+
+//           applyCatalogPresetToSinglePedal(pedalId, preset);
+
+//           // Chiude il dropdown
+//           $(".preset-dropdown-wrapper").removeClass("is-open");
+//         });
+
+
+//       $ul.append($li);
+//     });
+
+//   } catch (err) {
+//     console.error("Preset dropdown error:", err);
+//     $ul.html("<li class='error'>Error loading presets</li>");
+//   }
+// }
+async function buildPresetDropdown($ul, pedalId) {
+
+  // 1️⃣ Cache hit → nessuna fetch
+  if (window.presetCatalogCache[pedalId]) {
+    renderPresetList($ul, pedalId, window.presetCatalogCache[pedalId]);
+    return;
+  }
+
+  // 2️⃣ Stato loading (una sola volta)
+  $ul
+    .empty()
+    .append("<li class='loading'>Loading presets…</li>");
+
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    $ul.html("<li class='error'>Not authenticated</li>");
+    return;
+  }
 
   try {
-    const res = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PRESETS_BY_PEDAL.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify({ pedalId })
-    });
+    const res = await fetch(
+      "https://www.cineteatrosanluigi.it/plex/GET_PRESETS_BY_PEDAL.php",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ pedalId })
+      }
+    );
 
-    const data = await res.json();
-    $ul.empty();
-
-    if (!data.presets || !data.presets.length) {
-      $ul.append("<li class='empty'>No presets found</li>");
-      return;
+    if (!res.ok) {
+      throw new Error("HTTP " + res.status);
     }
 
-    data.presets.forEach(preset => {
-      const $li = $("<li>").addClass("preset-item");
-      $li.append(`<span class="preset-name">${preset.presetName || preset._id}</span><br>`);
+    const data = await res.json();
+    const presets = Array.isArray(data.presets) ? data.presets : [];
 
-      // Mostra i tag colorati per gli style
-      if (Array.isArray(preset.style)) {
-        preset.style.forEach(style => {
-          const color = STYLE_TAG_MAP[style] || "gray";
-          $li.append(`
-            <button class="bx--tag bx--tag--${color}">
-              <span class="bx--tag__label">${style}</span>
-            </button>
-          `);
-        });
-      }
+    // 3️⃣ Salva in cache
+    window.presetCatalogCache[pedalId] = presets;
 
-      // Click sul preset → costruisce l’oggetto compatibile con applyPresetToPedalboard
-      // $li.on('click', function () {
-      //   const presetDoc = {
-      //     pedals: {
-      //       [preset.pedalId]: {
-      //         controls: preset.controls,
-      //         row: 1 // default row, puoi personalizzare se vuoi
-      //       }
-      //     }
-      //   };
-
-      //   applyPresetToPedalboard(presetDoc);
-      // });
-        $li.on('click', function (e) {
-          e.stopPropagation();
-
-          applyCatalogPresetToSinglePedal(pedalId, preset);
-
-          // Chiude il dropdown
-          $(".preset-dropdown-wrapper").removeClass("is-open");
-        });
-
-
-      $ul.append($li);
-    });
+    renderPresetList($ul, pedalId, presets);
 
   } catch (err) {
     console.error("Preset dropdown error:", err);
     $ul.html("<li class='error'>Error loading presets</li>");
   }
 }
+
 
 
 // Start glow effect on element
