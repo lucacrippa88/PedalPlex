@@ -1839,7 +1839,7 @@ async function renderFullPedalboard() {
           const $ul = $presetContainer.find(".preset-dropdown");
 
           // 🔁 Load presets for this pedal
-          buildPresetDropdown($ul, pedal._id);
+          //buildPresetDropdown($ul, pedal._id);
 
           // ✨ Glow
           const glowEl = $dropdownWrapper[0];
