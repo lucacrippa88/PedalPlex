@@ -1810,16 +1810,44 @@ async function renderFullPedalboard() {
               <ul class="preset-dropdown">
                 <li>Warm Clean Glide 
                   <button class="bx--tag bx--tag--cyan"><span class="bx--tag__label">altern</span></button>
+                  <button class="bx--tag bx--tag--cyan"><span class="bx--tag__label">indie</span></button>
+
                   <button class="bx--tag bx--tag--cool-gray"><span class="bx--tag__label">grunge</span></button>
+                  <button class="bx--tag bx--tag--cool-gray"><span class="bx--tag__label">lo-fi</span></button>
+
                   <button class="bx--tag bx--tag--blue"><span class="bx--tag__label">blues</span></button>
+
                   <button class="bx--tag bx--tag--red"><span class="bx--tag__label">rock</span></button>
+                  <button class="bx--tag bx--tag--red"><span class="bx--tag__label">stoner</span></button>
+
                   <button class="bx--tag bx--tag--green"><span class="bx--tag__label">funk</span></button>
+                  <button class="bx--tag bx--tag--green"><span class="bx--tag__label">raggaeton</span></button>
+
                   <button class="bx--tag bx--tag--magenta"><span class="bx--tag__label">ambient</span></button>
+                  <button class="bx--tag bx--tag--magenta"><span class="bx--tag__label">chill</span></button>
+
                   <button class="bx--tag bx--tag--black"><span class="bx--tag__label">metal</span></button>
+                  <button class="bx--tag bx--tag--black"><span class="bx--tag__label">stoner</span></button>
+
                   <button class="bx--tag bx--tag--teal"><span class="bx--tag__label">surf</span></button>
+
                   <button class="bx--tag bx--tag--gray"><span class="bx--tag__label">jazz</span></button>
+
                   <button class="bx--tag bx--tag--warm-gray"><span class="bx--tag__label">pop</span></button>
+                  <button class="bx--tag bx--tag--warm-gray"><span class="bx--tag__label">beat</span></button>
+                  
+                  <button class="bx--tag bx--tag--orange"><span class="bx--tag__label">punk</span></button>
+                  <button class="bx--tag bx--tag--orange"><span class="bx--tag__label">wave</span></button>
+
                   <button class="bx--tag bx--tag--purple"><span class="bx--tag__label">prog</span></button>
+                  <button class="bx--tag bx--tag--purple"><span class="bx--tag__label">psych</span></button>
+                  
+                  <button class="bx--tag bx--tag--yellow"><span class="bx--tag__label">folk</span></button>
+
+                  
+                  
+                  
+                  
                 </li>
                 <li>Boosted Crunch Solo</li>
                 <li>Warm Analog Repeat</li>
