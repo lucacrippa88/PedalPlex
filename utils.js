@@ -1791,114 +1791,114 @@ async function renderFullPedalboard() {
 
         // ============== AI DROPDOWN PRESET ===============
 
-        $wrapper.css("position", "relative");
+        if (window.currentUser.role != "guest") {
+          $wrapper.css("position", "relative");
 
-        const $presetContainer = $(`
-          <div class="preset-container">
-            <svg class="preset-icon"
-              focusable="false"
-              preserveAspectRatio="xMidYMid meet"
-              fill="currentColor"
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path><path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
-            </svg>
+          const $presetContainer = $(`
+            <div class="preset-container">
+              <svg class="preset-icon"
+                focusable="false"
+                preserveAspectRatio="xMidYMid meet"
+                fill="currentColor"
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path><path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
+              </svg>
 
-            <div class="preset-dropdown-wrapper">
-              <ul class="preset-dropdown">
-                <li>Warm Clean Glide 
-                  <button class="bx--tag bx--tag--cyan"><span class="bx--tag__label">altern</span></button>
-                  <button class="bx--tag bx--tag--cyan"><span class="bx--tag__label">indie</span></button>
+              <div class="preset-dropdown-wrapper">
+                <ul class="preset-dropdown">
+                  <li>Warm Clean Glide 
+                    <button class="bx--tag bx--tag--cyan"><span class="bx--tag__label">altern</span></button>
+                    <button class="bx--tag bx--tag--cyan"><span class="bx--tag__label">indie</span></button>
 
-                  <button class="bx--tag bx--tag--cool-gray"><span class="bx--tag__label">grunge</span></button>
-                  <button class="bx--tag bx--tag--cool-gray"><span class="bx--tag__label">lo-fi</span></button>
+                    <button class="bx--tag bx--tag--cool-gray"><span class="bx--tag__label">grunge</span></button>
+                    <button class="bx--tag bx--tag--cool-gray"><span class="bx--tag__label">lo-fi</span></button>
 
-                  <button class="bx--tag bx--tag--blue"><span class="bx--tag__label">blues</span></button>
+                    <button class="bx--tag bx--tag--blue"><span class="bx--tag__label">blues</span></button>
 
-                  <button class="bx--tag bx--tag--red"><span class="bx--tag__label">rock</span></button>
-                  <button class="bx--tag bx--tag--red"><span class="bx--tag__label">stoner</span></button>
+                    <button class="bx--tag bx--tag--red"><span class="bx--tag__label">rock</span></button>
+                    <button class="bx--tag bx--tag--red"><span class="bx--tag__label">stoner</span></button>
 
-                  <button class="bx--tag bx--tag--green"><span class="bx--tag__label">funk</span></button>
-                  <button class="bx--tag bx--tag--green"><span class="bx--tag__label">raggaeton</span></button>
+                    <button class="bx--tag bx--tag--green"><span class="bx--tag__label">funk</span></button>
+                    <button class="bx--tag bx--tag--green"><span class="bx--tag__label">raggaeton</span></button>
 
-                  <button class="bx--tag bx--tag--magenta"><span class="bx--tag__label">ambient</span></button>
-                  <button class="bx--tag bx--tag--magenta"><span class="bx--tag__label">chill</span></button>
+                    <button class="bx--tag bx--tag--magenta"><span class="bx--tag__label">ambient</span></button>
+                    <button class="bx--tag bx--tag--magenta"><span class="bx--tag__label">chill</span></button>
 
-                  <button class="bx--tag bx--tag--black"><span class="bx--tag__label">metal</span></button>
-                  <button class="bx--tag bx--tag--black"><span class="bx--tag__label">stoner</span></button>
+                    <button class="bx--tag bx--tag--black"><span class="bx--tag__label">metal</span></button>
+                    <button class="bx--tag bx--tag--black"><span class="bx--tag__label">stoner</span></button>
 
-                  <button class="bx--tag bx--tag--teal"><span class="bx--tag__label">surf</span></button>
+                    <button class="bx--tag bx--tag--teal"><span class="bx--tag__label">surf</span></button>
 
-                  <button class="bx--tag bx--tag--gray"><span class="bx--tag__label">jazz</span></button>
+                    <button class="bx--tag bx--tag--gray"><span class="bx--tag__label">jazz</span></button>
 
-                  <button class="bx--tag bx--tag--warm-gray"><span class="bx--tag__label">pop</span></button>
-                  <button class="bx--tag bx--tag--warm-gray"><span class="bx--tag__label">beat</span></button>
-                  
-                  <button class="bx--tag bx--tag--orange"><span class="bx--tag__label">punk</span></button>
-                  <button class="bx--tag bx--tag--orange"><span class="bx--tag__label">wave</span></button>
+                    <button class="bx--tag bx--tag--warm-gray"><span class="bx--tag__label">pop</span></button>
+                    <button class="bx--tag bx--tag--warm-gray"><span class="bx--tag__label">beat</span></button>
+                    
+                    <button class="bx--tag bx--tag--orange"><span class="bx--tag__label">punk</span></button>
+                    <button class="bx--tag bx--tag--orange"><span class="bx--tag__label">wave</span></button>
 
-                  <button class="bx--tag bx--tag--purple"><span class="bx--tag__label">prog</span></button>
-                  <button class="bx--tag bx--tag--purple"><span class="bx--tag__label">psych</span></button>
-                  
-                  <button class="bx--tag bx--tag--yellow"><span class="bx--tag__label">folk</span></button>
+                    <button class="bx--tag bx--tag--purple"><span class="bx--tag__label">prog</span></button>
+                    <button class="bx--tag bx--tag--purple"><span class="bx--tag__label">psych</span></button>
+                    
+                    <button class="bx--tag bx--tag--yellow"><span class="bx--tag__label">folk</span></button>
+                    <button class="bx--tag bx--tag--yellow"><span class="bx--tag__label">country</span></button>
 
-                  
-                  
-                  
-                  
-                </li>
-                <li>Boosted Crunch Solo</li>
-                <li>Warm Analog Repeat</li>
-                <li>Ultra Jet</li>
-                <li>Bright Spark Crunch</li>
-              </ul>
+                  </li>
+                  <li>Boosted Crunch Solo</li>
+                  <li>Warm Analog Repeat</li>
+                  <li>Ultra Jet</li>
+                  <li>Bright Spark Crunch</li>
+                </ul>
+              </div>
             </div>
-          </div>
-        `);
+          `);
 
-        $wrapper.append($presetContainer);
+          $wrapper.append($presetContainer);
 
-        const glowEl = $presetContainer.find(".preset-dropdown-wrapper")[0]; // prende l'elemento nativo
-        if (glowEl) {
-          let angle = 65;
-          const speed = 0.6;
+          const glowEl = $presetContainer.find(".preset-dropdown-wrapper")[0]; // prende l'elemento nativo
+          if (glowEl) {
+            let angle = 65;
+            const speed = 0.6;
 
-          function animateGlow() {
-            angle += speed;
-            if (angle >= 360) angle -= 360;
+            function animateGlow() {
+              angle += speed;
+              if (angle >= 360) angle -= 360;
 
-            glowEl.style.setProperty("--gradient-angle", angle + "deg");
-            requestAnimationFrame(animateGlow);
+              glowEl.style.setProperty("--gradient-angle", angle + "deg");
+              requestAnimationFrame(animateGlow);
+            }
+
+            animateGlow();
           }
 
-          animateGlow();
-        }
 
+          /* riferimento wrapper dropdown */
+          const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
 
-        /* riferimento wrapper dropdown */
-        const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
+          /* 🔒 STATO INIZIALE: CHIUSO (via CSS, NON JS) */
+          // NON usare .hide() / .show()
 
-        /* 🔒 STATO INIZIALE: CHIUSO (via CSS, NON JS) */
-        // NON usare .hide() / .show()
+          /* Toggle SAFE per Safari */
+          $presetContainer.find(".preset-icon").on("click", function (e) {
+            e.stopPropagation();
 
-        /* Toggle SAFE per Safari */
-        $presetContainer.find(".preset-icon").on("click", function (e) {
-          e.stopPropagation();
+            if ($dropdownWrapper.hasClass("is-open")) {
+              $dropdownWrapper.removeClass("is-open");
+            } else {
+              $(".preset-dropdown-wrapper").removeClass("is-open");
+              $dropdownWrapper.addClass("is-open");
+            }
+          });
 
-          if ($dropdownWrapper.hasClass("is-open")) {
-            $dropdownWrapper.removeClass("is-open");
-          } else {
+          /* Click esterno → chiude */
+          $(document).on("click", function () {
             $(".preset-dropdown-wrapper").removeClass("is-open");
-            $dropdownWrapper.addClass("is-open");
-          }
-        });
-
-        /* Click esterno → chiude */
-        $(document).on("click", function () {
-          $(".preset-dropdown-wrapper").removeClass("is-open");
-        });
+          });
+          
+        }
 
         // ================================================
 
