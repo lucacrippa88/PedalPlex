@@ -1939,17 +1939,11 @@ async function buildPresetDropdown($ul, pedalId) {
       return;
     }
 
-    // Costruisci una mappa locale dei preset per il click
-    const presetMap = {};
-    data.presets.forEach(p => presetMap[p._id] = p);
-
     data.presets.forEach(preset => {
       const $li = $("<li>").addClass("preset-item");
+      $li.append(`<span class="preset-name">${preset.presetName || preset._id}</span><br>`);
 
-      // Mostra presetName, non _id
-      $li.append(`<span class="preset-name">${preset.presetName}</span><br>`);
-
-      // Stili
+      // Mostra i tag colorati per gli style
       if (Array.isArray(preset.style)) {
         preset.style.forEach(style => {
           const color = STYLE_TAG_MAP[style] || "gray";
@@ -1961,13 +1955,18 @@ async function buildPresetDropdown($ul, pedalId) {
         });
       }
 
-      // Click handler → applica il preset
-      $li.on("click", function(e) {
-        e.stopPropagation();
-        $(".preset-dropdown-wrapper").removeClass("is-open");
+      // Click sul preset → costruisce l’oggetto compatibile con applyPresetToPedalboard
+      $li.on('click', function () {
+        const presetDoc = {
+          pedals: {
+            [preset.pedalId]: {
+              controls: preset.controls,
+              row: 1 // default row, puoi personalizzare se vuoi
+            }
+          }
+        };
 
-        const fullPreset = presetMap[preset._id];
-        if (fullPreset) applyPresetToPedalboard(fullPreset);
+        applyPresetToPedalboard(presetDoc);
       });
 
       $ul.append($li);
@@ -1980,6 +1979,7 @@ async function buildPresetDropdown($ul, pedalId) {
 }
 
 
+// Start glow effect on element
 function startGlow(el) {
   let angle = 65;
   const speed = 0.6;
