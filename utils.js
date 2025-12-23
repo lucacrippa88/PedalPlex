@@ -1838,25 +1838,12 @@ async function renderFullPedalboard() {
           const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
           const $ul = $presetContainer.find(".preset-dropdown");
 
-          // 🔁 Load presets for this pedal
-          //buildPresetDropdown($ul, pedal._id);
-
           // ✨ Glow
           const glowEl = $dropdownWrapper[0];
           let stopGlow = null;
           if (glowEl) stopGlow = startGlow(glowEl);
 
           // Toggle dropdown
-          // $presetContainer.find(".preset-icon").on("click", function (e) {
-          //   e.stopPropagation();
-
-          //   if ($dropdownWrapper.hasClass("is-open")) {
-          //     $dropdownWrapper.removeClass("is-open");
-          //   } else {
-          //     $(".preset-dropdown-wrapper").removeClass("is-open");
-          //     $dropdownWrapper.addClass("is-open");
-          //   }
-          // });
           $presetContainer.find(".preset-icon").on("click", function (e) {
             e.stopPropagation();
 
@@ -1906,7 +1893,7 @@ async function renderFullPedalboard() {
 
 
 
-
+// Render dropdown preset list from AI preset catalog
 function renderPresetList($ul, pedalId, presets) {
   $ul.empty();
 
@@ -1918,10 +1905,30 @@ function renderPresetList($ul, pedalId, presets) {
   presets.forEach(preset => {
     const $li = $("<li>").addClass("preset-item");
 
-    $li.append(
-      `<span class="preset-name">${preset.presetName || preset._id}</span><br>`
-    );
+    /* ===============================
+       TITLE ROW: name + info tooltip
+    =============================== */
+    const description = preset.description || "No description available";
 
+    const $titleRow = $("<div>").addClass("preset-title-row");
+
+    const $name = $("<span>")
+      .addClass("preset-name")
+      .text(preset.presetName || preset._id);
+
+    const $tooltip = $(`
+      <span class="bx--tooltip bx--tooltip--top">
+        <span class="bx--tooltip__trigger">ℹ</span>
+        <span class="bx--tooltip__label">${description}</span>
+      </span>
+    `);
+
+    $titleRow.append($name, $tooltip);
+    $li.append($titleRow);
+
+    /* ===============================
+       STYLE TAGS
+    =============================== */
     if (Array.isArray(preset.style)) {
       preset.style.forEach(style => {
         const color = STYLE_TAG_MAP[style] || "gray";
@@ -1933,18 +1940,20 @@ function renderPresetList($ul, pedalId, presets) {
       });
     }
 
+    /* ===============================
+       CLICK HANDLER
+    =============================== */
     $li.on("click", function (e) {
       e.stopPropagation();
 
-      // ⚠️ SOLO logica locale
       applyCatalogPresetToSinglePedal(pedalId, preset);
-
       $(".preset-dropdown-wrapper").removeClass("is-open");
     });
 
     $ul.append($li);
   });
 }
+
 
 
 
@@ -1973,64 +1982,6 @@ $(document).on("click", function () {
 });
 
 // Build Preset from AI Catalog
-// async function buildPresetDropdown($ul, pedalId) {
-//   $ul.empty().append("<li class='loading'>Loading presets…</li>");
-
-//   const token = localStorage.getItem('authToken');
-
-//   try {
-//     const res = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PRESETS_BY_PEDAL.php", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//         "Authorization": "Bearer " + token
-//       },
-//       body: JSON.stringify({ pedalId })
-//     });
-
-//     const data = await res.json();
-//     $ul.empty();
-
-//     if (!data.presets || !data.presets.length) {
-//       $ul.append("<li class='empty'>No presets found</li>");
-//       return;
-//     }
-
-//     data.presets.forEach(preset => {
-//       const $li = $("<li>").addClass("preset-item");
-//       $li.append(`<span class="preset-name">${preset.presetName || preset._id}</span><br>`);
-
-//       // Mostra i tag colorati per gli style
-//       if (Array.isArray(preset.style)) {
-//         preset.style.forEach(style => {
-//           const color = STYLE_TAG_MAP[style] || "gray";
-//           $li.append(`
-//             <button class="bx--tag bx--tag--${color}">
-//               <span class="bx--tag__label">${style}</span>
-//             </button>
-//           `);
-//         });
-//       }
-
-//       // Click sul preset → costruisce l’oggetto compatibile con applyPresetToPedalboard
-//         $li.on('click', function (e) {
-//           e.stopPropagation();
-
-//           applyCatalogPresetToSinglePedal(pedalId, preset);
-
-//           // Chiude il dropdown
-//           $(".preset-dropdown-wrapper").removeClass("is-open");
-//         });
-
-
-//       $ul.append($li);
-//     });
-
-//   } catch (err) {
-//     console.error("Preset dropdown error:", err);
-//     $ul.html("<li class='error'>Error loading presets</li>");
-//   }
-// }
 async function buildPresetDropdown($ul, pedalId) {
 
   // 1️⃣ Cache hit → nessuna fetch
