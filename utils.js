@@ -1893,7 +1893,6 @@ async function renderFullPedalboard() {
 
 
 
-// Render dropdown preset list from AI preset catalog
 function renderPresetList($ul, pedalId, presets) {
   $ul.empty();
 
@@ -1916,20 +1915,15 @@ function renderPresetList($ul, pedalId, presets) {
       .addClass("preset-name")
       .text(preset.presetName || preset._id);
 
+    // Tooltip CSS-only
     const $tooltip = $(`
-      <span class="bx--tooltip bx--tooltip--top">
-        <span class="bx--tooltip__trigger">ℹ</span>
-        <span class="bx--tooltip__label">${description}</span>
+      <span class="preset-tooltip">ℹ
+        <span class="preset-tooltip-text">${description}</span>
       </span>
     `);
 
     $titleRow.append($name, $tooltip);
     $li.append($titleRow);
-
-    // Inizializza Carbon tooltip dinamico
-    if (typeof CarbonComponents !== "undefined") {
-      new CarbonComponents.Tooltip($tooltip[0]);
-    }
 
     /* ===============================
        STYLE TAGS
@@ -1958,6 +1952,7 @@ function renderPresetList($ul, pedalId, presets) {
     $ul.append($li);
   });
 }
+
 
 
 
