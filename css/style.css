@@ -958,3 +958,41 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   opacity: 1;
   pointer-events: auto;
 }
+
+
+
+
+
+
+/* Tooltip standard */
+.preset-tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 5px;
+  color: #00aaff;
+  font-weight: bold;
+}
+
+.preset-tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: rgba(0,0,0,0.8);
+  color: #fff;
+  text-align: left;
+  border-radius: 4px;
+  padding: 6px 8px;
+  position: absolute;
+  z-index: 1000;
+  bottom: 125%; /* sopra l’icona */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-size: 0.85rem;
+}
+
+.preset-tooltip:hover .preset-tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
