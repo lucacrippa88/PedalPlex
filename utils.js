@@ -1956,18 +1956,27 @@ async function buildPresetDropdown($ul, pedalId) {
       }
 
       // Click sul preset → costruisce l’oggetto compatibile con applyPresetToPedalboard
-      $li.on('click', function () {
-        const presetDoc = {
-          pedals: {
-            [preset.pedalId]: {
-              controls: preset.controls,
-              row: 1 // default row, puoi personalizzare se vuoi
-            }
-          }
-        };
+      // $li.on('click', function () {
+      //   const presetDoc = {
+      //     pedals: {
+      //       [preset.pedalId]: {
+      //         controls: preset.controls,
+      //         row: 1 // default row, puoi personalizzare se vuoi
+      //       }
+      //     }
+      //   };
 
-        applyPresetToPedalboard(presetDoc);
-      });
+      //   applyPresetToPedalboard(presetDoc);
+      // });
+        $li.on('click', function (e) {
+          e.stopPropagation();
+
+          applyCatalogPresetToSinglePedal(pedalId, preset);
+
+          // Chiude il dropdown
+          $(".preset-dropdown-wrapper").removeClass("is-open");
+        });
+
 
       $ul.append($li);
     });
@@ -1995,6 +2004,79 @@ function startGlow(el) {
 
   return () => cancelAnimationFrame(rafId);
 }
+
+
+
+function applyCatalogPresetToSinglePedal(pedalId, preset) {
+  // Trova il pedale nel DOM
+  const $pedalDiv = $(`.pedal-catalog[data-pedal-id="${pedalId}"]`);
+  if (!$pedalDiv.length) {
+    console.warn("Pedal not found on board:", pedalId);
+    return;
+  }
+
+  // Recupera il pedale di default dal catalogo
+  const defaultPedal = window.catalog.find(
+    p => p._id === pedalId || p.name === pedalId
+  );
+  if (!defaultPedal) {
+    console.warn("Pedal not found in catalog:", pedalId);
+    return;
+  }
+
+  // Deep clone del pedale di catalogo
+  const pedalClone = JSON.parse(JSON.stringify(defaultPedal));
+
+  // Applica i controls del preset
+  if (preset.controls) {
+    pedalClone.controls.forEach(row => {
+      row.row.forEach(ctrl => {
+        const label = ctrl.label;
+        if (preset.controls.hasOwnProperty(label)) {
+          ctrl.value = preset.controls[label];
+        }
+      });
+    });
+  }
+
+  // Rimuove i controlli attuali
+  $pedalDiv.find('.row').remove();
+
+  // Ri-render dei controlli
+  renderPedalControls(pedalClone, $pedalDiv);
+
+  // Aggiorna il nome (se serve)
+  const $existingName = $pedalDiv.find('.pedal-name, .head-name').first();
+  let nameClass = 'pedal-name';
+  let $referenceNode = null;
+
+  if ($existingName.length) {
+    nameClass = $existingName.hasClass('head-name') ? 'head-name' : 'pedal-name';
+    $referenceNode = $existingName.next();
+    $existingName.remove();
+  }
+
+  const $nameDiv = $("<div>")
+    .addClass(nameClass)
+    .html(pedalClone.name)
+    .attr("style", pedalClone.logo || "");
+
+  if ($referenceNode && $referenceNode.length) {
+    $nameDiv.insertBefore($referenceNode);
+  } else {
+    $pedalDiv.prepend($nameDiv);
+  }
+
+  // Salva lo stato aggiornato della pedalboard
+  savePedalboard();
+
+  // Aggiorna UI (se presente)
+  if (typeof updateSavePresetButtonState === 'function') {
+    updateSavePresetButtonState();
+  }
+}
+
+
 // END HELPER FUNCTIONS AI PRESET DROPDOWN =======
 
 
