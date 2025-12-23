@@ -821,7 +821,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     rgb(94, 226, 240)
   );
 
-  filter: blur(8px);
+  /* filter: blur(8px); */
   opacity: 0.8;
 
   z-index: -1;
@@ -913,7 +913,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     rgb(156, 84, 213),
     rgb(94, 226, 240));
 
-  filter: blur(2px);
+  /* filter: blur(2px); */
   opacity: 0.8;
   z-index: -1;
   pointer-events: none;
