@@ -2126,7 +2126,7 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   }
 
   // Salva lo stato aggiornato della pedalboard
-  savePedalboard();
+  // savePedalboard();
 
   // Aggiorna UI (se presente)
   if (typeof updateSavePresetButtonState === 'function') {
