@@ -1364,9 +1364,21 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     if (editBtn) editBtn.style.display = 'inline-block';
 
     // Seleziona preset preferito se valido, altrimenti primo preset della lista
-    let selectedPreset = preferredPresetId
-      ? filteredPresets.find(p => p._id === preferredPresetId) || filteredPresets[0]
-      : filteredPresets[0];
+    // let selectedPreset = preferredPresetId
+    //   ? filteredPresets.find(p => p._id === preferredPresetId) || filteredPresets[0]
+    //   : filteredPresets[0];
+    let selectedPreset = null;
+    if (preferredPresetId) {
+      selectedPreset = filteredPresets.find(p => p._id === preferredPresetId);
+      // ⛔ NON fare fallback automatico
+      if (!selectedPreset) {
+        console.warn('Preferred preset not found in folder:', preferredPresetId);
+        return; // esci senza toccare stato o localStorage
+      }
+    } else {
+      selectedPreset = filteredPresets[0];
+    }
+
 
     currentPresetId = selectedPreset._id;
     currentPresetName = selectedPreset.preset_name;
@@ -1384,7 +1396,11 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
       currentPresetRev = null;
     }
 
-    saveCurrentSelectionToStorage();
+    // saveCurrentSelectionToStorage();
+    if (!preferredPresetId || selectedPreset._id === preferredPresetId) {
+      saveCurrentSelectionToStorage();
+    }
+
   }
 
   // Abilita/disabilita pulsante Save
