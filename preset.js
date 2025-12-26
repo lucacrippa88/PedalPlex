@@ -911,13 +911,13 @@ async function createPreset() {
     inputLabel: 'Plex Name',
     inputPlaceholder: 'Type your new Plex name here',
     showCancelButton: true,
-    showDenyButton: true,
+    // showDenyButton: true,
     confirmButtonText: 'Save',
-    denyButtonText: 'Browse Plex catalog',
+    // denyButtonText: 'Browse Plex catalog',
     customClass: {
       confirmButton: "bx--btn bx--btn--primary",
       cancelButton: "bx--btn bx--btn--secondary",
-      denyButton: "bx--btn bx--btn--tertiary"
+      // denyButton: "bx--btn bx--btn--tertiary"
     },
     inputValidator: value => !value && 'You must enter a Plex name!'
   });
