@@ -3,6 +3,7 @@ let selectedBoardIndex = null;
 let currentPresetId = null;
 let currentPresetRev = null;
 let currentPresetName = null;
+let isRestoringPreset = false;
 
 window.allPedalboards = [];
 
@@ -211,6 +212,32 @@ async function initPreset() {
       renderFullPedalboard();
 
       // Fetch presets for selected pedalboard
+      // await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
+      //   const presetSelect = document.getElementById('presetSelect');
+      //   const folderSelect = document.getElementById('folderSelect');
+
+      //   // 1️⃣ Restore folder first
+      //   const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
+      //   if (folderSelect) {
+      //     const folderOptionExists = Array.from(folderSelect.options).some(o => o.value === savedFolderId);
+      //     folderSelect.value = folderOptionExists ? savedFolderId : 'default';
+      //   }
+
+      //   // 2️⃣ Restore preset selection via populatePresetDropdownByFolder
+      //   const savedPresetId = localStorage.getItem('lastPresetId');
+      //   populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
+
+      //   // 3️⃣ Restore zoom for current pedalboard
+      //   if (typeof restoreZoomForCurrentBoard === "function") {
+      //     restoreZoomForCurrentBoard();
+      //   }
+
+      //   // 4️⃣ Trigger change event for Save button state
+      //   presetSelect.dispatchEvent(new Event('change', {
+      //     bubbles: true
+      //   }));
+      // });
+
       await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
         const presetSelect = document.getElementById('presetSelect');
         const folderSelect = document.getElementById('folderSelect');
@@ -218,24 +245,34 @@ async function initPreset() {
         // 1️⃣ Restore folder first
         const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
         if (folderSelect) {
-          const folderOptionExists = Array.from(folderSelect.options).some(o => o.value === savedFolderId);
+          const folderOptionExists = Array.from(folderSelect.options)
+            .some(o => o.value === savedFolderId);
           folderSelect.value = folderOptionExists ? savedFolderId : 'default';
         }
 
-        // 2️⃣ Restore preset selection via populatePresetDropdownByFolder
+        // 2️⃣ Restore preset selection (NO side effects)
         const savedPresetId = localStorage.getItem('lastPresetId');
         populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
 
-        // 3️⃣ Restore zoom for current pedalboard
+        // 3️⃣ Apply restored preset manually (NO onchange)
+        if (savedPresetId && window.presetMap?.[savedPresetId]) {
+          const preset = window.presetMap[savedPresetId];
+
+          currentPresetId   = preset._id;
+          currentPresetName = preset.preset_name;
+          currentPresetRev  = preset._rev;
+
+          applyPresetToPedalboard(preset);
+        }
+
+        // 4️⃣ Restore zoom
         if (typeof restoreZoomForCurrentBoard === "function") {
           restoreZoomForCurrentBoard();
         }
 
-        // 4️⃣ Trigger change event for Save button state
-        presetSelect.dispatchEvent(new Event('change', {
-          bubbles: true
-        }));
+        // ❌ NON dispatchare change
       });
+
 
       // Pedalboard change listener
       dropdown.addEventListener('change', async (e) => {
@@ -887,23 +924,6 @@ function applyPresetToPedalboard(presetDoc) {
 
 // Create preset function
 async function createPreset() {
-  // -------------------------------
-  // 1. Prompt for preset name
-  // -------------------------------
-  // const {
-  //   value: presetName
-  // } = await Swal.fire({
-  //   title: 'Enter new Plex name',
-  //   input: 'text',
-  //   inputLabel: 'Plex Name',
-  //   inputPlaceholder: 'Type your new Plex name here',
-  //   showCancelButton: true,
-  //   customClass: {
-  //     confirmButton: "bx--btn bx--btn--primary",
-  //     cancelButton: "bx--btn bx--btn--secondary"
-  //   },
-  //   inputValidator: value => !value && 'You must enter a Plex name!'
-  // });
 
   const { value: presetName, isConfirmed, isDenied } = await Swal.fire({
     title: 'Enter new Plex name',
