@@ -1396,10 +1396,13 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
       currentPresetRev = null;
     }
 
-    // saveCurrentSelectionToStorage();
-    if (!preferredPresetId || selectedPreset._id === preferredPresetId) {
-      saveCurrentSelectionToStorage();
-    }
+    // saveCurrentSelectionToStorage(); // test 1
+    // if (!preferredPresetId || selectedPreset._id === preferredPresetId) { // test 2
+    //   saveCurrentSelectionToStorage();
+    // }
+    presetSelect.addEventListener('change', saveCurrentSelectionToStorage); // test 3
+    folderSelect.addEventListener('change', saveCurrentSelectionToStorage);
+
 
   }
 
