@@ -1825,6 +1825,14 @@ async function renderFullPedalboard() {
 
           const $presetContainer = $(`
             <div class="preset-container">
+
+
+    <!-- AI PRESET INFO -->
+    <div class="applied-preset-info" style="display:none">
+      <div class="applied-preset-name"></div>
+      <div class="applied-preset-tags"></div>
+    </div>
+
               <svg class="preset-icon"
                 focusable="false"
                 preserveAspectRatio="xMidYMid meet"
@@ -1910,7 +1918,7 @@ function renderPresetList($ul, pedalId, presets) {
   $ul.empty();
 
   if (!presets.length) {
-    $ul.append("<li class='empty'>No presets found</li>");
+    $ul.append("<li class='empty'>No SubPlex found</li>");
     return;
   }
 
@@ -2145,6 +2153,60 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   if (typeof updateSavePresetButtonState === 'function') {
     updateSavePresetButtonState();
   }
+
+
+// ===== UPDATE APPLIED PRESET UI =====
+const $wrapper = $pedalDiv.closest(".pedal-wrapper");
+const $infoBox = $wrapper.find(".applied-preset-info");
+
+if ($infoBox.length) {
+  // Nome preset
+  const presetName = preset.presetName || preset.name || preset._id || "Preset";
+  $infoBox.find(".applied-preset-name").text(presetName);
+
+
+  // Tags
+  const $tagsBox = $infoBox.find(".applied-preset-tags");
+if ($tagsBox.length) {
+  $tagsBox.empty();
+
+  if (Array.isArray(preset.style)) {
+    preset.style.forEach(style => {
+      const color = STYLE_TAG_MAP[style] || "gray";
+      $tagsBox.append(`
+        <span class="bx--tag bx--tag--${color} bx--tag--sm">
+          ${style}
+        </span>
+      `);
+    });
+  }
+}
+
+
+  if (Array.isArray(preset.style)) {
+    preset.style.forEach(style => {
+      const color = STYLE_TAG_MAP[style] || "gray";
+      $tagsBox.append(`
+        <span class="bx--tag bx--tag--${color} bx--tag--sm">
+          ${style}
+        </span>
+      `);
+    });
+  }
+
+  $infoBox.show();
+}
+
+// Salva stato sul DOM (opzionale ma consigliato)
+$pedalDiv.attr("data-applied-preset", JSON.stringify({
+  id: preset._id,
+  name: preset.presetName || preset._id,
+  style: preset.style || []
+}));
+
+
+
+
 }
 
 
