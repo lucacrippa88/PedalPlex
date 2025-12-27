@@ -63,7 +63,7 @@ $('#authForm').on('submit', function (e) {
 
         // Redirect after 1 second
         setTimeout(function () {
-          window.location.href = 'preset';
+          window.location.href = 'plexes';
         }, 1000);
 
       } else if (!isLogin) {
@@ -206,7 +206,7 @@ function onGoogleLogin(response) {
                     timer: 1000,
                     showConfirmButton: false
                 }).then(() => {
-                    window.location.href = "preset";
+                    window.location.href = "plexes";
                 });
             } else {
                 Swal.fire("Login error", res.error || "", "error");

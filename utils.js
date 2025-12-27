@@ -1602,23 +1602,23 @@ async function renderFullPedalboard() {
         if (storedPedalboard) {
           try {
             window.pedalboard = JSON.parse(storedPedalboard);
-            console.log('Loaded pedalboard from localStorage for guest');
+            console.log('Loaded Rig from localStorage for guest');
           } catch (e) {
-            console.error('Failed to parse localStorage pedalboard', e);
-            container.innerHTML = `<p style="text-align:center;margin-top:40px;">No pedalboard found.</p>`;
+            console.error('Failed to parse localStorage Rig', e);
+            container.innerHTML = `<p style="text-align:center;margin-top:40px;">No Rids found.</p>`;
             return resolve();
           }
         } else {
           container.innerHTML = `
             <div style="text-align: center; margin-top: 40px;">
-              <p style="font-size: 1.1em; margin-bottom: 20px;">Pedalboard is empty.</p>
+              <p style="font-size: 1.1em; margin-bottom: 20px;">Rig is empty.</p>
               <button id="createBtn" class="bx--btn bx--btn--secondary" type="button">
-                Go to pedalboard
+                Go to Rigs
               </button>
             </div>
           `;
           document.getElementById('createBtn').addEventListener('click', () => {
-            window.location.href = 'pedalboard.html';
+            window.location.href = 'rigs';
           });
           return resolve();
         }
