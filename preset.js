@@ -944,7 +944,7 @@ async function createPreset() {
 
   if (isDenied) {
     // Redirect alla nuova pagina
-    window.location.href = 'preset-catalog';
+    //window.location.href = 'plexes-catalog'; // not existing yet
   }
 
   if (!presetName) return; // Cancelled

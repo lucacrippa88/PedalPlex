@@ -7,8 +7,8 @@ let zoomLevel = 1.0;
 
 /**
  * Get the current board ID depending on the page
- * - In pedalboard.html: ID is stored in option[value-id]
- * - In preset.html: ID is directly option.value
+ * - In rigs.html: ID is stored in option[value-id]
+ * - In plexes.html: ID is directly option.value
  */
 function getSelectedBoardId() {
   const select =

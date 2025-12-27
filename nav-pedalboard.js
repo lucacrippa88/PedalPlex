@@ -29,7 +29,7 @@ function initNavPedalboard(userRole) {
                style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 200px; display:none;" 
                aria-label="Filter pedals"/>
 
-        <button id="saveBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save pedalboard"
+        <button id="saveBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Rig"
                 style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>

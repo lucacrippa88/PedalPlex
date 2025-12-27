@@ -85,8 +85,8 @@ function initPedalboard(userRole) {
   const savedGuestBoards = JSON.parse(localStorage.getItem("guestPedalboard") || "[]");
   if (savedGuestBoards.length > 0) {
     Swal.fire({
-      title: "Import local pedalboard?",
-      text: "You have a pedalboard saved locally. Do you want to import it into your account?",
+      title: "Import local Rig?",
+      text: "You have a Rig saved locally. Do you want to import it into your account?",
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Yes, import",
@@ -593,7 +593,7 @@ function savePedalboard() {
     Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: 'No pedalboard selected!',
+      text: 'No Rig selected!',
       confirmButtonText: 'Ok',
       customClass: {
         confirmButton: "bx--btn bx--btn--primary",
@@ -1082,7 +1082,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
                   }
 
                 } else {
-                  Swal.fire('Error', data.error || 'Failed to delete pedalboard.', 'error');
+                  Swal.fire('Error', data.error || 'Failed to delete Rig.', 'error');
                 }
               })
               .catch((err) => {
