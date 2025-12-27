@@ -116,7 +116,7 @@ window.fullscreenMenuHtml = `
     <a href='/PedalPlex/' class="pedalplex-logo-fullscreen-menu"></a><br>
     <a href="plexes">Edit your Plexes</a>
     <a href="rigs">Manage Rigs</a>
-    <a href="catalog">View gears catalog</a>
+    <a href="gears">View gears catalog</a>
     <br><br>
     <span class="showMobile" style="color:#161616">
       Visit desktop website<br>to access all editing features
