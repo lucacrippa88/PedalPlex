@@ -1390,7 +1390,15 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
         }
         value = getValueFromRotation(angle);
       }
-      controlsArray.push({ [label]: isNaN(value) ? value : parseFloat(value) });
+      //controlsArray.push({ [label]: isNaN(value) ? value : parseFloat(value) }); // buggato
+      let finalValue;
+      if ($valueLabel.length && $valueLabel.text().trim() !== '') { // Se il valore viene da una label → DISCRETO → sempre stringa
+        finalValue = value;
+      } else {
+        finalValue = parseFloat(value);// Rotazione → CONTINUO → numero 
+      }
+      controlsArray.push({ [label]: finalValue });
+
     });
 
     // --- Dropdowns ---
