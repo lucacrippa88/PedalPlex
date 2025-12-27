@@ -1370,8 +1370,10 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
     // --- Knobs ---
     $pedal.find('.knob').each(function () {
       const label = $(this).data('control-label');
-      const $valueLabel = $(this).parent().find('.knob-value-label');
-
+      //const $valueLabel = $(this).parent().find('.knob-value-label'); // buggato
+      //const $valueLabel = $(this).closest('.knob-wrapper').find('.knob-value-label'); // test
+      const $valueLabel = $(this).closest('.knob-wrapper').children('.knob-value-label'); // test (migliore)
+      
       let value;
       if ($valueLabel.length && $valueLabel.text().trim() !== '') {
         value = $valueLabel.text().trim();
