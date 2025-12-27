@@ -1833,8 +1833,7 @@ async function renderFullPedalboard() {
                 height="32"
                 viewBox="0 0 32 32"
                 xmlns="http://www.w3.org/2000/svg">
-                <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
-                <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
+                <circle cx="8" cy="16" r="2"></circle><circle cx="16" cy="16" r="2"></circle><circle cx="24" cy="16" r="2"></circle>
               </svg>
 
               <div class="preset-dropdown-wrapper">
@@ -1842,6 +1841,10 @@ async function renderFullPedalboard() {
               </div>
             </div>
           `);
+
+          // AI icon
+          // <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
+          // <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
 
           $wrapper.append($presetContainer);
 
