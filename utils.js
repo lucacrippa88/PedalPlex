@@ -2202,18 +2202,6 @@ if ($tagsBox.length) {
   }
 }
 
-
-  if (Array.isArray(preset.style)) {
-    preset.style.forEach(style => {
-      const color = STYLE_TAG_MAP[style] || "gray";
-      $tagsBox.append(`
-        <span class="bx--tag bx--tag--${color} bx--tag--sm">
-          ${style}
-        </span>
-      `);
-    });
-  }
-
   $infoBox.show();
 }
 
