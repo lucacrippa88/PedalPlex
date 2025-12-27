@@ -2094,6 +2094,26 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     return;
   }
 
+// ⛔️ PREVENT DOUBLE APPLY OF SAME PRESET
+const applied = $pedalDiv.attr("data-applied-preset");
+if (applied) {
+  try {
+    const parsed = JSON.parse(applied);
+    if (parsed.id === preset._id) {
+      return; // già applicato → esci
+    }
+  } catch (e) {}
+}
+
+// 🔒 lock immediato (evita doppia esecuzione nello stesso flusso)
+$pedalDiv.attr("data-applied-preset", JSON.stringify({
+  id: preset._id,
+  name: preset.presetName || preset._id,
+  style: preset.style || []
+}));
+
+
+
   // Recupera il pedale di default dal catalogo
   const defaultPedal = window.catalog.find(
     p => p._id === pedalId || p.name === pedalId
