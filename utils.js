@@ -1918,7 +1918,7 @@ function renderPresetList($ul, pedalId, presets) {
   $ul.empty();
 
   if (!presets.length) {
-    $ul.append("<li class='empty'>No SubPlex found</li>");
+    $ul.append("<li class='empty'>No SubPlexes found</li>");
     return;
   }
 
@@ -2026,7 +2026,7 @@ async function buildPresetDropdown($ul, pedalId) {
   // 2️⃣ Stato loading (una sola volta)
   $ul
     .empty()
-    .append("<li class='loading'>Loading presets…</li>");
+    .append("<li class='loading'>Loading SubPlexes</li>");
 
   const token = localStorage.getItem("authToken");
   if (!token) {
@@ -2061,7 +2061,7 @@ async function buildPresetDropdown($ul, pedalId) {
 
   } catch (err) {
     console.error("Preset dropdown error:", err);
-    $ul.html("<li class='error'>Error loading presets</li>");
+    $ul.html("<li class='error'>Error loading SubPlexes</li>");
   }
 }
 
