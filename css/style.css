@@ -349,7 +349,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 .delete-btn { position: absolute; top: -8px; right: -8px; background: red; color: white; border: none; border-radius: 50%; font-size: 12px; cursor: pointer; }
 
 /* Pedal catalog buttons */
-.pedal-catalog .edit-btn { position: absolute; top: -6px; right: -5px; background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0); transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease; background-size: 150% 150%; background-position: 0% 50%; border-radius: 50%; border: none; cursor: pointer; width: 24px; height: 24px; padding: 0; display: flex; align-items: center; justify-content: center; }
+.pedal-catalog .edit-btn { position: absolute; top: -6px; /*right: -5px;*/ left:-5px; background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0); transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease; background-size: 150% 150%; background-position: 0% 50%; border-radius: 50%; border: none; cursor: pointer; width: 24px; height: 24px; padding: 0; display: flex; align-items: center; justify-content: center; }
 .edit-btn svg { width: 16px; height: 16px; fill: white; pointer-events: none; }
 .edit-btn:hover { background-position: 100% 50%; }
 
