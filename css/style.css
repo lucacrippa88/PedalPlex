@@ -844,12 +844,21 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 .preset-container {
-  position: absolute;
+  /* position: absolute;
   top: -20px;
   right: -12px;
   width: 32px;
   height: 32px;
+  z-index: 20; */
+  position: absolute;
+  top: -25px;
+  right: 0px;
+  /* width: 32px; */
+  height: 32px;
   z-index: 20;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .preset-icon {
