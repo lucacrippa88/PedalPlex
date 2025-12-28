@@ -1828,9 +1828,13 @@ async function renderFullPedalboard() {
 
               <!-- SUBPLEX INFO -->
               <div class="applied-preset-info" style="display:none">
-                <div class="applied-preset-name"></div>
+                <div class="applied-preset-title-row">
+                  <span class="applied-preset-name"></span>
+                  <span class="applied-preset-info-icon"></span>
+                </div>
                 <div class="applied-preset-tags"></div>
               </div>
+
 
               <button style="display:none" class="new-subplex-btn bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only">
                 <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
@@ -1865,21 +1869,21 @@ async function renderFullPedalboard() {
           $wrapper.append($presetContainer);
 
 
-// === SUBPLEX EMPTY STATE (New SubPlex button) ===
-const $newBtn = $presetContainer.find(".new-subplex-btn");
-const hasApplied = $pedalDiv.attr("data-applied-preset");
+          // === SUBPLEX EMPTY STATE (New SubPlex button) ===
+          const $newBtn = $presetContainer.find(".new-subplex-btn");
+          const hasApplied = $pedalDiv.attr("data-applied-preset");
 
-if (!hasApplied) { $newBtn.show(); } else { $newBtn.hide(); }
+          if (!hasApplied) { $newBtn.show(); } else { $newBtn.hide(); }
 
-$newBtn.on("click", function (e) {
-  e.stopPropagation();
+          $newBtn.on("click", function (e) {
+            e.stopPropagation();
 
-  // TODO: apri modale o redirect
-  console.log("Create new SubPlex for pedal:", pedal._id);
+            // TODO: apri modale o redirect
+            console.log("Create new SubPlex for pedal:", pedal._id);
 
-  // esempio futuro:
-  // openNewSubPlexModal({ pedalId: pedal._id });
-});
+            // esempio futuro:
+            // openNewSubPlexModal({ pedalId: pedal._id });
+          });
 
 
 
@@ -2121,23 +2125,23 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     return;
   }
 
-// ⛔️ PREVENT DOUBLE APPLY OF SAME PRESET
-const applied = $pedalDiv.attr("data-applied-preset");
-if (applied) {
-  try {
-    const parsed = JSON.parse(applied);
-    if (parsed.id === preset._id) {
-      return; // già applicato → esci
-    }
-  } catch (e) {}
-}
+  // ⛔️ PREVENT DOUBLE APPLY OF SAME PRESET
+  const applied = $pedalDiv.attr("data-applied-preset");
+  if (applied) {
+    try {
+      const parsed = JSON.parse(applied);
+      if (parsed.id === preset._id) {
+        return; // già applicato → esci
+      }
+    } catch (e) {}
+  }
 
-// 🔒 lock immediato (evita doppia esecuzione nello stesso flusso)
-$pedalDiv.attr("data-applied-preset", JSON.stringify({
-  id: preset._id,
-  name: preset.presetName || preset._id,
-  style: preset.style || []
-}));
+  // 🔒 lock immediato (evita doppia esecuzione nello stesso flusso)
+  $pedalDiv.attr("data-applied-preset", JSON.stringify({
+    id: preset._id,
+    name: preset.presetName || preset._id,
+    style: preset.style || []
+  }));
 
 
 
@@ -2207,33 +2211,103 @@ const $wrapper = $pedalDiv.closest(".pedal-wrapper");
 const $infoBox = $wrapper.find(".applied-preset-info");
 
 if ($infoBox.length) {
-  // Nome preset
+
   const presetName = preset.presetName || preset.name || preset._id || "Preset";
+  const description = preset.description || "No description available";
+
+  // Nome
   $infoBox.find(".applied-preset-name").text(presetName);
 
+  // INFO ICON (ℹ)
+  const $iconWrapper = $infoBox.find(".applied-preset-info-icon");
+  $iconWrapper.empty().append(`
+    <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+      fill="currentColor" width="12" height="12"
+      viewBox="0 0 32 32" aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg">
+      <path d="M17 22L17 14 13 14 13 16 15 16 15 22 12 22 12 24 20 24 20 22 17 22z"></path>
+      <path d="M16 8a1.5 1.5 0 101.5 1.5A1.5 1.5 0 0016 8z"></path>
+      <path d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30Z"></path>
+    </svg>
+  `);
 
-  // Tags
-  const $tagsBox = $infoBox.find(".applied-preset-tags");
-if ($tagsBox.length) {
-  $tagsBox.empty();
+  // Tooltip hover (stesso comportamento della lista)
+  $iconWrapper
+    .off("mouseenter mouseleave")
+    .on("mouseenter", function () {
+      const $tooltip = $(`<div class="preset-tooltip-popup">${description}</div>`);
+      $("body").append($tooltip);
 
-  if (Array.isArray(preset.style)) {
-    preset.style.forEach(style => {
-      const color = STYLE_TAG_MAP[style] || "gray";
-      $tagsBox.append(`
-        <span class="bx--tag bx--tag--${color} bx--tag--sm">
-          ${style}
-        </span>
-      `);
+      const offset = $iconWrapper.offset();
+      $tooltip.css({
+        position: "absolute",
+        top: offset.top - $tooltip.outerHeight() - 6,
+        left: offset.left,
+        zIndex: 2000,
+        maxWidth: "250px",
+        backgroundColor: "rgba(0,0,0,0.85)",
+        color: "#fff",
+        padding: "6px 8px",
+        borderRadius: "4px",
+        fontSize: "0.85rem",
+        pointerEvents: "none"
+      });
+
+      $iconWrapper.data("tooltipEl", $tooltip);
+    })
+    .on("mouseleave", function () {
+      const $tooltip = $iconWrapper.data("tooltipEl");
+      if ($tooltip) $tooltip.remove();
     });
+
+  // TAGS
+  const $tagsBox = $infoBox.find(".applied-preset-tags");
+  if ($tagsBox.length) {
+    $tagsBox.empty();
+
+    if (Array.isArray(preset.style)) {
+      preset.style.forEach(style => {
+        const color = STYLE_TAG_MAP[style] || "gray";
+        $tagsBox.append(`
+          <span class="bx--tag bx--tag--${color} bx--tag--sm">${style}</span>
+        `);
+      });
+    }
   }
-}
 
   $infoBox.show();
-
   $wrapper.find(".new-subplex-btn").hide();
-
 }
+
+
+// if ($infoBox.length) {
+//   // Nome preset
+//   const presetName = preset.presetName || preset.name || preset._id || "Preset";
+//   $infoBox.find(".applied-preset-name").text(presetName);
+
+
+//   // Tags
+//   const $tagsBox = $infoBox.find(".applied-preset-tags");
+// if ($tagsBox.length) {
+//   $tagsBox.empty();
+
+//   if (Array.isArray(preset.style)) {
+//     preset.style.forEach(style => {
+//       const color = STYLE_TAG_MAP[style] || "gray";
+//       $tagsBox.append(`
+//         <span class="bx--tag bx--tag--${color} bx--tag--sm">
+//           ${style}
+//         </span>
+//       `);
+//     });
+//   }
+// }
+
+//   $infoBox.show();
+
+//   $wrapper.find(".new-subplex-btn").hide();
+
+// }
 
 // Salva stato sul DOM (opzionale ma consigliato)
 $pedalDiv.attr("data-applied-preset", JSON.stringify({
