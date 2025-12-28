@@ -1832,8 +1832,10 @@ async function renderFullPedalboard() {
                 <div class="applied-preset-tags"></div>
               </div>
 
-              <button class="bx--btn bx--btn--tertiary bx--btn--sm new-subplex-btn" style="display:none">
-                Add SubPlex
+              <button style="display:none" class="new-subplex-btn bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only">
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                  <path d="M17 15L17 8 15 8 15 15 8 15 8 17 15 17 15 24 17 24 17 17 24 17 24 15z"></path>
+                </svg>
               </button>
 
               <svg class="preset-icon"
