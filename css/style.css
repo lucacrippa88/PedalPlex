@@ -905,6 +905,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  display:none;
 
   transition: opacity 0.15s ease;
   transform: translateZ(0); /* FIX Safari */
@@ -915,6 +916,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+  display:block;
 }
 
 /* 🌈 BLUR / GLOW */

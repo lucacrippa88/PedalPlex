@@ -1823,35 +1823,54 @@ async function renderFullPedalboard() {
         // ============== AI DROPDOWN PRESET ===============
         if (window.currentUser && window.currentUser.role === "admin") {
 
+
           const $presetContainer = $(`
-            <div class="preset-container">
+  <div class="preset-container">
 
-              <!-- SUBPLEX INFO -->
-              <div class="applied-preset-info" style="display:none">
-                <div class="applied-preset-name"></div>
-                <div class="applied-preset-tags"></div>
-              </div>
+    <!-- SUBPLEX INFO -->
+    <div class="applied-preset-info" style="display:none">
+      <div class="applied-preset-name"></div>
+      <div class="applied-preset-tags"></div>
+    </div>
 
-              <button class="bx--btn bx--btn--tertiary bx--btn--sm new-subplex-btn" style="display:none">
-                Add SubPlex
-              </button>
+    <!-- CARBON COMBO BUTTON -->
+    <div class="bx--btn-set bx--btn-set--split subplex-combo" style="display:none">
+      
+      <!-- PRIMARY ACTION -->
+      <button
+        class="bx--btn bx--btn--tertiary bx--btn--sm subplex-primary-btn"
+        type="button">
+        Add SubPlex
+      </button>
 
-              <svg class="preset-icon"
-                focusable="false"
-                preserveAspectRatio="xMidYMid meet"
-                fill="currentColor"
-                width="32"
-                height="32"
-                viewBox="0 0 32 32"
-                xmlns="http://www.w3.org/2000/svg">
-                <circle cx="8" cy="16" r="2"></circle><circle cx="16" cy="16" r="2"></circle><circle cx="24" cy="16" r="2"></circle>
-              </svg>
+      <!-- DROPDOWN TOGGLE -->
+      <button
+        class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only subplex-toggle-btn"
+        type="button"
+        aria-haspopup="true"
+        aria-expanded="false">
+        <svg
+          focusable="false"
+          preserveAspectRatio="xMidYMid meet"
+          fill="currentColor"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          aria-hidden="true">
+          <path d="M8 11L3 6h10L8 11z"></path>
+        </svg>
+      </button>
 
-              <div class="preset-dropdown-wrapper">
-                <ul class="preset-dropdown"></ul>
-              </div>
-            </div>
-          `);
+    </div>
+
+    <!-- DROPDOWN -->
+    <div class="preset-dropdown-wrapper">
+      <ul class="preset-dropdown"></ul>
+    </div>
+
+  </div>
+`);
+
 
           // AI icon
           // <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
@@ -1859,48 +1878,56 @@ async function renderFullPedalboard() {
 
           $wrapper.append($presetContainer);
 
-
-// === SUBPLEX EMPTY STATE (New SubPlex button) ===
-const $newBtn = $presetContainer.find(".new-subplex-btn");
+          
+          const $combo = $presetContainer.find(".subplex-combo");
 const hasApplied = $pedalDiv.attr("data-applied-preset");
 
-if (!hasApplied) { $newBtn.show(); } else { $newBtn.hide(); }
+if (!hasApplied) {
+  $combo.show();
+} else {
+  $combo.hide();
+}
 
-$newBtn.on("click", function (e) {
+$presetContainer.find(".subplex-primary-btn").on("click", function (e) {
   e.stopPropagation();
 
-  // TODO: apri modale o redirect
   console.log("Create new SubPlex for pedal:", pedal._id);
 
-  // esempio futuro:
+  // futuro:
   // openNewSubPlexModal({ pedalId: pedal._id });
+});
+
+const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
+const $ul = $presetContainer.find(".preset-dropdown");
+
+$dropdownWrapper.removeClass("is-open");
+
+
+$presetContainer.find(".subplex-toggle-btn").on("click", function (e) {
+  e.stopPropagation();
+
+  const isOpen = $dropdownWrapper.hasClass("is-open");
+
+  $(".preset-dropdown-wrapper").removeClass("is-open");
+  $(".subplex-toggle-btn").attr("aria-expanded", "false");
+
+
+if (!isOpen) {
+  $dropdownWrapper.addClass("is-open");
+  $(this).attr("aria-expanded", "true");
+  buildPresetDropdown($ul, pedal._id);
+} else {
+  $(this).attr("aria-expanded", "false");
+}
+
 });
 
 
 
-          const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
-          const $ul = $presetContainer.find(".preset-dropdown");
 
-          // ✨ Glow
-          const glowEl = $dropdownWrapper[0];
-          let stopGlow = null;
-          if (glowEl) stopGlow = startGlow(glowEl);
 
-          // Toggle dropdown
-          $presetContainer.find(".preset-icon").on("click", function (e) {
-            e.stopPropagation();
 
-            const isOpen = $dropdownWrapper.hasClass("is-open");
 
-            $(".preset-dropdown-wrapper").removeClass("is-open");
-
-            if (!isOpen) {
-              $dropdownWrapper.addClass("is-open");
-
-              // ✅ FETCH + render SOLO QUI, SOLO AL CLICK
-              buildPresetDropdown($ul, pedal._id);
-            }
-          });
 
 
         }
@@ -2034,7 +2061,9 @@ window.presetCatalogCache = window.presetCatalogCache || {};
 // HELPER FUNCTIONS AI PRESET DROPDOWN =======
 $(document).on("click", function () {
   $(".preset-dropdown-wrapper").removeClass("is-open");
+  $(".subplex-toggle-btn").attr("aria-expanded", "false");
 });
+
 
 // Build Preset from AI Catalog
 async function buildPresetDropdown($ul, pedalId) {
@@ -2226,7 +2255,7 @@ if ($tagsBox.length) {
 
   $infoBox.show();
 
-  $wrapper.find(".new-subplex-btn").hide();
+$wrapper.find(".subplex-combo").hide();
 
 }
 
