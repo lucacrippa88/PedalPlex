@@ -1826,12 +1826,15 @@ async function renderFullPedalboard() {
           const $presetContainer = $(`
             <div class="preset-container">
 
+              <!-- SUBPLEX INFO -->
+              <div class="applied-preset-info" style="display:none">
+                <div class="applied-preset-name"></div>
+                <div class="applied-preset-tags"></div>
+              </div>
 
-    <!-- AI PRESET INFO -->
-    <div class="applied-preset-info" style="display:none">
-      <div class="applied-preset-name"></div>
-      <div class="applied-preset-tags"></div>
-    </div>
+              <button class="bx--btn bx--btn--ghost bx--btn--sm new-subplex-btn" style="display:none">
+                New SubPlex
+              </button>
 
               <svg class="preset-icon"
                 focusable="false"
@@ -1855,6 +1858,25 @@ async function renderFullPedalboard() {
           // <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
 
           $wrapper.append($presetContainer);
+
+
+// === SUBPLEX EMPTY STATE (New SubPlex button) ===
+const $newBtn = $presetContainer.find(".new-subplex-btn");
+const hasApplied = $pedalDiv.attr("data-applied-preset");
+
+if (!hasApplied) { $newBtn.show(); } else { $newBtn.hide(); }
+
+$newBtn.on("click", function (e) {
+  e.stopPropagation();
+
+  // TODO: apri modale o redirect
+  console.log("Create new SubPlex for pedal:", pedal._id);
+
+  // esempio futuro:
+  // openNewSubPlexModal({ pedalId: pedal._id });
+});
+
+
 
           const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
           const $ul = $presetContainer.find(".preset-dropdown");
@@ -2203,6 +2225,9 @@ if ($tagsBox.length) {
 }
 
   $infoBox.show();
+
+  $wrapper.find(".new-subplex-btn").hide();
+
 }
 
 // Salva stato sul DOM (opzionale ma consigliato)
