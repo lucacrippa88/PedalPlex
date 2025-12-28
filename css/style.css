@@ -861,6 +861,31 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   gap: 8px;
 }
 
+.subplex-side {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px; /* NON eredita i 32px */
+}
+
+.applied-preset-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.applied-preset-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.new-subplex-btn {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+
+
 .preset-icon {
   width: 16px;
   height: 16px;
