@@ -1833,7 +1833,7 @@ async function renderFullPedalboard() {
               </div>
 
               <button class="bx--btn bx--btn--ghost bx--btn--sm new-subplex-btn" style="display:none">
-                New SubPlex
+                Add SubPlex
               </button>
 
               <svg class="preset-icon"
