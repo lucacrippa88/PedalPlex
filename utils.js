@@ -1959,7 +1959,31 @@ function renderPresetList($ul, pedalId, presets) {
     const description = preset.description || "No description available";
     const $titleRow = $("<div>").addClass("preset-title-row");
 
-    const $name = $("<span>").addClass("preset-name").text(preset.presetName || preset._id);
+    // const $name = $("<span>").addClass("preset-name").text(preset.presetName || preset._id);
+
+    const $name = $("<span>").addClass("preset-name");
+
+    // AI icon (solo se published === "ai")
+    if (preset.published === "ai") {
+      $name.append(`
+        <svg class="ai-preset-icon"
+          focusable="false"
+          preserveAspectRatio="xMidYMid meet"
+          fill="currentColor"
+          width="14"
+          height="14"
+          viewBox="0 0 32 32"
+          aria-hidden="true">
+          <path d="M16 2a6 6 0 00-6 6v2H8a4 4 0 000 8h2v2a6 6 0 0012 0v-2h2a4 4 0 000-8h-2V8a6 6 0 00-6-6zm-4 6a4 4 0 118 0v2h-8zm8 12a4 4 0 11-8 0v-2h8z"/>
+        </svg>
+      `);
+    }
+
+    // Nome preset
+    $name.append(
+      document.createTextNode(" " + (preset.presetName || preset._id))
+    );
+
 
     // ℹ icon with tooltip event
     const $info = $("<span>").addClass("preset-info").html(' <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="12" height="12" viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M17 22L17 14 13 14 13 16 15 16 15 22 12 22 12 24 20 24 20 22 17 22zM16 8a1.5 1.5 0 101.5 1.5A1.5 1.5 0 0016 8z"></path><path d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30ZM16,4A12,12,0,1,0,28,16,12,12,0,0,0,16,4Z"></path><title>Information</title></svg>');
@@ -2216,7 +2240,31 @@ if ($infoBox.length) {
   const description = preset.description || "No description available";
 
   // Nome
-  $infoBox.find(".applied-preset-name").text(presetName);
+  // $infoBox.find(".applied-preset-name").text(presetName);
+  const $nameEl = $infoBox.find(".applied-preset-name");
+  $nameEl.empty();
+
+  // aggiunge icona AI SOLO se preset AI
+  if (preset.published === "ai") {
+    $nameEl.append(`
+      <svg class="ai-preset-icon"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        fill="currentColor"
+        width="14"
+        height="14"
+        viewBox="0 0 32 32"
+        aria-hidden="true">
+        <path d="M16 2a6 6 0 00-6 6v2H8a4 4 0 000 8h2v2a6 6 0 0012 0v-2h2a4 4 0 000-8h-2V8a6 6 0 00-6-6zm-4 6a4 4 0 118 0v2h-8zm8 12a4 4 0 11-8 0v-2h8z"/>
+      </svg>
+    `);
+  }
+
+  // aggiunge il testo del nome
+  $nameEl.append(
+    document.createTextNode(" " + presetName)
+  );
+
 
   // INFO ICON (ℹ)
   const $iconWrapper = $infoBox.find(".applied-preset-info-icon");
