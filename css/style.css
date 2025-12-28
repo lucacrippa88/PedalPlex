@@ -1032,3 +1032,9 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   visibility: visible;
   opacity: 1;
 }
+
+
+.ai-preset-icon {
+  margin-right: 4px;
+  vertical-align: middle;
+}

@@ -1964,7 +1964,7 @@ function renderPresetList($ul, pedalId, presets) {
     const $name = $("<span>").addClass("preset-name");
 
     // AI icon (solo se published === "ai")
-    if (preset.published === "ai") {
+    if (preset.source === "ai") {
       $name.append(`
         <svg class="ai-preset-icon"
           focusable="false"
@@ -2246,7 +2246,7 @@ if ($infoBox.length) {
   $nameEl.empty();
 
   // aggiunge icona AI SOLO se preset AI
-  if (preset.published === "ai") {
+  if (preset.source === "ai") {
     $nameEl.append(`
       <svg class="ai-preset-icon"
         focusable="false"
