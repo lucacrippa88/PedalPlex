@@ -156,6 +156,9 @@ function getPedalHeight(height) {
 // Function to render pedal controls dynamically
 function renderPedalControls(pedal, $pedalDiv) {
 
+    $pedalDiv.removeData("subplexInvalidated"); // resetta il flag ogni volta che il pedale viene ri-renderizzato
+
+
     if (!pedal.controls || !Array.isArray(pedal.controls)) return; // <--- metadata only protection
 
     const editMode = window.isEditMode; 
@@ -276,6 +279,10 @@ function renderPedalControls(pedal, $pedalDiv) {
                             if (currentIndex === -1) currentIndex = 0;
                             let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
                             control.value = control.values[newIndex];
+                            if (!$pedalDiv.data("subplexInvalidated")) {
+                              $pedalDiv.data("subplexInvalidated", true);
+                              invalidateSubplexForPedal($pedalDiv); // mark SubPlex as changed
+                            }
                         } else {
                             const min = control.min ?? 0;
                             const max = control.max ?? 100;
@@ -283,6 +290,10 @@ function renderPedalControls(pedal, $pedalDiv) {
                             let newValue = startValue + steps;
                             newValue = Math.min(Math.max(newValue, min), max);
                             control.value = parseFloat(newValue.toFixed(1));
+                            if (!$pedalDiv.data("subplexInvalidated")) {
+                              $pedalDiv.data("subplexInvalidated", true);
+                              invalidateSubplexForPedal($pedalDiv); // mark SubPlex as changed
+                            }
                         }
 
                         const newRotation = getRotationFromValue(control, control.value);
@@ -473,6 +484,10 @@ function renderPedalControls(pedal, $pedalDiv) {
                       : `0 0 12px 4px ${color}, 0 0 20px 6px ${color}`);
                     control.value = index; // update value in control object
                     led.data("colorIndex", index);
+                    if (!$pedalDiv.data("subplexInvalidated")) {
+                      $pedalDiv.data("subplexInvalidated", true);
+                      invalidateSubplexForPedal($pedalDiv); // mark SubPlex as changed
+                    }
                 };
 
                 setColor(currentIndex);
@@ -533,7 +548,11 @@ function renderPedalControls(pedal, $pedalDiv) {
                   "data-control-label": control.label
                 })
                 .on("input", function () { 
-                  control.value = parseFloat($(this).val()); 
+                  control.value = parseFloat($(this).val());
+                  if (!$pedalDiv.data("subplexInvalidated")) {
+                    $pedalDiv.data("subplexInvalidated", true);
+                    invalidateSubplexForPedal($pedalDiv); // mark SubPlex as changed
+                  }
                   if (!editMode && $tooltipText) {
                     $tooltipText.text(control.value);
                     $tooltip.show();
@@ -615,7 +634,13 @@ function renderPedalControls(pedal, $pedalDiv) {
                     $lcd.css("height",`${control.width * 6}px`);
                 } 
 
-                $lcd.on("input", function () { control.value = $(this).val(); });
+                $lcd.on("input", function () { 
+                  control.value = $(this).val(); 
+                  if (!$pedalDiv.data("subplexInvalidated")) {
+                    $pedalDiv.data("subplexInvalidated", true);
+                    invalidateSubplexForPedal($pedalDiv); // mark SubPlex as changed
+                  }
+                });
 
                 const $wrapper = $("<div>").addClass("lcd-wrapper").append($label, $lcd);
 
@@ -659,6 +684,15 @@ function renderPedalControls(pedal, $pedalDiv) {
                 }
                 
                 $row.append($wrapper);
+
+                $select.on("change", function () {
+                  control.value = $(this).val();
+                  if (!$pedalDiv.data("subplexInvalidated")) {
+                    $pedalDiv.data("subplexInvalidated", true);
+                    invalidateSubplexForPedal($pedalDiv); // mark SubPlex as changed
+                  }
+                });
+
             }
 
         });
@@ -2069,6 +2103,30 @@ window.presetCatalogCache = window.presetCatalogCache || {};
 $(document).on("click", function () {
   $(".preset-dropdown-wrapper").removeClass("is-open");
 });
+
+
+// Invalidate SubPlex state for a pedal (called on manual edit)
+function invalidateSubplexForPedal($pedalDiv) {
+  const applied = $pedalDiv.attr("data-applied-preset");
+  if (!applied) return; // nessun SubPlex → nulla da fare
+
+  // 1. Rimuovi stato
+  $pedalDiv.removeAttr("data-applied-preset");
+
+  // 2. UI
+  const $wrapper = $pedalDiv.closest(".pedal-wrapper");
+
+  $wrapper.find(".applied-preset-info").hide();
+  $wrapper.find(".new-subplex-btn").show();
+
+  // opzionale: chiudi dropdown se aperto
+  $wrapper.find(".preset-dropdown-wrapper").removeClass("is-open");
+
+  console.log("SubPlex invalidated by manual edit");
+}
+
+
+
 
 // Build Preset from AI Catalog
 async function buildPresetDropdown($ul, pedalId) {
