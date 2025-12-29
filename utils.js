@@ -2220,11 +2220,11 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   }
 
   // 🔒 lock immediato (evita doppia esecuzione nello stesso flusso)
-  $pedalDiv.attr("data-applied-preset", JSON.stringify({
-    id: preset._id,
-    name: preset.presetName || preset._id,
-    style: preset.style || []
-  }));
+  // $pedalDiv.attr("data-applied-preset", JSON.stringify({
+  //   id: preset._id,
+  //   name: preset.presetName || preset._id,
+  //   style: preset.style || []
+  // }));
 
 
 
@@ -2386,41 +2386,25 @@ if ($infoBox.length) {
 }
 
 
-// if ($infoBox.length) {
-//   // Nome preset
-//   const presetName = preset.presetName || preset.name || preset._id || "Preset";
-//   $infoBox.find(".applied-preset-name").text(presetName);
 
-
-//   // Tags
-//   const $tagsBox = $infoBox.find(".applied-preset-tags");
-// if ($tagsBox.length) {
-//   $tagsBox.empty();
-
-//   if (Array.isArray(preset.style)) {
-//     preset.style.forEach(style => {
-//       const color = STYLE_TAG_MAP[style] || "gray";
-//       $tagsBox.append(`
-//         <span class="bx--tag bx--tag--${color} bx--tag--sm">
-//           ${style}
-//         </span>
-//       `);
-//     });
-//   }
-// }
-
-//   $infoBox.show();
-
-//   $wrapper.find(".new-subplex-btn").hide();
-
-// }
 
 // Salva stato sul DOM (opzionale ma consigliato)
+// $pedalDiv.attr("data-applied-preset", JSON.stringify({
+//   id: preset._id,
+//   name: preset.presetName || preset._id,
+//   style: preset.style || []
+// }));
+// Reset invalidazione (IMPORTANTISSIMO)
+$pedalDiv.removeData("subplexInvalidated");
+
+// Stato SubPlex applicato
 $pedalDiv.attr("data-applied-preset", JSON.stringify({
   id: preset._id,
   name: preset.presetName || preset._id,
-  style: preset.style || []
+  style: preset.style || [],
+  published: preset.published // ai | public | private
 }));
+
 
 
 
