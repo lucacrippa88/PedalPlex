@@ -1427,13 +1427,6 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
         value = getValueFromRotation(angle);
       }
       controlsArray.push({ [label]: isNaN(value) ? value : parseFloat(value) }); // buggato
-      // let finalValue;
-      // if ($valueLabel.length && $valueLabel.text().trim() !== '') { // Se il valore viene da una label → DISCRETO → sempre stringa
-      //   finalValue = value;
-      // } else {
-      //   finalValue = parseFloat(value);// Rotazione → CONTINUO → numero 
-      // }
-      // controlsArray.push({ [label]: finalValue });
 
     });
 
@@ -1519,9 +1512,31 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
 
 
     // Save pedal in preset only if at least a LED is turned on
+    // if (hasColoredLed) {
+    //   pedals.push({ id: pedalId, name: pedalName, controls: controlsArray });
+    // }
     if (hasColoredLed) {
-      pedals.push({ id: pedalId, name: pedalName, controls: controlsArray });
+      const pedalObj = { id: pedalId, name: pedalName, controls: controlsArray };
+
+      // --- SUBPLEX ---
+      const appliedSubplexData = $pedal.data('applied-subplex'); // oggetto JSON già salvato sul div
+      if (appliedSubplexData) {
+        // Salva solo i campi rilevanti
+        pedalObj.subplex = {
+          subplexId: appliedSubplexData.id || appliedSubplexData._id || appliedSubplexData.subplexId,
+          presetName: appliedSubplexData.presetName || appliedSubplexData.name,
+          published: appliedSubplexData.published,
+          source: appliedSubplexData.source,
+          description: appliedSubplexData.description,
+          style: appliedSubplexData.style || [],
+          authorId: appliedSubplexData.authorId || appliedSubplexData.user_id,
+          version: appliedSubplexData.version || 1
+        };
+      }
+
+      pedals.push(pedalObj);
     }
+
   });
 
   return { [presetName]: pedals };
@@ -2112,6 +2127,7 @@ function invalidateSubplexForPedal($pedalDiv) {
 
   // 1. Rimuovi stato
   $pedalDiv.removeAttr("data-applied-preset");
+  $pedalDiv.removeData('applied-subplex');
 
   // 2. UI
   const $wrapper = $pedalDiv.closest(".pedal-wrapper");
@@ -2219,14 +2235,6 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     } catch (e) {}
   }
 
-  // 🔒 lock immediato (evita doppia esecuzione nello stesso flusso)
-  // $pedalDiv.attr("data-applied-preset", JSON.stringify({
-  //   id: preset._id,
-  //   name: preset.presetName || preset._id,
-  //   style: preset.style || []
-  // }));
-
-
 
   // Recupera il pedale di default dal catalogo
   const defaultPedal = window.catalog.find(
@@ -2280,8 +2288,6 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     $pedalDiv.prepend($nameDiv);
   }
 
-  // Salva lo stato aggiornato della pedalboard
-  // savePedalboard();
 
   // Aggiorna UI (se presente)
   if (typeof updateSavePresetButtonState === 'function') {
@@ -2289,124 +2295,124 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   }
 
 
-// ===== UPDATE APPLIED PRESET UI =====
-const $wrapper = $pedalDiv.closest(".pedal-wrapper");
-const $infoBox = $wrapper.find(".applied-preset-info");
+  // ===== UPDATE APPLIED PRESET UI =====
+  const $wrapper = $pedalDiv.closest(".pedal-wrapper");
+  const $infoBox = $wrapper.find(".applied-preset-info");
 
-if ($infoBox.length) {
+  if ($infoBox.length) {
 
-  const presetName = preset.presetName || preset.name || preset._id || "Preset";
-  const description = preset.description || "No description available";
+    const presetName = preset.presetName || preset.name || preset._id || "Preset";
+    const description = preset.description || "No description available";
 
-  // Nome
-  // $infoBox.find(".applied-preset-name").text(presetName);
-  const $nameEl = $infoBox.find(".applied-preset-name");
-  $nameEl.empty();
+    // Nome
+    const $nameEl = $infoBox.find(".applied-preset-name");
+    $nameEl.empty();
 
-  // aggiunge icona AI SOLO se preset AI
-  if (preset.source === "ai") {
-    $nameEl.append(`
-      <svg class="ai-preset-icon"
-        focusable="false"
-        preserveAspectRatio="xMidYMid meet"
-        fill="currentColor"
-        width="14"
-        height="14"
-        viewBox="0 0 32 32"
-        aria-hidden="true">
-        <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
-        <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
+    // aggiunge icona AI SOLO se preset AI
+    if (preset.source === "ai") {
+      $nameEl.append(`
+        <svg class="ai-preset-icon"
+          focusable="false"
+          preserveAspectRatio="xMidYMid meet"
+          fill="currentColor"
+          width="14"
+          height="14"
+          viewBox="0 0 32 32"
+          aria-hidden="true">
+          <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
+          <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
+        </svg>
+      `);
+    }
+
+    // aggiunge il testo del nome
+    $nameEl.append(
+      document.createTextNode(" " + presetName)
+    );
+
+
+    // INFO ICON (ℹ)
+    const $iconWrapper = $infoBox.find(".applied-preset-info-icon");
+    $iconWrapper.empty().append(`
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+        fill="currentColor" width="12" height="12"
+        viewBox="0 0 32 32" aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg">
+        <path d="M17 22L17 14 13 14 13 16 15 16 15 22 12 22 12 24 20 24 20 22 17 22zM16 8a1.5 1.5 0 101.5 1.5A1.5 1.5 0 0016 8z"></path><path d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30ZM16,4A12,12,0,1,0,28,16,12,12,0,0,0,16,4Z"></path>
       </svg>
     `);
-  }
 
-  // aggiunge il testo del nome
-  $nameEl.append(
-    document.createTextNode(" " + presetName)
-  );
+    // Tooltip hover (stesso comportamento della lista)
+    $iconWrapper
+      .off("mouseenter mouseleave")
+      .on("mouseenter", function () {
+        const $tooltip = $(`<div class="preset-tooltip-popup">${description}</div>`);
+        $("body").append($tooltip);
 
+        const offset = $iconWrapper.offset();
+        $tooltip.css({
+          position: "absolute",
+          top: offset.top - $tooltip.outerHeight() - 6,
+          left: offset.left,
+          zIndex: 2000,
+          maxWidth: "250px",
+          backgroundColor: "rgba(0,0,0,0.85)",
+          color: "#fff",
+          padding: "6px 8px",
+          borderRadius: "4px",
+          fontSize: "0.85rem",
+          pointerEvents: "none"
+        });
 
-  // INFO ICON (ℹ)
-  const $iconWrapper = $infoBox.find(".applied-preset-info-icon");
-  $iconWrapper.empty().append(`
-    <svg focusable="false" preserveAspectRatio="xMidYMid meet"
-      fill="currentColor" width="12" height="12"
-      viewBox="0 0 32 32" aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg">
-      <path d="M17 22L17 14 13 14 13 16 15 16 15 22 12 22 12 24 20 24 20 22 17 22zM16 8a1.5 1.5 0 101.5 1.5A1.5 1.5 0 0016 8z"></path><path d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30ZM16,4A12,12,0,1,0,28,16,12,12,0,0,0,16,4Z"></path>
-    </svg>
-  `);
-
-  // Tooltip hover (stesso comportamento della lista)
-  $iconWrapper
-    .off("mouseenter mouseleave")
-    .on("mouseenter", function () {
-      const $tooltip = $(`<div class="preset-tooltip-popup">${description}</div>`);
-      $("body").append($tooltip);
-
-      const offset = $iconWrapper.offset();
-      $tooltip.css({
-        position: "absolute",
-        top: offset.top - $tooltip.outerHeight() - 6,
-        left: offset.left,
-        zIndex: 2000,
-        maxWidth: "250px",
-        backgroundColor: "rgba(0,0,0,0.85)",
-        color: "#fff",
-        padding: "6px 8px",
-        borderRadius: "4px",
-        fontSize: "0.85rem",
-        pointerEvents: "none"
+        $iconWrapper.data("tooltipEl", $tooltip);
+      })
+      .on("mouseleave", function () {
+        const $tooltip = $iconWrapper.data("tooltipEl");
+        if ($tooltip) $tooltip.remove();
       });
 
-      $iconWrapper.data("tooltipEl", $tooltip);
-    })
-    .on("mouseleave", function () {
-      const $tooltip = $iconWrapper.data("tooltipEl");
-      if ($tooltip) $tooltip.remove();
-    });
+    // TAGS
+    const $tagsBox = $infoBox.find(".applied-preset-tags");
+    if ($tagsBox.length) {
+      $tagsBox.empty();
 
-  // TAGS
-  const $tagsBox = $infoBox.find(".applied-preset-tags");
-  if ($tagsBox.length) {
-    $tagsBox.empty();
-
-    if (Array.isArray(preset.style)) {
-      preset.style.forEach(style => {
-        const color = STYLE_TAG_MAP[style] || "gray";
-        $tagsBox.append(`
-          <span class="bx--tag bx--tag--${color} bx--tag--sm">${style}</span>
-        `);
-      });
+      if (Array.isArray(preset.style)) {
+        preset.style.forEach(style => {
+          const color = STYLE_TAG_MAP[style] || "gray";
+          $tagsBox.append(`
+            <span class="bx--tag bx--tag--${color} bx--tag--sm">${style}</span>
+          `);
+        });
+      }
     }
+
+    $infoBox.show();
+    $wrapper.find(".new-subplex-btn").hide();
   }
 
-  $infoBox.show();
-  $wrapper.find(".new-subplex-btn").hide();
-}
+  // Reset invalidazione (IMPORTANTISSIMO)
+  $pedalDiv.removeData("subplexInvalidated");
+
+  // Stato SubPlex applicato
+  $pedalDiv.attr("data-applied-preset", JSON.stringify({
+    id: preset._id,
+    name: preset.presetName || preset._id,
+    style: preset.style || [],
+    published: preset.published // ai | public | private
+  }));
 
 
-
-
-// Salva stato sul DOM (opzionale ma consigliato)
-// $pedalDiv.attr("data-applied-preset", JSON.stringify({
-//   id: preset._id,
-//   name: preset.presetName || preset._id,
-//   style: preset.style || []
-// }));
-// Reset invalidazione (IMPORTANTISSIMO)
-$pedalDiv.removeData("subplexInvalidated");
-
-// Stato SubPlex applicato
-$pedalDiv.attr("data-applied-preset", JSON.stringify({
-  id: preset._id,
-  name: preset.presetName || preset._id,
-  style: preset.style || [],
-  published: preset.published // ai | public | private
-}));
-
-
-
+  // Salva SubPlex sul div del pedale per poterlo recuperare al salvataggio
+  $pedalDiv.data('applied-subplex', {
+    id: preset._id,
+    presetName: preset.presetName || preset.name || preset._id,
+    published: preset.published, // ai | public | private
+    source: preset.source,
+    description: preset.description || '',
+    style: preset.style || [],
+    authorId: preset.authorId || preset.user_id || '',
+    version: preset.version || 1
+  });
 
 
 }

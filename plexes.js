@@ -211,33 +211,6 @@ async function initPreset() {
 
       renderFullPedalboard();
 
-      // Fetch presets for selected pedalboard
-      // await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
-      //   const presetSelect = document.getElementById('presetSelect');
-      //   const folderSelect = document.getElementById('folderSelect');
-
-      //   // 1️⃣ Restore folder first
-      //   const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
-      //   if (folderSelect) {
-      //     const folderOptionExists = Array.from(folderSelect.options).some(o => o.value === savedFolderId);
-      //     folderSelect.value = folderOptionExists ? savedFolderId : 'default';
-      //   }
-
-      //   // 2️⃣ Restore preset selection via populatePresetDropdownByFolder
-      //   const savedPresetId = localStorage.getItem('lastPresetId');
-      //   populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
-
-      //   // 3️⃣ Restore zoom for current pedalboard
-      //   if (typeof restoreZoomForCurrentBoard === "function") {
-      //     restoreZoomForCurrentBoard();
-      //   }
-
-      //   // 4️⃣ Trigger change event for Save button state
-      //   presetSelect.dispatchEvent(new Event('change', {
-      //     bubbles: true
-      //   }));
-      // });
-
       await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
         const presetSelect = document.getElementById('presetSelect');
         const folderSelect = document.getElementById('folderSelect');
@@ -436,14 +409,10 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
   `;
 
 
-
-
   const htmlContent = `
     <input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="Plex Name" value="${currentPresetName}">
     ${folderSelectHtml}
   `;
-
-
 
   const result = await Swal.fire({
     title: "Edit Plex name and folder",
@@ -651,15 +620,7 @@ if (result.value) {
   }
 }
 
-
-
 });
-
-
-
-
-
-
 
 
 // Update the dropdown option text for the renamed preset
@@ -671,11 +632,6 @@ function updatePresetDropdownName(presetId, newName) {
     option.textContent = newName;
   }
 }
-
-
-
-
-
 
 
 // Update / save preset 
@@ -702,11 +658,6 @@ async function savePreset(presetId, updateData) {
     return false;
   }
 }
-
-
-
-
-
 
 
 
@@ -921,7 +872,6 @@ function applyPresetToPedalboard(presetDoc) {
 }
 
 
-
 // Create preset function
 async function createPreset() {
 
@@ -931,13 +881,10 @@ async function createPreset() {
     inputLabel: 'Plex Name',
     inputPlaceholder: 'Type your new Plex name here',
     showCancelButton: true,
-    // showDenyButton: true,
     confirmButtonText: 'Save',
-    // denyButtonText: 'Browse Plex catalog',
     customClass: {
       confirmButton: "bx--btn bx--btn--primary",
       cancelButton: "bx--btn bx--btn--secondary",
-      // denyButton: "bx--btn bx--btn--tertiary"
     },
     inputValidator: value => !value && 'You must enter a Plex name!'
   });
@@ -1004,8 +951,6 @@ async function createPreset() {
   // -------------------------------
   // 4. Create preset in Cloudant
   // -------------------------------
-
-
 
   // Validate selectedBoardName
   const sanitizedBoardName = removeForbiddenChars(selectedBoardName);
