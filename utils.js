@@ -2390,29 +2390,32 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     $wrapper.find(".new-subplex-btn").hide();
   }
 
-  // Reset invalidazione (IMPORTANTISSIMO)
+  // Reset invalidazione
   $pedalDiv.removeData("subplexInvalidated");
 
-  // Stato SubPlex applicato
-  $pedalDiv.attr("data-applied-preset", JSON.stringify({
-    id: preset._id,
-    name: preset.presetName || preset._id,
-    style: preset.style || [],
-    published: preset.published // ai | public | private
-  }));
-
-
-  // Salva SubPlex sul div del pedale per poterlo recuperare al salvataggio
-  $pedalDiv.data('applied-subplex', {
+  // Stato SubPlex applicato sul div
+  const appliedSubplex = {
     id: preset._id,
     presetName: preset.presetName || preset.name || preset._id,
-    published: preset.published, // ai | public | private
+    published: preset.published,
     source: preset.source,
     description: preset.description || '',
     style: preset.style || [],
     authorId: preset.authorId || preset.user_id || '',
     version: preset.version || 1
-  });
+  };
+
+  $pedalDiv.data('applied-subplex', appliedSubplex);
+  $pedalDiv.attr("data-applied-preset", JSON.stringify({
+    id: appliedSubplex.id,
+    name: appliedSubplex.presetName,
+    style: appliedSubplex.style,
+    published: appliedSubplex.published
+  }));
+
+  // ✅ Aggiorna globale
+  window.currentSubPlex = window.currentSubPlex || {};
+  window.currentSubPlex[pedalId] = appliedSubplex;
 
 
 }
