@@ -1830,15 +1830,7 @@ async function renderFullPedalboard() {
           const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
           $pedalDiv.append($nameDiv);
         }
-        
-console.log(pedal)
-
-// ============== SUBPLEX INFO ===============
-if (pbPedal.subplex) {
-    
-    showAppliedSubplexUI($pedalDiv, pbPedal.subplex);
-}
-// ===========================================
+      
 
         const widthPx = parseFloat(getPedalWidth(pedal.width));
         const heightPx = parseFloat(getPedalHeight(pedal.height));
@@ -1974,6 +1966,13 @@ if (pbPedal.subplex) {
 
 
         rowDiv.appendChild($wrapper[0]);
+
+        // ============== SUBPLEX INFO ===============
+        if (pbPedal.subplex) {
+            
+            showAppliedSubplexUI($pedalDiv, pbPedal.subplex);
+        }
+        // ===========================================
 
       } catch (err) {
         console.error('Error fetching pedal info:', err);
