@@ -11,10 +11,10 @@ function initNavPedalboard(userRole) {
         <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Rigs</span>
       </div>
       <div style="display: flex; align-items: center; gap: 1rem;">
-        <span class="showDesktop" style="font-size: 0.75rem; opacity: 0.7;">Add gears</span>
+        <span class="" style="font-size: 0.75rem; opacity: 0.7;">Add gears</span>
 
         <!-- Hide by default -->
-        <button id="toggleFilterBtn" class="showDesktop" aria-label="Toggle search" 
+        <button id="toggleFilterBtn" class="" aria-label="Toggle search" 
                 style="background:none; border:none; cursor:pointer; padding:4px; display:none;">
           <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
               viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
@@ -37,7 +37,7 @@ function initNavPedalboard(userRole) {
           Save
         </button>
 
-        <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Rig"
+        <button id="createBtn" class=" bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Rig"
                 style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <g transform="rotate(90 16 16)">
