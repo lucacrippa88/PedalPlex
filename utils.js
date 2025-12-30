@@ -1916,21 +1916,18 @@ async function renderFullPedalboard() {
 
           $wrapper.append($presetContainer);
 
-
-
 // ===============================
 // APPLY SUBPLEX FROM SAVED PRESET
 // ===============================
-const savedPedal =
-  window.pedalboard?.pedals?.[pedal.name];
+const savedPedal = window.pedalboard?.pedals?.find(
+  p => p.pedal_id === pedal._id || p.name === pedal.name
+);
 
 if (savedPedal && savedPedal.subplex) {
   const subplex = savedPedal.subplex;
-
   const $infoBox = $wrapper.find(".applied-preset-info");
 
   if ($infoBox.length) {
-
     const presetName = subplex.presetName || subplex.subplexId || "Preset";
     const description = subplex.description || "No description available";
 
@@ -1967,8 +1964,7 @@ if (savedPedal && savedPedal.subplex) {
       </svg>
     `);
 
-    $iconWrapper
-      .off("mouseenter mouseleave")
+    $iconWrapper.off("mouseenter mouseleave")
       .on("mouseenter", function () {
         const $tooltip = $(`<div class="preset-tooltip-popup">${description}</div>`);
         $("body").append($tooltip);
@@ -1996,13 +1992,10 @@ if (savedPedal && savedPedal.subplex) {
     // TAGS
     const $tagsBox = $infoBox.find(".applied-preset-tags");
     $tagsBox.empty();
-
     if (Array.isArray(subplex.style)) {
       subplex.style.forEach(style => {
         const color = STYLE_TAG_MAP[style] || "gray";
-        $tagsBox.append(`
-          <span class="bx--tag bx--tag--${color} bx--tag--sm">${style}</span>
-        `);
+        $tagsBox.append(`<span class="bx--tag bx--tag--${color} bx--tag--sm">${style}</span>`);
       });
     }
 
@@ -2010,7 +2003,7 @@ if (savedPedal && savedPedal.subplex) {
     $infoBox.show();
     $wrapper.find(".new-subplex-btn").hide();
 
-    // DATA STATE (CRITICO)
+    // DATA STATE
     $pedalDiv.data("applied-subplex", subplex);
     $pedalDiv.attr("data-applied-preset", JSON.stringify({
       id: subplex.subplexId,
@@ -2020,11 +2013,9 @@ if (savedPedal && savedPedal.subplex) {
     }));
 
     window.currentSubPlex = window.currentSubPlex || {};
-    window.currentSubPlex[pedalId] = subplex;
+    window.currentSubPlex[pedal._id] = subplex;
   }
 }
-
-
 
 
 
