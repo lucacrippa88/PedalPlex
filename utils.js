@@ -1861,8 +1861,10 @@ async function renderFullPedalboard() {
           });
         }
 
-
-
+        const $wrapper = $("<div>")
+          .addClass("pedal-wrapper") // serve per hover mouse menu catalog preset
+          .css(wrapperStyles).append($pedalDiv);
+          
 // === Mostra SubPlex se presente nel preset salvato ===
 if (pbPedal.subplex) {
     const subplex = pbPedal.subplex; // questo arriva dal DB
@@ -1960,11 +1962,6 @@ if (pbPedal.subplex) {
     }
 }
 
-
-
-        const $wrapper = $("<div>")
-          .addClass("pedal-wrapper") // serve per hover mouse menu catalog preset
-          .css(wrapperStyles).append($pedalDiv);
 
 
         $wrapper.css("position", "relative");
