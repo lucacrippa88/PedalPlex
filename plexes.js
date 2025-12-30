@@ -231,7 +231,6 @@ async function initPreset() {
           currentPresetName = preset.preset_name;
           currentPresetRev  = preset._rev;
 
-          console.log("Applying selected Plex:", preset);
           applyPresetToPedalboard(preset);
         }
 
@@ -282,7 +281,6 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
       currentPresetId = preset._id;
       currentPresetName = preset.preset_name;
       currentPresetRev = preset._rev;
-      console.log("Applying selected Plex:", preset);
       applyPresetToPedalboard(preset);
       // Save selection to storage
       saveCurrentSelectionToStorage();
@@ -846,6 +844,11 @@ function applyPresetToPedalboard(presetDoc) {
     $pedalDiv.find('.row').remove();
     renderPedalControls(resetPedal, $pedalDiv);
 
+    if (presetPedal) {
+      // render applied preset info (nome, tooltip, tags, icona AI)
+      renderAppliedPresetInfo($pedalDiv, presetPedal.subplex || presetPedal);
+    }
+
     // Find existing name element (.pedal-name or .head-name)
     const $existingName = $pedalDiv.find('.pedal-name, .head-name').first();
 
@@ -1344,7 +1347,6 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
 
     // Applica preset SOLO se appartiene alla pedaliera corrente
     if (selectedPreset.board_id === window.pedalboard._id) {
-      console.log("Applying selected Plex:", selectedPreset);
       applyPresetToPedalboard(selectedPreset);
     } else {
       console.warn('Selected Plex does not belong to current Rig:', selectedPreset);
