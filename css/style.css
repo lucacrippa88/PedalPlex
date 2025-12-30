@@ -1038,3 +1038,12 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   margin-right: 4px;
   vertical-align: middle;
 }
+
+
+
+
+
+
+#toggleFilterBtn[style*="display: block"] {
+  display: flex !important;
+}
