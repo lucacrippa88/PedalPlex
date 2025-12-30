@@ -1043,7 +1043,3 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
-
-#toggleFilterBtn[style*="display: block"] {
-  display: flex !important;
-}
