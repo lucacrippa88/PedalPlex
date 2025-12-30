@@ -795,6 +795,7 @@ async function duplicatePreset(presetId, newName, folderId) {
 
 // Apply preset to linked pedalboard
 function applyPresetToPedalboard(presetDoc) {
+  console.log("Applying Plex to Rig:", presetDoc);
   const pedalsFromPreset = presetDoc.pedals;
   //const pedalsOnBoard = getPedalList();
 
