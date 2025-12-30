@@ -1833,6 +1833,7 @@ async function renderFullPedalboard() {
 
 // ============== SUBPLEX INFO ===============
 if (pbPedal.subplex) {
+    console.log(pbPedal.subplex)
     showAppliedSubplexUI($pedalDiv, pbPedal.subplex);
 }
 // ===========================================
