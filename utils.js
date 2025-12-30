@@ -1921,8 +1921,12 @@ async function renderFullPedalboard() {
 // ===============================
 // APPLY SUBPLEX FROM SAVED PRESET
 // ===============================
-if (pbPedal.subplex) {
-  const subplex = pbPedal.subplex;
+const savedPedal =
+  window.pedalboard?.pedals?.[pedal.name];
+
+if (savedPedal && savedPedal.subplex) {
+  const subplex = savedPedal.subplex;
+
   const $infoBox = $wrapper.find(".applied-preset-info");
 
   if ($infoBox.length) {
