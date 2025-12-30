@@ -11,11 +11,11 @@ function initNavPedalboard(userRole) {
         <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Rigs</span>
       </div>
       <div style="display: flex; align-items: center; gap: 1rem;">
-        <span class="" style="font-size: 0.75rem; opacity: 0.7;">Add gears</span>
+        <span style="font-size: 0.75rem; opacity: 0.7;">Add gears</span>
 
         <!-- Hide by default -->
-        <button id="toggleFilterBtn" class="" aria-label="Toggle search" 
-                style="background:none; border:none; cursor:pointer; padding:4px; display: flex !important;">
+        <button id="toggleFilterBtn" aria-label="Toggle search" 
+                style="background:none; border:none; cursor:pointer; padding:4px; display: flex!important;">
           <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
               viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
               <circle cx="11" cy="11" r="7"></circle>
