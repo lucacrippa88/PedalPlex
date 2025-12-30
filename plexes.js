@@ -113,7 +113,6 @@ async function initPreset() {
 
 
   // Show loader overlay
-    // Show loader overlay
   document.getElementById("pageLoader").style.display = "flex";
 
   // 1️⃣ Scarica tutte le pedaliere per utente
@@ -160,9 +159,6 @@ async function initPreset() {
     window.catalog = catalog;
     window.catalogMap = {};
     catalog.forEach(p => window.catalogMap[p._id] = p);
-
-    // console.log("Catalog IDs loaded:", Object.keys(window.catalogMap));
-    // console.log("Pedal IDs requested:", idsArray);
 
     document.getElementById("pageLoader").style.display = "none";
 
@@ -235,6 +231,7 @@ async function initPreset() {
           currentPresetName = preset.preset_name;
           currentPresetRev  = preset._rev;
 
+          console.log("Applying selected Plex:", preset);
           applyPresetToPedalboard(preset);
         }
 
@@ -269,7 +266,7 @@ async function initPreset() {
 
 
 
-// Replace your fetchPresetsByBoardId function with this async version
+// Fetch presets for given board ID
 async function fetchPresetsByBoardId(user_id, board_id, callback) {
   const presetSelect = document.getElementById('presetSelect');
   if (!presetSelect) return;
@@ -285,6 +282,7 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
       currentPresetId = preset._id;
       currentPresetName = preset.preset_name;
       currentPresetRev = preset._rev;
+      console.log("Applying selected Plex:", preset);
       applyPresetToPedalboard(preset);
       // Save selection to storage
       saveCurrentSelectionToStorage();
@@ -795,7 +793,7 @@ async function duplicatePreset(presetId, newName, folderId) {
 
 // Apply preset to linked pedalboard
 function applyPresetToPedalboard(presetDoc) {
-  console.log("Applying Plex to Rig:", presetDoc);
+  
   const pedalsFromPreset = presetDoc.pedals;
   //const pedalsOnBoard = getPedalList();
 
@@ -1346,6 +1344,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
 
     // Applica preset SOLO se appartiene alla pedaliera corrente
     if (selectedPreset.board_id === window.pedalboard._id) {
+      console.log("Applying selected Plex:", selectedPreset);
       applyPresetToPedalboard(selectedPreset);
     } else {
       console.warn('Selected Plex does not belong to current Rig:', selectedPreset);
