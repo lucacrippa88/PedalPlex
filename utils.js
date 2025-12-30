@@ -2546,11 +2546,13 @@ setInterval(checkSessionTime, 30000);
 
 
 
-
+// Render applied SubPlex info box
 function renderAppliedPresetInfo($pedalDiv, preset) {
   const $wrapper = $pedalDiv.closest(".pedal-wrapper");
   const $infoBox = $wrapper.find(".applied-preset-info");
   if (!$infoBox.length) return;
+
+  console.log("Rendering applied SubPlex info for preset:", preset);
 
   const presetName = preset.subplex?.presetName || preset.preset_name || preset.name || preset._id || "Preset";
   const description = preset.subplex?.description || preset.description || "No description available";
