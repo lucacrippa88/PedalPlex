@@ -639,9 +639,15 @@ async function savePreset(presetId, updateData) {
 
   const token = localStorage.getItem('authToken');
 
-  // Includi i dati SubPlex se presenti
-  if (window.currentSubPlex) {
-    updateData.subplex = window.currentSubPlex; // salva l'intero oggetto SubPlex
+  // ===== ARRICCHISCI PEDALS CON SUBPLEX =====
+  if (updateData.pedals) {
+    for (const pedalName in updateData.pedals) {
+      const $pedalDiv = $(`.pedal-catalog[data-pedal-id="${pedalName}"]`);
+      const appliedSubplex = $pedalDiv.data('applied-subplex');
+      if (appliedSubplex) {
+        updateData.pedals[pedalName].subplex = appliedSubplex;
+      }
+    }
   }
 
   const payload = {
