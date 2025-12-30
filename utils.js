@@ -1830,10 +1830,12 @@ async function renderFullPedalboard() {
           const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
           $pedalDiv.append($nameDiv);
         }
+        
+console.log(pedal)
 
 // ============== SUBPLEX INFO ===============
 if (pbPedal.subplex) {
-    console.log(pbPedal.subplex)
+    
     showAppliedSubplexUI($pedalDiv, pbPedal.subplex);
 }
 // ===========================================
