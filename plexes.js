@@ -636,7 +636,14 @@ function updatePresetDropdownName(presetId, newName) {
 
 // Update / save preset 
 async function savePreset(presetId, updateData) {
+
   const token = localStorage.getItem('authToken');
+
+  // Includi i dati SubPlex se presenti
+  if (window.currentSubPlex) {
+    updateData.subplex = window.currentSubPlex; // salva l'intero oggetto SubPlex
+  }
+
   const payload = {
     preset_id: presetId,
     _rev: currentPresetRev, // <-- send current revision!
