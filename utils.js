@@ -1235,12 +1235,12 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     $pedalDiv.append($nameDiv);
   }
 
-  // Render pedal controls
-  renderPedalControls(pedal, $pedalDiv);
-
   if (pedal.subplex) {
     applySubplexStateToPedal($pedalDiv, pedal.subplex);
   }
+
+  // Render pedal controls
+  renderPedalControls(pedal, $pedalDiv);
 
 
   // Add name/logo for others
