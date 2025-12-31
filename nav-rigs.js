@@ -61,12 +61,17 @@ function initNavPedalboard(userRole) {
   });
   $("#closeMenu").on("click", function() { $("#fullscreenMenu").removeClass("active"); });
 
-  $("#toggleFilterBtn").on("click", function () {
+  $("#toggleFilterBtn").on("click", function (e) {
+    e.stopPropagation(); // ← FONDAMENTALE
     $("#pedalFilterInput").toggle().focus();
   });
-  $("#addGearsTrigger").on("click", function () {
+
+  $("#addGearsTrigger").on("click", function (e) {
+    e.stopPropagation(); // ← FONDAMENTALE
     $("#toggleFilterBtn").trigger("click");
   });
+
+
 
 
 
