@@ -2647,49 +2647,62 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
 // }
 
 // Apply SubPlex state to pedal UI
+// Apply a SubPlex preset state to a pedal DOM element
 function applySubplexStateToPedal($pedalDiv, subplex) {
   if (!$pedalDiv || !subplex) return;
 
   // Store SubPlex metadata in the pedal div
   $pedalDiv.data("applied-preset", subplex.id || "db-loaded");
   $pedalDiv.data("subplexInvalidated", false);
-  $pedalDiv.data("applied-subplex", subplex);
-  $pedalDiv.attr("data-applied-preset", subplex.name);
 
-  // Apply SubPlex values to controls
-  if (subplex.controls && Array.isArray(subplex.controls)) {
+  // Apply each control value from SubPlex to the pedal's controls
+  if (Array.isArray(subplex.controls)) {
     subplex.controls.forEach(ctrl => {
       const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
-      if ($control.length) {
-        if ($control.hasClass("knob") || $control.hasClass("smallknob") || $control.hasClass("largeknob") || $control.hasClass("xlargeknob")) {
+      if ($control.length === 0) return;
+
+      switch (ctrl.type) {
+        case "knob":
+        case "smallknob":
+        case "largeknob":
+        case "xlargeknob":
           $control.data("rotation", getRotationFromValue(ctrl, ctrl.value));
           $control.css("transform", `rotate(${getRotationFromValue(ctrl, ctrl.value)}deg)`);
-        } else if ($control.is("input[type=range]") || $control.is("input[type=text]") || $control.is("select")) {
+          $control.closest(".knob-wrapper").find(".knob-value-label").text(ctrl.value);
+          break;
+
+        case "slider":
           $control.val(ctrl.value);
-        } else if ($control.hasClass("led")) {
+          break;
+
+        case "led":
           const colors = ctrl.colors || ["#000"];
-          const idx = typeof ctrl.value === "number" ? ctrl.value : 0;
-          const color = colors[idx] || "#000";
-          $control.css({
-            "background-color": color,
-            "box-shadow": color === "#000" 
-              ? "inset -2px -2px 2px rgba(255, 255, 255, 0.3), inset 1px 1px 2px rgba(0, 0, 0, 0.6)"
-              : `0 0 12px 4px ${color}, 0 0 20px 6px ${color}`
-          });
-          $control.data("colorIndex", idx);
-        }
+          const index = Math.min(ctrl.value, colors.length - 1);
+          $control.css("background-color", colors[index]);
+          $control.data("colorIndex", index);
+          break;
+
+        case "lcd":
+          $control.val(ctrl.value);
+          break;
+
+        case "multi":
+          $control.val(ctrl.value);
+          break;
       }
     });
   }
 
-  // Ensure first change invalidates SubPlex
-  $pedalDiv.find("input, select, .knob, .led").one("change input", () => {
-    if (!$pedalDiv.data("subplexInvalidated")) {
-      $pedalDiv.data("subplexInvalidated", true);
-      invalidateSubplexForPedal($pedalDiv);
-    }
+  // Ensure that any listener attached to controls will properly invalidate SubPlex
+  // on first user interaction
+  $pedalDiv.find("[data-control-label]").each(function() {
+    const $el = $(this);
+    $el.off("change.subplexListener").on("change.subplexListener input.subplexListener", function() {
+      if (!$pedalDiv.data("subplexInvalidated")) {
+        $pedalDiv.data("subplexInvalidated", true);
+        invalidateSubplexForPedal($pedalDiv);
+      }
+    });
   });
-
-  // Render applied preset info
-  renderAppliedPresetInfo($pedalDiv, subplex);
 }
+
