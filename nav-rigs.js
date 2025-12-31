@@ -11,7 +11,7 @@ function initNavPedalboard(userRole) {
         <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Rigs</span>
       </div>
       <div style="display: flex; align-items: center; gap: 1rem;">
-        <span class="showDesktop" style="font-size: 0.75rem; opacity: 0.7;">Add gears</span>
+        <span id="addGearsTrigger" class="showDesktop" style="font-size: 0.75rem; opacity: 0.7;">Add gears</span>
 
         <!-- Hide by default -->
         <button id="toggleFilterBtn" class="showDesktop" aria-label="Toggle search" 
@@ -63,6 +63,9 @@ function initNavPedalboard(userRole) {
 
   $("#toggleFilterBtn").on("click", function () {
     $("#pedalFilterInput").toggle().focus();
+  });
+  $("#addGearsTrigger").on("click", function () {
+    $("#toggleFilterBtn").trigger("click");
   });
 
 
