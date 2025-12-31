@@ -281,16 +281,6 @@ $("#pedalFilterInput").on("input", debounce(async function() {
     }
 }, 300));
 
-// --- Nascondi dropdown se clicchi fuori ---
-// document.addEventListener("click", function (e) {
-//     const input = document.getElementById("pedalFilterInput");
-//     const dropdown = document.getElementById("pedalAddDropdownContainer");
-//     if (!dropdown || dropdown.style.display === "none") return;
-
-//     if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-//         dropdown.style.display = "none";
-//     }
-// });
 // --- Click fuori = chiudi search ---
 document.addEventListener("click", function () {
   const input = $("#pedalFilterInput");
