@@ -136,6 +136,25 @@ function initNavPreset() {
     $('#presetSelect').on('change input', updateSavePresetButtonState);
   });
 
+
+
+
+  // Rimuove subplex solo se un controllo viene modificato
+  $('.pedal-control').on('input change', function() {
+      const pedalId = $(this).closest('.pedal-catalog').data('pedal-id'); // Assumi che tu abbia pedalId nei dati
+      if (!pedalId) return;
+
+      const preset = window.presetMap?.[currentPresetId];
+      if (preset?.pedals?.[pedalId]?.subplex) {
+          delete preset.pedals[pedalId].subplex;
+          console.log(`Subplex rimosso per pedal ${pedalId} perché un controllo è stato modificato`);
+      }
+  });
+
+
+
+
+
   // Save preset
   $('#savePstBtn, #savePstBtnMobile').on('click', async () => {
     const presetName = $('#presetSelect option:selected').text().trim() || "Untitled Plex";
@@ -153,17 +172,29 @@ function initNavPreset() {
         flatControls[key] = ctrl[key];
       }
       // pedalsObject[pedal.id] = { controls: flatControls };
-      pedalsObject[pedal.id] = {
-  controls: flatControls
-};
+            pedalsObject[pedal.id] = {
+        controls: flatControls
+      };
 
-// 🔴 PRESERVA SUBPLEX SE GIÀ ESISTENTE NEL PRESET CARICATO
-const existingPreset = window.presetMap?.[currentPresetId];
-const existingSubplex = existingPreset?.pedals?.[pedal.id]?.subplex;
+      // 🔴 PRESERVA O RIMUOVE SUBPLEX SE I CONTROLLI SONO UGUALI O MODIFICATI
+      const existingPreset = window.presetMap?.[currentPresetId];
+      const existingPedal = existingPreset?.pedals?.[pedal.id];
+      if (existingPedal?.subplex) {
+          // confronta i controlli attuali con quelli salvati
+          const savedControls = existingPedal.controls || {};
+          let controlsChanged = false;
+          for (const key of Object.keys(flatControls)) {
+              if (flatControls[key] !== savedControls[key]) {
+                  controlsChanged = true;
+                  break;
+              }
+          }
+          // se i controlli non sono cambiati, preserva subplex
+          if (!controlsChanged) {
+              pedalsObject[pedal.id].subplex = existingPedal.subplex;
+          }
+      }
 
-if (existingSubplex) {
-  pedalsObject[pedal.id].subplex = existingSubplex;
-}
 
     }
 
