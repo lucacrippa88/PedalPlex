@@ -61,15 +61,22 @@ function initNavPedalboard(userRole) {
   });
   $("#closeMenu").on("click", function() { $("#fullscreenMenu").removeClass("active"); });
 
+
+  
   $("#toggleFilterBtn").on("click", function (e) {
-    e.stopPropagation(); // ← FONDAMENTALE
-    $("#pedalFilterInput").toggle().focus();
+    e.stopPropagation();
+    $("#pedalFilterInput").show().focus();
   });
 
   $("#addGearsTrigger").on("click", function (e) {
-    e.stopPropagation(); // ← FONDAMENTALE
+    e.stopPropagation();
     $("#toggleFilterBtn").trigger("click");
   });
+
+  $("#pedalFilterInput").on("click", function (e) {
+    e.stopPropagation();
+  });
+
 
 
 
@@ -275,15 +282,26 @@ $("#pedalFilterInput").on("input", debounce(async function() {
 }, 300));
 
 // --- Nascondi dropdown se clicchi fuori ---
-document.addEventListener("click", function (e) {
-    const input = document.getElementById("pedalFilterInput");
-    const dropdown = document.getElementById("pedalAddDropdownContainer");
-    if (!dropdown || dropdown.style.display === "none") return;
+// document.addEventListener("click", function (e) {
+//     const input = document.getElementById("pedalFilterInput");
+//     const dropdown = document.getElementById("pedalAddDropdownContainer");
+//     if (!dropdown || dropdown.style.display === "none") return;
 
-    if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.style.display = "none";
-    }
+//     if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+//         dropdown.style.display = "none";
+//     }
+// });
+// --- Click fuori = chiudi search ---
+document.addEventListener("click", function () {
+  const input = $("#pedalFilterInput");
+  if (!input.is(":visible")) return;
+
+  input.hide().val("");
+
+  const dropdown = document.getElementById("pedalAddDropdownContainer");
+  if (dropdown) dropdown.style.display = "none";
 });
+
 
 // --- Aggiorna posizione al scroll/resize ---
 window.addEventListener('scroll', positionDropdown);
