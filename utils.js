@@ -156,6 +156,8 @@ function getPedalHeight(height) {
 // Function to render pedal controls dynamically
 function renderPedalControls(pedal, $pedalDiv) {
 
+  console.log("rendering controls for pedal:", pedal.name);
+
     $pedalDiv.removeData("subplexInvalidated"); // resetta il flag ogni volta che il pedale viene ri-renderizzato
 
 
@@ -2630,22 +2632,6 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
   $infoBox.show();
   $wrapper.find(".new-subplex-btn").hide();
 }
-
-// Apply SubPlex state to pedal UI
-// function applySubplexStateToPedal($pedalDiv, subplex) {
-//   if (!$pedalDiv || !subplex) return;
-
-//   // Store SubPlex metadata in the pedal div
-//   $pedalDiv.data("applied-preset", subplex.id || "db-loaded");
-//   $pedalDiv.data("subplexInvalidated", false);
-
-//   $pedalDiv
-//     .attr("data-applied-preset", subplex.name)
-//     .data("applied-subplex", subplex);
-
-//   renderAppliedPresetInfo($pedalDiv, subplex);
-// }
-
 
 
 // Invalida SubPlex e aggiorna UI
