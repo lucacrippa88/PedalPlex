@@ -152,7 +152,19 @@ function initNavPreset() {
         const key = Object.keys(ctrl)[0];
         flatControls[key] = ctrl[key];
       }
-      pedalsObject[pedal.id] = { controls: flatControls };
+      // pedalsObject[pedal.id] = { controls: flatControls };
+      pedalsObject[pedal.id] = {
+  controls: flatControls
+};
+
+// 🔴 PRESERVA SUBPLEX SE GIÀ ESISTENTE NEL PRESET CARICATO
+const existingPreset = window.presetMap?.[currentPresetId];
+const existingSubplex = existingPreset?.pedals?.[pedal.id]?.subplex;
+
+if (existingSubplex) {
+  pedalsObject[pedal.id].subplex = existingSubplex;
+}
+
     }
 
     Swal.fire({ title: "Saving Plex...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
