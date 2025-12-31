@@ -1238,6 +1238,11 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
   // Render pedal controls
   renderPedalControls(pedal, $pedalDiv);
 
+  if (pedal.subplex) {
+    applySubplexStateToPedal($pedalDiv, pedal.subplex);
+  }
+
+
   // Add name/logo for others
   if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
     const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
@@ -2626,3 +2631,13 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
   $wrapper.find(".new-subplex-btn").hide();
 }
 
+// Apply SubPlex state to pedal UI
+function applySubplexStateToPedal($pedalDiv, subplex) {
+  if (!subplex) return;
+
+  $pedalDiv
+    .attr("data-applied-preset", subplex.name)
+    .data("applied-subplex", subplex);
+
+  renderAppliedPresetInfo($pedalDiv, subplex);
+}
