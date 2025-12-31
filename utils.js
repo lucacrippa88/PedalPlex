@@ -2547,20 +2547,20 @@ setInterval(checkSessionTime, 30000);
 
 
 // Render applied SubPlex info box
-function renderAppliedPresetInfo($pedalDiv, preset) {
+function renderAppliedPresetInfo($pedalDiv, subplex) {
+  if (!subplex) return; // 1) se non c'è subplex, esce subito
+
   const $wrapper = $pedalDiv.closest(".pedal-wrapper");
   const $infoBox = $wrapper.find(".applied-preset-info");
   if (!$infoBox.length) return;
 
-  console.log("Rendering applied SubPlex info for preset:", preset);
-
-  const presetName = preset.subplex?.presetName || preset.preset_name || preset.name || preset._id || "Preset";
-  const description = preset.subplex?.description || preset.description || "No description available";
+  const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || "SubPlex";
+  const description = subplex.description || "No description available";
 
   // Nome + icona AI
   const $nameEl = $infoBox.find(".applied-preset-name");
   $nameEl.empty();
-  if (preset.subplex?.source === "ai" || preset.source === "ai") {
+  if (subplex.source === "ai") {
     $nameEl.append(`
       <svg class="ai-preset-icon" focusable="false" preserveAspectRatio="xMidYMid meet"
         fill="currentColor" width="14" height="14" viewBox="0 0 32 32" aria-hidden="true">
@@ -2611,7 +2611,7 @@ function renderAppliedPresetInfo($pedalDiv, preset) {
   const $tagsBox = $infoBox.find(".applied-preset-tags");
   if ($tagsBox.length) {
     $tagsBox.empty();
-    const styles = preset.subplex?.style || preset.style || [];
+    const styles = subplex.style || [];
     styles.forEach(style => {
       const color = STYLE_TAG_MAP[style] || "gray";
       $tagsBox.append(`<span class="bx--tag bx--tag--${color} bx--tag--sm">${style}</span>`);
@@ -2621,3 +2621,4 @@ function renderAppliedPresetInfo($pedalDiv, preset) {
   $infoBox.show();
   $wrapper.find(".new-subplex-btn").hide();
 }
+
