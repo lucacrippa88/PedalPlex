@@ -2548,8 +2548,11 @@ setInterval(checkSessionTime, 30000);
 
 // Render applied SubPlex info box
 function renderAppliedPresetInfo($pedalDiv, subplex) {
-  console.log(subplex)
-  if (!subplex) return; // 1) se non c'è subplex, esce subito
+  
+  if (!subplex || (!subplex.presetName && !subplex.name && !subplex.preset_name && !subplex.id)) {
+    console.log("No valid SubPlex found, skipping render.");
+    return;
+  }
 
   const $wrapper = $pedalDiv.closest(".pedal-wrapper");
   const $infoBox = $wrapper.find(".applied-preset-info");
