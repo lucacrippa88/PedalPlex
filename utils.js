@@ -2646,16 +2646,15 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
 //   renderAppliedPresetInfo($pedalDiv, subplex);
 // }
 
-// Apply SubPlex state to pedal UI
-// Apply a SubPlex preset state to a pedal DOM element
 function applySubplexStateToPedal($pedalDiv, subplex) {
   if (!$pedalDiv || !subplex) return;
 
-  // Store SubPlex metadata in the pedal div
+  // Salva metadati
   $pedalDiv.data("applied-preset", subplex.id || "db-loaded");
   $pedalDiv.data("subplexInvalidated", false);
+  $pedalDiv.data("applied-subplex", subplex);
 
-  // Apply each control value from SubPlex to the pedal's controls
+  // 1️⃣ Applica valori ai controlli
   if (Array.isArray(subplex.controls)) {
     subplex.controls.forEach(ctrl => {
       const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
@@ -2666,12 +2665,15 @@ function applySubplexStateToPedal($pedalDiv, subplex) {
         case "smallknob":
         case "largeknob":
         case "xlargeknob":
-          $control.data("rotation", getRotationFromValue(ctrl, ctrl.value));
-          $control.css("transform", `rotate(${getRotationFromValue(ctrl, ctrl.value)}deg)`);
+          const rotation = getRotationFromValue(ctrl, ctrl.value);
+          $control.data("rotation", rotation);
+          $control.css("transform", `rotate(${rotation}deg)`);
           $control.closest(".knob-wrapper").find(".knob-value-label").text(ctrl.value);
           break;
 
         case "slider":
+        case "lcd":
+        case "multi":
           $control.val(ctrl.value);
           break;
 
@@ -2681,28 +2683,20 @@ function applySubplexStateToPedal($pedalDiv, subplex) {
           $control.css("background-color", colors[index]);
           $control.data("colorIndex", index);
           break;
-
-        case "lcd":
-          $control.val(ctrl.value);
-          break;
-
-        case "multi":
-          $control.val(ctrl.value);
-          break;
       }
     });
   }
 
-  // Ensure that any listener attached to controls will properly invalidate SubPlex
-  // on first user interaction
-  $pedalDiv.find("[data-control-label]").each(function() {
-    const $el = $(this);
-    $el.off("change.subplexListener").on("change.subplexListener input.subplexListener", function() {
-      if (!$pedalDiv.data("subplexInvalidated")) {
-        $pedalDiv.data("subplexInvalidated", true);
-        invalidateSubplexForPedal($pedalDiv);
-      }
-    });
+  // 2️⃣ Render info SubPlex UI
+  renderAppliedPresetInfo($pedalDiv, subplex);
+
+  // 3️⃣ Aggancia listener per invalidazione SubPlex
+  // Usa delegazione per coprire controlli che potrebbero essere renderizzati dopo
+  $pedalDiv.off("input.subplexListener change.subplexListener");
+  $pedalDiv.on("input.subplexListener change.subplexListener", "[data-control-label]", function() {
+    if (!$pedalDiv.data("subplexInvalidated")) {
+      $pedalDiv.data("subplexInvalidated", true);
+      invalidateSubplexForPedal($pedalDiv);
+    }
   });
 }
-
