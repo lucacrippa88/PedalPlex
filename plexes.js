@@ -845,9 +845,18 @@ function applyPresetToPedalboard(presetDoc) {
     renderPedalControls(resetPedal, $pedalDiv);
 
     if (presetPedal) {
-      // render applied preset info (nome, tooltip, tags, icona AI)
-      renderAppliedPresetInfo($pedalDiv, presetPedal.subplex || presetPedal);
+      const appliedSubplex = presetPedal.subplex || presetPedal;
+
+      // 1️⃣ salva il subplex sul pedale (COME IL DROPDOWN)
+      $pedalDiv.data('applied-subplex', appliedSubplex);
+
+      // 2️⃣ render UI info
+      renderAppliedPresetInfo($pedalDiv, appliedSubplex);
+
+      // 3️⃣ AGGANCIA INVALIDAZIONE (QUESTA ERA LA RIGA MANCANTE)
+      setupSubplexInvalidationOnDBLoad($pedalDiv);
     }
+
 
     // Find existing name element (.pedal-name or .head-name)
     const $existingName = $pedalDiv.find('.pedal-name, .head-name').first();
