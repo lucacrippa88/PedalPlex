@@ -1244,6 +1244,14 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
   // Render pedal controls
   renderPedalControls(pedal, $pedalDiv);
 
+  // Aggancia invalidazione SubPlex ai controlli
+  $pedalDiv.find('.knob, select, .led, input[type="range"], input[type="text"]')
+    .on('change input click', function() {
+        onPedalControlChange($pedalDiv);
+    });
+
+
+
 
   // Add name/logo for others
   if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
