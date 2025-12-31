@@ -2126,25 +2126,25 @@ $(document).on("click", function () {
 
 
 // Invalidate SubPlex state for a pedal (called on manual edit)
-function invalidateSubplexForPedal($pedalDiv) {
-  const applied = $pedalDiv.attr("data-applied-preset");
-  if (!applied) return; // nessun SubPlex → nulla da fare
+// function invalidateSubplexForPedal($pedalDiv) {
+//   const applied = $pedalDiv.attr("data-applied-preset");
+//   if (!applied) return; // nessun SubPlex → nulla da fare
 
-  // 1. Rimuovi stato
-  $pedalDiv.removeAttr("data-applied-preset");
-  $pedalDiv.removeData('applied-subplex');
+//   // 1. Rimuovi stato
+//   $pedalDiv.removeAttr("data-applied-preset");
+//   $pedalDiv.removeData('applied-subplex');
 
-  // 2. UI
-  const $wrapper = $pedalDiv.closest(".pedal-wrapper");
+//   // 2. UI
+//   const $wrapper = $pedalDiv.closest(".pedal-wrapper");
 
-  $wrapper.find(".applied-preset-info").hide();
-  $wrapper.find(".new-subplex-btn").show();
+//   $wrapper.find(".applied-preset-info").hide();
+//   $wrapper.find(".new-subplex-btn").show();
 
-  // opzionale: chiudi dropdown se aperto
-  $wrapper.find(".preset-dropdown-wrapper").removeClass("is-open");
+//   // opzionale: chiudi dropdown se aperto
+//   $wrapper.find(".preset-dropdown-wrapper").removeClass("is-open");
 
-  console.log("SubPlex invalidated by manual edit");
-}
+//   console.log("SubPlex invalidated by manual edit");
+// }
 
 
 
@@ -2646,37 +2646,97 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
 //   renderAppliedPresetInfo($pedalDiv, subplex);
 // }
 
-function applySubplexStateToPedal($pedalDiv, subplex) {
-  if (!$pedalDiv || !subplex) return;
 
-  // Salva metadati
-  $pedalDiv.data("applied-preset", subplex.id || "db-loaded");
-  $pedalDiv.data("subplexInvalidated", false);
-  $pedalDiv.data("applied-subplex", subplex);
 
-  // 1️⃣ Applica valori ai controlli
+// Invalida SubPlex e aggiorna UI
+function invalidateSubplexForPedal($pedalDiv) {
+  if (!$pedalDiv) return;
+
+  const applied = $pedalDiv.data("applied-subplex");
+  if (!applied) return;
+
+  // Rimuove stato
+  $pedalDiv.removeData('applied-subplex');
+  $pedalDiv.removeAttr("data-applied-preset");
+  $pedalDiv.data("subplexInvalidated", true);
+
+  // Aggiorna UI
+  const $wrapper = $pedalDiv.closest(".pedal-wrapper");
+  $wrapper.find(".applied-preset-info").hide();
+  $wrapper.find(".new-subplex-btn").show();
+  $wrapper.find(".preset-dropdown-wrapper").removeClass("is-open");
+
+  console.log("SubPlex invalidated by control change");
+}
+
+// Controlla se i valori dei controlli differiscono dal SubPlex applicato
+function onPedalControlChange($pedalDiv) {
+  const subplex = $pedalDiv.data('applied-subplex');
+  if (!subplex) return; // niente SubPlex → nulla da fare
+
+  let changed = false;
+
   if (Array.isArray(subplex.controls)) {
     subplex.controls.forEach(ctrl => {
       const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
-      if ($control.length === 0) return;
+      if (!$control.length) return;
+
+      let currentValue;
+      switch (ctrl.type) {
+        case "knob":
+        case "smallknob":
+        case "largeknob":
+        case "xlargeknob":
+          currentValue = parseFloat($control.closest(".knob-wrapper").find(".knob-value-label").text());
+          break;
+        case "slider":
+        case "lcd":
+        case "multi":
+          currentValue = $control.val();
+          break;
+        case "led":
+          currentValue = $control.data("colorIndex");
+          break;
+      }
+
+      if (currentValue != ctrl.value) changed = true;
+    });
+  }
+
+  if (changed && !$pedalDiv.data("subplexInvalidated")) {
+    invalidateSubplexForPedal($pedalDiv);
+  }
+}
+
+// Applica SubPlex a pedale e aggancia listener
+function applySubplexStateToPedal($pedalDiv, subplex) {
+  if (!$pedalDiv || !subplex) return;
+
+  // Store metadata
+  $pedalDiv.data("applied-subplex", subplex);
+  $pedalDiv.data("subplexInvalidated", false);
+
+  // Applica valori controlli
+  if (Array.isArray(subplex.controls)) {
+    subplex.controls.forEach(ctrl => {
+      const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
+      if (!$control.length) return;
 
       switch (ctrl.type) {
         case "knob":
         case "smallknob":
         case "largeknob":
         case "xlargeknob":
-          const rotation = getRotationFromValue(ctrl, ctrl.value);
-          $control.data("rotation", rotation);
-          $control.css("transform", `rotate(${rotation}deg)`);
+          const deg = getRotationFromValue(ctrl, ctrl.value);
+          $control.data("rotation", deg);
+          $control.css("transform", `rotate(${deg}deg)`);
           $control.closest(".knob-wrapper").find(".knob-value-label").text(ctrl.value);
           break;
-
         case "slider":
         case "lcd":
         case "multi":
           $control.val(ctrl.value);
           break;
-
         case "led":
           const colors = ctrl.colors || ["#000"];
           const index = Math.min(ctrl.value, colors.length - 1);
@@ -2687,16 +2747,12 @@ function applySubplexStateToPedal($pedalDiv, subplex) {
     });
   }
 
-  // 2️⃣ Render info SubPlex UI
+  // Aggiorna UI SubPlex info
   renderAppliedPresetInfo($pedalDiv, subplex);
 
-  // 3️⃣ Aggancia listener per invalidazione SubPlex
-  // Usa delegazione per coprire controlli che potrebbero essere renderizzati dopo
+  // Aggancia listener generico per invalidazione
   $pedalDiv.off("input.subplexListener change.subplexListener");
   $pedalDiv.on("input.subplexListener change.subplexListener", "[data-control-label]", function() {
-    if (!$pedalDiv.data("subplexInvalidated")) {
-      $pedalDiv.data("subplexInvalidated", true);
-      invalidateSubplexForPedal($pedalDiv);
-    }
+    onPedalControlChange($pedalDiv);
   });
 }
