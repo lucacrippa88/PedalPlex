@@ -2639,8 +2639,6 @@ function invalidateSubplexForPedal($pedalDiv) {
   // Rimuove stato
   $pedalDiv.removeData('applied-subplex');
   $pedalDiv.removeAttr("data-applied-preset");
-  
-  // Flag fondamentale
   $pedalDiv.data("subplexInvalidated", true);
 
   // Aggiorna UI
