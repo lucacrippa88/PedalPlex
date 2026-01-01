@@ -156,8 +156,6 @@ function getPedalHeight(height) {
 // Function to render pedal controls dynamically
 function renderPedalControls(pedal, $pedalDiv) {
 
-  console.log("rendering controls for pedal:", pedal.name);
-
     $pedalDiv.removeData("subplexInvalidated"); // resetta il flag ogni volta che il pedale viene ri-renderizzato
 
 
@@ -295,6 +293,17 @@ function renderPedalControls(pedal, $pedalDiv) {
                             if (!$pedalDiv.data("subplexInvalidated")) {
                               $pedalDiv.data("subplexInvalidated", true);
                               invalidateSubplexForPedal($pedalDiv); // mark SubPlex as changed
+                              
+                              console.log(
+                                "[SUBPLEX INVALIDATED]",
+                                {
+                                  pedal: $pedalDiv.data("pedal-name"),
+                                  control: control.label,
+                                  newValue: control.value,
+                                  source: "user"
+                                }
+                              );
+                              
                             }
                         }
 
