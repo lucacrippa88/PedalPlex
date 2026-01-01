@@ -2701,3 +2701,22 @@ function onPedalControlChange($pedalDiv) {
     invalidateSubplexForPedal($pedalDiv);
   }
 }
+
+
+// Al momento del render dal DB
+function setupSubplexInvalidationOnDBLoad($pedalDiv) {
+  const appliedSubplex = $pedalDiv.data('applied-subplex');
+  if (!appliedSubplex) return; // nessun SubPlex → nulla da fare
+
+  // Assicura che l'invalidazione avvenga al primo input/change
+  $pedalDiv.find("[data-control-label]").each(function() {
+    const $control = $(this);
+    $control.off("input.dbSubplexListener change.dbSubplexListener");
+    $control.on("input.dbSubplexListener change.dbSubplexListener", function() {
+      if (!$pedalDiv.data("subplexInvalidated")) {
+        $pedalDiv.data("subplexInvalidated", true);
+        invalidateSubplexForPedal($pedalDiv);
+      }
+    });
+  });
+}
