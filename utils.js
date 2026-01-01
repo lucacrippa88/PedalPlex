@@ -2639,7 +2639,7 @@ function invalidateSubplexForPedal($pedalDiv) {
   // Rimuove stato
   $pedalDiv.removeData('applied-subplex');
   $pedalDiv.removeAttr("data-applied-preset");
-
+  
   // Flag fondamentale
   $pedalDiv.data("subplexInvalidated", true);
 
@@ -2691,41 +2691,13 @@ function onPedalControlChange($pedalDiv) {
 }
 
 
-// // Al momento del render dal DB
-// function setupSubplexInvalidationOnDBLoad($pedalDiv) {
-//   if (!$pedalDiv) return;
-
-//   const invalidate = () => invalidateSubplexForPedal($pedalDiv);
-
-//   // rimuovi eventuali listener duplicati
-//   $pedalDiv
-//     .find('input, select, textarea')
-//     .off('.subplexInvalidate')
-//     .on('input.subplexInvalidate change.subplexInvalidate', invalidate);
-
-//   // knob / custom controls
-//   $pedalDiv
-//     .find('[data-control-label]')
-//     .off('.subplexInvalidate')
-//     .on('mousedown.subplexInvalidate click.subplexInvalidate', invalidate);
-// }
-
-
 // Al momento del render dal DB
 function setupSubplexInvalidationOnDBLoad($pedalDiv) {
   if (!$pedalDiv) return;
 
-  // SOLO se il subplex arriva dal DB
-  if (!$pedalDiv.data('applied-subplex')) return;
+  const invalidate = () => invalidateSubplexForPedal($pedalDiv);
 
-  const invalidate = () => {
-    // evita doppia invalidazione
-    if ($pedalDiv.data('subplexInvalidated')) return;
-
-    invalidateSubplexForPedal($pedalDiv);
-  };
-
-  // controlli standard
+  // rimuovi eventuali listener duplicati
   $pedalDiv
     .find('input, select, textarea')
     .off('.subplexInvalidate')
@@ -2737,5 +2709,4 @@ function setupSubplexInvalidationOnDBLoad($pedalDiv) {
     .off('.subplexInvalidate')
     .on('mousedown.subplexInvalidate click.subplexInvalidate', invalidate);
 }
-
 
