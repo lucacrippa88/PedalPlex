@@ -46,9 +46,9 @@
     </form>
 
     <br><br>
-    <h2>Link Google Account</h2>
+    <h2>Link Google Account</h2><br><br>
     <button id="linkGoogleBtn" class="bx--btn bx--btn--secondary" style="width: 100%;">
-      Collega account Google
+      Link
     </button>
 
   </div>
@@ -150,13 +150,13 @@
         data: JSON.stringify({ id_token }),
         success: function(res){
           if(res.success){
-            Swal.fire('Collegato!', 'Il tuo account Google è stato collegato.', 'success');
+            Swal.fire('Linked!', 'Your Google account has been linked.', 'success');
           } else {
-            Swal.fire('Errore', res.error || 'Impossibile collegare Google', 'error');
+            Swal.fire('Error', res.error || 'Impossible to link Google account. Please retry later.', 'error');
           }
         },
         error: function(){
-          Swal.fire('Errore server', 'Riprova più tardi', 'error');
+          Swal.fire('Server error', 'Retry later.', 'error');
         }
       });
     }
