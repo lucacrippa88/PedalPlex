@@ -290,20 +290,20 @@ function renderPedalControls(pedal, $pedalDiv) {
                             let newValue = startValue + steps;
                             newValue = Math.min(Math.max(newValue, min), max);
                             control.value = parseFloat(newValue.toFixed(1));
+
+console.log(
+  "[CONTROL CHANGED]",
+  {
+    pedal: $pedalDiv.data("pedal-name"),
+    control: control.label,
+    newValue: control.value,
+    type: "knob"
+  }
+);
+
                             if (!$pedalDiv.data("subplexInvalidated")) {
                               $pedalDiv.data("subplexInvalidated", true);
                               invalidateSubplexForPedal($pedalDiv); // mark SubPlex as changed
-                              
-                              console.log(
-                                "[SUBPLEX INVALIDATED]",
-                                {
-                                  pedal: $pedalDiv.data("pedal-name"),
-                                  control: control.label,
-                                  newValue: control.value,
-                                  source: "user"
-                                }
-                              );
-                              
                             }
                         }
 
