@@ -2639,6 +2639,8 @@ function invalidateSubplexForPedal($pedalDiv) {
   // Rimuove stato
   $pedalDiv.removeData('applied-subplex');
   $pedalDiv.removeAttr("data-applied-preset");
+
+  // Flag fondamentale
   $pedalDiv.data("subplexInvalidated", true);
 
   // Aggiorna UI
@@ -2646,9 +2648,8 @@ function invalidateSubplexForPedal($pedalDiv) {
   $wrapper.find(".applied-preset-info").hide();
   $wrapper.find(".new-subplex-btn").show();
   $wrapper.find(".preset-dropdown-wrapper").removeClass("is-open");
-
-  console.log("SubPlex invalidated by control change");
 }
+
 
 // Controlla se i valori dei controlli differiscono dal SubPlex applicato
 function onPedalControlChange($pedalDiv) {
@@ -2690,13 +2691,41 @@ function onPedalControlChange($pedalDiv) {
 }
 
 
+// // Al momento del render dal DB
+// function setupSubplexInvalidationOnDBLoad($pedalDiv) {
+//   if (!$pedalDiv) return;
+
+//   const invalidate = () => invalidateSubplexForPedal($pedalDiv);
+
+//   // rimuovi eventuali listener duplicati
+//   $pedalDiv
+//     .find('input, select, textarea')
+//     .off('.subplexInvalidate')
+//     .on('input.subplexInvalidate change.subplexInvalidate', invalidate);
+
+//   // knob / custom controls
+//   $pedalDiv
+//     .find('[data-control-label]')
+//     .off('.subplexInvalidate')
+//     .on('mousedown.subplexInvalidate click.subplexInvalidate', invalidate);
+// }
+
+
 // Al momento del render dal DB
 function setupSubplexInvalidationOnDBLoad($pedalDiv) {
   if (!$pedalDiv) return;
 
-  const invalidate = () => invalidateSubplexForPedal($pedalDiv);
+  // SOLO se il subplex arriva dal DB
+  if (!$pedalDiv.data('applied-subplex')) return;
 
-  // rimuovi eventuali listener duplicati
+  const invalidate = () => {
+    // evita doppia invalidazione
+    if ($pedalDiv.data('subplexInvalidated')) return;
+
+    invalidateSubplexForPedal($pedalDiv);
+  };
+
+  // controlli standard
   $pedalDiv
     .find('input, select, textarea')
     .off('.subplexInvalidate')
@@ -2708,4 +2737,5 @@ function setupSubplexInvalidationOnDBLoad($pedalDiv) {
     .off('.subplexInvalidate')
     .on('mousedown.subplexInvalidate click.subplexInvalidate', invalidate);
 }
+
 

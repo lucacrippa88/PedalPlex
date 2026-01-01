@@ -639,10 +639,23 @@ async function savePreset(presetId, updateData) {
   if (updateData.pedals) {
     for (const pedalName in updateData.pedals) {
       const $pedalDiv = $(`.pedal-catalog[data-pedal-id="${pedalName}"]`);
+
       const appliedSubplex = $pedalDiv.data('applied-subplex');
-      if (appliedSubplex) {
+      const subplexInvalidated = $pedalDiv.data('subplexInvalidated');
+
+      // se invalidato, NON DEVE ESISTERE
+      if (subplexInvalidated) {
+        delete updateData.pedals[pedalName].subplex;
+      }
+      // salva SOLO subplex validi e attivi
+      else if (appliedSubplex && appliedSubplex.id) {
         updateData.pedals[pedalName].subplex = appliedSubplex;
       }
+      // fallback di sicurezza
+      else {
+        delete updateData.pedals[pedalName].subplex;
+      }
+
     }
   }
 
