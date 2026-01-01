@@ -186,8 +186,6 @@ if (currentPreset?.pedals) {
           // altrimenti subplex viene eliminato implicitamente (non lo aggiungiamo)
       }
 
-
-
     }
 
     Swal.fire({ title: "Saving Plex...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
