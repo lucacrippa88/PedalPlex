@@ -2630,63 +2630,25 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
 
 
 // Invalida SubPlex e aggiorna UI
-// function invalidateSubplexForPedal($pedalDiv) {
-//   if (!$pedalDiv) return;
-
-//   const applied = $pedalDiv.data("applied-subplex");
-//   if (!applied) return;
-
-//   // Rimuove stato
-//   $pedalDiv.removeData('applied-subplex');
-//   $pedalDiv.removeAttr("data-applied-preset");
-//   $pedalDiv.data("subplexInvalidated", true);
-
-//   // Aggiorna UI
-//   const $wrapper = $pedalDiv.closest(".pedal-wrapper");
-//   $wrapper.find(".applied-preset-info").hide();
-//   $wrapper.find(".new-subplex-btn").show();
-//   $wrapper.find(".preset-dropdown-wrapper").removeClass("is-open");
-
-//   console.log("SubPlex invalidated by control change");
-// }
-
 function invalidateSubplexForPedal($pedalDiv) {
-  const pedalId = $pedalDiv.data("pedal-id");
-  if (!pedalId) return;
+  if (!$pedalDiv) return;
 
-  const pedalState = window.pedalboard?.pedals?.[pedalId];
-  if (!pedalState || !pedalState.subplex) return;
+  const applied = $pedalDiv.data("applied-subplex");
+  if (!applied) return;
 
-  console.log("[SUBPLEX REMOVED]", {
-    pedalId,
-    subplexId: pedalState.subplex.id
-  });
-
-  /* =========================
-     1️⃣ STATO (window)
-     ========================= */
-  delete pedalState.subplex;
-
-  /* =========================
-     2️⃣ UI (DOM reale)
-     ========================= */
-  const $presetContainer = $pedalDiv.siblings(".preset-container");
-
-  // rimuove box info preset
-  $presetContainer.find(".applied-preset-info").remove();
-
-  // riabilita pulsante "aggiungi subplex"
-  $presetContainer.find(".new-subplex-btn").show();
-
-  /* =========================
-     3️⃣ FLAG INTERNO
-     ========================= */
+  // Rimuove stato
+  $pedalDiv.removeData('applied-subplex');
+  $pedalDiv.removeAttr("data-applied-preset");
   $pedalDiv.data("subplexInvalidated", true);
+
+  // Aggiorna UI
+  const $wrapper = $pedalDiv.closest(".pedal-wrapper");
+  $wrapper.find(".applied-preset-info").hide();
+  $wrapper.find(".new-subplex-btn").show();
+  $wrapper.find(".preset-dropdown-wrapper").removeClass("is-open");
+
+  console.log("SubPlex invalidated by control change");
 }
-
-
-
-
 
 // Controlla se i valori dei controlli differiscono dal SubPlex applicato
 function onPedalControlChange($pedalDiv) {
@@ -2730,18 +2692,20 @@ function onPedalControlChange($pedalDiv) {
 
 // Al momento del render dal DB
 function setupSubplexInvalidationOnDBLoad($pedalDiv) {
-  const appliedSubplex = $pedalDiv.data('applied-subplex');
-  if (!appliedSubplex) return; // nessun SubPlex → nulla da fare
+  if (!$pedalDiv) return;
 
-  // Assicura che l'invalidazione avvenga al primo input/change
-  $pedalDiv.find("[data-control-label]").each(function() {
-    const $control = $(this);
-    $control.off("input.dbSubplexListener change.dbSubplexListener");
-    $control.on("input.dbSubplexListener change.dbSubplexListener", function() {
-      if (!$pedalDiv.data("subplexInvalidated")) {
-        $pedalDiv.data("subplexInvalidated", true);
-        invalidateSubplexForPedal($pedalDiv);
-      }
-    });
-  });
+  const invalidate = () => invalidateSubplexForPedal($pedalDiv);
+
+  // rimuovi eventuali listener duplicati
+  $pedalDiv
+    .find('input, select, textarea')
+    .off('.subplexInvalidate')
+    .on('input.subplexInvalidate change.subplexInvalidate', invalidate);
+
+  // knob / custom controls
+  $pedalDiv
+    .find('[data-control-label]')
+    .off('.subplexInvalidate')
+    .on('mousedown.subplexInvalidate click.subplexInvalidate', invalidate);
 }
+
