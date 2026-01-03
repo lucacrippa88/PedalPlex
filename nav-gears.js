@@ -608,8 +608,10 @@ function initSinglePedalView(pedalId, userRole) {
   `);
   resultsDiv.append(globalSpinner);
 
-  fetch(`https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=${encodeURIComponent(pedalId)}`, {
-    headers: { Authorization: token ? "Bearer " + token : "" }
+  fetch("…GET_PEDALS_BY_IDS.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ids: [pedalId] })
   })
     .then(res => res.json())
     .then(data => {
