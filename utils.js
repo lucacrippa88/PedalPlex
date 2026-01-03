@@ -1389,7 +1389,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     $pedalDiv.css('position', 'relative');
     $shareIcon.css({
       position: 'absolute',
-      bottom: '-10px',      // leggermente fuori dal pedale
+      bottom: '-22px',      // leggermente fuori dal pedale
       right: '0',
       cursor: 'pointer',
       opacity: 0,
