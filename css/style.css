@@ -1046,26 +1046,3 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
-.pedal-catalog {
-  position: relative; /* serve per posizionare icona */
-}
-
-.pedal-share-btn {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  display: none; /* nascosta di default */
-  background: rgba(0,0,0,0.6);
-  border: none;
-  border-radius: 50%;
-  padding: 4px;
-  cursor: pointer;
-  color: white;
-  transition: opacity 0.2s;
-}
-
-.pedal-catalog:hover .pedal-share-btn {
-  display: flex; /* mostra al hover */
-  align-items: center;
-  justify-content: center;
-}
