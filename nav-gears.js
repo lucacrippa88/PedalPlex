@@ -1,7 +1,52 @@
 // nav-catalog.js
 
+function getPedalIdFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("id"); // null se non presente
+}
+
+function fetchPedalsById(pedalId, userRole) {
+  const token = localStorage.getItem('authToken');
+
+  fetch(`https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=${pedalId}`, {
+    headers: { Authorization: "Bearer " + token }
+  })
+  .then(res => res.json())
+  .then(pedals => {
+    if (!pedals || pedals.length === 0) {
+      $("#catalog").html(`<p style="color:red;">Pedal not found</p>`);
+      return;
+    }
+
+    $("#catalog").empty();
+    pedals.forEach(pedal => {
+      const $div = renderPedal(pedal, userRole);
+      $div.attr("data-author", pedal.author || "");
+      $div.attr("data-published", (pedal.published || "draft").toLowerCase());
+      $("#catalog").append($div);
+    });
+
+    updatePedalCounts();
+    if (userRole !== "guest") setupEditPedalHandler(pedals);
+  })
+  .catch(err => {
+    console.error("Error loading pedal by ID:", err);
+    $("#catalog").html(`<p style="color:red;">Error loading pedal: ${err.message}</p>`);
+  });
+}
+
+
+
 // Initialize navigation catalog
 function initNavCatalog(userRole) {
+
+  const pedalIdFromURL = getPedalIdFromURL();
+  if (pedalIdFromURL) {
+    fetchPedalsById(pedalIdFromURL, userRole);
+    return; // salta le fetch parallele
+  }
+
+
   const isAdmin = (userRole === "admin");
 
   // Nav HTML
@@ -319,8 +364,6 @@ function initCatalog(userRole) {
       if (fullRendered) return; // se full è già arrivato, ignora metadata
 
       $("#catalog-global-loader").remove();
-
-      // pedals.sort((a, b) => a._id.localeCompare(b._id));
 
       pedals.forEach(pedal => {
         const $pedalDiv = renderPedal(pedal, userRole);
