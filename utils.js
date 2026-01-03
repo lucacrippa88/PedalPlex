@@ -1346,7 +1346,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
 
   // ==================== SHARE ICON ====================
   // Mostra icona share solo nella pagina Gears
-  if (window.location.pathname === 'gears') {
+  if (window.location.pathname === '/gears') {
 
     const $shareIcon = $(`
       <div class="pedal-share-icon" title="Copy pedal link">
