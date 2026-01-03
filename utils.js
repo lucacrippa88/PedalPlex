@@ -1343,6 +1343,36 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     }
   }
 
+
+  // ==================== SHARE ICON ====================
+  const $shareIcon = $(`
+    <button class="pedal-share-btn" aria-label="Copy pedal link">
+      <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32">
+        <path d="M28 18v-4l-10-6v4.172c-2.69.624-4.888 2.822-5.512 5.512H8v4h4.488c.624 2.69 2.822 4.888 5.512 5.512V28l10-6z"/>
+      </svg>
+    </button>
+  `);
+
+  $pedalDiv.append($shareIcon);
+
+  // Click copia negli appunti
+  $shareIcon.on('click', (e) => {
+    e.stopPropagation(); // evita trigger di hover o click sul pedale
+    const url = `${window.location.origin}/gears?id=${pedalId}`;
+    navigator.clipboard.writeText(url).then(() => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Link copied!',
+        showConfirmButton: false,
+        timer: 1200,
+        toast: true,
+        position: 'top-end'
+      });
+    });
+  });
+  // ==================== /SHARE ICON ====================
+  
+
   return $pedalDiv;
 }
 
