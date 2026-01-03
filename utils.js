@@ -1363,7 +1363,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     // Copy link on click
     $shareIcon.on('click', (e) => {
       e.stopPropagation();
-      const url = `${window.location.origin}/gears?id=${pedalId}`;
+      const url = `${window.location.origin}/PedalPlex/gears?id=${pedalId}`;
       navigator.clipboard.writeText(url).then(() => {
         Swal.fire({
           icon: 'success',
