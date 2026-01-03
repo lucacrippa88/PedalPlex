@@ -1,5 +1,12 @@
 const editMode = window.isEditMode
 
+function getBasePath() {
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  // se sei su /PedalPlex/gears → base = /PedalPlex
+  // se sei su /gears → base = ""
+  return parts.length > 1 ? '/' + parts[0] : '';
+}
+
 
 // TAG MAP STYLE
 const STYLE_TAG_MAP = {
@@ -1346,7 +1353,9 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
 
   // ==================== SHARE ICON ====================
   // Mostra icona share solo nella pagina Gears
-  if (window.location.pathname === '/PedalPlex/gears') {
+  if (window.location.pathname.endsWith('/gears')) {
+
+    const basePath = getBasePath();
 
     const $shareIcon = $(`
       <div class="pedal-share-icon" title="Copy pedal link">
@@ -1363,7 +1372,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     // Copy link on click
     $shareIcon.on('click', (e) => {
       e.stopPropagation();
-      const url = `${window.location.origin}/PedalPlex/gears?id=${pedalId}`;
+      const url = `${window.location.origin}${basePath}/gear?id=${encodeURIComponent(pedalId)}`;
       navigator.clipboard.writeText(url).then(() => {
         Swal.fire({
           icon: 'success',
