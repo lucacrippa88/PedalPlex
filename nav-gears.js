@@ -66,13 +66,6 @@ function initSinglePedalView(pedalId, userRole) {
 // Initialize navigation catalog
 function initNavCatalog(userRole) {
 
-  const pedalIdFromURL = getPedalIdFromURL();
-  if (pedalIdFromURL) {
-    initSinglePedalView(pedalIdFromURL, userRole);
-    return; // salta fetch parallele
-  }
-
-
   const isAdmin = (userRole === "admin");
 
   // Nav HTML
@@ -117,6 +110,12 @@ function initNavCatalog(userRole) {
 
   $("body").prepend(navHtml);
 
+  // Check for single pedal view
+  const pedalIdFromURL = getPedalIdFromURL();
+  if (pedalIdFromURL) {
+    initSinglePedalView(pedalIdFromURL, userRole);
+    return; // salta fetch parallele
+  }
 
 
   // Hide Add Gear button for guests
