@@ -25,8 +25,13 @@ function initSinglePedalView(pedalId, userRole) {
   resultsDiv.append(globalSpinner);
 
   // Fetch pedal singolo
-  fetch(`https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=${pedalId}`, {
-    headers: { Authorization: "Bearer " + token }
+  fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": token ? "Bearer " + token : ""
+    },
+    body: JSON.stringify({ ids: [pedalId] })
   })
     .then(res => res.json())
     .then(data => {
