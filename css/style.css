@@ -1045,4 +1045,24 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
+.pedal-catalog {
+  position: relative; /* serve per posizionare icona */
+}
+
+.pedal-share-icon {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  opacity: 0; /* invisibile di default */
+  transition: opacity 0.2s;
+  color: white; /* colore dell'icona */
+  z-index: 10;
+}
+
+.pedal-catalog:hover .pedal-share-icon {
+  opacity: 1; /* mostra all'hover */
+}
 
