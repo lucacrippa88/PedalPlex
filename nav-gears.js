@@ -171,7 +171,7 @@ function initSinglePedalView(pedalId, userRole) {
             confirmButton: 'bx--btn bx--btn--primary' // Carbon Design
           }
         }).then(() => {
-          window.location.href = '/gears'; // redirect alla lista pedali
+          window.location.href = 'gears'; // redirect alla lista pedali
         });
         return;
       }
