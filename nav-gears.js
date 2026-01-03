@@ -5,35 +5,56 @@ function getPedalIdFromURL() {
   return params.get("id"); // null se non presente
 }
 
-function fetchPedalsById(pedalId, userRole) {
-  const token = localStorage.getItem('authToken');
+function initSinglePedalView(pedalId, userRole) {
+  const token = localStorage.getItem("authToken");
+  const resultsDiv = $("#catalog");
+  resultsDiv.empty();
 
+  // Spinner centrale
+  const globalSpinner = $(`
+    <div id="catalog-global-loader" class="bx--loading-overlay"
+         style="position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); z-index:9999; width:120px; height:120px; display:flex; justify-content:center; align-items:center;">
+      <div class="bx--loading" role="status">
+        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+        </svg>
+      </div>
+    </div>
+  `);
+  resultsDiv.append(globalSpinner);
+
+  // Fetch pedal singolo
   fetch(`https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php?ids=${pedalId}`, {
     headers: { Authorization: "Bearer " + token }
   })
-  .then(res => res.json())
-  .then(pedals => {
-    if (!pedals || pedals.length === 0) {
-      $("#catalog").html(`<p style="color:red;">Pedal not found</p>`);
-      return;
-    }
+    .then(res => res.json())
+    .then(data => {
+      $("#catalog-global-loader").remove();
 
-    $("#catalog").empty();
-    pedals.forEach(pedal => {
-      const $div = renderPedal(pedal, userRole);
-      $div.attr("data-author", pedal.author || "");
-      $div.attr("data-published", (pedal.published || "draft").toLowerCase());
-      $("#catalog").append($div);
+      const pedals = data.docs || [];
+      if (pedals.length === 0) {
+        resultsDiv.html(`<p style="color:red;">Pedal not found</p>`);
+        return;
+      }
+
+      pedals.forEach(pedal => {
+        const $div = renderPedal(pedal, userRole);
+        $div.attr("data-author", pedal.author || "");
+        $div.attr("data-published", (pedal.published || "draft").toLowerCase());
+        resultsDiv.append($div);
+      });
+
+      updatePedalCounts();
+      if (userRole !== "guest") setupEditPedalHandler(pedals);
+    })
+    .catch(err => {
+      console.error("Error loading pedal by ID:", err);
+      $("#catalog-global-loader").remove();
+      resultsDiv.html(`<p style="color:red;">Error loading pedal: ${err.message}</p>`);
     });
-
-    updatePedalCounts();
-    if (userRole !== "guest") setupEditPedalHandler(pedals);
-  })
-  .catch(err => {
-    console.error("Error loading pedal by ID:", err);
-    $("#catalog").html(`<p style="color:red;">Error loading pedal: ${err.message}</p>`);
-  });
 }
+
 
 
 
@@ -42,8 +63,8 @@ function initNavCatalog(userRole) {
 
   const pedalIdFromURL = getPedalIdFromURL();
   if (pedalIdFromURL) {
-    fetchPedalsById(pedalIdFromURL, userRole);
-    return; // salta le fetch parallele
+    initSinglePedalView(pedalIdFromURL, userRole);
+    return; // salta fetch parallele
   }
 
 
