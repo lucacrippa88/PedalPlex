@@ -204,6 +204,11 @@ function initPedalboard(userRole) {
       resultsDiv.innerHTML = `<p style="color:red;">Error loading pedalboard: ${error}</p>`;
     });
   }
+
+  window.pedalboards = loadedBoards; // se non esiste già
+  // alla fine tento di gestire eventuale gear in sospeso
+  handlePendingPedalAdd();
+
 }
 
 
