@@ -65,6 +65,7 @@ function initPedalboard(userRole) {
 
       renderPedalboard();
       if (typeof onPedalboardLoaded === "function") setTimeout(onPedalboardLoaded, 100);
+      handlePendingPedalAdd();
 
       dropdown.addEventListener("change", (e) => {
         const idx = parseInt(e.target.value, 10);
@@ -177,6 +178,7 @@ function initPedalboard(userRole) {
 
           renderPedalboard();
           if (typeof onPedalboardLoaded === "function") setTimeout(onPedalboardLoaded, 100);
+          handlePendingPedalAdd();
 
           dropdown.value = selectedBoardIndex.toString();
           dropdown.addEventListener("change", (e) => {
@@ -205,7 +207,10 @@ function initPedalboard(userRole) {
     });
   }
 
-  window.pedalboards = loadedBoards; // se non esiste già
+
+
+
+
   // alla fine tento di gestire eventuale gear in sospeso
   handlePendingPedalAdd();
 
@@ -1255,6 +1260,7 @@ function setupPedalboardDropdownAndRender() {
     window.catalog = result.docs || [];
     renderPedalboard();
     if (typeof onPedalboardLoaded === "function") setTimeout(onPedalboardLoaded, 100);
+    handlePendingPedalAdd();
   })
   .catch(err => console.error("Error fetching pedals:", err));
 
@@ -1285,4 +1291,85 @@ function extractColorFromLogo(logoCss) {
   if (!logoCss) return null;
   const match = logoCss.match(/color\s*:\s*([^;]+);?/i);
   return match ? match[1].trim() : null;
+}
+
+
+
+
+// -----------------------------------------------------------------------------
+// Handle pending pedal add (from gears page)
+function handlePendingPedalAdd() {
+  const pendingRaw = localStorage.getItem('pendingPedalAdd');
+  if (!pendingRaw) return;
+
+  let pending;
+  try {
+    pending = JSON.parse(pendingRaw);
+  } catch (e) {
+    console.error('Invalid pendingPedalAdd payload', e);
+    localStorage.removeItem('pendingPedalAdd');
+    return;
+  }
+
+  if (!pending?.pedal_id) {
+    localStorage.removeItem('pendingPedalAdd');
+    return;
+  }
+
+  // Determine target pedalboard
+  let targetIndex = selectedBoardIndex;
+
+  const lastBoardId = localStorage.getItem('lastPedalboardId');
+  if (lastBoardId && window.allPedalboards?.length) {
+    const idx = window.allPedalboards.findIndex(b => b._id === lastBoardId);
+    if (idx !== -1) {
+      targetIndex = idx;
+      selectedBoardIndex = idx;
+    }
+  }
+
+  if (
+    !window.allPedalboards ||
+    !window.allPedalboards[targetIndex]
+  ) {
+    console.error('No valid pedalboard found for pending add');
+    localStorage.removeItem('pendingPedalAdd');
+    return;
+  }
+
+  const board = window.allPedalboards[targetIndex];
+
+  // Prevent duplicates
+  const alreadyExists = board.pedals.some(
+    p => p.pedal_id === pending.pedal_id
+  );
+
+  if (alreadyExists) {
+    localStorage.removeItem('pendingPedalAdd');
+    return;
+  }
+
+  // Add pedal
+  board.pedals.push({
+    pedal_id: pending.pedal_id,
+    rotation: pending.rotation ?? 0,
+    row: pending.row ?? 1
+  });
+
+  // Sync runtime state
+  window.pedalboard = structuredClone(board);
+
+  // Cleanup
+  localStorage.removeItem('pendingPedalAdd');
+
+  // Render and notify
+  renderPedalboard();
+
+  Swal.fire({
+    icon: 'success',
+    title: 'Gear added!',
+    text: 'The gear has been added to your Rig.',
+    timer: 1200,
+    showConfirmButton: false
+  });
 }
