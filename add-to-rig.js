@@ -1,22 +1,29 @@
+// ===============================
+// add-to-rig.js
+// ===============================
 
 let selectedPedalId = null;
 let catalogReady = false;
 
+// ===============================
+// Inizializza pulsanti nascosti
+// ===============================
 $(document).ready(() => {
   $('#goToRigs').hide();
   $('#addToRig').hide();
 });
 
-// Show "Add to Rig" button when catalog is ready
+// ===============================
+// Observer catalogo per mostrare "Go to Rigs"
+// ===============================
 function observeCatalogLoaded() {
   const catalogNode = document.getElementById('catalog');
-
   if (!catalogNode) return;
 
   const observer = new MutationObserver(() => {
     if (catalogNode.children.length > 0) {
       catalogReady = true;
-      $('#goToRigs').fadeIn();
+      $('#goToRigs').show(); // Mostra subito il pulsante senza fade
       observer.disconnect();
     }
   });
@@ -26,23 +33,43 @@ function observeCatalogLoaded() {
 
 document.addEventListener('DOMContentLoaded', observeCatalogLoaded);
 
-// Detect pedal ID from URL and show "Add to Rig" button
+// ===============================
+// Rileva pedal selezionato dall'URL e mostra "Add to Rig"
+// ===============================
 function detectPedalFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const pedalId = params.get('id');
 
   if (pedalId) {
     selectedPedalId = pedalId;
-    $('#addToRig').fadeIn();
+
+    // Mostra subito il pulsante "Add to Rig" anche se il catalogo non è pronto
+    $('#addToRig').show();
   }
 }
 
 document.addEventListener('DOMContentLoaded', detectPedalFromUrl);
 
+// ===============================
+// Click sul pulsante Add to Rig
+// ===============================
+$('#addToRig').on('click', function (e) {
+  e.preventDefault();
+  if (!selectedPedalId) return;
+  addPedalToRig(selectedPedalId);
+});
 
+// ===============================
+// Reset pedal selezionato quando si cambia categoria
+// ===============================
+$('#categoryFilter').on('change', () => {
+  selectedPedalId = null;
+  $('#addToRig').hide();
+});
 
-
-// Global function to ensure that a pedalboard exists for the current user (guest or logged in)
+// ===============================
+// Assicura che esista una pedalboard
+// ===============================
 async function ensurePedalboardExists() {
   const role = window.currentUser?.role || 'guest';
 
@@ -50,7 +77,6 @@ async function ensurePedalboardExists() {
   if (role === 'guest') {
     let boards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
 
-    // guest può avere MAX 1 board
     if (boards.length === 0) {
       const { value: boardName } = await Swal.fire({
         title: 'Create your Rig',
@@ -128,7 +154,7 @@ async function ensurePedalboardExists() {
     };
   }
 
-  // Più pedaliere → scegli
+  // Più pedaliere → scegli quale usare
   if (boards.length > 1) {
     const options = {};
     boards.forEach((b, i) => options[i] = b.board_name || `Rig ${i + 1}`);
@@ -160,8 +186,9 @@ async function ensurePedalboardExists() {
   };
 }
 
-
-// Main function to add a pedal to a rig from gears page
+// ===============================
+// Aggiunge un pedale alla pedalboard
+// ===============================
 async function addPedalToRig(pedalId) {
   try {
     const { mode, boardIndex } = await ensurePedalboardExists();
@@ -187,7 +214,7 @@ async function addPedalToRig(pedalId) {
       }));
     }
 
-    // Redirect
+    // Redirect alla pagina rig
     window.location.href = `${window.location.origin}/PedalPlex/rigs`;
 
   } catch (e) {
