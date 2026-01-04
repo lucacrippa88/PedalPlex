@@ -5,17 +5,20 @@
 let selectedPedalId = null;
 let catalogReady = false;
 
-// ===============================
-// Inizializza pulsanti nascosti
-// ===============================
 $(document).ready(() => {
   $('#goToRigs').hide();
   $('#addToRig').hide();
+
+  // Rileva subito il pedale da URL
+  const params = new URLSearchParams(window.location.search);
+  const pedalId = params.get('id');
+  if (pedalId) {
+    selectedPedalId = pedalId;
+    $('#addToRig').show(); // mostra secco
+  }
 });
 
-// ===============================
 // Observer catalogo per mostrare "Go to Rigs"
-// ===============================
 function observeCatalogLoaded() {
   const catalogNode = document.getElementById('catalog');
   if (!catalogNode) return;
@@ -23,7 +26,7 @@ function observeCatalogLoaded() {
   const observer = new MutationObserver(() => {
     if (catalogNode.children.length > 0) {
       catalogReady = true;
-      $('#goToRigs').show(); // Mostra subito il pulsante senza fade
+      $('#goToRigs').show(); // mostra secco
       observer.disconnect();
     }
   });
