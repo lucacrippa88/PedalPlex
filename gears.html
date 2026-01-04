@@ -60,7 +60,12 @@
         <option value="wah">Wah</option>
       </select>
 
-      <a href="rigs" class="showDesktop bx--btn bx--btn--tertiary" type="button" style="margin-left: auto!important; max-width:500px!important;">Create Rigs
+      <a id="goToRigs" href="rigs" class="showDesktop bx--btn bx--btn--tertiary" type="button" style="margin-left: auto!important; max-width:500px!important;">Go to Rigs
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/>
+        </svg>   
+      </a>
+      <a id="addToRig" href="#" class="bx--btn bx--btn--tertiary" type="button" style="margin-left: auto!important; max-width:500px!important;">Add this Gear to a Rig
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
           <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/>
         </svg>   
@@ -90,7 +95,31 @@
     <script src="gears.js"></script>
     <script src="fullscreen-menu.js"></script>
     <script src="nav-gears.js"></script>
+    <script src="add-to-rig.js"></script>
   </div>
+
+
+  <script>
+  // Add to Rig button functionality
+  $('#addToRig').on('click', function (e) {
+    e.preventDefault();
+
+    if (!selectedPedalId) return;
+
+    addPedalToRig(selectedPedalId);
+  });
+
+  // Reset selected pedal when changing category
+  $('#categoryFilter').on('change', () => {
+    selectedPedalId = null;
+    $('#addToRig').fadeOut();
+  });
+
+
+  </script>
+
+
+
 
   <script>
   // Check user authentication
