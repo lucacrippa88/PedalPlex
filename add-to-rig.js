@@ -193,8 +193,11 @@ async function ensurePedalboardExists() {
 // Aggiunge un pedale alla pedalboard
 // ===============================
 async function addPedalToRig(pedalId) {
+  console.log('addPedalToRig CALLED', pedalId);
+
   try {
     const { mode, boardIndex } = await ensurePedalboardExists();
+    console.log('MODE:', mode, 'BOARD:', boardIndex);
 
     // ---------------- GUEST ----------------
     if (mode === 'guest') {
@@ -209,6 +212,7 @@ async function addPedalToRig(pedalId) {
 
     // ---------------- LOGGED ----------------
     if (mode === 'logged') {
+      console.log('WRITING pendingPedalAdd');
       localStorage.setItem('lastPedalboardId', boardIndex);
       localStorage.setItem('pendingPedalAdd', JSON.stringify({
         pedal_id: pedalId,
@@ -216,6 +220,8 @@ async function addPedalToRig(pedalId) {
         row: 1
       }));
     }
+
+    localStorage.getItem('pendingPedalAdd') // test
 
     // Redirect alla pagina rig
     window.location.href = `${window.location.origin}/PedalPlex/rigs`;
