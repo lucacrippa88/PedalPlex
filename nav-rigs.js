@@ -8,7 +8,7 @@ function initNavPedalboard(userRole) {
           <div class="pedalplex-logo"></div>
         </button>
         <a href="/PedalPlex/" style="text-decoration:none;" class="title">PedalPlex</a>
-        <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Rigs</span>
+        <a href="rigs" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">Rigs</a>
       </div>
       <div style="display: flex; align-items: center; gap: 1rem;">
         <span id="addGearsTrigger" class="showDesktop" style="cursor:pointer; font-size: 0.75rem; opacity: 0.7;">Add gears</span>
