@@ -1,49 +1,60 @@
-async function handlePendingPedalAdd() {
-  const pending = localStorage.getItem('pendingPedalAdd');
-  if (!pending) return;
+(async function () {
 
-  const pedalData = JSON.parse(pending);
+  const pendingRaw = localStorage.getItem('pendingPedalAdd');
+  if (!pendingRaw) return;
+
   const boardIndex = parseInt(localStorage.getItem('lastPedalboardId'), 10);
-
   if (isNaN(boardIndex)) {
-    console.warn('Invalid pedalboard index');
-    cleanupPendingPedalAdd();
+    cleanup();
     return;
   }
 
-  // ASSUMIAMO che le pedalboard siano già caricate
-  // e disponibili come array globale (es: window.pedalboards)
-  if (!window.pedalboards || !window.pedalboards[boardIndex]) {
-    console.error('Pedalboard not ready yet');
-    return; // verrà ritentato
+  const pending = JSON.parse(pendingRaw);
+
+  /**
+   * ATTENDIAMO che rigs.js abbia finito:
+   * - caricare le pedaliere
+   * - renderizzarle
+   *
+   * Nel tuo progetto questo avviene quando esiste:
+   * window.currentPedalboards (o simile)
+   */
+  const waitForPedalboards = setInterval(async () => {
+
+    if (!window.pedalboards || !window.pedalboards[boardIndex]) {
+      return;
+    }
+
+    clearInterval(waitForPedalboards);
+
+    const board = window.pedalboards[boardIndex];
+
+    // INSERIMENTO PEDALE
+    board.pedals.push({
+      pedal_id: pending.pedal_id,
+      rotation: pending.rotation || 0,
+      row: pending.row || 1
+    });
+
+    // SALVATAGGIO
+    await savePedalboard(board);
+
+    cleanup();
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Pedal added to your Rig',
+      timer: 1200,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false
+    });
+
+  }, 100);
+
+  function cleanup() {
+    localStorage.removeItem('pendingPedalAdd');
+    localStorage.removeItem('lastPedalboardId');
   }
 
-  const board = window.pedalboards[boardIndex];
-
-  // Inserisci il pedale
-  board.pedals.push({
-    pedal_id: pedalData.pedal_id,
-    rotation: pedalData.rotation || 0,
-    row: pedalData.row || 1
-  });
-
-  // Salva la pedaliera
-  await savePedalboard(board);
-
-  cleanupPendingPedalAdd();
-
-  Swal.fire({
-    icon: 'success',
-    title: 'Pedal added!',
-    text: 'The pedal has been added to your Rig.',
-    timer: 1200,
-    showConfirmButton: false,
-    toast: true,
-    position: 'top-end'
-  });
-}
-
-function cleanupPendingPedalAdd() {
-  localStorage.removeItem('pendingPedalAdd');
-  localStorage.removeItem('lastPedalboardId');
-}
+})();
