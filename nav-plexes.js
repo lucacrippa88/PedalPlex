@@ -21,7 +21,7 @@ if (currentPreset?.pedals) {
       <div class="pedalplex-logo"></div>
     </button>
     <a href="/PedalPlex/" style="text-decoration:none;" class="title">PedalPlex</a>
-    <span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600">Plexes</span>
+    <a href="plexes" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">Plexes</a>
   </div>
 
   <!-- Right: buttons -->

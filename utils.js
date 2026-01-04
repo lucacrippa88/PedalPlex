@@ -1375,7 +1375,6 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       const url = `${window.location.origin}${basePath}/gears?id=${encodeURIComponent(pedalId)}`;
       navigator.clipboard.writeText(url).then(() => {
         Swal.fire({
-          icon: 'success',
           title: 'Link copied!',
           showConfirmButton: false,
           timer: 1200,
