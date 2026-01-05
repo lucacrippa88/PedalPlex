@@ -169,3 +169,46 @@ $(document).on("change", "#categoryFilter", function () {
 
 
 
+
+
+
+
+$(document).ready(() => {
+
+  const $goToRigs = $('#goToRigs');
+  const $addToRig = $('#addToRig');
+  const $categoryFilter = $('#categoryFilter');
+
+  const isCatalog = !window.location.search.includes('id=');
+  const isSingleGear = !isCatalog;
+
+  // Nascondiamo entrambi inizialmente
+  $goToRigs.hide();
+  $addToRig.hide();
+
+  if (isCatalog) {
+    // Solo catalogo → mostra Go to Rigs
+    $goToRigs.show();
+  }
+
+  if (isSingleGear) {
+    // Pagina singolo pedale → mostra Add to Rig
+    $addToRig.show();
+
+    // Aggiungiamo il pulsante "Back to Catalog" accanto al dropdown
+    let $backToCatalog = $('#backToCatalog');
+    if ($backToCatalog.length === 0) {
+      $backToCatalog = $(`
+        <a id="backToCatalog" href="/PedalPlex/gears" class="bx--btn bx--btn--tertiary" style="margin-left:8px; max-width:500px!important;">
+          Back to Catalog
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+               xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"></path>
+          </svg>
+        </a>
+      `);
+      $categoryFilter.after($backToCatalog);
+    }
+  }
+
+});
