@@ -1351,87 +1351,173 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
   }
 
 
-  // ==================== SHARE ICON ====================
-  if (window.location.pathname.endsWith('/gears')) {
+  // // ==================== SHARE ICON ====================
+  // if (window.location.pathname.endsWith('/gears')) {
 
-    const basePath = getBasePath();
+  //   const basePath = getBasePath();
 
-    const $shareIcon = $(`
-      <div class="pedal-share-icon" title="Share pedal">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
-          <path d="M23,20a5,5,0,0,0-3.89,1.89L11.8,17.32a4.46,4.46,0,0,0,0-2.64l7.31-4.57A5,5,0,1,0,18,7a4.79,4.79,0,0,0,.2,1.32l-7.31,4.57a5,5,0,1,0,0,6.22l7.31,4.57A4.79,4.79,0,0,0,18,25a5,5,0,1,0,5-5ZM23,4a3,3,0,1,1-3,3A3,3,0,0,1,23,4ZM7,19a3,3,0,1,1,3-3A3,3,0,0,1,7,19Zm16,9a3,3,0,1,1,3-3A3,3,0,0,1,23,28Z"></path>  
-        </svg>
-      </div>
-    `);
+  //   const $shareIcon = $(`
+  //     <div class="pedal-share-icon" title="Share pedal">
+  //       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
+  //         <path d="M23,20a5,5,0,0,0-3.89,1.89L11.8,17.32a4.46,4.46,0,0,0,0-2.64l7.31-4.57A5,5,0,1,0,18,7a4.79,4.79,0,0,0,.2,1.32l-7.31,4.57a5,5,0,1,0,0,6.22l7.31,4.57A4.79,4.79,0,0,0,18,25a5,5,0,1,0,5-5ZM23,4a3,3,0,1,1-3,3A3,3,0,0,1,23,4ZM7,19a3,3,0,1,1,3-3A3,3,0,0,1,7,19Zm16,9a3,3,0,1,1,3-3A3,3,0,0,1,23,28Z"></path>  
+  //       </svg>
+  //     </div>
+  //   `);
 
-    $pedalDiv.append($shareIcon);
+  //   $pedalDiv.append($shareIcon);
 
-    $pedalDiv.css('position', 'relative');
-    $shareIcon.css({
-      position: 'absolute',
-      bottom: '-22px',
-      right: '0',
-      cursor: 'pointer',
-      opacity: 0,
-      transition: 'opacity 0.2s ease'
-    });
+  //   $pedalDiv.css('position', 'relative');
+  //   $shareIcon.css({
+  //     position: 'absolute',
+  //     bottom: '-22px',
+  //     right: '0',
+  //     cursor: 'pointer',
+  //     opacity: 0,
+  //     transition: 'opacity 0.2s ease'
+  //   });
 
-    $pedalDiv.hover(
-      function() { $shareIcon.css('opacity', 1); },
-      function() { $shareIcon.css('opacity', 0); }
-    );
+  //   $pedalDiv.hover(
+  //     function() { $shareIcon.css('opacity', 1); },
+  //     function() { $shareIcon.css('opacity', 0); }
+  //   );
 
-    $shareIcon.on('click', (e) => {
-      e.stopPropagation();
+  //   $shareIcon.on('click', (e) => {
+  //     e.stopPropagation();
 
-      const url = `${window.location.origin}${basePath}/gears?id=${encodeURIComponent(pedalId)}`;
+  //     const url = `${window.location.origin}${basePath}/gears?id=${encodeURIComponent(pedalId)}`;
 
-      Swal.fire({
-        title: 'Share this Gear',
-        showConfirmButton: false,
-        showCloseButton: false,
-        allowOutsideClick: true, // ora funziona correttamente
-        position: 'top-end',      // rimane in alto a destra
-        width: 'auto',            // popup compatto
-        html: `
-          <div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">
-            <button id="copyLink" class="bx--btn bx--btn--secondary">
-              Copy Link
-              <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
-                  class="bx--btn__icon">
-                <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path>
-                <path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
-              </svg>
-            </button>
-            <button id="openPedal" class="bx--btn bx--btn--tertiary">
-              Open Gear
-              <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
-                  class="bx--btn__icon">
-                <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"></path>
-              </svg>
-            </button>
-          </div>
-        `,
-        didOpen: () => {
-          const copyBtn = Swal.getPopup().querySelector('#copyLink');
-          const openBtn = Swal.getPopup().querySelector('#openPedal');
+  //     Swal.fire({
+  //       title: 'Share this Gear',
+  //       showConfirmButton: false,
+  //       showCloseButton: false,
+  //       allowOutsideClick: true, // ora funziona correttamente
+  //       position: 'top-end',      // rimane in alto a destra
+  //       width: 'auto',            // popup compatto
+  //       html: `
+  //         <div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">
+  //           <button id="copyLink" class="bx--btn bx--btn--secondary">
+  //             Copy Link
+  //             <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+  //                 fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
+  //                 class="bx--btn__icon">
+  //               <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path>
+  //               <path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
+  //             </svg>
+  //           </button>
+  //           <button id="openPedal" class="bx--btn bx--btn--tertiary">
+  //             Open Gear
+  //             <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+  //                 fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
+  //                 class="bx--btn__icon">
+  //               <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"></path>
+  //             </svg>
+  //           </button>
+  //         </div>
+  //       `,
+  //       didOpen: () => {
+  //         const copyBtn = Swal.getPopup().querySelector('#copyLink');
+  //         const openBtn = Swal.getPopup().querySelector('#openPedal');
 
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(url); // copia silenziosa
-          });
+  //         copyBtn.addEventListener('click', () => {
+  //           navigator.clipboard.writeText(url); // copia silenziosa
+  //         });
 
+  //         openBtn.addEventListener('click', () => {
+  //           window.open(url, '_blank');
+  //         });
+  //       }
+  //     });
+
+  //   });
+  // }
+  // // ==================== /SHARE ICON ====================
+
+// ==================== SHARE ICON ====================
+if (window.location.pathname.endsWith('/gears')) {
+
+  const basePath = getBasePath();
+
+  const $shareIcon = $(`
+    <div class="pedal-share-icon" title="Share pedal">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
+        <path d="M23,20a5,5,0,0,0-3.89,1.89L11.8,17.32a4.46,4.46,0,0,0,0-2.64l7.31-4.57A5,5,0,1,0,18,7a4.79,4.79,0,0,0,.2,1.32l-7.31,4.57a5,5,0,1,0,0,6.22l7.31,4.57A4.79,4.79,0,0,0,18,25a5,5,0,1,0,5-5ZM23,4a3,3,0,1,1-3,3A3,3,0,0,1,23,4ZM7,19a3,3,0,1,1,3-3A3,3,0,0,1,7,19Zm16,9a3,3,0,1,1,3-3A3,3,0,0,1,23,28Z"></path>  
+      </svg>
+    </div>
+  `);
+
+  $pedalDiv.append($shareIcon);
+
+  $pedalDiv.css('position', 'relative');
+  $shareIcon.css({
+    position: 'absolute',
+    bottom: '-22px',
+    right: '0',
+    cursor: 'pointer',
+    opacity: 0,
+    transition: 'opacity 0.2s ease'
+  });
+
+  $pedalDiv.hover(
+    function() { $shareIcon.css('opacity', 1); },
+    function() { $shareIcon.css('opacity', 0); }
+  );
+
+  $shareIcon.on('click', (e) => {
+    e.stopPropagation();
+
+    const url = `${window.location.origin}${basePath}/gears?id=${encodeURIComponent(pedalId)}`;
+
+    // Costruisci HTML dinamicamente in base alla pagina
+    let buttonsHTML = `<button id="copyLink" class="bx--btn bx--btn--secondary">
+                          Copy Link
+                          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+                               fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
+                               class="bx--btn__icon">
+                            <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path>
+                            <path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
+                          </svg>
+                        </button>`;
+
+    // Se siamo nella pagina principale del catalogo (/gears senza query), aggiungi il bottone Open Gear
+    if (!window.location.search.includes('id=')) {
+      buttonsHTML += `<button id="openPedal" class="bx--btn bx--btn--tertiary">
+                        Open Gear
+                        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+                             fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
+                             class="bx--btn__icon">
+                          <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"></path>
+                        </svg>
+                      </button>`;
+    }
+
+    Swal.fire({
+      title: 'Share this Gear',
+      showConfirmButton: false,
+      showCloseButton: false,
+      allowOutsideClick: true,
+      position: 'top-end',
+      width: 'auto',
+      html: `<div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">
+               ${buttonsHTML}
+             </div>`,
+      didOpen: () => {
+        const copyBtn = Swal.getPopup().querySelector('#copyLink');
+        copyBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(url); // copia silenziosa
+        });
+
+        const openBtn = Swal.getPopup().querySelector('#openPedal');
+        if (openBtn) {
           openBtn.addEventListener('click', () => {
             window.open(url, '_blank');
           });
         }
-      });
-
+      }
     });
-  }
-  // ==================== /SHARE ICON ====================
 
+  });
+}
+// ==================== /SHARE ICON ====================
 
 
 
