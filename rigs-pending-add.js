@@ -11,33 +11,33 @@
 
   const pending = JSON.parse(pendingRaw);
 
-  /**
-   * ATTENDIAMO che rigs.js abbia finito:
-   * - caricare le pedaliere
-   * - renderizzarle
-   *
-   * Nel tuo progetto questo avviene quando esiste:
-   * window.currentPedalboards (o simile)
-   */
-  const waitForPedalboards = setInterval(async () => {
+  const waitForRigs = setInterval(() => {
 
-    if (!window.pedalboards || !window.pedalboards[boardIndex]) {
+    // aspettiamo rigs.js
+    if (
+      !window.allPedalboards ||
+      !Array.isArray(window.allPedalboards) ||
+      !window.allPedalboards[boardIndex] ||
+      typeof savePedalboard !== 'function'
+    ) {
       return;
     }
 
-    clearInterval(waitForPedalboards);
+    clearInterval(waitForRigs);
 
-    const board = window.pedalboards[boardIndex];
+    // 🔑 allineiamo lo stato interno di rigs.js
+    selectedBoardIndex = boardIndex;
+    window.pedalboard = structuredClone(window.allPedalboards[boardIndex]);
 
-    // INSERIMENTO PEDALE
-    board.pedals.push({
+    // ➕ aggiunta pedale
+    window.pedalboard.pedals.push({
       pedal_id: pending.pedal_id,
       rotation: pending.rotation || 0,
       row: pending.row || 1
     });
 
-    // SALVATAGGIO
-    await savePedalboard(board);
+    // 💾 salva usando il flusso NATIVO
+    savePedalboard();
 
     cleanup();
 
