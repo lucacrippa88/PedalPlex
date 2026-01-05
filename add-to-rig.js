@@ -230,20 +230,3 @@ async function addPedalToRig(pedalId) {
     if (e !== 'cancelled') console.error(e);
   }
 }
-
-
-
-
-
-$(document).on('click', '#addToRig', function (e) {
-  e.preventDefault();
-
-  console.log('ADD TO RIG CLICK');
-
-  if (!selectedPedalId) {
-    console.warn('No selectedPedalId');
-    return;
-  }
-
-  addPedalToRig(selectedPedalId);
-});
