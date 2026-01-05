@@ -4,30 +4,38 @@
 
 (async function () {
 
-  const raw = localStorage.getItem('pendingPedalAdd');
+  const pendingRaw = localStorage.getItem('pendingPedalAdd');
+  if (!pendingRaw) return;
+
+  const pending = JSON.parse(pendingRaw);
   const boardId = localStorage.getItem('lastPedalboardId');
+  if (!boardId) {
+    cleanup();
+    return;
+  }
 
-  if (!raw || !boardId) return;
+  // Attendiamo che rigs.js abbia caricato tutto
+  const waitForRigs = setInterval(async () => {
+    if (!window.pedalboards || !Array.isArray(window.pedalboards)) return;
 
-  const pending = JSON.parse(raw);
-
-  const wait = setInterval(async () => {
-    if (!window.pedalboards) return;
-
-    const board = window.pedalboards.find(b => b._id === boardId);
+    const board = window.pedalboards.find(b => String(b.board_id) === String(boardId));
     if (!board) return;
 
-    clearInterval(wait);
+    clearInterval(waitForRigs);
 
+    // Inserimento pedale
     board.pedals.push({
       pedal_id: pending.pedal_id,
       rotation: pending.rotation || 0,
       row: pending.row || 1
     });
 
-    await savePedalboard(board);
+    // Salvataggio tramite funzione esistente
+    if (typeof savePedalboard === 'function') {
+      await savePedalboard(board);
+    }
 
-    localStorage.removeItem('pendingPedalAdd');
+    cleanup();
 
     Swal.fire({
       icon: 'success',
@@ -35,9 +43,16 @@
       toast: true,
       timer: 1200,
       position: 'top-end',
-      showConfirmButton: false
+      showConfirmButton: false,
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary'
+      }
     });
 
   }, 100);
+
+  function cleanup() {
+    localStorage.removeItem('pendingPedalAdd');
+  }
 
 })();
