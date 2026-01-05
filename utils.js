@@ -1446,7 +1446,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
   position: 'top-end',      // rimane in alto a destra
   width: 'auto',            // popup compatto
   html: `
-    <div style="display:flex; gap:10px; justify-content:center;">
+    <div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">
       <button id="copyLink" class="bx--btn bx--btn--secondary">
         Copy Link
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
