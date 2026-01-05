@@ -1402,7 +1402,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
   // }
   // // ==================== /SHARE ICON ====================
 
-  // ==================== SHARE ICON ====================
+ // ==================== SHARE ICON ====================
 if (window.location.pathname.endsWith('/gears')) {
 
   const basePath = getBasePath();
@@ -1441,13 +1441,16 @@ if (window.location.pathname.endsWith('/gears')) {
     Swal.fire({
       title: 'Share this pedal',
       showConfirmButton: false,
-      html: `
-        <button id="copyLink" class="bx--btn bx--btn--primary" style="margin-right:10px;">Copy Link</button>
-        <button id="openPedal" class="bx--btn bx--btn--secondary">Open Pedal</button>
-      `,
-      showCloseButton: true,
+      showCloseButton: false,
+      allowOutsideClick: true,
       toast: true,
       position: 'top-end',
+      html: `
+        <div style="display:flex; gap:10px; justify-content:center;">
+          <button id="openPedal" class="bx--btn bx--btn--secondary">Open Gear</button>
+          <button id="copyLink" class="bx--btn bx--btn--tertiary">Copy Link</button>
+        </div>
+      `,
       didOpen: () => {
         const copyBtn = Swal.getPopup().querySelector('#copyLink');
         const openBtn = Swal.getPopup().querySelector('#openPedal');
@@ -1473,6 +1476,7 @@ if (window.location.pathname.endsWith('/gears')) {
   });
 }
 // ==================== /SHARE ICON ====================
+
 
 
 

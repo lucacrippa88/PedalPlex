@@ -1066,3 +1066,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   opacity: 1; /* mostra all'hover */
 }
 
+
+/* Fix toast swal2 appearance */
+.swal2-toast {
+  padding:0em!important;
+}
