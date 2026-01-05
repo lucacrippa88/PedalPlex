@@ -1,52 +1,63 @@
-// ===============================
-// rigs-pending-add.js
-// ===============================
-
 (async function () {
 
   const pendingRaw = localStorage.getItem('pendingPedalAdd');
   if (!pendingRaw) return;
 
-  const pending = JSON.parse(pendingRaw);
-  const boardId = localStorage.getItem('lastPedalboardId');
-
-  if (!boardId) {
+  const boardIndex = parseInt(localStorage.getItem('lastPedalboardId'), 10);
+  if (isNaN(boardIndex)) {
     cleanup();
     return;
   }
 
-  // Attendiamo che rigs.js abbia caricato tutto
-  const waitForRigs = setInterval(async () => {
+  const pending = JSON.parse(pendingRaw);
 
-    if (!window.pedalboards || !Array.isArray(window.pedalboards)) {
+  const waitForRigs = setInterval(() => {
+
+    // aspettiamo rigs.js
+    if (
+      !window.allPedalboards ||
+      !Array.isArray(window.allPedalboards) ||
+      !window.allPedalboards[boardIndex] ||
+      typeof savePedalboard !== 'function'
+    ) {
       return;
     }
 
-    const board = window.pedalboards.find(
-      b => String(b.board_id) === String(boardId)
-    );
-
-    if (!board) return;
-
     clearInterval(waitForRigs);
 
-    // Inserimento pedale
-    board.pedals.push({
+    // 🔑 allineiamo lo stato interno di rigs.js
+    // forziamo la pedaliera DOPO il bootstrap completo
+    selectedBoardIndex = boardIndex;
+
+    // sincronizziamo anche il localStorage usato da rigs.js
+    localStorage.setItem('selectedPedalboardIndex', boardIndex);
+
+    // ricostruiamo lo stato attivo
+    window.pedalboard = structuredClone(window.allPedalboards[boardIndex]);
+
+    // se esiste una funzione di cambio pedaliera, usiamola
+    if (typeof selectPedalboard === 'function') {
+    selectPedalboard(boardIndex);
+    }
+
+
+    // ➕ aggiunta pedale
+    window.pedalboard.pedals.push({
       pedal_id: pending.pedal_id,
       rotation: pending.rotation || 0,
       row: pending.row || 1
     });
 
-    // Salvataggio (usa la tua funzione esistente)
-    await savePedalboard(board);
+    // 💾 salva usando il flusso NATIVO
+    savePedalboard();
 
     cleanup();
 
     Swal.fire({
       icon: 'success',
       title: 'Pedal added to your Rig',
-      toast: true,
       timer: 1200,
+      toast: true,
       position: 'top-end',
       showConfirmButton: false
     });
@@ -55,7 +66,7 @@
 
   function cleanup() {
     localStorage.removeItem('pendingPedalAdd');
+    localStorage.removeItem('lastPedalboardId');
   }
 
 })();
-
