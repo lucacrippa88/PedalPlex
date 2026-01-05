@@ -1,3 +1,7 @@
+// ===============================
+// rigs-pending-add.js
+// ===============================
+
 (async function () {
 
   const pendingRaw = localStorage.getItem('pendingPedalAdd');
