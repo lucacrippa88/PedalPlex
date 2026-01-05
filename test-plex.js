@@ -1,34 +1,47 @@
 /**
- * Test Plex: mostra un solo pedale (con tutti i SubPlex) usando renderFullPedalboard
+ * Test Plex: renderizza un "plex fake" con un solo pedale e tutti i suoi subplex
  */
-
-(async function() {
+async function renderFakePlex(pedalId) {
   const container = document.getElementById('preset');
   if (!container) return console.warn("No #preset container found");
+  container.innerHTML = ''; // pulisci container
 
-  // Prendi pedalId dalla query string
-  const pedalId = new URLSearchParams(window.location.search).get('id');
-  if (!pedalId) {
-    container.innerHTML = `<p style="color:red;">Nessun pedale specificato</p>`;
-    return;
-  }
-
-  // Trova il pedale nel catalog
-  const pedalData = window.catalogMap[pedalId] || window.catalog.find(p => p._id === pedalId || p.id === pedalId);
+  // Trova il pedale nel catalogo
+  const pedalData = (window.catalog || []).find(p => p._id === pedalId || p.id === pedalId);
   if (!pedalData) {
     container.innerHTML = `<p style="color:red;">Pedale non trovato: ${pedalId}</p>`;
     return;
   }
 
-  // --- Soluzione 1: filtrare catalog temporaneamente ---
-  const originalCatalog = window.catalog;
-  window.catalog = [pedalData]; // solo il pedale selezionato
+  // Crea una pedalboard finta con un solo pedale
+  const fakeBoard = {
+    _id: `fake-${pedalData._id}`,
+    name: `Fake board - ${pedalData._id}`,
+    pedals: [pedalData], // solo il pedale scelto
+  };
 
-  try {
-    // Chiama la funzione originale: mostrerà solo questo pedale e i suoi SubPlex
-    await renderFullPedalboard(container);
-  } finally {
-    // Ripristina catalog originale per non rompere altre parti dell'app
-    window.catalog = originalCatalog;
+  // renderFullPedalboard accetta la pedalboard completa
+  // Passiamo il nostro fakeBoard
+  renderFullPedalboard(fakeBoard, container);
+}
+
+/**
+ * Assicura che il catalogo sia pronto prima di chiamare renderFakePlex
+ */
+async function initTestPlex() {
+  // Attendi catalogMap/catalog se necessario
+  while (!window.catalog || window.catalog.length === 0) {
+    await new Promise(r => setTimeout(r, 50));
   }
-})();
+
+  // Prendi pedalId dalla query string
+  const pedalId = new URLSearchParams(window.location.search).get('id');
+  if (pedalId) {
+    renderFakePlex(pedalId);
+  } else {
+    console.warn("Nessun parametro ?id= trovato nell'URL");
+  }
+}
+
+// Avvia
+initTestPlex();
