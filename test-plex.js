@@ -1,51 +1,34 @@
 /**
- * Renderizza un plex fake con un solo pedale (con tutti i subplex)
- * @param {string} pedalId - ID del pedale da mostrare
+ * Test Plex: mostra un solo pedale (con tutti i SubPlex) usando renderFullPedalboard
  */
-async function renderFakePlex(pedalId) {
+
+(async function() {
   const container = document.getElementById('preset');
   if (!container) return console.warn("No #preset container found");
-  container.innerHTML = ''; // pulisci
 
-  // Trova il pedale dal catalogo
+  // Prendi pedalId dalla query string
+  const pedalId = new URLSearchParams(window.location.search).get('id');
+  if (!pedalId) {
+    container.innerHTML = `<p style="color:red;">Nessun pedale specificato</p>`;
+    return;
+  }
+
+  // Trova il pedale nel catalog
   const pedalData = window.catalogMap[pedalId] || window.catalog.find(p => p._id === pedalId || p.id === pedalId);
   if (!pedalData) {
     container.innerHTML = `<p style="color:red;">Pedale non trovato: ${pedalId}</p>`;
     return;
   }
 
-  // Render pedale
-  const $pedalDiv = renderPedal(pedalData, window.currentUser?.role || 'guest');
+  // --- Soluzione 1: filtrare catalog temporaneamente ---
+  const originalCatalog = window.catalog;
+  window.catalog = [pedalData]; // solo il pedale selezionato
 
-  // Wrapper come nelle pedalboards
-  const $wrapper = $("<div>")
-    .addClass("pedal-wrapper")
-    .css({ display: 'inline-block', position: 'relative' })
-    .append($pedalDiv);
-
-  container.appendChild($wrapper[0]);
-
-  // --- Carica SubPlex ---
-  if (window.currentUser && window.currentUser.role === 'admin') {
-    const $presetContainer = $(`
-      <div class="preset-container">
-        <div class="preset-dropdown-wrapper">
-          <ul class="preset-dropdown"></ul>
-        </div>
-      </div>
-    `);
-    $wrapper.append($presetContainer);
-
-    const $ul = $presetContainer.find('.preset-dropdown');
-    await buildPresetDropdown($ul, pedalId); // fetch SubPlex
+  try {
+    // Chiama la funzione originale: mostrerà solo questo pedale e i suoi SubPlex
+    await renderFullPedalboard(container);
+  } finally {
+    // Ripristina catalog originale per non rompere altre parti dell'app
+    window.catalog = originalCatalog;
   }
-}
-
-
-
-
-// Controlla query string
-const pedalId = new URLSearchParams(window.location.search).get('id');
-if (pedalId) {
-  renderFakePlex(pedalId);
-}
+})();
