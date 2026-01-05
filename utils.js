@@ -1436,11 +1436,11 @@ if (window.location.pathname.endsWith('/gears')) {
 }
 // ==================== /SHARE ICON ====================
 
-
-
-
   return $pedalDiv;
 }
+
+
+
 
 
 // HELPER: returns CSS depending on type + inside
