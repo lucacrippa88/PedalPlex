@@ -14,7 +14,7 @@ $(document).ready(() => {
   const pedalId = params.get('id');
   if (pedalId) {
     selectedPedalId = pedalId;
-    $('#addToRig').show();
+    $('#addToRig').show(); // mostra secco
   }
 });
 
@@ -26,7 +26,7 @@ function observeCatalogLoaded() {
   const observer = new MutationObserver(() => {
     if (catalogNode.children.length > 0) {
       catalogReady = true;
-      $('#goToRigs').show();
+      $('#goToRigs').show(); // mostra secco
       observer.disconnect();
     }
   });
@@ -36,7 +36,9 @@ function observeCatalogLoaded() {
 
 document.addEventListener('DOMContentLoaded', observeCatalogLoaded);
 
+// ===============================
 // Rileva pedal selezionato dall'URL e mostra "Add to Rig"
+// ===============================
 function detectPedalFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const pedalId = params.get('id');
@@ -49,14 +51,18 @@ function detectPedalFromUrl() {
 
 document.addEventListener('DOMContentLoaded', detectPedalFromUrl);
 
+// ===============================
 // Click sul pulsante Add to Rig
+// ===============================
 $('#addToRig').on('click', function (e) {
   e.preventDefault();
   if (!selectedPedalId) return;
   addPedalToRig(selectedPedalId);
 });
 
+// ===============================
 // Reset pedal selezionato quando si cambia categoria
+// ===============================
 $('#categoryFilter').on('change', () => {
   selectedPedalId = null;
   $('#addToRig').hide();
@@ -88,7 +94,11 @@ async function ensurePedalboardExists() {
 
       if (!boardName) throw 'cancelled';
 
-      const newBoard = { board_name: boardName, pedals: [] };
+      const newBoard = {
+        board_name: boardName,
+        pedals: []
+      };
+
       boards = [newBoard];
       localStorage.setItem('guestPedalboard', JSON.stringify(boards));
     }
@@ -139,7 +149,7 @@ async function ensurePedalboardExists() {
     return { mode: 'logged', boardIndex: 0 };
   }
 
-  // Più pedaliere → l’utente seleziona
+  // Più pedaliere → scegli quale usare
   if (boards.length > 1) {
     const options = {};
     boards.forEach((b, i) => options[i] = b.board_name || `Rig ${i + 1}`);
@@ -153,19 +163,27 @@ async function ensurePedalboardExists() {
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary',
         cancelButton: 'bx--btn bx--btn--secondary'
+      },
+      didOpen: () => {
+        // Aggiorna localStorage quando l'utente cambia selezione
+        const selectEl = document.querySelector('.swal2-select');
+        if (selectEl) {
+          selectEl.addEventListener('change', (e) => {
+            localStorage.setItem('lastPedalboardId', e.target.value);
+          });
+        }
       }
     });
 
     if (value === undefined) throw 'cancelled';
 
-    // ✅ aggiorniamo localStorage con la scelta dell’utente
+    // Imposta anche localStorage al momento della conferma
     localStorage.setItem('lastPedalboardId', value);
 
     return { mode: 'logged', boardIndex: parseInt(value, 10) };
   }
 
   // Una sola pedaliera
-  localStorage.setItem('lastPedalboardId', 0);
   return { mode: 'logged', boardIndex: 0 };
 }
 
@@ -173,20 +191,30 @@ async function ensurePedalboardExists() {
 // Aggiunge un pedale alla pedalboard
 // ===============================
 async function addPedalToRig(pedalId) {
+  console.log('addPedalToRig CALLED', pedalId);
+
   try {
     const { mode, boardIndex } = await ensurePedalboardExists();
+    console.log('MODE:', mode, 'BOARD:', boardIndex);
 
     // ---------------- GUEST ----------------
     if (mode === 'guest') {
       const boards = JSON.parse(localStorage.getItem('guestPedalboard'));
-      boards[0].pedals.push({ pedal_id: pedalId, rotation: 0, row: 1 });
+      boards[0].pedals.push({
+        pedal_id: pedalId,
+        rotation: 0,
+        row: 1
+      });
       localStorage.setItem('guestPedalboard', JSON.stringify(boards));
     }
 
     // ---------------- LOGGED ----------------
     if (mode === 'logged') {
+      console.log('WRITING pendingPedalAdd');
       localStorage.setItem('pendingPedalAdd', JSON.stringify({
-        pedal_id: pedalId, rotation: 0, row: 1
+        pedal_id: pedalId,
+        rotation: 0,
+        row: 1
       }));
     }
 
