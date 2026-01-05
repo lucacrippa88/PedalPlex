@@ -95,7 +95,8 @@ function createNewPedal() {
               canEdit: true
             };
             pedals.push(createdPedal);
-            const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
+            // const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
+            appendNewPedalWithSubPlex(createdPedal); // new with subplexes
             $pedalDiv.attr("data-author", createdPedal.author || "");
             $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
             $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
@@ -164,3 +165,108 @@ $(document).on("change", "#categoryFilter", function () {
 
   updatePedalCounts();
 });
+
+
+
+
+// =======================
+// SUBPLEX CARBON STYLE
+// =======================
+
+// Funzione per ottenere i SubPlex di un pedal (da adattare alla tua logica)
+function getSubPlexForPedal(pedalId) {
+  const pedal = pedals.find(p => p._id === pedalId);
+  return pedal && pedal.subplexes ? pedal.subplexes : [];
+}
+
+// Render SubPlex Carbon-style
+function renderSubPlexDropdown(pedal) {
+  const subPlexes = getSubPlexForPedal(pedal._id);
+
+  // Costruisci lista Carbon
+  let itemsHtml = "";
+  subPlexes.forEach(sub => {
+    itemsHtml += `
+      <li class="bx--list-box__menu-item subplex-item" role="option" tabindex="0">
+        ${sub.name}
+      </li>
+    `;
+  });
+
+  return `
+    <div class="subplex-container" data-pedal-id="${pedal._id}" style="margin-top:8px;">
+      <div class="bx--list-box bx--list-box--light" style="width: 180px;">
+        <button class="bx--list-box__field bx--btn bx--btn--tertiary subplex-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+          <span class="bx--list-box__label">SubPlex</span>
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+               xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" class="bx--list-box__menu-icon">
+            <path d="M16 4L20 12H12L16 4Z M16 28L12 20H20L16 28Z M4 16L12 20V12L4 16Z M28 16L20 12V20L28 16Z"/>
+          </svg>
+        </button>
+        <ul class="bx--list-box__menu subplex-dropdown" style="display:none;">
+          ${itemsHtml || '<li class="bx--list-box__menu-item" role="option" tabindex="0">No SubPlex</li>'}
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+// Setup eventi dropdown
+function setupSubPlexEvents() {
+  $(".subplex-btn").off("click").on("click", function () {
+    const $container = $(this).closest(".subplex-container");
+    const expanded = $(this).attr("aria-expanded") === "true";
+    $(this).attr("aria-expanded", !expanded);
+    $container.find(".subplex-dropdown").toggle();
+  });
+
+  // Chiudi dropdown cliccando fuori
+  $(document).on("click", function(e) {
+    if (!$(e.target).closest(".subplex-container").length) {
+      $(".subplex-dropdown").hide();
+      $(".subplex-btn").attr("aria-expanded", false);
+    }
+  });
+}
+
+// =======================
+// RENDER PEDAL CON SUBPLEX CARBON
+// =======================
+function renderPedalWithSubPlexCarbon(pedal, role) {
+  const $pedalDiv = renderPedal(pedal, role); // funzione esistente per pedal normale
+  $pedalDiv.append(renderSubPlexDropdown(pedal));
+  setupSubPlexEvents();
+  return $pedalDiv;
+}
+
+// =======================
+// POPOLAMENTO CATALOG
+// =======================
+function populateCatalogWithSubPlexCarbon(pedalArray, role) {
+  const $resultsDiv = $("#catalog");
+  $resultsDiv.empty();
+
+  pedalArray.forEach(pedal => {
+    const $pedalDiv = renderPedalWithSubPlexCarbon(pedal, role);
+    $pedalDiv.attr("data-author", pedal.author || "");
+    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+    $pedalDiv.find(".edit-btn").data("pedal", pedal);
+    $resultsDiv.append($pedalDiv);
+  });
+
+  updatePedalCounts();
+}
+
+// =======================
+// INTEGRAZIONE CON CREATE NEW PEDAL
+// =======================
+function appendNewPedalWithSubPlex(newPedal) {
+  pedals.push(newPedal);
+  const $pedalDiv = renderPedalWithSubPlexCarbon(newPedal, window.currentUser.role || "user");
+  $pedalDiv.attr("data-author", newPedal.author || "");
+  $pedalDiv.attr("data-published", (newPedal.published || "draft").toLowerCase());
+  $pedalDiv.find(".edit-btn").data("pedal", newPedal);
+  $("#catalog").append($pedalDiv);
+  updatePedalCounts();
+  setupEditPedalHandler(pedals);
+}
