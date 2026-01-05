@@ -100,22 +100,11 @@
 
 
   <script>
-  // Add to Rig button functionality
-  $('#addToRig').on('click', function (e) {
-    e.preventDefault();
-
-    if (!selectedPedalId) return;
-
-    addPedalToRig(selectedPedalId);
-  });
-
   // Reset selected pedal when changing category
   $('#categoryFilter').on('change', () => {
     selectedPedalId = null;
     $('#addToRig').hide();
   });
-
-
   </script>
 
 
