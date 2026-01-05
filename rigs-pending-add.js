@@ -26,8 +26,20 @@
     clearInterval(waitForRigs);
 
     // 🔑 allineiamo lo stato interno di rigs.js
+    // forziamo la pedaliera DOPO il bootstrap completo
     selectedBoardIndex = boardIndex;
+
+    // sincronizziamo anche il localStorage usato da rigs.js
+    localStorage.setItem('selectedPedalboardIndex', boardIndex);
+
+    // ricostruiamo lo stato attivo
     window.pedalboard = structuredClone(window.allPedalboards[boardIndex]);
+
+    // se esiste una funzione di cambio pedaliera, usiamola
+    if (typeof selectPedalboard === 'function') {
+    selectPedalboard(boardIndex);
+    }
+
 
     // ➕ aggiunta pedale
     window.pedalboard.pedals.push({
