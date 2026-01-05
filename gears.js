@@ -171,8 +171,6 @@ $(document).on("change", "#categoryFilter", function () {
 
 
 
-
-
 $(document).ready(() => {
 
   const $goToRigs = $('#goToRigs');
@@ -182,28 +180,32 @@ $(document).ready(() => {
   const isCatalog = !window.location.search.includes('id=');
   const isSingleGear = !isCatalog;
 
-  // Nascondiamo entrambi inizialmente
+  // Nascondiamo entrambi all’inizio
   $goToRigs.hide();
   $addToRig.hide();
 
   if (isCatalog) {
     // Solo catalogo → mostra Go to Rigs
     $goToRigs.show();
+    $addToRig.hide();
+    $('#backToCatalog').remove(); // rimuoviamo eventuale pulsante legacy
   }
 
   if (isSingleGear) {
-    // Pagina singolo pedale → mostra Add to Rig
+    // Pagina singolo pedale → mostra Add to Rig e Back to Catalog
     $addToRig.show();
+    $goToRigs.hide(); // <-- garantito nascondere Go to Rigs
 
     // Aggiungiamo il pulsante "Back to Catalog" accanto al dropdown
     let $backToCatalog = $('#backToCatalog');
     if ($backToCatalog.length === 0) {
       $backToCatalog = $(`
-        <a id="backToCatalog" href="/PedalPlex/gears" class="bx--btn bx--btn--tertiary" style="margin-left:8px; max-width:500px!important;">
+        <a id="backToCatalog" href="/PedalPlex/gears" class="bx--btn bx--btn--tertiary" 
+           style="margin-left:8px; max-width:500px!important;">
           Back to Catalog
           <svg focusable="false" preserveAspectRatio="xMidYMid meet"
                xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"></path>
+            <path d="M14 26L15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26z"></path>
           </svg>
         </a>
       `);
@@ -212,3 +214,4 @@ $(document).ready(() => {
   }
 
 });
+
