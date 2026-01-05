@@ -14,7 +14,7 @@ $(document).ready(() => {
   const pedalId = params.get('id');
   if (pedalId) {
     selectedPedalId = pedalId;
-    $('#addToRig').show();
+    $('#addToRig').show(); // mostra secco
   }
 });
 
@@ -26,7 +26,7 @@ function observeCatalogLoaded() {
   const observer = new MutationObserver(() => {
     if (catalogNode.children.length > 0) {
       catalogReady = true;
-      $('#goToRigs').show();
+      $('#goToRigs').show(); // mostra secco
       observer.disconnect();
     }
   });
@@ -36,39 +36,38 @@ function observeCatalogLoaded() {
 
 document.addEventListener('DOMContentLoaded', observeCatalogLoaded);
 
+// ===============================
 // Rileva pedal selezionato dall'URL e mostra "Add to Rig"
+// ===============================
 function detectPedalFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const pedalId = params.get('id');
+
   if (pedalId) {
     selectedPedalId = pedalId;
+
+    // Mostra subito il pulsante "Add to Rig" anche se il catalogo non è pronto
     $('#addToRig').show();
   }
 }
 
 document.addEventListener('DOMContentLoaded', detectPedalFromUrl);
 
+// ===============================
 // Click sul pulsante Add to Rig
-$('#addToRig').on('click', function(e) {
+// ===============================
+$('#addToRig').on('click', function (e) {
   e.preventDefault();
   if (!selectedPedalId) return;
   addPedalToRig(selectedPedalId);
 });
 
+// ===============================
 // Reset pedal selezionato quando si cambia categoria
+// ===============================
 $('#categoryFilter').on('change', () => {
   selectedPedalId = null;
   $('#addToRig').hide();
-});
-
-// Quando l'utente seleziona una pedalboard dal dropdown
-$(document).on('change', '#pedalboardDropdown', function() {
-  const newBoardId = $(this).val();
-  const newBoardName = $(this).find('option:selected').text();
-
-  // Aggiorna localStorage
-  localStorage.setItem('lastPedalboardId', newBoardId);
-  localStorage.setItem('lastPedalboardText', newBoardName);
 });
 
 // ===============================
@@ -97,16 +96,19 @@ async function ensurePedalboardExists() {
 
       if (!boardName) throw 'cancelled';
 
-      const newBoard = { board_name: boardName, pedals: [] };
+      const newBoard = {
+        board_name: boardName,
+        pedals: []
+      };
+
       boards = [newBoard];
       localStorage.setItem('guestPedalboard', JSON.stringify(boards));
-
-      // Aggiorna localStorage con la nuova pedalboard
-      localStorage.setItem('lastPedalboardId', 0); // indice guest
-      localStorage.setItem('lastPedalboardText', boardName);
     }
 
-    return { mode: 'guest', boardIndex: 0 };
+    return {
+      mode: 'guest',
+      boardIndex: 0
+    };
   }
 
   // ---------------- LOGGED USER ----------------
@@ -119,6 +121,7 @@ async function ensurePedalboardExists() {
   const data = await res.json();
   const boards = data.docs || [];
 
+  // Nessuna pedaliera → creane una
   if (boards.length === 0) {
     const { value: boardName } = await Swal.fire({
       title: 'Create your first Rig',
@@ -142,14 +145,16 @@ async function ensurePedalboardExists() {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: new URLSearchParams({ board_name: boardName, user_id: window.currentUser.userid })
+      body: new URLSearchParams({
+        board_name: boardName,
+        user_id: window.currentUser.userid
+      })
     });
 
-    // Aggiorna localStorage con la nuova pedalboard
-    localStorage.setItem('lastPedalboardId', boardName); 
-    localStorage.setItem('lastPedalboardText', boardName);
-
-    return { mode: 'logged', boardIndex: 0 };
+    return {
+      mode: 'logged',
+      boardIndex: 0
+    };
   }
 
   // Più pedaliere → scegli quale usare
@@ -171,44 +176,56 @@ async function ensurePedalboardExists() {
 
     if (value === undefined) throw 'cancelled';
 
-    // Aggiorna localStorage con la pedalboard selezionata
-    const selectedBoard = boards[value];
-    localStorage.setItem('lastPedalboardId', selectedBoard.board_id);
-    localStorage.setItem('lastPedalboardText', selectedBoard.board_name);
-
-    return { mode: 'logged', boardIndex: parseInt(value, 10) };
+    return {
+      mode: 'logged',
+      boardIndex: parseInt(value, 10)
+    };
   }
 
   // Una sola pedaliera
-  localStorage.setItem('lastPedalboardId', boards[0].board_id);
-  localStorage.setItem('lastPedalboardText', boards[0].board_name);
-  return { mode: 'logged', boardIndex: 0 };
+  return {
+    mode: 'logged',
+    boardIndex: 0
+  };
 }
 
 // ===============================
 // Aggiunge un pedale alla pedalboard
 // ===============================
 async function addPedalToRig(pedalId) {
+  console.log('addPedalToRig CALLED', pedalId);
+
   try {
     const { mode, boardIndex } = await ensurePedalboardExists();
+    console.log('MODE:', mode, 'BOARD:', boardIndex);
 
+    // ---------------- GUEST ----------------
     if (mode === 'guest') {
       const boards = JSON.parse(localStorage.getItem('guestPedalboard'));
-      boards[0].pedals.push({ pedal_id: pedalId, rotation: 0, row: 1 });
+      boards[0].pedals.push({
+        pedal_id: pedalId,
+        rotation: 0,
+        row: 1
+      });
       localStorage.setItem('guestPedalboard', JSON.stringify(boards));
     }
 
+    // ---------------- LOGGED ----------------
     if (mode === 'logged') {
-      const boardId = localStorage.getItem('lastPedalboardId');
+      console.log('WRITING pendingPedalAdd');
+      localStorage.setItem('lastPedalboardId', boardIndex);
       localStorage.setItem('pendingPedalAdd', JSON.stringify({
         pedal_id: pedalId,
         rotation: 0,
         row: 1
       }));
-      localStorage.setItem('lastPedalboardId', boardId);
     }
 
+    localStorage.getItem('pendingPedalAdd') // test
+
+    // Redirect alla pagina rig
     window.location.href = `${window.location.origin}/PedalPlex/rigs`;
+
   } catch (e) {
     if (e !== 'cancelled') console.error(e);
   }
