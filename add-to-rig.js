@@ -26,7 +26,7 @@ function observeCatalogLoaded() {
   const observer = new MutationObserver(() => {
     if (catalogNode.children.length > 0) {
       catalogReady = true;
-      $('#goToRigs').show(); // mostra secco
+      $('#goToRigs').show();
       observer.disconnect();
     }
   });
@@ -45,22 +45,11 @@ function detectPedalFromUrl() {
 
   if (pedalId) {
     selectedPedalId = pedalId;
-
-    // Mostra subito il pulsante "Add to Rig" anche se il catalogo non è pronto
     $('#addToRig').show();
   }
 }
 
 document.addEventListener('DOMContentLoaded', detectPedalFromUrl);
-
-// ===============================
-// Click sul pulsante Add to Rig
-// ===============================
-$('#addToRig').on('click', function (e) {
-  e.preventDefault();
-  if (!selectedPedalId) return;
-  addPedalToRig(selectedPedalId);
-});
 
 // ===============================
 // Reset pedal selezionato quando si cambia categoria
@@ -105,14 +94,7 @@ async function ensurePedalboardExists() {
       localStorage.setItem('guestPedalboard', JSON.stringify(boards));
     }
 
-    // GUEST usa sempre boardIndex 0
-    localStorage.setItem('lastPedalboardId', 'guest-0');
-    localStorage.setItem('lastPedalboardText', boards[0].board_name);
-
-    return {
-      mode: 'guest',
-      boardIndex: 0
-    };
+    return { mode: 'guest', boardIndex: 0 };
   }
 
   // ---------------- LOGGED USER ----------------
@@ -125,7 +107,6 @@ async function ensurePedalboardExists() {
   const data = await res.json();
   const boards = data.docs || [];
 
-  // Nessuna pedaliera → creane una
   if (boards.length === 0) {
     const { value: boardName } = await Swal.fire({
       title: 'Create your first Rig',
@@ -142,7 +123,6 @@ async function ensurePedalboardExists() {
     if (!boardName) throw 'cancelled';
 
     const token = localStorage.getItem('authToken');
-
     await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php', {
       method: 'POST',
       headers: {
@@ -155,22 +135,15 @@ async function ensurePedalboardExists() {
       })
     });
 
-    // Salviamo ID e nome nel localStorage
-    localStorage.setItem('lastPedalboardId', 'new'); // non esiste ancora, poi sarà aggiornato da rigs.js
-    localStorage.setItem('lastPedalboardText', boardName);
-
-    return {
-      mode: 'logged',
-      boardIndex: 0
-    };
+    return { mode: 'logged', boardIndex: 0 };
   }
 
   // Più pedaliere → scegli quale usare
   if (boards.length > 1) {
     const options = {};
-    boards.forEach((b, i) => options[b._id] = b.board_name || `Rig ${i + 1}`);
+    boards.forEach(b => options[b._id] = b.board_name);
 
-    const { value: selectedId } = await Swal.fire({
+    const { value: selectedBoardId } = await Swal.fire({
       title: 'Select Rig',
       input: 'select',
       inputOptions: options,
@@ -180,42 +153,28 @@ async function ensurePedalboardExists() {
         confirmButton: 'bx--btn bx--btn--primary',
         cancelButton: 'bx--btn bx--btn--secondary'
       },
-      didOpen: () => {
-        const select = document.querySelector('.swal2-select');
-        if (!select) return;
-        select.addEventListener('change', e => {
-          const chosenId = e.target.value;
-          const chosenBoard = boards.find(b => b._id === chosenId);
-          if (!chosenBoard) return;
-          localStorage.setItem('lastPedalboardId', chosenBoard._id);
-          localStorage.setItem('lastPedalboardText', chosenBoard.board_name);
-        });
+      // Aggiorna subito localStorage anche all’apertura
+      willOpen: () => {
+        const defaultId = Object.keys(options)[0];
+        localStorage.setItem('lastPedalboardId', defaultId);
+        localStorage.setItem('lastPedalboardText', options[defaultId]);
       }
     });
 
-    if (!selectedId) throw 'cancelled';
+    if (!selectedBoardId) throw 'cancelled';
 
-    const boardIndex = boards.findIndex(b => b._id === selectedId);
-
-    // Salviamo anche al momento della conferma
-    const selectedBoard = boards[boardIndex];
-    localStorage.setItem('lastPedalboardId', selectedBoard._id);
-    localStorage.setItem('lastPedalboardText', selectedBoard.board_name);
+    // Aggiorna localStorage anche al change
+    localStorage.setItem('lastPedalboardId', selectedBoardId);
+    localStorage.setItem('lastPedalboardText', options[selectedBoardId]);
 
     return {
       mode: 'logged',
-      boardIndex
+      boardIndex: selectedBoardId
     };
   }
 
   // Una sola pedaliera
-  localStorage.setItem('lastPedalboardId', boards[0]._id);
-  localStorage.setItem('lastPedalboardText', boards[0].board_name);
-
-  return {
-    mode: 'logged',
-    boardIndex: 0
-  };
+  return { mode: 'logged', boardIndex: boards[0]._id };
 }
 
 // ===============================
@@ -228,24 +187,20 @@ async function addPedalToRig(pedalId) {
     const { mode, boardIndex } = await ensurePedalboardExists();
     console.log('MODE:', mode, 'BOARD:', boardIndex);
 
-    // ---------------- GUEST ----------------
     if (mode === 'guest') {
       const boards = JSON.parse(localStorage.getItem('guestPedalboard'));
-      boards[0].pedals.push({
-        pedal_id: pedalId,
-        rotation: 0,
-        row: 1
-      });
+      boards[0].pedals.push({ pedal_id: pedalId, rotation: 0, row: 1 });
       localStorage.setItem('guestPedalboard', JSON.stringify(boards));
     }
 
-    // ---------------- LOGGED ----------------
     if (mode === 'logged') {
+      // Scrive pedale in pendingPedalAdd come prima
       localStorage.setItem('pendingPedalAdd', JSON.stringify({
         pedal_id: pedalId,
         rotation: 0,
         row: 1
       }));
+      localStorage.setItem('lastPedalboardId', boardIndex); // garantisce coerenza
     }
 
     // Redirect alla pagina rig
@@ -255,3 +210,12 @@ async function addPedalToRig(pedalId) {
     if (e !== 'cancelled') console.error(e);
   }
 }
+
+// ===============================
+// Click sul pulsante Add to Rig
+// ===============================
+$('#addToRig').on('click', function (e) {
+  e.preventDefault();
+  if (!selectedPedalId) return;
+  addPedalToRig(selectedPedalId);
+});
