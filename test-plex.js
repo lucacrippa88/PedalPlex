@@ -1,8 +1,3 @@
-/**
- * TEST MODE
- * Renderizza una pedalboard fake con UN SOLO pedale (?id=)
- */
-
 (function () {
 
   const pedalId = new URLSearchParams(window.location.search).get('id');
@@ -12,7 +7,7 @@
 
   function waitForCatalog(cb) {
     const check = setInterval(() => {
-      if (window.catalogMap && window.catalogMap[pedalId]) {
+      if (window.catalogMap || window.catalog) {
         clearInterval(check);
         cb();
       }
@@ -20,6 +15,19 @@
   }
 
   waitForCatalog(() => {
+
+    const pedalExists =
+      window.catalogMap?.[pedalId] ||
+      window.catalog?.find(p => p._id === pedalId || p.id === pedalId);
+
+    if (!pedalExists) {
+      const container = document.getElementById('preset');
+      if (container) {
+        container.innerHTML = `<p style="color:red;">Pedale non trovato: ${pedalId}</p>`;
+      }
+      console.warn("[TEST-PLEX] Pedal not found in catalog:", pedalId);
+      return;
+    }
 
     const fakeBoard = {
       _id: "fake-board",
