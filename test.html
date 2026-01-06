@@ -15,7 +15,7 @@
 <style>
   body { font-family: sans-serif; padding: 20px; }
   #results { margin-top: 20px; color: #c00; }
-  #pedalboard { width: 100%; min-height: 300px; }
+  #pedalboard { width: 100%; min-height: 300px; border: 1px solid #ccc; }
 </style>
 </head>
 
@@ -47,10 +47,10 @@
 (async function () {
 
   const resultsDiv = document.getElementById('results');
+  const pedalboardDiv = document.getElementById('pedalboard');
   window.resultsDiv = resultsDiv;
 
   /* ================= LOGIN ================= */
-
   async function doLogin(username, password) {
     const res = await fetch('https://www.cineteatrosanluigi.it/plex/USER_LOGIN.php', {
       method: 'POST',
@@ -96,7 +96,6 @@
   }
 
   /* ================= PEDALE ================= */
-
   const pedalId = new URLSearchParams(location.search).get('id');
   if (!pedalId) {
     resultsDiv.textContent = 'Usa ?id=<PEDAL_ID>';
@@ -104,87 +103,72 @@
   }
 
   async function fetchPedals(ids) {
-    try {
-      const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ ids })
-      });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      return data.docs || [];
-    } catch (err) {
-      console.error('[TEST-PLEX] Error fetching pedals:', err);
-      resultsDiv.textContent = 'Errore nel fetch del pedale: ' + err.message;
-      return [];
-    }
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ ids })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return (await res.json()).docs || [];
   }
 
-  async function fetchPresetsByPedal(pedalId) {
-    try {
-      const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESETS_BY_PEDAL.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ pedal_id: pedalId })
-      });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      return data.docs || [];
-    } catch (err) {
-      console.error('[TEST-PLEX] Error fetching presets:', err);
-      return [];
-    }
+  async function fetchPresets(pedalId) {
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESETS_BY_PEDAL.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ pedalId }) // <-- chiave corretta!
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return (await res.json()).presets || [];
   }
 
-  // Fetch pedale principale
+  // Pedale principale
   const [pedal] = await fetchPedals([pedalId]);
   if (!pedal) {
     resultsDiv.textContent = 'Pedale non trovato';
     return;
   }
 
-  // Fetch subplex
+  // Subplex
   let subplexDocs = [];
   if (pedal.subplex?.length) {
     subplexDocs = await fetchPedals(pedal.subplex.map(s => s.pedal_id));
   }
 
-  // Fetch presets
-  const presets = await fetchPresetsByPedal(pedalId);
-  pedal.presets = presets;
+  // Presets
+  const presets = await fetchPresets(pedalId);
 
-  // Catalog globale
+  /* ================= CATALOG ================= */
   window.catalogMap = {};
   window.catalogMap[pedalId] = pedal;
   subplexDocs.forEach(p => window.catalogMap[p._id] = p);
 
   /* ================= FAKE BOARD ================= */
-
   const fakeBoard = {
     _id: 'test-board',
-    name: 'TEST – ' + pedalId,
+    name: 'TEST',
     pedals: [{
       pedal_id: pedalId,
       row: 1,
       rotation: 0,
-      subplex: pedal.subplex || []
+      subplex: pedal.subplex || [],
+      presets
     }]
   };
 
   /* ================= RENDER ================= */
-
-  try {
-    await renderFullPedalboard(fakeBoard);
-  } catch (err) {
-    console.error('Errore render:', err);
-    resultsDiv.textContent = 'Errore nel render: ' + err.message;
+  if (!window.renderFullPedalboard || !pedalboardDiv) {
+    resultsDiv.textContent = 'Funzione renderFullPedalboard non trovata o div mancante';
+    return;
   }
+
+  await renderFullPedalboard(fakeBoard);
 
 })();
 </script>
