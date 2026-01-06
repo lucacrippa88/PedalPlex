@@ -3,213 +3,164 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PedalPlex - Test Single Pedal</title>
+<title>PedalPlex – Test Single Pedal</title>
+
 <link rel="stylesheet" href="css/carbon-components.min.css" />
 <link rel="stylesheet" href="css/style.css" />
+
 <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
   body { font-family: sans-serif; padding: 20px; }
-  #results { margin-top: 20px; border: 1px solid #ccc; padding: 10px; min-height: 200px; }
-  .btn-disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; }
+  #results { margin-top: 20px; color: #c00; }
+  #pedalboard { width: 100%; min-height: 300px; }
 </style>
 </head>
+
 <body>
 
-  <div class="bx--loading-overlay" id="pageLoader" style="display:none;">
-      <div class="bx--loading" role="status">
-        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
-          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
-        </svg>
-      </div>
-    </div>
-
-
-
-  <!-- Zoom spinner -->
-  <div id="zoomSpinner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; background: rgba(255,255,255,0.7); padding: 1rem; border-radius: 8px;">
-    <div class="bx--loading bx--loading--small" role="alert" aria-live="assertive" aria-label="Loading">
-      <svg class="bx--loading__svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-        <circle class="bx--loading__background" cx="50" cy="50" r="44" stroke-width="8"></circle>
-        <circle class="bx--loading__stroke" cx="50" cy="50" r="44" stroke-width="8"></circle>
-      </svg>
-    </div>
+<!-- LOADER -->
+<div class="bx--loading-overlay" id="pageLoader" style="display:none;">
+  <div class="bx--loading" role="status">
+    <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+      <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+      <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+    </svg>
   </div>
-  
-  <!-- Main content area -->
-  <div id="page-content">
+</div>
 
-    <br><br><br><br>
+<!-- CONTENT -->
+<div id="page-content">
+  <div id="pedalboard"></div>
+  <div id="results"></div>
+</div>
 
-    <div id="results" style="flex-direction: column; align-items: center;"></div>
-  </div>
-
-
-
-    <div class="zoom-controls">
-      <button id="zoomIn" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="zoomIn()">
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-          <path d="M18 12L14 12 14 8 12 8 12 12 8 12 8 14 12 14 12 18 14 18 14 14 18 14 18 12z"></path><path d="M21.4479,20A10.856,10.856,0,0,0,24,13,11,11,0,1,0,13,24a10.856,10.856,0,0,0,7-2.5521L27.5859,29,29,27.5859ZM13,22a9,9,0,1,1,9-9A9.01,9.01,0,0,1,13,22Z"></path>
-        </svg>
-      </button>
-      <button id="zoomOut" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="zoomOut()">
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-          <path d="M8 12H18V14H8z"></path><path d="M21.4479,20A10.856,10.856,0,0,0,24,13,11,11,0,1,0,13,24a10.856,10.856,0,0,0,7-2.5521L27.5859,29,29,27.5859ZM13,22a9,9,0,1,1,9-9A9.01,9.01,0,0,1,13,22Z"></path>
-        </svg>
-      </button>
-      <button id="zoomReset" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="resetZoom()">
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-          <path d="M22.4478,21A10.855,10.855,0,0,0,25,14,10.99,10.99,0,0,0,6,6.4658V2H4v8h8V8H7.332a8.9768,8.9768,0,1,1-2.1,8H3.1912A11.0118,11.0118,0,0,0,14,25a10.855,10.855,0,0,0,7-2.5522L28.5859,30,30,28.5859Z"/>
-        </svg>
-      </button>
-    </div>
-
-
-
-
-  <!-- Fallback content -->
-  <div id="noPedalboardsContainer" style="display: none; text-align: center; margin-top: 7em;">
-    <p style="font-size: 1.25em;">No Gear found.</p>
-    <a href="gears" class="bx--btn bx--btn--primary" style="margin-top: 1em;">Back to Gears</a>
-  </div>
-
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="test-plex.js"></script>
-  <script src="utils.js"></script>
-  <!-- <script src="local-plexes.js"></script> -->
-  <script src="fullscreen-menu.js"></script>
-  <script src="nav.js"></script>
-  <script src="zoom.js"></script>
+<!-- SCRIPT CORE -->
+<script src="test-plex.js"></script>
+<script src="utils.js"></script>
+<script src="fullscreen-menu.js"></script>
+<script src="nav.js"></script>
+<script src="zoom.js"></script>
 
 <script>
-(async function() {
-  const resultsDiv = document.getElementById('results') || document.body;
-  window.resultsDiv = resultsDiv; // necessario per renderFullPedalboard
+(async function () {
 
-  // --- LOGIN FLOW ---
+  const resultsDiv = document.getElementById('results');
+  window.resultsDiv = resultsDiv;
+
+  /* ================= LOGIN ================= */
+
   async function doLogin(username, password) {
-    try {
-      const res = await fetch('https://www.cineteatrosanluigi.it/plex/USER_LOGIN.php', {
+    const res = await fetch(
+      'https://www.cineteatrosanluigi.it/plex/USER_LOGIN.php',
+      {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
-      });
-      if(!res.ok) throw new Error('Login failed');
-      const data = await res.json();
-      if(!data.token) throw new Error('No token returned');
-      localStorage.setItem('authToken', data.token);
-      return data.user;
-    } catch(err) {
-      console.error(err);
-      Swal.fire('Login failed', err.message, 'error');
-      return null;
-    }
+      }
+    );
+    if (!res.ok) throw new Error('Login failed');
+    const data = await res.json();
+    localStorage.setItem('authToken', data.token);
+    return data.user;
   }
 
-  // --- CHECK EXISTING TOKEN ---
   let token = localStorage.getItem('authToken');
-  if(token) {
+
+  if (token) {
     try {
-      const res = await fetch('https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php', {
-        method:'POST',   // POST obbligatorio!
-        headers:{ 'Authorization':'Bearer '+token }
-      });
-      if(!res.ok) throw new Error('Auth check failed');
+      const res = await fetch(
+        'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
+        {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token }
+        }
+      );
+      if (!res.ok) throw new Error();
       window.currentUser = await res.json();
-    } catch(err) {
-      console.warn('Token expired or invalid, clearing...');
+    } catch {
       localStorage.removeItem('authToken');
       token = null;
     }
   }
 
-  // --- PROMPT LOGIN IF NEEDED ---
-  if(!token) {
-    const { value: formValues } = await Swal.fire({
-      title: 'Login Required',
+  if (!token) {
+    const { value } = await Swal.fire({
+      title: 'Login',
       html:
-        '<input id="swal-username" class="swal2-input" placeholder="Username">' +
-        '<input id="swal-password" type="password" class="swal2-input" placeholder="Password">',
-      focusConfirm: false,
+        '<input id="u" class="swal2-input" placeholder="Username">' +
+        '<input id="p" type="password" class="swal2-input" placeholder="Password">',
       preConfirm: () => [
-        document.getElementById('swal-username').value,
-        document.getElementById('swal-password').value
+        document.getElementById('u').value,
+        document.getElementById('p').value
       ]
     });
-    if(!formValues) {
-      resultsDiv.innerHTML = 'Login required to continue.';
-      return;
-    }
-    window.currentUser = await doLogin(formValues[0], formValues[1]);
+    if (!value) return;
+    await doLogin(value[0], value[1]);
     token = localStorage.getItem('authToken');
-    if(!token || !window.currentUser) return;
   }
 
-  // --- RECUPERA PEDALE DAL QUERY PARAM ---
-  const pedalId = new URLSearchParams(window.location.search).get('id');
-  if(!pedalId) {
-    resultsDiv.innerHTML = 'Nessun pedale selezionato. Usa ?id=<PEDAL_ID>';
+  /* ================= DATA ================= */
+
+  const pedalId = new URLSearchParams(location.search).get('id');
+  if (!pedalId) {
+    resultsDiv.textContent = 'Usa ?id=<PEDAL_ID>';
     return;
   }
 
-  // --- FETCH PEDALE VIA POST ---
-  async function fetchPedalsByIds(ids) {
-    try {
-      const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
+  async function fetchPedals(ids) {
+    const res = await fetch(
+      'https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
         body: JSON.stringify({ ids })
-      });
-      if(!res.ok) throw new Error('HTTP '+res.status+' — '+res.statusText);
-      const data = await res.json();
-      return data.docs || [];
-    } catch(err) {
-      console.error('[TEST-PLEX] Error fetching pedal:', err);
-      resultsDiv.innerHTML = 'Errore nel fetch del pedale: '+err.message;
-      return [];
-    }
+      }
+    );
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return (await res.json()).docs || [];
   }
 
-  // --- Recupera pedale singolo e subplex ---
-  const pedals = await fetchPedalsByIds([pedalId]);
-  const pedalDoc = pedals[0];
-  if(!pedalDoc) {
-    resultsDiv.innerHTML = 'Pedale non trovato: '+pedalId;
+  const [pedal] = await fetchPedals([pedalId]);
+  if (!pedal) {
+    resultsDiv.textContent = 'Pedale non trovato';
     return;
   }
 
   let subplexDocs = [];
-  if(pedalDoc.subplex && pedalDoc.subplex.length > 0) {
-    const subIds = pedalDoc.subplex.map(sp => sp.pedal_id);
-    subplexDocs = await fetchPedalsByIds(subIds);
+  if (pedal.subplex?.length) {
+    subplexDocs = await fetchPedals(
+      pedal.subplex.map(s => s.pedal_id)
+    );
   }
 
-  // --- Catalog map globale ---
-  if(!window.catalogMap) window.catalogMap = {};
-  window.catalogMap[pedalId] = pedalDoc;
-  subplexDocs.forEach(sp => window.catalogMap[sp._id] = sp);
+  /* ================= CATALOG ================= */
 
-  // --- FAKE PEDALBOARD ---
+  window.catalogMap = {};
+  window.catalogMap[pedalId] = pedal;
+  subplexDocs.forEach(p => window.catalogMap[p._id] = p);
+
+  /* ================= FAKE BOARD ================= */
+
   const fakeBoard = {
-    _id: 'fake-board',
-    name: 'TEST – '+pedalId,
-    pedals: [
-      { pedal_id: pedalId, row:1, rotation:0, subplex: pedalDoc.subplex || [] }
-    ]
+    _id: 'test-board',
+    name: 'TEST',
+    pedals: [{
+      pedal_id: pedalId,
+      row: 1,
+      rotation: 0,
+      subplex: pedal.subplex || []
+    }]
   };
-  window.fakeBoard = fakeBoard;
 
-  // --- RENDER ---
-  try {
-    await renderFullPedalboard(fakeBoard);
-    resultsDiv.innerHTML = '';
-  } catch(err) {
-    console.error(err);
-    resultsDiv.innerHTML = 'Errore nel render: '+err.message;
-  }
+  /* ================= RENDER ================= */
+
+  await renderFullPedalboard(fakeBoard);
 
 })();
 </script>
