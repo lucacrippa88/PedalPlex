@@ -1,136 +1,158 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<title>Test Single Pedal Auth</title>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PedalPlex</title>
-  <link rel="stylesheet" href="css/carbon-components.min.css" />
-  <link rel="stylesheet" href="css/style.css" />
-  <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>   
-  <script src="utils.js"></script> <!-- renderFullPedalboard + helpers -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PedalPlex - Test Single Pedal</title>
+<link rel="stylesheet" href="css/carbon-components.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+<script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="utils.js"></script>
 <style>
-  body { font-family:sans-serif; padding:20px; }
+  body { font-family: sans-serif; padding: 20px; }
   #results { margin-top: 20px; border: 1px solid #ccc; padding: 10px; min-height: 200px; }
+  .btn-disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; }
 </style>
 </head>
 <body>
 
-<h1>TEST PEDALBOARD SINGLE PEDAL MODE (Auth)</h1>
-<div id="preset" style="flex-direction: column; align-items: center;"></div>
+<h1>TEST PEDALBOARD SINGLE PEDAL MODE (Login Required)</h1>
+<div id="results">Caricamento pedalboard...</div>
 
 <script>
 (async function() {
-
   const resultsDiv = document.getElementById('results');
-  window.resultsDiv = resultsDiv;
+  window.resultsDiv = resultsDiv; // necessario per renderFullPedalboard
 
-  const pedalId = new URLSearchParams(window.location.search).get('id');
-  if (!pedalId) {
-    resultsDiv.innerHTML = 'Nessun pedale selezionato. Usa ?id=<PEDAL_ID>';
-    return;
-  }
-
-  const token = localStorage.getItem("authToken");
-  if (!token) {
-    resultsDiv.innerHTML = 'Nessun authToken trovato in localStorage. Effettua login prima.';
-    return;
-  }
-
-  // Funzione fetch pedale
-  async function fetchPedalById(id) {
+  // --- LOGIN FLOW ---
+  async function doLogin(username, password) {
     try {
-      const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
+      const res = await fetch('https://www.cineteatrosanluigi.it/plex/USER_LOGIN.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ ids: [id] })
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ username, password })
       });
-
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      if(!res.ok) throw new Error('Login failed');
       const data = await res.json();
-      if (!data.docs || data.docs.length === 0) return null;
-      return data.docs[0];
-
-    } catch (err) {
-      console.error("Errore fetching pedal:", err);
+      if(!data.token) throw new Error('No token returned');
+      localStorage.setItem('authToken', data.token);
+      return data.user;
+    } catch(err) {
+      console.error(err);
+      Swal.fire('Login failed', err.message, 'error');
       return null;
     }
   }
 
-  // Funzione fetch SubPlex
-  async function fetchSubplexes(pedalId) {
+  // --- CHECK EXISTING TOKEN ---
+  let token = localStorage.getItem('authToken');
+  if(token) {
     try {
-      const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESETS_BY_PEDAL.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ pedalId })
+      const res = await fetch('https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php', {
+        method:'GET',
+        headers:{ 'Authorization':'Bearer '+token }
       });
-
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      return data.presets || [];
+      if(!res.ok) throw new Error('Auth check failed');
+      window.currentUser = await res.json();
     } catch(err) {
-      console.error("Errore fetching SubPlex:", err);
-      return [];
+      console.warn('Token expired or invalid, clearing...');
+      localStorage.removeItem('authToken');
+      token = null;
     }
   }
 
-  resultsDiv.innerHTML = 'Recupero pedale dal server...';
+  // --- PROMPT LOGIN IF NEEDED ---
+  if(!token) {
+    const { value: formValues } = await Swal.fire({
+      title: 'Login Required',
+      html:
+        '<input id="swal-username" class="swal2-input" placeholder="Username">' +
+        '<input id="swal-password" type="password" class="swal2-input" placeholder="Password">',
+      focusConfirm: false,
+      preConfirm: () => {
+        return [
+          document.getElementById('swal-username').value,
+          document.getElementById('swal-password').value
+        ];
+      }
+    });
+    if(!formValues) {
+      resultsDiv.innerHTML = 'Login required to continue.';
+      return;
+    }
+    window.currentUser = await doLogin(formValues[0], formValues[1]);
+    token = localStorage.getItem('authToken');
+    if(!token || !window.currentUser) return;
+  }
 
-  // 1️⃣ Recupera pedale principale
-  const pedalDoc = await fetchPedalById(pedalId);
-  if (!pedalDoc) {
-    resultsDiv.innerHTML = 'Pedale non trovato: ' + pedalId;
+  // --- RECUPERA PEDALE DAL QUERY PARAM ---
+  const pedalId = new URLSearchParams(window.location.search).get('id');
+  if(!pedalId) {
+    resultsDiv.innerHTML = 'Nessun pedale selezionato. Usa ?id=<PEDAL_ID>';
     return;
   }
 
-  // 2️⃣ Recupera eventuali SubPlex
-  const subplexDocs = await fetchSubplexes(pedalId);
+  async function fetchPedalById(id) {
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+token
+      },
+      body: JSON.stringify({ ids: [id] })
+    });
+    if(!res.ok) throw new Error('Failed fetching pedal');
+    const data = await res.json();
+    return data.docs?.[0] || null;
+  }
 
-  // 3️⃣ Inizializza catalogMap
-  window.catalogMap = {};
+  async function fetchSubplexes(pedal) {
+    if(!pedal.subplex || pedal.subplex.length===0) return [];
+    const ids = pedal.subplex.map(sp=>sp.pedal_id);
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+token },
+      body: JSON.stringify({ ids })
+    });
+    if(!res.ok) return [];
+    const data = await res.json();
+    return data.docs || [];
+  }
+
+  const pedalDoc = await fetchPedalById(pedalId);
+  if(!pedalDoc) {
+    resultsDiv.innerHTML = 'Pedale non trovato: '+pedalId;
+    return;
+  }
+
+  const subplexDocs = await fetchSubplexes(pedalDoc);
+
+  if(!window.catalogMap) window.catalogMap = {};
   window.catalogMap[pedalId] = pedalDoc;
-  subplexDocs.forEach(sp => { window.catalogMap[sp._id] = sp; });
+  subplexDocs.forEach(sp=>window.catalogMap[sp._id]=sp);
 
-  // 4️⃣ Crea pedalboard fake
+  // --- FAKE PEDALBOARD ---
   const fakeBoard = {
     _id: 'fake-board',
-    name: 'TEST – ' + pedalId,
+    name: 'TEST – '+pedalId,
     pedals: [
-      {
-        pedal_id: pedalId,
-        row: 1,
-        rotation: 0,
-        subplex: subplexDocs.map(sp => ({ pedal_id: sp._id }))
-      }
+      { pedal_id: pedalId, row:1, rotation:0, subplex: pedalDoc.subplex || [] }
     ]
   };
+  window.fakeBoard = fakeBoard;
 
-  resultsDiv.innerHTML = 'Rendering pedalboard...';
-
+  // --- RENDER ---
   try {
     await renderFullPedalboard(fakeBoard);
-    resultsDiv.innerHTML = ''; // pulisci messaggio di caricamento
-  } catch (err) {
+    resultsDiv.innerHTML = '';
+  } catch(err) {
     console.error(err);
-    resultsDiv.innerHTML = 'Errore nel render: ' + err.message;
+    resultsDiv.innerHTML = 'Errore nel render: '+err.message;
   }
 
 })();
 </script>
-
 </body>
-
-  <script src="fullscreen-menu.js"></script>
-  <script src="nav.js"></script>
-  <script src="zoom.js"></script>
-
 </html>
