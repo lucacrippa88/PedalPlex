@@ -1730,6 +1730,11 @@ function filterPedalsWithColoredLeds(pedalsObj) {
 // Render full pedalboard in preset page
 async function renderFullPedalboard(pedalboardOverride = null) {
 
+  // 🔒 TEST / SINGLE PEDAL MODE
+  if (window.__SINGLE_PEDAL_MODE__ && !pedalboardOverride) {
+    return Promise.resolve();
+  }
+
   // 🔹 Override pedalboard (test / single pedal mode)
   if (pedalboardOverride && pedalboardOverride.pedals) {
     window.pedalboard = pedalboardOverride;
