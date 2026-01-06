@@ -38,7 +38,6 @@
 </div>
 
 <!-- SCRIPT CORE -->
-<script src="test-plex.js"></script>
 <script src="utils.js"></script>
 <script src="fullscreen-menu.js"></script>
 <script src="nav.js"></script>
@@ -53,14 +52,11 @@
   /* ================= LOGIN ================= */
 
   async function doLogin(username, password) {
-    const res = await fetch(
-      'https://www.cineteatrosanluigi.it/plex/USER_LOGIN.php',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      }
-    );
+    const res = await fetch('https://www.cineteatrosanluigi.it/plex/USER_LOGIN.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
     if (!res.ok) throw new Error('Login failed');
     const data = await res.json();
     localStorage.setItem('authToken', data.token);
@@ -71,13 +67,10 @@
 
   if (token) {
     try {
-      const res = await fetch(
-        'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
-        {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + token }
-        }
-      );
+      const res = await fetch('https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
       if (!res.ok) throw new Error();
       window.currentUser = await res.json();
     } catch {
@@ -102,7 +95,7 @@
     token = localStorage.getItem('authToken');
   }
 
-  /* ================= DATA ================= */
+  /* ================= PEDALE ================= */
 
   const pedalId = new URLSearchParams(location.search).get('id');
   if (!pedalId) {
@@ -111,36 +104,62 @@
   }
 
   async function fetchPedals(ids) {
-    const res = await fetch(
-      'https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php',
-      {
+    try {
+      const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + token
         },
         body: JSON.stringify({ ids })
-      }
-    );
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return (await res.json()).docs || [];
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      return data.docs || [];
+    } catch (err) {
+      console.error('[TEST-PLEX] Error fetching pedals:', err);
+      resultsDiv.textContent = 'Errore nel fetch del pedale: ' + err.message;
+      return [];
+    }
   }
 
+  async function fetchPresetsByPedal(pedalId) {
+    try {
+      const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESETS_BY_PEDAL.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ pedal_id: pedalId })
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      return data.docs || [];
+    } catch (err) {
+      console.error('[TEST-PLEX] Error fetching presets:', err);
+      return [];
+    }
+  }
+
+  // Fetch pedale principale
   const [pedal] = await fetchPedals([pedalId]);
   if (!pedal) {
     resultsDiv.textContent = 'Pedale non trovato';
     return;
   }
 
+  // Fetch subplex
   let subplexDocs = [];
   if (pedal.subplex?.length) {
-    subplexDocs = await fetchPedals(
-      pedal.subplex.map(s => s.pedal_id)
-    );
+    subplexDocs = await fetchPedals(pedal.subplex.map(s => s.pedal_id));
   }
 
-  /* ================= CATALOG ================= */
+  // Fetch presets
+  const presets = await fetchPresetsByPedal(pedalId);
+  pedal.presets = presets;
 
+  // Catalog globale
   window.catalogMap = {};
   window.catalogMap[pedalId] = pedal;
   subplexDocs.forEach(p => window.catalogMap[p._id] = p);
@@ -149,7 +168,7 @@
 
   const fakeBoard = {
     _id: 'test-board',
-    name: 'TEST',
+    name: 'TEST – ' + pedalId,
     pedals: [{
       pedal_id: pedalId,
       row: 1,
@@ -160,7 +179,12 @@
 
   /* ================= RENDER ================= */
 
-  await renderFullPedalboard(fakeBoard);
+  try {
+    await renderFullPedalboard(fakeBoard);
+  } catch (err) {
+    console.error('Errore render:', err);
+    resultsDiv.textContent = 'Errore nel render: ' + err.message;
+  }
 
 })();
 </script>
