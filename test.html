@@ -15,7 +15,7 @@
 <style>
   body { font-family: sans-serif; padding: 20px; }
   #results { margin-top: 20px; color: #c00; }
-  #pedalboard { width: 100%; min-height: 300px; border: 1px solid #ccc; }
+  #preset { width: 100%; min-height: 300px; border: 1px solid #ccc; }
 </style>
 </head>
 
@@ -33,7 +33,7 @@
 
 <!-- CONTENT -->
 <div id="page-content">
-  <div id="pedalboard"></div>
+  <div id="preset"></div>
   <div id="results"></div>
 </div>
 
@@ -47,7 +47,7 @@
 (async function () {
 
   const resultsDiv = document.getElementById('results');
-  const pedalboardDiv = document.getElementById('pedalboard');
+  const pedalboardDiv = document.getElementById('preset');
   window.resultsDiv = resultsDiv;
 
   /* ================= LOGIN ================= */
