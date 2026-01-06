@@ -7,54 +7,16 @@ let isRestoringPreset = false;
 
 
 
-
-function getSinglePedalIdFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("id"); // es: "Boss Digital Delay DD-8"
-}
-
-
-
-
-
 window.allPedalboards = [];
 
-// $(document).ready(function () {
-//   if (!localStorage.getItem('authToken')) {
-//     console.warn("No auth token found — initializing guest mode.");
-//     initGuestMode();
-//   }
-
-//   renderFullPedalboard();
-// });
-
-
-$(document).ready(async function () {
-
-  const singlePedalId = getSinglePedalIdFromUrl();
-
-  // ===============================
-  // SINGLE PEDAL MODE
-  // ===============================
-  if (singlePedalId) {
-    console.log("Single pedal mode:", singlePedalId);
-
-    await initSinglePedalMode(singlePedalId);
-    return; // ⛔ BLOCCA TUTTO IL RESTO
-  }
-
-  // ===============================
-  // NORMAL MODE
-  // ===============================
+$(document).ready(function () {
   if (!localStorage.getItem('authToken')) {
     console.warn("No auth token found — initializing guest mode.");
     initGuestMode();
-    return;
   }
 
-  initPreset(); // <-- IMPORTANTISSIMO
+  renderFullPedalboard();
 });
-
 
 
 
