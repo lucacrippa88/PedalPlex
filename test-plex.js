@@ -1,24 +1,22 @@
 /**
  * TEST MODE
- * Renderizza una pedalboard fake con UN SOLO pedale passato via URL (?id=)
- * Scarica il pedale dal DB se non è già presente
+ * Renderizza una pedalboard con UN SOLO pedale passato via URL (?id=)
+ * Scarica sempre il pedale dal DB
  */
-
-(function () {
+(async function () {
 
   const pedalId = new URLSearchParams(window.location.search).get('id');
   if (!pedalId) return;
 
   console.log("[TEST-PLEX] Single pedal mode:", pedalId);
 
-  // Flag globale per bloccare il rendering standard
   window.__SINGLE_PEDAL_MODE__ = true;
 
-  // Funzione per fare fetch del pedale dal DB
+  // 1️⃣ Scarica il pedale dal DB
   async function fetchPedalById(id) {
     try {
       const token = localStorage.getItem("authToken") || "";
-      const res = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+      const res = await fetch("/plex/GET_PEDALS_BY_IDS.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,15 +34,8 @@
     }
   }
 
+  // 2️⃣ Renderizza il fake board
   async function init() {
-
-    // 1️⃣ Controlla se il pedale esiste già nel catalogMap
-    if (window.catalogMap && window.catalogMap[pedalId]) {
-      renderFakeBoard(window.catalogMap[pedalId]);
-      return;
-    }
-
-    // 2️⃣ Scarica il pedale dal DB
     const pedal = await fetchPedalById(pedalId);
 
     if (!pedal) {
@@ -57,18 +48,9 @@
       return;
     }
 
-    // 3️⃣ Popola catalogMap con il pedale scaricato
+    // Aggiorna catalogMap così renderFullPedalboard funziona con subplex
     window.catalogMap = window.catalogMap || {};
     window.catalogMap[pedalId] = pedal;
-
-    renderFakeBoard(pedal);
-  }
-
-  function renderFakeBoard(pedal) {
-    const container = document.getElementById('preset');
-    if (!container) return;
-
-    container.innerHTML = '';
 
     const fakeBoard = {
       _id: "fake-board",
@@ -84,11 +66,10 @@
 
     console.log("[TEST-PLEX] Rendering fake board:", fakeBoard);
 
-    // Renderizza il pedale
+    // 🔹 Renderizza con subplex
     renderFullPedalboard(fakeBoard);
   }
 
-  // Avvia
   init();
 
 })();
