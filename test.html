@@ -97,7 +97,7 @@
 
 <script>
 (async function() {
-  const resultsDiv = document.getElementById('results');
+  const resultsDiv = document.getElementById('results') || document.body;
   window.resultsDiv = resultsDiv; // necessario per renderFullPedalboard
 
   // --- LOGIN FLOW ---
@@ -125,7 +125,7 @@
   if(token) {
     try {
       const res = await fetch('https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php', {
-        method:'GET',
+        method:'POST',   // POST obbligatorio!
         headers:{ 'Authorization':'Bearer '+token }
       });
       if(!res.ok) throw new Error('Auth check failed');
@@ -145,12 +145,10 @@
         '<input id="swal-username" class="swal2-input" placeholder="Username">' +
         '<input id="swal-password" type="password" class="swal2-input" placeholder="Password">',
       focusConfirm: false,
-      preConfirm: () => {
-        return [
-          document.getElementById('swal-username').value,
-          document.getElementById('swal-password').value
-        ];
-      }
+      preConfirm: () => [
+        document.getElementById('swal-username').value,
+        document.getElementById('swal-password').value
+      ]
     });
     if(!formValues) {
       resultsDiv.innerHTML = 'Login required to continue.';
@@ -168,44 +166,42 @@
     return;
   }
 
-  async function fetchPedalById(id) {
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Authorization':'Bearer '+token
-      },
-      body: JSON.stringify({ ids: [id] })
-    });
-    if(!res.ok) throw new Error('Failed fetching pedal');
-    const data = await res.json();
-    return data.docs?.[0] || null;
+  // --- FETCH PEDALE VIA POST ---
+  async function fetchPedalsByIds(ids) {
+    try {
+      const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
+        body: JSON.stringify({ ids })
+      });
+      if(!res.ok) throw new Error('HTTP '+res.status+' — '+res.statusText);
+      const data = await res.json();
+      return data.docs || [];
+    } catch(err) {
+      console.error('[TEST-PLEX] Error fetching pedal:', err);
+      resultsDiv.innerHTML = 'Errore nel fetch del pedale: '+err.message;
+      return [];
+    }
   }
 
-  async function fetchSubplexes(pedal) {
-    if(!pedal.subplex || pedal.subplex.length===0) return [];
-    const ids = pedal.subplex.map(sp=>sp.pedal_id);
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+token },
-      body: JSON.stringify({ ids })
-    });
-    if(!res.ok) return [];
-    const data = await res.json();
-    return data.docs || [];
-  }
-
-  const pedalDoc = await fetchPedalById(pedalId);
+  // --- Recupera pedale singolo e subplex ---
+  const pedals = await fetchPedalsByIds([pedalId]);
+  const pedalDoc = pedals[0];
   if(!pedalDoc) {
     resultsDiv.innerHTML = 'Pedale non trovato: '+pedalId;
     return;
   }
 
-  const subplexDocs = await fetchSubplexes(pedalDoc);
+  let subplexDocs = [];
+  if(pedalDoc.subplex && pedalDoc.subplex.length > 0) {
+    const subIds = pedalDoc.subplex.map(sp => sp.pedal_id);
+    subplexDocs = await fetchPedalsByIds(subIds);
+  }
 
+  // --- Catalog map globale ---
   if(!window.catalogMap) window.catalogMap = {};
   window.catalogMap[pedalId] = pedalDoc;
-  subplexDocs.forEach(sp=>window.catalogMap[sp._id]=sp);
+  subplexDocs.forEach(sp => window.catalogMap[sp._id] = sp);
 
   // --- FAKE PEDALBOARD ---
   const fakeBoard = {
@@ -228,5 +224,6 @@
 
 })();
 </script>
+
 </body>
 </html>
