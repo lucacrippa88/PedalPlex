@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Test Single Pedal</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Assumi che renderFullPedalboard.js sia incluso o definito prima -->
+<script src="utils.js"></script>
+<style>
+  body { font-family:sans-serif; padding:20px; }
+  #results { margin-top: 20px; border: 1px solid #ccc; padding: 10px; min-height: 200px; }
+</style>
+</head>
+<body>
+
+<h1>TEST PEDALBOARD SINGLE PEDAL MODE</h1>
+<div id="results">Caricamento pedalboard...</div>
+
+<script>
+(async function() {
+
+  const resultsDiv = document.getElementById('results');
+  window.resultsDiv = resultsDiv; // renderFullPedalboard si aspetta questo
+
+  const pedalId = new URLSearchParams(window.location.search).get('id');
+  if (!pedalId) {
+    resultsDiv.innerHTML = 'Nessun pedale selezionato. Usa ?id=<PEDAL_ID>';
+    return;
+  }
+
+  console.log("[TEST-HTML] Single pedal mode:", pedalId);
+
+  async function fetchPedalById(id) {
+    try {
+      const res = await fetch('GET_PEDALS_BY_IDS.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: [id] })
+      });
+
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      if (!data.docs || data.docs.length === 0) return null;
+      return data.docs[0];
+
+    } catch (err) {
+      console.error("[TEST-HTML] Errore fetching pedal:", err);
+      return null;
+    }
+  }
+
+  async function fetchSubplexes(pedal) {
+    if (!pedal.subplex || pedal.subplex.length === 0) return [];
+    const ids = pedal.subplex.map(sp => sp.pedal_id);
+    const res = await fetch('GET_PEDALS_BY_IDS.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids })
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.docs || [];
+  }
+
+  // Recupera pedale principale
+  const pedalDoc = await fetchPedalById(pedalId);
+  if (!pedalDoc) {
+    Swal.fire({ icon: 'error', title: 'Pedale non trovato', text: pedalId });
+    resultsDiv.innerHTML = 'Pedale non trovato: ' + pedalId;
+    return;
+  }
+
+  // Recupera eventuali subplex
+  let subplexDocs = [];
+  if (pedalDoc.subplex && pedalDoc.subplex.length > 0) {
+    subplexDocs = await fetchSubplexes(pedalDoc);
+  }
+
+  // Inizializza catalogMap
+  if (!window.catalogMap) window.catalogMap = {};
+  window.catalogMap[pedalId] = pedalDoc;
+  subplexDocs.forEach(sp => { window.catalogMap[sp._id] = sp; });
+
+  // Crea fake pedalboard
+  const fakeBoard = {
+    _id: 'fake-board',
+    name: 'TEST – ' + pedalId,
+    pedals: [
+      {
+        pedal_id: pedalId,
+        row: 1,
+        rotation: 0,
+        subplex: pedalDoc.subplex || []
+      }
+    ]
+  };
+
+  console.log("[TEST-HTML] Rendering fake board:", fakeBoard);
+
+  // Renderizza con renderFullPedalboard
+  try {
+    await renderFullPedalboard(fakeBoard);
+    resultsDiv.innerHTML = ''; // pulisci messaggio di caricamento
+  } catch (err) {
+    console.error(err);
+    resultsDiv.innerHTML = 'Errore nel render: ' + err.message;
+  }
+
+})();
+</script>
+
+</body>
+</html>
