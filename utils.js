@@ -1382,7 +1382,7 @@ if (window.location.pathname.endsWith('/gears')) {
   $shareIcon.on('click', (e) => {
     e.stopPropagation();
 
-    const url = `${window.location.origin}${basePath}/gears?id=${encodeURIComponent(pedalId)}`;
+    const url = `${window.location.origin}${basePath}/view-gear?id=${encodeURIComponent(pedalId)}`;
 
     // Costruisci HTML dinamicamente in base alla pagina
     let buttonsHTML = `<button id="copyLink" class="bx--btn bx--btn--secondary">
