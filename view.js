@@ -19,7 +19,7 @@
   //   return data.user;
   // }
 
-  // let token = localStorage.getItem('authToken');
+  let token = localStorage.getItem('authToken');
 
   // if (token) {
   //   try {
