@@ -2,28 +2,18 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Test Single Pedal</title>
+<title>Test Single Pedal Auth</title>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="utils.js"></script>
+<script src="utils.js"></script> <!-- renderFullPedalboard + helpers -->
 <style>
   body { font-family:sans-serif; padding:20px; }
   #results { margin-top: 20px; border: 1px solid #ccc; padding: 10px; min-height: 200px; }
-  .pedal-wrapper { display:inline-block; margin:5px; }
-  .pedal-catalog { display:flex; justify-content:center; align-items:center; font-size:12px; text-align:center; }
-  .pedal-name, .head-name { font-weight:bold; }
-  .preset-container { margin-top:5px; position:relative; }
-  .preset-dropdown-wrapper { display:none; position:absolute; top:30px; left:0; background:#fff; border:1px solid #ccc; z-index:1000; width:200px; }
-  .preset-dropdown-wrapper.is-open { display:block; }
-  .preset-dropdown { list-style:none; padding:5px; margin:0; }
-  .preset-dropdown li { padding:3px 5px; cursor:pointer; }
-  .applied-preset-info { margin-top:5px; display:none; background:#f2f2f2; padding:3px 5px; border-radius:3px; font-size:0.8em; }
-  .bx--tag { margin:2px; padding:2px 5px; border-radius:3px; font-size:0.75em; display:inline-block; }
 </style>
 </head>
 <body>
 
-<h1>TEST PEDALBOARD SINGLE PEDAL MODE</h1>
+<h1>TEST PEDALBOARD SINGLE PEDAL MODE (Auth)</h1>
 <div id="results">Caricamento pedalboard...</div>
 
 <script>
@@ -32,88 +22,98 @@
   const resultsDiv = document.getElementById('results');
   window.resultsDiv = resultsDiv;
 
-  // === MOCK CATALOG (esempio minimo) ===
-  if (!window.catalog) {
-    window.catalog = [
-      {
-        _id: 'pedal1',
-        name: 'Distortion X',
-        type: 'pedal',
-        width: 100,
-        height: 60,
-        color: '#ff0000',
-        "font-color": '#ffffff',
-        "inside-color": '#ff6666',
-        "inside-border": '#000000',
-        logo: '',
-        controls: [
-          { row: [{ label:'Gain', value:5, type:'knob' }] },
-          { row: [{ label:'Level', value:7, type:'knob' }] }
-        ],
-        subplex: [],
-      },
-      {
-        _id: 'pedal2',
-        name: 'Chorus Z',
-        type: 'pedal',
-        width: 90,
-        height: 50,
-        color: '#0000ff',
-        "font-color": '#ffffff',
-        "inside-color": '#6666ff',
-        "inside-border": '#000000',
-        logo: '',
-        controls: [
-          { row: [{ label:'Depth', value:3, type:'knob' }] },
-          { row: [{ label:'Rate', value:4, type:'knob' }] }
-        ],
-        subplex: [],
-      }
-    ];
+  const pedalId = new URLSearchParams(window.location.search).get('id');
+  if (!pedalId) {
+    resultsDiv.innerHTML = 'Nessun pedale selezionato. Usa ?id=<PEDAL_ID>';
+    return;
   }
 
-  // === SINGLE PEDAL MODE ===
-  window.__SINGLE_PEDAL_MODE__ = true;
-
-  // Recupera pedale da query string ?id=pedal1
-  const pedalId = new URLSearchParams(window.location.search).get('id') || 'pedal1';
-
-  function getPedalFromCatalogById(id) {
-    return window.catalog.find(p =>
-      p._id === id || p.name === id || p._id?.normalize() === id.normalize() || p.name?.normalize() === id.normalize()
-    ) || null;
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    resultsDiv.innerHTML = 'Nessun authToken trovato in localStorage. Effettua login prima.';
+    return;
   }
 
-  const pedal = getPedalFromCatalogById(pedalId);
+  // Funzione fetch pedale
+  async function fetchPedalById(id) {
+    try {
+      const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ ids: [id] })
+      });
 
-  if (!pedal) {
-    Swal.fire({ icon: 'error', title: 'Pedale non trovato', text: pedalId });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      if (!data.docs || data.docs.length === 0) return null;
+      return data.docs[0];
+
+    } catch (err) {
+      console.error("Errore fetching pedal:", err);
+      return null;
+    }
+  }
+
+  // Funzione fetch SubPlex
+  async function fetchSubplexes(pedalId) {
+    try {
+      const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESETS_BY_PEDAL.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ pedalId })
+      });
+
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      return data.presets || [];
+    } catch(err) {
+      console.error("Errore fetching SubPlex:", err);
+      return [];
+    }
+  }
+
+  resultsDiv.innerHTML = 'Recupero pedale dal server...';
+
+  // 1️⃣ Recupera pedale principale
+  const pedalDoc = await fetchPedalById(pedalId);
+  if (!pedalDoc) {
     resultsDiv.innerHTML = 'Pedale non trovato: ' + pedalId;
     return;
   }
 
-  // Inizializza catalogMap (necessario per utils.js)
-  window.catalogMap = {};
-  window.catalogMap[pedal._id] = pedal;
+  // 2️⃣ Recupera eventuali SubPlex
+  const subplexDocs = await fetchSubplexes(pedalId);
 
-  // Fake pedalboard
+  // 3️⃣ Inizializza catalogMap
+  window.catalogMap = {};
+  window.catalogMap[pedalId] = pedalDoc;
+  subplexDocs.forEach(sp => { window.catalogMap[sp._id] = sp; });
+
+  // 4️⃣ Crea pedalboard fake
   const fakeBoard = {
     _id: 'fake-board',
     name: 'TEST – ' + pedalId,
     pedals: [
       {
-        pedal_id: pedal._id,
+        pedal_id: pedalId,
         row: 1,
-        rotation: 0
+        rotation: 0,
+        subplex: subplexDocs.map(sp => ({ pedal_id: sp._id }))
       }
     ]
   };
 
-  // Render pedalboard
+  resultsDiv.innerHTML = 'Rendering pedalboard...';
+
   try {
     await renderFullPedalboard(fakeBoard);
-    resultsDiv.innerHTML = ''; // pulisci messaggio caricamento
-    resultsDiv.appendChild(document.getElementById('preset')); // aggiungi il container pedalboard
+    resultsDiv.innerHTML = ''; // pulisci messaggio di caricamento
   } catch (err) {
     console.error(err);
     resultsDiv.innerHTML = 'Errore nel render: ' + err.message;
@@ -121,9 +121,6 @@
 
 })();
 </script>
-
-<!-- Container necessario per renderFullPedalboard -->
-<div id="preset"></div>
 
 </body>
 </html>
