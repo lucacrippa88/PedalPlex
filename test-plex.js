@@ -1,7 +1,5 @@
 /**
- * TEST MODE
- * Renderizza una pedalboard con UN SOLO pedale passato via URL (?id=)
- * Scarica sempre il pedale dal DB
+ * TEST MODE – Render single pedal from URL
  */
 (async function () {
 
@@ -10,48 +8,69 @@
 
   console.log("[TEST-PLEX] Single pedal mode:", pedalId);
 
-  window.__SINGLE_PEDAL_MODE__ = true;
-
-  // 1️⃣ Scarica il pedale dal DB
+  /**
+   * Funzione per fare POST a GET_PEDALS_BY_IDS.php e recuperare il pedale
+   */
   async function fetchPedalById(id) {
     try {
-      const token = localStorage.getItem("authToken") || "";
+      const token = localStorage.getItem("authToken") || ""; // opzionale
       const res = await fetch("/plex/GET_PEDALS_BY_IDS.php", {
-        method: "POST",
+        method: "POST", // POST obbligatorio
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
+          "Authorization": token ? "Bearer " + token : ""
         },
         body: JSON.stringify({ ids: [id] })
       });
+
       if (!res.ok) throw new Error("HTTP " + res.status);
+
       const data = await res.json();
-      if (!data.docs || data.docs.length === 0) return null;
+      if (!data.docs || data.docs.length === 0) {
+        console.warn("[TEST-PLEX] Pedal not found in DB:", id);
+        return null;
+      }
       return data.docs[0];
+
     } catch (err) {
       console.error("[TEST-PLEX] Error fetching pedal:", err);
       return null;
     }
   }
 
-  // 2️⃣ Renderizza il fake board
-  async function init() {
-    const pedal = await fetchPedalById(pedalId);
+  /**
+   * Aspetta che resultsDiv sia pronto
+   */
+  function waitForResultsDiv(cb) {
+    const check = setInterval(() => {
+      if (window.resultsDiv) {
+        clearInterval(check);
+        cb();
+      }
+    }, 50);
+  }
 
-    if (!pedal) {
+  /**
+   * Main logic
+   */
+  waitForResultsDiv(async () => {
+
+    // Scarica pedale dal DB
+    const pedalDoc = await fetchPedalById(pedalId);
+    if (!pedalDoc) {
       Swal.fire({
-        icon: 'error',
-        title: 'Missing gear on Rig',
-        text: `Pedale non trovato: ${pedalId}`,
-        confirmButtonText: 'OK'
+        icon: "error",
+        title: "Missing gear on Rig",
+        text: pedalId
       });
       return;
     }
 
-    // Aggiorna catalogMap così renderFullPedalboard funziona con subplex
-    window.catalogMap = window.catalogMap || {};
-    window.catalogMap[pedalId] = pedal;
+    // Inizializza catalogMap se non esiste
+    if (!window.catalogMap) window.catalogMap = {};
+    window.catalogMap[pedalId] = pedalDoc;
 
+    // Crea fake board con il pedale richiesto
     const fakeBoard = {
       _id: "fake-board",
       name: `TEST – ${pedalId}`,
@@ -66,10 +85,9 @@
 
     console.log("[TEST-PLEX] Rendering fake board:", fakeBoard);
 
-    // 🔹 Renderizza con subplex
-    renderFullPedalboard(fakeBoard);
-  }
+    // Renderizza la pedalboard (la tua funzione globale)
+    await renderFullPedalboard(fakeBoard);
 
-  init();
+  });
 
 })();
