@@ -1997,7 +1997,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
               </div>
 
 
-              <button style="display:none" class="new-subplex-btn bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only">
+              <button disabled style="display:none" class="new-subplex-btn bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only">
                 <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
                   <path d="M17 15L17 8 15 8 15 15 8 15 8 17 15 17 15 24 17 24 17 17 24 17 24 15z"></path>
                 </svg>
@@ -2273,7 +2273,7 @@ async function buildPresetDropdown($ul, pedalId) {
 
   const token = localStorage.getItem("authToken");
   if (!token) {
-    $ul.html("<li class='error'>Not authenticated</li>");
+    $ul.html("<li class='error'>Login to see all SubPlexes</li>");
     return;
   }
 
