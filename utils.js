@@ -1980,7 +1980,9 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
 
         // ============== AI DROPDOWN PRESET ===============
-        if (window.currentUser && window.currentUser.role === "admin") {
+        // if (window.currentUser && window.currentUser.role === "admin") {
+        const isLoggedIn = !!window.currentUser;
+        if (isLoggedIn) {
 
           const $presetContainer = $(`
             <div class="preset-container">
@@ -2071,7 +2073,30 @@ async function renderFullPedalboard(pedalboardOverride = null) {
           });
 
 
+        } else {
+          // Guest mode: show locked preset container
+          const $presetContainer = $(`
+            <div class="preset-container preset-locked">
+              <svg class="preset-icon disabled"
+                focusable="false"
+                preserveAspectRatio="xMidYMid meet"
+                fill="currentColor"
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6H22V8H4zM4 12H22V14H4zM4 18H16V20H4zM21 18L28 23 21 28 21 18z"></path>
+              </svg>
+
+              <div class="preset-locked-label">
+                Login to see all SubPlexes
+              </div>
+            </div>
+          `);
+
+          $wrapper.append($presetContainer);
         }
+
         // ================================================
 
 
@@ -2325,13 +2350,22 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
 
 
   // Recupera il pedale di default dal catalogo
-  const defaultPedal = window.catalog.find(
-    p => p._id === pedalId || p.name === pedalId
-  );
+  // const defaultPedal = window.catalog.find(
+  //   p => p._id === pedalId || p.name === pedalId
+  // );
+  // if (!defaultPedal) {
+  //   console.warn("Pedal not found in catalog:", pedalId);
+  //   return;
+  // }
+  const defaultPedal =
+    window.catalogMap?.[pedalId] ||
+    window.catalogMap?.[String(pedalId).trim()];
+
   if (!defaultPedal) {
-    console.warn("Pedal not found in catalog:", pedalId);
+    console.warn("Pedal not found in catalogMap:", pedalId);
     return;
   }
+
 
   // Deep clone del pedale di catalogo
   const pedalClone = JSON.parse(JSON.stringify(defaultPedal));
