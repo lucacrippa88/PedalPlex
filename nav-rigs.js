@@ -29,13 +29,22 @@ function initNavPedalboard(userRole) {
                style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 200px; display:none;" 
                aria-label="Filter pedals"/>
 
-        <button id="saveBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Rig"
+        <button id="saveBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Rig"
                 style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
           </svg>
           Save
         </button>
+
+        <button id="saveBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Save Rig"
+                style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
+          </svg>
+        </button>
+
+        
 
         <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Rig"
                 style="display: flex; align-items: center; gap: 0.5rem;">
@@ -47,6 +56,17 @@ function initNavPedalboard(userRole) {
           </svg>
           Create Rig
         </button>
+
+        <button id="createBtnMobile" class="showMobile bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Create New Rig"
+                style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <g transform="rotate(90 16 16)">
+              <path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"></path>
+              <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
+            </g>
+          </svg>
+        </button>
+
       </div>
     </header>
   `;
@@ -329,8 +349,15 @@ window.addEventListener('resize', positionDropdown);
         <path d='M24.8008 12.1362a8.8694 8.8694 0 00-.9795-2.5434L30 3.4142 28.5872 2 2 28.5872 3.4142 30l5-5H23.5a6.4974 6.4974 0 001.3008-12.8638zM23.5 23H10.4141L22.3418 11.0723a6.9049 6.9049 0 01.6006 2.0708l.0986.812.8154.0639A4.4975 4.4975 0 0123.5 23zM4.2964 23.4487l1.4313-1.4311A4.4774 4.4774 0 018.144 14.019l.8155-.0639.0991-.812a6.9867 6.9867 0 0110.63-5.0865l1.4431-1.4428A8.9859 8.9859 0 007.2 12.1362 6.4891 6.4891 0 004.2964 23.4487z'/>
       </svg> Offline Save
     `);
+    $("#saveBtnMobile").html(`
+      <svg focusable='false' preserveAspectRatio='xMidYMid meet'
+           xmlns='http://www.w3.org/2000/svg' fill='currentColor'
+           width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'>
+        <path d='M24.8008 12.1362a8.8694 8.8694 0 00-.9795-2.5434L30 3.4142 28.5872 2 2 28.5872 3.4142 30l5-5H23.5a6.4974 6.4974 0 001.3008-12.8638zM23.5 23H10.4141L22.3418 11.0723a6.9049 6.9049 0 01.6006 2.0708l.0986.812.8154.0639A4.4975 4.4975 0 0123.5 23zM4.2964 23.4487l1.4313-1.4311A4.4774 4.4774 0 018.144 14.019l.8155-.0639.0991-.812a6.9867 6.9867 0 0110.63-5.0865l1.4431-1.4428A8.9859 8.9859 0 007.2 12.1362 6.4891 6.4891 0 004.2964 23.4487z'/>
+      </svg>
+    `);
 
-    $("#saveBtn").on("click", function() {
+    $("#saveBtn, #saveBtnMobile").on("click", function() {
       if (typeof saveGuestPedalboard === "function") saveGuestPedalboard();
       if (window.allPedalboards.length === 1) setupPedalboardDropdownAndRender();
       updateFilterVisibility();
@@ -348,6 +375,8 @@ window.addEventListener('resize', positionDropdown);
     $("#loginBtn").on("click", () => window.location.href = "login");
   } else {
     $("#saveBtn").on("click", function() { if (typeof savePedalboard === "function") savePedalboard(); });
+    $("#saveBtnMobile").on("click", function() { if (typeof savePedalboard === "function") savePedalboard(); });
     $("#createBtn").on("click", function() { if (typeof createNewPedalboard === "function") createNewPedalboard(); });
+    $("#createBtnMobile").on("click", function() { if (typeof createNewPedalboard === "function") createNewPedalboard(); });
   }
 }

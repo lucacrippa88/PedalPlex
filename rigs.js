@@ -591,16 +591,54 @@ function openEditPedalModal(pbPedal) {
 }
 
 // Save pedalboard (both logged-in and guest users)
+// function savePedalboard() {
+//   const saveBtn = document.getElementById('saveBtn');
+//   const userId = currentUser?.userid;
+
+//   if (saveBtn) {
+//     saveBtn.classList.add('cds--btn', 'cds--btn--primary'); 
+//   }
+
+//   if (!window.allPedalboards || !Array.isArray(window.allPedalboards) || selectedBoardIndex === undefined || selectedBoardIndex < 0) {
+//     if (saveBtn) saveBtn.disabled = true;
+//     Swal.fire({
+//       icon: 'error',
+//       title: 'Error',
+//       text: 'No Rig selected!',
+//       confirmButtonText: 'Ok',
+//       customClass: {
+//         confirmButton: "bx--btn bx--btn--primary",
+//       }
+//     });
+//     return;
+//   }
+
+//   if (saveBtn) saveBtn.disabled = false;
+
 function savePedalboard() {
-  const saveBtn = document.getElementById('saveBtn');
-  const userId = currentUser?.userid;
 
-  if (saveBtn) {
-    saveBtn.classList.add('cds--btn', 'cds--btn--primary'); 
-  }
+  const saveBtns = [
+    document.getElementById('saveBtn'),
+    document.getElementById('saveBtnMobile')
+  ].filter(Boolean); // rimuove null
 
-  if (!window.allPedalboards || !Array.isArray(window.allPedalboards) || selectedBoardIndex === undefined || selectedBoardIndex < 0) {
-    if (saveBtn) saveBtn.disabled = true;
+  const userId = window.currentUser?.userid;
+
+  // Applica stile
+  saveBtns.forEach(btn => {
+    btn.classList.add('cds--btn', 'cds--btn--primary');
+  });
+
+  const invalidState =
+    !window.allPedalboards ||
+    !Array.isArray(window.allPedalboards) ||
+    selectedBoardIndex === undefined ||
+    selectedBoardIndex < 0;
+
+  if (invalidState) {
+
+    saveBtns.forEach(btn => btn.disabled = true);
+
     Swal.fire({
       icon: 'error',
       title: 'Error',
@@ -610,10 +648,11 @@ function savePedalboard() {
         confirmButton: "bx--btn bx--btn--primary",
       }
     });
+
     return;
   }
 
-  if (saveBtn) saveBtn.disabled = false;
+  saveBtns.forEach(btn => btn.disabled = false);
 
   window.allPedalboards[selectedBoardIndex] = structuredClone(window.pedalboard);
 
