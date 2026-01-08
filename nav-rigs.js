@@ -15,7 +15,7 @@ function initNavPedalboard(userRole) {
 
         <!-- Hide by default -->
         <button id="toggleFilterBtn" class="" aria-label="Toggle search" 
-                style="background:none; border:none; cursor:pointer; padding:4px; display:none;">
+                style="background:none; border:none; cursor:pointer; padding:4px;">
           <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
               viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
               <circle cx="11" cy="11" r="7"></circle>
