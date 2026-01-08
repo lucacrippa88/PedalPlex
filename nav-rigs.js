@@ -57,16 +57,6 @@ function initNavPedalboard(userRole) {
           Create Rig
         </button>
 
-        <button id="createBtnMobile" class="showMobile bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Create New Rig"
-                style="display: flex; align-items: center; gap: 0.5rem;">
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <g transform="rotate(90 16 16)">
-              <path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"></path>
-              <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
-            </g>
-          </svg>
-        </button>
-
       </div>
     </header>
   `;
@@ -377,6 +367,5 @@ window.addEventListener('resize', positionDropdown);
     $("#saveBtn").on("click", function() { if (typeof savePedalboard === "function") savePedalboard(); });
     $("#saveBtnMobile").on("click", function() { if (typeof savePedalboard === "function") savePedalboard(); });
     $("#createBtn").on("click", function() { if (typeof createNewPedalboard === "function") createNewPedalboard(); });
-    $("#createBtnMobile").on("click", function() { if (typeof createNewPedalboard === "function") createNewPedalboard(); });
   }
 }
