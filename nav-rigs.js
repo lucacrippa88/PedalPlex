@@ -14,7 +14,7 @@ function initNavPedalboard(userRole) {
         <span id="addGearsTrigger" class="showDesktop" style="cursor:pointer; font-size: 0.75rem; opacity: 0.7;">Add gears</span>
 
         <!-- Hide by default -->
-        <button id="toggleFilterBtn" class="showDesktop" aria-label="Toggle search" 
+        <button id="toggleFilterBtn" class="" aria-label="Toggle search" 
                 style="background:none; border:none; cursor:pointer; padding:4px; display:none;">
           <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
               viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
