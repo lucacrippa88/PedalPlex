@@ -124,8 +124,19 @@
 
       <!-- Link support PayPal a sinistra -->
       <a href="https://paypal.me/lucacrippa88" target="_blank" 
-        class="bx--btn bx--btn--tertiary bx--btn--sm" 
-        style="display: flex; align-items: center; gap: 4px;">
+        class="bx--btn bx--btn--ghost bx--btn--sm" 
+        style="position: fixed;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                background-color: #0070ba; /* blu PayPal */
+                color: #a3a3a3;
+                padding: 8px 12px;
+                border-radius: 4px;
+                font-family: sans-serif;
+                text-decoration: none;
+                font-weight: bold;
+                z-index: 1000;">
         <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor">
           <path d="M16 0C7.163 0 0 7.163 0 16s7.163 16 16 16 16-7.163 16-16S24.837 0 16 0zm0 29C8.268 29 3 23.732 3 16S8.268 3 16 3s13 5.268 13 13-5.268 13-13 13z"/>
           <path d="M12 10h4v12h-4z"/>
