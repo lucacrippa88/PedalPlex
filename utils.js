@@ -2,7 +2,7 @@ const editMode = window.isEditMode
 
 function getBasePath() {
   const parts = window.location.pathname.split('/').filter(Boolean);
-  // se sei su /PedalPlex/gears → base = /PedalPlex
+  // se sei su gears → base = /PedalPlex
   // se sei su /gears → base = ""
   return parts.length > 1 ? '/' + parts[0] : '';
 }

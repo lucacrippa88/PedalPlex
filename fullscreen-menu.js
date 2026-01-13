@@ -113,7 +113,7 @@ window.fullscreenMenuHtml = `
   </div>
 
   <div class="fullscreen-nav">
-    <a href='/PedalPlex/' class="pedalplex-logo-fullscreen-menu"></a><br>
+    <a href='' class="pedalplex-logo-fullscreen-menu"></a><br>
     <a href="plexes">Edit your Plexes</a>
     <a href="rigs">Manage Rigs</a>
     <a href="gears">View Gears catalog</a>
@@ -236,7 +236,7 @@ $(document).ready(function () {
           localStorage.removeItem('authToken');
           window.currentUser = { role: 'guest', username: 'guest' }; // reset state
           updateFullscreenMenu(); // immediately update buttons
-          window.location.href = '/PedalPlex/';
+          window.location.href = 'https://pedalplex.com';
         }
       });
     }
