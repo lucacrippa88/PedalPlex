@@ -1,5 +1,7 @@
 // nav-catalog.js
 
+window.catalogInitialized = false;
+
 // ========================== UTILITY ==========================
 function getPedalIdFromURL() {
   const params = new URLSearchParams(window.location.search);
@@ -206,18 +208,102 @@ function initNavCatalog(userRole) {
 }
 
 // ========================== CATALOG ==========================
+// function initCatalog(userRole) {
+//   if (window.singlePedalMode) return;
+//   const resultsDiv = $("#catalog");
+//   resultsDiv.empty();
+
+//   const roleParam = userRole === "guest" ? "guest" : userRole;
+//   const usernameParam = window.currentUser?.username || "";
+//   const token = localStorage.getItem("authToken");
+
+//   const globalSpinner = $(`
+//     <div id="catalog-global-loader" class="bx--loading-overlay"
+//          style="position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); z-index:9999; width:120px; height:120px; display:flex; justify-content:center; align-items:center;">
+//       <div class="bx--loading" role="status">
+//         <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+//           <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+//           <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+//         </svg>
+//       </div>
+//     </div>
+//   `);
+//   resultsDiv.append(globalSpinner);
+
+//   let fullRendered = false;
+
+//   fetch(`https://api.pedalplex.com/GET_CATALOG_METADATA.php?role=${roleParam}&username=${usernameParam}`, {
+//     headers: { Authorization: token ? "Bearer " + token : "" }
+//   })
+//     .then(r => r.json())
+//     .then(pedals => {
+//       if (window.singlePedalMode || fullRendered) return;
+//       $("#catalog-global-loader").remove();
+
+//       pedals.forEach(pedal => {
+//         const $pedalDiv = renderPedal(pedal, userRole);
+//         $pedalDiv.attr("data-author", pedal.author || "");
+//         $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+
+//         const $loaderInline = $(`
+//           <div class="loader-inline-container">
+//             <div class="loader-bar"></div>
+//           </div>
+//         `);
+//         $pedalDiv.append($loaderInline);
+//         resultsDiv.append($pedalDiv);
+//       });
+
+//       updatePedalCounts();
+//       if (userRole !== "guest") setupEditPedalHandler(pedals);
+//     })
+//     .catch(err => {
+//       console.error("Error metadata:", err);
+//       $("#catalog-global-loader").remove();
+//       resultsDiv.html(`<p style="color:red;">Error loading metadata: ${err.message}</p>`);
+//     });
+
+//   fetch(`https://api.pedalplex.com/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
+//     headers: { Authorization: token ? "Bearer " + token : "" }
+//   })
+//     .then(r => r.json())
+//     .then(fullPedals => {
+//       if (window.singlePedalMode) return;
+
+//       fullRendered = true;
+//       resultsDiv.empty();
+
+//       fullPedals.forEach(pedal => {
+//         const $div = renderPedal(pedal, userRole);
+//         $div.attr("data-author", pedal.author || "");
+//         $div.attr("data-published", (pedal.published || "draft").toLowerCase());
+//         if (pedal.published === "template") $div.hide();
+//         resultsDiv.append($div);
+//       });
+
+//       updatePedalCounts();
+//       if (userRole !== "guest") setupEditPedalHandler(fullPedals);
+//     })
+//     .catch(err => console.error("Error full fetch:", err));
+// }
+
 function initCatalog(userRole) {
-  if (window.singlePedalMode) return;
+  // Evita duplicazioni
+  if (window.singlePedalMode || window.catalogInitialized) return;
+  window.catalogInitialized = true;
+
   const resultsDiv = $("#catalog");
   resultsDiv.empty();
 
+  const token = localStorage.getItem("authToken");
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
-  const token = localStorage.getItem("authToken");
 
+  // Spinner globale
   const globalSpinner = $(`
     <div id="catalog-global-loader" class="bx--loading-overlay"
-         style="position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); z-index:9999; width:120px; height:120px; display:flex; justify-content:center; align-items:center;">
+         style="position: fixed; top:50%; left:50%; transform: translate(-50%, -50%);
+                z-index:9999; width:120px; height:120px; display:flex; justify-content:center; align-items:center;">
       <div class="bx--loading" role="status">
         <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
           <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
@@ -228,21 +314,20 @@ function initCatalog(userRole) {
   `);
   resultsDiv.append(globalSpinner);
 
-  let fullRendered = false;
-
+  // Fetch metadata (per mostrare loader e info iniziali)
   fetch(`https://api.pedalplex.com/GET_CATALOG_METADATA.php?role=${roleParam}&username=${usernameParam}`, {
     headers: { Authorization: token ? "Bearer " + token : "" }
   })
     .then(r => r.json())
     .then(pedals => {
-      if (window.singlePedalMode || fullRendered) return;
-      $("#catalog-global-loader").remove();
+      if (window.singlePedalMode) return;
 
       pedals.forEach(pedal => {
         const $pedalDiv = renderPedal(pedal, userRole);
         $pedalDiv.attr("data-author", pedal.author || "");
         $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
 
+        // Loader inline per ogni pedal
         const $loaderInline = $(`
           <div class="loader-inline-container">
             <div class="loader-bar"></div>
@@ -261,6 +346,7 @@ function initCatalog(userRole) {
       resultsDiv.html(`<p style="color:red;">Error loading metadata: ${err.message}</p>`);
     });
 
+  // Fetch catalogo completo (sovrascrive loader con i dati reali)
   fetch(`https://api.pedalplex.com/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
     headers: { Authorization: token ? "Bearer " + token : "" }
   })
@@ -268,7 +354,7 @@ function initCatalog(userRole) {
     .then(fullPedals => {
       if (window.singlePedalMode) return;
 
-      fullRendered = true;
+      $("#catalog-global-loader").remove(); // rimuove spinner globale
       resultsDiv.empty();
 
       fullPedals.forEach(pedal => {
@@ -284,6 +370,7 @@ function initCatalog(userRole) {
     })
     .catch(err => console.error("Error full fetch:", err));
 }
+
 
 // ========================== UPDATE COUNTS ==========================
 function updatePedalCounts(activeFilter = null) {
