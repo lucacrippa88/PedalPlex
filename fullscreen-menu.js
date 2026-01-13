@@ -113,7 +113,7 @@ window.fullscreenMenuHtml = `
   </div>
 
   <div class="fullscreen-nav">
-    <a href='' class="pedalplex-logo-fullscreen-menu"></a><br>
+    <a href='/' class="pedalplex-logo-fullscreen-menu"></a><br>
     <a href="plexes">Edit your Plexes</a>
     <a href="rigs">Manage Rigs</a>
     <a href="gears">View Gears catalog</a>
