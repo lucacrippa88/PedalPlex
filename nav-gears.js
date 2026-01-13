@@ -288,7 +288,6 @@ function initNavCatalog(userRole) {
 // }
 
 function initCatalog(userRole) {
-  // Evita duplicazioni
   if (window.singlePedalMode || window.catalogInitialized) return;
   window.catalogInitialized = true;
 
@@ -299,7 +298,7 @@ function initCatalog(userRole) {
   const roleParam = userRole === "guest" ? "guest" : userRole;
   const usernameParam = window.currentUser?.username || "";
 
-  // Spinner globale
+  // Spinner globale iniziale
   const globalSpinner = $(`
     <div id="catalog-global-loader" class="bx--loading-overlay"
          style="position: fixed; top:50%; left:50%; transform: translate(-50%, -50%);
@@ -314,13 +313,16 @@ function initCatalog(userRole) {
   `);
   resultsDiv.append(globalSpinner);
 
-  // Fetch metadata (per mostrare loader e info iniziali)
+  // --- FETCH METADATA ---
   fetch(`https://api.pedalplex.com/GET_CATALOG_METADATA.php?role=${roleParam}&username=${usernameParam}`, {
     headers: { Authorization: token ? "Bearer " + token : "" }
   })
     .then(r => r.json())
     .then(pedals => {
       if (window.singlePedalMode) return;
+
+      // Rimuove lo spinner globale subito dopo metadata
+      $("#catalog-global-loader").remove();
 
       pedals.forEach(pedal => {
         const $pedalDiv = renderPedal(pedal, userRole);
@@ -346,7 +348,7 @@ function initCatalog(userRole) {
       resultsDiv.html(`<p style="color:red;">Error loading metadata: ${err.message}</p>`);
     });
 
-  // Fetch catalogo completo (sovrascrive loader con i dati reali)
+  // --- FETCH CATALOGO COMPLETO (in parallelo) ---
   fetch(`https://api.pedalplex.com/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
     headers: { Authorization: token ? "Bearer " + token : "" }
   })
@@ -354,15 +356,16 @@ function initCatalog(userRole) {
     .then(fullPedals => {
       if (window.singlePedalMode) return;
 
-      $("#catalog-global-loader").remove(); // rimuove spinner globale
-      resultsDiv.empty();
-
-      fullPedals.forEach(pedal => {
-        const $div = renderPedal(pedal, userRole);
-        $div.attr("data-author", pedal.author || "");
-        $div.attr("data-published", (pedal.published || "draft").toLowerCase());
-        if (pedal.published === "template") $div.hide();
-        resultsDiv.append($div);
+      // Sovrascrive loader inline con i dati completi
+      $(".pedal-catalog").each(function () {
+        const pedalId = $(this).data("pedal-id");
+        const fullPedal = fullPedals.find(p => p._id === pedalId);
+        if (fullPedal) {
+          $(this).replaceWith(renderPedal(fullPedal, userRole)
+            .attr("data-author", fullPedal.author || "")
+            .attr("data-published", (fullPedal.published || "draft").toLowerCase())
+          );
+        }
       });
 
       updatePedalCounts();
@@ -370,6 +373,7 @@ function initCatalog(userRole) {
     })
     .catch(err => console.error("Error full fetch:", err));
 }
+
 
 
 // ========================== UPDATE COUNTS ==========================
