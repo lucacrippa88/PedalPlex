@@ -31,7 +31,6 @@ function initPedalboard(userRole) {
           No Rigs found. Create a new one!
         </p>
         <button id="createBtn" class="bx--btn bx--btn--secondary">Create a Rig</button>
-        <span class="showMobile">Visit the desktop website to create Rigs.</span>
       </div>`;
     window.allPedalboards = [];
     return;

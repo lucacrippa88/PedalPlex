@@ -118,9 +118,6 @@ window.fullscreenMenuHtml = `
     <a href="rigs">Manage Rigs</a>
     <a href="gears">View Gears catalog</a>
     <br><br>
-    <span class="showMobile" style="color:#161616">
-      Visit desktop website<br>to access all editing features
-    </span>
     <span id="guestLoginMessage" style="color:#161616; font-size:0.875rem; display:none;">
       Login to access all features
     </span>

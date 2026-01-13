@@ -317,16 +317,7 @@ function updatePedalCounts(activeFilter = null) {
   });
 
   const reviewingBadge = statusCounts.reviewing > 0
-    ? `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing" style="
-        background:#ff0000;
-        color:white;
-        border-radius:50%;
-        padding:1px 5px;
-        font-size:0.75rem;
-        font-weight:bold;
-        min-width:18px;
-        text-align:center;
-      ">${statusCounts.reviewing}</span>`
+    ? `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing" style="background:#ff0000; color:white; border-radius:50%; padding:1px 5px; font-size:0.75rem; font-weight:bold; min-width:18px; text-align:center;">${statusCounts.reviewing}</span>`
     : `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">0</span>`;
 
   let countsHtml =
