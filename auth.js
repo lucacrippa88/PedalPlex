@@ -7,6 +7,7 @@ let isLogin = true;
       $('#formTitle').text(isLogin ? 'Login' : 'Register');
       $('#submitBtn').text(isLogin ? 'Login' : 'Register');
       $('#email').toggle(!isLogin);
+      $('#recaptchaContainer').toggle(!isLogin);
       $('#toggleText').html(
         isLogin
           ? `Don't have an account? <a href="#" id="toggleForm">Register here</a>`
@@ -32,20 +33,32 @@ $('#authForm').on('submit', function (e) {
 
   const data = isLogin ? { username: username, password: password } : { username: username, password: password, email: email };
 
+
+  // --- aggiungi controllo reCAPTCHA solo per registrazione ---
+  if (!isLogin) {
+    const recaptchaResponse = grecaptcha.getResponse();
+    if (!recaptchaResponse) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Verification required',
+        text: 'Please complete the reCAPTCHA to register.'
+      });
+      return; // blocca l’invio se non completato
+    }
+    data['recaptcha'] = recaptchaResponse; // invia token al server
+  }
+
   $.ajax({
     url: endpoint,
     method: 'POST',
     contentType: 'application/json',
     dataType: 'json',
     data: JSON.stringify(data),
-    // Remove this since no cookies anymore:
-    // xhrFields: { withCredentials: true },
     success: function (res) {
       console.log('Login response:', res);
 
       if (isLogin && res.token) {
-        // Store JWT token in localStorage
-        localStorage.setItem('authToken', res.token);
+        localStorage.setItem('authToken', res.token); // Store JWT token in localStorage
 
         Swal.fire({
           icon: 'success',
