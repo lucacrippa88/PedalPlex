@@ -148,7 +148,7 @@ function initSinglePedalView(pedalId, userRole) {
   const cleanId = decodeURIComponent(pedalId.trim());
 
   // Fetch pedal singolo
-  fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+  fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -230,7 +230,7 @@ function initCatalog(userRole) {
 
   let fullRendered = false;
 
-  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_METADATA.php?role=${roleParam}&username=${usernameParam}`, {
+  fetch(`https://api.pedalplex.com/GET_CATALOG_METADATA.php?role=${roleParam}&username=${usernameParam}`, {
     headers: { Authorization: token ? "Bearer " + token : "" }
   })
     .then(r => r.json())
@@ -261,7 +261,7 @@ function initCatalog(userRole) {
       resultsDiv.html(`<p style="color:red;">Error loading metadata: ${err.message}</p>`);
     });
 
-  fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
+  fetch(`https://api.pedalplex.com/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
     headers: { Authorization: token ? "Bearer " + token : "" }
   })
     .then(r => r.json())

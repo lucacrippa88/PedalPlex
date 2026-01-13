@@ -85,7 +85,7 @@ async function initPreset() {
   // 3️⃣ Scarica SOLO i pedali necessari
   if (ids.length > 0) {
     try {
-      const res = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+      const res = await fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids })
@@ -118,7 +118,7 @@ async function initPreset() {
   document.getElementById("pageLoader").style.display = "flex";
 
   // 1️⃣ Scarica tutte le pedaliere per utente
-  fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
+  fetch('https://api.pedalplex.com/GET_PEDALBOARD.php', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -146,7 +146,7 @@ async function initPreset() {
     // 3️⃣ Scarica solo i pedali necessari
     let catalog = [];
     if (idsArray.length > 0) {
-      const pedalRes = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+      const pedalRes = await fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids: idsArray })
@@ -298,7 +298,7 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
   const token = localStorage.getItem('authToken');
   
   try {
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PRESET.php', {
+    const res = await fetch('https://api.pedalplex.com/GET_PRESET.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -499,7 +499,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
     const token = localStorage.getItem('authToken');
 
-    const response = await fetch("https://www.cineteatrosanluigi.it/plex/DELETE_PRESET.php", {
+    const response = await fetch("https://api.pedalplex.com/DELETE_PRESET.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -659,7 +659,7 @@ async function savePreset(presetId, updateData) {
     ...updateData
   };
   try {
-    const res = await fetch("https://www.cineteatrosanluigi.it/plex/UPDATE_PRESET.php", {
+    const res = await fetch("https://api.pedalplex.com/UPDATE_PRESET.php", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -1023,7 +1023,7 @@ async function createPreset() {
   try {
     const token = localStorage.getItem('authToken'); // JWT token
 
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
+    const res = await fetch('https://api.pedalplex.com/CREATE_PRESET.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1160,7 +1160,7 @@ async function movePresetToFolder(presetId, targetFolderId) {
 
       const token = localStorage.getItem('authToken');
       updatePromises.push(
-        fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+        fetch('https://api.pedalplex.com/UPDATE_FOLDER.php', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -1256,7 +1256,7 @@ async function assignPresetToFolder(presetId, folderId) {
 
   try {
     const token = localStorage.getItem('authToken');
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+    const res = await fetch('https://api.pedalplex.com/UPDATE_FOLDER.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -1397,7 +1397,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
 async function createPresetOnServer(presetData) {
   try {
     const token = localStorage.getItem('authToken');
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PRESET.php', {
+    const res = await fetch('https://api.pedalplex.com/CREATE_PRESET.php', {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1543,7 +1543,7 @@ async function initGuestMode() {
   if (pedalIds.length > 0) {
     console.log("Fetching gears via GET_PEDALS_BY_IDS (guest):", pedalIds);
 
-    const response = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+    const response = await fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ids: pedalIds })

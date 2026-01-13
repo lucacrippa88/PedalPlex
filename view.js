@@ -6,7 +6,7 @@
   // /* ================= LOGIN ================= */
   // async function doLogin(username, password) {
   //   const res = await fetch(
-  //     'https://www.cineteatrosanluigi.it/plex/USER_LOGIN.php',
+  //     'https://api.pedalplex.com/USER_LOGIN.php',
   //     {
   //       method: 'POST',
   //       headers: { 'Content-Type': 'application/json' },
@@ -24,7 +24,7 @@
   // if (token) {
   //   try {
   //     const res = await fetch(
-  //       'https://www.cineteatrosanluigi.it/plex/USER_CHECK_AUTH_JWT.php',
+  //       'https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php',
   //       {
   //         method: 'POST',
   //         headers: { 'Authorization': 'Bearer ' + token }
@@ -64,7 +64,7 @@
   async function fetchPedals(ids) {
     try {
       const res = await fetch(
-        'https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php',
+        'https://api.pedalplex.com/GET_PEDALS_BY_IDS.php',
         {
           method: 'POST',
           headers: {

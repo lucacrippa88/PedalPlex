@@ -161,12 +161,12 @@ $("#pedalFilterInput").on("input", debounce(async function() {
     positionDropdown();
 
     try {
-        // const res = await fetch(`https://www.cineteatrosanluigi.it/plex/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`);
+        // const res = await fetch(`https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`);
         // const data = await res.json();
         const authToken = localStorage.getItem('authToken');
 
         const res = await fetch(
-            `https://www.cineteatrosanluigi.it/plex/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`,
+            `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -252,7 +252,7 @@ $("#pedalFilterInput").on("input", debounce(async function() {
                 let pedalData = window.catalog.find(p => p._id === pedal._id);
                 if (!pedalData) {
                     try {
-                        const postRes = await fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+                        const postRes = await fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ ids: [pedal._id] })

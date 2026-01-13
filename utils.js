@@ -869,7 +869,7 @@ function setupEditPedalHandler(pedals) {
                   const newPedalData = dupResult.value;
                   const token = localStorage.getItem('authToken');
 
-                  fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_CATALOG.php', {
+                  fetch('https://api.pedalplex.com/UPDATE_CATALOG.php', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
@@ -944,7 +944,7 @@ function setupEditPedalHandler(pedals) {
           Swal.showLoading();
           const token = localStorage.getItem('authToken');
 
-          fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_CATALOG.php', {
+          fetch('https://api.pedalplex.com/UPDATE_CATALOG.php', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -998,7 +998,7 @@ function setupEditPedalHandler(pedals) {
               Swal.showLoading();
               const token = localStorage.getItem('authToken');
 
-              fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FROM_CATALOG.php', {
+              fetch('https://api.pedalplex.com/DELETE_FROM_CATALOG.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
                 body: JSON.stringify({ _id: pedal._id, _rev: pedal._rev })
@@ -1041,7 +1041,7 @@ function setupEditPedalHandler(pedals) {
     if (!pedal.controls || pedal.controls.length === 0) {
       const token = localStorage.getItem('authToken');
 
-      fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+      fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2279,7 +2279,7 @@ async function buildPresetDropdown($ul, pedalId) {
 
   try {
     const res = await fetch(
-      "https://www.cineteatrosanluigi.it/plex/GET_PRESETS_BY_PEDAL.php",
+      "https://api.pedalplex.com/GET_PRESETS_BY_PEDAL.php",
       {
         method: "POST",
         headers: {

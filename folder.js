@@ -51,7 +51,7 @@ async function updateFolderOnServer(folder) {
     formData.append('preset_ids', JSON.stringify(folder.preset_ids || []));
 
     const token = localStorage.getItem('authToken');
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+    const res = await fetch('https://api.pedalplex.com/UPDATE_FOLDER.php', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -155,7 +155,7 @@ async function saveFolderToDB(folder, explicitBoardId) {
     }
 
     const token = localStorage.getItem('authToken');
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_FOLDER.php', {
+    const res = await fetch('https://api.pedalplex.com/CREATE_FOLDER.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({
@@ -282,7 +282,7 @@ function attachRenameFolderListener() {
         const token = localStorage.getItem("authToken");
         if (!token) return Swal.fire({ icon: "error", title: "Authentication error", text: "You must be logged in." });
 
-        const res = await fetch('https://www.cineteatrosanluigi.it/plex/DELETE_FOLDER.php', {
+        const res = await fetch('https://api.pedalplex.com/DELETE_FOLDER.php', {
           method: 'POST',
           headers: { "Content-Type": "application/x-www-form-urlencoded", "Authorization": "Bearer " + token },
           body: formData.toString()
@@ -314,7 +314,7 @@ function attachRenameFolderListener() {
       Swal.fire({ title: 'Renaming...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
       try {
         const token = localStorage.getItem('authToken');
-        const res = await fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_FOLDER.php', {
+        const res = await fetch('https://api.pedalplex.com/UPDATE_FOLDER.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': 'Bearer ' + token },
           body: `folder_id=${encodeURIComponent(folderId)}&name=${encodeURIComponent(sanitizedName)}`
@@ -355,7 +355,7 @@ async function loadFoldersForCurrentPedalboard(forSwal = false) {
   }
 
   try {
-    const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_FOLDERS.php', {
+    const res = await fetch('https://api.pedalplex.com/GET_FOLDERS.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: window.currentUser.userid, board_id: boardId })

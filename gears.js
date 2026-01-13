@@ -69,7 +69,7 @@ function createNewPedal() {
 
       const token = localStorage.getItem('authToken');
 
-      fetch('https://www.cineteatrosanluigi.it/plex/CREATE_GEAR.php', {
+      fetch('https://api.pedalplex.com/CREATE_GEAR.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
