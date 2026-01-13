@@ -20,7 +20,7 @@ if (currentPreset?.pedals) {
     <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
       <div class="pedalplex-logo"></div>
     </button>
-    <a href="/PedalPlex/" style="text-decoration:none;" class="title">PedalPlex</a>
+    <a href="" style="text-decoration:none;" class="title">PedalPlex</a>
     <a href="plexes" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">Plexes</a>
   </div>
 

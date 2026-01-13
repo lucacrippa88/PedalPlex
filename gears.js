@@ -200,7 +200,7 @@ $(document).ready(() => {
     let $backToCatalog = $('#backToCatalog');
     if ($backToCatalog.length === 0) {
       $backToCatalog = $(`
-        <a id="backToCatalog" href="/PedalPlex/gears" class="bx--btn bx--btn--tertiary" 
+        <a id="backToCatalog" href="gears" class="bx--btn bx--btn--tertiary" 
            style="margin-left:8px; max-width:500px!important;">
           Back to Catalog
           <svg focusable="false" preserveAspectRatio="xMidYMid meet"

@@ -7,7 +7,7 @@ function initNav404() {
           <div class="pedalplex-logo"></div>
         </button>
 
-        <a href="/PedalPlex/" style="text-decoration:none;" class="title">PedalPlex</a><span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600"></span>
+        <a href="" style="text-decoration:none;" class="title">PedalPlex</a><span class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600"></span>
       </div>
 
     </header>  
