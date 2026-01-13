@@ -34,8 +34,8 @@
     </p>
 
     <!-- CTA buttons -->
-    <div style="margin-top:2rem; display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
-        <a href="rigs" class="bx--btn bx--btn--secondary" type="button" aria-label="Start as Guest"
+    <!-- <div style="margin-top:2rem; display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+        <a href="rigs" class="bx--btn bx--btn--tertiary" type="button" aria-label="Start as Guest"
             style="display: flex; align-items: center; gap: 0.5rem;">
             <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
                 <path d="M6.34 19H17.65V21H6.34z" transform="rotate(-45 11.995 20.002)"></path><path d="M17,30a1,1,0,0,1-.37-.07,1,1,0,0,1-.62-.79l-1-7,2-.28.75,5.27L21,24.52V17a1,1,0,0,1,.29-.71l4.07-4.07A8.94,8.94,0,0,0,28,5.86V4H26.14a8.94,8.94,0,0,0-6.36,2.64l-4.07,4.07A1,1,0,0,1,15,11H7.48L4.87,14.26l5.27.75-.28,2-7-1a1,1,0,0,1-.79-.62,1,1,0,0,1,.15-1l4-5A1,1,0,0,1,7,9h7.59l3.77-3.78A10.92,10.92,0,0,1,26.14,2H28a2,2,0,0,1,2,2V5.86a10.92,10.92,0,0,1-3.22,7.78L23,17.41V25a1,1,0,0,1-.38.78l-5,4A1,1,0,0,1,17,30Z"></path>
@@ -56,14 +56,59 @@
             <title>Why becoming PedalPlexer?</title>
           </svg>
         </a>
-        <!-- <a href="gears" class="bx--btn bx--btn--secondary" type="button" aria-label="Browse Gears"
-            style="display: flex; align-items: center; gap: 0.5rem;">
-            <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-                <path d="M22 26H10a2 2 0 01-2-2V8a2 2 0 012-2H22a2 2 0 012 2V24A2 2 0 0122 26zM10 8V24H22V8zM4 24H0V22H4V10H0V8H4a2 2 0 012 2V22A2 2 0 014 24zM32 24H28a2 2 0 01-2-2V10a2 2 0 012-2h4v2H28V22h4z"/>
-            </svg>
-            Browse Gears
-        </a> -->
+    </div> -->
+
+
+    <!-- CTA buttons -->
+    <div id="cta-buttons" style="margin-top:2rem; display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+      <!-- I bottoni saranno inseriti qui dinamicamente -->
     </div>
+
+    <script>
+      // Riferimento al container
+      const ctaContainer = document.getElementById('cta-buttons');
+
+      // Funzione per creare un bottone
+      function createButton(href, classes, label, svgContent) {
+        const a = document.createElement('a');
+        a.href = href;
+        a.className = classes;
+        a.type = 'button';
+        a.setAttribute('aria-label', label);
+        a.style.display = 'flex';
+        a.style.alignItems = 'center';
+        a.style.gap = '0.5rem';
+        a.innerHTML = svgContent + label;
+        return a;
+      }
+
+      // SVG template dei bottoni
+      const svgGuest = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M6.34 19H17.65V21H6.34z" transform="rotate(-45 11.995 20.002)"></path>
+          <path d="M17,30a1,1,0,0,1-.37-.07,1,1,0,0,1-.62-.79l-1-7,2-.28.75,5.27L21,24.52V17a1,1,0,0,1,.29-.71l4.07-4.07A8.94,8.94,0,0,0,28,5.86V4H26.14a8.94,8.94,0,0,0-6.36,2.64l-4.07,4.07A1,1,0,0,1,15,11H7.48L4.87,14.26l5.27.75-.28,2-7-1a1,1,0,0,1-.79-.62,1,1,0,0,1,.15-1l4-5A1,1,0,0,1,7,9h7.59l3.77-3.78A10.92,10.92,0,0,1,26.14,2H28a2,2,0,0,1,2,2V5.86a10.92,10.92,0,0,1-3.22,7.78L23,17.41V25a1,1,0,0,1-.38.78l-5,4A1,1,0,0,1,17,30Z"></path>
+      </svg>`;
+
+      const svgLogin = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
+          <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
+      </svg>`;
+
+      const svgDashboard = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M4 4H28V28H4z"></path>
+      </svg>`;
+
+      // Logica per mostrare i bottoni corretti
+      if (window.currentUser && window.currentUser.username) {
+        // Utente loggato: mostra bottone "Vai ai tuoi Rigs"
+        ctaContainer.appendChild(createButton('rigs', 'bx--btn bx--btn--primary', 'Go to My Rigs', svgDashboard));
+      } else {
+        // Guest / non loggato: mostra Start as Guest e Login
+        ctaContainer.appendChild(createButton('rigs', 'bx--btn bx--btn--tertiary', 'Start as Guest', svgGuest));
+        ctaContainer.appendChild(createButton('login', 'bx--btn bx--btn--primary', 'PedalPlexer Login', svgLogin));
+      }
+    </script>
+
+
   </main>
 
   <img src="logos/splash.png" alt="Splash image" style="width:100%; height:auto; margin-top:2rem;" />
