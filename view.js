@@ -3,56 +3,8 @@
   const resultsDiv = document.getElementById('results');
   window.resultsDiv = resultsDiv;
 
-  // /* ================= LOGIN ================= */
-  // async function doLogin(username, password) {
-  //   const res = await fetch(
-  //     'https://api.pedalplex.com/USER_LOGIN.php',
-  //     {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ username, password })
-  //     }
-  //   );
-  //   if (!res.ok) throw new Error('Login failed');
-  //   const data = await res.json();
-  //   localStorage.setItem('authToken', data.token);
-  //   return data.user;
-  // }
-
   let token = localStorage.getItem('authToken');
 
-  // if (token) {
-  //   try {
-  //     const res = await fetch(
-  //       'https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php',
-  //       {
-  //         method: 'POST',
-  //         headers: { 'Authorization': 'Bearer ' + token }
-  //       }
-  //     );
-  //     if (!res.ok) throw new Error();
-  //     window.currentUser = await res.json();
-  //   } catch {
-  //     localStorage.removeItem('authToken');
-  //     token = null;
-  //   }
-  // }
-
-  // if (!token) {
-  //   const { value } = await Swal.fire({
-  //     title: 'Login',
-  //     html:
-  //       '<input id="u" class="swal2-input" placeholder="Username">' +
-  //       '<input id="p" type="password" class="swal2-input" placeholder="Password">',
-  //     preConfirm: () => [
-  //       document.getElementById('u').value,
-  //       document.getElementById('p').value
-  //     ]
-  //   });
-  //   if (!value) return;
-  //   await doLogin(value[0], value[1]);
-  //   token = localStorage.getItem('authToken');
-  // }
 
   /* ================= DATA ================= */
   const pedalId = new URLSearchParams(location.search).get('id');
@@ -78,7 +30,7 @@
       return (await res.json()).docs || [];
     } catch (err) {
       console.error('[TEST-PLEX] Error fetching pedals:', err);
-      resultsDiv.textContent = 'Errore nel fetch dei pedali: ' + err.message;
+      resultsDiv.textContent = 'Error fetching pedals: ' + err.message;
       return [];
     }
   }
@@ -86,7 +38,7 @@
   // Fetch pedale principale
   const [pedal] = await fetchPedals([pedalId]);
   if (!pedal) {
-    resultsDiv.textContent = 'Pedale non trovato';
+    resultsDiv.textContent = 'Gear not found!';
     return;
   }
 
@@ -118,6 +70,7 @@
 
   /* ================= RENDER ================= */
   try {
+    $('#gearName').text(pedalId);
     await renderFullPedalboard(fakeBoard);
   } catch (err) {
     console.error('[TEST-PLEX] Render error:', err);
