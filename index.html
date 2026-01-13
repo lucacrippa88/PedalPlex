@@ -90,8 +90,8 @@
       <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
   </svg>`;
 
-  const svgDashboard = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-      <path d="M4 4H28V28H4z"></path>
+  const svgPlexes = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+      <path d="M25,4H10A2.002,2.002,0,0,0,8,6V20.5563A3.9551,3.9551,0,0,0,6,20a4,4,0,1,0,4,4V12H25v8.5562A3.9545,3.9545,0,0,0,23,20a4,4,0,1,0,4,4V6A2.0023,2.0023,0,0,0,25,4ZM6,26a2,2,0,1,1,2-2A2.0023,2.0023,0,0,1,6,26Zm17,0a2,2,0,1,1,2-2A2.0027,2.0027,0,0,1,23,26ZM10,6H25v4H10Z"/>
   </svg>`;
 
   // Funzione per decodificare JWT
@@ -111,7 +111,7 @@
 
   if (currentUser && currentUser.username) {
     // Utente loggato: mostra bottone "Vai ai tuoi Rigs"
-    ctaContainer.appendChild(createButton('rigs', 'bx--btn bx--btn--primary', 'Go to My Rigs', svgDashboard));
+    ctaContainer.appendChild(createButton('plexes', 'bx--btn bx--btn--primary', 'Go to My Plexes', svgPlexes));
   } else {
     // Guest / non loggato: mostra Start as Guest e Login
     ctaContainer.appendChild(createButton('rigs', 'bx--btn bx--btn--tertiary', 'Start as Guest', svgGuest));
