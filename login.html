@@ -16,13 +16,11 @@
 
   <form id="authForm" style="max-width: 400px; margin: auto;">
     <!-- Username -->
-    <input type="text" id="username" placeholder="Username" required class="bx--text-input"
-          style="margin-bottom: 10px; width: 100%;" />
+    <input type="text" id="username" placeholder="Username" required class="bx--text-input" style="margin-bottom: 10px; width: 100%;" />
 
     <!-- Password with toggle -->
     <div style="position: relative; margin-bottom: 10px;">
-      <input type="password" id="password" placeholder="Password" required class="bx--text-input"
-          style="width: 100%;" />
+      <input type="password" id="password" placeholder="Password" required class="bx--text-input" style="width: 100%;" />
       <button type="button" id="togglePassword" aria-label="Show password">
           <svg xmlns="http://www.w3.org/2000/svg" class="bx--icon" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
           <path d="M16,10a6,6,0,1,1-6,6A6,6,0,0,1,16,10Zm0-2C10.5,8,5.8,12,4,16c1.8,4,6.5,8,12,8s10.2-4,12-8C26.2,12,21.5,8,16,8Z"/>
@@ -33,7 +31,7 @@
     <!-- Optional Email -->
     <input type="email" id="email" placeholder="Email" class="bx--text-input" style="display: none; margin-bottom: 10px; width: 100%;" />
 
-    <div id="recaptchaContainer">
+    <div id="recaptchaContainer" style="display:none;">
       <div class="g-recaptcha" data-sitekey="6LerYkksAAAAAMbhqqezJ-JOvmUVyZkQMT9Q6fm1"></div>
     </div>
 
