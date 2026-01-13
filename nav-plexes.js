@@ -52,7 +52,7 @@ if (currentPreset?.pedals) {
 
   </div>
 
-  <div class="showMobile" style="display: flex; align-items: center; gap: 1rem;">
+  <div class="rightButtons showMobile" style="display: flex; align-items: center; gap: 1rem;">
 
     <button id="savePstBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Plex" disabled
       style="display: flex; align-items: center; gap: 0.5rem;">
