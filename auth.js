@@ -27,8 +27,8 @@ $('#authForm').on('submit', function (e) {
   const email = $('#email').val().trim();
 
   const endpoint = isLogin
-    ? 'https://www.cineteatrosanluigi.it/plex/USER_LOGIN_JWT.php'
-    : 'https://www.cineteatrosanluigi.it/plex/USER_REGISTER_JWT.php';
+    ? 'https://api.pedalplex.com/USER_LOGIN_JWT.php'
+    : 'https://api.pedalplex.com/USER_REGISTER_JWT.php';
 
   const data = isLogin ? { username: username, password: password } : { username: username, password: password, email: email };
 
@@ -143,7 +143,7 @@ $(document).ready(function () {
     }).then((result) => {
       if (result.isConfirmed) {
         $.ajax({
-          url: 'https://www.cineteatrosanluigi.it/plex/USER_FORGOT_PASSWORD.php',
+          url: 'https://api.pedalplex.com/USER_FORGOT_PASSWORD.php',
           method: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ identifier: result.value.trim() }),
@@ -191,7 +191,7 @@ function onGoogleLogin(response) {
     const id_token = response.credential;
 
     $.ajax({
-        url: "https://www.cineteatrosanluigi.it/plex/USER_LOGIN_GOOGLE.php",
+        url: "https://api.pedalplex.com/USER_LOGIN_GOOGLE.php",
         method: "POST",
         contentType: "application/json",
         dataType: "json",

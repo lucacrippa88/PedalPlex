@@ -13,7 +13,7 @@ $(document).ready(function () {
       </div>
     </div>`;
 
-  fetch("https://www.cineteatrosanluigi.it/plex/GET_CATALOG.php")
+  fetch("https://api.pedalplex.com/GET_CATALOG.php")
     .then(response => {
       if (!response.ok) throw new Error("Network response was not ok");
       return response.json();

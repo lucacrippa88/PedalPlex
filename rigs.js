@@ -39,7 +39,7 @@ function initPedalboard(userRole) {
 
   // --- Fetch pedal data dal server ---
   const pedalIds = boards[0].pedals.map(p => p.pedal_id); // ora boards[0] è oggetto corretto
-  fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+  fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ids: pedalIds })
@@ -114,7 +114,7 @@ function initPedalboard(userRole) {
     return;
   } else {
   // Fetch pedalboard first
-  fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
+  fetch('https://api.pedalplex.com/GET_PEDALBOARD.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ user_id: userId })
@@ -161,7 +161,7 @@ function initPedalboard(userRole) {
 
       // Fetch pedals from server
       const pedalIds = selectedBoard.pedals.map(p => p.pedal_id);
-      return fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+      return fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids: pedalIds })
@@ -186,7 +186,7 @@ function initPedalboard(userRole) {
             window.pedalboard = window.allPedalboards[selectedBoardIndex];
 
             const pedalIds = window.pedalboard.pedals.map(p => p.pedal_id);
-            fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+            fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ ids: pedalIds })
@@ -707,7 +707,7 @@ function savePedalboard() {
   // --- LOGGED-IN USER SAVE ---
   const token = localStorage.getItem('authToken');
 
-  fetch('https://www.cineteatrosanluigi.it/plex/UPDATE_PEDALBOARD.php', {
+  fetch('https://api.pedalplex.com/UPDATE_PEDALBOARD.php', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -865,7 +865,7 @@ $(document).ready(function () {
 
 
 
-        fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php', {
+        fetch('https://api.pedalplex.com/CREATE_PEDALBOARD.php', {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -1052,7 +1052,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
       const boardId = currentBoard._id;
 
       // Check if there are related presets first
-      fetch('https://www.cineteatrosanluigi.it/plex/CHECK_PRESETS_FOR_BOARD.php', {
+      fetch('https://api.pedalplex.com/CHECK_PRESETS_FOR_BOARD.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -1096,7 +1096,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
 
               const token = localStorage.getItem('authToken');
 
-              fetch('https://www.cineteatrosanluigi.it/plex/DELETE_PEDALBOARD.php', {
+              fetch('https://api.pedalplex.com/DELETE_PEDALBOARD.php', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -1227,7 +1227,7 @@ function importGuestPedalboard(board, userFromServer) {
     const token = localStorage.getItem('authToken');
 
     $.ajax({
-      url: 'https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php',
+      url: 'https://api.pedalplex.com/CREATE_PEDALBOARD.php',
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + token
@@ -1289,7 +1289,7 @@ function setupPedalboardDropdownAndRender() {
 
   // --- FETCH PEDALS ---
   const pedalIds = selectedBoard.pedals.map(p => p.pedal_id);
-  fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+  fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ids: pedalIds })
@@ -1310,7 +1310,7 @@ function setupPedalboardDropdownAndRender() {
     window.pedalboard = newBoard;
 
     const pedalIds = newBoard.pedals.map(p => p.pedal_id);
-    fetch("https://www.cineteatrosanluigi.it/plex/GET_PEDALS_BY_IDS.php", {
+    fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ids: pedalIds })

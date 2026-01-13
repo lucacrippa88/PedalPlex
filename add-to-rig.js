@@ -98,7 +98,7 @@ async function ensurePedalboardExists() {
   }
 
   // ---------------- LOGGED USER ----------------
-  const res = await fetch('https://www.cineteatrosanluigi.it/plex/GET_PEDALBOARD.php', {
+  const res = await fetch('https://api.pedalplex.com/GET_PEDALBOARD.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ user_id: window.currentUser.userid })
@@ -123,7 +123,7 @@ async function ensurePedalboardExists() {
     if (!boardName) throw 'cancelled';
 
     const token = localStorage.getItem('authToken');
-    await fetch('https://www.cineteatrosanluigi.it/plex/CREATE_PEDALBOARD.php', {
+    await fetch('https://api.pedalplex.com/CREATE_PEDALBOARD.php', {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + token,
