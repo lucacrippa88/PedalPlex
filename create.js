@@ -1,15 +1,27 @@
 let lastValidation = null;
 
 
+function normalizeInlineCssQuotes(value) {
+    if (typeof value !== "string") return value;
+    return value.replace(/'/g, '"');
+}
+
+
+
 // Builder logic
 function buildJSON() {
     if (isSyncing) return lastValidation; // Skip rebuild during JSON sync
 
+    const rawLogo = $("#pedal-logo").val();
+    const rawName = $("#pedal-name").val();
+
     // --- Base pedal object ---
     const pedal = {
         _id: $("#pedal-id").val(),
-        name: $("#pedal-name").val(),
-        logo: $("#pedal-logo").val(),
+        // name: $("#pedal-name").val(),
+        // logo: $("#pedal-logo").val(),
+        name: normalizeInlineCssQuotes(rawName),
+        logo: normalizeInlineCssQuotes(rawLogo),
         type: $("#pedal-type").val(),
         width: $("#pedal-width").val(),
         height: $("#pedal-height").val(),
@@ -790,3 +802,13 @@ $(document).on("change", ".ctrl-knob-type", function() {
 
 $(document).on("change", "#inside-type-select", updateInsideUI);
 $(document).on("change", "#pedal-inside-full-check", updateInsideUI);
+
+
+// Normalize quotes in logo and name fields on input
+$(document).on("input", "#pedal-logo, #pedal-name", function () {
+    const normalized = normalizeInlineCssQuotes($(this).val());
+    if ($(this).val() !== normalized) {
+        $(this).val(normalized);
+    }
+});
+
