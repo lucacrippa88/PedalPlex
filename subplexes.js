@@ -6,7 +6,7 @@ function getHigherSubplexLevel(a, b) {
 }
 
 // -------------------------------------------------
-// Restituisce il valore corrente di un controllo
+// Ottieni il valore corrente di un controllo, compatibile con il tuo markup
 function getCurrentControlValue($pedalDiv, ctrl) {
   const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
   if (!$control.length) return null;
@@ -15,13 +15,18 @@ function getCurrentControlValue($pedalDiv, ctrl) {
     case "knob":
     case "smallknob":
     case "largeknob":
-    case "xlargeknob":
-      // Valore reale dal label interno o tooltip
-      const $valLabel = $control.closest(".knob-wrapper").find(".knob-value-label");
-      if ($valLabel.length) return parseFloat($valLabel.text());
-      const $tooltip = $control.closest(".knob-wrapper").find(".bx--tooltip__label");
-      if ($tooltip.length) return parseFloat($tooltip.text());
-      return null;
+    case "xlargeknob": {
+      // Prima prova con il label visibile
+      let $label = $control.closest(".knob-wrapper").find(".knob-value-label");
+      if ($label.length) return parseFloat($label.text());
+
+      // fallback: tooltip
+      $label = $control.closest(".knob-wrapper").find(".bx--tooltip__label");
+      if ($label.length) return parseFloat($label.text());
+
+      // fallback: testo diretto nel knob (per caso speciale)
+      return parseFloat($control.text()) || null;
+    }
 
     case "slider":
     case "lcd":
@@ -80,27 +85,30 @@ function classifySubplexModificationNormalized($pedalDiv) {
   return "custom";
 }
 
+// Aggiorna il titolo del SubPlex nella UI
 function updateSubplexTitleUI($pedalDiv, level) {
   const $wrapper = $pedalDiv.closest(".pedal-wrapper");
-  const $title = $wrapper.find(".applied-preset-title");
 
+  // ATTENZIONE: adattato al tuo markup
+  const $title = $wrapper.find(".applied-preset-name");
   if (!$title.length) return;
 
   const baseName = $title.data("base-name") || $title.text().replace(/\*+$/, "");
   $title.data("base-name", baseName);
 
   if (level === "original") {
-    $title.text(baseName);
+    $title.text(baseName).removeAttr("contenteditable");
   } else if (level === "modified") {
-    $title.text(baseName + "*");
+    $title.text(baseName + "*").removeAttr("contenteditable");
   } else if (level === "heavily_modified") {
-    $title.text(baseName + "**");
+    $title.text(baseName + "**").removeAttr("contenteditable");
   } else if (level === "custom") {
-    $title
-      .text("Custom SubPlex")
+    $title.text("Custom SubPlex")
       .attr("contenteditable", "true")
       .focus();
   }
+
+  console.log("🔵 SubPlex title updated:", $title.text(), "level:", level);
 }
 
 
