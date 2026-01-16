@@ -5,6 +5,8 @@ function getHigherSubplexLevel(a, b) {
   return SUBPLEX_LEVELS.indexOf(a) > SUBPLEX_LEVELS.indexOf(b) ? a : b;
 }
 
+// -------------------------------------------------
+// Restituisce il valore corrente di un controllo
 function getCurrentControlValue($pedalDiv, ctrl) {
   const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
   if (!$control.length) return null;
@@ -14,9 +16,12 @@ function getCurrentControlValue($pedalDiv, ctrl) {
     case "smallknob":
     case "largeknob":
     case "xlargeknob":
-      return parseFloat(
-        $control.closest(".knob-wrapper").find(".knob-value-label").text()
-      );
+      // Valore reale dal label interno o tooltip
+      const $valLabel = $control.closest(".knob-wrapper").find(".knob-value-label");
+      if ($valLabel.length) return parseFloat($valLabel.text());
+      const $tooltip = $control.closest(".knob-wrapper").find(".bx--tooltip__label");
+      if ($tooltip.length) return parseFloat($tooltip.text());
+      return null;
 
     case "slider":
     case "lcd":
@@ -127,22 +132,28 @@ function onPedalControlChangeNormalized($pedalDiv) {
 }
 
 
+// -------------------------------------------------
+// Aggancia tracking modifiche SubPlex
 function setupSubplexChangeTracking($pedalDiv) {
-  if (!$pedalDiv) return;
+  if (!$pedalDiv || !$pedalDiv.length) {
+    console.warn("🔵 setupSubplexChangeTracking – $pedalDiv undefined");
+    return;
+  }
 
-  console.log("🔵 setupSubplexChangeTracking", $pedalDiv.attr("id"));
+  const handler = () => {
+    // microtimeout per assicurarsi che il valore sia aggiornato
+    setTimeout(() => {
+      console.log("🟢 control change detected");
+      onPedalControlChangeNormalized($pedalDiv);
+    }, 0);
+  };
 
-  const handler = () => onPedalControlChangeNormalized($pedalDiv);
-
-  $pedalDiv
-    .find("input, select, textarea")
-    .off(".subplexTrack")
-    .on("input.subplexTrack change.subplexTrack", handler);
-
-  $pedalDiv
-    .find("[data-control-label]")
-    .off(".subplexTrack")
-    .on("mousedown.subplexTrack click.subplexTrack", handler);
+  // Delegazione eventi su tutti i controlli
+  $pedalDiv.off(".subplexTrack").on(
+    "input.subplexTrack change.subplexTrack mousedown.subplexTrack mouseup.subplexTrack click.subplexTrack",
+    "[data-control-label], input, select, textarea",
+    handler
+  );
 }
 
 
