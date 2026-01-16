@@ -67,69 +67,41 @@ function computeControlDelta(ctrl, originalValue, currentValue) {
 // Classifica livello di modifica del SubPlex (NORMALIZZATO + LOG)
 // ------------------------
 function classifySubplexModificationNormalized($pedalDiv) {
-  const subplex = $pedalDiv.data("applied-subplex");
   const originalControls = $pedalDiv.data("subplex-original-controls");
-
-  console.group("📊 classifySubplexModificationNormalized");
-
-  if (!subplex) {
-    console.warn("❌ No applied subplex on pedal");
-    console.groupEnd();
-    return "original";
-  }
-
   if (!Array.isArray(originalControls) || originalControls.length === 0) {
     console.warn("❌ No original controls baseline", originalControls);
-    console.groupEnd();
     return "original";
   }
 
-  console.log(
-    "✅ SubPlex:",
-    subplex.presetName || subplex.id,
-    "controls:",
-    originalControls.length
-  );
-
   let totalDelta = 0;
+  let changedControls = 0;
 
-  originalControls.forEach((ctrl, index) => {
-    const originalValue = ctrl.value;
+  originalControls.forEach(ctrl => {
     const currentValue = getCurrentControlValue($pedalDiv, ctrl);
-    const delta = computeControlDelta(ctrl, originalValue, currentValue);
+    const delta = computeControlDelta(ctrl, ctrl.value, currentValue);
 
-    console.log(
-      `🔍 [${index}]`,
-      ctrl.label || ctrl.id || "unnamed",
-      "| orig:", originalValue,
-      "| curr:", currentValue,
-      "| delta:", delta
-    );
-
-    totalDelta += delta;
+    if (delta > 0.02) { // micro noise guard
+      changedControls++;
+      totalDelta += delta;
+    }
   });
 
-  const ratio = totalDelta / originalControls.length;
+  if (changedControls === 0) return "original";
 
-  console.log(
-    "📈 TOTAL",
-    "delta:", totalDelta,
-    "controls:", originalControls.length,
-    "ratio:", ratio
-  );
+  const avgDelta = totalDelta / changedControls;
 
-  let level = "original";
+  console.log("📊 SubPlex deltas", {
+    changedControls,
+    totalControls: originalControls.length,
+    avgDelta
+  });
 
-  if (ratio === 0) level = "original";
-  else if (ratio < 0.15) level = "modified";
-  else if (ratio < 0.4) level = "heavily_modified";
-  else level = "custom";
-
-  console.log("🏷️ RESULT LEVEL:", level);
-  console.groupEnd();
-
-  return level;
+  // 🔥 LOGICA IBRIDA
+  if (changedControls <= 2 && avgDelta < 0.15) return "modified";
+  if (changedControls <= 4 && avgDelta < 0.35) return "heavily_modified";
+  return "custom";
 }
+
 
 
 // ------------------------
