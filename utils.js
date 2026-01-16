@@ -2432,6 +2432,12 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   };
 
   $pedalDiv.data('applied-subplex', appliedSubplex);
+  // Salva anche la baseline dei controlli per il tracking normalizzato
+  $pedalDiv.data('subplex-original-controls', JSON.parse(JSON.stringify(appliedSubplex.controls)));
+  // Stato iniziale SubPlex
+  $pedalDiv.data('subplex-modification-level', 'original');
+  $pedalDiv.removeData('subplexInvalidated');
+  // Aggiorna l'attributo HTML
   $pedalDiv.attr("data-applied-preset", JSON.stringify({
     id: appliedSubplex.id,
     name: appliedSubplex.presetName,
@@ -2445,22 +2451,11 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
 
 
 
-  // 🔴 Baseline per tracking normalizzato
-  $pedalDiv.data(
-    'subplex-original-controls',
-    JSON.parse(JSON.stringify(preset.controls || []))
-  );
+// 🔵 Attiva tracking modifiche: titolo e stato si aggiornano automaticamente
+setupSubplexChangeTracking($pedalDiv);
 
-  // 🔴 Stato iniziale
-  $pedalDiv.data('subplex-modification-level', 'original');
-  $pedalDiv.removeData('subplexInvalidated');
-
-  // 🔴 Attiva tracking modifiche
-  setupSubplexChangeTracking($pedalDiv);
-
-
-
-  renderAppliedPresetInfo($pedalDiv, appliedSubplex);
+// 🔹 Render della UI del preset applicato (icone, titolo, tags, ecc.)
+renderAppliedPresetInfo($pedalDiv, appliedSubplex);
 
 }
 
