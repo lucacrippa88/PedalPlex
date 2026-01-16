@@ -64,69 +64,174 @@ function computeControlDelta(ctrl, originalValue, currentValue) {
 }
 
 // ------------------------
-// Classifica livello di modifica del SubPlex
+// Classifica livello di modifica del SubPlex (NORMALIZZATO + LOG)
 // ------------------------
 function classifySubplexModificationNormalized($pedalDiv) {
   const subplex = $pedalDiv.data("applied-subplex");
   const originalControls = $pedalDiv.data("subplex-original-controls");
 
-  if (!subplex || !Array.isArray(originalControls)) return "original";
+  console.group("📊 classifySubplexModificationNormalized");
 
-  let totalDelta = 0;
-  let totalControls = 0;
-
-  originalControls.forEach(ctrl => {
-    const currentValue = getCurrentControlValue($pedalDiv, ctrl);
-    const delta = computeControlDelta(ctrl, ctrl.value, currentValue);
-    totalDelta += delta;
-    totalControls++;
-  });
-
-  if (totalControls === 0) return "original";
-
-  const ratio = totalDelta / totalControls;
-
-  if (ratio === 0) return "original";
-  if (ratio < 0.15) return "modified";
-  if (ratio < 0.4) return "heavily_modified";
-  return "custom";
-}
-
-// ------------------------
-// Aggiorna il titolo del SubPlex nella UI
-// ------------------------
-function updateSubplexTitleUI($pedalDiv, level) {
-  const $title = $pedalDiv.closest(".pedal-wrapper").find(".applied-preset-name");
-  if (!$title.length) return;
-
-  const baseName = $title.data("base-name") || $title.text().trim().replace(/\*+$/, "");
-  $title.data("base-name", baseName);
-
-  if (level === "original") {
-    $title.text(baseName).removeAttr("contenteditable");
-  } else if (level === "modified") {
-    $title.text(baseName + "*").removeAttr("contenteditable");
-  } else if (level === "heavily_modified") {
-    $title.text(baseName + "**").removeAttr("contenteditable");
-  } else if (level === "custom") {
-    $title.text("Custom SubPlex").attr("contenteditable", "true").focus();
+  if (!subplex) {
+    console.warn("❌ No applied subplex on pedal");
+    console.groupEnd();
+    return "original";
   }
 
-  console.log("🔵 SubPlex title updated:", $title.text(), "level:", level);
+  if (!Array.isArray(originalControls) || originalControls.length === 0) {
+    console.warn("❌ No original controls baseline", originalControls);
+    console.groupEnd();
+    return "original";
+  }
+
+  console.log(
+    "✅ SubPlex:",
+    subplex.presetName || subplex.id,
+    "controls:",
+    originalControls.length
+  );
+
+  let totalDelta = 0;
+
+  originalControls.forEach((ctrl, index) => {
+    const originalValue = ctrl.value;
+    const currentValue = getCurrentControlValue($pedalDiv, ctrl);
+    const delta = computeControlDelta(ctrl, originalValue, currentValue);
+
+    console.log(
+      `🔍 [${index}]`,
+      ctrl.label || ctrl.id || "unnamed",
+      "| orig:", originalValue,
+      "| curr:", currentValue,
+      "| delta:", delta
+    );
+
+    totalDelta += delta;
+  });
+
+  const ratio = totalDelta / originalControls.length;
+
+  console.log(
+    "📈 TOTAL",
+    "delta:", totalDelta,
+    "controls:", originalControls.length,
+    "ratio:", ratio
+  );
+
+  let level = "original";
+
+  if (ratio === 0) level = "original";
+  else if (ratio < 0.15) level = "modified";
+  else if (ratio < 0.4) level = "heavily_modified";
+  else level = "custom";
+
+  console.log("🏷️ RESULT LEVEL:", level);
+  console.groupEnd();
+
+  return level;
 }
+
+
+// ------------------------
+// Aggiorna il titolo del SubPlex nella UI (CON LOG)
+// ------------------------
+function updateSubplexTitleUI($pedalDiv, level) {
+  console.group("📝 updateSubplexTitleUI");
+
+  if (!$pedalDiv || !$pedalDiv.length) {
+    console.warn("❌ Invalid $pedalDiv");
+    console.groupEnd();
+    return;
+  }
+
+  const $wrapper = $pedalDiv.closest(".pedal-wrapper");
+  if (!$wrapper.length) {
+    console.warn("❌ .pedal-wrapper not found");
+    console.groupEnd();
+    return;
+  }
+
+  const $title = $wrapper.find(".applied-preset-name").first();
+  if (!$title.length) {
+    console.warn("❌ .applied-preset-name not found");
+    console.groupEnd();
+    return;
+  }
+
+  console.log("📌 Requested level:", level);
+  console.log("📌 Current title text:", $title.text());
+
+  // Base name stabile (senza asterischi)
+  let baseName = $title.data("base-name");
+
+  if (!baseName) {
+    baseName = $title.text().trim().replace(/\*+$/, "");
+    $title.data("base-name", baseName);
+    console.log("🧱 Base name initialized:", baseName);
+  } else {
+    console.log("🧱 Base name from data:", baseName);
+  }
+
+  // Applica stato
+  switch (level) {
+    case "original":
+      $title
+        .text(baseName)
+        .removeAttr("contenteditable");
+      console.log("✅ UI set to ORIGINAL");
+      break;
+
+    case "modified":
+      $title
+        .text(baseName + " *")
+        .removeAttr("contenteditable");
+      console.log("✅ UI set to MODIFIED");
+      break;
+
+    case "heavily_modified":
+      $title
+        .text(baseName + " **")
+        .removeAttr("contenteditable");
+      console.log("✅ UI set to HEAVILY MODIFIED");
+      break;
+
+    case "custom":
+      $title
+        .text("Custom SubPlex")
+        .attr("contenteditable", "true");
+      console.log("✅ UI set to CUSTOM (editable)");
+      break;
+
+    default:
+      console.warn("⚠️ Unknown level:", level);
+  }
+
+  console.log("🏷️ Final title text:", $title.text());
+  console.groupEnd();
+}
+
 
 // ------------------------
 // Trigger quando un controllo cambia
 // ------------------------
 function onPedalControlChangeNormalized($pedalDiv) {
   const subplex = $pedalDiv.data("applied-subplex");
-  if (!subplex) return;
+    if (!subplex) {
+    console.warn("🟡 change ignored: no applied subplex");
+    return;
+  }
 
   const previousLevel = $pedalDiv.data("subplex-modification-level") || "original";
   const calculatedLevel = classifySubplexModificationNormalized($pedalDiv);
+  console.log(
+    "🟣 SubPlex level",
+    "previous:", previousLevel,
+    "calculated:", calculatedLevel
+  );
   const newLevel = getHigherSubplexLevel(previousLevel, calculatedLevel);
 
   if (newLevel !== previousLevel) {
+    console.log("🟠 Level upgrade:", previousLevel, "→", newLevel);
     $pedalDiv.data("subplex-modification-level", newLevel);
     updateSubplexTitleUI($pedalDiv, newLevel);
   }
@@ -137,7 +242,19 @@ function onPedalControlChangeNormalized($pedalDiv) {
 // ------------------------
 function setupSubplexChangeTracking($pedalDiv) {
   if (!$pedalDiv) return;
-  const handler = () => onPedalControlChangeNormalized($pedalDiv);
+   console.log(
+    "🔵 setupSubplexChangeTracking",
+    $pedalDiv.attr("data-pedal-id"),
+    "has subplex:",
+    !!$pedalDiv.data("applied-subplex"),
+    "original controls:",
+    $pedalDiv.data("subplex-original-controls")
+  );
+
+  const handler = () => {
+    console.log("🟢 control change detected");
+    onPedalControlChangeNormalized($pedalDiv);
+  };
 
   // Input standard
   $pedalDiv.find("input, select, textarea")
