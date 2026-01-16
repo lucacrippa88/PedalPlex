@@ -6,6 +6,12 @@ let currentPresetName = null;
 let isRestoringPreset = false;
 
 
+const subplexMarkers = {
+  original: "",
+  modified: "*",
+  custom: "**"
+};
+
 
 window.allPedalboards = [];
 
@@ -854,14 +860,34 @@ function applyPresetToPedalboard(presetDoc) {
     if (presetPedal) {
       const appliedSubplex = presetPedal.subplex || presetPedal;
 
-      // 1️⃣ salva il subplex sul pedale (COME IL DROPDOWN)
+      // // 1️⃣ salva il subplex sul pedale (COME IL DROPDOWN)
+      // $pedalDiv.data('applied-subplex', appliedSubplex);
+
+      // // 2️⃣ render UI info
+      // renderAppliedPresetInfo($pedalDiv, appliedSubplex);
+
+      // // 3️⃣ AGGANCIA INVALIDAZIONE (QUESTA ERA LA RIGA MANCANTE)
+      // setupSubplexInvalidationOnDBLoad($pedalDiv);
+
+
+      // 1️⃣ salva il subplex sul pedale
       $pedalDiv.data('applied-subplex', appliedSubplex);
+
+      // 🔴 AGGIUNGI QUESTE RIGHE
+      $pedalDiv.data(
+        'subplex-original-controls',
+        JSON.parse(JSON.stringify(appliedSubplex.controls || []))
+      );
+      $pedalDiv.data('subplex-modification-level', 'original');
+      $pedalDiv.removeData('subplexInvalidated');
 
       // 2️⃣ render UI info
       renderAppliedPresetInfo($pedalDiv, appliedSubplex);
 
-      // 3️⃣ AGGANCIA INVALIDAZIONE (QUESTA ERA LA RIGA MANCANTE)
-      setupSubplexInvalidationOnDBLoad($pedalDiv);
+      // 🔴 USA IL NUOVO TRACKING
+      setupSubplexChangeTracking($pedalDiv);
+
+
     }
 
 
@@ -1339,10 +1365,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     presetSelect.style.display = 'inline-block';
     if (editBtn) editBtn.style.display = 'inline-block';
 
-    // Seleziona preset preferito se valido, altrimenti primo preset della lista
-    // let selectedPreset = preferredPresetId
-    //   ? filteredPresets.find(p => p._id === preferredPresetId) || filteredPresets[0]
-    //   : filteredPresets[0];
+    // Seleziona preset preferito se valido, altrimenti il primo
     let selectedPreset = null;
     if (preferredPresetId) {
       selectedPreset = filteredPresets.find(p => p._id === preferredPresetId);
@@ -1372,13 +1395,8 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
       currentPresetRev = null;
     }
 
-    // saveCurrentSelectionToStorage(); // test 1
-    // if (!preferredPresetId || selectedPreset._id === preferredPresetId) { // test 2
-    //   saveCurrentSelectionToStorage();
-    // }
     presetSelect.addEventListener('change', saveCurrentSelectionToStorage); // test 3
     folderSelect.addEventListener('change', saveCurrentSelectionToStorage);
-
 
   }
 
@@ -1576,10 +1594,6 @@ async function initGuestMode() {
 }
 
 
-
-
-
-
 // --- Global function accessible everywhere ---
   function removeForbiddenChars(str) {
     const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/g;
@@ -1588,11 +1602,6 @@ async function initGuestMode() {
     str = str.replace(/\s+/g, ' ').trim();     // collapse spaces & trim
     return str;
   }
-
-
-
-
-
 
 
 // Assicurati che il DOM sia pronto
@@ -1623,4 +1632,3 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(led, { attributes: true, attributeFilter: ["style"] });
   });
 });
-

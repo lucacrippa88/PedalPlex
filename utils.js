@@ -2444,6 +2444,22 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   window.currentSubPlex[pedalId] = appliedSubplex;
 
 
+
+  // 🔴 Baseline per tracking normalizzato
+  $pedalDiv.data(
+    'subplex-original-controls',
+    JSON.parse(JSON.stringify(preset.controls || []))
+  );
+
+  // 🔴 Stato iniziale
+  $pedalDiv.data('subplex-modification-level', 'original');
+  $pedalDiv.removeData('subplexInvalidated');
+
+  // 🔴 Attiva tracking modifiche
+  setupSubplexChangeTracking($pedalDiv);
+
+
+
   renderAppliedPresetInfo($pedalDiv, appliedSubplex);
 
 }
@@ -2663,82 +2679,5 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
 }
 
 
-// Invalida SubPlex e aggiorna UI
-function invalidateSubplexForPedal($pedalDiv) {
-  if (!$pedalDiv) return;
 
-  const applied = $pedalDiv.data("applied-subplex");
-  if (!applied) return;
-
-  // Rimuove stato
-  $pedalDiv.removeData('applied-subplex');
-  $pedalDiv.removeAttr("data-applied-preset");
-  $pedalDiv.data("subplexInvalidated", true);
-
-  // Aggiorna UI
-  const $wrapper = $pedalDiv.closest(".pedal-wrapper");
-  $wrapper.find(".applied-preset-info").hide();
-  $wrapper.find(".new-subplex-btn").show();
-  $wrapper.find(".preset-dropdown-wrapper").removeClass("is-open");
-}
-
-
-// Controlla se i valori dei controlli differiscono dal SubPlex applicato
-function onPedalControlChange($pedalDiv) {
-  const subplex = $pedalDiv.data('applied-subplex');
-  if (!subplex) return; // niente SubPlex → nulla da fare
-
-  let changed = false;
-
-  if (Array.isArray(subplex.controls)) {
-    subplex.controls.forEach(ctrl => {
-      const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
-      if (!$control.length) return;
-
-      let currentValue;
-      switch (ctrl.type) {
-        case "knob":
-        case "smallknob":
-        case "largeknob":
-        case "xlargeknob":
-          currentValue = parseFloat($control.closest(".knob-wrapper").find(".knob-value-label").text());
-          break;
-        case "slider":
-        case "lcd":
-        case "multi":
-          currentValue = $control.val();
-          break;
-        case "led":
-          currentValue = $control.data("colorIndex");
-          break;
-      }
-
-      if (currentValue != ctrl.value) changed = true;
-    });
-  }
-
-  if (changed && !$pedalDiv.data("subplexInvalidated")) {
-    invalidateSubplexForPedal($pedalDiv);
-  }
-}
-
-
-// Al momento del render dal DB
-function setupSubplexInvalidationOnDBLoad($pedalDiv) {
-  if (!$pedalDiv) return;
-
-  const invalidate = () => invalidateSubplexForPedal($pedalDiv);
-
-  // rimuovi eventuali listener duplicati
-  $pedalDiv
-    .find('input, select, textarea')
-    .off('.subplexInvalidate')
-    .on('input.subplexInvalidate change.subplexInvalidate', invalidate);
-
-  // knob / custom controls
-  $pedalDiv
-    .find('[data-control-label]')
-    .off('.subplexInvalidate')
-    .on('mousedown.subplexInvalidate click.subplexInvalidate', invalidate);
-}
 
