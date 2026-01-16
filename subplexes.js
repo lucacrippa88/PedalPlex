@@ -73,7 +73,7 @@ function classifySubplexModificationNormalized($pedalDiv) {
   console.group("📊 classifySubplexModificationNormalized");
 
   if (!subplex) {
-    console.warn("❌ No applied subplex");
+    console.warn("❌ No applied subplex on pedal");
     console.groupEnd();
     return "original";
   }
@@ -84,76 +84,68 @@ function classifySubplexModificationNormalized($pedalDiv) {
     return "original";
   }
 
-  const controlCount = originalControls.length;
+  console.log(
+    "✅ SubPlex:",
+    subplex.presetName || subplex.id,
+    "controls:",
+    originalControls.length
+  );
 
   let totalDelta = 0;
-  let changedControls = 0;
-  let strongChanges = 0;
+  let totalControls = 0;
 
   originalControls.forEach((ctrl, index) => {
     const originalValue = ctrl.value;
     const currentValue = getCurrentControlValue($pedalDiv, ctrl);
-    const delta = computeControlDelta(ctrl, originalValue, currentValue);
 
-    if (delta > 0.01) changedControls++;
-    if (delta > 0.25) strongChanges++;
+    let delta = 0;
+
+    switch (ctrl.type) {
+      case "slider":
+      case "knob":
+        if (typeof originalValue === "number" && typeof currentValue === "number" && !isNaN(originalValue) && !isNaN(currentValue)) {
+          delta = Math.abs(currentValue - originalValue); // opzionale: normalizzare per range se disponibile
+        }
+        break;
+
+      case "led":
+      case "discrete":
+      case "multi":
+        delta = originalValue !== currentValue ? 1 : 0;
+        break;
+
+      default:
+        console.log(`⏭️ [${index}] Ignored type:`, ctrl.type);
+        delta = 0;
+    }
 
     totalDelta += delta;
+    totalControls++;
 
     console.log(
       `🔍 [${index}]`,
-      ctrl.label || "unnamed",
+      ctrl.label || ctrl.id || "unnamed",
+      "| type:", ctrl.type,
       "| orig:", originalValue,
       "| curr:", currentValue,
       "| delta:", delta
     );
   });
 
-  const avgDelta = totalDelta / controlCount;
-  const changedRatio = changedControls / controlCount;
+  if (totalControls === 0) totalControls = 1; // evita divisione per 0
 
-  console.log("📈 STATS", {
-    controlCount,
-    totalDelta,
-    avgDelta,
-    changedControls,
-    changedRatio,
-    strongChanges
-  });
-
-  /*
-    🔑 LOGICA DECISIONALE
-    - pedali piccoli → conta QUANTI controlli tocchi
-    - pedali grandi → conta QUANTO tocchi
-  */
+  const ratio = totalDelta / totalControls;
 
   let level = "original";
+  if (ratio === 0) level = "original";
+  else if (ratio < 0.05) level = "modified";
+  else if (ratio < 0.2) level = "heavily_modified";
+  else level = "custom";
 
-  // Nessuna modifica reale
-  if (changedControls === 0) {
-    level = "original";
-  }
-
-  // Poche modifiche leggere
-  else if (
-    changedRatio <= 0.25 &&
-    avgDelta < 0.08
-  ) {
-    level = "modified";
-  }
-
-  // Modifiche evidenti ma ancora riconducibili al SubPlex
-  else if (
-    changedRatio <= 0.6 &&
-    (avgDelta < 0.25 || strongChanges <= 2)
-  ) {
-    level = "heavily_modified";
-  }
-
-  // Stravolto
-  else {
-    level = "custom";
-  }
+  console.log(
+    "📈 STATS –",
+    { controlCount: totalControls, totalDelta, ratio }
+  );
 
   console.log("🏷️ RESULT LEVEL:", level);
   console.groupEnd();
