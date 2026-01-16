@@ -67,39 +67,98 @@ function computeControlDelta(ctrl, originalValue, currentValue) {
 // Classifica livello di modifica del SubPlex (NORMALIZZATO + LOG)
 // ------------------------
 function classifySubplexModificationNormalized($pedalDiv) {
+  const subplex = $pedalDiv.data("applied-subplex");
   const originalControls = $pedalDiv.data("subplex-original-controls");
-  if (!Array.isArray(originalControls) || originalControls.length === 0) {
-    console.warn("❌ No original controls baseline", originalControls);
+
+  console.group("📊 classifySubplexModificationNormalized");
+
+  if (!subplex) {
+    console.warn("❌ No applied subplex");
+    console.groupEnd();
     return "original";
   }
 
+  if (!Array.isArray(originalControls) || originalControls.length === 0) {
+    console.warn("❌ No original controls baseline", originalControls);
+    console.groupEnd();
+    return "original";
+  }
+
+  const controlCount = originalControls.length;
+
   let totalDelta = 0;
   let changedControls = 0;
+  let strongChanges = 0;
 
-  originalControls.forEach(ctrl => {
+  originalControls.forEach((ctrl, index) => {
+    const originalValue = ctrl.value;
     const currentValue = getCurrentControlValue($pedalDiv, ctrl);
-    const delta = computeControlDelta(ctrl, ctrl.value, currentValue);
+    const delta = computeControlDelta(ctrl, originalValue, currentValue);
 
-    if (delta > 0.02) { // micro noise guard
-      changedControls++;
-      totalDelta += delta;
-    }
+    if (delta > 0.01) changedControls++;
+    if (delta > 0.25) strongChanges++;
+
+    totalDelta += delta;
+
+    console.log(
+      `🔍 [${index}]`,
+      ctrl.label || "unnamed",
+      "| orig:", originalValue,
+      "| curr:", currentValue,
+      "| delta:", delta
+    );
   });
 
-  if (changedControls === 0) return "original";
+  const avgDelta = totalDelta / controlCount;
+  const changedRatio = changedControls / controlCount;
 
-  const avgDelta = totalDelta / changedControls;
-
-  console.log("📊 SubPlex deltas", {
+  console.log("📈 STATS", {
+    controlCount,
+    totalDelta,
+    avgDelta,
     changedControls,
-    totalControls: originalControls.length,
-    avgDelta
+    changedRatio,
+    strongChanges
   });
 
-  // 🔥 LOGICA IBRIDA
-  if (changedControls <= 2 && avgDelta < 0.15) return "modified";
-  if (changedControls <= 4 && avgDelta < 0.35) return "heavily_modified";
-  return "custom";
+  /*
+    🔑 LOGICA DECISIONALE
+    - pedali piccoli → conta QUANTI controlli tocchi
+    - pedali grandi → conta QUANTO tocchi
+  */
+
+  let level = "original";
+
+  // Nessuna modifica reale
+  if (changedControls === 0) {
+    level = "original";
+  }
+
+  // Poche modifiche leggere
+  else if (
+    changedRatio <= 0.25 &&
+    avgDelta < 0.08
+  ) {
+    level = "modified";
+  }
+
+  // Modifiche evidenti ma ancora riconducibili al SubPlex
+  else if (
+    changedRatio <= 0.6 &&
+    (avgDelta < 0.25 || strongChanges <= 2)
+  ) {
+    level = "heavily_modified";
+  }
+
+  // Stravolto
+  else {
+    level = "custom";
+  }
+
+  console.log("🏷️ RESULT LEVEL:", level);
+  console.groupEnd();
+
+  return level;
 }
 
 
