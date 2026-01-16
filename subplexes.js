@@ -67,64 +67,68 @@ function computeControlDelta(ctrl, originalValue, currentValue) {
 // Classifica livello di modifica del SubPlex (NORMALIZZATO + LOG)
 // ------------------------
 function classifySubplexModificationNormalized($pedalDiv) {
+  console.group("📊 classifySubplexModificationNormalized");
+
   const subplex = $pedalDiv.data("applied-subplex");
   const originalControls = $pedalDiv.data("subplex-original-controls");
 
-  console.group("📊 classifySubplexModificationNormalized");
-
   if (!subplex) {
-    console.warn("❌ No applied subplex on pedal");
+    console.warn("❌ No applied subplex");
     console.groupEnd();
     return "original";
   }
 
   if (!Array.isArray(originalControls) || originalControls.length === 0) {
-    console.warn("❌ No original controls baseline", originalControls);
+    console.warn("❌ No baseline controls");
     console.groupEnd();
     return "original";
   }
 
-  console.log(
-    "✅ SubPlex:",
-    subplex.presetName || subplex.id,
-    "controls:",
-    originalControls.length
-  );
-
-  let totalDelta = 0;
-  let totalControls = 0;
+  let changedControls = 0;
+  let numericDeltaSum = 0;
+  let numericCount = 0;
+  let discreteChanges = 0;
 
   originalControls.forEach((ctrl, index) => {
     const originalValue = ctrl.value;
     const currentValue = getCurrentControlValue($pedalDiv, ctrl);
 
+    let changed = false;
     let delta = 0;
 
-    switch (ctrl.type) {
-      case "slider":
-      case "knob":
-        if (typeof originalValue === "number" && typeof currentValue === "number" && !isNaN(originalValue) && !isNaN(currentValue)) {
-          delta = Math.abs(currentValue - originalValue); // opzionale: normalizzare per range se disponibile
-        }
-        break;
+    // 🔹 NUMERICO
+    if (
+      typeof originalValue === "number" &&
+      typeof currentValue === "number" &&
+      !isNaN(originalValue) &&
+      !isNaN(currentValue)
+    ) {
+      const min = ctrl.min ?? 0;
+      const max = ctrl.max ?? 100;
+      const range = max - min || 100;
 
-      case "led":
-      case "discrete":
-      case "multi":
-        delta = originalValue !== currentValue ? 1 : 0;
-        break;
+      delta = Math.abs(currentValue - originalValue) / range;
+      delta = Math.min(delta, 1);
 
-      default:
-        console.log(`⏭️ [${index}] Ignored type:`, ctrl.type);
-        delta = 0;
+      if (delta > 0.01) {
+        changed = true;
+        numericDeltaSum += delta;
+        numericCount++;
+      }
     }
 
-    totalDelta += delta;
-    totalControls++;
+    // 🔹 DISCRETO (led, mode, multi, knob discreto)
+    else if (originalValue !== currentValue) {
+      changed = true;
+      discreteChanges++;
+      delta = 1;
+    }
+
+    if (changed) changedControls++;
 
     console.log(
       `🔍 [${index}]`,
-      ctrl.label || ctrl.id || "unnamed",
+      ctrl.label,
       "| type:", ctrl.type,
       "| orig:", originalValue,
       "| curr:", currentValue,
@@ -132,26 +136,39 @@ function classifySubplexModificationNormalized($pedalDiv) {
     );
   });
 
-  if (totalControls === 0) totalControls = 1; // evita divisione per 0
+  const controlCount = originalControls.length;
+  const changedRatio = changedControls / controlCount;
+  const avgNumericDelta = numericCount > 0 ? numericDeltaSum / numericCount : 0;
 
-  const ratio = totalDelta / totalControls;
+  console.log("📈 STATS", {
+    controlCount,
+    changedControls,
+    changedRatio,
+    numericCount,
+    avgNumericDelta,
+    discreteChanges
+  });
 
   let level = "original";
-  if (ratio === 0) level = "original";
-  else if (ratio < 0.05) level = "modified";
-  else if (ratio < 0.2) level = "heavily_modified";
-  else level = "custom";
 
-  console.log(
-    "📈 STATS –",
-    { controlCount: totalControls, totalDelta, ratio }
-  );
+  if (changedControls === 0) {
+    level = "original";
+  }
+  else if (changedRatio < 0.25 && discreteChanges <= 1) {
+    level = "modified";
+  }
+  else if (changedRatio < 0.6 || discreteChanges === 1) {
+    level = "heavily_modified";
+  }
+  else {
+    level = "custom";
+  }
 
   console.log("🏷️ RESULT LEVEL:", level);
   console.groupEnd();
-
   return level;
 }
+
 
 
 
