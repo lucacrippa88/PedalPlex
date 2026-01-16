@@ -11,29 +11,37 @@ function getHigherSubplexLevel(a, b) {
 // Ottieni il valore corrente di un controllo
 // ------------------------
 function getCurrentControlValue($pedalDiv, ctrl) {
-  const $control = findControlInDOM($pedalDiv, ctrl); // tua funzione esistente
+  if (!ctrl || !ctrl.type) return null;
 
-  if (!ctrl.type || !$control.length) return null;
+  const label = ctrl.label || ctrl.id;
+  let $control;
 
-  switch(ctrl.type) {
+  switch (ctrl.type) {
     case "led":
-      return $control.hasClass("active") ? 1 : 0; // o il modo in cui segnali ON
-    case "slider":
+      $control = $pedalDiv.find(`.led[data-control-label="${label}"]`);
+      return $control.hasClass("active") ? 1 : 0;
+
     case "knob":
-      if (ctrl.discrete || ctrl.multi) {
-        // Leggi il valore testuale per discreti/multi
+      $control = $pedalDiv.find(`.knob[data-control-label="${label}"]`);
+      if (!ctrl.discrete && !ctrl.multi) {
+        // Knob numerico → usa tooltip o rotazione
+        const tooltipVal = parseFloat($control.siblings(".bx--tooltip").find("span.bx--tooltip__label").text());
+        return isNaN(tooltipVal) ? 0 : tooltipVal;
+      } else {
+        // Knob discreto → prendi il valore testuale visibile
         const $label = $control.closest(".knob-wrapper").find(".knob-value-label, .label-top");
         return $label.text().trim();
-      } else {
-        // normale knob numerico
-        return parseFloat($control.attr("data-value") ?? extractRotationAsNumber($control));
       }
+
     case "multi":
-      return $control.val(); // dropdown
+      $control = $pedalDiv.find(`select[data-control-label="${label}"]`);
+      return $control.val();
+
     default:
       return null;
   }
 }
+
 
 
 // ------------------------
