@@ -1,11 +1,15 @@
-// Livelli di modifica
+// ------------------------
+// SubPlex Modification Levels
+// ------------------------
 const SUBPLEX_LEVELS = ["original", "modified", "heavily_modified", "custom"];
 
 function getHigherSubplexLevel(a, b) {
   return SUBPLEX_LEVELS.indexOf(a) > SUBPLEX_LEVELS.indexOf(b) ? a : b;
 }
 
-// Ottieni il valore corrente del controllo
+// ------------------------
+// Ottieni il valore corrente di un controllo
+// ------------------------
 function getCurrentControlValue($pedalDiv, ctrl) {
   const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
   if (!$control.length) return null;
@@ -32,17 +36,21 @@ function getCurrentControlValue($pedalDiv, ctrl) {
       return $control.val();
 
     case "led":
-      return $control.data("colorIndex");
+    case "switch":
+      return $control.data("colorIndex") ?? $control.prop("checked") ?? 0;
 
     default:
       return null;
   }
 }
 
-// Delta normalizzato tra originale e corrente
+// ------------------------
+// Calcola delta normalizzato tra valore originale e corrente
+// ------------------------
 function computeControlDelta(ctrl, originalValue, currentValue) {
   if (currentValue === null || originalValue === undefined) return 0;
 
+  // Controlli numerici
   if (typeof originalValue === "number" && typeof currentValue === "number") {
     const min = ctrl.min ?? 0;
     const max = ctrl.max ?? 100;
@@ -51,10 +59,13 @@ function computeControlDelta(ctrl, originalValue, currentValue) {
     return Math.min(delta, 1);
   }
 
+  // Switch, LED o discreti
   return originalValue !== currentValue ? 1 : 0;
 }
 
-// Classifica il livello di modifica
+// ------------------------
+// Classifica livello di modifica del SubPlex
+// ------------------------
 function classifySubplexModificationNormalized($pedalDiv) {
   const subplex = $pedalDiv.data("applied-subplex");
   const originalControls = $pedalDiv.data("subplex-original-controls");
@@ -81,11 +92,11 @@ function classifySubplexModificationNormalized($pedalDiv) {
   return "custom";
 }
 
-// Aggiorna il titolo nella UI
+// ------------------------
+// Aggiorna il titolo del SubPlex nella UI
+// ------------------------
 function updateSubplexTitleUI($pedalDiv, level) {
-  const $title = $pedalDiv.closest(".pedal-wrapper")
-    .find(".applied-preset-name");
-
+  const $title = $pedalDiv.closest(".pedal-wrapper").find(".applied-preset-name");
   if (!$title.length) return;
 
   const baseName = $title.data("base-name") || $title.text().trim().replace(/\*+$/, "");
@@ -98,26 +109,21 @@ function updateSubplexTitleUI($pedalDiv, level) {
   } else if (level === "heavily_modified") {
     $title.text(baseName + "**").removeAttr("contenteditable");
   } else if (level === "custom") {
-    $title.text("Custom SubPlex")
-      .attr("contenteditable", "true")
-      .focus();
+    $title.text("Custom SubPlex").attr("contenteditable", "true").focus();
   }
 
   console.log("🔵 SubPlex title updated:", $title.text(), "level:", level);
 }
 
-
-
-
-
-// Triggera quando cambia un controllo
+// ------------------------
+// Trigger quando un controllo cambia
+// ------------------------
 function onPedalControlChangeNormalized($pedalDiv) {
   const subplex = $pedalDiv.data("applied-subplex");
   if (!subplex) return;
 
   const previousLevel = $pedalDiv.data("subplex-modification-level") || "original";
   const calculatedLevel = classifySubplexModificationNormalized($pedalDiv);
-
   const newLevel = getHigherSubplexLevel(previousLevel, calculatedLevel);
 
   if (newLevel !== previousLevel) {
@@ -126,24 +132,50 @@ function onPedalControlChangeNormalized($pedalDiv) {
   }
 }
 
-
-// -------------------------------------------------
-// Setup tracking
+// ------------------------
+// Setup tracking completo dei controlli
+// ------------------------
 function setupSubplexChangeTracking($pedalDiv) {
   if (!$pedalDiv) return;
-
   const handler = () => onPedalControlChangeNormalized($pedalDiv);
 
-  $pedalDiv
-    .find("input, select, textarea")
+  // Input standard
+  $pedalDiv.find("input, select, textarea")
     .off(".subplexTrack")
     .on("input.subplexTrack change.subplexTrack", handler);
 
-  $pedalDiv
-    .find("[data-control-label]")
+  // LED / switch cliccabili
+  $pedalDiv.find("[data-control-label].led, [data-control-label].switch")
     .off(".subplexTrack")
-    .on("mousedown.subplexTrack click.subplexTrack", handler);
+    .on("click.subplexTrack", handler);
+
+  // Knob visuali: osserva il cambio del valore nel label o tooltip
+  $pedalDiv.find(".knob-value-label, .bx--tooltip__label").each(function () {
+    const target = this;
+    const observer = new MutationObserver(handler);
+    observer.observe(target, { childList: true, characterData: true, subtree: true });
+  });
 }
+
+// ------------------------
+// Invalida SubPlex e reset UI (solo se serve)
+// ------------------------
+function invalidateSubplexForPedal($pedalDiv) {
+  if (!$pedalDiv) return;
+  const applied = $pedalDiv.data("applied-subplex");
+  if (!applied) return;
+
+  $pedalDiv.removeData("applied-subplex");
+  $pedalDiv.removeAttr("data-applied-preset");
+  $pedalDiv.data("subplexInvalidated", true);
+
+  const $wrapper = $pedalDiv.closest(".pedal-wrapper");
+  $wrapper.find(".applied-preset-info").hide();
+  $wrapper.find(".new-subplex-btn").show();
+  $wrapper.find(".preset-dropdown-wrapper").removeClass("is-open");
+}
+
+
 
 
 
