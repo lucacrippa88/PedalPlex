@@ -11,38 +11,30 @@ function getHigherSubplexLevel(a, b) {
 // Ottieni il valore corrente di un controllo
 // ------------------------
 function getCurrentControlValue($pedalDiv, ctrl) {
-  const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
-  if (!$control.length) return null;
+  const $control = findControlInDOM($pedalDiv, ctrl); // tua funzione esistente
 
-  switch (ctrl.type) {
-    case "knob":
-    case "smallknob":
-    case "largeknob":
-    case "xlargeknob": {
-      // 1️⃣ valore label
-      const $label = $control.closest(".knob-wrapper").find(".knob-value-label");
-      if ($label.length && $label.text().trim() !== "") return parseFloat($label.text());
+  if (!ctrl.type || !$control.length) return null;
 
-      // 2️⃣ fallback tooltip
-      const $tooltip = $control.closest(".knob-wrapper").find(".bx--tooltip__label");
-      if ($tooltip.length && $tooltip.text().trim() !== "") return parseFloat($tooltip.text());
-
-      return null;
-    }
-
-    case "slider":
-    case "lcd":
-    case "multi":
-      return $control.val();
-
+  switch(ctrl.type) {
     case "led":
-    case "switch":
-      return $control.data("colorIndex") ?? $control.prop("checked") ?? 0;
-
+      return $control.hasClass("active") ? 1 : 0; // o il modo in cui segnali ON
+    case "slider":
+    case "knob":
+      if (ctrl.discrete || ctrl.multi) {
+        // Leggi il valore testuale per discreti/multi
+        const $label = $control.closest(".knob-wrapper").find(".knob-value-label, .label-top");
+        return $label.text().trim();
+      } else {
+        // normale knob numerico
+        return parseFloat($control.attr("data-value") ?? extractRotationAsNumber($control));
+      }
+    case "multi":
+      return $control.val(); // dropdown
     default:
       return null;
   }
 }
+
 
 // ------------------------
 // Calcola delta normalizzato tra valore originale e corrente
