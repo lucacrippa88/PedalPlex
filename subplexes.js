@@ -296,6 +296,58 @@ function invalidateSubplexForPedal($pedalDiv) {
 
 
 
+// ------------------------
+// Cattura baseline controlli DAL DOM
+// ------------------------
+function captureSubplexBaselineFromDOM($pedalDiv) {
+  const controls = [];
+
+  $pedalDiv.find("[data-control-label]").each(function () {
+    const $ctrl = $(this);
+    const label = $ctrl.data("control-label");
+
+    let type = "unknown";
+    let value = null;
+
+    if ($ctrl.hasClass("knob")) type = "knob";
+    else if ($ctrl.is("input[type=range]")) type = "slider";
+    else if ($ctrl.hasClass("led")) type = "led";
+
+    switch (type) {
+      case "knob": {
+        const $labelValue = $ctrl
+          .closest(".knob-wrapper")
+          .find(".knob-value-label");
+        if ($labelValue.length) value = parseFloat($labelValue.text());
+        break;
+      }
+
+      case "slider":
+        value = $ctrl.val();
+        break;
+
+      case "led":
+        value = $ctrl.data("colorIndex");
+        break;
+    }
+
+    if (label && value !== null) {
+      controls.push({
+        label,
+        type,
+        value
+      });
+    }
+  });
+
+  console.log(
+    "📸 SubPlex baseline captured:",
+    controls.length,
+    controls
+  );
+
+  return controls;
+}
 
 
 

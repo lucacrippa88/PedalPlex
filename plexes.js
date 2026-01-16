@@ -857,38 +857,63 @@ function applyPresetToPedalboard(presetDoc) {
     $pedalDiv.find('.row').remove();
     renderPedalControls(resetPedal, $pedalDiv);
 
+    // if (presetPedal) {
+    //   const appliedSubplex = presetPedal.subplex || presetPedal;
+
+    //   // 1️⃣ salva il subplex sul pedale
+    //   $pedalDiv.data('applied-subplex', appliedSubplex);
+
+
+    //   const baselineControls = captureSubplexBaselineFromDOM($pedalDiv);
+
+    //   $pedalDiv.data("subplex-original-controls", baselineControls);
+    //   $pedalDiv.data("subplex-modification-level", "original");
+    //   $pedalDiv.removeData("subplexInvalidated");
+
+    //   console.log(
+    //     "🧱 SubPlex baseline initialized for",
+    //     pedalId,
+    //     baselineControls
+    //   );
+
+    //   $pedalDiv.data('subplex-modification-level', 'original');
+    //   $pedalDiv.removeData('subplexInvalidated');
+
+    //   // 2️⃣ render UI info
+    //   renderAppliedPresetInfo($pedalDiv, appliedSubplex);
+
+    //   // 🔴 USA IL NUOVO TRACKING
+    //   setupSubplexChangeTracking($pedalDiv);
+
+
+    // }
+
     if (presetPedal) {
       const appliedSubplex = presetPedal.subplex || presetPedal;
 
-      // // 1️⃣ salva il subplex sul pedale (COME IL DROPDOWN)
-      // $pedalDiv.data('applied-subplex', appliedSubplex);
+      // 1️⃣ Salva il SubPlex applicato
+      $pedalDiv.data("applied-subplex", appliedSubplex);
 
-      // // 2️⃣ render UI info
-      // renderAppliedPresetInfo($pedalDiv, appliedSubplex);
-
-      // // 3️⃣ AGGANCIA INVALIDAZIONE (QUESTA ERA LA RIGA MANCANTE)
-      // setupSubplexInvalidationOnDBLoad($pedalDiv);
-
-
-      // 1️⃣ salva il subplex sul pedale
-      $pedalDiv.data('applied-subplex', appliedSubplex);
-
-      // 🔴 AGGIUNGI QUESTE RIGHE
-      $pedalDiv.data(
-        'subplex-original-controls',
-        JSON.parse(JSON.stringify(appliedSubplex.controls || []))
-      );
-      $pedalDiv.data('subplex-modification-level', 'original');
-      $pedalDiv.removeData('subplexInvalidated');
-
-      // 2️⃣ render UI info
+      // 2️⃣ Render UI SubPlex (TITOLO, TAG, INFO)
       renderAppliedPresetInfo($pedalDiv, appliedSubplex);
 
-      // 🔴 USA IL NUOVO TRACKING
+      // 3️⃣ Cattura BASELINE dal DOM *DOPO* il render
+      const baselineControls = captureSubplexBaselineFromDOM($pedalDiv);
+
+      $pedalDiv.data("subplex-original-controls", baselineControls);
+      $pedalDiv.data("subplex-modification-level", "original");
+      $pedalDiv.removeData("subplexInvalidated");
+
+      console.log(
+        "🧱 SubPlex baseline initialized for",
+        pedalId,
+        baselineControls
+      );
+
+      // 4️⃣ Attiva tracking modifiche
       setupSubplexChangeTracking($pedalDiv);
-
-
     }
+
 
 
     // Find existing name element (.pedal-name or .head-name)
