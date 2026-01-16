@@ -103,8 +103,12 @@ function updateSubplexTitleUI($pedalDiv, level) {
 
 
 function onPedalControlChangeNormalized($pedalDiv) {
+  console.log("🟢 control change detected");
   const subplex = $pedalDiv.data("applied-subplex");
-  if (!subplex) return;
+  if (!subplex) {
+    console.log("❌ no applied-subplex");
+    return;
+  }
 
   const previousLevel = $pedalDiv.data("subplex-modification-level") || "original";
   const calculatedLevel = classifySubplexModificationNormalized($pedalDiv);
@@ -125,6 +129,8 @@ function onPedalControlChangeNormalized($pedalDiv) {
 
 function setupSubplexChangeTracking($pedalDiv) {
   if (!$pedalDiv) return;
+
+  console.log("🔵 setupSubplexChangeTracking", $pedalDiv.attr("id"));
 
   const handler = () => onPedalControlChangeNormalized($pedalDiv);
 
