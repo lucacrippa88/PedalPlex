@@ -1,12 +1,13 @@
 function getAllSubplexControls(subplex) {
+    console.log("[getAllSubplexControls] subplex:", subplex);
     if (!subplex || !Array.isArray(subplex.controls)) return [];
 
-    // caso flat
     if (!subplex.controls[0]?.row) {
+        console.log("[getAllSubplexControls] flat controls found");
         return subplex.controls;
     }
 
-    // caso a righe
+    console.log("[getAllSubplexControls] row controls found");
     return subplex.controls.flatMap(r => Array.isArray(r.row) ? r.row : []);
 }
 
@@ -14,21 +15,26 @@ function getAllSubplexControls(subplex) {
 
 
 
+
 // Render applied SubPlex info box
 function renderAppliedPresetInfo($pedalDiv, subplex) {
-
+    console.log("[renderAppliedPresetInfo] called for pedal:", $pedalDiv.data("pedal-id"), "subplex:", subplex);
 
     const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || subplex.id || "SubPlex";
 
-
     if (!subplex || (!subplex.presetName && !subplex.name && !subplex.preset_name && !subplex.id)) {
-        console.log("No valid SubPlex found, skipping render.");
+        console.log("[renderAppliedPresetInfo] No valid SubPlex found, skipping render.");
         return;
     }
 
     const $wrapper = $pedalDiv.closest(".pedal-wrapper");
     const $infoBox = $wrapper.find(".applied-preset-info");
-    if (!$infoBox.length) return;
+    if (!$infoBox.length) {
+        console.log("[renderAppliedPresetInfo] No info box found");
+        return;
+    }
+
+    console.log("[renderAppliedPresetInfo] Rendering presetName:", presetName);
 
     // const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || "SubPlex";
     const description = subplex.description || "No description available";
@@ -126,12 +132,14 @@ function invalidateSubplexForPedal($pedalDiv) {
 
 // Controlla se i valori dei controlli differiscono dal SubPlex applicato
 function onPedalControlChange($pedalDiv) {
+    console.log("[onPedalControlChange] called for pedal:", $pedalDiv.data("pedal-id"));
     const subplex = $pedalDiv.data('applied-subplex');
-    if (!subplex) return; // niente SubPlex → nulla da fare
+    if (!subplex) {
+        console.log("[onPedalControlChange] No subplex applied");
+        return;
+    }
 
     let changed = false;
-
-    // Prendo tutti i controlli, sia flat che a righe
     const controls = getAllSubplexControls(subplex);
 
     controls.forEach(ctrl => {
@@ -144,9 +152,7 @@ function onPedalControlChange($pedalDiv) {
             case "smallknob":
             case "largeknob":
             case "xlargeknob":
-                currentValue = parseFloat(
-                    $control.closest(".knob-wrapper").find(".knob-value-label").text()
-                );
+                currentValue = parseFloat($control.closest(".knob-wrapper").find(".knob-value-label").text());
                 break;
             case "slider":
             case "lcd":
@@ -162,13 +168,18 @@ function onPedalControlChange($pedalDiv) {
                 break;
         }
 
-        if (currentValue != ctrl.value) changed = true;
+        if (currentValue != ctrl.value) {
+            console.log("[onPedalControlChange] Control changed:", ctrl.label, "from", ctrl.value, "to", currentValue);
+            changed = true;
+        }
     });
 
     if (changed && !$pedalDiv.data("subplexInvalidated")) {
+        console.log("[onPedalControlChange] Changes detected, updating SubPlex status");
         updateSubplexStatus($pedalDiv);
     }
 }
+
 
 
 
@@ -198,39 +209,34 @@ function setupSubplexInvalidationOnDBLoad($pedalDiv) {
 
 // New
 function updateSubplexStatus($pedalDiv) {
+    console.log("[updateSubplexStatus] called for pedal:", $pedalDiv.data("pedal-id"));
 
     const subplex = $pedalDiv.data('applied-subplex');
-    if (!subplex) return;
-
-    console.log("[SubPlex] checking pedal", $pedalDiv.data("pedal-id"));
-    console.log("[SubPlex] original controls", subplex.controls);
-
-    if (!window.currentSubPlex) {
-        window.currentSubPlex = {};
+    if (!subplex) {
+        console.log("[updateSubplexStatus] No subplex applied");
+        return;
     }
 
-    let totalScore = 0;
+    if (!window.currentSubPlex) window.currentSubPlex = {};
 
+    let totalScore = 0;
     const controls = getAllSubplexControls(subplex);
 
     controls.forEach(ctrl => {
         const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
         if (!$control.length) return;
-
-        totalScore += calculateControlChangeScore(ctrl, $control);
+        const score = calculateControlChangeScore(ctrl, $control);
+        console.log("[updateSubplexStatus] Control:", ctrl.label, "score:", score);
+        totalScore += score;
     });
 
-    console.log("[SubPlex] totalScore =", totalScore);
+    console.log("[updateSubplexStatus] totalScore =", totalScore);
 
-    // Salva il nome originale del SubPlex
-    if (!subplex._originalName) {
-        subplex._originalName = subplex.presetName || subplex.name;
-    }
+    if (!subplex._originalName) subplex._originalName = subplex.presetName || subplex.name;
     const baseName = subplex._originalName || 'SubPlex';
     let displayName = baseName;
-
-    // Calcola lo stato
     let state = '';
+
     if (totalScore === 0) {
         state = 'original';
     } else if (totalScore <= 2) {
@@ -244,17 +250,15 @@ function updateSubplexStatus($pedalDiv) {
         displayName = 'Custom SubPlex';
     }
 
-    // Aggiorna lo stato e il nome SubPlex
+    console.log("[updateSubplexStatus] New state:", state, "displayName:", displayName);
+
     $pedalDiv.data('applied-subplex-state', state);
     subplex.presetName = displayName;
-
-    // Aggiorna il SubPlex globale per il salvataggio
     window.currentSubPlex[$pedalDiv.data('pedal-id')] = subplex;
 
-    console.log("[SubPlex] state =", state, "name =", displayName);
-
-    renderAppliedPresetInfo($pedalDiv, subplex, displayName, state);
+    renderAppliedPresetInfo($pedalDiv, subplex);
 }
+
 
 
 
@@ -269,19 +273,14 @@ function calculateControlChangeScore(ctrl, $control) {
         case "largeknob":
         case "xlargeknob":
         case "slider":
-            //   const currentVal = parseFloat($control.closest(".knob-wrapper").find(".knob-value-label").text()) || parseFloat($control.val());
             let currentVal = parseFloat($control.closest(".knob-wrapper").find(".knob-value-label").text());
-            if (isNaN(currentVal)) {
-                currentVal = parseFloat($control.val());
-            }
-
+            if (isNaN(currentVal)) currentVal = parseFloat($control.val());
             const originalVal = parseFloat(ctrl.value);
             if (isNaN(currentVal) || isNaN(originalVal)) break;
 
             const range = ctrl.max - ctrl.min || 100;
             const relativeDiff = Math.abs(currentVal - originalVal) / range;
-
-            score += relativeDiff < 0.1 ? 1 : 2; // piccola modifica -> *, grande -> **
+            score += relativeDiff < 0.1 ? 1 : 2;
             break;
 
         case "led":
@@ -289,13 +288,16 @@ function calculateControlChangeScore(ctrl, $control) {
         case "dropdown":
         case "knob_discrete":
             const currentValue = $control.val() ?? $control.data("colorIndex");
-            if (currentValue != ctrl.value) score += 2; // sempre **
+            if (String(currentValue) !== String(ctrl.value)) score += 2;
             break;
 
         case "lcd":
         default:
-            break; // ignoriamo
+            break;
     }
 
+    console.log("[calculateControlChangeScore] Control:", ctrl.label, "score:", score);
     return score;
 }
+
+
