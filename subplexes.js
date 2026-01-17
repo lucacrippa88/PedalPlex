@@ -175,6 +175,9 @@ function setupSubplexInvalidationOnDBLoad($pedalDiv) {
 
 // New
 function updateSubplexStatus($pedalDiv) {
+  console.log("[SubPlex] checking pedal", $pedalDiv.data("pedal-id"));
+  console.log("[SubPlex] original controls", subplex.controls);
+
   const subplex = $pedalDiv.data('applied-subplex');
   if (!subplex) return;
 
@@ -192,6 +195,9 @@ function updateSubplexStatus($pedalDiv) {
     });
   }
 
+  console.log("[SubPlex] totalScore =", totalScore);
+
+
   let state = '';
   let displayName = subplex.presetName || subplex.name || 'SubPlex';
 
@@ -205,6 +211,8 @@ function updateSubplexStatus($pedalDiv) {
   // Aggiorna anche il SubPlex in window.currentSubPlex per il salvataggio
   subplex.presetName = displayName;
   window.currentSubPlex[$pedalDiv.data('pedal-id')] = subplex;
+
+  console.log("[SubPlex] state =", state, "name =", displayName);
 
   renderAppliedPresetInfo($pedalDiv, subplex, displayName, state);
 }
@@ -221,8 +229,11 @@ function calculateControlChangeScore(ctrl, $control) {
     case "largeknob":
     case "xlargeknob":
     case "slider":
-      const currentVal = parseFloat($control.closest(".knob-wrapper").find(".knob-value-label").text()) || parseFloat($control.val());
-      const originalVal = parseFloat(ctrl.value);
+    //   const currentVal = parseFloat($control.closest(".knob-wrapper").find(".knob-value-label").text()) || parseFloat($control.val());
+    let currentVal = parseFloat( $control.closest(".knob-wrapper").find(".knob-value-label").text() );
+    if (isNaN(currentVal)) { currentVal = parseFloat($control.val()); }
+    
+    const originalVal = parseFloat(ctrl.value);
       if (isNaN(currentVal) || isNaN(originalVal)) break;
 
       const range = ctrl.max - ctrl.min || 100;

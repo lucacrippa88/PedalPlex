@@ -1720,8 +1720,11 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     description: preset.description || '',
     style: preset.style || [],
     authorId: preset.authorId || preset.user_id || '',
-    version: preset.version || 1
+    version: preset.version || 1,
+    // AGGIUNTO
+    controls: JSON.parse(JSON.stringify(preset.controls || {}))
   };
+
 
   $pedalDiv.data('applied-subplex', appliedSubplex);
   $pedalDiv.attr("data-applied-preset", JSON.stringify({
