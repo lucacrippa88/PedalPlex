@@ -1,164 +1,5 @@
 const editMode = window.isEditMode
 
-function getBasePath() {
-  const parts = window.location.pathname.split('/').filter(Boolean);
-  // se sei su gears → base = /PedalPlex
-  // se sei su /gears → base = ""
-  return parts.length > 1 ? '/' + parts[0] : '';
-}
-
-
-// TAG MAP STYLE
-const STYLE_TAG_MAP = {
-  altern: "cyan",
-  indie: "cyan",
-  grunge: "cool-gray",
-  "lo-fi": "cool-gray",
-  blues: "blue",
-  rock: "red",
-  stoner: "red",
-  funk: "green",
-  raggaeton: "green",
-  ambient: "magenta",
-  chill: "magenta",
-  metal: "black",
-  surf: "teal",
-  jazz: "gray",
-  pop: "warm-gray",
-  beat: "warm-gray",
-  punk: "orange",
-  wave: "orange",
-  prog: "purple",
-  psych: "purple",
-  folk: "yellow",
-  country: "yellow"
-};
-
-
-
-
-// HELPER
-function rgbToHex(rgb) {
-  const result = rgb.match(/\d+/g);
-  if (!result || result.length < 3) return '#000000';
-  const r = parseInt(result[0], 10);
-  const g = parseInt(result[1], 10);
-  const b = parseInt(result[2], 10);
-  const hex = ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-  return '#' + hex.padStart(6, '0').toLowerCase(); // always 6 digits
-}
-
-
-// HELPER
-function getValueFromRotation(angle) {
-  const angleOffset = -135;
-  const angleRange = 270;
-  const minValue = 7;
-  const maxValue = 17;
-
-  // normalize angle within the range
-  let normalizedAngle = angle - angleOffset;
-  if (normalizedAngle < 0) normalizedAngle += 360; // handle negative rotation
-
-  const ratio = normalizedAngle / angleRange;
-  let value = minValue + ratio * (maxValue - minValue);
-
-  // Clamp value within min/max and round if needed
-  if (value < minValue) value = minValue;
-  if (value > maxValue) value = maxValue;
-  // return Math.round(value);
-  return Math.round(value * 10) / 10; // round to 1 decimal place
-}
-
-
-// HELPER
-function getPedalList() {
-  const pedalList = [];
-
-  $(".pedal").each(function () {
-    const $pedalDiv = $(this);
-    const pedalName = $pedalDiv.data("pedal-name");
-    if (pedalName) {
-      pedalList.push(pedalName);
-    }
-  });
-
-  return pedalList;
-}
-
-
-
-// HELPER
-function getPedalsInPreset(songPresetArray) {
-  if (!songPresetArray) return [];
-    const pedalNames = songPresetArray.map(p => p.name);
-  
-    return [...new Set(pedalNames)]; // Ensures uniqueness
-}
-
-
-// HELPER
-function getRotationFromValue(control, value) {
-  let index = 0, range = 1, min = 0, max = 1;
-
-  if (control.values && Array.isArray(control.values)) {
-    index = control.values.indexOf(value);
-    if (index === -1) index = 0;
-    min = 0;
-    max = control.values.length - 1;
-  } else {
-    min = control.min ?? 0;
-    max = control.max ?? 100;
-    index = value;
-  }
-
-  range = max - min;
-
-  let angleRange, angleOffset;
-
-  switch (control.span) {
-    case "all": angleRange = 360; angleOffset = 0; break;
-    case "three-quarters": angleRange = 270; angleOffset = -135; break;
-    case "half": angleRange = 180; angleOffset = 180; break;
-    case "half-shift": angleRange = -180; angleOffset = 30; break;
-    case "half-shift-inverted": angleRange = 180; angleOffset = 150; break;
-    case "quarter": angleRange = -90; angleOffset = 30; break;
-    case "tenToTwo": angleRange = 120; angleOffset = 300; break;
-    case "twelveToSix": angleRange = 180; angleOffset = 0; break;
-    case "elevenToSeven": angleRange = -120; angleOffset = 330; break;
-    case "elevenToNineteen": angleRange = 240; angleOffset = -30; break; // testing
-    case "oneToFive": angleRange = 120; angleOffset = 30; break;
-    case "oneToElevenClock": angleRange = 300; angleOffset = 30; break;
-    default: angleRange = 270; angleOffset = -135;
-  }
-
-  const ratio = (index - min) / range;
-
-  return angleOffset + ratio * angleRange;
-}
-
-// HELPER
-function getPedalWidth(width) {
-  switch (width) {
-    case "xsmall": return "70px"; case "smaller": return "90px"; case "small": return "120px"; case "medium": return "140px";
-    case "standard": return "190px"; case "large": return "210px"; case "+large": return "230px"; case "larger": return "250px";
-    case "+larger": return "300px"; case "++larger": return "350px";case "xlarge": return "400px"; case "xlarger": return "450px";
-    case "largest": return "500px"; case "wide": return "550px"; case "wider": return "600px"; case "widest": return "700px"; 
-    case "xwidest": return "775px"; default: return "190px";
-  }
-}
-
-// HELPER
-function getPedalHeight(height) {
-  switch (height) {
-    case "xsmall": return "70px"; case "smaller": return "90px"; case "small": return "110px"; case "medium": return "140px";
-    case "standard": return "160px"; case "large": return "190px"; case "+large": return "210px"; case "larger": return "240px";
-    case "xlarge": return "255px"; case "xlarger": return "265px"; case "largest": return "350px"; case "xlargest": return "400px";
-    case "tall": return "450px"; default: return "500px";
-  }
-}
-
-
 
 // Function to render pedal controls dynamically
 function renderPedalControls(pedal, $pedalDiv) {
@@ -330,23 +171,12 @@ function renderPedalControls(pedal, $pedalDiv) {
                 let $label;
 
                 if (control.position === "under-top" && control.type === "smallknob") {
-                    $label = $("<div>").css({
-                        position: "absolute",
-                        "margin-left": "4px",
-                        "margin-top": "45px",
-                        transform: "translateY(-50%)",
-                        "white-space": "nowrap",
-                        "font-size": "10px"
-                    }).text(control.label);
+                    $label = $("<div>").css({ position: "absolute", "margin-left": "4px", "margin-top": "45px", transform: "translateY(-50%)", "white-space": "nowrap", "font-size": "10px" }).text(control.label);
                 } 
-                else {
-                    $label = $("<div>").addClass("label-top").text(control.label);
-                }
+                else { $label = $("<div>").addClass("label-top").text(control.label); }
 
                 // 🔥 Applica colore e background in entrambi i casi
-                if (labelColor) {
-                    $label.css("color", labelColor);
-                }
+                if (labelColor) { $label.css("color", labelColor); }
                 if (labelBackground) {
                     $label.css("padding", "0px 4px");
                     $label.css("border-radius", "3px");
@@ -354,14 +184,9 @@ function renderPedalControls(pedal, $pedalDiv) {
                 }
 
                 // Knob label positioning
-                const $container = $("<div>")
-                  .addClass("knob-container")
-                  .css({ position: "relative" })
-                  .append(knob);
+                const $container = $("<div>").addClass("knob-container").css({ position: "relative" }).append(knob);
 
-                if (!editMode && $tooltip) {
-                  $container.append($tooltip);
-                }
+                if (!editMode && $tooltip) { $container.append($tooltip); }
 
                 let $knobWrapper = $("<div>")
                   .addClass("knob-wrapper") // aggiungi classe per gestione CSS
@@ -372,10 +197,8 @@ function renderPedalControls(pedal, $pedalDiv) {
                 // Qui controllo la posizione del label (se sopra o sotto, più il margine se sotto)
                 if (control.labelPos === "inverted") {
                   // Set different margin for different knob sizes and presence of thick border
-                  if (control.border === "thick") { 
-                    labelMarginTop = isSmall ? "1px" : isLarge ? "28px" : isXLarge ? "52px" : "15px";
-                  } else { 
-                    labelMarginTop = isSmall ? "-13px" : isLarge ? "12px" : isXLarge ? "36px" : "0px";
+                  if (control.border === "thick") {  labelMarginTop = isSmall ? "1px" : isLarge ? "28px" : isXLarge ? "52px" : "15px";
+                  } else { labelMarginTop = isSmall ? "-13px" : isLarge ? "12px" : isXLarge ? "36px" : "0px";
                   }
                   $label.css("margin-top", labelMarginTop)
                   $knobWrapper.addClass("label-under"); // classe CSS per label sotto
@@ -394,22 +217,12 @@ function renderPedalControls(pedal, $pedalDiv) {
 
                     // wrapper standard (centrato)
                     function makeWrapper(marginTop) {
-                        return $("<div>").css({
-                            "margin-top": marginTop,
-                            "display": "flex",
-                            "flex-direction": "column",
-                            "align-items": "center"
-                        });
+                        return $("<div>").css({ "margin-top": marginTop, "display": "flex", "flex-direction": "column", "align-items": "center" });
                     }
 
                     // wrapper speciale per under-top (NO align-items)
                     function makeWrapperUnderTop(marginTop) {
-                        return $("<div>").css({
-                            "margin-top": marginTop,
-                            "display": "flex",
-                            "flex-direction": "column"
-                            // niente align-items:center
-                        });
+                        return $("<div>").css({ "margin-top": marginTop, "display": "flex", "flex-direction": "column" });
                     }
 
 
@@ -479,10 +292,7 @@ function renderPedalControls(pedal, $pedalDiv) {
 
                 if (control.showlabel === "yes") { $label.text(control.label) }
 
-                const led = $("<div>")
-                    .addClass("led")
-                    .attr("data-control-label", control.label)
-                    .css("cursor", "pointer");
+                const led = $("<div>").addClass("led").attr("data-control-label", control.label).css("cursor", "pointer");
 
                 const setColor = (index) => {
                     const color = colors[index] || "#000000";
@@ -574,13 +384,7 @@ function renderPedalControls(pedal, $pedalDiv) {
               if (!editMode) {
                 $tooltip = $("<div>")
                   .addClass("bx--tooltip bx--tooltip--bottom") // caret on bottom
-                  .css({
-                    display: "none",
-                    position: "absolute",
-                    bottom: "-45px", // below slider
-                    left: "50%",
-                    transform: "translateX(-50%)"
-                  });
+                  .css({ display: "none", position: "absolute", bottom: "-45px", left: "50%", transform: "translateX(-50%)" });
 
                 const $caret = $("<span>").addClass("bx--tooltip__caret");
                 $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
@@ -720,7 +524,6 @@ function renderPedalControls(pedal, $pedalDiv) {
 
 
 
-
 // Edit gears in catalog page
 function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
@@ -781,22 +584,14 @@ function setupEditPedalHandler(pedals) {
           </div>
         `,
         width: '100%',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
+        allowOutsideClick: false, allowEscapeKey: false,
         showConfirmButton: boolConfirmBtn,
         showDenyButton: boolDenyBtn,
         showCancelButton: boolCancelBtn,
-        confirmButtonText: 'Save',
-        denyButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
+        confirmButtonText: 'Save', denyButtonText: 'Delete', cancelButtonText: 'Cancel',
         footer: `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--tertiary">Duplicate</button></span>`,
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--primary',
-          denyButton: 'bx--btn bx--btn--danger',
-          cancelButton: 'bx--btn bx--btn--secondary'
-        },
-        background: '#2e2e2e',
-        color: '#ffffff',
+        customClass: { confirmButton: 'bx--btn bx--btn--primary', denyButton: 'bx--btn bx--btn--danger', cancelButton: 'bx--btn bx--btn--secondary' },
+        background: '#2e2e2e', color: '#ffffff',
         didOpen: () => {
           const iframe = document.getElementById('swal-builder-iframe');
           const spinner = document.getElementById('builder-spinner');
@@ -830,16 +625,11 @@ function setupEditPedalHandler(pedals) {
                 title: `Duplicate of ${pedal._id}`,
                 html: `<iframe src="create.html" style="width:100%; height:80vh; border:none;" id="swal-duplicate-iframe"></iframe>`,
                 width: '100%',
-                showConfirmButton: true,
-                showCancelButton: true,
+                showConfirmButton: true, showCancelButton: true,
                 confirmButtonText: 'Save duplicate',
                 cancelButtonText: 'Cancel',
-                customClass: {
-                    confirmButton: 'bx--btn bx--btn--primary',
-                    cancelButton: 'bx--btn bx--btn--secondary'
-                },
-                background: '#2e2e2e',
-                color: '#ffffff',
+                customClass: { confirmButton: 'bx--btn bx--btn--primary', cancelButton: 'bx--btn bx--btn--secondary' },
+                background: '#2e2e2e', color: '#ffffff',
                 didOpen: () => {
                   const dupIframe = document.getElementById('swal-duplicate-iframe');
                   dupIframe.addEventListener('load', () => {
@@ -882,10 +672,8 @@ function setupEditPedalHandler(pedals) {
                     if (data.success) {
                       const createdPedal = {
                         ...newPedalData,
-                        _id: data.id,
-                        _rev: data.rev,
-                        author: window.currentUser?.username || "",
-                        canEdit: true
+                        _id: data.id, _rev: data.rev,
+                        author: window.currentUser?.username || "", canEdit: true
                       };
                       pedals.push(createdPedal);
                       const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
@@ -985,14 +773,9 @@ function setupEditPedalHandler(pedals) {
           Swal.fire({
             title: 'Are you sure?',
             text: `This will permanently delete "${pedal._id}"`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'No, cancel!',
-            customClass: {
-                confirmButton: 'bx--btn bx--btn--danger',
-                cancelButton: 'bx--btn bx--btn--secondary'
-            }
+            icon: 'warning', showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!', cancelButtonText: 'No, cancel!',
+            customClass: { confirmButton: 'bx--btn bx--btn--danger', cancelButton: 'bx--btn bx--btn--secondary' }
           }).then((deleteConfirm) => {
             if (deleteConfirm.isConfirmed) {
               Swal.showLoading();
@@ -1014,8 +797,7 @@ function setupEditPedalHandler(pedals) {
                   Swal.fire({
                     title: 'Deleted!',
                     text: 'The gear has been removed.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
+                    icon: 'success', confirmButtonText: 'OK',
                     customClass: { confirmButton: 'bx--btn bx--btn--primary' }
                   }).then(() => {
                     const idx = pedals.findIndex(p => p._id === pedal._id);
@@ -1087,94 +869,6 @@ function setupEditPedalHandler(pedals) {
 window.setupEditPedalHandler = setupEditPedalHandler;
 
 
-
-
-
-
-// HELPER
-function safeLogoStyle(inputStyle) {
-  if (!inputStyle) return "";
-  // Reject javascript or expression
-  if (/expression\s*\(|javascript:/i.test(inputStyle)) { return ""; }
-
-  // Optionally allow only certain props
-  const allowedProps = ["color", "font-size", "font-weight", "font-style", "font-family", "vertical-align",
-                        "background-color", "padding", "position", "margin", "margin-left", "margin-right", "margin-bottom", 
-                        "bottom", "top", "left", "right", "letter-spacing", "word-spacing", "display", "border", "margin-top", 
-                        "line-height", "transform", "height", "width", "border-radius", "box-shadow", "background-size",
-                        "background-image", "text-align", "background", "rotate", "overflow", "white-space", "text-shadow", 
-                        "text-decoration", "text-decoration-style", "text-decoration-line", "text-decoration-color", "outline", "outline-offset"];
-  const safeRules = inputStyle.split(";").filter(rule => {
-    const [prop] = rule.split(":");
-    return allowedProps.includes(prop.trim().toLowerCase());
-  });
-  return safeRules.join(";");
-}
-
-
-
-
-/**
- * sanitizePedalHTML
- * - Only allows span, style, br, hr, div
- * - Keeps class and style attributes (inline CSS)
- * - Removes any JS events, scripts, or malicious URLs
- */
-function sanitizePedalHTML(input) {
-    if (!input) return '';
-
-    const temp = document.createElement('div');
-    temp.innerHTML = input;
-
-    function cleanNode(node) {
-        if (node.nodeType === Node.TEXT_NODE) return;
-
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            const tag = node.tagName.toLowerCase();
-            const allowedTags = ['span','style','br','hr','div'];
-
-            if (!allowedTags.includes(tag)) {
-                const frag = document.createDocumentFragment();
-                while (node.firstChild) frag.appendChild(node.firstChild);
-                node.parentNode.replaceChild(frag, node);
-                return;
-            }
-
-            // sanitize attributes
-            [...node.attributes].forEach(attr => {
-                const name = attr.name.toLowerCase();
-
-                // keep class, clean unsafe chars
-                if (name === 'class') {
-                    node.className = node.className.replace(/[^a-zA-Z0-9 _-]/g,'');
-                } 
-                // keep style but remove dangerous patterns
-                else if (name === 'style') {
-                    let safeStyle = node.style.cssText
-                        .replace(/expression\s*\(/gi,'')
-                        .replace(/javascript\s*:/gi,'')
-                        .replace(/url\s*\(\s*data\s*:/gi,'')
-                        .replace(/behavior\s*:/gi,''); // block old IE expressions
-                    node.style.cssText = safeStyle;
-                } 
-                // remove all other attributes including on*
-                else {
-                    node.removeAttribute(attr.name);
-                }
-            });
-        }
-
-        // recursively clean children
-        Array.from(node.childNodes).forEach(child => cleanNode(child));
-    }
-
-    Array.from(temp.childNodes).forEach(child => cleanNode(child));
-    return temp.innerHTML;
-}
-
-
-
-
 // HELPER: render a gear in catalog and editor
 function renderPedal(pedal, userRole, pedalboardPage = false) {
   const pedalId = pedal._id || pedal.id;
@@ -1194,21 +888,9 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
 
   // Base CSS
   const baseCss = {
-    border: `5px solid ${pedal["color"]}`,
-    borderRadius: '10px',
-    color: pedal["font-color"],
-    width: getPedalWidth(pedal.width),
-    height: getPedalHeight(pedal.height),
-    marginBottom: '10px',
-    display: 'inline-block',
-    ...(pedal["inside-border"] && {
-      boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}`
-    }),
-    ...(isImage ? {
-      backgroundImage: `url("${insideColorRaw}")`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center'
-    } : { background: colorOnly })
+    border: `5px solid ${pedal["color"]}`, borderRadius: '10px', color: pedal["font-color"], width: getPedalWidth(pedal.width), height: getPedalHeight(pedal.height), marginBottom: '10px', display: 'inline-block',
+    ...(pedal["inside-border"] && { boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` }),
+    ...(isImage ? { backgroundImage: `url("${insideColorRaw}")`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: colorOnly })
   };
 
   let $pedalDiv;
@@ -1221,20 +903,12 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     case "head":
     case "pedal-inverted":
     case "round":
-      $pedalDiv = $("<div>")
-        .addClass("pedal-catalog")
-        .css(getPedalTypeCss(pedal, baseCss, inside))
-        .attr("data-pedal-name", pedalName)
-        .attr("data-pedal-id", pedalId)
-        .attr("data-published", (pedal.published || "draft").toLowerCase())
-        .attr("data-author", pedal.author || "");
+      $pedalDiv = $("<div>").addClass("pedal-catalog").css(getPedalTypeCss(pedal, baseCss, inside)).attr("data-pedal-name", pedalName).attr("data-pedal-id", pedalId).attr("data-published", (pedal.published || "draft").toLowerCase()).attr("data-author", pedal.author || "");
       break;
   }
 
   // const cleanName = sanitizeHtml(pedal.name);
   const cleanName = sanitizePedalHTML(pedal.name);
-
-
 
   // Head and inverted pedals → add name/logo
   if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
@@ -1256,14 +930,11 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     });
 
 
-
-
   // Add name/logo for others
   if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
     const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
     $pedalDiv.append($nameDiv);
   } 
-
 
   // =======================================================
   // AUTHOR + VERIFIED + PUBLISHED (FIX DEFINITIVO)
@@ -1276,16 +947,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
 
     // BADGE VERIFIED → sempre visibile se esiste
     let $verifiedBadge = null;
-    if (pedal.verified == "true") {
-      $verifiedBadge = $(`
-        <span class="verified-badge">
-          <svg viewBox="0 0 24 24" class="verified-icon">
-            <path d="M12 1.5 L3 6 V12 C3 17 7 21 12 22.5 C17 21 21 17 21 12 V6 L12 1.5 Z"></path>
-            <text x="12" y="15" text-anchor="middle" font-size="10" fill="white" font-weight="bold">V</text>
-          </svg>
-        </span>
-      `);
-    }
+    if (pedal.verified == "true") {$verifiedBadge = $(`<span class="verified-badge"><svg viewBox="0 0 24 24" class="verified-icon"><path d="M12 1.5 L3 6 V12 C3 17 7 21 12 22.5 C17 21 21 17 21 12 V6 L12 1.5 Z"></path><text x="12" y="15" text-anchor="middle" font-size="10" fill="white" font-weight="bold">V</text></svg></span>`); }
 
     // DECIDE SE MOSTRARE L'AUTORE
     let showAuthor = false;
@@ -1335,15 +997,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     // Show these only if not in pedalboard page
     if (pedalboardPage == false) {
       if (isAdmin || isAuthor || isTemplate) {
-        const $editBtn = $("<button>")
-          .addClass("edit-btn showDesktop")
-          .attr("title", "Edit pedal JSON")
-          .data("pedal", pedal)
-          .html(`
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16">
-              <path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/>
-            </svg>
-          `);
+        const $editBtn = $("<button>").addClass("edit-btn showDesktop").attr("title", "Edit pedal JSON").data("pedal", pedal).html(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16"><path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/></svg>`);
         $pedalDiv.append($editBtn);
       }
     }
@@ -1354,25 +1008,12 @@ if (window.location.pathname.endsWith('/gears')) {
 
   const basePath = getBasePath();
 
-  const $shareIcon = $(`
-    <div class="pedal-share-icon" title="Share pedal">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
-        <path d="M23,20a5,5,0,0,0-3.89,1.89L11.8,17.32a4.46,4.46,0,0,0,0-2.64l7.31-4.57A5,5,0,1,0,18,7a4.79,4.79,0,0,0,.2,1.32l-7.31,4.57a5,5,0,1,0,0,6.22l7.31,4.57A4.79,4.79,0,0,0,18,25a5,5,0,1,0,5-5ZM23,4a3,3,0,1,1-3,3A3,3,0,0,1,23,4ZM7,19a3,3,0,1,1,3-3A3,3,0,0,1,7,19Zm16,9a3,3,0,1,1,3-3A3,3,0,0,1,23,28Z"></path>  
-      </svg>
-    </div>
-  `);
+  const $shareIcon = $(`<div class="pedal-share-icon" title="Share pedal"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M23,20a5,5,0,0,0-3.89,1.89L11.8,17.32a4.46,4.46,0,0,0,0-2.64l7.31-4.57A5,5,0,1,0,18,7a4.79,4.79,0,0,0,.2,1.32l-7.31,4.57a5,5,0,1,0,0,6.22l7.31,4.57A4.79,4.79,0,0,0,18,25a5,5,0,1,0,5-5ZM23,4a3,3,0,1,1-3,3A3,3,0,0,1,23,4ZM7,19a3,3,0,1,1,3-3A3,3,0,0,1,7,19Zm16,9a3,3,0,1,1,3-3A3,3,0,0,1,23,28Z"></path>  </svg></div>`);
 
   $pedalDiv.append($shareIcon);
 
   $pedalDiv.css('position', 'relative');
-  $shareIcon.css({
-    position: 'absolute',
-    bottom: '-22px',
-    right: '0',
-    cursor: 'pointer',
-    opacity: 0,
-    transition: 'opacity 0.2s ease'
-  });
+  $shareIcon.css({ position: 'absolute', bottom: '-22px', right: '0', cursor: 'pointer', opacity: 0, transition: 'opacity 0.2s ease' });
 
   $pedalDiv.hover(
     function() { $shareIcon.css('opacity', 1); },
@@ -1414,9 +1055,7 @@ if (window.location.pathname.endsWith('/gears')) {
       allowOutsideClick: true,
       position: 'top-end',
       width: 'auto',
-      html: `<div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">
-               ${buttonsHTML}
-             </div>`,
+      html: `<div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">${buttonsHTML}</div>`,
       didOpen: () => {
         const copyBtn = Swal.getPopup().querySelector('#copyLink');
         copyBtn.addEventListener('click', () => {
@@ -1440,54 +1079,6 @@ if (window.location.pathname.endsWith('/gears')) {
 }
 
 
-
-
-
-// HELPER: returns CSS depending on type + inside
-function getPedalTypeCss(pedal, baseCss, inside) {
-  switch (pedal.type) {
-    case "pedal":
-      return {
-        ...baseCss,
-        boxShadow: inside === "full" ?
-          `0 4px 8px rgba(0,0,0,0.3)` + (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "") :
-          `0 4px 8px rgba(0,0,0,0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-      };
-    case "expression":
-      return {
-        ...baseCss,
-        borderRadius: "25px",
-          boxShadow: inside === "full" ?
-          `0 4px 8px rgba(0,0,0,0.3)` + (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "") :
-          `0 4px 8px rgba(0,0,0,0.3), inset 0 -36px 0 0 ${pedal["color"]}`
-      };
-    case "combo":
-      return {
-        ...baseCss,
-        boxShadow: inside === "full" ?
-          baseCss.boxShadow || "" :
-          `0 4px 8px rgba(0,0,0,0.3), inset 0 -80px 0 0 ${pedal["color"]}`
-      };
-    case "head":
-    case "pedal-inverted":
-      return {
-        ...baseCss,
-        boxShadow: inside === "full" ?
-          `0 4px 8px rgba(0,0,0,0.3)` + (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "") :
-          `0 4px 8px rgba(0,0,0,0.3), inset 0 80px 0 0 ${pedal["color"]}`
-      };
-    case "round":
-      return {
-        ...baseCss,
-        borderRadius: "50%",
-          width: getPedalWidth(pedal.width),
-          height: getPedalWidth(pedal.width),
-          boxShadow: `0 4px 8px rgba(0,0,0,0.3), inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
-      };
-  }
-  return baseCss;
-}
- 
 
 // Get all active gears controls to save the preset
 function collectPedalControlValues(presetName = "Untitled Preset") {
@@ -1586,10 +1177,7 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
                       const cRgb = hexToRgb(catalogColors[i]);
                       if (!cRgb) continue;
                       const d = colorDistanceSq(targetRgb, cRgb);
-                      if (d < bestDist) {
-                        bestDist = d;
-                        bestIdx = i;
-                      }
+                      if (d < bestDist) { bestDist = d; bestIdx = i; }
                     }
                     if (bestDist < 2500) foundIndex = bestIdx;
                   }
@@ -1611,10 +1199,6 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
     });
 
 
-    // Save pedal in preset only if at least a LED is turned on
-    // if (hasColoredLed) {
-    //   pedals.push({ id: pedalId, name: pedalName, controls: controlsArray });
-    // }
     if (hasColoredLed) {
       const pedalObj = { id: pedalId, name: pedalName, controls: controlsArray };
 
@@ -1643,117 +1227,23 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
 }
 
 
-// HELPER
-function normalizeHex(color) {
-  if (!color) return '#000000';
-  color = color.trim().toLowerCase();
-  if (color.startsWith('rgb')) color = rgbToHex(color);
-  color = color.replace(/[^#0-9a-f]/g, '');
-  if (color.length === 4)
-    color = '#' + color[1] + color[1] + color[2] + color[2] + color[3] + color[3];
-  if (!/^#[0-9a-f]{6}$/.test(color)) return '#000000';
-  return color;
-}
-
-// HELPER
-function hexToRgb(hex) {
-  const clean = hex.replace('#', '');
-  if (clean.length === 3) {
-    const [r, g, b] = clean.split('').map(x => parseInt(x + x, 16));
-    return { r, g, b };
-  } else if (clean.length === 6) {
-    const r = parseInt(clean.slice(0, 2), 16);
-    const g = parseInt(clean.slice(2, 4), 16);
-    const b = parseInt(clean.slice(4, 6), 16);
-    return { r, g, b };
-  }
-  return null;
-}
-
-// HELPER
-function colorDistanceSq(a, b) {
-  const dr = a.r - b.r;
-  const dg = a.g - b.g;
-  const db = a.b - b.b;
-  return dr * dr + dg * dg + db * db;
-}
-
-
-
-
-// Function to filter pedals with colored LEDs in preset
-function filterPedalsWithColoredLeds(pedalsObj) {
-  const filteredPedals = {};
-
-  if (!pedalsObj || typeof pedalsObj !== 'object') {
-    console.warn('filterPedalsWithColoredLeds: invalid pedalsObj:', pedalsObj);
-    return filteredPedals;
-  }
-
-  for (const [pedalName, pedalData] of Object.entries(pedalsObj)) {
-    if (!pedalData || typeof pedalData !== 'object') {
-      console.warn(`Skipping pedal ${pedalName} because pedalData is invalid`, pedalData);
-      continue;
-    }
-
-    const controls = pedalData.controls;
-
-    if (!controls || (typeof controls !== 'object' && !Array.isArray(controls))) {
-      console.warn(`Skipping pedal ${pedalName} because controls is invalid`, controls);
-      continue;
-    }
-
-    let controlsArray;
-    if (Array.isArray(controls)) {
-      controlsArray = controls;
-    } else {
-      controlsArray = Object.entries(controls).map(([key, value]) => ({
-        [key]: value
-      }));
-    }
-
-    const hasColoredLed = controlsArray.some(ctrlObj => {
-      const ledValue = Object.values(ctrlObj)[0];
-      return typeof ledValue === 'number' && ledValue > 0;
-    });
-
-    if (hasColoredLed) {
-      filteredPedals[pedalName] = pedalData;
-    }
-  }
-
-  return filteredPedals;
-}
-
 
 
 // Render full pedalboard in preset page
 async function renderFullPedalboard(pedalboardOverride = null) {
 
   // 🔒 TEST / SINGLE PEDAL MODE
-  if (window.__SINGLE_PEDAL_MODE__ && !pedalboardOverride) {
-    return Promise.resolve();
-  }
+  if (window.__SINGLE_PEDAL_MODE__ && !pedalboardOverride) { return Promise.resolve(); }
 
   // 🔹 Override pedalboard (test / single pedal mode)
-  if (pedalboardOverride && pedalboardOverride.pedals) {
-    window.pedalboard = pedalboardOverride;
-  }
-
+  if (pedalboardOverride && pedalboardOverride.pedals) { window.pedalboard = pedalboardOverride; }
 
   return new Promise((resolve) => {  
 
      try {
-      if (!resultsDiv) {
-        console.error("resultsDiv not initialized yet");
-        return resolve(); 
-      }
-
+      if (!resultsDiv) { console.error("resultsDiv not initialized yet"); return resolve(); }
       const container = document.getElementById('preset');
-      if (!container) {
-        console.warn('No #pedalboard container found');
-        return resolve(); 
-      }
+      if (!container) { console.warn('No #pedalboard container found'); return resolve(); }
       container.innerHTML = '';
 
       // Guest mode
@@ -1769,14 +1259,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
             return resolve();
           }
         } else {
-          container.innerHTML = `
-            <div style="text-align: center; margin-top: 40px;">
-              <p style="font-size: 1.1em; margin-bottom: 20px;">Rig is empty.</p>
-              <button id="createBtn" class="bx--btn bx--btn--secondary" type="button">
-                Go to Rigs
-              </button>
-            </div>
-          `;
+          container.innerHTML = `<div style="text-align: center; margin-top: 40px;"><p style="font-size: 1.1em; margin-bottom: 20px;">Rig is empty.</p><button id="createBtn" class="bx--btn bx--btn--secondary" type="button">Go to Rigs</button></div>`;
           document.getElementById('createBtn').addEventListener('click', () => {
             window.location.href = 'rigs';
           });
@@ -1799,10 +1282,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
   for (const rowNum of sortedRows) {
     const rowDiv = document.createElement('div');
-    rowDiv.style.display = 'flex';
-    rowDiv.style.flexWrap = 'wrap';
-    rowDiv.style.alignItems = 'flex-start';
-    rowDiv.style.gap = '10px';
+    rowDiv.style.display = 'flex'; rowDiv.style.flexWrap = 'wrap'; rowDiv.style.alignItems = 'flex-start'; rowDiv.style.gap = '10px';
 
 
     for (const pbPedal of rowsMap[rowNum]) {
@@ -1848,79 +1328,27 @@ async function renderFullPedalboard(pedalboardOverride = null) {
           transform: `rotate(${angle}deg)`,
           marginBottom: '10px',
           display: 'inline-block',
-          ...(pedal["inside-border"] && {
-            boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
-          }),
-          ...(isImage ? {
-            backgroundImage: `url("${insideColorRaw}")`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          } : {
-            background: colorOnly
-          })
+          ...(pedal["inside-border"] && { boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` }),
+          ...(isImage ? { backgroundImage: `url("${insideColorRaw}")`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: colorOnly })
         };
 
         let $pedalDiv;
 
         if (pedal.type === "pedal") {
           const boxShadow = getBoxShadow(pedal, inside, `inset 0 -36px 0 0 ${pedal["color"]}`);
-
-          $pedalDiv = $("<div>")
-            .addClass("pedal-catalog")
-            .css({
-              ...baseCss,
-              boxShadow
-            })
-            .attr("data-pedal-name", pedal.name)
-            .attr("data-pedal-id", pedal._id);
-
+          $pedalDiv = $("<div>").addClass("pedal-catalog").css({ ...baseCss, boxShadow }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         } else if (pedal.type === "expression") {
           const boxShadow = getBoxShadow(pedal, inside, `inset 0 -36px 0 0 ${pedal["color"]}`);
-
-          $pedalDiv = $("<div>")
-            .addClass("pedal-catalog")
-            .css({
-              ...baseCss,
-              borderRadius: '25px',
-              boxShadow
-            })
-            .attr("data-pedal-name", pedal.name)
-            .attr("data-pedal-id", pedal._id);
-
+          $pedalDiv = $("<div>").addClass("pedal-catalog").css({ ...baseCss, borderRadius: '25px', boxShadow }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         } else if (pedal.type === "combo") {
           const boxShadow = getBoxShadow(pedal, inside, `inset 0 -80px 0 0 ${pedal["color"]}`);
-
-          $pedalDiv = $("<div>")
-            .addClass("pedal-catalog")
-            .css({
-              ...baseCss,
-              boxShadow
-            })
-            .attr("data-pedal-name", pedal.name)
-            .attr("data-pedal-id", pedal._id);
-
+          $pedalDiv = $("<div>").addClass("pedal-catalog").css({ ...baseCss,boxShadow }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         } else if (pedal.type === "head" || pedal.type === "pedal-inverted") {
           const boxShadow = getBoxShadow(pedal, inside, `inset 0 80px 0 0 ${pedal["color"]}`);
-
-          $pedalDiv = $("<div>")
-            .addClass("pedal-catalog")
-            .css({
-              ...baseCss,
-              boxShadow
-            })
-            .attr("data-pedal-name", pedal.name)
-            .attr("data-pedal-id", pedal._id);
-
+          $pedalDiv = $("<div>").addClass("pedal-catalog").css({ ...baseCss, boxShadow }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         } else if (pedal.type === "round") {
           const boxShadow = getBoxShadow(pedal, inside, `inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`);
-
-          $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-            ...baseCss,
-            borderRadius: "50%",  // make it circular
-            width: getPedalWidth(pedal.width),  // Same width and height
-            height: getPedalWidth(pedal.width), // Same width and height
-            boxShadow
-          }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+          $pedalDiv = $("<div>").addClass("pedal-catalog").css({ ...baseCss, borderRadius: "50%",  width: getPedalWidth(pedal.width),  height: getPedalWidth(pedal.width), boxShadow }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         }
 
         // const cleanName = sanitizeHtml(pedal.name);
@@ -1941,46 +1369,26 @@ async function renderFullPedalboard(pedalboardOverride = null) {
           $pedalDiv.append($nameDiv);
         }
       
-
         const widthPx = parseFloat(getPedalWidth(pedal.width));
         const heightPx = parseFloat(getPedalHeight(pedal.height));
         const hasRotation = angle !== 0;
 
-        let wrapperStyles = {
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
-          position: 'relative',
-          boxSizing: 'content-box',
-          marginBottom: '20px',
-        };
+        let wrapperStyles = { display: 'flex', justifyContent: 'center', alignItems: 'flex-start', position: 'relative', boxSizing: 'content-box', marginBottom: '20px', };
 
         if (hasRotation) {
           const radians = angle * Math.PI / 180;
           const sin = Math.abs(Math.sin(radians));
           const cos = Math.abs(Math.cos(radians));
-
           const rotatedWidth = widthPx * cos + heightPx * sin;
           const rotatedHeight = widthPx * sin + heightPx * cos;
 
-          Object.assign(wrapperStyles, {
-            width: `${rotatedWidth}px`,
-            height: `${rotatedHeight}px`,
-            marginLeft: `${rotatedWidth * 0.2}px`,
-            marginRight: `${rotatedWidth * 0.2}px`,
-            ...(widthPx > heightPx ? { marginTop: '30px' } : {})
-          });
+          Object.assign(wrapperStyles, { width: `${rotatedWidth}px`, height: `${rotatedHeight}px`, marginLeft: `${rotatedWidth * 0.2}px`, marginRight: `${rotatedWidth * 0.2}px`, ...(widthPx > heightPx ? { marginTop: '30px' } : {}) });
         }
 
-        const $wrapper = $("<div>")
-          .addClass("pedal-wrapper") // serve per hover mouse menu catalog preset
-          .css(wrapperStyles).append($pedalDiv);
-
+        const $wrapper = $("<div>").addClass("pedal-wrapper").css(wrapperStyles).append($pedalDiv);
         $wrapper.css("position", "relative");
 
-
         // ============== AI DROPDOWN PRESET ===============
-        // if (window.currentUser && window.currentUser.role === "admin") {
         const isLoggedIn = !!window.currentUser;
         if (isLoggedIn) {
 
@@ -1995,37 +1403,11 @@ async function renderFullPedalboard(pedalboardOverride = null) {
                 </div>
                 <div class="applied-preset-tags"></div>
               </div>
-
-
-              <button disabled style="display:none" class="new-subplex-btn bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only">
-                <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-                  <path d="M17 15L17 8 15 8 15 15 8 15 8 17 15 17 15 24 17 24 17 17 24 17 24 15z"></path>
-                </svg>
-              </button>
-
-              <svg class="preset-icon"
-                focusable="false"
-                preserveAspectRatio="xMidYMid meet"
-                fill="currentColor"
-                width="32"
-                height="32"
-                viewBox="0 0 32 32"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 6H22V8H4zM4 12H22V14H4zM4 18H16V20H4zM21 18L28 23 21 28 21 18z"></path>
-              </svg>
-
-              <div class="preset-dropdown-wrapper">
-                <ul class="preset-dropdown"></ul>
-              </div>
+              <button disabled style="display:none" class="new-subplex-btn bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only"><svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M17 15L17 8 15 8 15 15 8 15 8 17 15 17 15 24 17 24 17 17 24 17 24 15z"></path></svg></button>
+              <svg class="preset-icon" focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H22V8H4zM4 12H22V14H4zM4 18H16V20H4zM21 18L28 23 21 28 21 18z"></path></svg>
+              <div class="preset-dropdown-wrapper"><ul class="preset-dropdown"></ul></div>
             </div>
           `);
-
-          // AI icon
-          // <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
-          // <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
-          // 3 dots icon
-          // <circle cx="8" cy="16" r="2"></circle><circle cx="16" cy="16" r="2"></circle><circle cx="24" cy="16" r="2"></circle>
-
 
           $wrapper.append($presetContainer);
 
@@ -2033,20 +1415,8 @@ async function renderFullPedalboard(pedalboardOverride = null) {
           // === SUBPLEX EMPTY STATE (New SubPlex button) ===
           const $newBtn = $presetContainer.find(".new-subplex-btn");
           const hasApplied = $pedalDiv.attr("data-applied-preset");
-
           if (!hasApplied) { $newBtn.show(); } else { $newBtn.hide(); }
-
-          $newBtn.on("click", function (e) {
-            e.stopPropagation();
-
-            // TODO: apri modale o redirect
-            console.log("Create new SubPlex for pedal:", pedal._id);
-
-            // esempio futuro:
-            // openNewSubPlexModal({ pedalId: pedal._id });
-          });
-
-
+          $newBtn.on("click", function (e) { e.stopPropagation(); });
 
           const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
           const $ul = $presetContainer.find(".preset-dropdown");
@@ -2075,28 +1445,9 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
         } else {
           // Guest mode: show locked preset container
-          const $presetContainer = $(`
-            <div class="preset-container preset-locked">
-              <svg class="preset-icon disabled"
-                focusable="false"
-                preserveAspectRatio="xMidYMid meet"
-                fill="currentColor"
-                width="32"
-                height="32"
-                viewBox="0 0 32 32"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 6H22V8H4zM4 12H22V14H4zM4 18H16V20H4zM21 18L28 23 21 28 21 18z"></path>
-              </svg>
-
-              <div class="preset-locked-label">
-                Login to see all SubPlexes
-              </div>
-            </div>
-          `);
-
+          const $presetContainer = $(`<div class="preset-container preset-locked"><svg class="preset-icon disabled" focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H22V8H4zM4 12H22V14H4zM4 18H16V20H4zM21 18L28 23 21 28 21 18z"></path></svg><div class="preset-locked-label">Login to see all SubPlexes</div></div>`);
           $wrapper.append($presetContainer);
         }
-
         // ================================================
 
 
@@ -2112,18 +1463,10 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
   // Save current pedals on board
   const pedalsOnBoard = [];
-  $(".pedal").each(function () {
-    pedalsOnBoard.push($(this).data("pedal-name"));
-  });
+  $(".pedal").each(function () { pedalsOnBoard.push($(this).data("pedal-name")); });
   window.currentPedalsOnBoard = pedalsOnBoard;
-
-      setTimeout(() => {
-        resolve();
-      }, 100);
-
-    } catch (err) {
-      resolve();
-    }
+      setTimeout(() => { resolve(); }, 100);
+    } catch (err) { resolve(); }
   }); // end Promise
 }
 
@@ -2132,42 +1475,20 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 function renderPresetList($ul, pedalId, presets) {
   $ul.empty();
 
-  if (!presets.length) {
-    $ul.append("<li class='empty'>No SubPlexes found</li>");
-    return;
-  }
+  if (!presets.length) { $ul.append("<li class='empty'>No SubPlexes found</li>"); return; }
 
   presets.forEach(preset => {
     const $li = $("<li>").addClass("preset-item");
 
     const description = preset.description || "No description available";
     const $titleRow = $("<div>").addClass("preset-title-row");
-
-    // const $name = $("<span>").addClass("preset-name").text(preset.presetName || preset._id);
-
     const $name = $("<span>").addClass("preset-name");
 
     // AI icon (solo se published === "ai")
-    if (preset.source === "ai") {
-      $name.append(`
-        <svg class="ai-preset-icon"
-          focusable="false"
-          preserveAspectRatio="xMidYMid meet"
-          fill="currentColor"
-          width="14"
-          height="14"
-          viewBox="0 0 32 32"
-          aria-hidden="true">
-          <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
-          <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
-        </svg>
-      `);
-    }
+    if (preset.source === "ai") { $name.append(`<svg class="ai-preset-icon" focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="14" height="14" viewBox="0 0 32 32" aria-hidden="true"> <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path><path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path> </svg>`); }
 
     // Nome preset
-    $name.append(
-      document.createTextNode(" " + (preset.presetName || preset._id))
-    );
+    $name.append(document.createTextNode(" " + (preset.presetName || preset._id)));
 
 
     // ℹ icon with tooltip event
@@ -2177,19 +1498,7 @@ function renderPresetList($ul, pedalId, presets) {
       $("body").append($tooltip);
 
       const offset = $info.offset();
-      $tooltip.css({
-        position: "absolute",
-        top: offset.top - $tooltip.outerHeight() - 5,
-        left: offset.left,
-        zIndex: 2000,
-        maxWidth: "250px",
-        backgroundColor: "rgba(0,0,0,0.85)",
-        color: "#fff",
-        padding: "6px 8px",
-        borderRadius: "4px",
-        fontSize: "0.85rem",
-        pointerEvents: "none"
-      });
+      $tooltip.css({ position: "absolute", top: offset.top - $tooltip.outerHeight() - 5, left: offset.left, zIndex: 2000, maxWidth: "250px", backgroundColor: "rgba(0,0,0,0.85)", color: "#fff", padding: "6px 8px", borderRadius: "4px", fontSize: "0.85rem", pointerEvents: "none" });
 
       $info.data("tooltipEl", $tooltip);
     });
@@ -2206,11 +1515,7 @@ function renderPresetList($ul, pedalId, presets) {
     if (Array.isArray(preset.style)) {
       preset.style.forEach(style => {
         const color = STYLE_TAG_MAP[style] || "gray";
-        $li.append(`
-          <button class="bx--tag bx--tag--${color}">
-            <span class="bx--tag__label">${style}</span>
-          </button>
-        `);
+        $li.append(`<button class="bx--tag bx--tag--${color}"><span class="bx--tag__label">${style}</span></button>`);
       });
     }
 
@@ -2226,26 +1531,6 @@ function renderPresetList($ul, pedalId, presets) {
 }
 
 
-
-
-
-
-// HELPER
-function getBoxShadow(pedal, inside, insetIfNotFull) {
-  const outerShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-
-  // Handle full inside
-  if (inside === "full") {
-    return pedal["inside-border"]
-      ? `${outerShadow}, inset 0 0 0 3px ${pedal["inside-border"]}`
-      : outerShadow;
-  }
-
-  // Handle partial inside
-  return `${outerShadow}, ${insetIfNotFull}`;
-}
-
-
 window.presetCatalogCache = window.presetCatalogCache || {};
 
 
@@ -2253,8 +1538,6 @@ window.presetCatalogCache = window.presetCatalogCache || {};
 $(document).on("click", function () {
   $(".preset-dropdown-wrapper").removeClass("is-open");
 });
-
-
 
 
 // Build Preset from AI Catalog
@@ -2267,9 +1550,7 @@ async function buildPresetDropdown($ul, pedalId) {
   }
 
   // 2️⃣ Stato loading (una sola volta)
-  $ul
-    .empty()
-    .append("<li class='loading'>Loading SubPlexes</li>");
+  $ul.empty().append("<li class='loading'>Loading SubPlexes</li>");
 
   const token = localStorage.getItem("authToken");
   if (!token) {
@@ -2282,10 +1563,7 @@ async function buildPresetDropdown($ul, pedalId) {
       "https://api.pedalplex.com/GET_PRESETS_BY_PEDAL.php",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
         body: JSON.stringify({ pedalId })
       }
     );
@@ -2299,7 +1577,6 @@ async function buildPresetDropdown($ul, pedalId) {
 
     // 3️⃣ Salva in cache
     window.presetCatalogCache[pedalId] = presets;
-
     renderPresetList($ul, pedalId, presets);
 
   } catch (err) {
@@ -2307,26 +1584,6 @@ async function buildPresetDropdown($ul, pedalId) {
     $ul.html("<li class='error'>Error loading SubPlexes</li>");
   }
 }
-
-
-
-// Start glow effect on element
-function startGlow(el) {
-  let angle = 65;
-  const speed = 0.6;
-  let rafId;
-
-  function tick() {
-    angle = (angle + speed) % 360;
-    el.style.setProperty("--gradient-angle", angle + "deg");
-    rafId = requestAnimationFrame(tick);
-  }
-
-  tick();
-
-  return () => cancelAnimationFrame(rafId);
-}
-
 
 
 function applyCatalogPresetToSinglePedal(pedalId, preset) {
@@ -2342,29 +1599,13 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   if (applied) {
     try {
       const parsed = JSON.parse(applied);
-      if (parsed.id === preset._id) {
-        return; // già applicato → esci
-      }
+      if (parsed.id === preset._id) { return; }
     } catch (e) {}
   }
 
+  const defaultPedal = window.catalogMap?.[pedalId] || window.catalogMap?.[String(pedalId).trim()];
 
-  // Recupera il pedale di default dal catalogo
-  // const defaultPedal = window.catalog.find(
-  //   p => p._id === pedalId || p.name === pedalId
-  // );
-  // if (!defaultPedal) {
-  //   console.warn("Pedal not found in catalog:", pedalId);
-  //   return;
-  // }
-  const defaultPedal =
-    window.catalogMap?.[pedalId] ||
-    window.catalogMap?.[String(pedalId).trim()];
-
-  if (!defaultPedal) {
-    console.warn("Pedal not found in catalogMap:", pedalId);
-    return;
-  }
+  if (!defaultPedal) { console.warn("Pedal not found in catalogMap:", pedalId); return; }
 
 
   // Deep clone del pedale di catalogo
@@ -2375,9 +1616,7 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     pedalClone.controls.forEach(row => {
       row.row.forEach(ctrl => {
         const label = ctrl.label;
-        if (preset.controls.hasOwnProperty(label)) {
-          ctrl.value = preset.controls[label];
-        }
+        if (preset.controls.hasOwnProperty(label)) { ctrl.value = preset.controls[label]; }
       });
     });
   }
@@ -2399,37 +1638,20 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     $existingName.remove();
   }
 
-  const $nameDiv = $("<div>")
-    .addClass(nameClass)
-    .html(pedalClone.name)
-    .attr("style", pedalClone.logo || "");
+  const $nameDiv = $("<div>").addClass(nameClass).html(pedalClone.name).attr("style", pedalClone.logo || "");
 
-  if ($referenceNode && $referenceNode.length) {
-    $nameDiv.insertBefore($referenceNode);
-  } else {
-    $pedalDiv.prepend($nameDiv);
-  }
+  if ($referenceNode && $referenceNode.length) { $nameDiv.insertBefore($referenceNode);
+  } else {$pedalDiv.prepend($nameDiv); }
 
 
   // Aggiorna UI (se presente)
-  if (typeof updateSavePresetButtonState === 'function') {
-    updateSavePresetButtonState();
-  }
+  if (typeof updateSavePresetButtonState === 'function') { updateSavePresetButtonState(); }
 
   // Reset invalidazione
   $pedalDiv.removeData("subplexInvalidated");
 
   // Stato SubPlex applicato sul div
-  const appliedSubplex = {
-    id: preset._id,
-    presetName: preset.presetName || preset.name || preset._id,
-    published: preset.published,
-    source: preset.source,
-    description: preset.description || '',
-    style: preset.style || [],
-    authorId: preset.authorId || preset.user_id || '',
-    version: preset.version || 1
-  };
+  const appliedSubplex = { id: preset._id, presetName: preset.presetName || preset.name || preset._id, published: preset.published, source: preset.source, description: preset.description || '', style: preset.style || [], authorId: preset.authorId || preset.user_id || '', version: preset.version || 1 };
 
   $pedalDiv.data('applied-subplex', appliedSubplex);
   // Salva anche la baseline dei controlli per il tracking normalizzato
@@ -2438,17 +1660,11 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   $pedalDiv.data('subplex-modification-level', 'original');
   $pedalDiv.removeData('subplexInvalidated');
   // Aggiorna l'attributo HTML
-  $pedalDiv.attr("data-applied-preset", JSON.stringify({
-    id: appliedSubplex.id,
-    name: appliedSubplex.presetName,
-    style: appliedSubplex.style,
-    published: appliedSubplex.published
-  }));
+  $pedalDiv.attr("data-applied-preset", JSON.stringify({ id: appliedSubplex.id, name: appliedSubplex.presetName, style: appliedSubplex.style, published: appliedSubplex.published }));
 
   // ✅ Aggiorna globale
   window.currentSubPlex = window.currentSubPlex || {};
   window.currentSubPlex[pedalId] = appliedSubplex;
-
 
 
 // 🔵 Attiva tracking modifiche: titolo e stato si aggiornano automaticamente
@@ -2463,194 +1679,38 @@ renderAppliedPresetInfo($pedalDiv, appliedSubplex);
 // END HELPER FUNCTIONS AI PRESET DROPDOWN =======
 
 
-// HELPER
-function decodeHTMLEntities(str) {
-  const txt = document.createElement('textarea');
-  txt.innerHTML = str;
-  return txt.value;
-}
-
-
-
-// ======================================================================
-// SESSION TIMEOUT WARNING (JWT-based)
-// ======================================================================
-
-// --- Configurazione ---
-const SESSION_WARNING_THRESHOLD = 5 * 60 * 1000; // 5 minuti
-let sessionWarningShown = false;
-let countdownInterval;
-
-// --- Legge & decodifica JWT dal localStorage ---
-(function initSessionExpiration() {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-        console.log("Nessun token presente → nessun controllo sessione");
-        return;
-    }
-
-    try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.exp) {
-            // exp è in secondi → converti in millisecondi
-            window.sessionExpires = payload.exp * 1000;
-            console.log("Session expires at:", new Date(window.sessionExpires));
-        } else {
-            console.warn("Il JWT non contiene exp → impossibile calcolare la scadenza");
-        }
-    } catch (e) {
-        console.error("Errore nel decodificare il JWT:", e);
-    }
-})();
-
-// --- Funzione di controllo sessione ---
-function checkSessionTime() {
-    if (!window.sessionExpires) return; // guest → nessun controllo
-    const now = Date.now();
-    const remaining = window.sessionExpires - now;
-
-    if (remaining <= SESSION_WARNING_THRESHOLD && !sessionWarningShown) {
-        sessionWarningShown = true;
-        showSessionWarningModal(remaining);
-    }
-
-    if (remaining <= 0) {
-        window.location.href = 'login';
-    }
-}
-
-
-// --- Funzione per mostrare il modal con countdown ---
-function showSessionWarningModal(initialRemaining) {
-    let remaining = Math.floor(initialRemaining / 1000); // secondi
-
-    Swal.fire({
-        title: 'Session is expiring',
-        html: `Your session wil expire in <strong id="swal-countdown">${formatTime(remaining)}</strong>.<br>Do you want to login again?`,
-        icon: 'warning',
-        showCancelButton: true,
-        focusConfirm: false,
-        confirmButtonText: 'Login',
-        cancelButtonText: 'Continue as Guest',
-        customClass: {
-            confirmButton: 'bx--btn bx--btn--primary',
-            cancelButton: 'bx--btn bx--btn--secondary'
-        },
-        didOpen: () => {
-            const countdownEl = Swal.getHtmlContainer().querySelector('#swal-countdown');
-
-            countdownInterval = setInterval(() => {
-                remaining -= 1;
-
-                if (remaining <= 0) {
-                    clearInterval(countdownInterval);
-                    Swal.close();
-                    window.location.href = 'login';
-                } else {
-                    countdownEl.textContent = formatTime(remaining);
-                }
-            }, 1000);
-        },
-        willClose: () => {
-            clearInterval(countdownInterval);
-        }
-    }).then((result) => {
-
-    if (result.isConfirmed) {
-        // login
-        window.location.href = 'login';
-        return;
-    }
-
-    // ❗ Guest, click fuori, ESC → NON deve più ripresentarsi
-    localStorage.removeItem('authToken');
-    window.sessionExpires = null;
-    sessionWarningShown = true;
-
-    console.log("Sessione gestita come guest o popup chiuso: nessun nuovo prompt.");
-});
-
-}
-
-// --- Helper: formatta i secondi in mm:ss ---
-function formatTime(seconds) {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-}
-
-// --- Check periodico ogni 30 secondi ---
-setInterval(checkSessionTime, 30000);
-
-
-
 
 // Render applied SubPlex info box
 function renderAppliedPresetInfo($pedalDiv, subplex) {
 
-
   const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || subplex.id || "SubPlex";
 
-  
-  if (!subplex || (!subplex.presetName && !subplex.name && !subplex.preset_name && !subplex.id)) {
-    console.log("No valid SubPlex found, skipping render.");
-    return;
-  }
+  if (!subplex || (!subplex.presetName && !subplex.name && !subplex.preset_name && !subplex.id)) { return; }
 
   const $wrapper = $pedalDiv.closest(".pedal-wrapper");
   const $infoBox = $wrapper.find(".applied-preset-info");
   if (!$infoBox.length) return;
 
-  // const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || "SubPlex";
   const description = subplex.description || "No description available";
 
   // Nome + icona AI
   const $nameEl = $infoBox.find(".applied-preset-name");
   $nameEl.empty();
-  if (subplex.source === "ai") {
-    $nameEl.append(`
-      <svg class="ai-preset-icon" focusable="false" preserveAspectRatio="xMidYMid meet"
-        fill="currentColor" width="14" height="14" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
-        <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
-      </svg>
-    `);
-  }
+  if (subplex.source === "ai") { $nameEl.append(`<svg class="ai-preset-icon" focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="14" height="14" viewBox="0 0 32 32" aria-hidden="true"><path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path><path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path></svg>`); }
   $nameEl.append(document.createTextNode(" " + presetName));
 
   // Icona info + tooltip
   const $iconWrapper = $infoBox.find(".applied-preset-info-icon");
-  $iconWrapper.empty().append(`
-    <svg focusable="false" preserveAspectRatio="xMidYMid meet"
-      fill="currentColor" width="12" height="12"
-      viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-      <path d="M17 22L17 14 13 14 13 16 15 16 15 22 12 22 12 24 20 24 20 22 17 22zM16 8a1.5 1.5 0 101.5 1.5A1.5 1.5 0 0016 8z"></path>
-      <path d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30ZM16,4A12,12,0,1,0,28,16,12,12,0,0,0,16,4Z"></path>
-    </svg>
-  `);
+  $iconWrapper.empty().append(`<svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="12" height="12" viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M17 22L17 14 13 14 13 16 15 16 15 22 12 22 12 24 20 24 20 22 17 22zM16 8a1.5 1.5 0 101.5 1.5A1.5 1.5 0 0016 8z"></path><path d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30ZM16,4A12,12,0,1,0,28,16,12,12,0,0,0,16,4Z"></path></svg>`);
 
   $iconWrapper.off("mouseenter mouseleave")
     .on("mouseenter", function () {
-      // const $tooltip = $(`<div class="preset-tooltip-popup">${description}</div>`);
-      // Safe description (no HTML injection)
       const safeDescription = decodeHTMLEntities(description);
       const $tooltip = $(`<div class="preset-tooltip-popup"></div>`).text(safeDescription);
 
       $("body").append($tooltip);
       const offset = $iconWrapper.offset();
-      $tooltip.css({
-        position: "absolute",
-        top: offset.top - $tooltip.outerHeight() - 6,
-        left: offset.left,
-        zIndex: 2000,
-        maxWidth: "250px",
-        backgroundColor: "rgba(0,0,0,0.85)",
-        color: "#fff",
-        padding: "6px 8px",
-        borderRadius: "4px",
-        fontSize: "0.85rem",
-        pointerEvents: "none"
-      });
+      $tooltip.css({ position: "absolute", top: offset.top - $tooltip.outerHeight() - 6, left: offset.left, zIndex: 2000, maxWidth: "250px", backgroundColor: "rgba(0,0,0,0.85)", color: "#fff", padding: "6px 8px", borderRadius: "4px", fontSize: "0.85rem", pointerEvents: "none" });
       $iconWrapper.data("tooltipEl", $tooltip);
     })
     .on("mouseleave", function () {
@@ -2672,7 +1732,3 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
   $infoBox.show();
   $wrapper.find(".new-subplex-btn").hide();
 }
-
-
-
-
