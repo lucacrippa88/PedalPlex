@@ -272,32 +272,45 @@ function calculateControlChangeScore(ctrl, $control) {
         case "smallknob":
         case "largeknob":
         case "xlargeknob":
-        case "slider":
-            let currentVal = parseFloat($control.closest(".knob-wrapper").find(".knob-value-label").text());
-            if (isNaN(currentVal)) currentVal = parseFloat($control.val());
-            const originalVal = parseFloat(ctrl.value);
-            if (isNaN(currentVal) || isNaN(originalVal)) break;
-
+            let rotation = 0;
+            const transform = $control.css('transform');
+            if (transform && transform !== 'none') {
+                const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
+                const a = parseFloat(values[0]);
+                const b = parseFloat(values[1]);
+                rotation = Math.atan2(b, a) * (180 / Math.PI);
+                if (rotation < 0) rotation += 360;
+            }
+            const currentVal = getValueFromRotation(ctrl, rotation);
+            const originalVal = ctrl.value ?? ctrl._originalValue ?? 0;
             const range = ctrl.max - ctrl.min || 100;
             const relativeDiff = Math.abs(currentVal - originalVal) / range;
             score += relativeDiff < 0.1 ? 1 : 2;
             break;
 
-        case "led":
+        case "slider":
+            const sliderVal = parseFloat($control.val());
+            const origSlider = ctrl.value ?? ctrl._originalValue ?? 0;
+            const sliderRange = ctrl.max - ctrl.min || 100;
+            const relDiff = Math.abs(sliderVal - origSlider) / sliderRange;
+            score += relDiff < 0.1 ? 1 : 2;
+            break;
+
+        case "knob_discrete":
         case "multi":
         case "dropdown":
-        case "knob_discrete":
-            const currentValue = $control.val() ?? $control.data("colorIndex");
-            if (String(currentValue) !== String(ctrl.value)) score += 2;
+        case "led":
+            const val = $control.val() ?? $control.data("colorIndex");
+            if (String(val) !== String(ctrl.value)) score += 2;
             break;
 
         case "lcd":
         default:
-            break;
+            break; // ignoriamo
     }
 
-    console.log("[calculateControlChangeScore] Control:", ctrl.label, "score:", score);
     return score;
 }
+
 
 
