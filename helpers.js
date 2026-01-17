@@ -482,4 +482,3 @@ function formatTime(seconds) {
 
 // --- Check periodico ogni 30 secondi ---
 setInterval(checkSessionTime, 30000);
-
