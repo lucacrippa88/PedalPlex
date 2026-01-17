@@ -1,3 +1,19 @@
+function getAllSubplexControls(subplex) {
+  if (!subplex || !Array.isArray(subplex.controls)) return [];
+
+  // caso flat
+  if (!subplex.controls[0]?.row) {
+    return subplex.controls;
+  }
+
+  // caso a righe
+  return subplex.controls.flatMap(r => Array.isArray(r.row) ? r.row : []);
+}
+
+
+
+
+
 // Render applied SubPlex info box
 function renderAppliedPresetInfo($pedalDiv, subplex) {
 
@@ -115,38 +131,45 @@ function onPedalControlChange($pedalDiv) {
 
   let changed = false;
 
-  if (Array.isArray(subplex.controls)) {
-    subplex.controls.forEach(ctrl => {
-      const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
-      if (!$control.length) return;
+  // Prendo tutti i controlli, sia flat che a righe
+  const controls = getAllSubplexControls(subplex);
 
-      let currentValue;
-      switch (ctrl.type) {
-        case "knob":
-        case "smallknob":
-        case "largeknob":
-        case "xlargeknob":
-          currentValue = parseFloat($control.closest(".knob-wrapper").find(".knob-value-label").text());
-          break;
-        case "slider":
-        case "lcd":
-        case "multi":
-          currentValue = $control.val();
-          break;
-        case "led":
-          currentValue = $control.data("colorIndex");
-          break;
-      }
+  controls.forEach(ctrl => {
+    const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
+    if (!$control.length) return;
 
-      if (currentValue != ctrl.value) changed = true;
-    });
-  }
+    let currentValue;
+    switch (ctrl.type) {
+      case "knob":
+      case "smallknob":
+      case "largeknob":
+      case "xlargeknob":
+        currentValue = parseFloat(
+          $control.closest(".knob-wrapper").find(".knob-value-label").text()
+        );
+        break;
+      case "slider":
+      case "lcd":
+      case "multi":
+        currentValue = $control.val();
+        break;
+      case "led":
+        currentValue = $control.data("colorIndex");
+        break;
+      case "dropdown":
+      case "knob_discrete":
+        currentValue = $control.val() ?? $control.data("colorIndex");
+        break;
+    }
+
+    if (currentValue != ctrl.value) changed = true;
+  });
 
   if (changed && !$pedalDiv.data("subplexInvalidated")) {
-    // invalidateSubplexForPedal($pedalDiv);
     updateSubplexStatus($pedalDiv);
   }
 }
+
 
 
 // Al momento del render dal DB
@@ -177,10 +200,11 @@ function setupSubplexInvalidationOnDBLoad($pedalDiv) {
 function updateSubplexStatus($pedalDiv) {
 
   const subplex = $pedalDiv.data('applied-subplex');
-  console.log("[SubPlex] checking pedal", $pedalDiv.data("pedal-id"));
-  console.log("[SubPlex] original controls", subplex.controls);
-  
   if (!subplex) return;
+
+  console.log("[SubPlex] checking pedal", $pedalDiv.data("pedal-id")); 
+  console.log("[SubPlex] original controls", subplex.controls);
+
 
   if (!window.currentSubPlex) {
     window.currentSubPlex = {};
@@ -188,33 +212,63 @@ function updateSubplexStatus($pedalDiv) {
 
   let totalScore = 0;
 
-  if (Array.isArray(subplex.controls)) {
-    subplex.controls.forEach(row => {
-      if (!Array.isArray(row.row)) return;
-      row.row.forEach(ctrl => {
-        const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
-        if (!$control.length) return;
+//   if (Array.isArray(subplex.controls)) {
+//     subplex.controls.forEach(row => {
+//       if (!Array.isArray(row.row)) return;
+//       row.row.forEach(ctrl => {
+//         const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
+//         if (!$control.length) return;
 
-        totalScore += calculateControlChangeScore(ctrl, $control);
-      });
-    });
-  }
+//         totalScore += calculateControlChangeScore(ctrl, $control);
+//       });
+//     });
+//   }
+
+const controls = getAllSubplexControls(subplex);
+
+controls.forEach(ctrl => {
+  const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
+  if (!$control.length) return;
+
+  totalScore += calculateControlChangeScore(ctrl, $control);
+});
+
 
   console.log("[SubPlex] totalScore =", totalScore);
 
 
-  let state = '';
-  let displayName = subplex.presetName || subplex.name || 'SubPlex';
 
-  if (totalScore === 0) state = 'original';
-  else if (totalScore <= 2) { state = 'modified'; displayName += '*'; }
-  else if (totalScore <= 5) { state = 'based_on'; displayName += '**'; }
-  else { state = 'custom'; displayName = 'Custom SubPlex'; }
 
   $pedalDiv.data('applied-subplex-state', state);
 
   // Aggiorna anche il SubPlex in window.currentSubPlex per il salvataggio
-  subplex.presetName = displayName;
+if (!subplex._originalName) {
+  subplex._originalName = subplex.presetName || subplex.name;
+}
+
+
+const baseName = subplex._originalName || 'SubPlex';
+let displayName = baseName;
+
+if (totalScore === 0) {
+  state = 'original';
+}
+else if (totalScore <= 2) {
+  state = 'modified';
+  displayName = baseName + '*';
+}
+else if (totalScore <= 5) {
+  state = 'based_on';
+  displayName = baseName + '**';
+}
+else {
+  state = 'custom';
+  displayName = 'Custom SubPlex';
+}
+
+subplex.presetName = displayName;
+
+
   window.currentSubPlex[$pedalDiv.data('pedal-id')] = subplex;
 
   console.log("[SubPlex] state =", state, "name =", displayName);
