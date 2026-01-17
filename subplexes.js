@@ -175,10 +175,11 @@ function setupSubplexInvalidationOnDBLoad($pedalDiv) {
 
 // New
 function updateSubplexStatus($pedalDiv) {
-  console.log("[SubPlex] checking pedal", $pedalDiv.data("pedal-id"));
-  console.log("[SubPlex] original controls", subplex.controls);
 
   const subplex = $pedalDiv.data('applied-subplex');
+  console.log("[SubPlex] checking pedal", $pedalDiv.data("pedal-id"));
+  console.log("[SubPlex] original controls", subplex.controls);
+  
   if (!subplex) return;
 
   let totalScore = 0;
