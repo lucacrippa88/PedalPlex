@@ -1,3 +1,4 @@
+
 // Edit gears in catalog page
 function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
@@ -5,7 +6,10 @@ function setupEditPedalHandler(pedals) {
     let pedal = $(this).data("pedal");
     const pedalDiv = $(this).closest(".pedal");
 
-    if (!pedal) { console.error("Pedal data not found!"); return; }
+    if (!pedal) {
+      console.error("Pedal data not found!");
+      return;
+    }
 
     const openSwal = () => {
 
@@ -15,8 +19,10 @@ function setupEditPedalHandler(pedals) {
 
       if (!(isAdmin || isAuthor || isTemplate)) {
         Swal.fire({
-          title: 'Permission denied', text: 'You are not allowed to edit this gear.',
-          icon: 'error', confirmButtonText: 'OK',
+          title: 'Permission denied',
+          text: 'You are not allowed to edit this gear.',
+          icon: 'error',
+          confirmButtonText: 'OK',
           customClass: { confirmButton: 'bx--btn bx--btn--primary' }
         });
         return;
@@ -38,16 +44,37 @@ function setupEditPedalHandler(pedals) {
 
       Swal.fire({
         title: `Edit ${pedal._id}`,
-        html: `<div style="position:relative; width:100%; height:80vh;"><div id="builder-spinner" style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(46,46,46,0.9);z-index:10;"><div class="bx--loading" style="width:40px;height:40px;"><svg class="bx--loading__svg" viewBox="-75 -75 150 150"><circle class="bx--loading__background" cx="0" cy="0" r="26"></circle><circle class="bx--loading__stroke" cx="0" cy="0" r="26"></circle></svg></div></div><iframe src="create.html" style="width:100%; height:100%; border:none; display:none;" id="swal-builder-iframe"></iframe></div>`,
+        html: `
+          <div style="position:relative; width:100%; height:80vh;">
+            <div id="builder-spinner" style="position:absolute;top:0;left:0;width:100%;height:100%;
+                display:flex;align-items:center;justify-content:center;background:rgba(46,46,46,0.9);z-index:10;">
+              <div class="bx--loading" style="width:40px;height:40px;">
+                <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+                  <circle class="bx--loading__background" cx="0" cy="0" r="26"></circle>
+                  <circle class="bx--loading__stroke" cx="0" cy="0" r="26"></circle>
+                </svg>
+              </div>
+            </div>
+            <iframe src="create.html" style="width:100%; height:100%; border:none; display:none;" id="swal-builder-iframe"></iframe>
+          </div>
+        `,
         width: '100%',
-        allowOutsideClick: false, allowEscapeKey: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
         showConfirmButton: boolConfirmBtn,
         showDenyButton: boolDenyBtn,
         showCancelButton: boolCancelBtn,
-        confirmButtonText: 'Save', denyButtonText: 'Delete', cancelButtonText: 'Cancel',
+        confirmButtonText: 'Save',
+        denyButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
         footer: `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--tertiary">Duplicate</button></span>`,
-        customClass: { confirmButton: 'bx--btn bx--btn--primary', denyButton: 'bx--btn bx--btn--danger', cancelButton: 'bx--btn bx--btn--secondary' },
-        background: '#2e2e2e', color: '#ffffff',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary',
+          denyButton: 'bx--btn bx--btn--danger',
+          cancelButton: 'bx--btn bx--btn--secondary'
+        },
+        background: '#2e2e2e',
+        color: '#ffffff',
         didOpen: () => {
           const iframe = document.getElementById('swal-builder-iframe');
           const spinner = document.getElementById('builder-spinner');
@@ -80,10 +107,17 @@ function setupEditPedalHandler(pedals) {
               Swal.fire({
                 title: `Duplicate of ${pedal._id}`,
                 html: `<iframe src="create.html" style="width:100%; height:80vh; border:none;" id="swal-duplicate-iframe"></iframe>`,
-                width: '100%', showConfirmButton: true, showCancelButton: true,
-                confirmButtonText: 'Save duplicate', cancelButtonText: 'Cancel',
-                customClass: { confirmButton: 'bx--btn bx--btn--primary', cancelButton: 'bx--btn bx--btn--secondary' },
-                background: '#2e2e2e', color: '#ffffff',
+                width: '100%',
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Save duplicate',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'bx--btn bx--btn--primary',
+                    cancelButton: 'bx--btn bx--btn--secondary'
+                },
+                background: '#2e2e2e',
+                color: '#ffffff',
                 didOpen: () => {
                   const dupIframe = document.getElementById('swal-duplicate-iframe');
                   dupIframe.addEventListener('load', () => {
@@ -97,9 +131,15 @@ function setupEditPedalHandler(pedals) {
                 },
                 preConfirm: () => {
                   const dupIframe = document.getElementById('swal-duplicate-iframe');
-                  if (!dupIframe || !dupIframe.contentWindow || !dupIframe.contentWindow.getPedalValidation) { Swal.showValidationMessage('Builder not ready'); return false; }
+                  if (!dupIframe || !dupIframe.contentWindow || !dupIframe.contentWindow.getPedalValidation) {
+                    Swal.showValidationMessage('Builder not ready');
+                    return false;
+                  }
                   const validation = dupIframe.contentWindow.getPedalValidation();
-                  if (validation.hasMissingFields) { Swal.showValidationMessage("Please fill all required fields!"); return false; }
+                  if (validation.hasMissingFields) {
+                    Swal.showValidationMessage("Please fill all required fields!");
+                    return false;
+                  }
                   return validation.pedal;
                 }
               }).then((dupResult) => {
@@ -109,13 +149,22 @@ function setupEditPedalHandler(pedals) {
 
                   fetch('https://api.pedalplex.com/UPDATE_CATALOG.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + token
+                    },
                     body: JSON.stringify(newPedalData)
                   })
                   .then(res => res.json())
                   .then(data => {
                     if (data.success) {
-                      const createdPedal = { ...newPedalData, _id: data.id, _rev: data.rev, author: window.currentUser?.username || "", canEdit: true };
+                      const createdPedal = {
+                        ...newPedalData,
+                        _id: data.id,
+                        _rev: data.rev,
+                        author: window.currentUser?.username || "",
+                        canEdit: true
+                      };
                       pedals.push(createdPedal);
                       const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
                       $pedalDiv.attr("data-author", createdPedal.author || "");
@@ -126,11 +175,15 @@ function setupEditPedalHandler(pedals) {
                       setupEditPedalHandler(pedals);
 
                       Swal.fire({
-                        title: 'Duplicated!', text: 'Your gear has been copied.',
-                        icon: 'success', confirmButtonText: 'OK',
+                        title: 'Duplicated!',
+                        text: 'Your gear has been copied.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
                         customClass: { confirmButton: 'bx--btn bx--btn--primary' }
                       });
-                    } else { Swal.fire({ title: 'Error', text: data.error || 'Failed to save duplicate', icon: 'error', confirmButtonText: 'OK', customClass: { confirmButton: 'bx--btn bx--btn--primary' }}); }
+                    } else {
+                      Swal.fire({ title: 'Error', text: data.error || 'Failed to save duplicate', icon: 'error', confirmButtonText: 'OK', customClass: { confirmButton: 'bx--btn bx--btn--primary' }});
+                    }
                   });
                 }
               });
@@ -146,13 +199,16 @@ function setupEditPedalHandler(pedals) {
 
           const validation = iframe.contentWindow.buildJSON ? iframe.contentWindow.buildJSON() : iframe.contentWindow.getPedalValidation();
 
-          // Collect all errors
           const errors = [];
           if (validation.cssError) errors.push(`CSS Error: ${validation.cssError}`);
           if (validation.hasMissingFields) errors.push("Please fill all required fields!");
           if (validation.duplicateFound) errors.push("Duplicate control labels detected!");
           if (!validation.ledFound) errors.push("At least one LED is required!");
-          if (errors.length > 0) { Swal.showValidationMessage(errors.join("<br>")); return false; }
+
+          if (errors.length > 0) {
+            Swal.showValidationMessage(errors.join("<br>"));
+            return false;
+          }
 
           return validation.pedal;
         }
@@ -168,7 +224,10 @@ function setupEditPedalHandler(pedals) {
 
           fetch('https://api.pedalplex.com/UPDATE_CATALOG.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
             body: JSON.stringify(updated)
           })
           .then(res => res.json())
@@ -180,7 +239,8 @@ function setupEditPedalHandler(pedals) {
                 pedals[idx] = {
                   ...updated,
                   _id: data.id || updated._id,
-                  _rev: data.rev || updated._rev, canEdit: true
+                  _rev: data.rev || updated._rev,
+                  canEdit: true
                 };
               }
               const $old = $(`[data-pedal-id="${updated._id}"]`);
@@ -190,7 +250,9 @@ function setupEditPedalHandler(pedals) {
               }
               updatePedalCounts();
               Swal.fire({
-                title: 'Gear saved!', icon: 'success', confirmButtonText: 'OK',
+                title: 'Gear saved!',
+                icon: 'success',
+                confirmButtonText: 'OK',
                 customClass: { confirmButton: 'bx--btn bx--btn--primary' }
               });
             } else {
@@ -199,9 +261,16 @@ function setupEditPedalHandler(pedals) {
           });
         } else if (result.isDenied) {
           Swal.fire({
-            title: 'Are you sure?', text: `This will permanently delete "${pedal._id}"`, icon: 'warning', showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!', cancelButtonText: 'No, cancel!',
-            customClass: { confirmButton: 'bx--btn bx--btn--danger', cancelButton: 'bx--btn bx--btn--secondary' }
+            title: 'Are you sure?',
+            text: `This will permanently delete "${pedal._id}"`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            customClass: {
+                confirmButton: 'bx--btn bx--btn--danger',
+                cancelButton: 'bx--btn bx--btn--secondary'
+            }
           }).then((deleteConfirm) => {
             if (deleteConfirm.isConfirmed) {
               Swal.showLoading();
@@ -221,7 +290,10 @@ function setupEditPedalHandler(pedals) {
                 Swal.hideLoading();
                 if (data.success) {
                   Swal.fire({
-                    title: 'Deleted!', text: 'The gear has been removed.', icon: 'success', confirmButtonText: 'OK',
+                    title: 'Deleted!',
+                    text: 'The gear has been removed.',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
                     customClass: { confirmButton: 'bx--btn bx--btn--primary' }
                   }).then(() => {
                     const idx = pedals.findIndex(p => p._id === pedal._id);
@@ -249,20 +321,26 @@ function setupEditPedalHandler(pedals) {
 
       fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
         body: JSON.stringify({ ids: [pedal._id] })
       })
       .then(res => res.json())
       .then(fullPedalRes => {
         if (!fullPedalRes.docs || fullPedalRes.docs.length === 0) {
-          console.warn("GET_PEDALS_BY_IDS returned empty or invalid response for pedal:", pedal._id); return;
+          console.warn("GET_PEDALS_BY_IDS returned empty or invalid response for pedal:", pedal._id);
+          return;
         }
 
         pedal = fullPedalRes.docs[0];
 
         // Recupera canEdit se presente nel catalogo
         const existingPedal = pedals.find(p => p._id === pedal._id);
-        if (existingPedal && typeof existingPedal.canEdit !== 'undefined') { pedal.canEdit = existingPedal.canEdit; }
+        if (existingPedal && typeof existingPedal.canEdit !== 'undefined') {
+          pedal.canEdit = existingPedal.canEdit;
+        }
 
         // Aggiorna il div
         const $newPedalDiv = renderPedal(pedal, window.currentUser.role || "user");

@@ -1,12 +1,35 @@
 function getBasePath() {
   const parts = window.location.pathname.split('/').filter(Boolean);
+  // se sei su gears → base = /PedalPlex
+  // se sei su /gears → base = ""
   return parts.length > 1 ? '/' + parts[0] : '';
 }
 
 
 // TAG MAP STYLE
 const STYLE_TAG_MAP = {
-  altern: "cyan", indie: "cyan", grunge: "cool-gray", "lo-fi": "cool-gray", blues: "blue", rock: "red", stoner: "red", funk: "green", raggaeton: "green", ambient: "magenta", chill: "magenta", metal: "black", surf: "teal", jazz: "gray", pop: "warm-gray", beat: "warm-gray", punk: "orange", wave: "orange", prog: "purple", psych: "purple", folk: "yellow", country: "yellow"
+  altern: "cyan",
+  indie: "cyan",
+  grunge: "cool-gray",
+  "lo-fi": "cool-gray",
+  blues: "blue",
+  rock: "red",
+  stoner: "red",
+  funk: "green",
+  raggaeton: "green",
+  ambient: "magenta",
+  chill: "magenta",
+  metal: "black",
+  surf: "teal",
+  jazz: "gray",
+  pop: "warm-gray",
+  beat: "warm-gray",
+  punk: "orange",
+  wave: "orange",
+  prog: "purple",
+  psych: "purple",
+  folk: "yellow",
+  country: "yellow"
 };
 
 
@@ -134,8 +157,6 @@ function getPedalHeight(height) {
 }
 
 
-
-
 // HELPER
 function safeLogoStyle(inputStyle) {
   if (!inputStyle) return "";
@@ -155,6 +176,7 @@ function safeLogoStyle(inputStyle) {
   });
   return safeRules.join(";");
 }
+
 
 
 
@@ -217,6 +239,7 @@ function sanitizePedalHTML(input) {
 }
 
 
+
 // HELPER: returns CSS depending on type + inside
 function getPedalTypeCss(pedal, baseCss, inside) {
   switch (pedal.type) {
@@ -265,41 +288,6 @@ function getPedalTypeCss(pedal, baseCss, inside) {
 
 
 // HELPER
-function getBoxShadow(pedal, inside, insetIfNotFull) {
-  const outerShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-
-  // Handle full inside
-  if (inside === "full") {
-    return pedal["inside-border"]
-      ? `${outerShadow}, inset 0 0 0 3px ${pedal["inside-border"]}`
-      : outerShadow;
-  }
-
-  // Handle partial inside
-  return `${outerShadow}, ${insetIfNotFull}`;
-}
-
-
-
-// Start glow effect on element
-function startGlow(el) {
-  let angle = 65;
-  const speed = 0.6;
-  let rafId;
-
-  function tick() {
-    angle = (angle + speed) % 360;
-    el.style.setProperty("--gradient-angle", angle + "deg");
-    rafId = requestAnimationFrame(tick);
-  }
-
-  tick();
-
-  return () => cancelAnimationFrame(rafId);
-}
-
-
-// HELPER
 function normalizeHex(color) {
   if (!color) return '#000000';
   color = color.trim().toLowerCase();
@@ -335,48 +323,50 @@ function colorDistanceSq(a, b) {
 }
 
 
-// Function to filter pedals with colored LEDs in preset
-function filterPedalsWithColoredLeds(pedalsObj) {
-  const filteredPedals = {};
 
-  if (!pedalsObj || typeof pedalsObj !== 'object') {
-    console.warn('filterPedalsWithColoredLeds: invalid pedalsObj:', pedalsObj);
-    return filteredPedals;
+
+// HELPER
+function getBoxShadow(pedal, inside, insetIfNotFull) {
+  const outerShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+
+  // Handle full inside
+  if (inside === "full") {
+    return pedal["inside-border"]
+      ? `${outerShadow}, inset 0 0 0 3px ${pedal["inside-border"]}`
+      : outerShadow;
   }
 
-  for (const [pedalName, pedalData] of Object.entries(pedalsObj)) {
-    if (!pedalData || typeof pedalData !== 'object') {
-      console.warn(`Skipping pedal ${pedalName} because pedalData is invalid`, pedalData);
-      continue;
-    }
+  // Handle partial inside
+  return `${outerShadow}, ${insetIfNotFull}`;
+}
 
-    const controls = pedalData.controls;
 
-    if (!controls || (typeof controls !== 'object' && !Array.isArray(controls))) {
-      console.warn(`Skipping pedal ${pedalName} because controls is invalid`, controls);
-      continue;
-    }
 
-    let controlsArray;
-    if (Array.isArray(controls)) {
-      controlsArray = controls;
-    } else {
-      controlsArray = Object.entries(controls).map(([key, value]) => ({
-        [key]: value
-      }));
-    }
+// Start glow effect on element
+function startGlow(el) {
+  let angle = 65;
+  const speed = 0.6;
+  let rafId;
 
-    const hasColoredLed = controlsArray.some(ctrlObj => {
-      const ledValue = Object.values(ctrlObj)[0];
-      return typeof ledValue === 'number' && ledValue > 0;
-    });
-
-    if (hasColoredLed) {
-      filteredPedals[pedalName] = pedalData;
-    }
+  function tick() {
+    angle = (angle + speed) % 360;
+    el.style.setProperty("--gradient-angle", angle + "deg");
+    rafId = requestAnimationFrame(tick);
   }
 
-  return filteredPedals;
+  tick();
+
+  return () => cancelAnimationFrame(rafId);
+}
+
+
+
+
+// HELPER
+function decodeHTMLEntities(str) {
+  const txt = document.createElement('textarea');
+  txt.innerHTML = str;
+  return txt.value;
 }
 
 
@@ -493,12 +483,3 @@ function formatTime(seconds) {
 // --- Check periodico ogni 30 secondi ---
 setInterval(checkSessionTime, 30000);
 
-
-
-
-// HELPER
-function decodeHTMLEntities(str) {
-  const txt = document.createElement('textarea');
-  txt.innerHTML = str;
-  return txt.value;
-}
