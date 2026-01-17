@@ -1,3 +1,268 @@
+// HELPER FUNCTIONS AI PRESET DROPDOWN =======
+$(document).on("click", function () { $(".preset-dropdown-wrapper").removeClass("is-open") });
+
+
+// Build Preset from AI Catalog
+async function buildPresetDropdown($ul, pedalId) {
+
+  // 1️⃣ Cache hit → nessuna fetch
+  if (window.presetCatalogCache[pedalId]) {
+    renderPresetList($ul, pedalId, window.presetCatalogCache[pedalId]);
+    return;
+  }
+
+  // 2️⃣ Stato loading (una sola volta)
+  $ul.empty().append("<li class='loading'>Loading SubPlexes</li>");
+
+  const token = localStorage.getItem("authToken");
+  if (!token) { $ul.html("<li class='error'>Login to see all SubPlexes</li>"); return; }
+
+  try {
+    const res = await fetch(
+      "https://api.pedalplex.com/GET_PRESETS_BY_PEDAL.php",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ pedalId })
+      }
+    );
+
+    if (!res.ok) { throw new Error("HTTP " + res.status); }
+
+    const data = await res.json();
+    const presets = Array.isArray(data.presets) ? data.presets : [];
+
+    // 3️⃣ Salva in cache
+    window.presetCatalogCache[pedalId] = presets;
+    renderPresetList($ul, pedalId, presets);
+
+  } catch (err) {
+    console.error("Preset dropdown error:", err);
+    $ul.html("<li class='error'>Error loading SubPlexes</li>");
+  }
+}
+
+
+function applyCatalogPresetToSinglePedal(pedalId, preset) {
+  // Trova il pedale nel DOM
+  const $pedalDiv = $(`.pedal-catalog[data-pedal-id="${pedalId}"]`);
+  if (!$pedalDiv.length) { console.warn("Pedal not found on board:", pedalId); return; }
+
+  // ⛔️ PREVENT DOUBLE APPLY OF SAME PRESET
+  const applied = $pedalDiv.attr("data-applied-preset");
+  if (applied) {
+    try {
+      const parsed = JSON.parse(applied);
+      if (parsed.id === preset._id) { return; }
+    } catch (e) {}
+  }
+
+  const defaultPedal = window.catalogMap?.[pedalId] || window.catalogMap?.[String(pedalId).trim()];
+
+  if (!defaultPedal) { console.warn("Pedal not found in catalogMap:", pedalId); return; }
+
+  // Deep clone del pedale di catalogo
+  const pedalClone = JSON.parse(JSON.stringify(defaultPedal));
+
+  // Applica i controls del preset
+  if (preset.controls) {
+    pedalClone.controls.forEach(row => {
+      row.row.forEach(ctrl => {
+        const label = ctrl.label;
+        if (preset.controls.hasOwnProperty(label)) { ctrl.value = preset.controls[label]; }
+      });
+    });
+  }
+
+  // Rimuove i controlli attuali
+  $pedalDiv.find('.row').remove();
+
+  // Ri-render dei controlli
+  renderPedalControls(pedalClone, $pedalDiv);
+
+  // Aggiorna il nome (se serve)
+  const $existingName = $pedalDiv.find('.pedal-name, .head-name').first();
+  let nameClass = 'pedal-name';
+  let $referenceNode = null;
+
+  if ($existingName.length) {
+    nameClass = $existingName.hasClass('head-name') ? 'head-name' : 'pedal-name';
+    $referenceNode = $existingName.next();
+    $existingName.remove();
+  }
+
+  const $nameDiv = $("<div>").addClass(nameClass).html(pedalClone.name).attr("style", pedalClone.logo || "");
+
+  if ($referenceNode && $referenceNode.length) { $nameDiv.insertBefore($referenceNode);
+  } else {$pedalDiv.prepend($nameDiv); }
+
+
+  // Aggiorna UI (se presente)
+  if (typeof updateSavePresetButtonState === 'function') { updateSavePresetButtonState(); }
+
+  // Reset invalidazione
+  $pedalDiv.removeData("subplexInvalidated");
+
+  // Stato SubPlex applicato sul div
+  const appliedSubplex = { id: preset._id, presetName: preset.presetName || preset.name || preset._id, published: preset.published, source: preset.source, description: preset.description || '', style: preset.style || [], authorId: preset.authorId || preset.user_id || '', version: preset.version || 1 };
+  $pedalDiv.data('applied-subplex', appliedSubplex);
+  $pedalDiv.data('subplex-original-controls', JSON.parse(JSON.stringify(appliedSubplex.controls)));
+  $pedalDiv.data('subplex-modification-level', 'original');
+  $pedalDiv.removeData('subplexInvalidated');
+  $pedalDiv.attr("data-applied-preset", JSON.stringify({ id: appliedSubplex.id, name: appliedSubplex.presetName, style: appliedSubplex.style, published: appliedSubplex.published }));
+
+  // ✅ Aggiorna globale
+  window.currentSubPlex = window.currentSubPlex || {};
+  window.currentSubPlex[pedalId] = appliedSubplex;
+
+
+// 🔵 Attiva tracking modifiche: titolo e stato si aggiornano automaticamente
+setupSubplexChangeTracking($pedalDiv);
+
+// 🔹 Render della UI del preset applicato (icone, titolo, tags, ecc.)
+renderAppliedPresetInfo($pedalDiv, appliedSubplex);
+
+}
+
+// END HELPER FUNCTIONS AI PRESET DROPDOWN =======
+
+
+
+// Render applied SubPlex info box
+// function renderAppliedPresetInfo($pedalDiv, subplex) {
+
+//   const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || subplex.id || "SubPlex";
+
+//   if (!subplex || (!subplex.presetName && !subplex.name && !subplex.preset_name && !subplex.id)) { return; }
+
+//   const $wrapper = $pedalDiv.closest(".pedal-wrapper");
+//   const $infoBox = $wrapper.find(".applied-preset-info");
+//   if (!$infoBox.length) return;
+//   const description = subplex.description || "No description available";
+
+//   // Nome + icona AI
+//   const $nameEl = $infoBox.find(".applied-preset-name");
+//   $nameEl.empty();
+//   if (subplex.source === "ai") { $nameEl.append(`<svg class="ai-preset-icon" focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="14" height="14" viewBox="0 0 32 32" aria-hidden="true"><path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path><path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path></svg>`); }
+//   $nameEl.append(document.createTextNode(" " + presetName));
+
+//   // Icona info + tooltip
+//   const $iconWrapper = $infoBox.find(".applied-preset-info-icon");
+//   $iconWrapper.empty().append(`<svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="12" height="12" viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M17 22L17 14 13 14 13 16 15 16 15 22 12 22 12 24 20 24 20 22 17 22zM16 8a1.5 1.5 0 101.5 1.5A1.5 1.5 0 0016 8z"></path><path d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30ZM16,4A12,12,0,1,0,28,16,12,12,0,0,0,16,4Z"></path></svg>`);
+
+//   $iconWrapper.off("mouseenter mouseleave")
+//     .on("mouseenter", function () {
+//       const safeDescription = decodeHTMLEntities(description);
+//       const $tooltip = $(`<div class="preset-tooltip-popup"></div>`).text(safeDescription);
+
+//       $("body").append($tooltip);
+//       const offset = $iconWrapper.offset();
+//       $tooltip.css({ position: "absolute", top: offset.top - $tooltip.outerHeight() - 6, left: offset.left, zIndex: 2000, maxWidth: "250px", backgroundColor: "rgba(0,0,0,0.85)", color: "#fff", padding: "6px 8px", borderRadius: "4px", fontSize: "0.85rem", pointerEvents: "none" });
+//       $iconWrapper.data("tooltipEl", $tooltip);
+//     })
+//     .on("mouseleave", function () {
+//       const $tooltip = $iconWrapper.data("tooltipEl");
+//       if ($tooltip) $tooltip.remove();
+//     });
+
+//   // Tags
+//   const $tagsBox = $infoBox.find(".applied-preset-tags");
+//   if ($tagsBox.length) {
+//     $tagsBox.empty();
+//     const styles = subplex.style || [];
+//     styles.forEach(style => {
+//       const color = STYLE_TAG_MAP[style] || "gray";
+//       $tagsBox.append(`<span class="bx--tag bx--tag--${color} bx--tag--sm">${style}</span>`);
+//     });
+//   }
+
+//   $infoBox.show();
+//   $wrapper.find(".new-subplex-btn").hide();
+
+// }
+
+function renderAppliedPresetInfo($pedalDiv, subplex) {
+  if (!subplex || (!subplex.presetName && !subplex.name && !subplex.preset_name && !subplex.id && !subplex._id)) return;
+
+  // Nome del preset
+  const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || subplex.id || "SubPlex";
+  const description = subplex.description || "No description available";
+
+  // Trova il container corretto dentro il pedale
+  const $infoBox = $pedalDiv.find(".applied-preset-info");
+  if (!$infoBox.length) return;
+
+  // --- Nome + icona AI ---
+  const $nameEl = $infoBox.find(".applied-preset-name");
+  $nameEl.empty();
+  if (subplex.source === "ai") {
+    $nameEl.append(`
+      <svg class="ai-preset-icon" focusable="false" preserveAspectRatio="xMidYMid meet"
+           fill="currentColor" width="14" height="14" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
+        <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
+      </svg>
+    `);
+  }
+  $nameEl.append(document.createTextNode(" " + presetName));
+
+  // --- Icona info + tooltip ---
+  const $iconWrapper = $infoBox.find(".applied-preset-info-icon");
+  $iconWrapper.empty().append(`
+    <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor"
+         width="12" height="12" viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17 22L17 14 13 14 13 16 15 16 15 22 12 22 12 24 20 24 20 22 17 22zM16 8a1.5 1.5 0 101.5 1.5A1.5 1.5 0 0016 8z"></path>
+      <path d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30ZM16,4A12,12,0,1,0,28,16,12,12,0,0,0,16,4Z"></path>
+    </svg>
+  `);
+
+  // Rimuove eventuali listener precedenti e aggiunge tooltip
+  $iconWrapper.off("mouseenter mouseleave")
+    .on("mouseenter", function () {
+      const safeDescription = decodeHTMLEntities(description);
+      const $tooltip = $(`<div class="preset-tooltip-popup"></div>`).text(safeDescription);
+
+      $("body").append($tooltip);
+      const offset = $iconWrapper.offset();
+      $tooltip.css({
+        position: "absolute",
+        top: offset.top - $tooltip.outerHeight() - 6,
+        left: offset.left,
+        zIndex: 2000,
+        maxWidth: "250px",
+        backgroundColor: "rgba(0,0,0,0.85)",
+        color: "#fff",
+        padding: "6px 8px",
+        borderRadius: "4px",
+        fontSize: "0.85rem",
+        pointerEvents: "none"
+      });
+      $iconWrapper.data("tooltipEl", $tooltip);
+    })
+    .on("mouseleave", function () {
+      const $tooltip = $iconWrapper.data("tooltipEl");
+      if ($tooltip) $tooltip.remove();
+    });
+
+  // --- Tags ---
+  const $tagsBox = $infoBox.find(".applied-preset-tags");
+  if ($tagsBox.length) {
+    $tagsBox.empty();
+    const styles = subplex.style || [];
+    styles.forEach(style => {
+      const color = STYLE_TAG_MAP[style] || "gray";
+      $tagsBox.append(`<span class="bx--tag bx--tag--${color} bx--tag--sm">${style}</span>`);
+    });
+  }
+
+  // --- Mostra info box e nasconde pulsante ---
+  $infoBox.show();
+  const $newBtn = $pedalDiv.find(".new-subplex-btn");
+  if ($newBtn.length) $newBtn.hide();
+}
+
+
+
 // ------------------------
 // SubPlex Modification Levels
 // ------------------------
