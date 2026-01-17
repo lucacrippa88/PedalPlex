@@ -250,6 +250,8 @@ if (!subplex._originalName) {
 const baseName = subplex._originalName || 'SubPlex';
 let displayName = baseName;
 
+let state = '';
+
 if (totalScore === 0) {
   state = 'original';
 }
