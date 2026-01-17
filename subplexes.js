@@ -182,6 +182,10 @@ function updateSubplexStatus($pedalDiv) {
   
   if (!subplex) return;
 
+  if (!window.currentSubPlex) {
+    window.currentSubPlex = {};
+  }
+
   let totalScore = 0;
 
   if (Array.isArray(subplex.controls)) {
