@@ -186,13 +186,19 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
   const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || subplex.id || "SubPlex";
   const description = subplex.description || "No description available";
 
-  // 🔹 Trova il container in modo robusto
+  // 🔹 Trova o crea il container info
   let $infoBox = $pedalDiv.find(".applied-preset-info");
   if (!$infoBox.length) {
-    const $wrapper = $pedalDiv.closest(".pedal-wrapper");
-    $infoBox = $wrapper.find(".applied-preset-info");
+    $infoBox = $(`
+      <div class="applied-preset-info">
+        <div class="applied-preset-title-row">
+          <span class="applied-preset-name"></span>
+          <span class="applied-preset-info-icon"></span>
+        </div>
+        <div class="applied-preset-tags"></div>
+      </div>
+    `).appendTo($pedalDiv.find(".preset-container"));
   }
-  if (!$infoBox.length) return;
 
   // --- Nome + icona AI ---
   const $nameEl = $infoBox.find(".applied-preset-name");
@@ -261,6 +267,7 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
   const $newBtn = $pedalDiv.find(".new-subplex-btn");
   if ($newBtn.length) $newBtn.hide();
 }
+
 
 
 
