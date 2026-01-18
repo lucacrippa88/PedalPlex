@@ -99,11 +99,18 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
 // AGGIORNA LO STATO DEL SUBPLEX
 // ===============================
 function updateSubplexStatus($pedalDiv) {
-  // ⛔️ IGNORA EVENTI DI BOOTSTRAP
+
+  // ⛔️ ignora bootstrap
   if ($pedalDiv.data('subplex-hydrating')) return;
 
   const subplex = $pedalDiv.data('applied-subplex');
   if (!subplex) return;
+
+  // 🔒 finché l'utente non tocca nulla davvero, NON sporcare
+  if (!$pedalDiv.data('subplex-dirty-enabled')) {
+    $pedalDiv.data('subplex-dirty-enabled', true);
+    return;
+  }
 
   if (!subplex._originalName) {
     subplex._originalName = subplex.presetName || 'SubPlex';
@@ -115,6 +122,7 @@ function updateSubplexStatus($pedalDiv) {
     renderAppliedPresetInfo($pedalDiv, subplex);
   }
 }
+
 
 
 
@@ -154,6 +162,7 @@ function createCustomSubplex($pedalDiv) {
     };
     $pedalDiv.data('applied-subplex', custom);
     $pedalDiv.data('subplex-original-controls', []);
+    $pedalDiv.data('subplex-dirty-enabled', true);
     updateSubplexStatus($pedalDiv);
 }
 
@@ -273,7 +282,7 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   // Salva il nome originale subito
   appliedSubplex._originalName = appliedSubplex.presetName;
   $pedalDiv.data('applied-subplex-state', 'original');
-
+  $pedalDiv.data('subplex-dirty-enabled', false);
   $pedalDiv.data('applied-subplex', appliedSubplex);
   $pedalDiv.attr("data-applied-preset", JSON.stringify({
     id: appliedSubplex.id,

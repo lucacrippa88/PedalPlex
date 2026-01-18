@@ -1370,7 +1370,9 @@ async function renderFullPedalboard(pedalboardOverride = null) {
             e.stopPropagation();
 
             // TODO: apri modale o redirect
-            console.log("Create new SubPlex for pedal:", pedal._id);
+            // console.log("Create new SubPlex for pedal:", pedal._id);
+            createCustomSubplex($pedalDiv);
+            $newBtn.hide();
 
             // esempio futuro:
             // openNewSubPlexModal({ pedalId: pedal._id });
