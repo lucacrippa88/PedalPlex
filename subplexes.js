@@ -304,3 +304,33 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   renderAppliedPresetInfo($pedalDiv, appliedSubplex);
 
 }
+
+
+
+function collectSinglePedalControls($pedalDiv) {
+  const controls = [];
+
+  $pedalDiv.find('[data-control-label]').each(function () {
+    const $el = $(this);
+    const label = $el.data('control-label');
+    let value = null;
+
+    // knob con rotazione
+    if ($el.hasClass('knob')) {
+      const transform = $el.css('transform');
+      value = transform || null;
+    }
+    // input / select
+    else if ($el.is('input, select, textarea')) {
+      value = $el.val();
+    }
+    // fallback
+    else {
+      value = $el.text();
+    }
+
+    controls.push({ label, value });
+  });
+
+  return controls;
+}
