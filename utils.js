@@ -1244,6 +1244,10 @@ async function renderFullPedalboard(pedalboardOverride = null) {
           }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
         }
 
+        // 🔒 BOOTSTRAP DB: disabilita invalidazioni
+        $pedalDiv.data('subplex-hydrating', true);
+
+
         // const cleanName = sanitizeHtml(pedal.name);
         const cleanName = sanitizePedalHTML(pedal.name);
 
@@ -1255,6 +1259,11 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
         // Render controls
         renderPedalControls(pedal, $pedalDiv);
+
+        // ✅ Fine bootstrap: stato pulito
+        $pedalDiv.data('subplex-hydrating', false);
+        $pedalDiv.data('applied-subplex-state', 'original');
+
 
         // Pedal logo
         if ((pedal.type === "pedal") || (pedal.type === "combo") || (pedal.type === "round") || (pedal.type === "expression")) {
