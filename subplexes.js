@@ -102,31 +102,21 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
 // ===============================
 function updateSubplexStatus($pedalDiv) {
   const subplex = $pedalDiv.data('applied-subplex');
-  const originalControls = $pedalDiv.data('subplex-original-controls');
+  if (!subplex) return;
 
-  if (!subplex || !originalControls) return;
-
-  const currentControls = collectSinglePedalControls($pedalDiv);
-
-  // Controlla se ci sono modifiche
-  const changed = currentControls.some(curr => {
-    const orig = originalControls.find(o => o.label === curr.label);
-    return orig && orig.value !== curr.value;
-  });
-
-  // Imposta il nome solo se _originalName esiste
-  if (!subplex._originalName) subplex._originalName = subplex.presetName || 'SubPlex';
-
-  if (changed) {
-    subplex.presetName = subplex._originalName + '*';
-    $pedalDiv.data('applied-subplex-state', 'modified');
-  } else {
-    subplex.presetName = subplex._originalName;
-    $pedalDiv.data('applied-subplex-state', 'original');
+  // nome originale garantito
+  if (!subplex._originalName) {
+    subplex._originalName = subplex.presetName || 'SubPlex';
   }
 
-  renderAppliedPresetInfo($pedalDiv, subplex);
+  // se non è già modified → segna modified
+  if ($pedalDiv.data('applied-subplex-state') !== 'modified') {
+    subplex.presetName = subplex._originalName + '*';
+    $pedalDiv.data('applied-subplex-state', 'modified');
+    renderAppliedPresetInfo($pedalDiv, subplex);
+  }
 }
+
 
 
 
@@ -280,7 +270,8 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   };
 
   // Salva il nome originale subito
-  appliedSubplex._originalName = appliedSubplex.presetName;   
+  appliedSubplex._originalName = appliedSubplex.presetName;
+  $pedalDiv.data('applied-subplex-state', 'original');
 
   $pedalDiv.data('applied-subplex', appliedSubplex);
   $pedalDiv.attr("data-applied-preset", JSON.stringify({
