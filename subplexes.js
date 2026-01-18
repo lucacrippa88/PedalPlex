@@ -114,6 +114,9 @@ function updateSubplexStatus($pedalDiv) {
     return orig && orig.value !== curr.value;
   });
 
+  // Imposta il nome solo se _originalName esiste
+  if (!subplex._originalName) subplex._originalName = subplex.presetName || 'SubPlex';
+
   if (changed) {
     subplex.presetName = subplex._originalName + '*';
     $pedalDiv.data('applied-subplex-state', 'modified');
@@ -124,6 +127,7 @@ function updateSubplexStatus($pedalDiv) {
 
   renderAppliedPresetInfo($pedalDiv, subplex);
 }
+
 
 
 // ===============================
@@ -169,4 +173,134 @@ function decodeHTMLEntities(str) {
     const txt = document.createElement("textarea");
     txt.innerHTML = str;
     return txt.value;
+}
+
+
+
+function applyCatalogPresetToSinglePedal(pedalId, preset) {
+  // Trova il pedale nel DOM
+  const $pedalDiv = $(`.pedal-catalog[data-pedal-id="${pedalId}"]`);
+  if (!$pedalDiv.length) {
+    console.warn("Pedal not found on board:", pedalId);
+    return;
+  }
+
+  // ⛔️ PREVENT DOUBLE APPLY OF SAME PRESET
+  const applied = $pedalDiv.attr("data-applied-preset");
+  if (applied) {
+    try {
+      const parsed = JSON.parse(applied);
+      if (parsed.id === preset._id) {
+        return; // già applicato → esci
+      }
+    } catch (e) {}
+  }
+
+
+  // Recupera il pedale di default dal catalogo
+  // const defaultPedal = window.catalog.find(
+  //   p => p._id === pedalId || p.name === pedalId
+  // );
+  // if (!defaultPedal) {
+  //   console.warn("Pedal not found in catalog:", pedalId);
+  //   return;
+  // }
+  const defaultPedal =
+    window.catalogMap?.[pedalId] ||
+    window.catalogMap?.[String(pedalId).trim()];
+
+  if (!defaultPedal) {
+    console.warn("Pedal not found in catalogMap:", pedalId);
+    return;
+  }
+
+
+  // Deep clone del pedale di catalogo
+  const pedalClone = JSON.parse(JSON.stringify(defaultPedal));
+
+  // Applica i controls del preset
+  if (preset.controls) {
+    pedalClone.controls.forEach(row => {
+      row.row.forEach(ctrl => {
+        const label = ctrl.label;
+        if (preset.controls.hasOwnProperty(label)) {
+          ctrl.value = preset.controls[label];
+        }
+      });
+    });
+  }
+
+  // Rimuove i controlli attuali
+  $pedalDiv.find('.row').remove();
+
+  // Ri-render dei controlli
+  renderPedalControls(pedalClone, $pedalDiv);
+
+  // Aggiorna il nome (se serve)
+  const $existingName = $pedalDiv.find('.pedal-name, .head-name').first();
+  let nameClass = 'pedal-name';
+  let $referenceNode = null;
+
+  if ($existingName.length) {
+    nameClass = $existingName.hasClass('head-name') ? 'head-name' : 'pedal-name';
+    $referenceNode = $existingName.next();
+    $existingName.remove();
+  }
+
+  const $nameDiv = $("<div>")
+    .addClass(nameClass)
+    .html(pedalClone.name)
+    .attr("style", pedalClone.logo || "");
+
+  if ($referenceNode && $referenceNode.length) {
+    $nameDiv.insertBefore($referenceNode);
+  } else {
+    $pedalDiv.prepend($nameDiv);
+  }
+
+
+  // Aggiorna UI (se presente)
+  if (typeof updateSavePresetButtonState === 'function') {
+    updateSavePresetButtonState();
+  }
+
+  // Reset invalidazione
+  $pedalDiv.removeData("subplexInvalidated");
+
+  // Stato SubPlex applicato sul div
+  const appliedSubplex = {
+    id: preset._id,
+    presetName: preset.presetName || preset.name || preset._id,
+    published: preset.published,
+    source: preset.source,
+    description: preset.description || '',
+    style: preset.style || [],
+    authorId: preset.authorId || preset.user_id || '',
+    version: preset.version || 1
+  };
+
+  // Salva il nome originale subito
+  appliedSubplex._originalName = appliedSubplex.presetName;   
+
+  $pedalDiv.data('applied-subplex', appliedSubplex);
+  $pedalDiv.attr("data-applied-preset", JSON.stringify({
+    id: appliedSubplex.id,
+    name: appliedSubplex.presetName,
+    style: appliedSubplex.style,
+    published: appliedSubplex.published
+  }));
+
+  // ✅ Aggiorna globale
+  window.currentSubPlex = window.currentSubPlex || {};
+  window.currentSubPlex[pedalId] = appliedSubplex;
+
+  // Salva i controlli originali per confronti futuri
+  const originalControls = collectSinglePedalControls($pedalDiv);
+  $pedalDiv.data('subplex-original-controls', JSON.parse(JSON.stringify(originalControls)));
+  // Salva il nome originale
+  if (!appliedSubplex._originalName) appliedSubplex._originalName = appliedSubplex.presetName;
+
+
+  renderAppliedPresetInfo($pedalDiv, appliedSubplex);
+
 }
