@@ -274,6 +274,7 @@ function updateSubplexStatus($pedalDiv) {
     window.currentSubPlex[$pedalDiv.data('pedal-id')] = subplex;
 
     renderAppliedPresetInfo($pedalDiv, subplex);
+    console.log('[DEBUG] subplexControls:', subplexControls);
 }
 
 
