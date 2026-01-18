@@ -1720,11 +1720,8 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     description: preset.description || '',
     style: preset.style || [],
     authorId: preset.authorId || preset.user_id || '',
-    version: preset.version || 1,
-    // AGGIUNTO
-    controls: JSON.parse(JSON.stringify(preset.controls || {}))
+    version: preset.version || 1
   };
-
 
   $pedalDiv.data('applied-subplex', appliedSubplex);
   $pedalDiv.attr("data-applied-preset", JSON.stringify({
@@ -1733,12 +1730,6 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     style: appliedSubplex.style,
     published: appliedSubplex.published
   }));
-
-  const originalControls = collectSinglePedalControls($pedalDiv);
-  $pedalDiv.data('subplex-original-controls', originalControls);
-
-  console.log('[SubPlex] snapshot saved', originalControls);
-
 
   // ✅ Aggiorna globale
   window.currentSubPlex = window.currentSubPlex || {};
@@ -1751,3 +1742,10 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
 
 
 // END HELPER FUNCTIONS AI PRESET DROPDOWN =======
+
+
+
+
+
+
+
