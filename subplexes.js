@@ -12,9 +12,7 @@ function getAllSubplexControls(subplex) {
 // Render applied SubPlex info box
 function renderAppliedPresetInfo($pedalDiv, subplex) {
 
-
   const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || subplex.id || "SubPlex";
-
   
   if (!subplex || (!subplex.presetName && !subplex.name && !subplex.preset_name && !subplex.id)) {
     console.log("No valid SubPlex found, skipping render.");
@@ -101,21 +99,23 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
 // AGGIORNA LO STATO DEL SUBPLEX
 // ===============================
 function updateSubplexStatus($pedalDiv) {
+  // ⛔️ IGNORA EVENTI DI BOOTSTRAP
+  if ($pedalDiv.data('subplex-hydrating')) return;
+
   const subplex = $pedalDiv.data('applied-subplex');
   if (!subplex) return;
 
-  // nome originale garantito
   if (!subplex._originalName) {
     subplex._originalName = subplex.presetName || 'SubPlex';
   }
 
-  // se non è già modified → segna modified
   if ($pedalDiv.data('applied-subplex-state') !== 'modified') {
     subplex.presetName = subplex._originalName + '*';
     $pedalDiv.data('applied-subplex-state', 'modified');
     renderAppliedPresetInfo($pedalDiv, subplex);
   }
 }
+
 
 
 
