@@ -184,26 +184,43 @@ function onPedalControlChange($pedalDiv) {
 
 
 // Al momento del render dal DB
+// function setupSubplexInvalidationOnDBLoad($pedalDiv) {
+//     if (!$pedalDiv) return;
+
+//     // const invalidate = () => invalidateSubplexForPedal($pedalDiv);
+//     const updateStatus = () => updateSubplexStatus($pedalDiv);
+
+//     // rimuovi eventuali listener duplicati
+//     $pedalDiv
+//         .find('input, select, textarea')
+//         .off('.subplexInvalidate')
+//         // .on('input.subplexInvalidate change.subplexInvalidate', invalidate);
+//         .on('input.subplexInvalidate change.subplexInvalidate', updateStatus);
+
+//     // knob / custom controls
+//     $pedalDiv
+//         .find('[data-control-label]')
+//         .off('.subplexInvalidate')
+//         // .on('mousedown.subplexInvalidate click.subplexInvalidate', invalidate);
+//         .on('mousedown.subplexInvalidate click.subplexInvalidate', updateStatus);
+// }
+
 function setupSubplexInvalidationOnDBLoad($pedalDiv) {
-    if (!$pedalDiv) return;
+  if (!$pedalDiv) return;
 
-    // const invalidate = () => invalidateSubplexForPedal($pedalDiv);
-    const updateStatus = () => updateSubplexStatus($pedalDiv);
+  const debug = () => debugPedalControlValues($pedalDiv);
 
-    // rimuovi eventuali listener duplicati
-    $pedalDiv
-        .find('input, select, textarea')
-        .off('.subplexInvalidate')
-        // .on('input.subplexInvalidate change.subplexInvalidate', invalidate);
-        .on('input.subplexInvalidate change.subplexInvalidate', updateStatus);
+  $pedalDiv
+    .find('input, select, textarea')
+    .off('.subplexDebug')
+    .on('input.subplexDebug change.subplexDebug', debug);
 
-    // knob / custom controls
-    $pedalDiv
-        .find('[data-control-label]')
-        .off('.subplexInvalidate')
-        // .on('mousedown.subplexInvalidate click.subplexInvalidate', invalidate);
-        .on('mousedown.subplexInvalidate click.subplexInvalidate', updateStatus);
+  $pedalDiv
+    .find('[data-control-label]')
+    .off('.subplexDebug')
+    .on('mousedown.subplexDebug click.subplexDebug', debug);
 }
+
 
 
 
@@ -315,3 +332,79 @@ function calculateControlChangeScore(ctrl, $control) {
 
 
 
+
+
+
+
+
+
+function debugPedalControlValues($pedalDiv) {
+  const pedalName = $pedalDiv.data('pedal-name');
+  const pedalId = $pedalDiv.data('pedal-id');
+
+  console.group(`[DEBUG] Pedal controls changed → ${pedalName}`);
+
+  // --- KNOBS ---
+  $pedalDiv.find('.knob').each(function () {
+    const label = $(this).data('control-label');
+    const $valueLabel = $(this).closest('.knob-wrapper').children('.knob-value-label');
+
+    let value;
+
+    if ($valueLabel.length && $valueLabel.text().trim() !== '') {
+      value = $valueLabel.text().trim();
+    } else {
+      const transform = $(this).css('transform');
+      let angle = 0;
+
+      if (transform && transform !== 'none') {
+        const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
+        const a = parseFloat(values[0]);
+        const b = parseFloat(values[1]);
+        angle = Math.atan2(b, a) * (180 / Math.PI);
+      } else {
+        const style = $(this).attr('style');
+        const match = style && style.match(/rotate\((-?\d+(\.\d+)?)deg\)/);
+        angle = match ? parseFloat(match[1]) : 0;
+      }
+
+      value = angle;
+    }
+
+    console.log(`KNOB → ${label}:`, value);
+  });
+
+  // --- SLIDERS ---
+  $pedalDiv.find('input[type="range"][data-control-label]').each(function () {
+    console.log(
+      `SLIDER → ${$(this).data('control-label')}:`,
+      $(this).val()
+    );
+  });
+
+  // --- DROPDOWNS / MULTI ---
+  $pedalDiv.find('select[data-control-label]').each(function () {
+    console.log(
+      `SELECT → ${$(this).data('control-label')}:`,
+      $(this).val()
+    );
+  });
+
+  // --- LCD ---
+  $pedalDiv.find('input[type="text"][data-control-label]').each(function () {
+    console.log(
+      `LCD → ${$(this).data('control-label')}:`,
+      $(this).val()
+    );
+  });
+
+  // --- LED ---
+  $pedalDiv.find('.led[data-control-label]').each(function () {
+    console.log(
+      `LED → ${$(this).data('control-label')}:`,
+      $(this).data('colorIndex')
+    );
+  });
+
+  console.groupEnd();
+}
