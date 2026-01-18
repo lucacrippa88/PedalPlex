@@ -1,79 +1,87 @@
-// ======================
-// Recupera i controlli di un singolo pedale
-// ======================
-function collectSinglePedalControls($pedalDiv) {
-    const controls = [];
+// ===============================
+// SUBPLEX.JS – VERSIONE SEMPLIFICATA
+// ===============================
 
-    // --- KNOBS ---
-    $pedalDiv.find('.knob').each(function () {
-        const label = $(this).data('control-label');
-        let value = 0;
-
-        const $valueLabel = $(this).closest('.knob-wrapper').children('.knob-value-label');
-        if ($valueLabel.length && $valueLabel.text().trim() !== '') {
-            value = parseFloat($valueLabel.text().trim());
-        } else {
-            // fallback: legge angolo dal transform
-            const transform = $(this).css('transform');
-            if (transform && transform !== 'none') {
-                const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
-                const a = parseFloat(values[0]);
-                const b = parseFloat(values[1]);
-                value = Math.atan2(b, a) * (180 / Math.PI);
-            }
-        }
-
-        controls.push({ label, value, type: 'knob' });
-    });
-
-    // --- SLIDERS ---
-    $pedalDiv.find('input[type="range"][data-control-label]').each(function () {
-        controls.push({
-            label: $(this).data('control-label'),
-            value: parseFloat($(this).val()),
-            type: 'slider'
-        });
-    });
-
-    // --- DROPDOWNS / MULTI ---
-    $pedalDiv.find('select[data-control-label]').each(function () {
-        controls.push({
-            label: $(this).data('control-label'),
-            value: $(this).val(),
-            type: 'dropdown'
-        });
-    });
-
-    // --- LCD ---
-    $pedalDiv.find('input[type="text"][data-control-label]').each(function () {
-        controls.push({
-            label: $(this).data('control-label'),
-            value: $(this).val(),
-            type: 'lcd'
-        });
-    });
-
-    // --- LED ---
-    $pedalDiv.find('.led[data-control-label]').each(function () {
-        controls.push({
-            label: $(this).data('control-label'),
-            value: $(this).data('colorIndex'),
-            type: 'led'
-        });
-    });
-
-    return controls;
+// Ottiene tutti i controlli di un SubPlex
+function getAllSubplexControls(subplex) {
+    if (!subplex || !Array.isArray(subplex.controls)) return [];
+    if (!subplex.controls[0]?.row) return subplex.controls;
+    return subplex.controls.flatMap(r => Array.isArray(r.row) ? r.row : []);
 }
 
+// Render info box del SubPlex applicato
+function renderAppliedPresetInfo($pedalDiv, subplex) {
+    if (!subplex) return;
+    const presetName = subplex.presetName || subplex.name || "SubPlex";
+    const description = subplex.description || "No description available";
 
-// ======================
-// Applica o aggiorna SubPlex su un pedale
-// ======================
+    const $wrapper = $pedalDiv.closest(".pedal-wrapper");
+    const $infoBox = $wrapper.find(".applied-preset-info");
+    if (!$infoBox.length) return;
+
+    // Nome + icona AI
+    const $nameEl = $infoBox.find(".applied-preset-name");
+    $nameEl.empty();
+    if (subplex.source === "ai") {
+        $nameEl.append(`
+            <svg class="ai-preset-icon" width="14" height="14" viewBox="0 0 32 32" fill="currentColor">
+                <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
+                <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
+            </svg>
+        `);
+    }
+    $nameEl.append(document.createTextNode(" " + presetName));
+
+    // Tooltip info
+    const $iconWrapper = $infoBox.find(".applied-preset-info-icon");
+    $iconWrapper.off("mouseenter mouseleave")
+        .on("mouseenter", function () {
+            const safeDescription = decodeHTMLEntities(description);
+            const $tooltip = $(`<div class="preset-tooltip-popup"></div>`).text(safeDescription);
+            $("body").append($tooltip);
+            const offset = $iconWrapper.offset();
+            $tooltip.css({
+                position: "absolute",
+                top: offset.top - $tooltip.outerHeight() - 6,
+                left: offset.left,
+                zIndex: 2000,
+                maxWidth: "250px",
+                backgroundColor: "rgba(0,0,0,0.85)",
+                color: "#fff",
+                padding: "6px 8px",
+                borderRadius: "4px",
+                fontSize: "0.85rem",
+                pointerEvents: "none"
+            });
+            $iconWrapper.data("tooltipEl", $tooltip);
+        })
+        .on("mouseleave", function () {
+            const $tooltip = $iconWrapper.data("tooltipEl");
+            if ($tooltip) $tooltip.remove();
+        });
+
+    // Tags
+    const $tagsBox = $infoBox.find(".applied-preset-tags");
+    if ($tagsBox.length) {
+        $tagsBox.empty();
+        (subplex.style || []).forEach(style => {
+            const color = STYLE_TAG_MAP[style] || "gray";
+            $tagsBox.append(`<span class="bx--tag bx--tag--${color} bx--tag--sm">${style}</span>`);
+        });
+    }
+
+    $infoBox.show();
+    $wrapper.find(".new-subplex-btn").hide();
+}
+
+// ===============================
+// AGGIORNA LO STATO DEL SUBPLEX
+// ===============================
 function updateSubplexStatus($pedalDiv) {
-    let subplex = $pedalDiv.data('applied-subplex');
+    const subplex = $pedalDiv.data('applied-subplex');
     if (!subplex) return;
 
-    // Se non è già modificato, aggiungi *
+    // Se non è già modificato, aggiunge *
     if (!subplex.presetName?.endsWith('*')) {
         subplex.presetName = (subplex.presetName || 'SubPlex') + '*';
     }
@@ -81,88 +89,54 @@ function updateSubplexStatus($pedalDiv) {
     // Salva stato
     $pedalDiv.data('applied-subplex-state', 'modified');
 
-    // Aggiorna globalmente
+    // Aggiorna globale
     window.currentSubPlex = window.currentSubPlex || {};
     window.currentSubPlex[$pedalDiv.data('pedal-id')] = subplex;
 
-    // Aggiorna UI
     renderAppliedPresetInfo($pedalDiv, subplex);
 }
 
-
-// ======================
-// Crea un SubPlex custom
-// ======================
-function createCustomSubplex($pedalDiv) {
-    const custom = {
-        id: 'custom-' + Date.now(),
-        presetName: 'Custom SubPlex',
-        description: '',
-        style: [],
-        source: 'user',
-        authorId: 'currentUser',
-        version: 1,
-        controls: collectSinglePedalControls($pedalDiv)
-    };
-
-    $pedalDiv.data('applied-subplex', custom);
-    $pedalDiv.data('subplex-original-controls', collectSinglePedalControls($pedalDiv));
-    $pedalDiv.data('applied-subplex-state', 'custom');
-
-    window.currentSubPlex = window.currentSubPlex || {};
-    window.currentSubPlex[$pedalDiv.data('pedal-id')] = custom;
-
-    renderAppliedPresetInfo($pedalDiv, custom);
-}
-
-
-// ======================
-// Imposta listener per modifiche controlli
-// ======================
+// ===============================
+// SETUP EVENTI CONTROLLI PEDALE
+// ===============================
 function setupSubplexInvalidationOnDBLoad($pedalDiv) {
     if (!$pedalDiv) return;
 
-    const markModified = () => updateSubplexStatus($pedalDiv);
+    const updateStatus = () => updateSubplexStatus($pedalDiv);
 
-    // input, select, textarea → qualsiasi modifica
-    $pedalDiv.find('input, select, textarea')
+    $pedalDiv
+        .find('input, select, textarea')
         .off('.subplexInvalidate')
-        .on('input.subplexInvalidate change.subplexInvalidate', markModified);
+        .on('input.subplexInvalidate change.subplexInvalidate', updateStatus);
 
-    // knob / custom controls
-    $pedalDiv.find('[data-control-label]')
+    $pedalDiv
+        .find('[data-control-label]')
         .off('.subplexInvalidate')
-        .on('mousedown.subplexInvalidate click.subplexInvalidate', markModified);
+        .on('mousedown.subplexInvalidate click.subplexInvalidate', updateStatus);
 }
 
+// ===============================
+// CREAZIONE SUBPLEX CUSTOM SE NON PRESENTE
+// ===============================
+function createCustomSubplex($pedalDiv) {
+    const custom = {
+        id: 'custom_' + Date.now(),
+        presetName: 'Custom SubPlex',
+        source: 'custom',
+        style: [],
+        description: '',
+        controls: []
+    };
+    $pedalDiv.data('applied-subplex', custom);
+    $pedalDiv.data('subplex-original-controls', []);
+    updateSubplexStatus($pedalDiv);
+}
 
-// ======================
-// Render info SubPlex (titolo, tag, descrizione)
-// ======================
-function renderAppliedPresetInfo($pedalDiv, subplex) {
-    const presetName = subplex.presetName || 'SubPlex';
-    const $wrapper = $pedalDiv.closest('.pedal-wrapper');
-    const $infoBox = $wrapper.find('.applied-preset-info');
-    if (!$infoBox.length) return;
-
-    const description = subplex.description || 'No description available';
-
-    const $nameEl = $infoBox.find('.applied-preset-name');
-    $nameEl.empty();
-    if (subplex.source === 'ai') {
-        $nameEl.append('<svg class="ai-preset-icon" ...>...</svg>'); // tua icona AI
-    }
-    $nameEl.append(document.createTextNode(' ' + presetName));
-
-    const $tagsBox = $infoBox.find('.applied-preset-tags');
-    if ($tagsBox.length) {
-        $tagsBox.empty();
-        (subplex.style || []).forEach(style => {
-            const color = STYLE_TAG_MAP[style] || 'gray';
-            $tagsBox.append(`<span class="bx--tag bx--tag--${color} bx--tag--sm">${style}</span>`);
-        });
-    }
-
-    $infoBox.show();
-    $wrapper.find('.new-subplex-btn').hide();
+// ===============================
+// UTILITA
+// ===============================
+function decodeHTMLEntities(str) {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = str;
+    return txt.value;
 }
