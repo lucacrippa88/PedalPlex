@@ -184,42 +184,42 @@ function onPedalControlChange($pedalDiv) {
 
 
 // Al momento del render dal DB
-// function setupSubplexInvalidationOnDBLoad($pedalDiv) {
-//     if (!$pedalDiv) return;
-
-//     // const invalidate = () => invalidateSubplexForPedal($pedalDiv);
-//     const updateStatus = () => updateSubplexStatus($pedalDiv);
-
-//     // rimuovi eventuali listener duplicati
-//     $pedalDiv
-//         .find('input, select, textarea')
-//         .off('.subplexInvalidate')
-//         // .on('input.subplexInvalidate change.subplexInvalidate', invalidate);
-//         .on('input.subplexInvalidate change.subplexInvalidate', updateStatus);
-
-//     // knob / custom controls
-//     $pedalDiv
-//         .find('[data-control-label]')
-//         .off('.subplexInvalidate')
-//         // .on('mousedown.subplexInvalidate click.subplexInvalidate', invalidate);
-//         .on('mousedown.subplexInvalidate click.subplexInvalidate', updateStatus);
-// }
-
 function setupSubplexInvalidationOnDBLoad($pedalDiv) {
-  if (!$pedalDiv) return;
+    if (!$pedalDiv) return;
 
-  const debug = () => debugPedalControlValues($pedalDiv);
+    // const invalidate = () => invalidateSubplexForPedal($pedalDiv);
+    const updateStatus = () => updateSubplexStatus($pedalDiv);
 
-  $pedalDiv
-    .find('input, select, textarea')
-    .off('.subplexDebug')
-    .on('input.subplexDebug change.subplexDebug', debug);
+    // rimuovi eventuali listener duplicati
+    $pedalDiv
+        .find('input, select, textarea')
+        .off('.subplexInvalidate')
+        // .on('input.subplexInvalidate change.subplexInvalidate', invalidate);
+        .on('input.subplexInvalidate change.subplexInvalidate', updateStatus);
 
-  $pedalDiv
-    .find('[data-control-label]')
-    .off('.subplexDebug')
-    .on('mousedown.subplexDebug click.subplexDebug', debug);
+    // knob / custom controls
+    $pedalDiv
+        .find('[data-control-label]')
+        .off('.subplexInvalidate')
+        // .on('mousedown.subplexInvalidate click.subplexInvalidate', invalidate);
+        .on('mousedown.subplexInvalidate click.subplexInvalidate', updateStatus);
 }
+
+// function setupSubplexInvalidationOnDBLoad($pedalDiv) {
+//   if (!$pedalDiv) return;
+
+//   const debug = () => debugPedalControlValues($pedalDiv);
+
+//   $pedalDiv
+//     .find('input, select, textarea')
+//     .off('.subplexDebug')
+//     .on('input.subplexDebug change.subplexDebug', debug);
+
+//   $pedalDiv
+//     .find('[data-control-label]')
+//     .off('.subplexDebug')
+//     .on('mousedown.subplexDebug click.subplexDebug', debug);
+// }
 
 
 
@@ -288,22 +288,38 @@ function calculateControlChangeScore(ctrl, $control) {
         case "knob":
         case "smallknob":
         case "largeknob":
-        case "xlargeknob":
-            let rotation = 0;
-            const transform = $control.css('transform');
-            if (transform && transform !== 'none') {
-                const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
-                const a = parseFloat(values[0]);
-                const b = parseFloat(values[1]);
-                rotation = Math.atan2(b, a) * (180 / Math.PI);
-                if (rotation < 0) rotation += 360;
-            }
-            const currentVal = getValueFromRotation(ctrl, rotation);
-            const originalVal = ctrl.value ?? ctrl._originalValue ?? 0;
-            const range = ctrl.max - ctrl.min || 100;
-            const relativeDiff = Math.abs(currentVal - originalVal) / range;
-            score += relativeDiff < 0.1 ? 1 : 2;
-            break;
+        case "xlargeknob": {
+
+        // rotazione attuale dal DOM
+        let currentRotation = 0;
+        const transform = $control.css('transform');
+
+        if (transform && transform !== 'none') {
+            const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
+            const a = parseFloat(values[0]);
+            const b = parseFloat(values[1]);
+            currentRotation = Math.atan2(b, a) * (180 / Math.PI);
+        } else {
+            const style = $control.attr('style');
+            const match = style && style.match(/rotate\((-?\d+(\.\d+)?)deg\)/);
+            currentRotation = match ? parseFloat(match[1]) : 0;
+        }
+
+        // rotazione ORIGINALE dal SubPlex
+        const originalRotation = getRotationFromValue(ctrl, ctrl.value);
+
+        const diff = Math.abs(currentRotation - originalRotation);
+
+        // soglie (da tarare se vuoi)
+        if (diff < 3) {
+            score += 1;        // *
+        } else {
+            score += 2;        // **
+        }
+
+        break;
+        }
+
 
         case "slider":
             const sliderVal = parseFloat($control.val());
