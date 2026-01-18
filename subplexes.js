@@ -226,56 +226,70 @@ function setupSubplexInvalidationOnDBLoad($pedalDiv) {
 
 // New
 function updateSubplexStatus($pedalDiv) {
-    console.log("[updateSubplexStatus] called for pedal:", $pedalDiv.data("pedal-id"));
+  const subplex = $pedalDiv.data('applied-subplex');
+  const originalControls = $pedalDiv.data('subplex-original-controls');
 
-    const subplex = $pedalDiv.data('applied-subplex');
-    if (!subplex) {
-        console.log("[updateSubplexStatus] No subplex applied");
-        return;
+  if (!subplex || !originalControls) return;
+
+  console.log('[updateSubplexStatus] called for pedal:', $pedalDiv.data('pedal-name'));
+
+  // Valori attuali
+  const currentControls = collectSinglePedalControls($pedalDiv);
+
+  let totalScore = 0;
+  let changedControls = 0;
+
+  originalControls.forEach(orig => {
+    const label = orig.label;
+    const origValue = orig.value;
+
+    const current = currentControls.find(c => c.label === label);
+    if (!current) return;
+
+    const currValue = current.value;
+
+    let score = calculateControlDelta(orig, current);
+    if (score > 0) {
+      totalScore += score;
+      changedControls++;
     }
+  });
 
-    if (!window.currentSubPlex) window.currentSubPlex = {};
+  console.log('[updateSubplexStatus] totalScore =', totalScore);
 
-    let totalScore = 0;
-    const controls = getAllSubplexControls(subplex);
+  // Nome base (immutabile)
+  if (!subplex._originalName) {
+    subplex._originalName = subplex.presetName;
+  }
 
-    controls.forEach(ctrl => {
-        const $control = $pedalDiv.find(`[data-control-label="${ctrl.label}"]`);
-        if (!$control.length) return;
-        const score = calculateControlChangeScore(ctrl, $control);
-        console.log("[updateSubplexStatus] Control:", ctrl.label, "score:", score);
-        totalScore += score;
-    });
+  const baseName = subplex._originalName;
+  let displayName = baseName;
+  let state = 'original';
 
-    console.log("[updateSubplexStatus] totalScore =", totalScore);
+  if (totalScore === 0) {
+    state = 'original';
+  } else if (totalScore <= 2) {
+    state = 'modified';
+    displayName = baseName + '*';
+  } else if (totalScore <= 5) {
+    state = 'based_on';
+    displayName = baseName + '**';
+  } else {
+    state = 'custom';
+    displayName = 'Custom SubPlex';
+  }
 
-    if (!subplex._originalName) subplex._originalName = subplex.presetName || subplex.name;
-    const baseName = subplex._originalName || 'SubPlex';
-    let displayName = baseName;
-    let state = '';
+  subplex.presetName = displayName;
+  $pedalDiv.data('applied-subplex-state', state);
 
-    if (totalScore === 0) {
-        state = 'original';
-    } else if (totalScore <= 2) {
-        state = 'modified';
-        displayName = baseName + '*';
-    } else if (totalScore <= 5) {
-        state = 'based_on';
-        displayName = baseName + '**';
-    } else {
-        state = 'custom';
-        displayName = 'Custom SubPlex';
-    }
+  window.currentSubPlex = window.currentSubPlex || {};
+  window.currentSubPlex[$pedalDiv.data('pedal-id')] = subplex;
 
-    console.log("[updateSubplexStatus] New state:", state, "displayName:", displayName);
+  console.log('[updateSubplexStatus] state =', state, 'name =', displayName);
 
-    $pedalDiv.data('applied-subplex-state', state);
-    subplex.presetName = displayName;
-    window.currentSubPlex[$pedalDiv.data('pedal-id')] = subplex;
-
-    renderAppliedPresetInfo($pedalDiv, subplex);
-    console.log('[DEBUG] subplexControls:', subplexControls);
+  renderAppliedPresetInfo($pedalDiv, subplex);
 }
+
 
 
 
@@ -346,6 +360,28 @@ function calculateControlChangeScore(ctrl, $control) {
     return score;
 }
 
+
+
+function calculateControlDelta(original, current) {
+  const orig = original.value;
+  const curr = current.value;
+
+  // Numerici (knob continui, slider)
+  if (typeof orig === 'number' && typeof curr === 'number') {
+    const diff = Math.abs(curr - orig);
+
+    if (diff < 0.5) return 0;       // tolleranza
+    if (diff < 3) return 1;         // *
+    return 2;                       // **
+  }
+
+  // Discreti / dropdown / LED
+  if (String(orig) !== String(curr)) {
+    return 2;
+  }
+
+  return 0;
+}
 
 
 
