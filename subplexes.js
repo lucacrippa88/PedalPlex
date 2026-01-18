@@ -101,23 +101,30 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
 // AGGIORNA LO STATO DEL SUBPLEX
 // ===============================
 function updateSubplexStatus($pedalDiv) {
-    const subplex = $pedalDiv.data('applied-subplex');
-    if (!subplex) return;
+  const subplex = $pedalDiv.data('applied-subplex');
+  const originalControls = $pedalDiv.data('subplex-original-controls');
 
-    // Se non è già modificato, aggiunge *
-    if (!subplex.presetName?.endsWith('*')) {
-        subplex.presetName = (subplex.presetName || 'SubPlex') + '*';
-    }
+  if (!subplex || !originalControls) return;
 
-    // Salva stato
+  const currentControls = collectSinglePedalControls($pedalDiv);
+
+  // Controlla se ci sono modifiche
+  const changed = currentControls.some(curr => {
+    const orig = originalControls.find(o => o.label === curr.label);
+    return orig && orig.value !== curr.value;
+  });
+
+  if (changed) {
+    subplex.presetName = subplex._originalName + '*';
     $pedalDiv.data('applied-subplex-state', 'modified');
+  } else {
+    subplex.presetName = subplex._originalName;
+    $pedalDiv.data('applied-subplex-state', 'original');
+  }
 
-    // Aggiorna globale
-    window.currentSubPlex = window.currentSubPlex || {};
-    window.currentSubPlex[$pedalDiv.data('pedal-id')] = subplex;
-
-    renderAppliedPresetInfo($pedalDiv, subplex);
+  renderAppliedPresetInfo($pedalDiv, subplex);
 }
+
 
 // ===============================
 // SETUP EVENTI CONTROLLI PEDALE

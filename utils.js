@@ -1735,6 +1735,12 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   window.currentSubPlex = window.currentSubPlex || {};
   window.currentSubPlex[pedalId] = appliedSubplex;
 
+  // Salva i controlli originali per confronti futuri
+  const originalControls = collectSinglePedalControls($pedalDiv);
+  $pedalDiv.data('subplex-original-controls', JSON.parse(JSON.stringify(originalControls)));
+  // Salva il nome originale
+  if (!appliedSubplex._originalName) appliedSubplex._originalName = appliedSubplex.presetName;
+
 
   renderAppliedPresetInfo($pedalDiv, appliedSubplex);
 
