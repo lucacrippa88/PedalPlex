@@ -375,12 +375,48 @@ function editCustomSubplexUI($pedalDiv) {
   const subplex = $pedalDiv.data('applied-subplex');
   if (!subplex) return;
 
+  const currentName = subplex.presetName || subplex.name || '';
+  const currentDesc = subplex.description || '';
+  const currentStyles = subplex.style || [];
+
+  // Costruisci options per dropdown tag
+  let tagOptionsHtml = '';
+  Object.keys(STYLE_TAG_MAP).forEach(tag => {
+    const selected = currentStyles.includes(tag) ? 'selected' : '';
+    tagOptionsHtml += `<option value="${tag}" ${selected}>${tag}</option>`;
+  });
+
   Swal.fire({
     title: 'Edit Custom SubPlex',
     html: `
-      <input id="swal-subplex-name" class="bx--text-input swal2-input" placeholder="Name (max 20 chars)" value="${subplex.name || ''}">
-      <input id="swal-subplex-tags" class="bx--text-input swal2-input" placeholder="Tags (comma-separated)" value="${(subplex.tags || []).join(', ')}">
-      <textarea id="swal-subplex-desc" class="bx--text-area swal2-textarea" placeholder="Description (max 100 chars)">${subplex.description || ''}</textarea>
+      <div style="text-align:left">
+
+        <label class="bx--label">Name</label>
+        <input id="swal-subplex-name"
+               class="bx--text-input swal2-input"
+               maxlength="20"
+               placeholder="Name (max 20 chars)"
+               value="${currentName}">
+
+        <label class="bx--label" style="margin-top:10px;">Style Tags</label>
+        <select id="swal-subplex-tags"
+                class="bx--select-input"
+                multiple
+                style="width:100%; min-height:120px;">
+          ${tagOptionsHtml}
+        </select>
+
+        <label class="bx--label" style="margin-top:10px;">Description</label>
+        <textarea id="swal-subplex-desc"
+                  class="bx--text-area swal2-textarea"
+                  maxlength="100"
+                  placeholder="Description (max 100 chars)">${currentDesc}</textarea>
+
+        <div style="font-size:0.8rem; color:#666; margin-top:6px;">
+          Hold Ctrl / Cmd to select multiple tags.
+        </div>
+
+      </div>
     `,
     showCancelButton: true,
     showConfirmButton: true,
@@ -394,12 +430,11 @@ function editCustomSubplexUI($pedalDiv) {
     preConfirm: () => {
       const name = document.getElementById('swal-subplex-name').value.trim();
       const desc = document.getElementById('swal-subplex-desc').value.trim();
-      let tags = document.getElementById('swal-subplex-tags').value
-        .split(',')
-        .map(t => t.trim())
-        .filter(t => t.length);
+      const select = document.getElementById('swal-subplex-tags');
 
-      // Limiti di lunghezza
+      const selectedTags = Array.from(select.selectedOptions).map(opt => opt.value);
+
+      // Validazioni
       if (name.length === 0) {
         Swal.showValidationMessage('Name cannot be empty');
         return false;
@@ -413,23 +448,27 @@ function editCustomSubplexUI($pedalDiv) {
         return false;
       }
 
-      // Filtra solo tag validi in STYLE_TAG_MAP
-      tags = tags.filter(t => STYLE_TAG_MAP.hasOwnProperty(t));
-
-      return { name, tags, desc };
+      return {
+        name,
+        styles: selectedTags,
+        desc
+      };
     }
   }).then((result) => {
     if (!result.isConfirmed || !result.value) return;
 
-    // Aggiorna SubPlex in memoria
-    subplex.name = result.value.name;
-    subplex.tags = result.value.tags;
+    // 🔹 Aggiorna SubPlex in memoria (nomi corretti!)
+    subplex.presetName = result.value.name;
+    subplex.style = result.value.styles;
     subplex.description = result.value.desc;
 
+    // Abilita dirty state
     $pedalDiv.data('subplex-dirty-enabled', true);
+
+    // Forza invalidazione (*)
     updateSubplexStatus($pedalDiv);
 
-    // Aggiorna UI info box con tag colorati
+    // Sync UI
     renderAppliedPresetInfo($pedalDiv, subplex);
   });
 }
