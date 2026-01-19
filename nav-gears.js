@@ -135,7 +135,7 @@ function initSinglePedalView(pedalId, userRole) {
 
   const globalSpinner = $(`
     <div id="catalog-global-loader" class="bx--loading-overlay"
-         style="position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); z-index:9999; width:120px; height:120px; display:flex; justify-content:center; align-items:center;">
+         style="position: fixed; top:70%; left:50%; transform: translate(-50%, -50%); z-index:9999; width:120px; height:120px; display:flex; justify-content:center; align-items:center;">
       <div class="bx--loading" role="status">
         <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
           <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
