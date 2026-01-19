@@ -5,7 +5,15 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PedalPlex</title>
+  <title>PedalPlex – Guitar Pedals & Amplifiers Catalog</title>
+  <meta name="description" content="Browse a curated catalog of guitar pedals, bass effects, and amplifiers. Filter by category, visualize controls, and add gear to your pedalboard rigs in PedalPlex.">
+  <link rel="canonical" href="https://pedalplex.com/gears">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Guitar Pedals & Amplifiers Catalog – PedalPlex">
+  <meta property="og:description" content="Explore a growing library of guitar pedals, effects, and amps. Build your rigs and document your tone.">
+  <meta property="og:url" content="https://pedalplex.com/gears">
+  <meta property="og:image" content="https://pedalplex.com/logos/splash.png">
+
   <link rel="icon" href="logos/pedalplex_logo_gradient.png" type="image/x-icon">
   <!-- Anticipate Carbon Design load -->
   <link rel="dns-prefetch" href="https://1.www.s81c.com">
@@ -24,6 +32,22 @@
 
   <link rel="stylesheet" href="css/style.css" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "PedalPlex Gear Catalog",
+    "description": "A curated catalog of guitar pedals, bass effects, and amplifiers for building and documenting pedalboard rigs.",
+    "url": "https://pedalplex.com/gears",
+    "mainEntity": {
+      "@type": "ItemList",
+      "name": "Guitar Pedals and Amplifiers",
+      "itemListOrder": "https://schema.org/ItemListUnordered"
+    }
+  }
+  </script>
+
 </head>
 <body>
   
@@ -73,6 +97,15 @@
       </a>  
 
     </div>
+
+    <header style="max-width:900px;margin:2rem auto 1rem auto;text-align:left;">
+      <h1 style="font-size:2.25rem; font-weight:700;">Guitar Pedals and Amplifiers Catalog</h1>
+      <p style="font-size:1.25rem; margin-top:1rem; color:#717171;">
+        Browse a growing library of guitar pedals, bass effects, and amplifiers.
+        Filter by category, inspect controls, and add gear directly to your pedalboard rigs.
+        This catalog is designed for musicians who want to document and recreate real-world tones.
+      </p>
+    </header>
 
     <div id="catalog"></div>
 
