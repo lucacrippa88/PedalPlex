@@ -1364,6 +1364,8 @@ async function renderFullPedalboard(pedalboardOverride = null) {
           const $newBtn = $presetContainer.find(".new-subplex-btn");
           const $resetBtn = $presetContainer.find(".reset-subplex-btn");
 
+          // Sempre visibile
+          $resetBtn.show();
 
           // ▶️ NEW SUBPLEX
           $newBtn.on("click", function (e) {
