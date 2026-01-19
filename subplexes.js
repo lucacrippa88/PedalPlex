@@ -195,6 +195,9 @@ function createCustomSubplex($pedalDiv) {
 
   // 3️⃣ Apri modal per modificare nome, tag e descrizione
   editCustomSubplexUI($pedalDiv);
+
+  updateSubplexButtonsUI($pedalDiv);
+
 }
 
 
@@ -330,6 +333,8 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
 
 
   renderAppliedPresetInfo($pedalDiv, appliedSubplex);
+  updateSubplexButtonsUI($pedalDiv);
+
 
   setTimeout(() => {
     $pedalDiv.data("subplex-listeners-armed", true);
@@ -545,7 +550,8 @@ function resetSubplexOnSinglePedal($pedalDiv) {
   $wrapper.find(".applied-preset-name").empty();
 
   // Ri-mostra il bottone "New SubPlex"
-  $wrapper.find(".new-subplex-btn").show();
+  updateSubplexButtonsUI($pedalDiv);
+
 
   // 9️⃣ Rimuove dal registro globale per il salvataggio
   if (window.currentSubPlex && window.currentSubPlex[pedalId]) {
@@ -558,4 +564,26 @@ function resetSubplexOnSinglePedal($pedalDiv) {
   }
 
   console.log("SubPlex reset completed for pedal:", pedalId);
+}
+
+
+
+function updateSubplexButtonsUI($pedalDiv) {
+  const $wrapper = $pedalDiv.closest('.pedal-wrapper');
+  const $presetContainer = $wrapper.find('.preset-container');
+
+  const $newBtn = $presetContainer.find(".new-subplex-btn");
+  const $resetBtn = $presetContainer.find(".reset-subplex-btn");
+
+  const hasApplied =
+    !!$pedalDiv.attr("data-applied-preset") ||
+    !!$pedalDiv.data("applied-subplex");
+
+  if (hasApplied) {
+    $newBtn.hide();
+    $resetBtn.show();
+  } else {
+    $newBtn.show();
+    $resetBtn.hide();
+  }
 }

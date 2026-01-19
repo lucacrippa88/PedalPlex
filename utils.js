@@ -1257,6 +1257,10 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
           // Arma i listener per rilevare modifiche
           setupSubplexInvalidationOnDBLoad($pedalDiv);
+
+          // 🔁 Allinea bottoni dopo bootstrap DB
+          updateSubplexButtonsUI($pedalDiv);
+
         }
 
 
@@ -1353,29 +1357,14 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
 
           // === SUBPLEX EMPTY STATE (New SubPlex button) ===
-          const $newBtn = $presetContainer.find(".new-subplex-btn");
-          const $resetBtn = $presetContainer.find(".reset-subplex-btn");
-          const hasApplied = $pedalDiv.attr("data-applied-preset");
+          // 🔁 Visibilità bottoni centralizzata
+          updateSubplexButtonsUI($pedalDiv);
 
-          // if (!hasApplied) { $newBtn.show(); } else { $newBtn.hide(); }
-          // 🔁 Visibilità bottoni in base allo stato
-          if (!hasApplied) {
-            $newBtn.show();
-            $resetBtn.hide();
-          } else {
-            $newBtn.hide();
-            $resetBtn.show();
-          }
 
           // ▶️ NEW SUBPLEX
           $newBtn.on("click", function (e) {
             e.stopPropagation();
-
             createCustomSubplex($pedalDiv);
-
-            // Stato UI
-            $newBtn.hide();
-            $resetBtn.show();
           });
 
           // ♻️ RESET SUBPLEX
@@ -1396,12 +1385,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
               }
             }).then((result) => {
               if (!result.isConfirmed) return;
-
               resetSubplexOnSinglePedal($pedalDiv);
-
-              // Stato UI
-              $resetBtn.hide();
-              $newBtn.show();
             });
           });
 
