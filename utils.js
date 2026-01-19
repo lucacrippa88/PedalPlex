@@ -1354,14 +1354,55 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
           // === SUBPLEX EMPTY STATE (New SubPlex button) ===
           const $newBtn = $presetContainer.find(".new-subplex-btn");
+          const $resetBtn = $presetContainer.find(".reset-subplex-btn");
           const hasApplied = $pedalDiv.attr("data-applied-preset");
 
-          if (!hasApplied) { $newBtn.show(); } else { $newBtn.hide(); }
+          // if (!hasApplied) { $newBtn.show(); } else { $newBtn.hide(); }
+          // 🔁 Visibilità bottoni in base allo stato
+          if (!hasApplied) {
+            $newBtn.show();
+            $resetBtn.hide();
+          } else {
+            $newBtn.hide();
+            $resetBtn.show();
+          }
 
+          // ▶️ NEW SUBPLEX
           $newBtn.on("click", function (e) {
             e.stopPropagation();
+
             createCustomSubplex($pedalDiv);
+
+            // Stato UI
             $newBtn.hide();
+            $resetBtn.show();
+          });
+
+          // ♻️ RESET SUBPLEX
+          $resetBtn.on("click", function (e) {
+            e.stopPropagation();
+
+            // (opzionale) conferma Swal2
+            Swal.fire({
+              title: 'Remove SubPlex?',
+              text: 'This will remove the applied SubPlex and restore default controls.',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Remove',
+              cancelButtonText: 'Cancel',
+              customClass: {
+                confirmButton: 'bx--btn bx--btn--danger',
+                cancelButton: 'bx--btn bx--btn--secondary'
+              }
+            }).then((result) => {
+              if (!result.isConfirmed) return;
+
+              resetSubplexOnSinglePedal($pedalDiv);
+
+              // Stato UI
+              $resetBtn.hide();
+              $newBtn.show();
+            });
           });
 
           const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
