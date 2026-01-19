@@ -101,30 +101,30 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
 // ===============================
 // AGGIORNA LO STATO DEL SUBPLEX
 // ===============================
-// function updateSubplexStatus($pedalDiv) {
+function updateSubplexStatus($pedalDiv) {
 
-//   // ⛔️ ignora bootstrap
-//   if ($pedalDiv.data('subplex-hydrating')) return;
+  // ⛔️ ignora bootstrap
+  if ($pedalDiv.data('subplex-hydrating')) return;
 
-//   const subplex = $pedalDiv.data('applied-subplex');
-//   if (!subplex) return;
+  const subplex = $pedalDiv.data('applied-subplex');
+  if (!subplex) return;
 
-//   // 🔒 finché l'utente non tocca nulla davvero, NON sporcare
-//   if (!$pedalDiv.data('subplex-dirty-enabled')) {
-//     $pedalDiv.data('subplex-dirty-enabled', true);
-//     return;
-//   }
+  // 🔒 finché l'utente non tocca nulla davvero, NON sporcare
+  if (!$pedalDiv.data('subplex-dirty-enabled')) {
+    $pedalDiv.data('subplex-dirty-enabled', true);
+    return;
+  }
 
-//   if (!subplex._originalName) {
-//     subplex._originalName = subplex.presetName || 'SubPlex';
-//   }
+  if (!subplex._originalName) {
+    subplex._originalName = subplex.presetName || 'SubPlex';
+  }
 
-//   if ($pedalDiv.data('applied-subplex-state') !== 'modified') {
-//     subplex.presetName = subplex._originalName + '*';
-//     $pedalDiv.data('applied-subplex-state', 'modified');
-//     renderAppliedPresetInfo($pedalDiv, subplex);
-//   }
-// }
+  if ($pedalDiv.data('applied-subplex-state') !== 'modified') {
+    subplex.presetName = subplex._originalName + '*';
+    $pedalDiv.data('applied-subplex-state', 'modified');
+    renderAppliedPresetInfo($pedalDiv, subplex);
+  }
+}
 
 
 

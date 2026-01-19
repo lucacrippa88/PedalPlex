@@ -560,18 +560,6 @@ function renderPedalControls(pedal, $pedalDiv) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 // HELPER: render a gear in catalog and editor
 function renderPedal(pedal, userRole, pedalboardPage = false) {
   const pedalId = pedal._id || pedal.id;
@@ -838,11 +826,6 @@ if (window.location.pathname.endsWith('/gears')) {
 
 
 
-
-
-
- 
-
 // Get all active gears controls to save the preset
 function collectPedalControlValues(presetName = "Untitled Preset") {
   const pedals = [];
@@ -998,10 +981,6 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
 
 
 
-
-
-
-
 // Function to filter pedals with colored LEDs in preset
 function filterPedalsWithColoredLeds(pedalsObj) {
   const filteredPedals = {};
@@ -1060,7 +1039,6 @@ async function renderFullPedalboard(pedalboardOverride = null) {
   if (pedalboardOverride && pedalboardOverride.pedals) {
     window.pedalboard = pedalboardOverride;
   }
-
 
   return new Promise((resolve) => {  
 
@@ -1247,7 +1225,6 @@ async function renderFullPedalboard(pedalboardOverride = null) {
         // 🔒 BOOTSTRAP DB: disabilita invalidazioni
         $pedalDiv.data('subplex-hydrating', true);
 
-
         // const cleanName = sanitizeHtml(pedal.name);
         const cleanName = sanitizePedalHTML(pedal.name);
 
@@ -1264,14 +1241,12 @@ async function renderFullPedalboard(pedalboardOverride = null) {
         $pedalDiv.data('subplex-hydrating', false);
         $pedalDiv.data('applied-subplex-state', 'original');
 
-
         // Pedal logo
         if ((pedal.type === "pedal") || (pedal.type === "combo") || (pedal.type === "round") || (pedal.type === "expression")) {
           const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
           $pedalDiv.append($nameDiv);
         }
       
-
         const widthPx = parseFloat(getPedalWidth(pedal.width));
         const heightPx = parseFloat(getPedalHeight(pedal.height));
         const hasRotation = angle !== 0;
@@ -1326,7 +1301,6 @@ async function renderFullPedalboard(pedalboardOverride = null) {
                 <div class="applied-preset-tags"></div>
               </div>
 
-
               <button style="display:none" class="new-subplex-btn bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only">
                 <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
                   <path d="M17 15L17 8 15 8 15 15 8 15 8 17 15 17 15 24 17 24 17 17 24 17 24 15z"></path>
@@ -1350,13 +1324,6 @@ async function renderFullPedalboard(pedalboardOverride = null) {
             </div>
           `);
 
-          // AI icon
-          // <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
-          // <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
-          // 3 dots icon
-          // <circle cx="8" cy="16" r="2"></circle><circle cx="16" cy="16" r="2"></circle><circle cx="24" cy="16" r="2"></circle>
-
-
           $wrapper.append($presetContainer);
 
 
@@ -1368,17 +1335,9 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
           $newBtn.on("click", function (e) {
             e.stopPropagation();
-
-            // TODO: apri modale o redirect
-            // console.log("Create new SubPlex for pedal:", pedal._id);
             createCustomSubplex($pedalDiv);
             $newBtn.hide();
-
-            // esempio futuro:
-            // openNewSubPlexModal({ pedalId: pedal._id });
           });
-
-
 
           const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
           const $ul = $presetContainer.find(".preset-dropdown");
@@ -1403,7 +1362,6 @@ async function renderFullPedalboard(pedalboardOverride = null) {
               buildPresetDropdown($ul, pedal._id);
             }
           });
-
 
         } else {
           // Guest mode: show locked preset container
@@ -1430,7 +1388,6 @@ async function renderFullPedalboard(pedalboardOverride = null) {
         }
 
         // ================================================
-
 
         rowDiv.appendChild($wrapper[0]);
 
@@ -1474,9 +1431,6 @@ function renderPresetList($ul, pedalId, presets) {
 
     const description = preset.description || "No description available";
     const $titleRow = $("<div>").addClass("preset-title-row");
-
-    // const $name = $("<span>").addClass("preset-name").text(preset.presetName || preset._id);
-
     const $name = $("<span>").addClass("preset-name");
 
     // AI icon (solo se published === "ai")
@@ -1500,7 +1454,6 @@ function renderPresetList($ul, pedalId, presets) {
     $name.append(
       document.createTextNode(" " + (preset.presetName || preset._id))
     );
-
 
     // ℹ icon with tooltip event
     const $info = $("<span>").addClass("preset-info").html(' <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="12" height="12" viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M17 22L17 14 13 14 13 16 15 16 15 22 12 22 12 24 20 24 20 22 17 22zM16 8a1.5 1.5 0 101.5 1.5A1.5 1.5 0 0016 8z"></path><path d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30ZM16,4A12,12,0,1,0,28,16,12,12,0,0,0,16,4Z"></path><title>Information</title></svg>');
@@ -1559,19 +1512,14 @@ function renderPresetList($ul, pedalId, presets) {
 
 
 
-
-
-
-
-
 window.presetCatalogCache = window.presetCatalogCache || {};
+
 
 
 // HELPER FUNCTIONS AI PRESET DROPDOWN =======
 $(document).on("click", function () {
   $(".preset-dropdown-wrapper").removeClass("is-open");
 });
-
 
 
 
@@ -1625,21 +1573,3 @@ async function buildPresetDropdown($ul, pedalId) {
     $ul.html("<li class='error'>Error loading SubPlexes</li>");
   }
 }
-
-
-
-
-
-
-
-
-
-
-// END HELPER FUNCTIONS AI PRESET DROPDOWN =======
-
-
-
-
-
-
-
