@@ -882,7 +882,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   gap: 4px;
 }
 
-.new-subplex-btn {
+.new-subplex-btn, .reset-subplex-btn {
   padding-left: 8px;
   padding-right: 8px;
   position:relative;

@@ -476,3 +476,86 @@ function editCustomSubplexUI($pedalDiv) {
     window.currentSubPlex[pedalId] = subplex;
   });
 }
+
+
+
+
+function resetSubplexOnSinglePedal($pedalDiv) {
+  if (!$pedalDiv || !$pedalDiv.length) return;
+
+  const pedalId = $pedalDiv.data('pedal-id');
+
+  // 1️⃣ Recupera il pedale di catalogo originale
+  const defaultPedal =
+    window.catalogMap?.[pedalId] ||
+    window.catalogMap?.[String(pedalId).trim()];
+
+  if (!defaultPedal) {
+    console.warn("Default pedal not found for reset:", pedalId);
+    return;
+  }
+
+  // 2️⃣ Deep clone del pedale originale
+  const pedalClone = JSON.parse(JSON.stringify(defaultPedal));
+
+  // 3️⃣ Rimuove tutti i controlli attuali
+  $pedalDiv.find('.row').remove();
+
+  // 4️⃣ Ri-render controlli originali
+  renderPedalControls(pedalClone, $pedalDiv);
+
+  // 5️⃣ Ri-arma invalidazione (se serve in futuro)
+  setupSubplexInvalidationOnDBLoad($pedalDiv);
+
+  // 6️⃣ Ripristina nome/logo se era stato toccato
+  const $existingName = $pedalDiv.find('.pedal-name, .head-name').first();
+  let nameClass = 'pedal-name';
+  let $referenceNode = null;
+
+  if ($existingName.length) {
+    nameClass = $existingName.hasClass('head-name') ? 'head-name' : 'pedal-name';
+    $referenceNode = $existingName.next();
+    $existingName.remove();
+  }
+
+  const $nameDiv = $("<div>")
+    .addClass(nameClass)
+    .html(pedalClone.name)
+    .attr("style", pedalClone.logo || "");
+
+  if ($referenceNode && $referenceNode.length) {
+    $nameDiv.insertBefore($referenceNode);
+  } else {
+    $pedalDiv.prepend($nameDiv);
+  }
+
+  // 7️⃣ Pulisce stato SubPlex sul DOM
+  $pedalDiv.removeData('applied-subplex');
+  $pedalDiv.removeData('subplex-original-controls');
+  $pedalDiv.removeData('applied-subplex-state');
+  $pedalDiv.removeData('subplex-dirty-enabled');
+  $pedalDiv.removeData('subplex-listeners-armed');
+
+  $pedalDiv.removeAttr('data-applied-preset');
+
+  // 8️⃣ Rimuove UI SubPlex (info box)
+  const $wrapper = $pedalDiv.closest(".pedal-wrapper");
+  $wrapper.find(".applied-preset-info").hide();
+  $wrapper.find(".applied-preset-tags").empty();
+  $wrapper.find(".applied-preset-name").empty();
+
+  // Ri-mostra il bottone "New SubPlex"
+  $wrapper.find(".new-subplex-btn").show();
+
+  // 9️⃣ Rimuove dal registro globale per il salvataggio
+  if (window.currentSubPlex && window.currentSubPlex[pedalId]) {
+    delete window.currentSubPlex[pedalId];
+  }
+
+  // 🔟 Aggiorna stato del tasto Save (se esiste)
+  if (typeof updateSavePresetButtonState === 'function') {
+    updateSavePresetButtonState();
+  }
+
+  console.log("SubPlex reset completed for pedal:", pedalId);
+}
