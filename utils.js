@@ -1360,6 +1360,10 @@ async function renderFullPedalboard(pedalboardOverride = null) {
           // 🔁 Visibilità bottoni centralizzata
           updateSubplexButtonsUI($pedalDiv);
 
+          // Recupera i bottoni dal container (scope corretto)
+          const $newBtn = $presetContainer.find(".new-subplex-btn");
+          const $resetBtn = $presetContainer.find(".reset-subplex-btn");
+
 
           // ▶️ NEW SUBPLEX
           $newBtn.on("click", function (e) {
