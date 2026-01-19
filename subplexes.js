@@ -178,19 +178,26 @@ function setupSubplexInvalidationOnDBLoad($pedalDiv) {
 // CREAZIONE SUBPLEX CUSTOM SE NON PRESENTE
 // ===============================
 function createCustomSubplex($pedalDiv) {
-    const custom = {
-        id: 'custom_' + Date.now(),
-        presetName: 'Custom SubPlex',
-        source: 'custom',
-        style: [],
-        description: '',
-        controls: []
-    };
-    $pedalDiv.data('applied-subplex', custom);
-    $pedalDiv.data('subplex-original-controls', []);
-    $pedalDiv.data('subplex-dirty-enabled', true);
-    updateSubplexStatus($pedalDiv);
+  // 1️⃣ Crea SubPlex custom in memoria
+  const custom = {
+    id: 'custom_' + Date.now(),
+    presetName: 'Custom SubPlex',
+    source: 'custom',
+    tags: [],
+    description: '',
+    controls: []
+  };
+  $pedalDiv.data('applied-subplex', custom);
+  $pedalDiv.data('subplex-original-controls', []);
+  $pedalDiv.data('subplex-dirty-enabled', true);
+
+  // 2️⃣ Aggiorna stato iniziale (* se necessario)
+  updateSubplexStatus($pedalDiv);
+
+  // 3️⃣ Apri modal per modificare nome, tag e descrizione
+  editCustomSubplexUI($pedalDiv);
 }
+
 
 // ===============================
 // UTILITA
@@ -360,4 +367,69 @@ function collectSinglePedalControls($pedalDiv) {
   });
 
   return controls;
+}
+
+
+
+function editCustomSubplexUI($pedalDiv) {
+  const subplex = $pedalDiv.data('applied-subplex');
+  if (!subplex) return;
+
+  Swal.fire({
+    title: 'Edit Custom SubPlex',
+    html: `
+      <input id="swal-subplex-name" class="bx--text-input swal2-input" placeholder="Name (max 20 chars)" value="${subplex.name || ''}">
+      <input id="swal-subplex-tags" class="bx--text-input swal2-input" placeholder="Tags (comma-separated)" value="${(subplex.tags || []).join(', ')}">
+      <textarea id="swal-subplex-desc" class="bx--text-area swal2-textarea" placeholder="Description (max 100 chars)">${subplex.description || ''}</textarea>
+    `,
+    showCancelButton: true,
+    showConfirmButton: true,
+    focusConfirm: false,
+    customClass: {
+      confirmButton: 'bx--btn bx--btn--primary',
+      cancelButton: 'bx--btn bx--btn--secondary'
+    },
+    confirmButtonText: 'Save',
+    cancelButtonText: 'Cancel',
+    preConfirm: () => {
+      const name = document.getElementById('swal-subplex-name').value.trim();
+      const desc = document.getElementById('swal-subplex-desc').value.trim();
+      let tags = document.getElementById('swal-subplex-tags').value
+        .split(',')
+        .map(t => t.trim())
+        .filter(t => t.length);
+
+      // Limiti di lunghezza
+      if (name.length === 0) {
+        Swal.showValidationMessage('Name cannot be empty');
+        return false;
+      }
+      if (name.length > 20) {
+        Swal.showValidationMessage('Name must be max 20 characters');
+        return false;
+      }
+      if (desc.length > 100) {
+        Swal.showValidationMessage('Description must be max 100 characters');
+        return false;
+      }
+
+      // Filtra solo tag validi in STYLE_TAG_MAP
+      tags = tags.filter(t => STYLE_TAG_MAP.hasOwnProperty(t));
+
+      return { name, tags, desc };
+    }
+  }).then((result) => {
+    if (!result.isConfirmed || !result.value) return;
+
+    // Aggiorna SubPlex in memoria
+    subplex.name = result.value.name;
+    subplex.tags = result.value.tags;
+    subplex.description = result.value.desc;
+
+    $pedalDiv.data('subplex-dirty-enabled', true);
+    updateSubplexStatus($pedalDiv);
+
+    // Aggiorna UI info box con tag colorati
+    renderAppliedPresetInfo($pedalDiv, subplex);
+  });
 }
