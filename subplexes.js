@@ -3,11 +3,12 @@
 // ===============================
 
 // Ottiene tutti i controlli di un SubPlex
-function getAllSubplexControls(subplex) {
-    if (!subplex || !Array.isArray(subplex.controls)) return [];
-    if (!subplex.controls[0]?.row) return subplex.controls;
-    return subplex.controls.flatMap(r => Array.isArray(r.row) ? r.row : []);
-}
+// function getAllSubplexControls(subplex) {
+//     if (!subplex || !Array.isArray(subplex.controls)) return [];
+//     if (!subplex.controls[0]?.row) return subplex.controls;
+//     return subplex.controls.flatMap(r => Array.isArray(r.row) ? r.row : []);
+// }
+
 
 // Render applied SubPlex info box
 function renderAppliedPresetInfo($pedalDiv, subplex) {
@@ -95,30 +96,53 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
   $wrapper.find(".new-subplex-btn").hide();
 }
 
+
+
 // ===============================
 // AGGIORNA LO STATO DEL SUBPLEX
 // ===============================
-function updateSubplexStatus($pedalDiv) {
+// function updateSubplexStatus($pedalDiv) {
 
-  // ⛔️ ignora bootstrap
-  if ($pedalDiv.data('subplex-hydrating')) return;
+//   // ⛔️ ignora bootstrap
+//   if ($pedalDiv.data('subplex-hydrating')) return;
 
-  const subplex = $pedalDiv.data('applied-subplex');
+//   const subplex = $pedalDiv.data('applied-subplex');
+//   if (!subplex) return;
+
+//   // 🔒 finché l'utente non tocca nulla davvero, NON sporcare
+//   if (!$pedalDiv.data('subplex-dirty-enabled')) {
+//     $pedalDiv.data('subplex-dirty-enabled', true);
+//     return;
+//   }
+
+//   if (!subplex._originalName) {
+//     subplex._originalName = subplex.presetName || 'SubPlex';
+//   }
+
+//   if ($pedalDiv.data('applied-subplex-state') !== 'modified') {
+//     subplex.presetName = subplex._originalName + '*';
+//     $pedalDiv.data('applied-subplex-state', 'modified');
+//     renderAppliedPresetInfo($pedalDiv, subplex);
+//   }
+// }
+
+
+
+
+
+function invalidateSubplex($pedalDiv) {
+
+  if (!$pedalDiv.data("subplex-listeners-armed")) return;
+
+  const subplex = $pedalDiv.data("applied-subplex");
   if (!subplex) return;
 
-  // 🔒 finché l'utente non tocca nulla davvero, NON sporcare
-  if (!$pedalDiv.data('subplex-dirty-enabled')) {
-    $pedalDiv.data('subplex-dirty-enabled', true);
-    return;
-  }
-
   if (!subplex._originalName) {
-    subplex._originalName = subplex.presetName || 'SubPlex';
+    subplex._originalName = subplex.presetName;
   }
 
-  if ($pedalDiv.data('applied-subplex-state') !== 'modified') {
-    subplex.presetName = subplex._originalName + '*';
-    $pedalDiv.data('applied-subplex-state', 'modified');
+  if (!subplex.presetName.endsWith("*")) {
+    subplex.presetName += "*";
     renderAppliedPresetInfo($pedalDiv, subplex);
   }
 }
@@ -128,25 +152,24 @@ function updateSubplexStatus($pedalDiv) {
 
 
 
-
 // ===============================
 // SETUP EVENTI CONTROLLI PEDALE
 // ===============================
-function setupSubplexInvalidationOnDBLoad($pedalDiv) {
-    if (!$pedalDiv) return;
+// function setupSubplexInvalidationOnDBLoad($pedalDiv) {
+//     if (!$pedalDiv) return;
 
-    const updateStatus = () => updateSubplexStatus($pedalDiv);
+//     const updateStatus = () => updateSubplexStatus($pedalDiv);
 
-    $pedalDiv
-        .find('input, select, textarea')
-        .off('.subplexInvalidate')
-        .on('input.subplexInvalidate change.subplexInvalidate', updateStatus);
+//     $pedalDiv
+//         .find('input, select, textarea')
+//         .off('.subplexInvalidate')
+//         .on('input.subplexInvalidate change.subplexInvalidate', updateStatus);
 
-    $pedalDiv
-        .find('[data-control-label]')
-        .off('.subplexInvalidate')
-        .on('mousedown.subplexInvalidate click.subplexInvalidate', updateStatus);
-}
+//     $pedalDiv
+//         .find('[data-control-label]')
+//         .off('.subplexInvalidate')
+//         .on('mousedown.subplexInvalidate click.subplexInvalidate', updateStatus);
+// }
 
 // ===============================
 // CREAZIONE SUBPLEX CUSTOM SE NON PRESENTE
@@ -185,6 +208,9 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     return;
   }
 
+  $pedalDiv.data("subplex-listeners-armed", false);
+
+
   // ⛔️ PREVENT DOUBLE APPLY OF SAME PRESET
   const applied = $pedalDiv.attr("data-applied-preset");
   if (applied) {
@@ -196,15 +222,6 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     } catch (e) {}
   }
 
-
-  // Recupera il pedale di default dal catalogo
-  // const defaultPedal = window.catalog.find(
-  //   p => p._id === pedalId || p.name === pedalId
-  // );
-  // if (!defaultPedal) {
-  //   console.warn("Pedal not found in catalog:", pedalId);
-  //   return;
-  // }
   const defaultPedal =
     window.catalogMap?.[pedalId] ||
     window.catalogMap?.[String(pedalId).trim()];
@@ -213,7 +230,6 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     console.warn("Pedal not found in catalogMap:", pedalId);
     return;
   }
-
 
   // Deep clone del pedale di catalogo
   const pedalClone = JSON.parse(JSON.stringify(defaultPedal));
@@ -303,6 +319,11 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
 
 
   renderAppliedPresetInfo($pedalDiv, appliedSubplex);
+
+  setTimeout(() => {
+    $pedalDiv.data("subplex-listeners-armed", true);
+  }, 0);
+
 
 }
 
