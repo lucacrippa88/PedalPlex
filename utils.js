@@ -1241,6 +1241,25 @@ async function renderFullPedalboard(pedalboardOverride = null) {
         $pedalDiv.data('subplex-hydrating', false);
         $pedalDiv.data('applied-subplex-state', 'original');
 
+        if (pbPedal.subplex) {
+          const appliedSubplex = pbPedal.subplex;
+
+          // Nome originale per il *
+          appliedSubplex._originalName = appliedSubplex.presetName;
+
+          // Popola il .data() del pedale
+          $pedalDiv.data('applied-subplex', appliedSubplex);
+          $pedalDiv.data('applied-subplex-state', 'original');
+          $pedalDiv.data('subplex-dirty-enabled', false);
+
+          // Mostra info del SubPlex (nome, tag, icona AI)
+          renderAppliedPresetInfo($pedalDiv, appliedSubplex);
+
+          // Arma i listener per rilevare modifiche
+          setupSubplexInvalidationOnDBLoad($pedalDiv);
+        }
+
+
         // Pedal logo
         if ((pedal.type === "pedal") || (pedal.type === "combo") || (pedal.type === "round") || (pedal.type === "expression")) {
           const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
