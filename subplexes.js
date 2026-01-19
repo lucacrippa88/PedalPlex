@@ -470,5 +470,10 @@ function editCustomSubplexUI($pedalDiv) {
 
     // Sync UI
     renderAppliedPresetInfo($pedalDiv, subplex);
+    
+    // ✅ REGISTRA PER IL SALVATAGGIO GLOBALE
+    const pedalId = $pedalDiv.data('pedal-id');
+    window.currentSubPlex = window.currentSubPlex || {};
+    window.currentSubPlex[pedalId] = subplex;
   });
 }
