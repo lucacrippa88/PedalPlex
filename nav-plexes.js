@@ -96,7 +96,7 @@ if (currentPreset?.pedals) {
         Login
     </button>`;
     const loginBtnHtmlMobile = `
-    <button id="loginBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-onl" type="button" aria-label="Login" 
+    <button id="loginBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Login" 
         style="display: flex; align-items: center; gap: 0.5rem;">
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
