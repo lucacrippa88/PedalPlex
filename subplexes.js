@@ -409,16 +409,15 @@ function editCustomSubplexUI($pedalDiv) {
                 style="width:30%; min-height:120px; position:relative; left:28px">
           ${tagOptionsHtml}
         </select>
+        <div style="font-size:0.8rem; color:#666; margin-top:6px;">
+          Hold Ctrl / Cmd to select multiple tags.
+        </div>
 
         <label class="bx--label" style="margin-top:10px;">Description</label>
         <textarea id="swal-subplex-desc"
                   class="bx--text-area swal2-textarea"
                   maxlength="100" style="width:83%"
                   placeholder="Description (max 100 chars)">${currentDesc}</textarea>
-
-        <div style="font-size:0.8rem; color:#666; margin-top:6px;">
-          Hold Ctrl / Cmd to select multiple tags.
-        </div>
 
       </div>
     `,
