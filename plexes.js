@@ -818,76 +818,143 @@ function applyPresetToPedalboard(presetDoc) {
     }
   });
 
-  $(".pedal-catalog").each(function () {
-    const $pedalDiv = $(this);
-    const pedalId = $pedalDiv.data("pedal-id");
+  // $(".pedal-catalog").each(function () {
+  //   const $pedalDiv = $(this);
+  //   const pedalId = $pedalDiv.data("pedal-id");
 
-    const defaultPedalFromCatalog = window.catalog.find(p => p._id === pedalId || p.name === pedalId);
-    if (!defaultPedalFromCatalog) return;
+  //   const defaultPedalFromCatalog = window.catalog.find(p => p._id === pedalId || p.name === pedalId);
+  //   if (!defaultPedalFromCatalog) return;
 
-    // Step 1: Deep clone the default controls from catalog
-    const resetPedal = JSON.parse(JSON.stringify(defaultPedalFromCatalog));
+  //   // Step 1: Deep clone the default controls from catalog
+  //   const resetPedal = JSON.parse(JSON.stringify(defaultPedalFromCatalog));
 
-    // Step 2: Apply preset values on top (if present)
-    const presetPedal = pedalsFromPreset[pedalId];
-    if (presetPedal) {
-      // apply controls
-      if (presetPedal.controls) {
-        resetPedal.controls.forEach(row => {
-          row.row.forEach(ctrl => {
-            const controlLabel = ctrl.label;
-            if (presetPedal.controls.hasOwnProperty(controlLabel)) {
-              ctrl.value = presetPedal.controls[controlLabel];
-            }
-          });
+  //   // Step 2: Apply preset values on top (if present)
+  //   const presetPedal = pedalsFromPreset[pedalId];
+  //   if (presetPedal) {
+  //     // apply controls
+  //     if (presetPedal.controls) {
+  //       resetPedal.controls.forEach(row => {
+  //         row.row.forEach(ctrl => {
+  //           const controlLabel = ctrl.label;
+  //           if (presetPedal.controls.hasOwnProperty(controlLabel)) {
+  //             ctrl.value = presetPedal.controls[controlLabel];
+  //           }
+  //         });
+  //       });
+  //     }
+  //     // add row info
+  //     resetPedal.row = presetPedal.row || resetPedal.row || 1;
+  //   }
+
+
+  //   // Step 3: Re-render controls
+  //   $pedalDiv.find('.row').remove();
+  //   renderPedalControls(resetPedal, $pedalDiv);
+
+  //   if (presetPedal) {
+  //     const appliedSubplex = presetPedal.subplex || presetPedal;
+
+  //     $pedalDiv.data('applied-subplex', appliedSubplex);
+  //     renderAppliedPresetInfo($pedalDiv, appliedSubplex);
+
+  //     // setupSubplexInvalidationOnDBLoad($pedalDiv);
+  //     invalidateSubplex($pedalDiv);
+  //   }
+
+
+  //   // Find existing name element (.pedal-name or .head-name)
+  //   const $existingName = $pedalDiv.find('.pedal-name, .head-name').first();
+
+  //   let nameClass = 'pedal-name'; // default
+  //   let $referenceNode = null;
+
+  //   if ($existingName.length) {
+  //     nameClass = $existingName.hasClass('head-name') ? 'head-name' : 'pedal-name';
+  //     $referenceNode = $existingName.next(); // Save position relative to next sibling
+  //     $existingName.remove(); // Remove it before re-adding
+  //   }
+
+  //   // Create new name element
+  //   const $nameDiv = $("<div>")
+  //     .addClass(nameClass)
+  //     .html(resetPedal.name)
+  //     .attr("style", resetPedal.logo || "");
+
+  //   // Insert it back in the correct place
+  //   if ($referenceNode && $referenceNode.length) {
+  //     $nameDiv.insertBefore($referenceNode);
+  //   } else {
+  //     $pedalDiv.prepend($nameDiv); // fallback if no reference point
+  //   }
+
+  // });
+
+
+// Dentro applyPresetToPedalboard, per ogni pedal-catalog
+$(".pedal-catalog").each(function () {
+  const $pedalDiv = $(this);
+  const pedalId = $pedalDiv.data("pedal-id");
+
+  const defaultPedalFromCatalog = window.catalog.find(p => p._id === pedalId || p.name === pedalId);
+  if (!defaultPedalFromCatalog) return;
+
+  // Step 1: Deep clone del pedale
+  const resetPedal = JSON.parse(JSON.stringify(defaultPedalFromCatalog));
+
+  // Step 2: Applica valori preset
+  const presetPedal = pedalsFromPreset[pedalId];
+  if (presetPedal) {
+    if (presetPedal.controls) {
+      resetPedal.controls.forEach(row => {
+        row.row.forEach(ctrl => {
+          const controlLabel = ctrl.label;
+          if (presetPedal.controls.hasOwnProperty(controlLabel)) {
+            ctrl.value = presetPedal.controls[controlLabel];
+          }
         });
-      }
-      // add row info
-      resetPedal.row = presetPedal.row || resetPedal.row || 1;
+      });
     }
+    resetPedal.row = presetPedal.row || resetPedal.row || 1;
+  }
+
+  // Step 3: Render dei controlli
+  $pedalDiv.find('.row').remove();
+  renderPedalControls(resetPedal, $pedalDiv);
+
+  // Step 4: Applica SubPlex e setup invalidazione
+  if (presetPedal) {
+    const appliedSubplex = presetPedal.subplex || presetPedal;
+
+    // Imposta dati sul div
+    $pedalDiv.data('applied-subplex', appliedSubplex);
+    $pedalDiv.data('applied-subplex-state', 'original'); // STATO ORIGINALE
+    $pedalDiv.data('subplex-hydrating', false);
+
+    // Render info SubPlex (nome, icona ecc.)
+    renderAppliedPresetInfo($pedalDiv, appliedSubplex);
+
+    // ✅ Registrazione listener per dirty state
+    setupSubplexInvalidationOnDBLoad($pedalDiv); 
+  }
+
+  // Step 5: Aggiorna nome pedale
+  const $existingName = $pedalDiv.find('.pedal-name, .head-name').first();
+  let nameClass = 'pedal-name';
+  let $referenceNode = null;
+  if ($existingName.length) {
+    nameClass = $existingName.hasClass('head-name') ? 'head-name' : 'pedal-name';
+    $referenceNode = $existingName.next();
+    $existingName.remove();
+  }
+  const $nameDiv = $("<div>").addClass(nameClass).html(resetPedal.name).attr("style", resetPedal.logo || "");
+  if ($referenceNode && $referenceNode.length) {
+    $nameDiv.insertBefore($referenceNode);
+  } else {
+    $pedalDiv.prepend($nameDiv);
+  }
+});
 
 
-    // Step 3: Re-render controls
-    $pedalDiv.find('.row').remove();
-    renderPedalControls(resetPedal, $pedalDiv);
-
-    if (presetPedal) {
-      const appliedSubplex = presetPedal.subplex || presetPedal;
-
-      $pedalDiv.data('applied-subplex', appliedSubplex);
-      renderAppliedPresetInfo($pedalDiv, appliedSubplex);
-
-      // setupSubplexInvalidationOnDBLoad($pedalDiv);
-      invalidateSubplex($pedalDiv);
-    }
-
-
-    // Find existing name element (.pedal-name or .head-name)
-    const $existingName = $pedalDiv.find('.pedal-name, .head-name').first();
-
-    let nameClass = 'pedal-name'; // default
-    let $referenceNode = null;
-
-    if ($existingName.length) {
-      nameClass = $existingName.hasClass('head-name') ? 'head-name' : 'pedal-name';
-      $referenceNode = $existingName.next(); // Save position relative to next sibling
-      $existingName.remove(); // Remove it before re-adding
-    }
-
-    // Create new name element
-    const $nameDiv = $("<div>")
-      .addClass(nameClass)
-      .html(resetPedal.name)
-      .attr("style", resetPedal.logo || "");
-
-    // Insert it back in the correct place
-    if ($referenceNode && $referenceNode.length) {
-      $nameDiv.insertBefore($referenceNode);
-    } else {
-      $pedalDiv.prepend($nameDiv); // fallback if no reference point
-    }
-
-  });
 
   savePedalboard(); // Save full pedalboard state after applying preset
 
