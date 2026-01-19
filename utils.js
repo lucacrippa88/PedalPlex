@@ -128,7 +128,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                             control.value = control.values[newIndex];
                             if (!$pedalDiv.data("subplexInvalidated")) {
                               $pedalDiv.data("subplexInvalidated", true);
-                              updateSubplexStatus($pedalDiv); // mark SubPlex as changed
+                              invalidateSubplex($pedalDiv); // mark SubPlex as changed
                             }
                         } else {
                             const min = control.min ?? 0;
@@ -140,7 +140,7 @@ function renderPedalControls(pedal, $pedalDiv) {
 
                             if (!$pedalDiv.data("subplexInvalidated")) {
                               $pedalDiv.data("subplexInvalidated", true);
-                              updateSubplexStatus($pedalDiv); // mark SubPlex as changed
+                              invalidateSubplex($pedalDiv); // mark SubPlex as changed
                             }
                         }
 
@@ -334,7 +334,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                     led.data("colorIndex", index);
                     if (!$pedalDiv.data("subplexInvalidated")) {
                       $pedalDiv.data("subplexInvalidated", true);
-                      updateSubplexStatus($pedalDiv); // mark SubPlex as changed
+                      invalidateSubplex($pedalDiv); // mark SubPlex as changed
                     }
                 };
 
@@ -399,7 +399,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                   control.value = parseFloat($(this).val());
                   if (!$pedalDiv.data("subplexInvalidated")) {
                     $pedalDiv.data("subplexInvalidated", true);
-                    updateSubplexStatus($pedalDiv); // mark SubPlex as changed
+                    invalidateSubplex($pedalDiv); // mark SubPlex as changed
                   }
                   if (!editMode && $tooltipText) {
                     $tooltipText.text(control.value);
@@ -486,7 +486,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                   control.value = $(this).val(); 
                   if (!$pedalDiv.data("subplexInvalidated")) {
                     $pedalDiv.data("subplexInvalidated", true);
-                    updateSubplexStatus($pedalDiv); // mark SubPlex as changed
+                    invalidateSubplex($pedalDiv); // mark SubPlex as changed
                   }
                 });
 
@@ -537,7 +537,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                   control.value = $(this).val();
                   if (!$pedalDiv.data("subplexInvalidated")) {
                     $pedalDiv.data("subplexInvalidated", true);
-                    updateSubplexStatus($pedalDiv); // mark SubPlex as changed
+                    invalidateSubplex($pedalDiv); // mark SubPlex as changed
                   }
                 });
 
