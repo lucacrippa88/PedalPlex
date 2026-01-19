@@ -183,9 +183,8 @@ function createCustomSubplex($pedalDiv) {
     id: 'custom_' + Date.now(),
     presetName: 'Custom SubPlex',
     source: 'custom',
-    tags: [],
     description: '',
-    controls: []
+    userId: window.currentUser.username || ''
   };
   $pedalDiv.data('applied-subplex', custom);
   $pedalDiv.data('subplex-original-controls', []);
@@ -470,7 +469,7 @@ function editCustomSubplexUI($pedalDiv) {
 
     // Sync UI
     renderAppliedPresetInfo($pedalDiv, subplex);
-    
+
     // ✅ REGISTRA PER IL SALVATAGGIO GLOBALE
     const pedalId = $pedalDiv.data('pedal-id');
     window.currentSubPlex = window.currentSubPlex || {};
