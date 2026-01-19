@@ -155,21 +155,24 @@ function invalidateSubplex($pedalDiv) {
 // ===============================
 // SETUP EVENTI CONTROLLI PEDALE
 // ===============================
-// function setupSubplexInvalidationOnDBLoad($pedalDiv) {
-//     if (!$pedalDiv) return;
+function setupSubplexInvalidationOnDBLoad($pedalDiv) {
+  if (!$pedalDiv) return;
 
-//     const updateStatus = () => updateSubplexStatus($pedalDiv);
+  const updateStatus = () => updateSubplexStatus($pedalDiv);
 
-//     $pedalDiv
-//         .find('input, select, textarea')
-//         .off('.subplexInvalidate')
-//         .on('input.subplexInvalidate change.subplexInvalidate', updateStatus);
+  // Input classici
+  $pedalDiv
+    .find('input, select, textarea')
+    .off('.subplexInvalidate')
+    .on('input.subplexInvalidate change.subplexInvalidate', updateStatus);
 
-//     $pedalDiv
-//         .find('[data-control-label]')
-//         .off('.subplexInvalidate')
-//         .on('mousedown.subplexInvalidate click.subplexInvalidate', updateStatus);
-// }
+  // Controlli custom (knob, switch, ecc.)
+  $pedalDiv
+    .find('[data-control-label]')
+    .off('.subplexInvalidate')
+    .on('mousedown.subplexInvalidate click.subplexInvalidate', updateStatus);
+}
+
 
 // ===============================
 // CREAZIONE SUBPLEX CUSTOM SE NON PRESENTE
@@ -251,6 +254,8 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
 
   // Ri-render dei controlli
   renderPedalControls(pedalClone, $pedalDiv);
+  // Arma invalidazione subplex
+  setupSubplexInvalidationOnDBLoad($pedalDiv);
 
   // Aggiorna il nome (se serve)
   const $existingName = $pedalDiv.find('.pedal-name, .head-name').first();
