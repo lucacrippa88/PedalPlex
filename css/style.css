@@ -444,6 +444,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 @font-face { font-family: label; src: url("../fonts/Impact\ Label.ttf"); }
 @font-face { font-family: labelreversed; src: url("../fonts/Impact\ Label\ Reversed.ttf"); }
 @font-face { font-family: bellarosa; src: url("../fonts/bellarosa.ttf"); }
+@font-face { font-family: acab; src: url("../fonts/AC+AB.ttf"); }
 
 .verified-badge {
   display: inline-flex;
