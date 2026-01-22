@@ -59,50 +59,21 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
       const safeDescription = decodeHTMLEntities(description);
       const $tooltip = $(`<div class="preset-tooltip-popup"></div>`).text(safeDescription);
 
-      const $zoomRoot = $("#preset").length
-  ? $("#preset")
-  : $("#pedalboard");
-
-$zoomRoot.append($tooltip);
-
-const iconRect = $iconWrapper[0].getBoundingClientRect();
-const rootRect = $zoomRoot[0].getBoundingClientRect();
-
-const top =
-  iconRect.top - rootRect.top - $tooltip.outerHeight() - 6;
-const left =
-  iconRect.left - rootRect.left;
-
-$tooltip.css({
-  position: "absolute",
-  top,
-  left,
-  zIndex: 2000,
-  maxWidth: "250px",
-  backgroundColor: "rgba(0,0,0,0.85)",
-  color: "#fff",
-  padding: "6px 8px",
-  borderRadius: "4px",
-  fontSize: "0.85rem",
-  pointerEvents: "none"
-});
-
-
-      // $("body").append($tooltip);
-      // const offset = $iconWrapper.offset();
-      // $tooltip.css({
-      //   position: "absolute",
-      //   top: offset.top - $tooltip.outerHeight() - 6,
-      //   left: offset.left,
-      //   zIndex: 2000,
-      //   maxWidth: "250px",
-      //   backgroundColor: "rgba(0,0,0,0.85)",
-      //   color: "#fff",
-      //   padding: "6px 8px",
-      //   borderRadius: "4px",
-      //   fontSize: "0.85rem",
-      //   pointerEvents: "none"
-      // });
+      $("body").append($tooltip);
+      const offset = $iconWrapper.offset();
+      $tooltip.css({
+        position: "absolute",
+        top: offset.top - $tooltip.outerHeight() - 6,
+        left: offset.left,
+        zIndex: 2000,
+        maxWidth: "250px",
+        backgroundColor: "rgba(0,0,0,0.85)",
+        color: "#fff",
+        padding: "6px 8px",
+        borderRadius: "4px",
+        fontSize: "0.85rem",
+        pointerEvents: "none"
+      });
       $iconWrapper.data("tooltipEl", $tooltip);
     })
     .on("mouseleave", function () {
