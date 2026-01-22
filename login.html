@@ -31,9 +31,10 @@
     <!-- Optional Email -->
     <input type="email" id="email" placeholder="Email" class="bx--text-input" style="display: none; margin-bottom: 10px; width: 100%;" />
 
-    <div id="recaptchaContainer" style="display:none;">
+    <div id="recaptchaContainer" style="display:none;"></div>
+    <!-- <div id="recaptchaContainer" style="display:none;">
       <div class="g-recaptcha" data-sitekey="6LerYkksAAAAAMbhqqezJ-JOvmUVyZkQMT9Q6fm1"></div>
-    </div>
+    </div> -->
 
     <br>
 
@@ -89,6 +90,18 @@
       const isPassword = passwordField.type === 'password';
       passwordField.type = isPassword ? 'text' : 'password';
     });
+
+
+    // Render reCAPTCHA solo se non renderizzato
+    if (!isLogin && recaptchaWidgetId === null) {
+      recaptchaWidgetId = grecaptcha.render('recaptchaContainer', {
+        sitekey: '6LerYkksAAAAAMbhqqezJ-JOvmUVyZkQMT9Q6fm1'
+      });
+    }
+
+    if (isLogin && recaptchaWidgetId !== null) {
+      grecaptcha.reset(recaptchaWidgetId); // reset del widget
+    }
   </script>
 
 </body>
