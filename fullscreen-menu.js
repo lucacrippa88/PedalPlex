@@ -116,7 +116,7 @@ window.fullscreenMenuHtml = `
     <a href='/' class="pedalplex-logo-fullscreen-menu"></a><br>
     <a href="plexes">Edit your Plexes</a>
     <a href="rigs">Manage Rigs</a>
-    <a href="gears">View Gears catalog</a>
+    <a href="gears">View Gears Catalog</a>
     <br><br>
     <span id="guestLoginMessage" style="color:#161616; font-size:0.875rem; display:none;">
       Login to access all features
