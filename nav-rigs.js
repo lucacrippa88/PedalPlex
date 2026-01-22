@@ -166,7 +166,7 @@ $("#pedalFilterInput").on("input", debounce(async function() {
         const authToken = localStorage.getItem('authToken');
 
         const res = await fetch(
-            `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`,
+            `https://cineteatrosanluigi.it/plex/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`,
             {
                 headers: {
                     'Content-Type': 'application/json',
