@@ -204,7 +204,7 @@ async function addPedalToRig(pedalId) {
     }
 
     // Redirect alla pagina rig
-    window.location.href = `${window.location.origin}rigs`;
+    window.location.href = `${window.location.origin}/rigs`;
 
   } catch (e) {
     if (e !== 'cancelled') console.error(e);
