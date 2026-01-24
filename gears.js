@@ -225,11 +225,11 @@ $(document).ready(() => {
 
 
 
-
 /**
- * Renderizza il catalogo a blocchi, evitando il blocco del browser
+ * Renderizza il catalogo a blocchi usando DocumentFragment per ridurre reflow/repaint
  * @param {Array} data - array di pedali
  * @param {string} containerId - ID del div container (#catalog)
+ * @param {string} userRole - ruolo utente ("guest", "user", "admin")
  * @param {number} batchSize - numero di pedali per batch
  */
 function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
@@ -238,13 +238,16 @@ function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
 
   function renderBatch() {
     const batch = data.slice(index, index + batchSize);
+    const frag = document.createDocumentFragment(); // unico fragment per il batch
 
     batch.forEach(pedal => {
       const $pedalDiv = renderPedal(pedal, userRole);
       $pedalDiv.attr("data-author", pedal.author || "");
       $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-      container.appendChild($pedalDiv[0]); // appendiamo elemento jQuery come DOM
+      frag.appendChild($pedalDiv[0]); // appendiamo elemento jQuery come DOM
     });
+
+    container.appendChild(frag); // appendiamo tutto in un colpo
 
     index += batchSize;
 
@@ -258,3 +261,4 @@ function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
 
   renderBatch(); // avvia il primo batch
 }
+
