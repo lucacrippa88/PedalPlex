@@ -187,7 +187,7 @@ function initSinglePedalView(pedalId, userRole) {
       // });
       // updatePedalCounts();
 
-      renderCatalogIncremental(pedals, 'catalog', userRole, 200);
+      renderCatalogIncremental(pedals, 'catalog', userRole, 50);
 
       if (userRole !== "guest") setupEditPedalHandler(pedals);
     })
