@@ -179,14 +179,16 @@ function initSinglePedalView(pedalId, userRole) {
       }
 
 
-      pedals.forEach(pedal => {
-        const $div = renderPedal(pedal, userRole);
-        $div.attr("data-author", pedal.author || "");
-        $div.attr("data-published", (pedal.published || "draft").toLowerCase());
-        resultsDiv.append($div);
-      });
+      // pedals.forEach(pedal => {
+      //   const $div = renderPedal(pedal, userRole);
+      //   $div.attr("data-author", pedal.author || "");
+      //   $div.attr("data-published", (pedal.published || "draft").toLowerCase());
+      //   resultsDiv.append($div);
+      // });
+      // updatePedalCounts();
 
-      updatePedalCounts();
+      renderCatalogIncremental(pedals, 'catalog', userRole, 200);
+
       if (userRole !== "guest") setupEditPedalHandler(pedals);
     })
     .catch(err => {

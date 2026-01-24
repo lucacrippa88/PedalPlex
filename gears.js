@@ -215,3 +215,46 @@ $(document).ready(() => {
 
 });
 
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Renderizza il catalogo a blocchi, evitando il blocco del browser
+ * @param {Array} data - array di pedali
+ * @param {string} containerId - ID del div container (#catalog)
+ * @param {number} batchSize - numero di pedali per batch
+ */
+function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
+  const container = document.getElementById(containerId);
+  let index = 0;
+
+  function renderBatch() {
+    const batch = data.slice(index, index + batchSize);
+
+    batch.forEach(pedal => {
+      const $pedalDiv = renderPedal(pedal, userRole);
+      $pedalDiv.attr("data-author", pedal.author || "");
+      $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+      container.appendChild($pedalDiv[0]); // appendiamo elemento jQuery come DOM
+    });
+
+    index += batchSize;
+
+    if (index < data.length) {
+      requestAnimationFrame(renderBatch); // prossimo batch al frame successivo
+    } else {
+      updatePedalCounts(); // aggiorna contatori finale
+      if (userRole !== "guest") setupEditPedalHandler(data);
+    }
+  }
+
+  renderBatch(); // avvia il primo batch
+}
