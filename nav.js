@@ -16,7 +16,7 @@ $(document).ready(function () {
   `;
 
   $("body").prepend(navHtml);
-  $("body").append(window.fullscreenMenuHtml);
+  // $("body").append(window.fullscreenMenuHtml);
 
   // Wait until currentUser is known
   // const checkUserInterval = setInterval(() => {
