@@ -781,7 +781,7 @@ if (window.location.pathname.endsWith('/gears')) {
                         </button>`;
 
     buttonsHTML += `<button id="openFXDB" class="bx--btn bx--btn--danger">
-                          Open in EffectsDatabase
+                          Open in FXDB
                           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
                                fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
                                class="bx--btn__icon">
@@ -802,7 +802,7 @@ if (window.location.pathname.endsWith('/gears')) {
     }
 
     Swal.fire({
-      title: 'Share this Gear',
+      title: 'Open this Gear',
       showConfirmButton: false,
       showCloseButton: false,
       allowOutsideClick: true,
@@ -825,11 +825,9 @@ if (window.location.pathname.endsWith('/gears')) {
         }
 
         const openFXDB = Swal.getPopup().querySelector('#openFXDB');
-        if (openFXDB) {
-          openBtn.addEventListener('click', () => {
-            window.open(urlFXDB, '_blank');
-          });
-        }
+        openFXDB.addEventListener('click', () => {
+          window.open(urlFXDB, '_blank');
+        });
       }
     });
 
