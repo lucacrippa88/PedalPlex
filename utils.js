@@ -771,7 +771,7 @@ if (window.location.pathname.endsWith('/gears')) {
     const urlFXDB = `https://www.effectsdatabase.com/search?search=${encodeURIComponent(pedalId)}`;
 
     // Costruisci HTML dinamicamente in base alla pagina
-    let buttonsHTML = `<button id="copyLink" class="bx--btn bx--btn--secondary">
+    let buttonsHTML = `<button class="js-copyLink bx--btn bx--btn--secondary">
                           Copy Link
                           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
                                fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
@@ -780,7 +780,7 @@ if (window.location.pathname.endsWith('/gears')) {
                           </svg>
                         </button>`;
 
-    buttonsHTML += `<button id="openFXDB" class="bx--btn bx--btn--danger">
+    buttonsHTML += `<button class="js-openFXDB bx--btn bx--btn--danger">
                           Open in FXDB
                           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
                                fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
@@ -791,7 +791,7 @@ if (window.location.pathname.endsWith('/gears')) {
 
     // Se siamo nella pagina principale del catalogo (/gears senza query), aggiungi il bottone Open Gear
     if (!window.location.search.includes('id=')) {
-      buttonsHTML += `<button id="openPedal" class="bx--btn bx--btn--tertiary">
+      buttonsHTML += `<button class="js-openGear bx--btn bx--btn--tertiary">
                         Open Gear
                         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
                              fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
@@ -811,24 +811,43 @@ if (window.location.pathname.endsWith('/gears')) {
       html: `<div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">
                ${buttonsHTML}
              </div>`,
+      // didOpen: () => {
+      //   const copyBtn = Swal.getPopup().querySelector('#copyLink');
+      //   copyBtn.addEventListener('click', () => {
+      //     navigator.clipboard.writeText(url); // copia silenziosa
+      //   });
+
+      //   const openBtn = Swal.getPopup().querySelector('#openPedal');
+      //   if (openBtn) {
+      //     openBtn.addEventListener('click', () => {
+      //       window.open(url, '_blank');
+      //     });
+      //   }
+
+      //   const openFXDB = Swal.getPopup().querySelector('#openFXDB');
+      //   openFXDB.addEventListener('click', () => {
+      //     window.open(urlFXDB, '_blank');
+      //   });
+      // }
       didOpen: () => {
-        const copyBtn = Swal.getPopup().querySelector('#copyLink');
-        copyBtn.addEventListener('click', () => {
-          navigator.clipboard.writeText(url); // copia silenziosa
+        const popup = Swal.getPopup();
+
+        popup.querySelector('.js-copyLink')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          navigator.clipboard.writeText(url);
         });
 
-        const openBtn = Swal.getPopup().querySelector('#openPedal');
-        if (openBtn) {
-          openBtn.addEventListener('click', () => {
-            window.open(url, '_blank');
-          });
-        }
+        popup.querySelector('.js-openGear')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.open(url, '_blank');
+        });
 
-        const openFXDB = Swal.getPopup().querySelector('#openFXDB');
-        openFXDB.addEventListener('click', () => {
+        popup.querySelector('.js-openFXDB')?.addEventListener('click', (e) => {
+          e.stopPropagation();
           window.open(urlFXDB, '_blank');
         });
       }
+
     });
 
   });
