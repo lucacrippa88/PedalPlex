@@ -811,24 +811,6 @@ if (window.location.pathname.endsWith('/gears')) {
       html: `<div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">
                ${buttonsHTML}
              </div>`,
-      // didOpen: () => {
-      //   const copyBtn = Swal.getPopup().querySelector('#copyLink');
-      //   copyBtn.addEventListener('click', () => {
-      //     navigator.clipboard.writeText(url); // copia silenziosa
-      //   });
-
-      //   const openBtn = Swal.getPopup().querySelector('#openPedal');
-      //   if (openBtn) {
-      //     openBtn.addEventListener('click', () => {
-      //       window.open(url, '_blank');
-      //     });
-      //   }
-
-      //   const openFXDB = Swal.getPopup().querySelector('#openFXDB');
-      //   openFXDB.addEventListener('click', () => {
-      //     window.open(urlFXDB, '_blank');
-      //   });
-      // }
       didOpen: () => {
         const popup = Swal.getPopup();
 
