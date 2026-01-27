@@ -768,6 +768,7 @@ if (window.location.pathname.endsWith('/gears')) {
     e.stopPropagation();
 
     const url = `${window.location.origin}${basePath}/view-gear?id=${encodeURIComponent(pedalId)}`;
+    const urlFXDB = `https://www.effectsdatabase.com/search?search=${encodeURIComponent(pedalId)}`;
 
     // Costruisci HTML dinamicamente in base alla pagina
     let buttonsHTML = `<button id="copyLink" class="bx--btn bx--btn--secondary">
@@ -775,8 +776,16 @@ if (window.location.pathname.endsWith('/gears')) {
                           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
                                fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
                                class="bx--btn__icon">
-                            <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path>
-                            <path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
+                            <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path><path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
+                          </svg>
+                        </button>`;
+
+    buttonsHTML += `<button id="openFXDB" class="bx--btn bx--btn--danger">
+                          Open in EffectsDatabase
+                          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+                               fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
+                               class="bx--btn__icon">
+                            <path fill="none" d="M16,8a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,16,8Zm4,13.875H17.125v-8H13v2.25h1.875v5.75H12v2.25h8Z" data-icon-path="inner-path"></path><path d="M26,4H6A2,2,0,0,0,4,6V26a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2V6A2,2,0,0,0,26,4ZM16,8a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,16,8Zm4,16.125H12v-2.25h2.875v-5.75H13v-2.25h4.125v8H20Z"></path>
                           </svg>
                         </button>`;
 
@@ -812,6 +821,13 @@ if (window.location.pathname.endsWith('/gears')) {
         if (openBtn) {
           openBtn.addEventListener('click', () => {
             window.open(url, '_blank');
+          });
+        }
+
+        const openFXDB = Swal.getPopup().querySelector('#openFXDB');
+        if (openFXDB) {
+          openBtn.addEventListener('click', () => {
+            window.open(urlFXDB, '_blank');
           });
         }
       }
