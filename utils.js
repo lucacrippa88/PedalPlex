@@ -826,11 +826,13 @@ if (window.location.pathname.endsWith('/gears')) {
         });
 
         popup.querySelector('.js-openGear')?.addEventListener('click', (e) => {
+          console.log('encodedPedalId:', encodedPedalId);
           e.stopPropagation();
           window.open(url, '_blank');
         });
 
         popup.querySelector('.js-openFXDB')?.addEventListener('click', (e) => {
+          console.log('pedalId:', pedalId);
           e.stopPropagation();
           window.open(urlFXDB, '_blank');
         });
