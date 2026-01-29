@@ -66,7 +66,7 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
         top: offset.top - $tooltip.outerHeight() - 6,
         left: offset.left,
         zIndex: 2000,
-        maxWidth: "250px",
+        maxWidth: "150px",
         backgroundColor: "rgba(0,0,0,0.85)",
         color: "#fff",
         padding: "6px 8px",
