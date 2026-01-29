@@ -564,7 +564,8 @@ function renderPedalControls(pedal, $pedalDiv) {
 function renderPedal(pedal, userRole, pedalboardPage = false) {
   
   // const pedalId = pedal._id || pedal.id;
-  const pedalId = decodeURIComponent(pedal._id || pedal.id);
+  // const pedalId = decodeURIComponent(pedal._id || pedal.id);
+  const pedalId = pedal._id || pedal.id;
   const encodedPedalId = encodeURIComponent(pedalId);
 
   const pedalName = pedal.name || pedal.id;
