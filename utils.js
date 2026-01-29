@@ -774,7 +774,7 @@ if (window.location.pathname.endsWith('/gears')) {
     // const url = `${window.location.origin}${basePath}/view-gear?id=${encodeURIComponent(pedalId)}`;
     // const urlFXDB = `https://www.effectsdatabase.com/search?search=${encodeURIComponent(pedalId)}`;
     const url = `${window.location.origin}${basePath}/view-gear?id=${encodedPedalId}`;
-    const urlFXDB = `https://www.effectsdatabase.com/search?search=${encodedPedalId}`;
+    const urlFXDB = `https://www.effectsdatabase.com/search?search=${pedalId}`;
 
     // Costruisci HTML dinamicamente in base alla pagina
     let buttonsHTML = `<button class="js-copyLink bx--btn bx--btn--secondary">
