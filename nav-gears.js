@@ -236,7 +236,7 @@ function initNavCatalog(userRole) {
       const visible = $(".pedal-catalog:visible");
       if (visible.length === 1) {
         const pedalId = visible.data("pedal-id");
-        window.location.href = `/gears?id=${encodeURIComponent(pedalId)}`;
+        window.location.href = `/view-gear?id=${encodeURIComponent(pedalId)}`;
       }
     };
 
