@@ -563,8 +563,6 @@ function renderPedalControls(pedal, $pedalDiv) {
 // HELPER: render a gear in catalog and editor
 function renderPedal(pedal, userRole, pedalboardPage = false) {
   
-  // const pedalId = pedal._id || pedal.id;
-  // const pedalId = decodeURIComponent(pedal._id || pedal.id);
   const pedalId = pedal._id || pedal.id;
   const encodedPedalId = encodeURIComponent(pedalId);
 
@@ -632,9 +630,6 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     $pedalDiv.append($nameDiv);
   }
 
-  // if (pedal.subplex) {
-  //   applySubplexStateToPedal($pedalDiv, pedal.subplex);
-  // }
 
   // Render pedal controls
   renderPedalControls(pedal, $pedalDiv);
@@ -772,15 +767,9 @@ if (window.location.pathname.endsWith('/gears')) {
   $shareIcon.on('click', (e) => {
     e.stopPropagation();
 
-    // const url = `${window.location.origin}${basePath}/view-gear?id=${encodeURIComponent(pedalId)}`;
-    // const urlFXDB = `https://www.effectsdatabase.com/search?search=${encodeURIComponent(pedalId)}`;
     const url = `${window.location.origin}${basePath}/view-gear?id=${encodedPedalId}`;
-    // const urlFXDB = `https://www.effectsdatabase.com/search?search=${pedalId}`;
-    // const urlFXDB = `https://www.effectsdatabase.com/search?search=${encodeURIComponent(pedalId)}`;
     const fxdbSearch = pedalId.toLowerCase().trim().replace(/\s+/g, '+');
     const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
-
-
 
     // Costruisci HTML dinamicamente in base alla pagina
     let buttonsHTML = `<button class="js-copyLink bx--btn bx--btn--secondary">
