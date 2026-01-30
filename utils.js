@@ -776,7 +776,10 @@ if (window.location.pathname.endsWith('/gears')) {
     // const urlFXDB = `https://www.effectsdatabase.com/search?search=${encodeURIComponent(pedalId)}`;
     const url = `${window.location.origin}${basePath}/view-gear?id=${encodedPedalId}`;
     // const urlFXDB = `https://www.effectsdatabase.com/search?search=${pedalId}`;
-    const urlFXDB = `https://www.effectsdatabase.com/search?search=${encodeURIComponent(pedalId)}`;
+    // const urlFXDB = `https://www.effectsdatabase.com/search?search=${encodeURIComponent(pedalId)}`;
+    const fxdbSearch = pedalId.toLowerCase().trim().replace(/\s+/g, '+');
+    const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
+
 
 
     // Costruisci HTML dinamicamente in base alla pagina
