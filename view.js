@@ -6,8 +6,12 @@
 //   let token = localStorage.getItem('authToken');
 
 
-
-
+  // /* ================= DATA ================= */
+  // const pedalId = new URLSearchParams(location.search).get('id');
+  // if (!pedalId) {
+  //   resultsDiv.textContent = 'Usa ?id=<PEDAL_ID>';
+  //   return;
+  // }
 
   (async function () {
 
@@ -16,25 +20,38 @@
 
   let token = localStorage.getItem('authToken');
 
-  // ======== NUOVO: gestione fuzzy search ========
+  // ===================== GESTIONE FUZZY SEARCH =====================
   const urlParams = new URLSearchParams(location.search);
   const searchQuery = urlParams.get('search');
+
   if (searchQuery) {
       resultsDiv.textContent = 'Searching...';
-      
+
       try {
-          const res = await fetch('https://api.pedalplex.com/RESOLVE_LINK.php?q=' + encodeURIComponent(searchQuery));
+          // Chiamata alla nuova RESOLVE_LINK.php
+          const res = await fetch('https://api.pedalplex.com/RESOLVE_LINK.php?q=' + encodeURIComponent(searchQuery), {
+              method: 'GET',
+              headers: {
+                  'Authorization': token ? 'Bearer ' + token : ''
+              }
+          });
+
           if (!res.ok) throw new Error('HTTP ' + res.status);
+
           const data = await res.json();
 
           if (data && data._id) {
-              // redirect automatico su ?id=
+              // Redirect automatico su ?id=
               window.location.replace(window.location.pathname + '?id=' + encodeURIComponent(data._id));
               return; // blocca il resto del caricamento
-          } else {
+          } else if (data.error) {
               resultsDiv.textContent = 'No pedal matched your search query: ' + searchQuery;
               return;
+          } else {
+              resultsDiv.textContent = 'Unexpected response from server';
+              return;
           }
+
       } catch (err) {
           console.error('Error resolving search link:', err);
           resultsDiv.textContent = 'Failed to resolve search: ' + err.message;
@@ -42,13 +59,8 @@
       }
   }
 
-
-
-
-
-
-  /* ================= DATA ================= */
-  const pedalId = new URLSearchParams(location.search).get('id');
+  // ===================== CARICAMENTO PEDALE =====================
+  const pedalId = urlParams.get('id');
   if (!pedalId) {
     resultsDiv.textContent = 'Usa ?id=<PEDAL_ID>';
     return;
