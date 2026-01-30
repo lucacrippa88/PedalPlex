@@ -23,7 +23,7 @@
       resultsDiv.textContent = 'Searching...';
       
       try {
-          const res = await fetch('api.pedalplex.com/RESOLVE_LINK.php?q=' + encodeURIComponent(searchQuery));
+          const res = await fetch('https://api.pedalplex.com/RESOLVE_LINK.php?q=' + encodeURIComponent(searchQuery));
           if (!res.ok) throw new Error('HTTP ' + res.status);
           const data = await res.json();
 
