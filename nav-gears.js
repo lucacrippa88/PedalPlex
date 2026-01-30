@@ -223,20 +223,36 @@ function initNavCatalog(userRole) {
   initCatalog(userRole);
 
   if (searchQuery) {
-    const normalizedQuery = normalizeString(searchQuery);
+    const queryWords = splitAndNormalize(searchQuery);
 
-    const applySearchFilter = () => {
+    const applyFuzzySearch = () => {
+      const results = [];
+
       $(".pedal-catalog").each(function () {
         const pedalId = $(this).data("pedal-id") || "";
-        const normalizedPedalId = normalizeString(pedalId);
-        $(this).toggle(normalizedPedalId.includes(normalizedQuery));
+        const pedalWords = splitAndNormalize(pedalId);
+
+        // Conta quante parole della query sono presenti nell'id
+        const matchCount = queryWords.reduce((acc, word) => {
+          return acc + (pedalWords.includes(word) ? 1 : 0);
+        }, 0);
+
+        // Se almeno 1 parola matcha, lo mostriamo
+        const show = matchCount > 0;
+        $(this).toggle(show);
+
+        if (show) results.push({ element: $(this), matchCount });
       });
+
       updatePedalCounts();
 
-      const visible = $(".pedal-catalog:visible");
-      if (visible.length === 1) {
-        const pedalId = visible.data("pedal-id");
-        window.location.href = `/view-gear?id=${encodeURIComponent(pedalId)}`;
+      // Ordina i risultati per quante parole matchano (più match = più in alto)
+      results.sort((a, b) => b.matchCount - a.matchCount);
+
+      // Redirect se c’è un unico match completo (tutte le parole trovate)
+      if (results.length === 1) {
+        const pedalId = results[0].element.data("pedal-id");
+        window.location.href = `/gears?id=${encodeURIComponent(pedalId)}`;
       }
     };
 
@@ -244,7 +260,7 @@ function initNavCatalog(userRole) {
       if ($(".pedal-catalog").length === 0) {
         requestAnimationFrame(waitForCatalog);
       } else {
-        applySearchFilter();
+        applyFuzzySearch();
       }
     };
     waitForCatalog();
@@ -252,19 +268,21 @@ function initNavCatalog(userRole) {
 }
 
 /**
- * Normalizza stringhe per ricerca fuzzy leggera
+ * Divide una stringa in parole normalizzate
  * - minuscolo
- * - rimuove spazi iniziali/finali
- * - rimuove simboli comuni (- _ . ,)
- * - riduce spazi multipli a singolo
+ * - rimuove simboli (- _ . ,)
+ * - riduce spazi multipli
  */
-function normalizeString(str) {
+function splitAndNormalize(str) {
   return str
     .toLowerCase()
     .trim()
     .replace(/[\-\_.,]/g, "")
-    .replace(/\s+/g, " ");
+    .replace(/\s+/g, " ")
+    .split(" ")
+    .filter(Boolean);
 }
+
 
 
 // ========================== CATALOG ==========================
