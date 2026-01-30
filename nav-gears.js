@@ -199,15 +199,73 @@ function initSinglePedalView(pedalId, userRole) {
 }
 
 // ========================== NAV INIT ==========================
+// function initNavCatalog(userRole) {
+//   renderNavBar(userRole);
+//   const pedalIdFromURL = getPedalIdFromURL();
+//   if (pedalIdFromURL) {
+//     initSinglePedalView(pedalIdFromURL, userRole);
+//     return;
+//   }
+//   initCatalog(userRole);
+// }
+
 function initNavCatalog(userRole) {
   renderNavBar(userRole);
+
   const pedalIdFromURL = getPedalIdFromURL();
+  const searchQuery = new URLSearchParams(window.location.search).get("search");
+
   if (pedalIdFromURL) {
     initSinglePedalView(pedalIdFromURL, userRole);
     return;
   }
+
   initCatalog(userRole);
+
+  if (searchQuery) {
+    const normalizedQuery = normalizeString(searchQuery);
+
+    const applySearchFilter = () => {
+      $(".pedal-catalog").each(function () {
+        const pedalId = $(this).data("pedal-id") || "";
+        const normalizedPedalId = normalizeString(pedalId);
+        $(this).toggle(normalizedPedalId.includes(normalizedQuery));
+      });
+      updatePedalCounts();
+
+      const visible = $(".pedal-catalog:visible");
+      if (visible.length === 1) {
+        const pedalId = visible.data("pedal-id");
+        window.location.href = `/gears?id=${encodeURIComponent(pedalId)}`;
+      }
+    };
+
+    const waitForCatalog = () => {
+      if ($(".pedal-catalog").length === 0) {
+        requestAnimationFrame(waitForCatalog);
+      } else {
+        applySearchFilter();
+      }
+    };
+    waitForCatalog();
+  }
 }
+
+/**
+ * Normalizza stringhe per ricerca fuzzy leggera
+ * - minuscolo
+ * - rimuove spazi iniziali/finali
+ * - rimuove simboli comuni (- _ . ,)
+ * - riduce spazi multipli a singolo
+ */
+function normalizeString(str) {
+  return str
+    .toLowerCase()
+    .trim()
+    .replace(/[\-\_.,]/g, "")
+    .replace(/\s+/g, " ");
+}
+
 
 // ========================== CATALOG ==========================
 function initCatalog(userRole) {
