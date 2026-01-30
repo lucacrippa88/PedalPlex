@@ -1,9 +1,50 @@
-(async function () {
+// (async function () {
+
+//   const resultsDiv = document.getElementById('results');
+//   window.resultsDiv = resultsDiv;
+
+//   let token = localStorage.getItem('authToken');
+
+
+
+
+
+  (async function () {
 
   const resultsDiv = document.getElementById('results');
   window.resultsDiv = resultsDiv;
 
   let token = localStorage.getItem('authToken');
+
+  // ======== NUOVO: gestione fuzzy search ========
+  const urlParams = new URLSearchParams(location.search);
+  const searchQuery = urlParams.get('search');
+  if (searchQuery) {
+      resultsDiv.textContent = 'Searching...';
+      
+      try {
+          const res = await fetch('api.pedalplex.com/RESOLVE_LINK.php?q=' + encodeURIComponent(searchQuery));
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const data = await res.json();
+
+          if (data && data._id) {
+              // redirect automatico su ?id=
+              window.location.replace(window.location.pathname + '?id=' + encodeURIComponent(data._id));
+              return; // blocca il resto del caricamento
+          } else {
+              resultsDiv.textContent = 'No pedal matched your search query: ' + searchQuery;
+              return;
+          }
+      } catch (err) {
+          console.error('Error resolving search link:', err);
+          resultsDiv.textContent = 'Failed to resolve search: ' + err.message;
+          return;
+      }
+  }
+
+
+
+
 
 
   /* ================= DATA ================= */
