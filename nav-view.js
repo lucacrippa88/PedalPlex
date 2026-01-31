@@ -1,5 +1,3 @@
-// nav-catalog.js
-
 // ========================== UTILITY ==========================
 function getPedalIdFromURL() {
   const params = new URLSearchParams(window.location.search);
@@ -7,63 +5,42 @@ function getPedalIdFromURL() {
 }
 
 // ========================== NAVBAR ==========================
-function renderNavBar(userRole) {
+function renderNavBar(userRole = "guest") {
   const navHtml = `
-    <header style="display: flex; align-items: center; justify-content: space-between;">
+    <header style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background:#222; color:white;">
       <div style="display: flex; align-items: center; gap: 1rem;">
-        <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
-          <div class="pedalplex-logo"></div>
+        <button class="menu-toggle" id="menuToggle" aria-label="Open menu" style="background:none; border:none; cursor:pointer;">
+          <div class="pedalplex-logo" style="width:40px; height:40px; background:linear-gradient(to right,#ff0044,#00ff99); border-radius:50%;"></div>
         </button>
 
-        <div class="title">PedalPlex</div>
-        <a href="gears" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">View Gear</a>
+        <div class="title" style="font-size:1.25rem; font-weight:bold;">PedalPlex</div>
+        <a href="gears" class="subtitle" style="font-size:1rem; color: #aaa; text-decoration:none;">View Gear</a>
       </div>
 
+      <div>
+        ${userRole === "guest" ? `<button id="loginBtn" style="color:white;background:#555;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;">Login</button>` : `<span>Welcome, ${window.currentUser?.username || "User"}</span>`}
+      </div>
     </header>
   `;
 
   $("body").prepend(navHtml);
 
-  if (userRole === "guest") {
-    $("#createPedalBtn").hide();
-    const loginBtnHtml = `
-      <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Login" style="display: flex; align-items: center; gap: 0.5rem;">
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-          <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
-          <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
-        </svg>
-        Login
-      </button>
-    `;
-    $("#toggleFilterBtn").after(loginBtnHtml);
+  // Gestione click pulsante login
+  $("#loginBtn").on("click", () => window.location.href = "login");
 
-    $(document).on("click", "#loginBtn", function() {
-      window.location.href = "login";
-    });
-  } else {
-    function isTokenValid() {
-      const token = localStorage.getItem("authToken");
-      if (!token) return false;
-      try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const payload = JSON.parse(atob(base64));
-        const now = Math.floor(Date.now() / 1000);
-        return payload.exp && payload.exp > now;
-      } catch (err) {
-        console.error("Invalid JWT:", err);
-        return false;
-      }
-    }
-
-  }
-
+  // Menu toggle (puoi collegare il tuo fullscreenMenu se esiste)
   $("#menuToggle").on("click", function () {
-    const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
+    const randomQuote = window.songQuotes ? songQuotes[Math.floor(Math.random() * songQuotes.length)] : "";
     $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
     $("#fullscreenMenu").addClass("active");
   });
-  $("#closeMenu").on("click", () => $("#fullscreenMenu").removeClass("active"));
 
-  
+  $("#closeMenu").on("click", () => $("#fullscreenMenu").removeClass("active"));
 }
+
+// ========================== NAV INIT ==========================
+$(document).ready(() => {
+  const token = localStorage.getItem("authToken");
+  const userRole = token ? window.currentUser?.role || "user" : "guest";
+  renderNavBar(userRole);
+});
