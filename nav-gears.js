@@ -201,13 +201,26 @@ function initSinglePedalView(pedalId, userRole) {
 // ========================== NAV INIT ==========================
 function initNavCatalog(userRole) {
   renderNavBar(userRole);
-  const pedalIdFromURL = getPedalIdFromURL();
-  if (pedalIdFromURL) {
-    initSinglePedalView(pedalIdFromURL, userRole);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const pedalId = urlParams.get("id");
+  const searchQuery = urlParams.get("search");
+
+  if (pedalId) {
+    // Modalità singolo pedale
+    initSinglePedalView(pedalId, userRole);
     return;
   }
+
+  if (searchQuery) {
+    // Modalità ricerca → non chiamare initCatalog!
+    return;
+  }
+
+  // Catalogo completo
   initCatalog(userRole);
 }
+
 
 
 
