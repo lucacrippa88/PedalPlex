@@ -29,7 +29,7 @@
 
       try {
           // Chiamata alla nuova RESOLVE_LINK.php
-          const res = await fetch('https://api.pedalplex.com/RESOLVE_LINK.php?q=' + encodeURIComponent(searchQuery), {
+          const res = await fetch('https://api.pedalplex.com/SEARCH_GEAR.php?q=' + encodeURIComponent(searchQuery), {
               method: 'GET',
               headers: {
                   'Authorization': token ? 'Bearer ' + token : ''
@@ -65,6 +65,11 @@
     resultsDiv.textContent = 'Usa ?id=<PEDAL_ID>';
     return;
   }
+
+
+
+
+
 
   async function fetchPedals(ids) {
     try {
