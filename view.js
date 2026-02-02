@@ -13,63 +13,6 @@
   //   return;
   // }
 
-//   (async function () {
-
-//   const resultsDiv = document.getElementById('results');
-//   window.resultsDiv = resultsDiv;
-
-//   let token = localStorage.getItem('authToken');
-
-//   // ===================== GESTIONE FUZZY SEARCH =====================
-//   const urlParams = new URLSearchParams(location.search);
-//   const searchQuery = urlParams.get('search');
-
-//   if (searchQuery) {
-//       resultsDiv.textContent = 'Searching...';
-
-//       try {
-//           // Chiamata alla nuova RESOLVE_LINK.php
-//           const res = await fetch('https://api.pedalplex.com/SEARCH_GEAR.php?q=' + encodeURIComponent(searchQuery), {
-//               method: 'GET',
-//               headers: {
-//                   'Authorization': token ? 'Bearer ' + token : ''
-//               }
-//           });
-
-//           if (!res.ok) throw new Error('HTTP ' + res.status);
-
-//           const data = await res.json();
-
-//           if (data && data._id) {
-//               // Redirect automatico su ?id=
-//               window.location.replace(window.location.pathname + '?id=' + encodeURIComponent(data._id));
-//               return; // blocca il resto del caricamento
-//           } else if (data.error) {
-//               resultsDiv.textContent = 'No pedal matched your search query: ' + searchQuery;
-//               return;
-//           } else {
-//               resultsDiv.textContent = 'Unexpected response from server';
-//               return;
-//           }
-
-//       } catch (err) {
-//           console.error('Error resolving search link:', err);
-//           resultsDiv.textContent = 'Failed to resolve search: ' + err.message;
-//           return;
-//       }
-//   }
-
-//   // ===================== CARICAMENTO PEDALE =====================
-//   const pedalId = urlParams.get('id');
-//   if (!pedalId) {
-//     resultsDiv.textContent = 'Usa ?id=<PEDAL_ID>';
-//     return;
-//   }
-
-
-
-
-
 
 //   async function fetchPedals(ids) {
 //     try {
@@ -165,21 +108,55 @@
 
       const data = await res.json();
 
+      // if (Array.isArray(data) && data.length > 0) {
+      //   // Mostra la lista dei risultati
+      //   resultsDiv.innerHTML = '';
+      //   const ul = document.createElement('ul');
+      //   data.forEach(pedal => {
+      //     const li = document.createElement('li');
+      //     const link = document.createElement('a');
+      //     link.href = window.location.pathname + '?id=' + encodeURIComponent(pedal._id);
+      //     link.innerHTML = pedal.name || pedal._id;
+      //     li.appendChild(link);
+      //     ul.appendChild(li);
+      //   });
+      //   resultsDiv.appendChild(ul);
+      //   return; // blocca il resto del caricamento
+      // } 
       if (Array.isArray(data) && data.length > 0) {
-        // Mostra la lista dei risultati
-        resultsDiv.innerHTML = '';
-        const ul = document.createElement('ul');
-        data.forEach(pedal => {
-          const li = document.createElement('li');
-          const link = document.createElement('a');
-          link.href = window.location.pathname + '?id=' + encodeURIComponent(pedal._id);
-          link.innerHTML = pedal.name || pedal._id;
-          li.appendChild(link);
-          ul.appendChild(li);
-        });
-        resultsDiv.appendChild(ul);
-        return; // blocca il resto del caricamento
-      } else if (data.error) {
+
+  // ✅ 1 SOLO RISULTATO → render diretto
+  if (data.length === 1) {
+    const pedalId = data[0]._id;
+    window.location.replace(
+      window.location.pathname + '?id=' + encodeURIComponent(pedalId)
+    );
+    return;
+  }
+
+  // ✅ PIÙ RISULTATI → lista cliccabile
+  resultsDiv.innerHTML = '<h3>Search results</h3>';
+  const ul = document.createElement('ul');
+
+  data.forEach(pedal => {
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+
+    link.href =
+      window.location.pathname +
+      '?id=' +
+      encodeURIComponent(pedal._id);
+
+    link.innerHTML = pedal.name || pedal._id;
+
+    li.appendChild(link);
+    ul.appendChild(li);
+  });
+
+  resultsDiv.appendChild(ul);
+  return;
+}
+      else if (data.error) {
         resultsDiv.textContent = 'No pedal matched your search query: ' + searchQuery;
         return;
       } else {
