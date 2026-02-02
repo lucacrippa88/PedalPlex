@@ -37,7 +37,7 @@ function renderBackToCatalogButton() {
         method: 'GET',
         headers: {
           'Authorization': token ? 'Bearer ' + token : ''
-        }
+        } 
       });
 
       if (!res.ok) throw new Error('HTTP ' + res.status);
