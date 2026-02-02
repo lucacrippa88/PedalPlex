@@ -1,86 +1,3 @@
-// (async function () {
-
-//   const resultsDiv = document.getElementById('results');
-//   window.resultsDiv = resultsDiv;
-
-//   let token = localStorage.getItem('authToken');
-
-
-  // /* ================= DATA ================= */
-  // const pedalId = new URLSearchParams(location.search).get('id');
-  // if (!pedalId) {
-  //   resultsDiv.textContent = 'Usa ?id=<PEDAL_ID>';
-  //   return;
-  // }
-
-
-//   async function fetchPedals(ids) {
-//     try {
-//       const res = await fetch(
-//         'https://api.pedalplex.com/GET_PEDALS_BY_IDS.php',
-//         {
-//           method: 'POST',
-//           headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': 'Bearer ' + token
-//           },
-//           body: JSON.stringify({ ids })
-//         }
-//       );
-//       if (!res.ok) throw new Error('HTTP ' + res.status);
-//       return (await res.json()).docs || [];
-//     } catch (err) {
-//       console.error('[TEST-PLEX] Error fetching pedals:', err);
-//       resultsDiv.textContent = 'Error fetching pedals: ' + err.message;
-//       return [];
-//     }
-//   }
-
-//   // Fetch pedale principale
-//   const [pedal] = await fetchPedals([pedalId]);
-//   if (!pedal) {
-//     resultsDiv.textContent = 'Gear not found!';
-//     return;
-//   }
-
-//   // Fetch subplex
-//   let subplexDocs = [];
-//   if (pedal.subplex?.length) {
-//     const subIds = pedal.subplex.map(s => s.pedal_id);
-//     subplexDocs = await fetchPedals(subIds);
-//   }
-
-//   /* ================= CATALOG ================= */
-//   window.catalogMap = {};
-//   window.catalogMap[pedalId] = pedal;
-//   subplexDocs.forEach(p => window.catalogMap[p._id] = p);
-
-//   window.catalog = [pedal, ...subplexDocs]; // necessario per renderFullPedalboard
-
-//   /* ================= FAKE BOARD ================= */
-//   const fakeBoard = {
-//     _id: 'test-board',
-//     name: 'TEST',
-//     pedals: [{
-//       pedal_id: pedalId,
-//       row: 1,
-//       rotation: 0,
-//       subplex: pedal.subplex || []
-//     }]
-//   };
-
-//   /* ================= RENDER ================= */
-//   try {
-//     $('#gearName').text(pedalId);
-//     await renderFullPedalboard(fakeBoard);
-//   } catch (err) {
-//     console.error('[TEST-PLEX] Render error:', err);
-//     resultsDiv.textContent = 'Errore nel render: ' + err.message;
-//   }
-
-// })();
-
-
 function renderBackToCatalogButton() {
   const wrapper = document.createElement('div');
   wrapper.style.marginTop = '24px';
@@ -127,63 +44,49 @@ function renderBackToCatalogButton() {
 
       const data = await res.json();
 
-      // if (Array.isArray(data) && data.length > 0) {
-      //   // Mostra la lista dei risultati
-      //   resultsDiv.innerHTML = '';
-      //   const ul = document.createElement('ul');
-      //   data.forEach(pedal => {
-      //     const li = document.createElement('li');
-      //     const link = document.createElement('a');
-      //     link.href = window.location.pathname + '?id=' + encodeURIComponent(pedal._id);
-      //     link.innerHTML = pedal.name || pedal._id;
-      //     li.appendChild(link);
-      //     ul.appendChild(li);
-      //   });
-      //   resultsDiv.appendChild(ul);
-      //   return; // blocca il resto del caricamento
-      // } 
       if (Array.isArray(data) && data.length > 0) {
 
-  // ✅ 1 SOLO RISULTATO → render diretto
-  if (data.length === 1) {
-    const pedalId = data[0]._id;
-    window.location.replace(
-      window.location.pathname + '?id=' + encodeURIComponent(pedalId)
-    );
-    return;
-  }
+        // ✅ 1 SOLO RISULTATO → render diretto
+        if (data.length === 1) {
+          const pedalId = data[0]._id;
+          window.location.replace(
+            window.location.pathname + '?id=' + encodeURIComponent(pedalId)
+          );
+          return;
+        }
 
-  // ✅ PIÙ RISULTATI → lista cliccabile
-  resultsDiv.innerHTML = '<h3>Search results</h3>';
-  const ul = document.createElement('ul');
+        // ✅ PIÙ RISULTATI → lista cliccabile
+        resultsDiv.innerHTML = '<h3>Search results</h3><br>';
+        const ul = document.createElement('ul');
 
-  data.forEach(pedal => {
-    const li = document.createElement('li');
-    const link = document.createElement('a');
+        data.forEach(pedal => {
+          const li = document.createElement('li');
+          const link = document.createElement('a');
 
-    link.href =
-      window.location.pathname +
-      '?id=' +
-      encodeURIComponent(pedal._id);
+          link.href =
+            window.location.pathname +
+            '?id=' +
+            encodeURIComponent(pedal._id);
 
-    link.innerHTML = pedal._id || pedal.name;
+          link.innerHTML = pedal._id || pedal.name;
 
-    li.appendChild(link);
-    ul.appendChild(li);
-  });
+          link.style.color = '#ffffff';
+          link.style.textDecoration = 'none';
+          link.style.fontSize = '1.1rem';
 
-  resultsDiv.appendChild(ul);
-  resultsDiv.appendChild(renderBackToCatalogButton());
-  return;
+          li.appendChild(link);
+          ul.appendChild(li);
+        });
 
-}
-      else if (data.error) {
-  resultsDiv.innerHTML = `
-    <p>No pedal matched your search query: <b>${searchQuery}</b></p>
-  `;
-  resultsDiv.appendChild(renderBackToCatalogButton());
-  return;
-       } else {
+        resultsDiv.appendChild(ul);
+        resultsDiv.appendChild(renderBackToCatalogButton());
+        return;
+
+      } else if (data.error) {
+        resultsDiv.innerHTML = `<p>No pedal matched your search query: <b>${searchQuery}</b></p>`;
+        resultsDiv.appendChild(renderBackToCatalogButton());
+        return;
+      } else {
         resultsDiv.textContent = 'Unexpected response from server';
         return;
       }
@@ -210,7 +113,9 @@ function renderBackToCatalogButton() {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + token
         },
-        body: JSON.stringify({ ids })
+        body: JSON.stringify({
+          ids
+        })
       });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       return (await res.json()).docs || [];
