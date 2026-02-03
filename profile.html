@@ -66,9 +66,10 @@
       </div>
       <br>
       <div class="bx--row">
-        <div class="bx--col"><strong>Presets:</strong> <span id="c-presets">–</span></div>
         <div class="bx--col"><strong>Users:</strong> <span id="c-users">–</span></div>
-        <div class="bx--col"><strong>Boards:</strong> <span id="c-boards">–</span></div>
+        <div class="bx--col"><strong>Rigs:</strong> <span id="c-rigs">–</span></div>
+        <div class="bx--col"><strong>Plexes:</strong> <span id="c-plexes">–</span></div>
+        <div class="bx--col"><strong>SubPlexes:</strong> <span id="c-subplexes">–</span></div>
       </div>
     </div>
   </div>
@@ -201,14 +202,15 @@ function loadAdminStats() {
       'Authorization': 'Bearer ' + localStorage.getItem('authToken')
     },
     success: function (d) {
-      $('#g-public').text(d.gear.public);
-      $('#g-private').text(d.gear.private);
-      $('#g-reviewing').text(d.gear.reviewing);
-      $('#g-draft').text(d.gear.draft);
+      $('#g-public').text(d.gears.public);
+      $('#g-private').text(d.gears.private);
+      $('#g-reviewing').text(d.gears.reviewing);
+      $('#g-draft').text(d.gears.draft);
 
-      $('#c-presets').text(d.presets);
+      $('#c-plexes').text(d.plexes);
+      $('#c-subplexes').text(d.subplexes);
       $('#c-users').text(d.users);
-      $('#c-boards').text(d.boards);
+      $('#c-rigs').text(d.rigs);
     },
     error: function () {
       Swal.fire('Error', 'Failed to load admin stats', 'error');
