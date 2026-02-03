@@ -450,6 +450,9 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 @font-face { font-family: acdc; src: url("../fonts/Squealer.otf"); }
 @font-face { font-family: acdc_emb; src: url("../fonts/Squealer\ Embossed.otf"); }
 @font-face { font-family: western; src: url("../fonts/gomarice_nandaka_western.ttf"); }
+@font-face { font-family: west; src: url("../fonts/west.TTF"); }
+@font-face { font-family: arabic; src: url("../fonts/Arabic.ttf"); }
+@font-face { font-family: news; src: url("../fonts/Newspaper.ttf"); }
 
 .verified-badge {
   display: inline-flex;
