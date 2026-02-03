@@ -52,6 +52,28 @@
       Link
     </button>
 
+
+
+    <div id="admin-dashboard" style="display:none; max-width:800px; margin:40px auto;">
+    <h2>Admin Dashboard</h2>
+
+    <div class="bx--grid">
+      <div class="bx--row">
+        <div class="bx--col"><strong>Gear Public:</strong> <span id="g-public">–</span></div>
+        <div class="bx--col"><strong>Private:</strong> <span id="g-private">–</span></div>
+        <div class="bx--col"><strong>Reviewing:</strong> <span id="g-reviewing">–</span></div>
+        <div class="bx--col"><strong>Draft:</strong> <span id="g-draft">–</span></div>
+      </div>
+      <br>
+      <div class="bx--row">
+        <div class="bx--col"><strong>Presets:</strong> <span id="c-presets">–</span></div>
+        <div class="bx--col"><strong>Users:</strong> <span id="c-users">–</span></div>
+        <div class="bx--col"><strong>Boards:</strong> <span id="c-boards">–</span></div>
+      </div>
+    </div>
+  </div>
+
+
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -162,6 +184,41 @@
       });
     }
   </script>
+
+
+<script>
+function loadAdminStats() {
+  if (!window.currentUser || window.currentUser.role !== 'admin') return;
+
+  $('#admin-dashboard').show();
+
+  $.ajax({
+    url: 'https://api.pedalplex.com/ADMIN_DASHBOARD_STATS.php',
+    method: 'GET',
+    headers: {
+      'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+    },
+    success: function (d) {
+      $('#g-public').text(d.gear.public);
+      $('#g-private').text(d.gear.private);
+      $('#g-reviewing').text(d.gear.reviewing);
+      $('#g-draft').text(d.gear.draft);
+
+      $('#c-presets').text(d.presets);
+      $('#c-users').text(d.users);
+      $('#c-boards').text(d.boards);
+    },
+    error: function () {
+      Swal.fire('Error', 'Failed to load admin stats', 'error');
+    }
+  });
+}
+
+// dopo USER_CHECK_AUTH_JWT success
+// aggiungi:
+loadAdminStats();
+</script>
+
 
 </body>
 </html>
