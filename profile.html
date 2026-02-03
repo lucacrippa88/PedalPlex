@@ -103,6 +103,8 @@
       success: function(userFromServer) {
         $('#page-content').show();
         window.currentUser = userFromServer;
+        // If admin, load dashboard stats
+        loadAdminStats();
       },
       error: function(xhr) {
         if (xhr.status === 401) {
@@ -216,7 +218,7 @@ function loadAdminStats() {
 
 // dopo USER_CHECK_AUTH_JWT success
 // aggiungi:
-loadAdminStats();
+// loadAdminStats();
 </script>
 
 
