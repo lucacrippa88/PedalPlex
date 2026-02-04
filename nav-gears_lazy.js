@@ -1,4 +1,4 @@
-// nav-catalog.js
+// nav-gears_lazy.js
 
 window.catalogInitialized = false;
 
@@ -55,10 +55,6 @@ function renderNavBar(userRole) {
     $("#createPedalBtn").hide();
     const loginBtnHtml = `
       <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Login" style="display: flex; align-items: center; gap: 0.5rem;">
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-          <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
-          <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
-        </svg>
         Login
       </button>
     `;
@@ -120,7 +116,6 @@ function renderNavBar(userRole) {
       const name = $(this).data("pedal-id")?.toLowerCase() || "";
       $(this).toggle(name.includes(filterValue));
     });
-    // updatePedalCounts();
     updatePedalCountsFromServer();
   });
 
@@ -147,10 +142,8 @@ function initSinglePedalView(pedalId, userRole) {
   `);
   resultsDiv.append(globalSpinner);
 
-  // Pulizia ID dall'URL
   const cleanId = decodeURIComponent(pedalId.trim());
 
-  // Fetch pedal singolo
   fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
     method: "POST",
     headers: {
@@ -164,32 +157,16 @@ function initSinglePedalView(pedalId, userRole) {
       $("#catalog-global-loader").remove();
       const pedals = data.docs || [];
       if (pedals.length === 0) {
-        $("#catalog-global-loader").remove(); // assicuriamoci di rimuovere lo spinner
         Swal.fire({
           icon: 'error',
           title: 'Pedal not found',
           text: 'This gear does not exist.',
           confirmButtonText: 'Back to Catalog',
-          customClass: {
-            confirmButton: 'bx--btn bx--btn--primary' // Carbon Design
-          }
-        }).then(() => {
-          window.location.href = 'gears'; // redirect alla lista pedali
-        });
+          customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+        }).then(() => window.location.href = 'gears');
         return;
       }
-
-
-      // pedals.forEach(pedal => {
-      //   const $div = renderPedal(pedal, userRole);
-      //   $div.attr("data-author", pedal.author || "");
-      //   $div.attr("data-published", (pedal.published || "draft").toLowerCase());
-      //   resultsDiv.append($div);
-      // });
-      // updatePedalCounts();
-
       renderCatalogIncremental(pedals, 'catalog', userRole, 50);
-
       if (userRole !== "guest") setupEditPedalHandler(pedals);
     })
     .catch(err => {
@@ -210,189 +187,19 @@ function initNavCatalog(userRole) {
   initCatalog(userRole);
 }
 
-// ========================== CATALOG ==========================
+// ========================== CATALOG (Lazy Load) ==========================
 function initCatalog(userRole) {
   if (window.singlePedalMode || window.catalogInitialized) return;
   window.catalogInitialized = true;
 
-  const resultsDiv = $("#catalog");
-  resultsDiv.empty();
-
-  const token = localStorage.getItem("authToken");
-  const roleParam = userRole === "guest" ? "guest" : userRole;
-  const usernameParam = window.currentUser?.username || "";
-
-  // Spinner globale iniziale
-  const globalSpinner = $(`
-    <div id="catalog-global-loader" class="bx--loading-overlay"
-         style="position: fixed; top:50%; left:50%; transform: translate(-50%, -50%);
-                z-index:9999; width:120px; height:120px; display:flex; justify-content:center; align-items:center;">
-      <div class="bx--loading" role="status">
-        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
-          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
-        </svg>
-      </div>
-    </div>
-  `);
-  resultsDiv.append(globalSpinner);
-
-  // --- FETCH METADATA ---
-  fetch(`https://api.pedalplex.com/GET_CATALOG_METADATA.php?role=${roleParam}&username=${usernameParam}`, {
-    headers: { Authorization: token ? "Bearer " + token : "" }
-  })
-    .then(r => r.json())
-    .then(pedals => {
-      if (window.singlePedalMode) return;
-
-      // Rimuove lo spinner globale subito dopo metadata
-      $("#catalog-global-loader").remove();
-
-      pedals.forEach(pedal => {
-        const $pedalDiv = renderPedal(pedal, userRole);
-        $pedalDiv.attr("data-author", pedal.author || "");
-        $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-
-        // Loader inline per ogni pedal
-        const $loaderInline = $(`
-          <div class="loader-inline-container">
-            <div class="loader-bar"></div>
-          </div>
-        `);
-        $pedalDiv.append($loaderInline);
-        resultsDiv.append($pedalDiv);
-      });
-
-      // updatePedalCounts();
-      updatePedalCountsFromServer();
-      if (userRole !== "guest") setupEditPedalHandler(pedals);
-    })
-    .catch(err => {
-      console.error("Error metadata:", err);
-      $("#catalog-global-loader").remove();
-      resultsDiv.html(`<p style="color:red;">Error loading metadata: ${err.message}</p>`);
-    });
-
-  // --- FETCH CATALOGO COMPLETO (in parallelo) ---
-  fetch(`https://api.pedalplex.com/GET_CATALOG.php?role=${roleParam}&username=${usernameParam}`, {
-    headers: { Authorization: token ? "Bearer " + token : "" }
-  })
-    .then(r => r.json())
-    .then(fullPedals => {
-      if (window.singlePedalMode) return;
-
-      // Sovrascrive loader inline con i dati completi
-      $(".pedal-catalog").each(function () {
-        const pedalId = $(this).data("pedal-id");
-        const fullPedal = fullPedals.find(p => p._id === pedalId);
-        if (fullPedal) {
-          $(this).replaceWith(renderPedal(fullPedal, userRole)
-            .attr("data-author", fullPedal.author || "")
-            .attr("data-published", (fullPedal.published || "draft").toLowerCase())
-          );
-        }
-      });
-
-      // updatePedalCounts();
-      updatePedalCountsFromServer();
-      if (userRole !== "guest") setupEditPedalHandler(fullPedals);
-    })
-    .catch(err => console.error("Error full fetch:", err));
+  $("#catalog").empty();
+  setupCatalogObserver();
+  loadNextCatalogPage();
 }
-
-
-
-// ========================== UPDATE COUNTS ==========================
-// function updatePedalCounts(activeFilter = null) {
-//   const visiblePedals = $(".pedal-catalog:visible");
-//   const allPedals = $(".pedal-catalog");
-//   const totalVisible = visiblePedals.length;
-//   const totalAbsolute = allPedals.length;
-
-//   const statusCounts = { draft: 0, private: 0, reviewing: 0, publicByMe: 0, template: 0 };
-//   let userPedalsCount = 0;
-//   const currentUsername = (window.currentUser?.username || "").toLowerCase();
-
-//   allPedals.each(function() {
-//     const status = ($(this).data("published") || "").toLowerCase();
-//     const author = ($(this).data("author") || "").toLowerCase();
-//     if (status in statusCounts) statusCounts[status]++;
-//     if (status === "public" && author === currentUsername) statusCounts.publicByMe++;
-//     if (author && author !== "admin") userPedalsCount++;
-//   });
-
-//   const reviewingBadge = statusCounts.reviewing > 0
-//     ? `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing" style="background:#ff0000; color:white; border-radius:50%; padding:1px 5px; font-size:0.75rem; font-weight:bold; min-width:18px; text-align:center;">${statusCounts.reviewing}</span>`
-//     : `<span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">0</span>`;
-
-//   let countsHtml =
-//     `${totalVisible} gear${totalVisible === 1 ? "" : "s"} ` +
-//     `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${totalAbsolute}</span>`;
-
-//   if (window.currentUser?.role !== "guest") {
-//     countsHtml += `, Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${statusCounts.draft}</span>, 
-//      Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${statusCounts.private}</span>, 
-//      Review: ${reviewingBadge}, 
-//      By me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${statusCounts.publicByMe}</span>;
-//      Template: <span class="status-filter ${activeFilter === "template" ? "active-filter" : ""}" data-filter="template">${statusCounts.template}</span>`;
-
-//     if (window.currentUser?.role === "admin") {
-//       countsHtml += `, By Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${userPedalsCount}</span>`;
-//     }
-//   }
-
-//   countsHtml += `)`;
-//   $("#pedalCount").html(countsHtml);
-
-//   $(".status-filter").off("click").on("click", function() {
-//     const filter = $(this).data("filter");
-//     filterPedalsByStatus(filter);
-//   });
-// }
-
-
-function updatePedalCountsFromServer(activeFilter = null) {
-  const token = localStorage.getItem("authToken");
-
-  fetch("https://api.pedalplex.com/GET_CATALOG_COUNTS.php", {
-    headers: token ? { Authorization: "Bearer " + token } : {}
-  })
-    .then(r => r.json())
-    .then(counts => {
-      let countsHtml =
-        `${counts.total} gear${counts.total === 1 ? "" : "s"} ` +
-        `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${counts.total}</span>`;
-
-      if (window.currentUser?.role !== "guest") {
-        countsHtml += `, Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${counts.draft}</span>, 
-         Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${counts.private}</span>, 
-         Review: <span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">${counts.reviewing}</span>, 
-         By me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${counts.publicByMe}</span>;
-         Template: <span class="status-filter ${activeFilter === "template" ? "active-filter" : ""}" data-filter="template">${counts.template}</span>`;
-
-        if (window.currentUser?.role === "admin") {
-          countsHtml += `, By Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${counts.byUsers}</span>`;
-        }
-      }
-
-      countsHtml += `)`;
-      $("#pedalCount").html(countsHtml);
-
-      $(".status-filter").off("click").on("click", function() {
-        const filter = $(this).data("filter");
-        filterPedalsByStatus(filter);
-      });
-    })
-    .catch(err => {
-      console.error("Counts fetch error:", err);
-    });
-}
-
 
 // ========================== FILTER FUNCTION ==========================
 function filterPedalsByStatus(filter) {
   const currentUsername = (window.currentUser?.username || "").toLowerCase();
-
   $(".pedal-catalog").each(function () {
     const status = ($(this).data("published") || "").toLowerCase();
     const author = ($(this).data("author") || "").toLowerCase();
@@ -405,29 +212,44 @@ function filterPedalsByStatus(filter) {
     else if (filter === "user") $(this).toggle(isUserCreated);
     else $(this).toggle(status === filter);
   });
-
   updatePedalCounts(filter);
+}
+
+// ========================== PEDAL COUNTS ==========================
+function updatePedalCountsFromServer(activeFilter = null) {
+  const token = localStorage.getItem("authToken");
+  fetch("https://api.pedalplex.com/GET_CATALOG_COUNTS.php", {
+    headers: token ? { Authorization: "Bearer " + token } : {}
+  })
+    .then(r => r.json())
+    .then(counts => {
+      let countsHtml = `${counts.total} gear${counts.total === 1 ? "" : "s"} (All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${counts.total}</span>`;
+      if (window.currentUser?.role !== "guest") {
+        countsHtml += `, Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${counts.draft}</span>, 
+          Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${counts.private}</span>, 
+          Review: <span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">${counts.reviewing}</span>, 
+          By me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${counts.publicByMe}</span>;
+          Template: <span class="status-filter ${activeFilter === "template" ? "active-filter" : ""}" data-filter="template">${counts.template}</span>`;
+        if (window.currentUser?.role === "admin") {
+          countsHtml += `, By Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${counts.byUsers}</span>`;
+        }
+      }
+      countsHtml += `)`;
+      $("#pedalCount").html(countsHtml);
+
+      $(".status-filter").off("click").on("click", function() {
+        const filter = $(this).data("filter");
+        filterPedalsByStatus(filter);
+      });
+    })
+    .catch(err => console.error("Counts fetch error:", err));
 }
 
 // ========================== CSS ==========================
 const style = document.createElement("style");
 style.textContent = `
-  .status-filter {
-    cursor: pointer;
-    text-decoration: underline;
-    color: #ddd;
-  }
-  .status-filter.active-filter {
-    font-weight: bold;
-    color: #fff;
-    text-decoration: none;
-    border-bottom: 2px solid #fff;
-  }
-
-  @media (max-width: 768px) {
-    #pedalCount span.status-filter:not([data-filter="all"]) {
-      display: none !important;
-    }
-  }
+  .status-filter { cursor: pointer; text-decoration: underline; color: #ddd; }
+  .status-filter.active-filter { font-weight: bold; color: #fff; text-decoration: none; border-bottom: 2px solid #fff; }
+  @media (max-width: 768px) { #pedalCount span.status-filter:not([data-filter="all"]) { display: none !important; } }
 `;
 document.head.appendChild(style);
