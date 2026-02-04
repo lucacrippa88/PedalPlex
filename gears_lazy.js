@@ -3,10 +3,10 @@ let currentPage = 0;
 let isLoading = false;
 let hasMore = true;
 let currentCategory = 'all';
-let sentinel = null;
 
 let pedals = []; // stato globale
 let pedalJSON = null;
+let sentinel = null;
 
 // Salva JSON per altri script
 function setPedalJSON(jsonString) {
@@ -99,7 +99,7 @@ function createNewPedal() {
             $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
             $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
             $(resultsDiv).append($pedalDiv);
-            updatePedalCounts();
+            updatePedalCountsFromServer();
             setupEditPedalHandler(pedals);
           });
         } else {
@@ -148,7 +148,7 @@ $(document).on("change", "#categoryFilter", function () {
   const selected = $(this).val();
   if (selected === "all") {
     $(".pedal-catalog").show();
-    updatePedalCounts();
+    updatePedalCountsFromServer();
     return;
   }
   const variants = pedalCategoryMap[selected] || [];
@@ -157,7 +157,7 @@ $(document).on("change", "#categoryFilter", function () {
     const matches = variants.some(keyword => id.includes(keyword));
     $(this).toggle(matches);
   });
-  updatePedalCounts();
+  updatePedalCountsFromServer();
 });
 
 // ===== RENDER CATALOG INCREMENTAL =====
@@ -179,11 +179,14 @@ function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
     container.appendChild(frag);
     index += batchSize;
 
+    if (sentinel) container.appendChild(sentinel);
+
     if (index < data.length) {
       requestAnimationFrame(renderBatch);
     } else {
-      updatePedalCounts();
+      updatePedalCountsFromServer();
       if (userRole !== "guest") setupEditPedalHandler(data);
+      checkLoadNext(); // verifica se serve caricare subito altro
     }
   }
 
@@ -210,32 +213,36 @@ function loadNextCatalogPage() {
         if (sentinel) sentinel.remove();
         return;
       }
-      // batch size 20 per render per frame per smooth scrolling
-      renderCatalogIncremental(data, 'catalog', (window.currentUser?.role) || 'guest', 20);
+      renderCatalogIncremental(data, 'catalog', (window.currentUser?.role) || 'guest', 12);
     })
     .catch(err => console.error('Catalog lazy load error', err))
-    .finally(() => {
-      setTimeout(() => { isLoading = false; }, 200); // debounce leggero per evitare trigger multipli
-    });
+    .finally(() => isLoading = false);
 }
 
+// ===== CHECK SCROLL =====
+function checkLoadNext() {
+  if (isLoading || !hasMore || !sentinel) return;
+  const rect = sentinel.getBoundingClientRect();
+  if (rect.top - window.innerHeight < 500) { // entro 500px dalla fine
+    loadNextCatalogPage();
+  }
+}
+
+// ===== SETUP OBSERVER (per compatibilità) =====
 function setupCatalogObserver() {
-  if (sentinel) sentinel.remove();
-  sentinel = document.createElement('div');
-  sentinel.id = 'catalog-sentinel';
-  sentinel.style.height = '1px';
-  const catalog = document.getElementById('catalog');
-  catalog.appendChild(sentinel);
-
-  const observer = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) loadNextCatalogPage();
-  }, { rootMargin: '600px' }); // trigger anticipato, più scroll fluido
-
-  observer.observe(sentinel);
+  if (!sentinel) {
+    sentinel = document.createElement('div');
+    sentinel.id = 'catalog-sentinel';
+    sentinel.style.height = '1px';
+    const catalog = document.getElementById('catalog');
+    catalog.appendChild(sentinel);
+  }
 }
 
+window.addEventListener('scroll', checkLoadNext);
+window.addEventListener('resize', checkLoadNext);
 
-// ===== UPDATE PEDAL COUNTS (DA PHP) =====
+// ===== UPDATE PEDAL COUNTS (PHP) =====
 function updatePedalCountsFromServer(activeFilter = null) {
   const token = localStorage.getItem("authToken");
 
@@ -259,6 +266,7 @@ function updatePedalCountsFromServer(activeFilter = null) {
           countsHtml += `, By Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${counts.byUsers}</span>`;
         }
       }
+
       countsHtml += `)`;
       $("#pedalCount").html(countsHtml);
 
