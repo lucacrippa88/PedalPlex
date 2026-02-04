@@ -5,7 +5,7 @@ let hasMore = true;
 let currentCategory = 'all';
 let sentinel = null;
 
-let pedals = []; // stato globale catalogo
+let pedals = []; // stato globale
 let pedalJSON = null;
 
 // Salva JSON per altri script
@@ -13,7 +13,7 @@ function setPedalJSON(jsonString) {
   pedalJSON = jsonString;
 }
 
-// ========================== CREAZIONE PEDALI ==========================
+// ===== CREATE NEW PEDAL =====
 function createNewPedal() {
   if (!window.currentUser || window.currentUser.role === "guest") {
     Swal.fire('Access Denied', 'Guests cannot create pedals. Please log in.', 'warning');
@@ -47,9 +47,18 @@ function createNewPedal() {
         return false;
       }
       const validation = iframe.contentWindow.getPedalValidation();
-      if (validation.cssError) Swal.showValidationMessage(`CSS Error: ${validation.cssError}`);
-      if (validation.hasMissingFields) Swal.showValidationMessage("Please fill all required fields!");
-      if (validation.duplicateFound) Swal.showValidationMessage("Duplicate control labels detected!");
+      if (validation.cssError) {
+        Swal.showValidationMessage(`CSS Error: ${validation.cssError}`);
+        return false;
+      }
+      if (validation.hasMissingFields) {
+        Swal.showValidationMessage("Please fill all required fields!");
+        return false;
+      }
+      if (validation.duplicateFound) {
+        Swal.showValidationMessage("Duplicate control labels detected!");
+        return false;
+      }
       return validation.pedal;
     }
   }).then(result => {
@@ -57,84 +66,101 @@ function createNewPedal() {
       const newPedal = result.value;
       newPedal.author = window.currentUser.username || "unknown";
       newPedal.authorId = window.currentUser.userid || null;
-
       const token = localStorage.getItem('authToken');
+
       fetch('https://api.pedalplex.com/CREATE_GEAR.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
         body: JSON.stringify(newPedal)
       })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          Swal.fire({ title: 'Created!', icon: 'success', confirmButtonText: 'OK', customClass: { confirmButton: 'bx--btn bx--btn--primary' }})
-            .then(() => {
-              const resultsDiv = document.getElementById("catalog");
-              const createdPedal = { ...newPedal, _id: data.id, _rev: data.rev, canEdit: true };
-              pedals.push(createdPedal);
-              const $pedalDiv = appendNewPedalWithSubPlex(createdPedal);
-              $pedalDiv.attr("data-author", createdPedal.author || "");
-              $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
-              $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
-              $(resultsDiv).append($pedalDiv);
-              setupEditPedalHandler(pedals);
-            });
-        } else Swal.fire('Error', data.error || 'Failed to create', 'error');
+          Swal.fire({
+            title: 'Created!',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+          }).then(() => {
+            const resultsDiv = document.getElementById("catalog");
+            const createdPedal = {
+              ...newPedal,
+              _id: data.id,
+              _rev: data.rev,
+              author: data.author || newPedal.author,
+              canEdit: true
+            };
+            pedals.push(createdPedal);
+            const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
+            $pedalDiv.attr("data-author", createdPedal.author || "");
+            $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
+            $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
+            $(resultsDiv).append($pedalDiv);
+            updatePedalCounts();
+            setupEditPedalHandler(pedals);
+          });
+        } else {
+          Swal.fire('Error', data.error || 'Failed to create', 'error');
+        }
       })
-      .catch(err => Swal.fire('Error', err.message || 'Failed to create', 'error'));
+      .catch(err => {
+        Swal.fire('Error', err.message || 'Failed to create', 'error');
+      });
     }
   });
 }
 
-// ========================== CATEGORIE PEDALI ==========================
+// ===== CATEGORY MAP =====
 const pedalCategoryMap = {
-  acoustic: ["acoustic", "acoustic simulator", "ac sim", "simulator", "sim"],
-  ambient: ["ambient", "ambi", "amb", "dimension", "space"],
-  ampli: ["combo", "all-in-one", "all in one", "amplifier head", "amp head", "head", "amped", "marshall"],
-  boost: ["boost", "blst", "bst"],
-  chorus: ["chorus", "cho"],
-  compressor: ["compressor", "comp", "compr", "sustainer", "sustain"],
-  delay: ["delay", "dly", "del", "echo", "ech"],
-  distortion: ["distortion", "dist", "distort", "metal", "heavy", "dark", "feedbacker", "feedback", "overdrive", "drive", "od", "drv", "driving"],
-  drum: ["drum machine", "drum", "rhythm", "beat", "pad"],
-  eq: ["equal", "equalizer", "equaliser", "filter", "filt"],
-  expression: ["expression", "expr", "exp", "volume", "volum", "swell", "volume swell", "swl", "slow"],
-  flanger: ["flanger", "flg", "flange"],
-  fuzz: ["fuzz", "muff"],
-  looper: ["looper", "loop", "loop station", "loopstation"],
-  modulation: ["modulation", "mod"],
-  multifx: ["multifx", "multi-fx", "multi fx", "fx"],
-  octaver: ["octaver", "octave", "oct", "octa"],
-  phaser: ["phaser", "phase", "pha"],
-  pitchshifter: ["pitchshifter", "pitch shifter", "pshift", "pitch", "harmonist", "harmonizer", "shifter", "shift", "whammy"],
-  preamp: ["stack", "rig", "full rig", "amp stack", "preamp", "pre-amp", "pre amp", "irloader", "ir loader", "ir"],
-  reverb: ["reverb", "verb", "rvb", "shimmer", "shim"],
-  vibrato: ["tremolo", "trem","rotary", "rotovibe", "roto-vibe", "vibrato", "vibe", "vib"],
-  synth: ["spectrum", "enhancer", "spec", "sampler", "sample", "samp", "formant", "lfo", "synth", "synthesizer", "synthesiser", "slicer", "processor", "organ", "bitcrusher", "bit crusher", "crusher", "lofi", "lo-fi"],
-  utility: ["buffer", "bfr", "buff", "switcher", "switch", "footswitch", "loop switcher", "ab switcher", "aby", "dibox", "di box", "direct box", "utility", "util", "misc", "miscellaneous", "tuner", "tunr", "tnr", "noisegate", "noise gate", "suppressor"],
-  vocoder: ["vocoder", "voco", "vokoder", "talk box"],
-  wah: ["wah", "wah-wah"]
+  acoustic: ["acoustic","acoustic simulator","ac sim","simulator","sim"],
+  ambient: ["ambient","ambi","amb","dimension","space"],
+  ampli: ["combo","all-in-one","all in one","amplifier head","amp head","head","amped","marshall"],
+  boost: ["boost","blst","bst"],
+  chorus: ["chorus","cho"],
+  compressor: ["compressor","comp","compr","sustainer","sustain"],
+  delay: ["delay","dly","del","echo","ech"],
+  distortion: ["distortion","dist","distort","metal","heavy","dark","feedbacker","feedback","overdrive","drive","od","drv","driving"],
+  drum: ["drum machine","drum","rhythm","beat","pad"],
+  eq: ["equal","equalizer","equaliser","filter","filt"],
+  expression: ["expression","expr","exp","volume","volum","swell","volume swell","swl","slow"],
+  flanger: ["flanger","flg","flange"],
+  fuzz: ["fuzz","muff"],
+  looper: ["looper","loop","loop station","loopstation"],
+  modulation: ["modulation","mod"],
+  multifx: ["multifx","multi-fx","multi fx","fx"],
+  octaver: ["octaver","octave","oct","octa"],
+  phaser: ["phaser","phase","pha"],
+  pitchshifter: ["pitchshifter","pitch shifter","pshift","pitch","harmonist","harmonizer","shifter","shift","whammy"],
+  preamp: ["stack","rig","full rig","amp stack","preamp","pre-amp","pre amp","irloader","ir loader","ir"],
+  reverb: ["reverb","verb","rvb","shimmer","shim"],
+  vibrato: ["tremolo","trem","rotary","rotovibe","roto-vibe","vibrato","vibe","vib"],
+  synth: ["spectrum","enhancer","spec","sampler","sample","samp","formant","lfo","synth","synthesizer","synthesiser","slicer","processor","organ","bitcrusher","bit crusher","crusher","lofi","lo-fi"],
+  utility: ["buffer","bfr","buff","switcher","switch","footswitch","loop switcher","ab switcher","aby","dibox","di box","direct box","utility","util","misc","miscellaneous","tuner","tunr","tnr","noisegate","noise gate","suppressor"],
+  vocoder: ["vocoder","voco","vokoder","talk box"],
+  wah: ["wah","wah-wah"]
 };
 
-// ========================== FILTRO CATEGORIA ==========================
+// ===== CATEGORY FILTER =====
 $(document).on("change", "#categoryFilter", function () {
   const selected = $(this).val();
-  currentCategory = selected;
-
   if (selected === "all") {
     $(".pedal-catalog").show();
+    updatePedalCounts();
     return;
   }
   const variants = pedalCategoryMap[selected] || [];
-
   $(".pedal-catalog").each(function() {
     const id = ($(this).data("pedal-id") || "").toLowerCase();
     const matches = variants.some(keyword => id.includes(keyword));
     $(this).toggle(matches);
   });
+  updatePedalCounts();
 });
 
-// ========================== RENDER INCREMENTALE ==========================
+// ===== RENDER CATALOG INCREMENTAL =====
 function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
   const container = document.getElementById(containerId);
   let index = 0;
@@ -153,20 +179,25 @@ function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
     container.appendChild(frag);
     index += batchSize;
 
-    if (index < data.length) requestAnimationFrame(renderBatch);
-    else if (userRole !== "guest") setupEditPedalHandler(data);
+    if (index < data.length) {
+      requestAnimationFrame(renderBatch);
+    } else {
+      updatePedalCounts();
+      if (userRole !== "guest") setupEditPedalHandler(data);
+    }
   }
 
   renderBatch();
 }
 
-// ========================== LAZY LOAD ==========================
+// ===== LAZY LOAD =====
 function loadNextCatalogPage() {
   if (isLoading || !hasMore) return;
+
   isLoading = true;
   currentPage++;
 
-  const url = `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=${currentPage}&limit=24&category=${encodeURIComponent(currentCategory)}`;
+  const url = 'GET_CATALOG_LAZY.php?page=' + currentPage + '&limit=24' + '&category=' + encodeURIComponent(currentCategory);
   const headers = {};
   const token = localStorage.getItem('authToken');
   if (token) headers['Authorization'] = 'Bearer ' + token;
@@ -182,7 +213,7 @@ function loadNextCatalogPage() {
       renderCatalogIncremental(data, 'catalog', (window.currentUser?.role) || 'guest', 12);
     })
     .catch(err => console.error('Catalog lazy load error', err))
-    .finally(() => { isLoading = false; });
+    .finally(() => isLoading = false);
 }
 
 function setupCatalogObserver() {
@@ -190,15 +221,47 @@ function setupCatalogObserver() {
   sentinel = document.createElement('div');
   sentinel.id = 'catalog-sentinel';
   sentinel.style.height = '1px';
-  document.getElementById('catalog').appendChild(sentinel);
+  const catalog = document.getElementById('catalog');
+  catalog.appendChild(sentinel);
 
   const observer = new IntersectionObserver(entries => {
     if (entries[0].isIntersecting) loadNextCatalogPage();
   }, { rootMargin: '300px' });
+
   observer.observe(sentinel);
 }
 
-// ========================== DOCUMENT READY ==========================
-$(document).ready(() => {
-  setupCatalogObserver();
-});
+// ===== UPDATE PEDAL COUNTS (DA PHP) =====
+function updatePedalCountsFromServer(activeFilter = null) {
+  const token = localStorage.getItem("authToken");
+
+  fetch("https://api.pedalplex.com/GET_CATALOG_COUNTS.php", {
+    headers: token ? { Authorization: "Bearer " + token } : {}
+  })
+    .then(r => r.json())
+    .then(counts => {
+      let countsHtml =
+        `${counts.total} gear${counts.total === 1 ? "" : "s"} ` +
+        `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${counts.total}</span>`;
+
+      if (window.currentUser?.role !== "guest") {
+        countsHtml += `, Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${counts.draft}</span>, 
+         Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${counts.private}</span>, 
+         Review: <span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">${counts.reviewing}</span>, 
+         By me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${counts.publicByMe}</span>;
+         Template: <span class="status-filter ${activeFilter === "template" ? "active-filter" : ""}" data-filter="template">${counts.template}</span>`;
+
+        if (window.currentUser?.role === "admin") {
+          countsHtml += `, By Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${counts.byUsers}</span>`;
+        }
+      }
+      countsHtml += `)`;
+      $("#pedalCount").html(countsHtml);
+
+      $(".status-filter").off("click").on("click", function() {
+        const filter = $(this).data("filter");
+        filterPedalsByStatus(filter);
+      });
+    })
+    .catch(err => console.error("Counts fetch error:", err));
+}

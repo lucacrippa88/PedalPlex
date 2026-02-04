@@ -1,42 +1,47 @@
 window.catalogInitialized = false;
 
-// ========================== UTILITY ==========================
 function getPedalIdFromURL() {
   const params = new URLSearchParams(window.location.search);
-  return params.get("id");
+  return params.get("id"); 
 }
 
-// ========================== NAVBAR ==========================
 function renderNavBar(userRole) {
   const navHtml = `
-  <header style="display: flex; align-items: center; justify-content: space-between;">
-    <div style="display: flex; align-items: center; gap: 1rem;">
-      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
-        <div class="pedalplex-logo"></div>
-      </button>
-      <div class="title">PedalPlex</div>
-      <a href="gears" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">Gears</a>
-    </div>
-    <div style="display: flex; align-items: center; gap: 1rem;">
-      <span id="pedalCount" style="font-size: 0.75rem; color:#aaa"></span>
-      <button id="toggleFilterBtn" aria-label="Toggle search" style="background:none; border:none; cursor:pointer; padding:4px;">
-        <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-      </button>
-      <input type="text" id="pedalFilterInput" placeholder="Filter gears..." 
-             style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;" 
-             aria-label="Filter pedals"/>
-      <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-          <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        Add gear
-      </button>
-    </div>
-  </header>
+    <header style="display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+          <div class="pedalplex-logo"></div>
+        </button>
+        <div class="title">PedalPlex</div>
+        <a href="gears" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">Gears</a>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <span id="pedalCount" style="font-size: 0.75rem; color:#aaa"></span>
+
+        <button id="toggleFilterBtn" aria-label="Toggle search" style="background:none; border:none; cursor:pointer; padding:4px;">
+          <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+
+        <input 
+          type="text" 
+          id="pedalFilterInput" 
+          placeholder="Filter gears..." 
+          style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;" 
+          aria-label="Filter pedals"/>
+
+        <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Add gear
+        </button>
+      </div>
+    </header>
   `;
   $("body").prepend(navHtml);
 
@@ -44,80 +49,69 @@ function renderNavBar(userRole) {
     $("#createPedalBtn").hide();
     const loginBtnHtml = `<button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button">Login</button>`;
     $("#toggleFilterBtn").after(loginBtnHtml);
-    $(document).on("click", "#loginBtn", () => window.location.href = "login");
+    $(document).on("click","#loginBtn",()=>window.location.href="login");
   } else {
-    $(document).on('click', '#createPedalBtn', createNewPedal);
+    $(document).on('click','#createPedalBtn', createNewPedal);
+    $(document).on('click','#createOwnPedalBtn', createNewPedal);
   }
 
-  $("#toggleFilterBtn").on("click", function () {
+  $("#toggleFilterBtn").on("click", function(){
     const input = $("#pedalFilterInput");
     if (input.is(":visible")) input.hide().val("");
-    else input.css("display", "flex").focus();
+    else input.css("display","flex").focus();
   });
 
-  $("#pedalFilterInput").on("input", function () {
+  $("#pedalFilterInput").on("input", function(){
     const filterValue = $(this).val().toLowerCase();
-    $(".pedal-catalog").each(function () {
-      const name = ($(this).data("pedal-id") || "").toLowerCase();
+    $(".pedal-catalog").each(function(){
+      const name = $(this).data("pedal-id")?.toLowerCase() || "";
       $(this).toggle(name.includes(filterValue));
     });
   });
 }
 
-// ========================== SINGLE PEDAL VIEW ==========================
-function initSinglePedalView(pedalId, userRole) {
+// ===== SINGLE PEDAL VIEW =====
+function initSinglePedalView(pedalId, userRole){
   window.singlePedalMode = true;
   const token = localStorage.getItem("authToken");
   const resultsDiv = $("#catalog");
   resultsDiv.empty();
 
-  const globalSpinner = $(`
-    <div id="catalog-global-loader" class="bx--loading-overlay"
-         style="position: fixed; top:80%; left:50%; transform: translate(-50%, -50%); z-index:9999; width:120px; height:120px; display:flex; justify-content:center; align-items:center;">
-      <div class="bx--loading" role="status">
-        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
-          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
-        </svg>
-      </div>
-    </div>
-  `);
+  const globalSpinner = $('<div id="catalog-global-loader"></div>'); 
   resultsDiv.append(globalSpinner);
 
+  const cleanId = decodeURIComponent(pedalId.trim());
+
   fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": token ? "Bearer " + token : "" },
-    body: JSON.stringify({ ids: [pedalId] })
+    method:"POST",
+    headers: {
+      "Content-Type":"application/json",
+      "Authorization": token ? "Bearer "+token : ""
+    },
+    body: JSON.stringify({ids:[cleanId]})
   })
-  .then(res => res.json())
-  .then(data => {
+  .then(r=>r.json())
+  .then(data=>{
     $("#catalog-global-loader").remove();
     const pedals = data.docs || [];
-    if (!pedals.length) {
-      Swal.fire({ icon: 'error', title: 'Pedal not found', text: 'This gear does not exist.', confirmButtonText: 'Back to Catalog' })
-        .then(() => window.location.href = 'gears');
+    if(pedals.length===0){
+      Swal.fire({icon:"error", title:"Pedal not found", confirmButtonText:"Back to Catalog"})
+        .then(()=>window.location.href="gears");
       return;
     }
-    renderCatalogIncremental(pedals, 'catalog', userRole, 50);
-    if (userRole !== "guest") setupEditPedalHandler(pedals);
+    renderCatalogIncremental(pedals,'catalog',userRole,50);
+    if(userRole!=="guest") setupEditPedalHandler(pedals);
   });
 }
 
-// ========================== NAV INIT ==========================
-function initNavCatalog(userRole) {
+// ===== INIT NAV + CATALOG =====
+function initNavCatalog(userRole){
   renderNavBar(userRole);
-  updatePedalCountsFromServer(); // counts statici
+  updatePedalCountsFromServer(); // <- qui chiamiamo subito i counts fissi
   const pedalIdFromURL = getPedalIdFromURL();
-  if (pedalIdFromURL) initSinglePedalView(pedalIdFromURL, userRole);
-  else initCatalog(userRole);
+  if(pedalIdFromURL) initSinglePedalView(pedalIdFromURL,userRole);
+  else {
+    setupCatalogObserver();
+    loadNextCatalogPage();
+  }
 }
-
-// ========================== CATALOG ==========================
-function initCatalog(userRole) {
-  if (window.singlePedalMode || window.catalogInitialized) return;
-  window.catalogInitialized = true;
-
-  $("#catalog").empty();
-  setupCatalogObserver();
-}
-
