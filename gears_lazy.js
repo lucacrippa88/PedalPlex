@@ -207,7 +207,7 @@ function loadNextCatalogPage() {
   currentPage++;
 
   const url =
-    'GET_CATALOG_LAZY.php'
+    'https://api.pedalplex.com/_LAZY.php'
     + '?page=' + currentPage
     + '&limit=24'
     + '&category=' + encodeURIComponent(currentCategory);
