@@ -197,7 +197,7 @@ function loadNextCatalogPage() {
   isLoading = true;
   currentPage++;
 
-  const url = 'GET_CATALOG_LAZY.php?page=' + currentPage + '&limit=24' + '&category=' + encodeURIComponent(currentCategory);
+  const url = 'https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=' + currentPage + '&limit=24' + '&category=' + encodeURIComponent(currentCategory);
   const headers = {};
   const token = localStorage.getItem('authToken');
   if (token) headers['Authorization'] = 'Bearer ' + token;
