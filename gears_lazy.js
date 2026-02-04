@@ -210,10 +210,13 @@ function loadNextCatalogPage() {
         if (sentinel) sentinel.remove();
         return;
       }
-      renderCatalogIncremental(data, 'catalog', (window.currentUser?.role) || 'guest', 12);
+      // batch size 20 per render per frame per smooth scrolling
+      renderCatalogIncremental(data, 'catalog', (window.currentUser?.role) || 'guest', 20);
     })
     .catch(err => console.error('Catalog lazy load error', err))
-    .finally(() => isLoading = false);
+    .finally(() => {
+      setTimeout(() => { isLoading = false; }, 200); // debounce leggero per evitare trigger multipli
+    });
 }
 
 function setupCatalogObserver() {
@@ -226,10 +229,11 @@ function setupCatalogObserver() {
 
   const observer = new IntersectionObserver(entries => {
     if (entries[0].isIntersecting) loadNextCatalogPage();
-  }, { rootMargin: '300px' });
+  }, { rootMargin: '600px' }); // trigger anticipato, più scroll fluido
 
   observer.observe(sentinel);
 }
+
 
 // ===== UPDATE PEDAL COUNTS (DA PHP) =====
 function updatePedalCountsFromServer(activeFilter = null) {
