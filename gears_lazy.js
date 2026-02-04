@@ -5,7 +5,7 @@ let hasMore = true;
 let currentCategory = 'all';
 let sentinel = null;
 
-let pedals = []; // stato globale dei pedali
+let pedals = []; // stato globale catalogo
 let pedalJSON = null;
 
 // Salva JSON per altri script
@@ -13,7 +13,7 @@ function setPedalJSON(jsonString) {
   pedalJSON = jsonString;
 }
 
-// ========================== CREAZIONE PEDALE ==========================
+// ========================== CREAZIONE PEDALI ==========================
 function createNewPedal() {
   if (!window.currentUser || window.currentUser.role === "guest") {
     Swal.fire('Access Denied', 'Guests cannot create pedals. Please log in.', 'warning');
@@ -46,22 +46,10 @@ function createNewPedal() {
         Swal.showValidationMessage('Builder not ready');
         return false;
       }
-
       const validation = iframe.contentWindow.getPedalValidation();
-
-      if (validation.cssError) {
-        Swal.showValidationMessage(`CSS Error: ${validation.cssError}`);
-        return false;
-      }
-      if (validation.hasMissingFields) {
-        Swal.showValidationMessage("Please fill all required fields!");
-        return false;
-      }
-      if (validation.duplicateFound) {
-        Swal.showValidationMessage("Duplicate control labels detected!");
-        return false;
-      }
-
+      if (validation.cssError) Swal.showValidationMessage(`CSS Error: ${validation.cssError}`);
+      if (validation.hasMissingFields) Swal.showValidationMessage("Please fill all required fields!");
+      if (validation.duplicateFound) Swal.showValidationMessage("Duplicate control labels detected!");
       return validation.pedal;
     }
   }).then(result => {
@@ -71,55 +59,34 @@ function createNewPedal() {
       newPedal.authorId = window.currentUser.userid || null;
 
       const token = localStorage.getItem('authToken');
-
       fetch('https://api.pedalplex.com/CREATE_GEAR.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
         body: JSON.stringify(newPedal)
       })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          Swal.fire({
-            title: 'Created!',
-            icon: 'success',
-            confirmButtonText: 'OK',
-            customClass: { confirmButton: 'bx--btn bx--btn--primary' }
-          }).then(() => {
-            const resultsDiv = document.getElementById("catalog");
-            const createdPedal = {
-              ...newPedal,
-              _id: data.id,
-              _rev: data.rev,
-              author: data.author || newPedal.author,
-              canEdit: true
-            };
-            pedals.push(createdPedal);
-
-            const $pedalDiv = appendNewPedalWithSubPlex(createdPedal); // funzioni esistenti
-            $pedalDiv.attr("data-author", createdPedal.author || "");
-            $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
-            $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
-
-            $(resultsDiv).append($pedalDiv);
-            updatePedalCounts();
-            setupEditPedalHandler(pedals);
-          });
-        } else {
-          Swal.fire('Error', data.error || 'Failed to create', 'error');
-        }
+          Swal.fire({ title: 'Created!', icon: 'success', confirmButtonText: 'OK', customClass: { confirmButton: 'bx--btn bx--btn--primary' }})
+            .then(() => {
+              const resultsDiv = document.getElementById("catalog");
+              const createdPedal = { ...newPedal, _id: data.id, _rev: data.rev, canEdit: true };
+              pedals.push(createdPedal);
+              const $pedalDiv = appendNewPedalWithSubPlex(createdPedal);
+              $pedalDiv.attr("data-author", createdPedal.author || "");
+              $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
+              $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
+              $(resultsDiv).append($pedalDiv);
+              setupEditPedalHandler(pedals);
+            });
+        } else Swal.fire('Error', data.error || 'Failed to create', 'error');
       })
-      .catch(err => {
-        Swal.fire('Error', err.message || 'Failed to create', 'error');
-      });
+      .catch(err => Swal.fire('Error', err.message || 'Failed to create', 'error'));
     }
   });
 }
 
-// ========================== CATEGORY FILTER ==========================
+// ========================== CATEGORIE PEDALI ==========================
 const pedalCategoryMap = {
   acoustic: ["acoustic", "acoustic simulator", "ac sim", "simulator", "sim"],
   ambient: ["ambient", "ambi", "amb", "dimension", "space"],
@@ -149,15 +116,15 @@ const pedalCategoryMap = {
   wah: ["wah", "wah-wah"]
 };
 
+// ========================== FILTRO CATEGORIA ==========================
 $(document).on("change", "#categoryFilter", function () {
   const selected = $(this).val();
+  currentCategory = selected;
 
   if (selected === "all") {
     $(".pedal-catalog").show();
-    updatePedalCounts();
     return;
   }
-
   const variants = pedalCategoryMap[selected] || [];
 
   $(".pedal-catalog").each(function() {
@@ -165,11 +132,9 @@ $(document).on("change", "#categoryFilter", function () {
     const matches = variants.some(keyword => id.includes(keyword));
     $(this).toggle(matches);
   });
-
-  updatePedalCounts();
 });
 
-// ========================== RENDER CATALOG INCREMENTAL ==========================
+// ========================== RENDER INCREMENTALE ==========================
 function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
   const container = document.getElementById(containerId);
   let index = 0;
@@ -188,30 +153,20 @@ function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
     container.appendChild(frag);
     index += batchSize;
 
-    if (index < data.length) {
-      requestAnimationFrame(renderBatch);
-    } else {
-      updatePedalCounts();
-      if (userRole !== "guest") setupEditPedalHandler(data);
-    }
+    if (index < data.length) requestAnimationFrame(renderBatch);
+    else if (userRole !== "guest") setupEditPedalHandler(data);
   }
 
   renderBatch();
 }
 
-// ========================== LAZY LOAD PAGINE ==========================
+// ========================== LAZY LOAD ==========================
 function loadNextCatalogPage() {
   if (isLoading || !hasMore) return;
-
   isLoading = true;
   currentPage++;
 
-  const url =
-    'https://api.pedalplex.com/GET_CATALOG_LAZY.php'
-    + '?page=' + currentPage
-    + '&limit=24'
-    + '&category=' + encodeURIComponent(currentCategory);
-
+  const url = `GET_CATALOG_LAZY.php?page=${currentPage}&limit=24&category=${encodeURIComponent(currentCategory)}`;
   const headers = {};
   const token = localStorage.getItem('authToken');
   if (token) headers['Authorization'] = 'Bearer ' + token;
@@ -224,31 +179,26 @@ function loadNextCatalogPage() {
         if (sentinel) sentinel.remove();
         return;
       }
-      renderCatalogIncremental(
-        data,
-        'catalog',
-        (window.currentUser && window.currentUser.role) || 'guest',
-        12
-      );
+      renderCatalogIncremental(data, 'catalog', (window.currentUser?.role) || 'guest', 12);
     })
     .catch(err => console.error('Catalog lazy load error', err))
-    .finally(() => isLoading = false);
+    .finally(() => { isLoading = false; });
 }
 
-// ========================== INTERSECTION OBSERVER ==========================
 function setupCatalogObserver() {
   if (sentinel) sentinel.remove();
-
   sentinel = document.createElement('div');
   sentinel.id = 'catalog-sentinel';
   sentinel.style.height = '1px';
+  document.getElementById('catalog').appendChild(sentinel);
 
-  const catalog = document.getElementById('catalog');
-  catalog.appendChild(sentinel);
-
-  const observer = new IntersectionObserver(function (entries) {
+  const observer = new IntersectionObserver(entries => {
     if (entries[0].isIntersecting) loadNextCatalogPage();
   }, { rootMargin: '300px' });
-
   observer.observe(sentinel);
 }
+
+// ========================== DOCUMENT READY ==========================
+$(document).ready(() => {
+  setupCatalogObserver();
+});
