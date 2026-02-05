@@ -735,7 +735,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
   }
 
 // ==================== SHARE ICON ====================
-if (window.location.pathname.endsWith('/gears')) {
+if ( (window.location.pathname.endsWith('/gears')) || (window.location.pathname.endsWith('/gears_lazy'))) {
 
   const basePath = getBasePath();
 
