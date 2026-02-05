@@ -304,3 +304,40 @@ function createNewPedal() {
     }
   });
 }
+
+
+// ==================== UPDATE PEDAL COUNTS ====================
+function updatePedalCountsFromServer(activeFilter = null) {
+  const token = localStorage.getItem("authToken");
+
+  fetch("https://api.pedalplex.com/GET_CATALOG_COUNTS.php", {
+    headers: token ? { Authorization: "Bearer " + token } : {}
+  })
+  .then(r => r.json())
+  .then(counts => {
+    let countsHtml =
+      `${counts.total} gear${counts.total === 1 ? "" : "s"} ` +
+      `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${counts.total}</span>`;
+
+    if (window.currentUser?.role !== "guest") {
+      countsHtml += `, Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${counts.draft}</span>, 
+       Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${counts.private}</span>, 
+       Review: <span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">${counts.reviewing}</span>, 
+       By me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${counts.publicByMe}</span>;
+       Template: <span class="status-filter ${activeFilter === "template" ? "active-filter" : ""}" data-filter="template">${counts.template}</span>`;
+
+      if (window.currentUser?.role === "admin") {
+        countsHtml += `, By Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${counts.byUsers}</span>`;
+      }
+    }
+
+    countsHtml += `)`;
+    $("#pedalCount").html(countsHtml);
+
+    $(".status-filter").off("click").on("click", function() {
+      const filter = $(this).data("filter");
+      filterPedalsByStatus(filter);
+    });
+  })
+  .catch(err => console.error("Counts fetch error:", err));
+}
