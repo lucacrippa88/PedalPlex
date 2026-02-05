@@ -1,11 +1,18 @@
 window.catalogInitialized = false;
+window.catalogPage = 0;
+window.searchActive = false;
+window.singlePedalMode = false;
+window.currentUserRole = 'guest';
 
+// ===== URL PARAMS =====
 function getPedalIdFromURL() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id"); 
 }
 
+// ===== RENDER NAVBAR =====
 function renderNavBar(userRole) {
+  window.currentUserRole = userRole;
   const navHtml = `
     <header style="display: flex; align-items: center; justify-content: space-between;">
       <div style="display: flex; align-items: center; gap: 1rem;">
@@ -61,36 +68,37 @@ function renderNavBar(userRole) {
     else input.css("display","flex").focus();
   });
 
-  // ===== SEARCH PEDALS WITH SERVER CALL =====
-let searchTimeout = null;
+  // ===== SEARCH PEDALS =====
+  let searchTimeout = null;
 
-$("#pedalFilterInput").on("input", function(){
-  const query = $(this).val().trim();
+  $("#pedalFilterInput").on("input", function(){
+    const query = $(this).val().trim();
+    if(searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => performSearch(query), 500);
+  });
+}
 
-  // debounce: attendi 500ms prima di fare la ricerca
-  if(searchTimeout) clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    performSearch(query);
-  }, 500);
-});
-
+// ===== SEARCH FUNCTION =====
 function performSearch(query) {
   const resultsDiv = $("#catalog");
   const token = localStorage.getItem("authToken");
-  
+
   if(query === "") {
-    // Se campo vuoto, ripristina catalogo lazy load
+    // reset catalog
+    window.searchActive = false;
+    window.catalogPage = 0;
+    window.catalogInitialized = false;
     resultsDiv.empty();
     setupCatalogObserver();
     loadNextCatalogPage();
     return;
   }
 
-  // Mostra spinner globale
+  window.searchActive = true;
   resultsDiv.empty();
   resultsDiv.append('<div id="catalog-global-loader"></div>');
 
-  // Chiamata server SEARCH_GEAR.php
+  // SEARCH_GEAR.php
   $.ajax({
     url: 'https://api.pedalplex.com/SEARCH_GEAR.php',
     method: 'GET',
@@ -98,24 +106,22 @@ function performSearch(query) {
     headers: { "Authorization": token ? "Bearer " + token : "" },
     success: function(data){
       $("#catalog-global-loader").remove();
-
       if(!data || data.error || !data.length){
         resultsDiv.html('<p style="text-align:center;color:#aaa;">No matching pedals found</p>');
         return;
       }
-
-      // Ottieni i pedali completi dai loro _id
       const ids = data.map(d => d._id);
       fetchPedalsByIds(ids, token, resultsDiv);
     },
     error: function(xhr){
       $("#catalog-global-loader").remove();
       console.error('Search error', xhr);
+      resultsDiv.html('<p style="text-align:center;color:#aaa;">Error performing search</p>');
     }
   });
 }
 
-// Funzione helper: GET_PEDALS_BY_IDS + render completo
+// ===== FETCH COMPLETE PEDALS =====
 function fetchPedalsByIds(ids, token, containerDiv){
   fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
     method: "POST",
@@ -133,8 +139,6 @@ function fetchPedalsByIds(ids, token, containerDiv){
       containerDiv.html('<p style="text-align:center;color:#aaa;">No matching pedals found</p>');
       return;
     }
-
-    // Renderizza pedali completi
     renderCatalogIncremental(pedals, 'catalog', window.currentUserRole || 'guest', 50);
     if(window.currentUserRole !== 'guest') setupEditPedalHandler(pedals);
   })
@@ -144,34 +148,19 @@ function fetchPedalsByIds(ids, token, containerDiv){
   });
 }
 
-
-  // $("#pedalFilterInput").on("input", function(){
-  //   const filterValue = $(this).val().toLowerCase();
-  //   $(".pedal-catalog").each(function(){
-  //     const name = $(this).data("pedal-id")?.toLowerCase() || "";
-  //     $(this).toggle(name.includes(filterValue));
-  //   });
-  // });
-}
-
 // ===== SINGLE PEDAL VIEW =====
 function initSinglePedalView(pedalId, userRole){
   window.singlePedalMode = true;
   const token = localStorage.getItem("authToken");
   const resultsDiv = $("#catalog");
   resultsDiv.empty();
-
-  const globalSpinner = $('<div id="catalog-global-loader"></div>'); 
-  resultsDiv.append(globalSpinner);
+  resultsDiv.append('<div id="catalog-global-loader"></div>');
 
   const cleanId = decodeURIComponent(pedalId.trim());
 
   fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
     method:"POST",
-    headers: {
-      "Content-Type":"application/json",
-      "Authorization": token ? "Bearer "+token : ""
-    },
+    headers: { "Content-Type":"application/json", "Authorization": token ? "Bearer "+token : "" },
     body: JSON.stringify({ids:[cleanId]})
   })
   .then(r=>r.json())
@@ -191,11 +180,43 @@ function initSinglePedalView(pedalId, userRole){
 // ===== INIT NAV + CATALOG =====
 function initNavCatalog(userRole){
   renderNavBar(userRole);
-  updatePedalCountsFromServer(); // <- qui chiamiamo subito i counts fissi
+  updatePedalCountsFromServer();
   const pedalIdFromURL = getPedalIdFromURL();
   if(pedalIdFromURL) initSinglePedalView(pedalIdFromURL,userRole);
   else {
     setupCatalogObserver();
     loadNextCatalogPage();
   }
+}
+
+// ===== LAZY LOAD =====
+function loadNextCatalogPage() {
+  if(window.searchActive || window.singlePedalMode) return; // blocca lazy load durante search o single view
+  if(window.catalogInitialized && window.catalogPage >= 1000) return; // optional limite
+
+  const resultsDiv = $("#catalog");
+  resultsDiv.append('<div class="catalog-loader"></div>');
+
+  const token = localStorage.getItem("authToken");
+  const page = window.catalogPage;
+  window.catalogPage++;
+
+  fetch("https://api.pedalplex.com/GET_PEDALS_BY_PAGE.php?page="+page, { // supponendo un endpoint paginato
+    headers: { "Authorization": token ? "Bearer "+token : "" }
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    $(".catalog-loader").remove();
+    const pedals = data.docs || [];
+    if(pedals.length === 0) {
+      window.catalogInitialized = true;
+      return;
+    }
+    renderCatalogIncremental(pedals,'catalog',window.currentUserRole || 'guest',50);
+    if(window.currentUserRole !== 'guest') setupEditPedalHandler(pedals);
+  })
+  .catch(err=>{
+    $(".catalog-loader").remove();
+    console.error("Lazy load error", err);
+  });
 }
