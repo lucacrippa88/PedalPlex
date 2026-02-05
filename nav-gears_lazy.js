@@ -61,13 +61,97 @@ function renderNavBar(userRole) {
     else input.css("display","flex").focus();
   });
 
-  $("#pedalFilterInput").on("input", function(){
-    const filterValue = $(this).val().toLowerCase();
-    $(".pedal-catalog").each(function(){
-      const name = $(this).data("pedal-id")?.toLowerCase() || "";
-      $(this).toggle(name.includes(filterValue));
-    });
+  // ===== SEARCH PEDALS WITH SERVER CALL =====
+let searchTimeout = null;
+
+$("#pedalFilterInput").on("input", function(){
+  const query = $(this).val().trim();
+
+  // debounce: attendi 500ms prima di fare la ricerca
+  if(searchTimeout) clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    performSearch(query);
+  }, 500);
+});
+
+function performSearch(query) {
+  const resultsDiv = $("#catalog");
+  const token = localStorage.getItem("authToken");
+  
+  if(query === "") {
+    // Se campo vuoto, ripristina catalogo lazy load
+    resultsDiv.empty();
+    setupCatalogObserver();
+    loadNextCatalogPage();
+    return;
+  }
+
+  // Mostra spinner globale
+  resultsDiv.empty();
+  resultsDiv.append('<div id="catalog-global-loader"></div>');
+
+  // Chiamata server SEARCH_GEAR.php
+  $.ajax({
+    url: 'https://api.pedalplex.com/SEARCH_GEAR.php',
+    method: 'GET',
+    data: { q: query },
+    headers: { "Authorization": token ? "Bearer " + token : "" },
+    success: function(data){
+      $("#catalog-global-loader").remove();
+
+      if(!data || data.error || !data.length){
+        resultsDiv.html('<p style="text-align:center;color:#aaa;">No matching pedals found</p>');
+        return;
+      }
+
+      // Ottieni i pedali completi dai loro _id
+      const ids = data.map(d => d._id);
+      fetchPedalsByIds(ids, token, resultsDiv);
+    },
+    error: function(xhr){
+      $("#catalog-global-loader").remove();
+      console.error('Search error', xhr);
+    }
   });
+}
+
+// Funzione helper: GET_PEDALS_BY_IDS + render completo
+function fetchPedalsByIds(ids, token, containerDiv){
+  fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": token ? "Bearer "+token : ""
+    },
+    body: JSON.stringify({ ids: ids })
+  })
+  .then(r => r.json())
+  .then(data => {
+    containerDiv.empty();
+    const pedals = data.docs || [];
+    if(pedals.length === 0){
+      containerDiv.html('<p style="text-align:center;color:#aaa;">No matching pedals found</p>');
+      return;
+    }
+
+    // Renderizza pedali completi
+    renderCatalogIncremental(pedals, 'catalog', window.currentUserRole || 'guest', 50);
+    if(window.currentUserRole !== 'guest') setupEditPedalHandler(pedals);
+  })
+  .catch(err => {
+    console.error('Fetch pedals error', err);
+    containerDiv.html('<p style="text-align:center;color:#aaa;">Error loading pedals</p>');
+  });
+}
+
+
+  // $("#pedalFilterInput").on("input", function(){
+  //   const filterValue = $(this).val().toLowerCase();
+  //   $(".pedal-catalog").each(function(){
+  //     const name = $(this).data("pedal-id")?.toLowerCase() || "";
+  //     $(this).toggle(name.includes(filterValue));
+  //   });
+  // });
 }
 
 // ===== SINGLE PEDAL VIEW =====
