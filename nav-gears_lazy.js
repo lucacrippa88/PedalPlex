@@ -1,5 +1,4 @@
 window.catalogInitialized = false;
-let currentSearchQuery = null; // null = catalogo normale
 
 
 function getPedalIdFromURL() {
