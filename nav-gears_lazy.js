@@ -70,17 +70,18 @@ $("#pedalFilterInput").on("input", function(){
 
   if(searchTimeout) clearTimeout(searchTimeout);
   searchTimeout = setTimeout(function(){
-    if(query === "") {
-      resetCatalogState();
-      loadNextCatalogPage();
-      return;
-    }
-
     resetCatalogState();
-    currentSearchQuery = query;
-    loadNextCatalogPage();
+    if(query === "") {
+      // catalogo normale
+      loadNextCatalogPage();
+    } else {
+      // ricerca lazy
+      currentSearchQuery = query;
+      loadNextCatalogPage();
+    }
   }, 500);
 });
+
 
 
 function performSearch(query) {

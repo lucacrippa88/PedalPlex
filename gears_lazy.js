@@ -4,6 +4,7 @@ let isLoading = false;
 let hasMore = true;
 let currentCategory = 'all';
 let currentSearchQuery = null;
+let catalogRenderIndex = 0; 
 
 
 let pedals = []; // stato globale
@@ -22,6 +23,7 @@ function resetCatalogState() {
   hasMore = true;
   pedals = [];
   currentSearchQuery = null;
+  catalogRenderIndex = 0;  // reset index globale
 
   const catalog = document.getElementById("catalog");
   catalog.innerHTML = "";
@@ -33,6 +35,7 @@ function resetCatalogState() {
 
   setupCatalogObserver();
 }
+
 
 
 
@@ -184,9 +187,41 @@ $(document).on("change", "#categoryFilter", function () {
 });
 
 // ===== RENDER CATALOG INCREMENTAL =====
+// function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
+//   const container = document.getElementById(containerId);
+//   let index = 0;
+
+//   function renderBatch() {
+//     const batch = data.slice(index, index + batchSize);
+//     const frag = document.createDocumentFragment();
+
+//     batch.forEach(pedal => {
+//       const $pedalDiv = renderPedal(pedal, userRole);
+//       $pedalDiv.attr("data-author", pedal.author || "");
+//       $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+//       frag.appendChild($pedalDiv[0]);
+//     });
+
+//     container.appendChild(frag);
+//     index += batchSize;
+
+//     if (sentinel) container.appendChild(sentinel);
+
+//     if (index < data.length) {
+//       requestAnimationFrame(renderBatch);
+//     } else {
+//       updatePedalCountsFromServer();
+//       if (userRole !== "guest") setupEditPedalHandler(data);
+//       checkLoadNext(); // verifica se serve caricare subito altro
+//     }
+//   }
+
+//   renderBatch();
+// }
+
 function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
   const container = document.getElementById(containerId);
-  let index = 0;
+  let index = catalogRenderIndex;  // parte dall'ultimo index globale
 
   function renderBatch() {
     const batch = data.slice(index, index + batchSize);
@@ -201,6 +236,7 @@ function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
 
     container.appendChild(frag);
     index += batchSize;
+    catalogRenderIndex = index; // aggiorna globale
 
     if (sentinel) container.appendChild(sentinel);
 
@@ -209,14 +245,52 @@ function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
     } else {
       updatePedalCountsFromServer();
       if (userRole !== "guest") setupEditPedalHandler(data);
-      checkLoadNext(); // verifica se serve caricare subito altro
+      checkLoadNext(); // verifica se serve caricare altro
     }
   }
 
   renderBatch();
 }
 
+
 // ===== LAZY LOAD =====
+// function loadNextCatalogPage() {
+//   if (isLoading || !hasMore) return;
+
+//   isLoading = true;
+//   currentPage++;
+
+//   let url;
+//   if (currentSearchQuery) {
+//     url = 'https://api.pedalplex.com/SEARCH_GEAR_LAZY.php' +
+//           '?q=' + encodeURIComponent(currentSearchQuery) +
+//           '&page=' + currentPage +
+//           '&limit=20';
+//   } else {
+//     url = 'https://api.pedalplex.com/GET_CATALOG_LAZY.php' +
+//           '?page=' + currentPage +
+//           '&limit=100' +
+//           '&category=' + encodeURIComponent(currentCategory);
+//   }
+
+//   const headers = {};
+//   const token = localStorage.getItem('authToken');
+//   if(token) headers['Authorization'] = 'Bearer '+token;
+
+//   fetch(url, { headers })
+//     .then(r => r.json())
+//     .then(data => {
+//       if(!Array.isArray(data) || data.length === 0) {
+//         hasMore = false;
+//         if (sentinel) sentinel.remove();
+//         return;
+//       }
+//       renderCatalogIncremental(data, 'catalog', (window.currentUser?.role) || 'guest', 12);
+//     })
+//     .catch(err => console.error('Catalog lazy load error', err))
+//     .finally(() => isLoading = false);
+// }
+
 function loadNextCatalogPage() {
   if (isLoading || !hasMore) return;
 
@@ -253,6 +327,7 @@ function loadNextCatalogPage() {
     .catch(err => console.error('Catalog lazy load error', err))
     .finally(() => isLoading = false);
 }
+
 
 
 
