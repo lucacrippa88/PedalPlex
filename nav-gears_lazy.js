@@ -1,4 +1,6 @@
 window.catalogInitialized = false;
+let currentSearchQuery = null; // null = catalogo normale
+
 
 function getPedalIdFromURL() {
   const params = new URLSearchParams(window.location.search);
@@ -67,12 +69,20 @@ let searchTimeout = null;
 $("#pedalFilterInput").on("input", function(){
   const query = $(this).val().trim();
 
-  // debounce: attendi 500ms prima di fare la ricerca
   if(searchTimeout) clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    performSearch(query);
+  searchTimeout = setTimeout(function(){
+    if(query === "") {
+      resetCatalogState();
+      loadNextCatalogPage();
+      return;
+    }
+
+    resetCatalogState();
+    currentSearchQuery = query;
+    loadNextCatalogPage();
   }, 500);
 });
+
 
 function performSearch(query) {
   const resultsDiv = $("#catalog");

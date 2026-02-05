@@ -3,6 +3,8 @@ let currentPage = 0;
 let isLoading = false;
 let hasMore = true;
 let currentCategory = 'all';
+let currentSearchQuery = null;
+
 
 let pedals = []; // stato globale
 let pedalJSON = null;
@@ -12,6 +14,27 @@ let sentinel = null;
 function setPedalJSON(jsonString) {
   pedalJSON = jsonString;
 }
+
+
+function resetCatalogState() {
+  currentPage = 0;
+  isLoading = false;
+  hasMore = true;
+  pedals = [];
+  currentSearchQuery = null;
+
+  const catalog = document.getElementById("catalog");
+  catalog.innerHTML = "";
+
+  if (sentinel) {
+    sentinel.remove();
+    sentinel = null;
+  }
+
+  setupCatalogObserver();
+}
+
+
 
 // ===== CREATE NEW PEDAL =====
 function createNewPedal() {
@@ -200,15 +223,27 @@ function loadNextCatalogPage() {
   isLoading = true;
   currentPage++;
 
-  const url = 'https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=' + currentPage + '&limit=100' + '&category=' + encodeURIComponent(currentCategory);
+  let url;
+  if (currentSearchQuery) {
+    url = 'https://api.pedalplex.com/SEARCH_GEAR_LAZY.php' +
+          '?q=' + encodeURIComponent(currentSearchQuery) +
+          '&page=' + currentPage +
+          '&limit=20';
+  } else {
+    url = 'https://api.pedalplex.com/GET_CATALOG_LAZY.php' +
+          '?page=' + currentPage +
+          '&limit=100' +
+          '&category=' + encodeURIComponent(currentCategory);
+  }
+
   const headers = {};
   const token = localStorage.getItem('authToken');
-  if (token) headers['Authorization'] = 'Bearer ' + token;
+  if(token) headers['Authorization'] = 'Bearer '+token;
 
   fetch(url, { headers })
-    .then(res => res.json())
+    .then(r => r.json())
     .then(data => {
-      if (!Array.isArray(data) || data.length === 0) {
+      if(!Array.isArray(data) || data.length === 0) {
         hasMore = false;
         if (sentinel) sentinel.remove();
         return;
@@ -218,6 +253,8 @@ function loadNextCatalogPage() {
     .catch(err => console.error('Catalog lazy load error', err))
     .finally(() => isLoading = false);
 }
+
+
 
 // ===== CHECK SCROLL =====
 function checkLoadNext() {
