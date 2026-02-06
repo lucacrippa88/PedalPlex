@@ -34,7 +34,7 @@ function resetCatalogState() {
 $(document).on("change", "#categoryFilter", function () {
   currentCategory = $(this).val();
   searchBookmark = null;        // reset bookmark
-  currentSearchQuery = "";      // forziamo anche solo category
+  currentSearchQuery = null;      // forziamo anche solo category
   resetCatalogState();
   loadNextCatalogPage();
 });
@@ -48,10 +48,15 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
 
   batch.forEach(pedal => {
     const $pedalDiv = renderPedal(pedal, userRole);
+    if (!$pedalDiv || !$pedalDiv[0]) {
+      console.warn("Pedal non renderizzato:", pedal);
+      return;
+    }
     $pedalDiv.attr("data-author", pedal.author || "");
     $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
     frag.appendChild($pedalDiv[0]);
   });
+
 
   container.appendChild(frag);
   catalogRenderIndex += batch.length;
@@ -119,7 +124,7 @@ if (currentSearchQuery || currentCategory !== 'all') {
         return;
       }
 
-      const isSearchMode = currentSearchQuery || (currentCategory && currentCategory !== 'all');
+      const isSearchMode = currentSearchQuery !== null || (currentCategory && currentCategory !== 'all');
 
       // ---------- SEARCH ----------
       if (isSearchMode) {
