@@ -11,7 +11,6 @@ var searchBookmark = null;
 var currentSearchQuery = null;
 var currentCategory = 'all';
 
-
 // ==================== Helpers ====================
 function setPedalJSON(jsonString) { pedalJSON = jsonString; }
 
@@ -34,17 +33,15 @@ function resetCatalogState() {
 // ==================== Category Filter ====================
 $(document).on("change", "#categoryFilter", function () {
   currentCategory = $(this).val();
-  currentSearchQuery = null;
+  currentSearchQuery = null; // reset search query
   resetCatalogState();
-  loadNextCatalogPage(); // il server riceverà la category
+  loadNextCatalogPage(); // trigger loading della nuova categoria
 });
-
 
 // ==================== Lazy Catalog Render ====================
 function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
   const container = document.getElementById(containerId);
-  const data = catalogData;
-  const batch = data.slice(catalogRenderIndex, catalogRenderIndex + batchSize);
+  const batch = catalogData.slice(catalogRenderIndex, catalogRenderIndex + batchSize);
   const frag = document.createDocumentFragment();
 
   batch.forEach(pedal => {
@@ -57,16 +54,18 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
   container.appendChild(frag);
   catalogRenderIndex += batch.length;
 
+  // mantieni sentinel alla fine
   if (sentinel) container.appendChild(sentinel);
+
   if (userRole !== "guest") setupEditPedalHandler(batch);
 
+  // controlla se caricare batch successivo
   checkLoadNext();
 }
 
 // ==================== Lazy Load ====================
 function loadNextCatalogPage() {
   if (isLoading || !hasMore) return;
-
   isLoading = true;
 
   let url = "";
@@ -74,23 +73,22 @@ function loadNextCatalogPage() {
 
   // ==================== SEARCH MODE ====================
   if (currentSearchQuery) {
-
     url = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
     params.push("q=" + encodeURIComponent(currentSearchQuery));
     params.push("limit=100");
 
-    // if (currentCategory && currentCategory !== "all") {
+    // ✅ categoria inviata al server per filtrare tramite search_tokens
+    if (currentCategory && currentCategory !== "all") {
       params.push("category=" + encodeURIComponent(currentCategory));
-    // }
+    }
+
     if (searchBookmark) {
       params.push("bookmark=" + encodeURIComponent(searchBookmark));
     }
 
   // ==================== CATALOG MODE ====================
   } else {
-
     currentPage++;
-
     url = "https://api.pedalplex.com/GET_CATALOG_LAZY.php";
     params.push("page=" + currentPage);
     params.push("limit=100");
@@ -109,11 +107,15 @@ function loadNextCatalogPage() {
   fetch(url, { headers })
     .then(r => r.json())
     .then(data => {
+      if (!data) {
+        hasMore = false;
+        if (sentinel) sentinel.remove();
+        return;
+      }
 
       // ---------- SEARCH ----------
       if (currentSearchQuery) {
-
-        if (!data || !Array.isArray(data.docs) || data.docs.length === 0) {
+        if (!Array.isArray(data.docs) || data.docs.length === 0) {
           hasMore = false;
           if (sentinel) sentinel.remove();
           return;
@@ -129,29 +131,24 @@ function loadNextCatalogPage() {
 
       // ---------- CATALOG ----------
       } else {
-
         if (!Array.isArray(data) || data.length === 0) {
           hasMore = false;
           if (sentinel) sentinel.remove();
           return;
         }
-
         catalogData = catalogData.concat(data);
       }
 
-      renderCatalogIncremental(
-        [],
-        "catalog",
-        (window.currentUser?.role) || "guest",
-        12
-      );
+      renderCatalogIncremental([], "catalog", (window.currentUser?.role) || "guest", 12);
     })
-    .catch(err => console.error("Catalog lazy error:", err))
+    .catch(err => {
+      console.error("Catalog lazy error:", err);
+      isLoading = false;
+    })
     .finally(() => {
       isLoading = false;
     });
 }
-
 
 // ==================== Scroll Observer ====================
 function checkLoadNext() {
@@ -171,8 +168,6 @@ function setupCatalogObserver() {
 
 window.addEventListener('scroll', checkLoadNext);
 window.addEventListener('resize', checkLoadNext);
-
-
 
 // ==================== Single Pedal View ====================
 function getPedalIdFromURL() {
@@ -210,6 +205,10 @@ function initSinglePedalView(pedalId, userRole){
     catalogRenderIndex = 0;
     renderCatalogIncremental([], 'catalog', userRole, 50);
     if(userRole!=="guest") setupEditPedalHandler(pedals);
+  })
+  .catch(err => {
+    console.error("Single pedal fetch error:", err);
+    $("#catalog-global-loader").remove();
   });
 }
 
@@ -312,7 +311,6 @@ function createNewPedal() {
     }
   });
 }
-
 
 // ==================== UPDATE PEDAL COUNTS ====================
 function updatePedalCountsFromServer(activeFilter = null) {
