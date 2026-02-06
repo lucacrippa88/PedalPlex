@@ -22,7 +22,7 @@ function resetCatalogState() {
   pedals = [];
   catalogData = [];
   catalogRenderIndex = 0;
-  currentSearchQuery = null;
+  // currentSearchQuery = null;
   searchBookmark = null;   // ← AGGIUNTA
 
   const catalog = document.getElementById("catalog");
@@ -63,11 +63,18 @@ const pedalCategoryMap = {
   wah: ["wah","wah-wah"]
 };
 
+// $(document).on("change", "#categoryFilter", function () {
+//   currentCategory = $(this).val();
+//   resetCatalogState();
+//   loadNextCatalogPage();
+// });
 $(document).on("change", "#categoryFilter", function () {
   currentCategory = $(this).val();
+  currentSearchQuery = null;
   resetCatalogState();
   loadNextCatalogPage();
 });
+
 
 // ==================== Lazy Catalog Render ====================
 function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
@@ -144,32 +151,45 @@ if (currentSearchQuery) {
 
   fetch(url, { headers })
     .then(r => r.json())
-    // .then(data => {
-    //   if (!Array.isArray(data) || data.length === 0) {
-    //     hasMore = false;
-    //     if (sentinel) sentinel.remove();
-    //     return;
-    //   }
-    //   catalogData = catalogData.concat(data);
-    //   renderCatalogIncremental([], 'catalog', (window.currentUser?.role) || 'guest', 12);
-    // })
-    .then(data => {
-  if (!data || !Array.isArray(data.docs) || data.docs.length === 0) {
-    hasMore = false;
-    if (sentinel) sentinel.remove();
-    return;
+.then(data => {
+
+  // ==================== SEARCH MODE ====================
+  if (currentSearchQuery) {
+
+    if (!data || !Array.isArray(data.docs) || data.docs.length === 0) {
+      hasMore = false;
+      if (sentinel) sentinel.remove();
+      return;
+    }
+
+    catalogData = catalogData.concat(data.docs);
+    searchBookmark = data.bookmark || null;
+
+    if (!searchBookmark) {
+      hasMore = false;
+      if (sentinel) sentinel.remove();
+    }
+
+  // ==================== CATALOG MODE ====================
+  } else {
+
+    if (!Array.isArray(data) || data.length === 0) {
+      hasMore = false;
+      if (sentinel) sentinel.remove();
+      return;
+    }
+
+    catalogData = catalogData.concat(data);
   }
 
-  catalogData = catalogData.concat(data.docs);
-  searchBookmark = data.bookmark || null;
-
-  if (!searchBookmark) {
-    hasMore = false; // fine risultati search
-    if (sentinel) sentinel.remove();
-  }
-
-  renderCatalogIncremental([], 'catalog', (window.currentUser?.role) || 'guest', 12);
+  renderCatalogIncremental(
+    [],
+    'catalog',
+    (window.currentUser?.role) || 'guest',
+    12
+  );
 })
+
 
     .catch(err => console.error('Catalog lazy load error', err))
     .finally(() => isLoading = false);
@@ -196,16 +216,34 @@ window.addEventListener('resize', checkLoadNext);
 
 // ==================== Search ====================
 let searchTimeout = null;
-$("#pedalFilterInput").on("input", function(){
+// $("#pedalFilterInput").on("input", function(){
+//   const query = $(this).val().trim();
+
+//   if(searchTimeout) clearTimeout(searchTimeout);
+//   searchTimeout = setTimeout(function(){
+//     resetCatalogState();
+//     currentSearchQuery = query === "" ? null : query;
+//     loadNextCatalogPage();
+//   }, 500);
+// });
+$("#pedalFilterInput").on("input", function () {
   const query = $(this).val().trim();
 
-  if(searchTimeout) clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(function(){
+  if (searchTimeout) clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(function () {
+
     resetCatalogState();
-    currentSearchQuery = query === "" ? null : query;
+
+    if (query !== "") {
+      currentSearchQuery = query;
+    } else {
+      currentSearchQuery = null;
+    }
+
     loadNextCatalogPage();
   }, 500);
 });
+
 
 // ==================== Single Pedal View ====================
 function getPedalIdFromURL() {
