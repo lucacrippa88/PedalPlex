@@ -1,15 +1,15 @@
 // ==================== Global State ====================
-let currentPage = 0;
-let isLoading = false;
-let hasMore = true;
-let currentCategory = 'all';
+var currentPage = 0;
+var isLoading = false;
+var hasMore = true;
 let pedals = [];
 let catalogData = [];
 let catalogRenderIndex = 0;
 let pedalJSON = null;
 let sentinel = null;
-let searchBookmark = null;
+var searchBookmark = null;
 var currentSearchQuery = null;
+var currentCategory = 'all';
 
 
 // ==================== Helpers ====================
@@ -22,7 +22,6 @@ function resetCatalogState() {
   pedals = [];
   catalogData = [];
   catalogRenderIndex = 0;
-  // currentSearchQuery = null;
   searchBookmark = null;   // ← AGGIUNTA
 
   const catalog = document.getElementById("catalog");
@@ -95,92 +94,180 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
 
   if (sentinel) container.appendChild(sentinel);
 
-  updatePedalCountsFromServer();
+  // updatePedalCountsFromServer();
   if (userRole !== "guest") setupEditPedalHandler(batch);
 
   checkLoadNext();
 }
 
 // ==================== Lazy Load ====================
+// function loadNextCatalogPage() {
+//   if (isLoading || !hasMore) return;
+
+//   if (catalogRenderIndex < catalogData.length) {
+//     renderCatalogIncremental([], 'catalog', (window.currentUser?.role) || 'guest', 12);
+//     return;
+//   }
+
+//   isLoading = true;
+//   currentPage++;
+
+//   let url;
+
+// if (currentSearchQuery) {
+//   url = 'https://api.pedalplex.com/SEARCH_GEAR_LAZY.php' +
+//         '?q=' + encodeURIComponent(currentSearchQuery) +
+//         '&limit=20';
+
+//   if (searchBookmark) {
+//     url += '&bookmark=' + encodeURIComponent(searchBookmark);
+//   }
+
+// } else {
+//   url = 'https://api.pedalplex.com/GET_CATALOG_LAZY.php' +
+//         '?page=' + currentPage +
+//         '&limit=100' +
+//         '&category=' + encodeURIComponent(currentCategory);
+// }
+
+
+//   const headers = {};
+//   const token = localStorage.getItem('authToken');
+//   if(token) headers['Authorization'] = 'Bearer '+token;
+
+//   fetch(url, { headers })
+//     .then(r => r.json())
+// .then(data => {
+
+//   // ==================== SEARCH MODE ====================
+//   if (currentSearchQuery) {
+
+//     if (!data || !Array.isArray(data.docs) || data.docs.length === 0) {
+//       hasMore = false;
+//       if (sentinel) sentinel.remove();
+//       return;
+//     }
+
+//     catalogData = catalogData.concat(data.docs);
+//     searchBookmark = data.bookmark || null;
+
+//     if (!searchBookmark) {
+//       hasMore = false;
+//       if (sentinel) sentinel.remove();
+//     }
+
+//   // ==================== CATALOG MODE ====================
+//   } else {
+
+//     if (!Array.isArray(data) || data.length === 0) {
+//       hasMore = false;
+//       if (sentinel) sentinel.remove();
+//       return;
+//     }
+
+//     catalogData = catalogData.concat(data);
+//   }
+
+//   renderCatalogIncremental(
+//     [],
+//     'catalog',
+//     (window.currentUser?.role) || 'guest',
+//     12
+//   );
+// })
+
+
+//     .catch(err => console.error('Catalog lazy load error', err))
+//     .finally(() => isLoading = false);
+// }
+
 function loadNextCatalogPage() {
   if (isLoading || !hasMore) return;
 
-  if (catalogRenderIndex < catalogData.length) {
-    renderCatalogIncremental([], 'catalog', (window.currentUser?.role) || 'guest', 12);
-    return;
-  }
-
   isLoading = true;
-  currentPage++;
 
-  let url;
-
-if (currentSearchQuery) {
-  url = 'https://api.pedalplex.com/SEARCH_GEAR_LAZY.php' +
-        '?q=' + encodeURIComponent(currentSearchQuery) +
-        '&limit=20';
-
-  if (searchBookmark) {
-    url += '&bookmark=' + encodeURIComponent(searchBookmark);
-  }
-
-} else {
-  url = 'https://api.pedalplex.com/GET_CATALOG_LAZY.php' +
-        '?page=' + currentPage +
-        '&limit=100' +
-        '&category=' + encodeURIComponent(currentCategory);
-}
-
-
-  const headers = {};
-  const token = localStorage.getItem('authToken');
-  if(token) headers['Authorization'] = 'Bearer '+token;
-
-  fetch(url, { headers })
-    .then(r => r.json())
-.then(data => {
+  let url = "";
+  let params = [];
 
   // ==================== SEARCH MODE ====================
   if (currentSearchQuery) {
 
-    if (!data || !Array.isArray(data.docs) || data.docs.length === 0) {
-      hasMore = false;
-      if (sentinel) sentinel.remove();
-      return;
+    url = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
+    params.push("q=" + encodeURIComponent(currentSearchQuery));
+
+    if (currentCategory && currentCategory !== "all") {
+      params.push("category=" + encodeURIComponent(currentCategory));
     }
 
-    catalogData = catalogData.concat(data.docs);
-    searchBookmark = data.bookmark || null;
-
-    if (!searchBookmark) {
-      hasMore = false;
-      if (sentinel) sentinel.remove();
+    if (searchBookmark) {
+      params.push("bookmark=" + encodeURIComponent(searchBookmark));
     }
 
   // ==================== CATALOG MODE ====================
   } else {
 
-    if (!Array.isArray(data) || data.length === 0) {
-      hasMore = false;
-      if (sentinel) sentinel.remove();
-      return;
-    }
+    currentPage++;
 
-    catalogData = catalogData.concat(data);
+    url = "https://api.pedalplex.com/GET_CATALOG_LAZY.php";
+    params.push("page=" + currentPage);
+
+    if (currentCategory && currentCategory !== "all") {
+      params.push("category=" + encodeURIComponent(currentCategory));
+    }
   }
 
-  renderCatalogIncremental(
-    [],
-    'catalog',
-    (window.currentUser?.role) || 'guest',
-    12
-  );
-})
+  url += "?" + params.join("&");
 
+  const headers = {};
+  const token = localStorage.getItem("authToken");
+  if (token) headers.Authorization = "Bearer " + token;
 
-    .catch(err => console.error('Catalog lazy load error', err))
-    .finally(() => isLoading = false);
+  fetch(url, { headers })
+    .then(r => r.json())
+    .then(data => {
+
+      // ---------- SEARCH ----------
+      if (currentSearchQuery) {
+
+        if (!data || !Array.isArray(data.docs) || data.docs.length === 0) {
+          hasMore = false;
+          if (sentinel) sentinel.remove();
+          return;
+        }
+
+        catalogData = catalogData.concat(data.docs);
+        searchBookmark = data.bookmark || null;
+
+        if (!searchBookmark) {
+          hasMore = false;
+          if (sentinel) sentinel.remove();
+        }
+
+      // ---------- CATALOG ----------
+      } else {
+
+        if (!Array.isArray(data) || data.length === 0) {
+          hasMore = false;
+          if (sentinel) sentinel.remove();
+          return;
+        }
+
+        catalogData = catalogData.concat(data);
+      }
+
+      renderCatalogIncremental(
+        [],
+        "catalog",
+        (window.currentUser?.role) || "guest",
+        12
+      );
+    })
+    .catch(err => console.error("Catalog lazy error:", err))
+    .finally(() => {
+      isLoading = false;
+    });
 }
+
 
 // ==================== Scroll Observer ====================
 function checkLoadNext() {
