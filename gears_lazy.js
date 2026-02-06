@@ -6,10 +6,10 @@ let currentCategory = 'all';
 let pedals = [];
 let catalogData = [];
 let catalogRenderIndex = 0;
-let currentSearchQuery = null;
 let pedalJSON = null;
 let sentinel = null;
 let searchBookmark = null;
+var currentSearchQuery = null;
 
 
 // ==================== Helpers ====================
@@ -113,19 +113,6 @@ function loadNextCatalogPage() {
   isLoading = true;
   currentPage++;
 
-  // let url;
-  // if (currentSearchQuery) {
-  //   url = 'https://api.pedalplex.com/SEARCH_GEAR_LAZY.php' +
-  //         '?q=' + encodeURIComponent(currentSearchQuery) +
-  //         '&page=' + currentPage +
-  //         '&limit=20';
-  // } else {
-  //   url = 'https://api.pedalplex.com/GET_CATALOG_LAZY.php' +
-  //         '?page=' + currentPage +
-  //         '&limit=100' +
-  //         '&category=' + encodeURIComponent(currentCategory);
-  // }
-
   let url;
 
 if (currentSearchQuery) {
@@ -214,37 +201,6 @@ function setupCatalogObserver() {
 window.addEventListener('scroll', checkLoadNext);
 window.addEventListener('resize', checkLoadNext);
 
-// ==================== Search ====================
-let searchTimeout = null;
-// $("#pedalFilterInput").on("input", function(){
-//   const query = $(this).val().trim();
-
-//   if(searchTimeout) clearTimeout(searchTimeout);
-//   searchTimeout = setTimeout(function(){
-//     resetCatalogState();
-//     currentSearchQuery = query === "" ? null : query;
-//     loadNextCatalogPage();
-//   }, 500);
-// });
-$("#pedalFilterInput").on("input", function () {
-  const query = $(this).val().trim();
-
-  if (searchTimeout) clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(function () {
-
-    resetCatalogState();
-
-if (query !== "") {
-  currentSearchQuery = query;
-} else {
-  currentSearchQuery = null;
-  currentPage = 0;
-}
-
-loadNextCatalogPage();
-
-  }, 500);
-});
 
 
 // ==================== Single Pedal View ====================
