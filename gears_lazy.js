@@ -77,7 +77,7 @@ function loadNextCatalogPage() {
 
     url = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
     params.push("q=" + encodeURIComponent(currentSearchQuery));
-    params.push("limit=20");
+    params.push("limit=100");
 
     // if (currentCategory && currentCategory !== "all") {
       params.push("category=" + encodeURIComponent(currentCategory));
