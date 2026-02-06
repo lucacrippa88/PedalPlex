@@ -135,6 +135,7 @@ if (currentSearchQuery || currentCategory !== 'all') {
         }
 
         catalogData = catalogData.concat(data.docs);
+        console.log("CatalogData dopo fetch:", catalogData);
         searchBookmark = data.bookmark || null;
         hasMore = !!searchBookmark; // se c'è bookmark, ci sono altri risultati
 
