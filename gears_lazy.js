@@ -234,13 +234,15 @@ $("#pedalFilterInput").on("input", function () {
 
     resetCatalogState();
 
-    if (query !== "") {
-      currentSearchQuery = query;
-    } else {
-      currentSearchQuery = null;
-    }
+if (query !== "") {
+  currentSearchQuery = query;
+} else {
+  currentSearchQuery = null;
+  currentPage = 0;
+}
 
-    loadNextCatalogPage();
+loadNextCatalogPage();
+
   }, 500);
 });
 
