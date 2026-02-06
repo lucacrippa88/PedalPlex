@@ -123,6 +123,7 @@ function loadNextCatalogPage() {
 
         catalogData = catalogData.concat(data.docs);
         searchBookmark = data.bookmark || null;
+        hasMore = !!searchBookmark; // se c'è bookmark, ci sono altri risultati
 
         if (!searchBookmark) {
           hasMore = false;
@@ -139,7 +140,7 @@ function loadNextCatalogPage() {
         catalogData = catalogData.concat(data);
       }
 
-      renderCatalogIncremental([], "catalog", (window.currentUser?.role) || "guest", 12);
+      renderCatalogIncremental([], "catalog", (window.currentUser?.role) || "guest", 100);
     })
     .catch(err => {
       console.error("Catalog lazy error:", err);
