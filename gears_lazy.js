@@ -33,13 +33,15 @@ function resetCatalogState() {
 // ==================== Category Filter ====================
 $(document).on("change", "#categoryFilter", function () {
   currentCategory = $(this).val();
-  currentSearchQuery = null; // reset search query
+  searchBookmark = null;        // reset bookmark
+  currentSearchQuery = "";      // forziamo anche solo category
   resetCatalogState();
-  loadNextCatalogPage(); // trigger loading della nuova categoria
+  loadNextCatalogPage();
 });
 
 // ==================== Lazy Catalog Render ====================
 function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
+
   const container = document.getElementById(containerId);
   const batch = catalogData.slice(catalogRenderIndex, catalogRenderIndex + batchSize);
   const frag = document.createDocumentFragment();
@@ -72,12 +74,16 @@ function loadNextCatalogPage() {
   let params = [];
 
   // ==================== SEARCH MODE ====================
-  if (currentSearchQuery) {
+if (currentSearchQuery || currentCategory !== 'all') {
     url = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
-    params.push("q=" + encodeURIComponent(currentSearchQuery));
+    params = [];
+
+    let queryToSend = currentSearchQuery;
+    if (!queryToSend) queryToSend = "";  
+
+    params.push("q=" + encodeURIComponent(queryToSend));
     params.push("limit=100");
 
-    // ✅ categoria inviata al server per filtrare tramite search_tokens
     if (currentCategory && currentCategory !== "all") {
       params.push("category=" + encodeURIComponent(currentCategory));
     }
@@ -113,8 +119,10 @@ function loadNextCatalogPage() {
         return;
       }
 
+      const isSearchMode = currentSearchQuery || (currentCategory && currentCategory !== 'all');
+
       // ---------- SEARCH ----------
-      if (currentSearchQuery) {
+      if (isSearchMode) {
         if (!Array.isArray(data.docs) || data.docs.length === 0) {
           hasMore = false;
           if (sentinel) sentinel.remove();
@@ -204,7 +212,7 @@ function initSinglePedalView(pedalId, userRole){
     }
     catalogData = pedals;
     catalogRenderIndex = 0;
-    renderCatalogIncremental([], 'catalog', userRole, 50);
+    renderCatalogIncremental([], 'catalog', userRole, 100);
     if(userRole!=="guest") setupEditPedalHandler(pedals);
   })
   .catch(err => {
