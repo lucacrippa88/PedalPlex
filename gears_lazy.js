@@ -22,7 +22,7 @@ function resetCatalogState() {
   pedals = [];
   catalogData = [];
   catalogRenderIndex = 0;
-  searchBookmark = null;   // ← AGGIUNTA
+  searchBookmark = null;
 
   const catalog = document.getElementById("catalog");
   catalog.innerHTML = "";
@@ -31,47 +31,12 @@ function resetCatalogState() {
   setupCatalogObserver();
 }
 
-
 // ==================== Category Filter ====================
-const pedalCategoryMap = {
-  acoustic: ["acoustic","acoustic simulator","ac sim","simulator","sim"],
-  ambient: ["ambient","ambi","amb","dimension","space"],
-  ampli: ["combo","all-in-one","all in one","amplifier head","amp head","head","amped","marshall"],
-  boost: ["boost","blst","bst"],
-  chorus: ["chorus","cho"],
-  compressor: ["compressor","comp","compr","sustainer","sustain"],
-  delay: ["delay","dly","del","echo","ech"],
-  distortion: ["distortion","dist","distort","metal","heavy","dark","feedbacker","feedback","overdrive","drive","od","drv","driving"],
-  drum: ["drum machine","drum","rhythm","beat","pad"],
-  eq: ["equal","equalizer","equaliser","filter","filt"],
-  expression: ["expression","expr","exp","volume","volum","swell","volume swell","swl","slow"],
-  flanger: ["flanger","flg","flange"],
-  fuzz: ["fuzz","muff"],
-  looper: ["looper","loop","loop station","loopstation"],
-  modulation: ["modulation","mod"],
-  multifx: ["multifx","multi-fx","multi fx","fx"],
-  octaver: ["octaver","octave","oct","octa"],
-  phaser: ["phaser","phase","pha"],
-  pitchshifter: ["pitchshifter","pitch shifter","pshift","pitch","harmonist","harmonizer","shifter","shift","whammy"],
-  preamp: ["stack","rig","full rig","amp stack","preamp","pre-amp","pre amp","irloader","ir loader","ir"],
-  reverb: ["reverb","verb","rvb","shimmer","shim"],
-  vibrato: ["tremolo","trem","rotary","rotovibe","roto-vibe","vibrato","vibe","vib"],
-  synth: ["spectrum","enhancer","spec","sampler","sample","samp","formant","lfo","synth","synthesizer","synthesiser","slicer","processor","organ","bitcrusher","bit crusher","crusher","lofi","lo-fi"],
-  utility: ["buffer","bfr","buff","switcher","switch","footswitch","loop switcher","ab switcher","aby","dibox","di box","direct box","utility","util","misc","miscellaneous","tuner","tunr","tnr","noisegate","noise gate","suppressor"],
-  vocoder: ["vocoder","voco","vokoder","talk box"],
-  wah: ["wah","wah-wah"]
-};
-
-// $(document).on("change", "#categoryFilter", function () {
-//   currentCategory = $(this).val();
-//   resetCatalogState();
-//   loadNextCatalogPage();
-// });
 $(document).on("change", "#categoryFilter", function () {
   currentCategory = $(this).val();
   currentSearchQuery = null;
   resetCatalogState();
-  loadNextCatalogPage();
+  loadNextCatalogPage(); // il server riceverà la category
 });
 
 
@@ -93,94 +58,12 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
   catalogRenderIndex += batch.length;
 
   if (sentinel) container.appendChild(sentinel);
-
-  // updatePedalCountsFromServer();
   if (userRole !== "guest") setupEditPedalHandler(batch);
 
   checkLoadNext();
 }
 
 // ==================== Lazy Load ====================
-// function loadNextCatalogPage() {
-//   if (isLoading || !hasMore) return;
-
-//   if (catalogRenderIndex < catalogData.length) {
-//     renderCatalogIncremental([], 'catalog', (window.currentUser?.role) || 'guest', 12);
-//     return;
-//   }
-
-//   isLoading = true;
-//   currentPage++;
-
-//   let url;
-
-// if (currentSearchQuery) {
-//   url = 'https://api.pedalplex.com/SEARCH_GEAR_LAZY.php' +
-//         '?q=' + encodeURIComponent(currentSearchQuery) +
-//         '&limit=20';
-
-//   if (searchBookmark) {
-//     url += '&bookmark=' + encodeURIComponent(searchBookmark);
-//   }
-
-// } else {
-//   url = 'https://api.pedalplex.com/GET_CATALOG_LAZY.php' +
-//         '?page=' + currentPage +
-//         '&limit=100' +
-//         '&category=' + encodeURIComponent(currentCategory);
-// }
-
-
-//   const headers = {};
-//   const token = localStorage.getItem('authToken');
-//   if(token) headers['Authorization'] = 'Bearer '+token;
-
-//   fetch(url, { headers })
-//     .then(r => r.json())
-// .then(data => {
-
-//   // ==================== SEARCH MODE ====================
-//   if (currentSearchQuery) {
-
-//     if (!data || !Array.isArray(data.docs) || data.docs.length === 0) {
-//       hasMore = false;
-//       if (sentinel) sentinel.remove();
-//       return;
-//     }
-
-//     catalogData = catalogData.concat(data.docs);
-//     searchBookmark = data.bookmark || null;
-
-//     if (!searchBookmark) {
-//       hasMore = false;
-//       if (sentinel) sentinel.remove();
-//     }
-
-//   // ==================== CATALOG MODE ====================
-//   } else {
-
-//     if (!Array.isArray(data) || data.length === 0) {
-//       hasMore = false;
-//       if (sentinel) sentinel.remove();
-//       return;
-//     }
-
-//     catalogData = catalogData.concat(data);
-//   }
-
-//   renderCatalogIncremental(
-//     [],
-//     'catalog',
-//     (window.currentUser?.role) || 'guest',
-//     12
-//   );
-// })
-
-
-//     .catch(err => console.error('Catalog lazy load error', err))
-//     .finally(() => isLoading = false);
-// }
-
 function loadNextCatalogPage() {
   if (isLoading || !hasMore) return;
 
@@ -194,11 +77,11 @@ function loadNextCatalogPage() {
 
     url = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
     params.push("q=" + encodeURIComponent(currentSearchQuery));
+    params.push("limit=20");
 
-    if (currentCategory && currentCategory !== "all") {
+    // if (currentCategory && currentCategory !== "all") {
       params.push("category=" + encodeURIComponent(currentCategory));
-    }
-
+    // }
     if (searchBookmark) {
       params.push("bookmark=" + encodeURIComponent(searchBookmark));
     }
@@ -210,6 +93,7 @@ function loadNextCatalogPage() {
 
     url = "https://api.pedalplex.com/GET_CATALOG_LAZY.php";
     params.push("page=" + currentPage);
+    params.push("limit=100");
 
     if (currentCategory && currentCategory !== "all") {
       params.push("category=" + encodeURIComponent(currentCategory));
