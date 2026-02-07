@@ -82,9 +82,13 @@ function loadNextCatalogPage() {
   const token = localStorage.getItem("authToken");
 
   // ==================== SEARCH MODE (search + category + published filter) ====================
-  const isSearchMode = currentSearchQuery !== null ||
-                       currentCategory !== 'all' ||
-                       currentPublishedFilter !== 'all';
+  // const isSearchMode = currentSearchQuery !== null ||
+  //                      currentCategory !== 'all' ||
+  //                      currentPublishedFilter !== 'all';
+  const isSearchMode =
+  currentSearchQuery !== null ||
+  currentCategory !== 'all';
+
 
   if (isSearchMode) {
     url = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
