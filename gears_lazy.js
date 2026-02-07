@@ -72,7 +72,7 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
 }
 
 // ==================== Lazy Load ====================
-function loadNextCatalogPage() {
+function loadNextCatalogPage(extraParams = {}) {
   if (isLoading || !hasMore) return;
   isLoading = true;
 
@@ -84,7 +84,8 @@ function loadNextCatalogPage() {
   // ==================== SEARCH MODE (search + category + published filter) ====================
   const isSearchMode = currentSearchQuery !== null ||
                        currentCategory !== 'all' ||
-                       currentPublishedFilter !== 'all';
+                       currentPublishedFilter !== 'all' ||
+                       Object.keys(extraParams).length > 0;
 
   if (isSearchMode) {
     url = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
@@ -102,6 +103,11 @@ function loadNextCatalogPage() {
     // filtro published
     if (currentPublishedFilter && currentPublishedFilter !== 'all') {
       params.push("published=" + encodeURIComponent(currentPublishedFilter));
+    }
+
+    // aggiungi extraParams al GET
+    for (let k in extraParams) {
+      params.push(k + "=" + encodeURIComponent(extraParams[k]));
     }
 
     // bookmark per paginazione
@@ -370,22 +376,37 @@ function updatePedalCountsFromServer(activeFilter = null) {
       catalogRenderIndex = 0;
 
       // default
+      // currentPublishedFilter = 'all';
+      // window.onlyMine = false;
+      // window.onlyUsers = false;
+
+      // if (filter === 'publicByMe') {
+      //   window.onlyMine = true;
+      // } 
+      // else if (filter === 'user') {
+      //   window.onlyUsers = true;
+      // }
+      // else {
+      //   currentPublishedFilter = filter;
+      // }
+
+      // resetCatalogState();
+      // loadNextCatalogPage();
+
+      // reset tutti
       currentPublishedFilter = 'all';
-      window.onlyMine = false;
-      window.onlyUsers = false;
+      let extraParams = {};
 
       if (filter === 'publicByMe') {
-        window.onlyMine = true;
-      } 
-      else if (filter === 'user') {
-        window.onlyUsers = true;
-      }
-      else {
+        extraParams.onlyMine = 1;
+      } else if (filter === 'user') {
+        extraParams.onlyUsers = 1;
+      } else {
         currentPublishedFilter = filter;
       }
 
       resetCatalogState();
-      loadNextCatalogPage();
+      loadNextCatalogPage(extraParams);
     });
 
 
