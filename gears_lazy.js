@@ -10,6 +10,7 @@ let sentinel = null;
 var searchBookmark = null;
 var currentSearchQuery = null;
 var currentCategory = 'all';
+var currentPublishedFilter = 'all'; // all | draft | private | reviewing | publicByMe | template | user
 
 // ==================== Helpers ====================
 function setPedalJSON(jsonString) { pedalJSON = jsonString; }
@@ -93,6 +94,10 @@ if (currentSearchQuery || currentCategory !== 'all') {
       params.push("category=" + encodeURIComponent(currentCategory));
     }
 
+    if (currentPublishedFilter && currentPublishedFilter !== 'all') {
+      params.push("published=" + encodeURIComponent(currentPublishedFilter));
+    }
+
     if (searchBookmark) {
       params.push("bookmark=" + encodeURIComponent(searchBookmark));
     }
@@ -106,6 +111,10 @@ if (currentSearchQuery || currentCategory !== 'all') {
 
     if (currentCategory && currentCategory !== "all") {
       params.push("category=" + encodeURIComponent(currentCategory));
+    }
+
+    if (currentPublishedFilter && currentPublishedFilter !== 'all') {
+      params.push("published=" + encodeURIComponent(currentPublishedFilter));
     }
   }
 
@@ -124,7 +133,12 @@ if (currentSearchQuery || currentCategory !== 'all') {
         return;
       }
 
-      const isSearchMode = currentSearchQuery !== null || (currentCategory && currentCategory !== 'all');
+      // const isSearchMode = currentSearchQuery !== null || (currentCategory && currentCategory !== 'all');
+      const isSearchMode =
+        currentSearchQuery !== null ||
+        currentCategory !== 'all' ||
+        currentPublishedFilter !== 'all';
+
 
       // ---------- SEARCH ----------
       if (isSearchMode) {
@@ -355,10 +369,18 @@ function updatePedalCountsFromServer(activeFilter = null) {
     countsHtml += `)`;
     $("#pedalCount").html(countsHtml);
 
-    $(".status-filter").off("click").on("click", function() {
+    $(".status-filter").off("click").on("click", function () {
       const filter = $(this).data("filter");
-      filterPedalsByStatus(filter);
+
+      currentPublishedFilter = filter || 'all';
+      
+      $(".status-filter").removeClass("active-filter");
+      $(this).addClass("active-filter");
+
+      resetCatalogState();
+      loadNextCatalogPage();
     });
+
   })
   .catch(err => console.error("Counts fetch error:", err));
 }
