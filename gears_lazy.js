@@ -79,30 +79,37 @@ function loadNextCatalogPage() {
   let url = "";
   let params = [];
 
-  // ==================== SEARCH MODE ====================
-if (currentSearchQuery || currentCategory !== 'all') {
+  const token = localStorage.getItem("authToken");
+
+  // ==================== SEARCH MODE (search + category + published filter) ====================
+  const isSearchMode = currentSearchQuery !== null ||
+                       currentCategory !== 'all' ||
+                       currentPublishedFilter !== 'all';
+
+  if (isSearchMode) {
     url = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
-    params = [];
 
-    let queryToSend = currentSearchQuery;
-    if (!queryToSend) queryToSend = "";  
-
+    // query testo libero
+    let queryToSend = currentSearchQuery || "";
     params.push("q=" + encodeURIComponent(queryToSend));
     params.push("limit=100");
 
+    // filtro categoria
     if (currentCategory && currentCategory !== "all") {
       params.push("category=" + encodeURIComponent(currentCategory));
     }
 
+    // filtro published
     if (currentPublishedFilter && currentPublishedFilter !== 'all') {
       params.push("published=" + encodeURIComponent(currentPublishedFilter));
     }
 
+    // bookmark per paginazione
     if (searchBookmark) {
       params.push("bookmark=" + encodeURIComponent(searchBookmark));
     }
 
-  // ==================== CATALOG MODE ====================
+  // ==================== CATALOG MODE (nessun filtro) ====================
   } else {
     currentPage++;
     url = "https://api.pedalplex.com/GET_CATALOG_LAZY.php";
@@ -112,19 +119,11 @@ if (currentSearchQuery || currentCategory !== 'all') {
     if (currentCategory && currentCategory !== "all") {
       params.push("category=" + encodeURIComponent(currentCategory));
     }
-
-    if (currentPublishedFilter && currentPublishedFilter !== 'all') {
-      params.push("published=" + encodeURIComponent(currentPublishedFilter));
-    }
   }
 
   url += "?" + params.join("&");
 
-  const headers = {};
-  const token = localStorage.getItem("authToken");
-  if (token) headers.Authorization = "Bearer " + token;
-
-  fetch(url, { headers })
+  fetch(url, { headers: token ? { Authorization: "Bearer " + token } : {} })
     .then(r => r.json())
     .then(data => {
       if (!data) {
@@ -133,14 +132,7 @@ if (currentSearchQuery || currentCategory !== 'all') {
         return;
       }
 
-      // const isSearchMode = currentSearchQuery !== null || (currentCategory && currentCategory !== 'all');
-      const isSearchMode =
-        currentSearchQuery !== null ||
-        currentCategory !== 'all' ||
-        currentPublishedFilter !== 'all';
-
-
-      // ---------- SEARCH ----------
+      // ---------- SEARCH MODE ----------
       if (isSearchMode) {
         if (!Array.isArray(data.docs) || data.docs.length === 0) {
           hasMore = false;
@@ -149,7 +141,6 @@ if (currentSearchQuery || currentCategory !== 'all') {
         }
 
         catalogData = catalogData.concat(data.docs);
-        console.log("CatalogData dopo fetch:", catalogData);
         searchBookmark = data.bookmark || null;
         hasMore = !!searchBookmark; // se c'è bookmark, ci sono altri risultati
 
@@ -158,7 +149,7 @@ if (currentSearchQuery || currentCategory !== 'all') {
           if (sentinel) sentinel.remove();
         }
 
-      // ---------- CATALOG ----------
+      // ---------- CATALOG MODE ----------
       } else {
         if (!Array.isArray(data) || data.length === 0) {
           hasMore = false;
@@ -369,14 +360,15 @@ function updatePedalCountsFromServer(activeFilter = null) {
     countsHtml += `)`;
     $("#pedalCount").html(countsHtml);
 
+    // click sui filtri published -> forza SEARCH_GEAR_LAZY.php
     $(".status-filter").off("click").on("click", function () {
       const filter = $(this).data("filter");
-
       currentPublishedFilter = filter || 'all';
-      
+
       $(".status-filter").removeClass("active-filter");
       $(this).addClass("active-filter");
 
+      // reset catalogo e ricerca
       resetCatalogState();
       loadNextCatalogPage();
     });
