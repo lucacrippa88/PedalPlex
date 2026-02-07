@@ -361,22 +361,33 @@ function updatePedalCountsFromServer(activeFilter = null) {
     $("#pedalCount").html(countsHtml);
 
     // click sui filtri published -> forza SEARCH_GEAR_LAZY.php
-    $(".status-filter").off("click").on("click", function () {
+    $(".status-filter").on("click", function () {
       const filter = $(this).data("filter");
-      currentPublishedFilter = filter || 'all';
 
-      $(".status-filter").removeClass("active-filter");
-      $(this).addClass("active-filter");
-
-      // Total reset
+      // reset
       searchBookmark = null;
       catalogData = [];
       catalogRenderIndex = 0;
 
-      // reset catalogo e ricerca
+      // default
+      currentPublishedFilter = 'all';
+      window.onlyMine = false;
+      window.onlyUsers = false;
+
+      if (filter === 'publicByMe') {
+        window.onlyMine = true;
+      } 
+      else if (filter === 'user') {
+        window.onlyUsers = true;
+      }
+      else {
+        currentPublishedFilter = filter;
+      }
+
       resetCatalogState();
       loadNextCatalogPage();
     });
+
 
   })
   .catch(err => console.error("Counts fetch error:", err));
