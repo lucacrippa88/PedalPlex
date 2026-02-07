@@ -368,6 +368,11 @@ function updatePedalCountsFromServer(activeFilter = null) {
       $(".status-filter").removeClass("active-filter");
       $(this).addClass("active-filter");
 
+      // Total reset
+      searchBookmark = null;
+      catalogData = [];
+      catalogRenderIndex = 0;
+
       // reset catalogo e ricerca
       resetCatalogState();
       loadNextCatalogPage();
