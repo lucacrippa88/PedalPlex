@@ -245,6 +245,25 @@ html { box-sizing: content-box !important; }
 }
 
 
+.status-filter {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #ddd;
+}
+.status-filter.active-filter {
+  font-weight: bold;
+  color: #fff;
+  text-decoration: none;
+  border-bottom: 2px solid #fff;
+}
+
+@media (max-width: 768px) {
+  #pedalCount span.status-filter:not([data-filter="all"]) {
+    display: none !important;
+  }
+}
+
+
 
 /* Pedal dropdowns, catalog */
 #pedalAddDropdownContainer { background: white; max-height: 300px; overflow-y: auto; width: 200px; z-index: 3000; border-radius: 4px}

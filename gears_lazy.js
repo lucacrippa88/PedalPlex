@@ -451,10 +451,10 @@ function updatePedalCountsFromServer(activeFilter = null) {
       countsHtml += `, Template: <span class="status-filter ${isActive("template")}" data-filter="template">${counts.template}</span>`;
 
       // ===== SOLO COUNTER (NON CLICCABILI) =====
-      countsHtml += `, By me: <span class="status-filter">${counts.publicByMe}</span>`;
+      countsHtml += `, By me: <span>${counts.publicByMe}</span>`;
 
       if (window.currentUser?.role === "admin") {
-        countsHtml += `, By users: <span class="status-filter">${counts.byUsers}</span>`;
+        countsHtml += `, By users: <span>${counts.byUsers}</span>`;
       }
     }
 
