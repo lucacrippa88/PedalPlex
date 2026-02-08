@@ -339,6 +339,82 @@ function createNewPedal() {
 }
 
 // ==================== UPDATE PEDAL COUNTS ====================
+// function updatePedalCountsFromServer(activeFilter = null) {
+//   const token = localStorage.getItem("authToken");
+
+//   fetch("https://api.pedalplex.com/GET_CATALOG_COUNTS.php", {
+//     headers: token ? { Authorization: "Bearer " + token } : {}
+//   })
+//   .then(r => r.json())
+//   .then(counts => {
+//     let countsHtml =
+//       `${counts.total} gear${counts.total === 1 ? "" : "s"} ` +
+//       `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${counts.total}</span>`;
+
+//     if (window.currentUser?.role !== "guest") {
+//       countsHtml += `, Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${counts.draft}</span>, 
+//        Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${counts.private}</span>, 
+//        Review: <span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">${counts.reviewing}</span>, 
+//        By me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${counts.publicByMe}</span>;
+//        Template: <span class="status-filter ${activeFilter === "template" ? "active-filter" : ""}" data-filter="template">${counts.template}</span>`;
+
+//       if (window.currentUser?.role === "admin") {
+//         countsHtml += `, By Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${counts.byUsers}</span>`;
+//       }
+//     }
+
+//     countsHtml += `)`;
+//     $("#pedalCount").html(countsHtml);
+
+//     // click sui filtri published -> forza SEARCH_GEAR_LAZY.php
+//     $(".status-filter").on("click", function () {
+//       const filter = $(this).data("filter");
+
+//       // reset
+//       searchBookmark = null;
+//       catalogData = [];
+//       catalogRenderIndex = 0;
+
+//       // default
+//       // currentPublishedFilter = 'all';
+//       // window.onlyMine = false;
+//       // window.onlyUsers = false;
+
+//       // if (filter === 'publicByMe') {
+//       //   window.onlyMine = true;
+//       // } 
+//       // else if (filter === 'user') {
+//       //   window.onlyUsers = true;
+//       // }
+//       // else {
+//       //   currentPublishedFilter = filter;
+//       // }
+
+//       // resetCatalogState();
+//       // loadNextCatalogPage();
+
+//       // reset tutti
+//       currentPublishedFilter = 'all';
+//       let extraParams = {};
+
+//       if (filter === 'publicByMe') {
+//         extraParams.onlyMine = 1;
+//       } else if (filter === 'user') {
+//         extraParams.onlyUsers = 1;
+//       } else {
+//         currentPublishedFilter = filter;
+//       }
+
+//       resetCatalogState();
+//       loadNextCatalogPage(extraParams);
+//     });
+
+
+//   })
+//   .catch(err => console.error("Counts fetch error:", err));
+// }
+
+
 function updatePedalCountsFromServer(activeFilter = null) {
   const token = localStorage.getItem("authToken");
 
@@ -347,68 +423,58 @@ function updatePedalCountsFromServer(activeFilter = null) {
   })
   .then(r => r.json())
   .then(counts => {
-    let countsHtml =
-      `${counts.total} gear${counts.total === 1 ? "" : "s"} ` +
-      `(All: <span class="status-filter ${activeFilter === "all" ? "active-filter" : ""}" data-filter="all">${counts.total}</span>`;
 
+    const isActive = f => activeFilter === f ? "active-filter" : "";
+
+    // ===== BASE =====
+    let countsHtml =
+      `${counts.total} gear${counts.total === 1 ? "" : "s"} (` +
+      `All: <span class="status-filter ${isActive("all")}" data-filter="all">${counts.total}</span>`;
+
+    // ===== AUTH USERS =====
     if (window.currentUser?.role !== "guest") {
-      countsHtml += `, Draft: <span class="status-filter ${activeFilter === "draft" ? "active-filter" : ""}" data-filter="draft">${counts.draft}</span>, 
-       Private: <span class="status-filter ${activeFilter === "private" ? "active-filter" : ""}" data-filter="private">${counts.private}</span>, 
-       Review: <span class="status-filter ${activeFilter === "reviewing" ? "active-filter" : ""}" data-filter="reviewing">${counts.reviewing}</span>, 
-       By me: <span class="status-filter ${activeFilter === "publicByMe" ? "active-filter" : ""}" data-filter="publicByMe">${counts.publicByMe}</span>;
-       Template: <span class="status-filter ${activeFilter === "template" ? "active-filter" : ""}" data-filter="template">${counts.template}</span>`;
+
+      // Draft
+      countsHtml += `, Draft: <span class="status-filter ${isActive("draft")}" data-filter="draft">${counts.draft}</span>`;
+
+      // Private
+      countsHtml += `, Private: <span class="status-filter ${isActive("private")}" data-filter="private">${counts.private}</span>`;
+
+      // Reviewing (badge rosso se > 0)
+      const reviewingStyle = counts.reviewing > 0
+        ? 'style="background:#ff0000;color:white;border-radius:50%;padding:1px 5px;font-size:0.75rem;font-weight:bold;min-width:18px;text-align:center;"'
+        : '';
+
+      countsHtml += `, Review: <span class="status-filter ${isActive("reviewing")}" data-filter="reviewing" ${reviewingStyle}>${counts.reviewing}</span>`;
+
+      // Template
+      countsHtml += `, Template: <span class="status-filter ${isActive("template")}" data-filter="template">${counts.template}</span>`;
+
+      // ===== SOLO COUNTER (NON CLICCABILI) =====
+      countsHtml += `, By me: <span class="status-filter">${counts.publicByMe}</span>`;
 
       if (window.currentUser?.role === "admin") {
-        countsHtml += `, By Users: <span class="status-filter ${activeFilter === "user" ? "active-filter" : ""}" data-filter="user">${counts.byUsers}</span>`;
+        countsHtml += `, By users: <span class="status-filter">${counts.byUsers}</span>`;
       }
     }
 
     countsHtml += `)`;
+
     $("#pedalCount").html(countsHtml);
 
-    // click sui filtri published -> forza SEARCH_GEAR_LAZY.php
-    $(".status-filter").on("click", function () {
+    // ==================== CLICK SOLO SUI FILTRI REALI ====================
+    $(".status-filter[data-filter]").off("click").on("click", function () {
       const filter = $(this).data("filter");
 
-      // reset
       searchBookmark = null;
       catalogData = [];
       catalogRenderIndex = 0;
 
-      // default
-      // currentPublishedFilter = 'all';
-      // window.onlyMine = false;
-      // window.onlyUsers = false;
-
-      // if (filter === 'publicByMe') {
-      //   window.onlyMine = true;
-      // } 
-      // else if (filter === 'user') {
-      //   window.onlyUsers = true;
-      // }
-      // else {
-      //   currentPublishedFilter = filter;
-      // }
-
-      // resetCatalogState();
-      // loadNextCatalogPage();
-
-      // reset tutti
-      currentPublishedFilter = 'all';
-      let extraParams = {};
-
-      if (filter === 'publicByMe') {
-        extraParams.onlyMine = 1;
-      } else if (filter === 'user') {
-        extraParams.onlyUsers = 1;
-      } else {
-        currentPublishedFilter = filter;
-      }
+      currentPublishedFilter = filter;
 
       resetCatalogState();
-      loadNextCatalogPage(extraParams);
+      loadNextCatalogPage();
     });
-
 
   })
   .catch(err => console.error("Counts fetch error:", err));
