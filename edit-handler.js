@@ -315,7 +315,7 @@ function setupEditPedalHandler(pedals) {
       });
     }; // end openSwal
 
-    // --- ✅ Se mancano i controlli, aggiorniamo al volo ---
+    // If controls are missing, fetch full pedal data before opening modal
     if (!pedal.controls || pedal.controls.length === 0) {
       const token = localStorage.getItem('authToken');
 
@@ -336,28 +336,28 @@ function setupEditPedalHandler(pedals) {
 
         pedal = fullPedalRes.docs[0];
 
-        // Recupera canEdit se presente nel catalogo
+        // Fetch canEdit
         const existingPedal = pedals.find(p => p._id === pedal._id);
         if (existingPedal && typeof existingPedal.canEdit !== 'undefined') {
           pedal.canEdit = existingPedal.canEdit;
         }
 
-        // Aggiorna il div
+        // Div update with full data
         const $newPedalDiv = renderPedal(pedal, window.currentUser.role || "user");
         $newPedalDiv.attr("data-author", pedal.author || "");
         $newPedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
         $newPedalDiv.find(".edit-btn").data("pedal", pedal);
         pedalDiv.replaceWith($newPedalDiv);
 
-        // ✅ Ora apri il modal
+        // Open modal after data is loaded and div is updated
         openSwal();
       })
       .catch(err => console.error("Error loading pedal:", pedal._id, err));
 
-      return; // esci fino a quando il fetch non termina
+      return;
     }
 
-    // --- Se i controlli sono già presenti, apri direttamente il modal ---
+    // Data is already complete, just open the modal
     openSwal();
   });
 }

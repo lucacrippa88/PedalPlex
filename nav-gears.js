@@ -3,7 +3,7 @@ window.catalogInitialized = false;
 
 function getPedalIdFromURL() {
   const params = new URLSearchParams(window.location.search);
-  return params.get("id"); 
+  return params.get("id");
 }
 
 function renderNavBar(userRole) {
@@ -50,80 +50,86 @@ function renderNavBar(userRole) {
     $("#createPedalBtn").hide();
     const loginBtnHtml = `<button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button">Login</button>`;
     $("#toggleFilterBtn").after(loginBtnHtml);
-    $(document).on("click","#loginBtn",()=>window.location.href="login");
+    $(document).on("click", "#loginBtn", () => window.location.href = "login");
   } else {
-    $(document).on('click','#createPedalBtn', createNewPedal);
-    $(document).on('click','#createOwnPedalBtn', createNewPedal);
+    $(document).on('click', '#createPedalBtn', createNewPedal);
+    $(document).on('click', '#createOwnPedalBtn', createNewPedal);
   }
 
-  $("#toggleFilterBtn").on("click", function(){
+  $("#toggleFilterBtn").on("click", function () {
     const input = $("#pedalFilterInput");
     if (input.is(":visible")) input.hide().val("");
-    else input.css("display","flex").focus();
+    else input.css("display", "flex").focus();
   });
 
-  // ===== SEARCH PEDALS WITH SERVER CALL =====
-let searchTimeout = null;
+  // Search gear with server calls
+  let searchTimeout = null;
 
-$("#pedalFilterInput").on("input", function(){
-  const query = $(this).val().trim();
+  $("#pedalFilterInput").on("input", function () {
+    const query = $(this).val().trim();
 
-  if(searchTimeout) clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(function(){
-    resetCatalogState();
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(function () {
+      resetCatalogState();
 
-    if(query === "") {
-      currentSearchQuery = null;
-    } else {
-      currentSearchQuery = query;
-    }
+      if (query === "") {
+        currentSearchQuery = null;
+      } else {
+        currentSearchQuery = query;
+      }
 
-    loadNextCatalogPage();
-  }, 500);
-});
+      loadNextCatalogPage();
+    }, 500);
+  });
 
 }
 
-// ===== SINGLE PEDAL VIEW =====
-function initSinglePedalView(pedalId, userRole){
+// Single gear view
+function initSinglePedalView(pedalId, userRole) {
   window.singlePedalMode = true;
   const token = localStorage.getItem("authToken");
   const resultsDiv = $("#catalog");
   resultsDiv.empty();
 
-  const globalSpinner = $('<div id="catalog-global-loader"></div>'); 
+  const globalSpinner = $('<div id="catalog-global-loader"></div>');
   resultsDiv.append(globalSpinner);
 
   const cleanId = decodeURIComponent(pedalId.trim());
 
   fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
-    method:"POST",
-    headers: {
-      "Content-Type":"application/json",
-      "Authorization": token ? "Bearer "+token : ""
-    },
-    body: JSON.stringify({ids:[cleanId]})
-  })
-  .then(r=>r.json())
-  .then(data=>{
-    $("#catalog-global-loader").remove();
-    const pedals = data.docs || [];
-    if(pedals.length===0){
-      Swal.fire({icon:"error", title:"Pedal not found", confirmButtonText:"Back to Catalog"})
-        .then(()=>window.location.href="gears");
-      return;
-    }
-    renderCatalogIncremental(pedals,'catalog',userRole,50);
-    if(userRole!=="guest") setupEditPedalHandler(pedals);
-  });
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": token ? "Bearer " + token : ""
+      },
+      body: JSON.stringify({
+        ids: [cleanId]
+      })
+    })
+    .then(r => r.json())
+    .then(data => {
+      $("#catalog-global-loader").remove();
+      const pedals = data.docs || [];
+      if (pedals.length === 0) {
+        Swal.fire({
+            icon: "error",
+            title: "Pedal not found",
+            confirmButtonText: "Back to Catalog"
+          })
+          .then(() => window.location.href = "gears");
+        return;
+      }
+      renderCatalogIncremental(pedals, 'catalog', userRole, 50);
+      if (userRole !== "guest") setupEditPedalHandler(pedals);
+    });
 }
 
-// ===== INIT NAV + CATALOG =====
-function initNavCatalog(userRole){
+// Init nav + catalog
+function initNavCatalog(userRole) {
   renderNavBar(userRole);
-  updatePedalCountsFromServer(); // <- qui chiamiamo subito i counts fissi
+  updatePedalCountsFromServer();
   const pedalIdFromURL = getPedalIdFromURL();
-  if(pedalIdFromURL) initSinglePedalView(pedalIdFromURL,userRole);
+  if (pedalIdFromURL) initSinglePedalView(pedalIdFromURL, userRole);
   else {
     setupCatalogObserver();
     loadNextCatalogPage();

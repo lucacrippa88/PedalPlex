@@ -23,8 +23,6 @@ function buildJSON() {
     // --- Base pedal object ---
     const pedal = {
         _id: $("#pedal-id").val(),
-        // name: $("#pedal-name").val(),
-        // logo: $("#pedal-logo").val(),
         name: normalizeStyleAttributeQuotes(rawName),
         logo: normalizeStyleAttributeQuotes(rawLogo),
         type: $("#pedal-type").val(),
@@ -352,9 +350,6 @@ function highlightRequiredFields() {
 
 
 
-
-
-
 // Put this once in create.html (initialization area)
 (function initLedHelpers() {
   if (window.__ledHelpersInit) return;
@@ -434,8 +429,6 @@ window.updateInsideUI = updateInsideUI;
 // Attach global handlers ONCE
 $(document).on("change", "#inside-type-select", updateInsideUI);
 $(document).on("change", "#pedal-inside-full-check", updateInsideUI);
-
-
 
 
 
@@ -816,5 +809,3 @@ $(document).on("input", "#pedal-logo, #pedal-name", function () {
         this.value = normalized;
     }
 });
-
-

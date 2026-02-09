@@ -40,7 +40,7 @@ $('#authForm').on('submit', function (e) {
     ? { username, password }
     : { username, password, email };
 
-  // --- Controllo reCAPTCHA solo per registrazione ---
+  // --- reCAPTCHA check only for registration ---
   if (!isLogin) {
     const recaptchaResponse = grecaptcha.getResponse(recaptchaWidgetId);
     if (!recaptchaResponse) {

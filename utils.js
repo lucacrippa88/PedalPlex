@@ -1,568 +1,632 @@
 const editMode = window.isEditMode
 
-// Function to render pedal controls dynamically
+// Function to render pedal controls dynamically --------------------------------------
 function renderPedalControls(pedal, $pedalDiv) {
 
-    $pedalDiv.removeData("subplexInvalidated"); // resetta il flag ogni volta che il pedale viene ri-renderizzato
+  $pedalDiv.removeData("subplexInvalidated"); // flag reset for SubPlex invalidation
 
+  if (!pedal.controls || !Array.isArray(pedal.controls)) return; // metadata only protection
 
-    if (!pedal.controls || !Array.isArray(pedal.controls)) return; // <--- metadata only protection
+  const editMode = window.isEditMode;
 
-    const editMode = window.isEditMode; 
+  pedal.controls.forEach(controlRow => {
+    const $row = $("<div>").addClass("row");
 
-    pedal.controls.forEach(controlRow => {
-        const $row = $("<div>").addClass("row");
+    if (pedal.type === "head") { $row.addClass("lowest-row"); }
+    if (pedal.type === "pedal-inverted") { $row.addClass("lower-row"); }
 
-        if (pedal.type === "head") { $row.addClass("lowest-row"); }
-        if (pedal.type === "pedal-inverted") { $row.addClass("lower-row"); }
+    controlRow.row.forEach(control => {
+      // Knobs ======================================================================
+      if (["knob", "smallknob", "largeknob", "xlargeknob"].includes(control.type)) {
+        const isSmall = control.type === "smallknob";
+        const isLarge = control.type === "largeknob";
+        const isXLarge = control.type === "xlargeknob";
+        const knobColor = control["knob-color"] ?? pedal["knobs-color"];
+        const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
+        const knobIndicator = control["knob-indicator"] ?? pedal["knobs-indicator"];
+        const labelColor = control["knob-label-color"] ?? pedal["font-color"];
+        const labelBackground = control["knob-label-background"] ?? null;
+        const isThick = control.border === "thick";
 
-        controlRow.row.forEach(control => {
-            // Knobs
-            if (["knob", "smallknob", "largeknob", "xlargeknob"].includes(control.type)) {
-                const isSmall = control.type === "smallknob";
-                const isLarge = control.type === "largeknob";
-                const isXLarge = control.type === "xlargeknob";
+        const knob = $("<div>")
+          .addClass(isSmall ? "smallknob" : "knob")
+          .addClass(isLarge ? "largeknob" : "knob")
+          .addClass(isXLarge ? "xlargeknob" : "knob")
+          .toggleClass("thick", isThick)
+          .css({
+            background: knobColor,
+            border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}`
+          })
+          .css("--indicator-color", knobIndicator)
+          .attr("data-control-label", control.label);
 
-                const knobColor = control["knob-color"] ?? pedal["knobs-color"];
-                const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
-                const knobIndicator = control["knob-indicator"] ?? pedal["knobs-indicator"];
-                const labelColor = control["knob-label-color"] ?? pedal["font-color"];
-                const labelBackground = control["knob-label-background"] ?? null;
-                const isThick = control.border === "thick";
-                const isLabelInverted = control.labelPos === "inverted";
+        let $tooltip = null;
+        let $tooltipText = null;
 
-                const knob = $("<div>")
-                    .addClass(isSmall ? "smallknob" : "knob")
-                    .addClass(isLarge ? "largeknob" : "knob")
-                    .addClass(isXLarge ? "xlargeknob" : "knob")
-                    .toggleClass("thick", isThick)
-                    .css({
-                        background: knobColor,
-                        border: `${control.border === "thick" ? "10px" : "2px"} solid ${knobBorder}`
-                    })
-                    .css("--indicator-color", knobIndicator)
-                    .attr("data-control-label", control.label);
+        if (!editMode) { // Only create tooltip if not in edit mode
+          $tooltip = $("<div>")
+            .addClass("bx--tooltip bx--tooltip--top")
+            .attr("data-tooltip", "")
+            .css({
+              display: "none",
+              position: "absolute",
+              top: "38px",
+              left: "50%",
+              transform: "translateX(-50%)"
+            });
+          const $caret = $("<span>").addClass("bx--tooltip__caret");
+          $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
+          $tooltip.append($caret, $tooltipText);
+        }
 
-                let $tooltip = null;
-                let $tooltipText = null;
+        const rotation = getRotationFromValue(control, control.value);
+        knob.data("rotation", rotation);
+        knob.css("transform", `rotate(${rotation}deg)`);
 
-                if (!editMode) { // Only create tooltip if not in edit mode
-                    $tooltip = $("<div>")
-                        .addClass("bx--tooltip bx--tooltip--top")
-                        .attr("data-tooltip", "")
-                        .css({
-                            display: "none",
-                            position: "absolute",
-                            top: "38px",
-                            left: "50%",
-                            transform: "translateX(-50%)"
-                        });
-                    const $caret = $("<span>").addClass("bx--tooltip__caret");
-                    $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
-                    $tooltip.append($caret, $tooltipText);
-                }
- 
-                const rotation = getRotationFromValue(control, control.value);
-                knob.data("rotation", rotation);
-                knob.css("transform", `rotate(${rotation}deg)`);
+        let $valueLabel = null;
 
-                let $valueLabel = null;
-
-                if (control.values && Array.isArray(control.values)) {
-                  if (control.labelPos === "inverted") { // inverted
-                    if (control.border === "thick") { // thick border
-                      $valueLabel = $("<div>")
-                          .addClass("knob-value-label")
-                          .text(control.value)
-                          .css({
-                              textAlign: "center",
-                              marginTop: isSmall ? "-76px" : isLarge ? "-108px" : isXLarge ? "-132px" : "-89px", // margine in base al tipo
-                          });
-                    } else if (control.border !== "thick") { // non thick border
-                      $valueLabel = $("<div>")
-                          .addClass("knob-value-label")
-                          .text(control.value)
-                          .css({
-                              textAlign: "center",
-                              marginTop: isSmall ? "-67px" : isLarge ? "-93px" : isXLarge ? "-116px" : "-76px", // margine in base al tipo
-                          });
-                    }
-                  } else { // not inveted
-                    if (control.border === "thick") { // thick border
-                      $valueLabel = $("<div>")
-                          .addClass("knob-value-label")
-                          .text(control.value)
-                          .css({
-                              textAlign: "center",
-                              marginTop: isSmall ? "-12px" : isLarge ? "13px" : isXLarge ? "37px" : "2px", // margine in base al tipo
-                          });
-                    } else {
-                      $valueLabel = $("<div>")
-                          .addClass("knob-value-label")
-                          .text(control.value)
-                          .css({
-                              textAlign: "center",
-                              marginTop: isSmall ? "-28px" : isLarge ? "0px" : isXLarge ? "22px" : "-13px", // margine in base al tipo
-                          });
-                    }
-                  }
-                }
-
-
-
-                // Drag handler
-                function startDrag(e) {
-                    e.preventDefault();
-                    const startY = e.type.startsWith("touch") ? e.touches[0].pageY : e.pageY;
-                    const startValue = control.value;
-
-                    function onMove(e2) {
-                        const currentY = e2.type.startsWith("touch") ? e2.touches[0].pageY : e2.pageY;
-                        const delta = startY - currentY;
-
-                        if (control.values && Array.isArray(control.values)) {
-                            const steps = Math.round(delta / 5);
-                            let currentIndex = control.values.indexOf(startValue);
-                            if (currentIndex === -1) currentIndex = 0;
-                            let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
-                            control.value = control.values[newIndex];
-                            if (!$pedalDiv.data("subplexInvalidated")) {
-                              $pedalDiv.data("subplexInvalidated", true);
-                              invalidateSubplex($pedalDiv); // mark SubPlex as changed
-                            }
-                        } else {
-                            const min = control.min ?? 0;
-                            const max = control.max ?? 100;
-                            const steps = (delta / 5) / 2;
-                            let newValue = startValue + steps;
-                            newValue = Math.min(Math.max(newValue, min), max);
-                            control.value = parseFloat(newValue.toFixed(1));
-
-                            if (!$pedalDiv.data("subplexInvalidated")) {
-                              $pedalDiv.data("subplexInvalidated", true);
-                              invalidateSubplex($pedalDiv); // mark SubPlex as changed
-                            }
-                        }
-
-                        const newRotation = getRotationFromValue(control, control.value);
-                        knob.data("rotation", newRotation);
-                        knob.css("transform", `rotate(${newRotation}deg)`);
-                        if ($valueLabel) $valueLabel.text(control.value);
-
-                        if (!editMode && $tooltipText) {
-                            $tooltipText.text(control.value);
-                            $tooltip.show();
-                        }
-                    }
-
-                    function endDrag() {
-                        $(document).off("mousemove.knob touchmove.knob", onMove);
-                        $(document).off("mouseup.knob touchend.knob", endDrag);
-                        if (!editMode && $tooltip) $tooltip.hide();
-                    }
-
-                    $(document).on("mousemove.knob touchmove.knob", onMove);
-                    $(document).on("mouseup.knob touchend.knob", endDrag);
-                }
-
-                knob.on("mousedown touchstart", startDrag);
- 
-                let $label;
-
-                if (control.position === "under-top" && control.type === "smallknob") {
-                    $label = $("<div>").css({
-                        position: "absolute",
-                        "margin-left": "4px",
-                        "margin-top": "45px",
-                        transform: "translateY(-50%)",
-                        "white-space": "nowrap",
-                        "font-size": "10px"
-                    }).text(control.label);
-                } 
-                else {
-                    $label = $("<div>").addClass("label-top").text(control.label);
-                }
-
-                // 🔥 Applica colore e background in entrambi i casi
-                if (labelColor) {
-                    $label.css("color", labelColor);
-                }
-                if (labelBackground) {
-                    $label.css("padding", "0px 4px");
-                    $label.css("border-radius", "3px");
-                    $label.css("background-color", labelBackground);
-                }
-
-                // Knob label positioning
-                const $container = $("<div>")
-                  .addClass("knob-container")
-                  .css({ position: "relative" })
-                  .append(knob);
-
-                if (!editMode && $tooltip) {
-                  $container.append($tooltip);
-                }
-
-                let $knobWrapper = $("<div>")
-                  .addClass("knob-wrapper") // aggiungi classe per gestione CSS
-                  .css({ display: "flex", flexDirection: "column", alignItems: "center" });
-
-                let labelMarginTop
-
-                // Qui controllo la posizione del label (se sopra o sotto, più il margine se sotto)
-                if (control.labelPos === "inverted") {
-                  // Set different margin for different knob sizes and presence of thick border
-                  if (control.border === "thick") { 
-                    labelMarginTop = isSmall ? "1px" : isLarge ? "28px" : isXLarge ? "52px" : "15px";
-                  } else { 
-                    labelMarginTop = isSmall ? "-13px" : isLarge ? "12px" : isXLarge ? "36px" : "0px";
-                  }
-                  $label.css("margin-top", labelMarginTop)
-                  $knobWrapper.addClass("label-under"); // classe CSS per label sotto
-                  $knobWrapper.append($container, $label); // label sotto il knob
-                } else {
-                  $knobWrapper.addClass("label-over"); // classe CSS per label sopra
-                  $knobWrapper.append($label, $container); // label sopra il knob
-                }
-
-                // if (!editMode && $valueLabel) $knobWrapper.append($valueLabel);
-                if ($valueLabel) $knobWrapper.append($valueLabel);
-                // ---------------------
-
-                if (typeof control.position === "string") {
-                    const pos = control.position;
-
-                    // wrapper standard (centrato)
-                    function makeWrapper(marginTop) {
-                        return $("<div>").css({
-                            "margin-top": marginTop,
-                            "display": "flex",
-                            "flex-direction": "column",
-                            "align-items": "center"
-                        });
-                    }
-
-                    // wrapper speciale per under-top (NO align-items)
-                    function makeWrapperUnderTop(marginTop) {
-                        return $("<div>").css({
-                            "margin-top": marginTop,
-                            "display": "flex",
-                            "flex-direction": "column"
-                            // niente align-items:center
-                        });
-                    }
-
-
-                    // under-top logic (NO ALIGN, come richiesto)
-                    if (pos.includes("under-top") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append(makeWrapperUnderTop("-53px").append($label, $container));
-                        return;
-                    }
-
-                    // align-top logic (tutti gli altri *centrati*)
-                    if (pos.includes("align-top-clearest") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append(makeWrapper("15px").append($label, $container));
-                        return;
-                    }
-
-                    if (pos.includes("align-top-clearer") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append(makeWrapper("0px").append($label, $container));
-                        return;
-                    }
-
-                    if (pos.includes("align-top-clear") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append(makeWrapper("-14px").append($label, $container));
-                        return;
-                    }
-
-                    if (pos.includes("align-top") && $row.children().length > 0) {
-                        const $prev = $row.children().last();
-                        $prev.append(makeWrapper("-23px").append($label, $container));
-                        return;
-                    }
-
-
-
-                    // Vertical adjustments
-                    if (pos.includes("highest")) { $knobWrapper.css("margin-top", "-25px"); }
-                    else if (pos.includes("higher")) { $knobWrapper.css("margin-top", "-10px"); }
-                    else if (pos.includes("high")) { $knobWrapper.css("margin-top", "-3px"); }
-                    else if (pos.includes("lowest")) { $knobWrapper.css("margin-top", "45px"); }
-                    else if (pos.includes("lower")) { $knobWrapper.css("margin-top", "25px"); }
-                    else if (pos.includes("low")) { $knobWrapper.css("margin-top", "9px"); }
-
-                    // Margin-right
-                    const rightMatch = pos.match(/margin-right:\s*(\d+)px/);
-                    if (rightMatch) { $knobWrapper.css("margin-right", rightMatch[1] + "px"); }
-
-                    // Margin-left
-                    const leftMatch = pos.match(/margin-left:\s*(\d+)px/);
-                    if (leftMatch) { $knobWrapper.css("margin-left", leftMatch[1] + "px"); }
-
-                    $row.append($knobWrapper);
-
-                } else { $row.append($knobWrapper); }
-
-            }
-
-            // LEDs
-            if (control.type === "led") {
-                const colors = Array.isArray(control.colors) ? control.colors : ["#000000"];
-                const numColors = colors.length;
-                let currentIndex = typeof control.value === "number" ? control.value : 0;
-
-                const $label = $("<div>").addClass("label-top");
-
-                if (control.showlabel === "yes") { $label.text(control.label) }
-
-                const led = $("<div>")
-                    .addClass("led")
-                    .attr("data-control-label", control.label)
-                    .css("cursor", "pointer");
-
-                const setColor = (index) => {
-                    const color = colors[index] || "#000000";
-                    led.css("background-color", color);
-                    led.css("box-shadow", color === "#000000"
-                      ? "inset -2px -2px 2px rgba(255, 255, 255, 0.3), inset 1px 1px 2px rgba(0, 0, 0, 0.6)"
-                      : `0 0 12px 4px ${color}, 0 0 20px 6px ${color}`);
-                    control.value = index; // update value in control object
-                    led.data("colorIndex", index);
-                    if (!$pedalDiv.data("subplexInvalidated")) {
-                      $pedalDiv.data("subplexInvalidated", true);
-                      invalidateSubplex($pedalDiv); // mark SubPlex as changed
-                    }
-                };
-
-                setColor(currentIndex);
- 
-                led.on("click", function () {
-                    let index = (led.data("colorIndex") + 1) % numColors;
-                    setColor(index);
+        if (control.values && Array.isArray(control.values)) {
+          if (control.labelPos === "inverted") {
+            if (control.border === "thick") {
+              $valueLabel = $("<div>")
+                .addClass("knob-value-label")
+                .text(control.value)
+                .css({
+                  textAlign: "center",
+                  marginTop: isSmall ? "-76px" : isLarge ? "-108px" : isXLarge ? "-132px" : "-89px",
                 });
-
-                const $ledContainer = $("<div>").append($label, led);
-
-                if (control.position === "under-top" && $row.children().length > 0) {
-                    const $prev = $row.children().last();
-                    $prev.append($("<div>").css("margin-top", "0px").append($label, led));
-                } else if (control.position === "align-top" && $row.children().length > 0) {
-                    const $prev = $row.children().last();
-                    $prev.append($("<div>").css("margin-top", "8px").append($label, led));
-                }
-                else if (control.position === "xlow") { $ledContainer.css("margin-top", "50px"); $row.append($ledContainer); }
-                else if (control.position === "lowest") { $ledContainer.css("margin-top", "40px"); $row.append($ledContainer); }
-                else if (control.position === "lower") { $ledContainer.css("margin-top", "25px"); $row.append($ledContainer);}
-                else if (control.position === "low") { $ledContainer.css("margin-top", "10px"); $row.append($ledContainer);}
-                else if (control.position === "high") { $ledContainer.css("margin-top", "-15px"); $row.append($ledContainer); }
-                else if (control.position === "higher") { $ledContainer.css("margin-top", "-25px"); $row.append($ledContainer); }
-                else if (control.position === "highest") { $ledContainer.css("margin-top", "-30px"); $row.append($ledContainer);}
-                else if (control.position === "right") { $ledContainer.css({"right": "12px", position: "absolute"}); $row.append($ledContainer); }
-                
-                else if (typeof control.position === "string" && control.position.startsWith("margin-right:")) {
-                    // Extract the pixel value
-                    const match = control.position.match(/margin-right:\s*(-?\d+)px/);
-                    if (match) {
-                        const px = match[1] + "px";
-                        $ledContainer.css("margin-right", px);
-                    }
-                    $row.append($ledContainer);
-                } else if (typeof control.position === "string" && control.position.startsWith("margin-left:")) {
-                    // Extract the pixel value
-                    const match = control.position.match(/margin-left:\s*(-?\d+)px/);
-                    if (match) {
-                        const px = match[1] + "px";
-                        $ledContainer.css("margin-left", px);
-                    }
-                    $row.append($ledContainer);
-
-                } else { $row.append($ledContainer); }
-            }
-
-            // Slider
-            if (control.type === "slider") {
-              const $label = $("<div>").text(control.label).addClass("slider-label");
-
-              const $slider = $("<input type='range'>")
-                .attr({
-                  min: control.min,
-                  max: control.max,
-                  value: control.value,
-                  step: (control.step ?? 1) / 2, // 2x denser
-                  "data-control-label": control.label
-                })
-                .on("input", function () { 
-                  control.value = parseFloat($(this).val());
-                  if (!$pedalDiv.data("subplexInvalidated")) {
-                    $pedalDiv.data("subplexInvalidated", true);
-                    invalidateSubplex($pedalDiv); // mark SubPlex as changed
-                  }
-                  if (!editMode && $tooltipText) {
-                    $tooltipText.text(control.value);
-                    $tooltip.show();
-                  }
+            } else if (control.border !== "thick") {
+              $valueLabel = $("<div>")
+                .addClass("knob-value-label")
+                .text(control.value)
+                .css({
+                  textAlign: "center",
+                  marginTop: isSmall ? "-67px" : isLarge ? "-93px" : isXLarge ? "-116px" : "-76px",
                 });
+            }
+          } else {
+            if (control.border === "thick") {
+              $valueLabel = $("<div>")
+                .addClass("knob-value-label")
+                .text(control.value)
+                .css({
+                  textAlign: "center",
+                  marginTop: isSmall ? "-12px" : isLarge ? "13px" : isXLarge ? "37px" : "2px",
+                });
+            } else {
+              $valueLabel = $("<div>")
+                .addClass("knob-value-label")
+                .text(control.value)
+                .css({
+                  textAlign: "center",
+                  marginTop: isSmall ? "-28px" : isLarge ? "0px" : isXLarge ? "22px" : "-13px",
+                });
+            }
+          }
+        }
 
-              let $tooltip = null;
-              let $tooltipText = null;
+        // Drag handler
+        function startDrag(e) {
+          e.preventDefault();
+          const startY = e.type.startsWith("touch") ? e.touches[0].pageY : e.pageY;
+          const startValue = control.value;
 
-              // Only show tooltip if not in edit mode
-              if (!editMode) {
-                $tooltip = $("<div>")
-                  .addClass("bx--tooltip bx--tooltip--bottom") // caret on bottom
-                  .css({
-                    display: "none",
-                    position: "absolute",
-                    bottom: "-45px", // below slider
-                    left: "50%",
-                    transform: "translateX(-50%)"
-                  });
+          function onMove(e2) {
+            const currentY = e2.type.startsWith("touch") ? e2.touches[0].pageY : e2.pageY;
+            const delta = startY - currentY;
 
-                const $caret = $("<span>").addClass("bx--tooltip__caret");
-                $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
-                $tooltip.append($caret, $tooltipText);
+            if (control.values && Array.isArray(control.values)) {
+              const steps = Math.round(delta / 5);
+              let currentIndex = control.values.indexOf(startValue);
+              if (currentIndex === -1) currentIndex = 0;
+              let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
+              control.value = control.values[newIndex];
+              if (!$pedalDiv.data("subplexInvalidated")) {
+                $pedalDiv.data("subplexInvalidated", true);
+                invalidateSubplex($pedalDiv); // mark SubPlex as changed
               }
+            } else {
+              const min = control.min ?? 0;
+              const max = control.max ?? 100;
+              const steps = (delta / 5) / 2;
+              let newValue = startValue + steps;
+              newValue = Math.min(Math.max(newValue, min), max);
+              control.value = parseFloat(newValue.toFixed(1));
 
-              let $sliderWrapper;
-              if (control.orientation === "vertical") {
-                $slider.addClass("vertical");
-                $sliderWrapper = $("<div>")
-                  .addClass("slider-wrapper-vertical")
-                  .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px", position: "relative" })
-                  .append($label, $slider);
-              } else if (control.orientation === "vertical small") {
-                $slider.addClass("verticalsmall");
-                $sliderWrapper = $("<div>")
-                  .addClass("slider-wrapper-vertical")
-                  .css({ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 -12px", position: "relative" })
-                  .append($label, $slider);
-              } else {
-                $slider.addClass("horizontal");
-                $sliderWrapper = $("<div>")
-                  .addClass("slider-wrapper-horizontal")
-                  .css({ display: "flex", flexDirection: "column", alignItems: "flex-start", marginBottom: "10px", width: "100%", position: "relative" })
-                  .append($label, $slider);
+              if (!$pedalDiv.data("subplexInvalidated")) {
+                $pedalDiv.data("subplexInvalidated", true);
+                invalidateSubplex($pedalDiv); // mark SubPlex as changed
               }
-
-              // Attach tooltip if not in edit mode
-              if (!editMode && $tooltip) {
-                $sliderWrapper.append($tooltip);
-                $slider.on("mousedown touchstart", () => $tooltip.show());
-                $(document).on("mouseup touchend", () => $tooltip.hide());
-              }
-
-              $row.append($sliderWrapper);
             }
 
-            // LCD
-            if (control.type === "lcd") {
-                const $label = $("<div>").addClass("label-top");
+            const newRotation = getRotationFromValue(control, control.value);
+            knob.data("rotation", newRotation);
+            knob.css("transform", `rotate(${newRotation}deg)`);
+            if ($valueLabel) $valueLabel.text(control.value);
 
-                const textColor = control["text-color"] || "#fc0000"; 
-                const screenColor = control["screen-color"] || "#111";
-
-                const $lcd = $("<input type='text'>")
-                    .val(control.value)
-                    .attr("data-control-label", control.label)
-                    .css({
-                        width: `${control.width * 6}px`, height: `${control.height * 6}px`,
-                        fontFamily: "monospace", fontSize: "17px", textAlign: "center", 
-                        backgroundColor: screenColor, color: textColor,
-                        border: "2px solid #333", borderRadius: "4px", padding: "2px", position: "relative", top: "15px"
-                    });
-
-                if (control.shape === "round") { 
-                    $lcd.css("border-radius", "50%");
-                    $lcd.css("font-size", "12px");
-                    $lcd.css("width",`${control.width * 6}px`);
-                    $lcd.css("height",`${control.width * 6}px`);
-                } 
-
-                $lcd.on("input", function () { 
-                  control.value = $(this).val(); 
-                  if (!$pedalDiv.data("subplexInvalidated")) {
-                    $pedalDiv.data("subplexInvalidated", true);
-                    invalidateSubplex($pedalDiv); // mark SubPlex as changed
-                  }
-                });
-
-                const $wrapper = $("<div>").addClass("lcd-wrapper").append($label, $lcd);
-
-                if (control.position === "higher") { $lcd.css("margin-top", "-30px"); $row.append($wrapper); }
-                else if (control.position === "high") { $lcd.css("margin-top", "-15px"); $row.append($wrapper); }
-                else if (control.position === "lower") { $lcd.css("margin-top", "10px"); $row.append($wrapper); } 
-                else { $row.append($wrapper); }
-
-                
+            if (!editMode && $tooltipText) {
+              $tooltipText.text(control.value);
+              $tooltip.show();
             }
+          }
 
-            // Multi-select
-            if (control.type === "multi") {
-                const $label = $("<div>").addClass("label-top");
-                if (control.showlabel !== "no") { $label.text(control.label) }
-                const $select = $("<select>").attr("data-control-label", control.label);
-                control.values.forEach(val => {
-                    const $option = $("<option>").val(val).text(val);
-                    if (val === control.value) $option.attr("selected", true);
-                    $select.append($option);
-                });
+          function endDrag() {
+            $(document).off("mousemove.knob touchmove.knob", onMove);
+            $(document).off("mouseup.knob touchend.knob", endDrag);
+            if (!editMode && $tooltip) $tooltip.hide();
+          }
 
-                const $wrapper = $("<div>").append($label, $select);
+          $(document).on("mousemove.knob touchmove.knob", onMove);
+          $(document).on("mouseup.knob touchend.knob", endDrag);
+        }
 
-                if (control.position === "left") { $wrapper.addClass("align-left"); } 
-                else if (control.position === "right") { $wrapper.addClass("align-right"); } 
-                else if (control.position === "lower") { $wrapper.addClass("align-bottom"); } 
-                else if (control.position === "higher") { $wrapper.addClass("align-top"); } 
-                else if (control.position === "higher+") { $wrapper.addClass("align-top-er"); } 
-                else if (control.position === "highest") { $wrapper.addClass("align-top-est"); } 
-                else if (typeof control.position === "string" && control.position.startsWith("margin-right:")) {
-                    const match = control.position.match(/margin-right:\s*(\d+)px/);
-                    if (match) {
-                        const px = match[1] + "px";
-                        $wrapper.css("margin-right", px);
-                    }
-                }
-                else if (control.position === "align-top" && $row.children().length > 0) {
-                    const $prev = $row.children().last();
-                    $prev.append($("<div>").css("margin-top", "8px").append($label, $select));
-                }
-                
-                $row.append($wrapper);
+        knob.on("mousedown touchstart", startDrag);
 
-                $select.on("change", function () {
-                  control.value = $(this).val();
-                  if (!$pedalDiv.data("subplexInvalidated")) {
-                    $pedalDiv.data("subplexInvalidated", true);
-                    invalidateSubplex($pedalDiv); // mark SubPlex as changed
-                  }
-                });
+        let $label;
 
-            }
+        if (control.position === "under-top" && control.type === "smallknob") {
+          $label = $("<div>").css({
+            position: "absolute",
+            "margin-left": "4px",
+            "margin-top": "45px",
+            transform: "translateY(-50%)",
+            "white-space": "nowrap",
+            "font-size": "10px"
+          }).text(control.label);
+        } else {
+          $label = $("<div>").addClass("label-top").text(control.label);
+        }
 
+        if (labelColor) { $label.css("color", labelColor); }
+        if (labelBackground) {
+          $label.css("padding", "0px 4px");
+          $label.css("border-radius", "3px");
+          $label.css("background-color", labelBackground);
+        }
+
+        // Knob label positioning
+        const $container = $("<div>")
+          .addClass("knob-container")
+          .css({
+            position: "relative"
+          })
+          .append(knob);
+
+        if (!editMode && $tooltip) { $container.append($tooltip); }
+
+        let $knobWrapper = $("<div>")
+          .addClass("knob-wrapper") // add clas to handle css
+          .css({
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
+          });
+
+        let labelMarginTop
+
+        // Manage label positioning ---------------
+        if (control.labelPos === "inverted") {
+          // Set different margin for different knob sizes and presence of thick border
+          if (control.border === "thick") {
+            labelMarginTop = isSmall ? "1px" : isLarge ? "28px" : isXLarge ? "52px" : "15px";
+          } else {
+            labelMarginTop = isSmall ? "-13px" : isLarge ? "12px" : isXLarge ? "36px" : "0px";
+          }
+          $label.css("margin-top", labelMarginTop)
+          $knobWrapper.addClass("label-under"); 
+          $knobWrapper.append($container, $label); 
+        } else {
+          $knobWrapper.addClass("label-over"); 
+          $knobWrapper.append($label, $container); 
+        }
+
+        if ($valueLabel) $knobWrapper.append($valueLabel);
+        // -----------------------------------------
+
+        if (typeof control.position === "string") {
+          const pos = control.position;
+
+          // Centerd standard wrapper
+          function makeWrapper(marginTop) {
+            return $("<div>").css({
+              "margin-top": marginTop,
+              "display": "flex",
+              "flex-direction": "column",
+              "align-items": "center"
+            });
+          }
+
+          // Special wrapper for under-knob
+          function makeWrapperUnderTop(marginTop) {
+            return $("<div>").css({
+              "margin-top": marginTop,
+              "display": "flex",
+              "flex-direction": "column"
+            });
+          }
+
+
+          // Under-top logic
+          if (pos.includes("under-top") && $row.children().length > 0) {
+            const $prev = $row.children().last();
+            $prev.append(makeWrapperUnderTop("-53px").append($label, $container));
+            return;
+          }
+
+          // Align-top logic ----------------
+          if (pos.includes("align-top-clearest") && $row.children().length > 0) {
+            const $prev = $row.children().last();
+            $prev.append(makeWrapper("15px").append($label, $container));
+            return;
+          }
+
+          if (pos.includes("align-top-clearer") && $row.children().length > 0) {
+            const $prev = $row.children().last();
+            $prev.append(makeWrapper("0px").append($label, $container));
+            return;
+          }
+
+          if (pos.includes("align-top-clear") && $row.children().length > 0) {
+            const $prev = $row.children().last();
+            $prev.append(makeWrapper("-14px").append($label, $container));
+            return;
+          }
+
+          if (pos.includes("align-top") && $row.children().length > 0) {
+            const $prev = $row.children().last();
+            $prev.append(makeWrapper("-23px").append($label, $container));
+            return;
+          }
+          // ---------------------------------
+
+          // Vertical adjustments
+          if (pos.includes("highest")) {        $knobWrapper.css("margin-top", "-25px");
+          } else if (pos.includes("higher")) {  $knobWrapper.css("margin-top", "-10px");
+          } else if (pos.includes("high")) {    $knobWrapper.css("margin-top", "-3px");
+          } else if (pos.includes("lowest")) {  $knobWrapper.css("margin-top", "45px");
+          } else if (pos.includes("lower")) {   $knobWrapper.css("margin-top", "25px");
+          } else if (pos.includes("low")) {     $knobWrapper.css("margin-top", "9px");
+          }
+
+          // Margin-right
+          const rightMatch = pos.match(/margin-right:\s*(\d+)px/);
+          if (rightMatch) { $knobWrapper.css("margin-right", rightMatch[1] + "px"); }
+
+          // Margin-left
+          const leftMatch = pos.match(/margin-left:\s*(\d+)px/);
+          if (leftMatch) { $knobWrapper.css("margin-left", leftMatch[1] + "px"); }
+
+          $row.append($knobWrapper);
+
+        } else {
+          $row.append($knobWrapper);
+        }
+
+      }
+      // ============================================================================
+
+      // LEDs =======================================================================
+      if (control.type === "led") {
+        const colors = Array.isArray(control.colors) ? control.colors : ["#000000"];
+        const numColors = colors.length;
+        let currentIndex = typeof control.value === "number" ? control.value : 0;
+
+        const $label = $("<div>").addClass("label-top");
+
+        if (control.showlabel === "yes") { $label.text(control.label) }
+
+        const led = $("<div>")
+          .addClass("led")
+          .attr("data-control-label", control.label)
+          .css("cursor", "pointer");
+
+        const setColor = (index) => {
+          const color = colors[index] || "#000000";
+          led.css("background-color", color);
+          led.css("box-shadow", color === "#000000" ?
+            "inset -2px -2px 2px rgba(255, 255, 255, 0.3), inset 1px 1px 2px rgba(0, 0, 0, 0.6)" :
+            `0 0 12px 4px ${color}, 0 0 20px 6px ${color}`);
+          control.value = index; // update value in control object
+          led.data("colorIndex", index);
+          if (!$pedalDiv.data("subplexInvalidated")) {
+            $pedalDiv.data("subplexInvalidated", true);
+            invalidateSubplex($pedalDiv); // mark SubPlex as changed
+          }
+        };
+
+        setColor(currentIndex);
+
+        led.on("click", function () {
+          let index = (led.data("colorIndex") + 1) % numColors;
+          setColor(index);
         });
 
-        $pedalDiv.append($row);
+        const $ledContainer = $("<div>").append($label, led);
 
-        // Adjust gap if only 3 smallknobs and no other controls
-        const $allSmallKnobs = $row.find(".smallknob");
-        const $allControls = $row.find("> div"); // direct children of the row
+        if (control.position === "under-top" && $row.children().length > 0) {
+          const $prev = $row.children().last();
+          $prev.append($("<div>").css("margin-top", "0px").append($label, led));
+        } else if (control.position === "align-top" && $row.children().length > 0) {
+          const $prev = $row.children().last();
+          $prev.append($("<div>").css("margin-top", "8px").append($label, led));
+        } else if (control.position === "xlow") {
+          $ledContainer.css("margin-top", "50px");
+          $row.append($ledContainer);
+        } else if (control.position === "lowest") {
+          $ledContainer.css("margin-top", "40px");
+          $row.append($ledContainer);
+        } else if (control.position === "lower") {
+          $ledContainer.css("margin-top", "25px");
+          $row.append($ledContainer);
+        } else if (control.position === "low") {
+          $ledContainer.css("margin-top", "10px");
+          $row.append($ledContainer);
+        } else if (control.position === "high") {
+          $ledContainer.css("margin-top", "-15px");
+          $row.append($ledContainer);
+        } else if (control.position === "higher") {
+          $ledContainer.css("margin-top", "-25px");
+          $row.append($ledContainer);
+        } else if (control.position === "highest") {
+          $ledContainer.css("margin-top", "-30px");
+          $row.append($ledContainer);
+        } else if (control.position === "right") {
+          $ledContainer.css({
+            "right": "12px",
+            position: "absolute"
+          });
+          $row.append($ledContainer);
+        } else if (typeof control.position === "string" && control.position.startsWith("margin-right:")) {
+          // Extract the pixel value
+          const match = control.position.match(/margin-right:\s*(-?\d+)px/);
+          if (match) {
+            const px = match[1] + "px";
+            $ledContainer.css("margin-right", px);
+          }
+          $row.append($ledContainer);
+        } else if (typeof control.position === "string" && control.position.startsWith("margin-left:")) {
+          // Extract the pixel value
+          const match = control.position.match(/margin-left:\s*(-?\d+)px/);
+          if (match) {
+            const px = match[1] + "px";
+            $ledContainer.css("margin-left", px);
+          }
+          $row.append($ledContainer);
 
-        if ($allSmallKnobs.length === 3 && $allControls.length === 3) {
-          $row.css("gap", "0px");
+        } else {
+          $row.append($ledContainer);
         }
-        
-    }); 
+      }
+
+      // ============================================================================
+
+      // Sliders ====================================================================
+      if (control.type === "slider") {
+        const $label = $("<div>").text(control.label).addClass("slider-label");
+
+        const $slider = $("<input type='range'>")
+          .attr({
+            min: control.min,
+            max: control.max,
+            value: control.value,
+            step: (control.step ?? 1) / 2, // 2x denser
+            "data-control-label": control.label
+          })
+          .on("input", function () {
+            control.value = parseFloat($(this).val());
+            if (!$pedalDiv.data("subplexInvalidated")) {
+              $pedalDiv.data("subplexInvalidated", true);
+              invalidateSubplex($pedalDiv); // mark SubPlex as changed
+            }
+            if (!editMode && $tooltipText) {
+              $tooltipText.text(control.value);
+              $tooltip.show();
+            }
+          });
+
+        let $tooltip = null;
+        let $tooltipText = null;
+
+        // Only show tooltip if not in edit mode
+        if (!editMode) {
+          $tooltip = $("<div>")
+            .addClass("bx--tooltip bx--tooltip--bottom") // caret on bottom
+            .css({
+              display: "none",
+              position: "absolute",
+              bottom: "-45px", // below slider
+              left: "50%",
+              transform: "translateX(-50%)"
+            });
+
+          const $caret = $("<span>").addClass("bx--tooltip__caret");
+          $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
+          $tooltip.append($caret, $tooltipText);
+        }
+
+        let $sliderWrapper;
+        if (control.orientation === "vertical") {
+          $slider.addClass("vertical");
+          $sliderWrapper = $("<div>")
+            .addClass("slider-wrapper-vertical")
+            .css({
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              margin: "0 -12px",
+              position: "relative"
+            })
+            .append($label, $slider);
+        } else if (control.orientation === "vertical small") {
+          $slider.addClass("verticalsmall");
+          $sliderWrapper = $("<div>")
+            .addClass("slider-wrapper-vertical")
+            .css({
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              margin: "0 -12px",
+              position: "relative"
+            })
+            .append($label, $slider);
+        } else {
+          $slider.addClass("horizontal");
+          $sliderWrapper = $("<div>")
+            .addClass("slider-wrapper-horizontal")
+            .css({
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              marginBottom: "10px",
+              width: "100%",
+              position: "relative"
+            })
+            .append($label, $slider);
+        }
+
+        // Attach tooltip if not in edit mode
+        if (!editMode && $tooltip) {
+          $sliderWrapper.append($tooltip);
+          $slider.on("mousedown touchstart", () => $tooltip.show());
+          $(document).on("mouseup touchend", () => $tooltip.hide());
+        }
+
+        $row.append($sliderWrapper);
+      }
+
+      // ============================================================================
+
+      // LCDs =======================================================================
+      if (control.type === "lcd") {
+        const $label = $("<div>").addClass("label-top");
+
+        const textColor = control["text-color"] || "#fc0000";
+        const screenColor = control["screen-color"] || "#111";
+
+        const $lcd = $("<input type='text'>")
+          .val(control.value)
+          .attr("data-control-label", control.label)
+          .css({
+            width: `${control.width * 6}px`,
+            height: `${control.height * 6}px`,
+            fontFamily: "monospace",
+            fontSize: "17px",
+            textAlign: "center",
+            backgroundColor: screenColor,
+            color: textColor,
+            border: "2px solid #333",
+            borderRadius: "4px",
+            padding: "2px",
+            position: "relative",
+            top: "15px"
+          });
+
+        if (control.shape === "round") {
+          $lcd.css("border-radius", "50%");
+          $lcd.css("font-size", "12px");
+          $lcd.css("width", `${control.width * 6}px`);
+          $lcd.css("height", `${control.width * 6}px`);
+        }
+
+        $lcd.on("input", function () {
+          control.value = $(this).val();
+          if (!$pedalDiv.data("subplexInvalidated")) {
+            $pedalDiv.data("subplexInvalidated", true);
+            invalidateSubplex($pedalDiv); // mark SubPlex as changed
+          }
+        });
+
+        const $wrapper = $("<div>").addClass("lcd-wrapper").append($label, $lcd);
+
+        if (control.position === "higher") {
+          $lcd.css("margin-top", "-30px");
+          $row.append($wrapper);
+        } else if (control.position === "high") {
+          $lcd.css("margin-top", "-15px");
+          $row.append($wrapper);
+        } else if (control.position === "lower") {
+          $lcd.css("margin-top", "10px");
+          $row.append($wrapper);
+        } else {
+          $row.append($wrapper);
+        }
+
+
+      }
+
+      // ============================================================================
+
+      // Multi Selects ==============================================================
+      if (control.type === "multi") {
+        const $label = $("<div>").addClass("label-top");
+        if (control.showlabel !== "no") {
+          $label.text(control.label)
+        }
+        const $select = $("<select>").attr("data-control-label", control.label);
+        control.values.forEach(val => {
+          const $option = $("<option>").val(val).text(val);
+          if (val === control.value) $option.attr("selected", true);
+          $select.append($option);
+        });
+
+        const $wrapper = $("<div>").append($label, $select);
+
+        if (control.position === "left") {
+          $wrapper.addClass("align-left");
+        } else if (control.position === "right") {
+          $wrapper.addClass("align-right");
+        } else if (control.position === "lower") {
+          $wrapper.addClass("align-bottom");
+        } else if (control.position === "higher") {
+          $wrapper.addClass("align-top");
+        } else if (control.position === "higher+") {
+          $wrapper.addClass("align-top-er");
+        } else if (control.position === "highest") {
+          $wrapper.addClass("align-top-est");
+        } else if (typeof control.position === "string" && control.position.startsWith("margin-right:")) {
+          const match = control.position.match(/margin-right:\s*(\d+)px/);
+          if (match) {
+            const px = match[1] + "px";
+            $wrapper.css("margin-right", px);
+          }
+        } else if (control.position === "align-top" && $row.children().length > 0) {
+          const $prev = $row.children().last();
+          $prev.append($("<div>").css("margin-top", "8px").append($label, $select));
+        }
+
+        $row.append($wrapper);
+
+        $select.on("change", function () {
+          control.value = $(this).val();
+          if (!$pedalDiv.data("subplexInvalidated")) {
+            $pedalDiv.data("subplexInvalidated", true);
+            invalidateSubplex($pedalDiv); // mark SubPlex as changed
+          }
+        });
+
+      }
+
+    });
+
+    $pedalDiv.append($row);
+
+    // Adjust gap if only 3 smallknobs and no other controls
+    const $allSmallKnobs = $row.find(".smallknob");
+    const $allControls = $row.find("> div"); // direct children of the row
+
+    if ($allSmallKnobs.length === 3 && $allControls.length === 3) {
+      $row.css("gap", "0px");
+    }
+
+  });
 }
+// -------------------------------------------------------------------
 
 
 
-// HELPER: render a gear in catalog and editor
+// Render a gear in catalog and editor -------------------------------
 function renderPedal(pedal, userRole, pedalboardPage = false) {
-  
+
   const pedalId = pedal._id || pedal.id;
   const encodedPedalId = encodeURIComponent(pedalId);
 
@@ -577,7 +641,10 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     inside = "full";
   } else {
     const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-    if (match) { colorOnly = match[1]; inside = match[2] || ""; }
+    if (match) {
+      colorOnly = match[1];
+      inside = match[2] || "";
+    }
   }
 
   // Base CSS
@@ -596,7 +663,9 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       backgroundImage: `url("${insideColorRaw}")`,
       backgroundSize: 'cover',
       backgroundPosition: 'center'
-    } : { background: colorOnly })
+    } : {
+      background: colorOnly
+    })
   };
 
   let $pedalDiv;
@@ -622,44 +691,35 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
   // const cleanName = sanitizeHtml(pedal.name);
   const cleanName = sanitizePedalHTML(pedal.name);
 
-
-
   // Head and inverted pedals → add name/logo
   if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
     const $nameDiv = $("<div>").addClass("head-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
     $pedalDiv.append($nameDiv);
   }
 
-
   // Render pedal controls
   renderPedalControls(pedal, $pedalDiv);
 
-  // Aggancia invalidazione SubPlex ai controlli
+  // Link SubPlex controls to invalidation function
   $pedalDiv.find('.knob, select, .led, input[type="range"], input[type="text"]')
-    .on('change input click', function() {
-        onPedalControlChange($pedalDiv);
+    .on('change input click', function () {
+      onPedalControlChange($pedalDiv);
     });
-
-
-
 
   // Add name/logo for others
   if (["pedal", "combo", "round", "expression"].includes(pedal.type)) {
     const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
     $pedalDiv.append($nameDiv);
-  } 
+  }
 
-
-  // =======================================================
-  // AUTHOR + VERIFIED + PUBLISHED (FIX DEFINITIVO)
-  // =======================================================
+  // Author and verified badge in catalog page ==========
   if (pedalboardPage === false && pedal.author && pedal.authorId) {
 
     const ADMIN_AUTHOR_ID = 'user_admin';
     const isAdminUser = userRole === 'admin';
     const authorIsAdmin = pedal.authorId === ADMIN_AUTHOR_ID;
 
-    // BADGE VERIFIED → sempre visibile se esiste
+    // Verified badge
     let $verifiedBadge = null;
     if (pedal.verified == "true") {
       $verifiedBadge = $(`
@@ -672,35 +732,29 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       `);
     }
 
-    // DECIDE SE MOSTRARE L'AUTORE
     let showAuthor = false;
 
-    if (isAdminUser) {
-      showAuthor = true;
-    } else if (!authorIsAdmin) {
-      showAuthor = true;
+    if (isAdminUser) { showAuthor = true;
+    } else if (!authorIsAdmin) { showAuthor = true;
     }
 
-    // CREA IL CONTAINER SOLO SE SERVE
+    // Create container
     if ($verifiedBadge || showAuthor) {
 
       const $authorDiv = $("<div>").addClass("pedal-author");
 
-      // Badge prima del testo
+      // Badge positioning before text
       if ($verifiedBadge) {
         $authorDiv.append($verifiedBadge);
       }
 
-      // Testo autore (+ published solo per admin)
+      // Show author conditionally
       if (showAuthor) {
         let authorText = `By: ${pedal.author}`;
-
         const published = (pedal.published || '').toLowerCase();
         const showPublishedStatuses = ['private', 'draft', 'reviewing', 'template'];
 
-        if (showPublishedStatuses.indexOf(published) !== -1) {
-          authorText += `, ${published}`;
-        }
+        if (showPublishedStatuses.indexOf(published) !== -1) { authorText += `, ${published}`; }
 
         const $authorText = $("<span>").text(authorText);
         $authorDiv.append($authorText);
@@ -709,7 +763,6 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       $pedalDiv.prepend($authorDiv);
     }
   }
-
 
   // Add edit button if admin OR current user is the author OR is a template
   if (window.currentUser) {
@@ -734,12 +787,12 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     }
   }
 
-// ==================== SHARE ICON ====================
-if ( (window.location.pathname.endsWith('/gears')) || (window.location.pathname.endsWith('/gears_lazy'))) {
+  // Share icon ===========
+  if ((window.location.pathname.endsWith('/gears')) || (window.location.pathname.endsWith('/gears_lazy'))) {
 
-  const basePath = getBasePath();
+    const basePath = getBasePath();
 
-  const $shareIcon = $(`
+    const $shareIcon = $(`
     <div class="pedal-share-icon" title="Open Gear">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
       <path d="M26,28H6a2.0027,2.0027,0,0,1-2-2V6A2.0027,2.0027,0,0,1,6,4H16V6H6V26H26V16h2V26A2.0027,2.0027,0,0,1,26,28Z"></path><path d="M20 2 20 4 26.586 4 18 12.586 19.414 14 28 5.414 28 12 30 12 30 2 20 2z"></path>
@@ -747,32 +800,32 @@ if ( (window.location.pathname.endsWith('/gears')) || (window.location.pathname.
     </div>
   `);
 
-  $pedalDiv.append($shareIcon);
+    $pedalDiv.append($shareIcon);
 
-  $pedalDiv.css('position', 'relative');
-  $shareIcon.css({
-    position: 'absolute',
-    bottom: '-22px',
-    right: '0',
-    cursor: 'pointer',
-    opacity: 0,
-    transition: 'opacity 0.2s ease'
-  });
+    $pedalDiv.css('position', 'relative');
+    $shareIcon.css({
+      position: 'absolute',
+      bottom: '-22px',
+      right: '0',
+      cursor: 'pointer',
+      opacity: 0,
+      transition: 'opacity 0.2s ease'
+    });
 
-  $pedalDiv.hover(
-    function() { $shareIcon.css('opacity', 1); },
-    function() { $shareIcon.css('opacity', 0); }
-  );
+    $pedalDiv.hover(
+      function () { $shareIcon.css('opacity', 1); },
+      function () { $shareIcon.css('opacity', 0); }
+    );
 
-  $shareIcon.on('click', (e) => {
-    e.stopPropagation();
+    $shareIcon.on('click', (e) => {
+      e.stopPropagation();
 
-    const url = `${window.location.origin}${basePath}/view-gear?id=${encodedPedalId}`;
-    const fxdbSearch = pedalId.toLowerCase().trim().replace(/\s+/g, '+');
-    const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
+      const url = `${window.location.origin}${basePath}/view-gear?id=${encodedPedalId}`;
+      const fxdbSearch = pedalId.toLowerCase().trim().replace(/\s+/g, '+');
+      const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
 
-    // Costruisci HTML dinamicamente in base alla pagina
-    let buttonsHTML = `<button class="js-copyLink bx--btn bx--btn--secondary">
+      // Create dynamic buttons in the popup
+      let buttonsHTML = `<button class="js-copyLink bx--btn bx--btn--secondary">
                           Copy Link
                           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
                                fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
@@ -781,7 +834,7 @@ if ( (window.location.pathname.endsWith('/gears')) || (window.location.pathname.
                           </svg>
                         </button>`;
 
-    buttonsHTML += `<button class="js-openFXDB bx--btn bx--btn--danger">
+      buttonsHTML += `<button class="js-openFXDB bx--btn bx--btn--danger">
                           Open in FXDB
                           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
                                fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
@@ -790,9 +843,9 @@ if ( (window.location.pathname.endsWith('/gears')) || (window.location.pathname.
                           </svg>
                         </button>`;
 
-    // Se siamo nella pagina principale del catalogo (/gears senza query), aggiungi il bottone Open Gear
-    if (!window.location.search.includes('id=')) {
-      buttonsHTML += `<button class="js-openGear bx--btn bx--btn--tertiary">
+      // Add open gear button
+      if (!window.location.search.includes('id=')) {
+        buttonsHTML += `<button class="js-openGear bx--btn bx--btn--tertiary">
                         Open Gear
                         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
                              fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
@@ -800,48 +853,49 @@ if ( (window.location.pathname.endsWith('/gears')) || (window.location.pathname.
                           <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"></path>
                         </svg>
                       </button>`;
-    }
-
-    Swal.fire({
-      title: 'Open this Gear',
-      showConfirmButton: false,
-      showCloseButton: false,
-      allowOutsideClick: true,
-      position: 'top-end',
-      width: 'auto',
-      html: `<div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">
-               ${buttonsHTML}
-             </div>`,
-      didOpen: () => {
-        const popup = Swal.getPopup();
-
-        popup.querySelector('.js-copyLink')?.addEventListener('click', (e) => {
-          e.stopPropagation();
-          navigator.clipboard.writeText(url);
-        });
-
-        popup.querySelector('.js-openGear')?.addEventListener('click', (e) => {
-          console.log('encodedPedalId:', encodedPedalId);
-          e.stopPropagation();
-          window.open(url, '_blank');
-        });
-
-        popup.querySelector('.js-openFXDB')?.addEventListener('click', (e) => {
-          console.log('pedalId:', pedalId);
-          e.stopPropagation();
-          window.open(urlFXDB, '_blank');
-        });
       }
 
-    });
+      // Open gear swal
+      Swal.fire({
+        title: 'Open this Gear',
+        showConfirmButton: false,
+        showCloseButton: false,
+        allowOutsideClick: true,
+        position: 'top-end',
+        width: 'auto',
+        html: `<div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">
+               ${buttonsHTML}
+             </div>`,
+        didOpen: () => {
+          const popup = Swal.getPopup();
 
-  });
-}
-// ==================== /SHARE ICON ====================
+          popup.querySelector('.js-copyLink')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(url);
+          });
+
+          popup.querySelector('.js-openGear')?.addEventListener('click', (e) => {
+            console.log('encodedPedalId:', encodedPedalId);
+            e.stopPropagation();
+            window.open(url, '_blank');
+          });
+
+          popup.querySelector('.js-openFXDB')?.addEventListener('click', (e) => {
+            console.log('pedalId:', pedalId);
+            e.stopPropagation();
+            window.open(urlFXDB, '_blank');
+          });
+        }
+
+      });
+
+    });
+  }
+  // ===========
 
   return $pedalDiv;
 }
-
+// ------------------------------------------------
 
 
 // Get all active gears controls to save the preset
@@ -859,10 +913,8 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
     // --- Knobs ---
     $pedal.find('.knob').each(function () {
       const label = $(this).data('control-label');
-      //const $valueLabel = $(this).parent().find('.knob-value-label'); // buggato
-      //const $valueLabel = $(this).closest('.knob-wrapper').find('.knob-value-label'); // test
-      const $valueLabel = $(this).closest('.knob-wrapper').children('.knob-value-label'); // test (migliore)
-      
+      const $valueLabel = $(this).closest('.knob-wrapper').children('.knob-value-label');
+
       let value;
       if ($valueLabel.length && $valueLabel.text().trim() !== '') {
         value = $valueLabel.text().trim();
@@ -881,33 +933,41 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
         }
         value = getValueFromRotation(angle);
       }
-      controlsArray.push({ [label]: isNaN(value) ? value : parseFloat(value) }); // buggato
+      controlsArray.push({
+        [label]: isNaN(value) ? value : parseFloat(value)
+      });
 
     });
 
-    // --- Dropdowns ---
+    // Dropdowns
     $pedal.find('select[data-control-label]').each(function () {
       const label = $(this).data('control-label');
-      controlsArray.push({ [label]: $(this).val() });
+      controlsArray.push({
+        [label]: $(this).val()
+      });
     });
 
-    // --- Sliders ---
+    // Sliders
     $pedal.find('input[type="range"][data-control-label]').each(function () {
       const label = $(this).data('control-label');
-      controlsArray.push({ [label]: parseFloat($(this).val()) });
+      controlsArray.push({
+        [label]: parseFloat($(this).val())
+      });
     });
 
-    // --- LCDs ---
+    // LCDs
     $pedal.find('input[type="text"][data-control-label]').each(function () {
       const label = $(this).data('control-label');
-      controlsArray.push({ [label]: $(this).val().trim() });
+      controlsArray.push({
+        [label]: $(this).val().trim()
+      });
     });
 
-    // --- LEDs ---
+    // LEDs
     $pedal.find('.led[data-control-label]').each(function () {
       const label = $(this).data('control-label'); // case-sensitive
       const bgColor = ($(this).css('background-color') || '').trim();
-      const hexColor = normalizeHex(bgColor); // DOM color convertito in HEX
+      const hexColor = normalizeHex(bgColor); // DOM color converted in HEX
 
       let matchedIndex = 0;
       let catalogColorUsed = '#000000';
@@ -921,8 +981,7 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
           window.catalog.find(p => p.name === pedalName);
 
         if (pedalData && Array.isArray(pedalData.controls)) {
-          outerLoop:
-          for (const rowWrapper of pedalData.controls) {
+          outerLoop: for (const rowWrapper of pedalData.controls) {
             if (!Array.isArray(rowWrapper.row)) continue;
 
             for (const control of rowWrapper.row) {
@@ -962,21 +1021,23 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
       }
 
       if (hexColor !== '#000000') hasColoredLed = true;
-      controlsArray.push({ [label]: matchedIndex });
+      controlsArray.push({
+        [label]: matchedIndex
+      });
     });
 
-
     // Save pedal in preset only if at least a LED is turned on
-    // if (hasColoredLed) {
-    //   pedals.push({ id: pedalId, name: pedalName, controls: controlsArray });
-    // }
     if (hasColoredLed) {
-      const pedalObj = { id: pedalId, name: pedalName, controls: controlsArray };
+      const pedalObj = {
+        id: pedalId,
+        name: pedalName,
+        controls: controlsArray
+      };
 
-      // --- SUBPLEX ---
-      const appliedSubplexData = $pedal.data('applied-subplex'); // oggetto JSON già salvato sul div
+      // SubPlex
+      const appliedSubplexData = $pedal.data('applied-subplex');
       if (appliedSubplexData) {
-        // Salva solo i campi rilevanti
+
         pedalObj.subplex = {
           subplexId: appliedSubplexData.id || appliedSubplexData._id || appliedSubplexData.subplexId,
           presetName: appliedSubplexData.presetName || appliedSubplexData.name,
@@ -994,12 +1055,14 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
 
   });
 
-  return { [presetName]: pedals };
+  return {
+    [presetName]: pedals
+  };
 }
+// ------------------------
 
 
-
-// Function to filter pedals with colored LEDs in preset
+// Function to filter pedals with colored LEDs in preset ----------------
 function filterPedalsWithColoredLeds(pedalsObj) {
   const filteredPedals = {};
 
@@ -1045,31 +1108,31 @@ function filterPedalsWithColoredLeds(pedalsObj) {
 
 
 
-// Render full pedalboard in preset page
+// Render full pedalboard in preset page --------------------------
 async function renderFullPedalboard(pedalboardOverride = null) {
 
-  // 🔒 TEST / SINGLE PEDAL MODE
+  // Single pedal mode
   if (window.__SINGLE_PEDAL_MODE__ && !pedalboardOverride) {
     return Promise.resolve();
   }
 
-  // 🔹 Override pedalboard (test / single pedal mode)
+  // Override pedalboard (single pedal mode)
   if (pedalboardOverride && pedalboardOverride.pedals) {
     window.pedalboard = pedalboardOverride;
   }
 
-  return new Promise((resolve) => {  
+  return new Promise((resolve) => {
 
-     try {
+    try {
       if (!resultsDiv) {
         console.error("resultsDiv not initialized yet");
-        return resolve(); 
+        return resolve();
       }
 
       const container = document.getElementById('preset');
       if (!container) {
         console.warn('No #pedalboard container found');
-        return resolve(); 
+        return resolve();
       }
       container.innerHTML = '';
 
@@ -1101,384 +1164,371 @@ async function renderFullPedalboard(pedalboardOverride = null) {
         }
       }
 
-      // Mostra controlli
+      // Show controls
       $("#preset-controls").css("display", "flex");
 
-  // Organize pedals by row
-  const rowsMap = {};
-  window.pedalboard.pedals.forEach(pbPedal => {
-    const rowNum = pbPedal.row || 1;
-    if (!rowsMap[rowNum]) rowsMap[rowNum] = [];
-    rowsMap[rowNum].push(pbPedal);
-  });
+      // Organize pedals by row
+      const rowsMap = {};
+      window.pedalboard.pedals.forEach(pbPedal => {
+        const rowNum = pbPedal.row || 1;
+        if (!rowsMap[rowNum]) rowsMap[rowNum] = [];
+        rowsMap[rowNum].push(pbPedal);
+      });
 
-  const sortedRows = Object.keys(rowsMap).map(r => parseInt(r, 10)).sort((a, b) => a - b);
+      const sortedRows = Object.keys(rowsMap).map(r => parseInt(r, 10)).sort((a, b) => a - b);
 
-  for (const rowNum of sortedRows) {
-    const rowDiv = document.createElement('div');
-    rowDiv.style.display = 'flex';
-    rowDiv.style.flexWrap = 'wrap';
-    rowDiv.style.alignItems = 'flex-start';
-    rowDiv.style.gap = '10px';
+      for (const rowNum of sortedRows) {
+        const rowDiv = document.createElement('div');
+        rowDiv.style.display = 'flex';
+        rowDiv.style.flexWrap = 'wrap';
+        rowDiv.style.alignItems = 'flex-start';
+        rowDiv.style.gap = '10px';
+
+        for (const pbPedal of rowsMap[rowNum]) {
+          try {
+            const id = String(pbPedal.pedal_id || "").trim();
+            const pedalData = window.catalogMap[id] || window.catalogMap[id.normalize()];
+
+            if (!pedalData) {
+              console.warn(`Pedal not found in catalog: ${pbPedal.pedal_id}`);
+              continue;
+            }
+
+            const pedal = pedalData;
+            const angle = pbPedal.rotation || 0;
+
+            const insideColorRaw = pedal["inside-color"] || "";
+            let inside = "";
+            let colorOnly = insideColorRaw;
+
+            // Check if inside-color is an image URL (http, https, data URI, or local images/)
+            const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
+
+            if (isImage) {
+              inside = "full"; // Force full mode for images
+            } else {
+              // Existing logic for color + optional text
+              const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
+              if (match) {
+                colorOnly = match[1];
+                inside = match[2] || "";
+              }
+            }
+
+            const widthValue = parseFloat(getPedalWidth(pedal.width));
+
+            const baseCss = {
+              border: `5px solid ${pedal["color"]}`, // Outer border
+              borderRadius: '10px',
+              color: pedal["font-color"],
+              width: getPedalWidth(pedal.width),
+              height: getPedalHeight(pedal.height),
+              transform: `rotate(${angle}deg)`,
+              marginBottom: '10px',
+              display: 'inline-block',
+              ...(pedal["inside-border"] && {
+                boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
+              }),
+              ...(isImage ? {
+                backgroundImage: `url("${insideColorRaw}")`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              } : {
+                background: colorOnly
+              })
+            };
+
+            let $pedalDiv;
+
+            if (pedal.type === "pedal") {
+              const boxShadow = getBoxShadow(pedal, inside, `inset 0 -36px 0 0 ${pedal["color"]}`);
+
+              $pedalDiv = $("<div>")
+                .addClass("pedal-catalog")
+                .css({
+                  ...baseCss,
+                  boxShadow
+                })
+                .attr("data-pedal-name", pedal.name)
+                .attr("data-pedal-id", pedal._id);
+
+            } else if (pedal.type === "expression") {
+              const boxShadow = getBoxShadow(pedal, inside, `inset 0 -36px 0 0 ${pedal["color"]}`);
+
+              $pedalDiv = $("<div>")
+                .addClass("pedal-catalog")
+                .css({
+                  ...baseCss,
+                  borderRadius: '25px',
+                  boxShadow
+                })
+                .attr("data-pedal-name", pedal.name)
+                .attr("data-pedal-id", pedal._id);
+
+            } else if (pedal.type === "combo") {
+              const boxShadow = getBoxShadow(pedal, inside, `inset 0 -80px 0 0 ${pedal["color"]}`);
+
+              $pedalDiv = $("<div>")
+                .addClass("pedal-catalog")
+                .css({
+                  ...baseCss,
+                  boxShadow
+                })
+                .attr("data-pedal-name", pedal.name)
+                .attr("data-pedal-id", pedal._id);
+
+            } else if (pedal.type === "head" || pedal.type === "pedal-inverted") {
+              const boxShadow = getBoxShadow(pedal, inside, `inset 0 80px 0 0 ${pedal["color"]}`);
+
+              $pedalDiv = $("<div>")
+                .addClass("pedal-catalog")
+                .css({
+                  ...baseCss,
+                  boxShadow
+                })
+                .attr("data-pedal-name", pedal.name)
+                .attr("data-pedal-id", pedal._id);
+
+            } else if (pedal.type === "round") {
+              const boxShadow = getBoxShadow(pedal, inside, `inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`);
+
+              $pedalDiv = $("<div>").addClass("pedal-catalog").css({
+                ...baseCss,
+                borderRadius: "50%", // make it circular
+                width: getPedalWidth(pedal.width), // Same width and height
+                height: getPedalWidth(pedal.width), // Same width and height
+                boxShadow
+              }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
+            }
+
+            // Bootstrap DB: disable invalidations =======
+            $pedalDiv.data('subplex-hydrating', true);
+            const cleanName = sanitizePedalHTML(pedal.name);
+
+            // Head or inverted logo
+            if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
+              const $nameDiv = $("<div>").addClass("head-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
+              $pedalDiv.append($nameDiv);
+            }
+
+            // Render controls
+            renderPedalControls(pedal, $pedalDiv);
+
+            $pedalDiv.data('subplex-hydrating', false);
+            $pedalDiv.data('applied-subplex-state', 'original');
+            // End bootstrap: clean state =========
+
+            if (pbPedal.subplex) {
+              const appliedSubplex = pbPedal.subplex;
+
+              // Get original name to add *
+              appliedSubplex._originalName = appliedSubplex.presetName;
+
+              // Populate .data()
+              $pedalDiv.data('applied-subplex', appliedSubplex);
+              $pedalDiv.data('applied-subplex-state', 'original');
+              $pedalDiv.data('subplex-dirty-enabled', false);
+
+              // Show SubPlex info
+              renderAppliedPresetInfo($pedalDiv, appliedSubplex);
+              setupSubplexInvalidationOnDBLoad($pedalDiv);
+              updateSubplexButtonsUI($pedalDiv);
+
+            }
+
+            // Pedal logo
+            if ((pedal.type === "pedal") || (pedal.type === "combo") || (pedal.type === "round") || (pedal.type === "expression")) {
+              const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
+              $pedalDiv.append($nameDiv);
+            }
+
+            const widthPx = parseFloat(getPedalWidth(pedal.width));
+            const heightPx = parseFloat(getPedalHeight(pedal.height));
+            const hasRotation = angle !== 0;
+
+            let wrapperStyles = {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+              position: 'relative',
+              boxSizing: 'content-box',
+              marginBottom: '20px',
+            };
+
+            if (hasRotation) {
+              const radians = angle * Math.PI / 180;
+              const sin = Math.abs(Math.sin(radians));
+              const cos = Math.abs(Math.cos(radians));
+
+              const rotatedWidth = widthPx * cos + heightPx * sin;
+              const rotatedHeight = widthPx * sin + heightPx * cos;
+
+              Object.assign(wrapperStyles, {
+                width: `${rotatedWidth}px`,
+                height: `${rotatedHeight}px`,
+                marginLeft: `${rotatedWidth * 0.2}px`,
+                marginRight: `${rotatedWidth * 0.2}px`,
+                ...(widthPx > heightPx ? {
+                  marginTop: '30px'
+                } : {})
+              });
+            }
+
+            const $wrapper = $("<div>")
+              .addClass("pedal-wrapper") // For hover mouse menu catalog preset
+              .css(wrapperStyles).append($pedalDiv);
+
+            $wrapper.css("position", "relative");
 
 
-    for (const pbPedal of rowsMap[rowNum]) {
-      try {
-        // const pedalData = window.catalogMap[pbPedal.pedal_id];
-        const id = String(pbPedal.pedal_id || "").trim();
-        const pedalData = window.catalogMap[id] || window.catalogMap[id.normalize()];
+            // SubPlex Dropdown ======================================
+            const isLoggedIn = !!window.currentUser;
+            if (isLoggedIn) {
 
-        if (!pedalData) {
-          console.warn(`Pedal not found in catalog: ${pbPedal.pedal_id}`);
-          continue;
-        }
+            const $presetContainer = $(`
+              <div class="preset-container">
 
-        const pedal = pedalData;
-        const angle = pbPedal.rotation || 0;
+                <!-- SUBPLEX INFO -->
+                <div class="applied-preset-info" style="display:none">
+                  <div class="applied-preset-title-row">
+                    <span class="applied-preset-name"></span>
+                    <span class="applied-preset-info-icon"></span>
+                  </div>
+                  <div class="applied-preset-tags"></div>
+                </div>
 
-        const insideColorRaw = pedal["inside-color"] || "";
-        let inside = "";
-        let colorOnly = insideColorRaw;
+                <button style="display:none" class="reset-subplex-btn bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only">
+                  <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                    <path d="M18,28A12,12,0,1,0,6,16v6.2L2.4,18.6,1,20l6,6,6-6-1.4-1.4L8,22.2V16H8A10,10,0,1,1,18,26Z"></path>
+                  </svg>
+                </button>
 
-        // Check if inside-color is an image URL (http, https, data URI, or local images/)
-        const isImage = /^https?:\/\/|^data:image\/|^images\/|\.png$|\.jpg$|\.jpeg$|\.gif$/i.test(insideColorRaw);
+                <button style="display:none" class="new-subplex-btn bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only">
+                  <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                    <path d="M17 15L17 8 15 8 15 15 8 15 8 17 15 17 15 24 17 24 17 17 24 17 24 15z"></path>
+                  </svg>
+                </button>
 
-        if (isImage) {
-          inside = "full"; // Force full mode for images
-        } else {
-          // Existing logic for color + optional text
-          const match = insideColorRaw.match(/(#(?:[0-9a-fA-F]{3,6}))(?:\s+(.+))?/);
-          if (match) {
-            colorOnly = match[1];
-            inside = match[2] || "";
+                <svg class="preset-icon"
+                  focusable="false"
+                  preserveAspectRatio="xMidYMid meet"
+                  fill="currentColor"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 32 32"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 6H22V8H4zM4 12H22V14H4zM4 18H16V20H4zM21 18L28 23 21 28 21 18z"></path>
+                </svg>
+
+                <div class="preset-dropdown-wrapper">
+                  <ul class="preset-dropdown"></ul>
+                </div>
+              </div>
+            `);
+
+              $wrapper.append($presetContainer);
+
+              //SubPlex empty state (New SubPlex button) ===
+              updateSubplexButtonsUI($pedalDiv);
+
+              const $newBtn = $presetContainer.find(".new-subplex-btn");
+              const $resetBtn = $presetContainer.find(".reset-subplex-btn");
+              $resetBtn.show();
+
+              // New SubPlex
+              $newBtn.on("click", function (e) {
+                e.stopPropagation();
+                createCustomSubplex($pedalDiv);
+              });
+
+              // Reset SubPlex
+              $resetBtn.on("click", function (e) {
+                e.stopPropagation();
+
+                // Reset confirmation
+                Swal.fire({
+                  title: 'Remove SubPlex?',
+                  text: 'This will remove the applied SubPlex and restore default controls.',
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonText: 'Remove',
+                  cancelButtonText: 'Cancel',
+                  customClass: {
+                    confirmButton: 'bx--btn bx--btn--danger',
+                    cancelButton: 'bx--btn bx--btn--secondary'
+                  }
+                }).then((result) => {
+                  if (!result.isConfirmed) return;
+                  resetSubplexOnSinglePedal($pedalDiv);
+                });
+              });
+
+              const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
+              const $ul = $presetContainer.find(".preset-dropdown");
+
+              // Glow effect
+              const glowEl = $dropdownWrapper[0];
+              let stopGlow = null;
+              if (glowEl) stopGlow = startGlow(glowEl);
+
+              // Toggle dropdown
+              $presetContainer.find(".preset-icon").on("click", function (e) {
+                e.stopPropagation();
+
+                const isOpen = $dropdownWrapper.hasClass("is-open");
+
+                $(".preset-dropdown-wrapper").removeClass("is-open");
+
+                if (!isOpen) {
+                  $dropdownWrapper.addClass("is-open");
+
+                  // Fetch + render
+                  buildPresetDropdown($ul, pedal._id);
+                }
+              });
+
+            } else {
+              // Guest mode: show locked preset container
+              const $presetContainer = $(`
+                <div class="preset-container preset-locked">
+                  <svg class="preset-icon disabled"
+                    focusable="false"
+                    preserveAspectRatio="xMidYMid meet"
+                    fill="currentColor"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 32 32"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6H22V8H4zM4 12H22V14H4zM4 18H16V20H4zM21 18L28 23 21 28 21 18z"></path>
+                  </svg>
+
+                  <div class="preset-locked-label">
+                    Login to see all SubPlexes
+                  </div>
+                </div>
+              `);
+
+              $wrapper.append($presetContainer);
+            }
+
+            // ================================================
+
+            rowDiv.appendChild($wrapper[0]);
+
+          } catch (err) {
+            console.error('Error fetching pedal info:', err);
           }
         }
 
-        const widthValue = parseFloat(getPedalWidth(pedal.width));
-
-        const baseCss = {
-          border: `5px solid ${pedal["color"]}`, // Outer border
-          borderRadius: '10px',
-          color: pedal["font-color"],
-          width: getPedalWidth(pedal.width),
-          height: getPedalHeight(pedal.height),
-          transform: `rotate(${angle}deg)`,
-          marginBottom: '10px',
-          display: 'inline-block',
-          ...(pedal["inside-border"] && {
-            boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
-          }),
-          ...(isImage ? {
-            backgroundImage: `url("${insideColorRaw}")`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          } : {
-            background: colorOnly
-          })
-        };
-
-        let $pedalDiv;
-
-        if (pedal.type === "pedal") {
-          const boxShadow = getBoxShadow(pedal, inside, `inset 0 -36px 0 0 ${pedal["color"]}`);
-
-          $pedalDiv = $("<div>")
-            .addClass("pedal-catalog")
-            .css({
-              ...baseCss,
-              boxShadow
-            })
-            .attr("data-pedal-name", pedal.name)
-            .attr("data-pedal-id", pedal._id);
-
-        } else if (pedal.type === "expression") {
-          const boxShadow = getBoxShadow(pedal, inside, `inset 0 -36px 0 0 ${pedal["color"]}`);
-
-          $pedalDiv = $("<div>")
-            .addClass("pedal-catalog")
-            .css({
-              ...baseCss,
-              borderRadius: '25px',
-              boxShadow
-            })
-            .attr("data-pedal-name", pedal.name)
-            .attr("data-pedal-id", pedal._id);
-
-        } else if (pedal.type === "combo") {
-          const boxShadow = getBoxShadow(pedal, inside, `inset 0 -80px 0 0 ${pedal["color"]}`);
-
-          $pedalDiv = $("<div>")
-            .addClass("pedal-catalog")
-            .css({
-              ...baseCss,
-              boxShadow
-            })
-            .attr("data-pedal-name", pedal.name)
-            .attr("data-pedal-id", pedal._id);
-
-        } else if (pedal.type === "head" || pedal.type === "pedal-inverted") {
-          const boxShadow = getBoxShadow(pedal, inside, `inset 0 80px 0 0 ${pedal["color"]}`);
-
-          $pedalDiv = $("<div>")
-            .addClass("pedal-catalog")
-            .css({
-              ...baseCss,
-              boxShadow
-            })
-            .attr("data-pedal-name", pedal.name)
-            .attr("data-pedal-id", pedal._id);
-
-        } else if (pedal.type === "round") {
-          const boxShadow = getBoxShadow(pedal, inside, `inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`);
-
-          $pedalDiv = $("<div>").addClass("pedal-catalog").css({
-            ...baseCss,
-            borderRadius: "50%",  // make it circular
-            width: getPedalWidth(pedal.width),  // Same width and height
-            height: getPedalWidth(pedal.width), // Same width and height
-            boxShadow
-          }).attr("data-pedal-name", pedal.name).attr("data-pedal-id", pedal._id);
-        }
-
-        // 🔒 BOOTSTRAP DB: disabilita invalidazioni
-        $pedalDiv.data('subplex-hydrating', true);
-
-        // const cleanName = sanitizeHtml(pedal.name);
-        const cleanName = sanitizePedalHTML(pedal.name);
-
-        // Head or inverted logo
-        if ((pedal.type === "head") || (pedal.type === "pedal-inverted")) {
-          const $nameDiv = $("<div>").addClass("head-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
-          $pedalDiv.append($nameDiv);
-        }
-
-        // Render controls
-        renderPedalControls(pedal, $pedalDiv);
-
-        // ✅ Fine bootstrap: stato pulito
-        $pedalDiv.data('subplex-hydrating', false);
-        $pedalDiv.data('applied-subplex-state', 'original');
-
-        if (pbPedal.subplex) {
-          const appliedSubplex = pbPedal.subplex;
-
-          // Nome originale per il *
-          appliedSubplex._originalName = appliedSubplex.presetName;
-
-          // Popola il .data() del pedale
-          $pedalDiv.data('applied-subplex', appliedSubplex);
-          $pedalDiv.data('applied-subplex-state', 'original');
-          $pedalDiv.data('subplex-dirty-enabled', false);
-
-          // Mostra info del SubPlex (nome, tag, icona AI)
-          renderAppliedPresetInfo($pedalDiv, appliedSubplex);
-
-          // Arma i listener per rilevare modifiche
-          setupSubplexInvalidationOnDBLoad($pedalDiv);
-
-          // 🔁 Allinea bottoni dopo bootstrap DB
-          updateSubplexButtonsUI($pedalDiv);
-
-        }
-
-
-        // Pedal logo
-        if ((pedal.type === "pedal") || (pedal.type === "combo") || (pedal.type === "round") || (pedal.type === "expression")) {
-          const $nameDiv = $("<div>").addClass("pedal-name").html(cleanName).attr("style", safeLogoStyle(pedal.logo) || "");
-          $pedalDiv.append($nameDiv);
-        }
-      
-        const widthPx = parseFloat(getPedalWidth(pedal.width));
-        const heightPx = parseFloat(getPedalHeight(pedal.height));
-        const hasRotation = angle !== 0;
-
-        let wrapperStyles = {
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
-          position: 'relative',
-          boxSizing: 'content-box',
-          marginBottom: '20px',
-        };
-
-        if (hasRotation) {
-          const radians = angle * Math.PI / 180;
-          const sin = Math.abs(Math.sin(radians));
-          const cos = Math.abs(Math.cos(radians));
-
-          const rotatedWidth = widthPx * cos + heightPx * sin;
-          const rotatedHeight = widthPx * sin + heightPx * cos;
-
-          Object.assign(wrapperStyles, {
-            width: `${rotatedWidth}px`,
-            height: `${rotatedHeight}px`,
-            marginLeft: `${rotatedWidth * 0.2}px`,
-            marginRight: `${rotatedWidth * 0.2}px`,
-            ...(widthPx > heightPx ? { marginTop: '30px' } : {})
-          });
-        }
-
-        const $wrapper = $("<div>")
-          .addClass("pedal-wrapper") // serve per hover mouse menu catalog preset
-          .css(wrapperStyles).append($pedalDiv);
-
-        $wrapper.css("position", "relative");
-
-
-        // ============== AI DROPDOWN PRESET ===============
-        // if (window.currentUser && window.currentUser.role === "admin") {
-        const isLoggedIn = !!window.currentUser;
-        if (isLoggedIn) {
-
-          const $presetContainer = $(`
-            <div class="preset-container">
-
-              <!-- SUBPLEX INFO -->
-              <div class="applied-preset-info" style="display:none">
-                <div class="applied-preset-title-row">
-                  <span class="applied-preset-name"></span>
-                  <span class="applied-preset-info-icon"></span>
-                </div>
-                <div class="applied-preset-tags"></div>
-              </div>
-
-              <button style="display:none" class="reset-subplex-btn bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only">
-                <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-                  <path d="M18,28A12,12,0,1,0,6,16v6.2L2.4,18.6,1,20l6,6,6-6-1.4-1.4L8,22.2V16H8A10,10,0,1,1,18,26Z"></path>
-                </svg>
-              </button>
-
-              <button style="display:none" class="new-subplex-btn bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only">
-                <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-                  <path d="M17 15L17 8 15 8 15 15 8 15 8 17 15 17 15 24 17 24 17 17 24 17 24 15z"></path>
-                </svg>
-              </button>
-
-              <svg class="preset-icon"
-                focusable="false"
-                preserveAspectRatio="xMidYMid meet"
-                fill="currentColor"
-                width="32"
-                height="32"
-                viewBox="0 0 32 32"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 6H22V8H4zM4 12H22V14H4zM4 18H16V20H4zM21 18L28 23 21 28 21 18z"></path>
-              </svg>
-
-              <div class="preset-dropdown-wrapper">
-                <ul class="preset-dropdown"></ul>
-              </div>
-            </div>
-          `);
-
-          $wrapper.append($presetContainer);
-
-
-          // === SUBPLEX EMPTY STATE (New SubPlex button) ===
-          // 🔁 Visibilità bottoni centralizzata
-          updateSubplexButtonsUI($pedalDiv);
-
-          // Recupera i bottoni dal container (scope corretto)
-          const $newBtn = $presetContainer.find(".new-subplex-btn");
-          const $resetBtn = $presetContainer.find(".reset-subplex-btn");
-
-          // Sempre visibile
-          $resetBtn.show();
-
-          // ▶️ NEW SUBPLEX
-          $newBtn.on("click", function (e) {
-            e.stopPropagation();
-            createCustomSubplex($pedalDiv);
-          });
-
-          // ♻️ RESET SUBPLEX
-          $resetBtn.on("click", function (e) {
-            e.stopPropagation();
-
-            // (opzionale) conferma Swal2
-            Swal.fire({
-              title: 'Remove SubPlex?',
-              text: 'This will remove the applied SubPlex and restore default controls.',
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'Remove',
-              cancelButtonText: 'Cancel',
-              customClass: {
-                confirmButton: 'bx--btn bx--btn--danger',
-                cancelButton: 'bx--btn bx--btn--secondary'
-              }
-            }).then((result) => {
-              if (!result.isConfirmed) return;
-              resetSubplexOnSinglePedal($pedalDiv);
-            });
-          });
-
-          const $dropdownWrapper = $presetContainer.find(".preset-dropdown-wrapper");
-          const $ul = $presetContainer.find(".preset-dropdown");
-
-          // ✨ Glow
-          const glowEl = $dropdownWrapper[0];
-          let stopGlow = null;
-          if (glowEl) stopGlow = startGlow(glowEl);
-
-          // Toggle dropdown
-          $presetContainer.find(".preset-icon").on("click", function (e) {
-            e.stopPropagation();
-
-            const isOpen = $dropdownWrapper.hasClass("is-open");
-
-            $(".preset-dropdown-wrapper").removeClass("is-open");
-
-            if (!isOpen) {
-              $dropdownWrapper.addClass("is-open");
-
-              // ✅ FETCH + render SOLO QUI, SOLO AL CLICK
-              buildPresetDropdown($ul, pedal._id);
-            }
-          });
-
-        } else {
-          // Guest mode: show locked preset container
-          const $presetContainer = $(`
-            <div class="preset-container preset-locked">
-              <svg class="preset-icon disabled"
-                focusable="false"
-                preserveAspectRatio="xMidYMid meet"
-                fill="currentColor"
-                width="32"
-                height="32"
-                viewBox="0 0 32 32"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 6H22V8H4zM4 12H22V14H4zM4 18H16V20H4zM21 18L28 23 21 28 21 18z"></path>
-              </svg>
-
-              <div class="preset-locked-label">
-                Login to see all SubPlexes
-              </div>
-            </div>
-          `);
-
-          $wrapper.append($presetContainer);
-        }
-
-        // ================================================
-
-        rowDiv.appendChild($wrapper[0]);
-
-      } catch (err) {
-        console.error('Error fetching pedal info:', err);
+        container.appendChild(rowDiv);
       }
-    }
 
-    container.appendChild(rowDiv);
-  }
-
-  // Save current pedals on board
-  const pedalsOnBoard = [];
-  $(".pedal").each(function () {
-    pedalsOnBoard.push($(this).data("pedal-name"));
-  });
-  window.currentPedalsOnBoard = pedalsOnBoard;
+      // Save current pedals on board
+      const pedalsOnBoard = [];
+      $(".pedal").each(function () {
+        pedalsOnBoard.push($(this).data("pedal-name"));
+      });
+      window.currentPedalsOnBoard = pedalsOnBoard;
 
       setTimeout(() => {
         resolve();
@@ -1487,11 +1537,12 @@ async function renderFullPedalboard(pedalboardOverride = null) {
     } catch (err) {
       resolve();
     }
-  }); // end Promise
+  });
 }
+// ----------------------------------
 
 
-
+// Render SubPlex list in dropdown
 function renderPresetList($ul, pedalId, presets) {
   $ul.empty();
 
@@ -1507,7 +1558,7 @@ function renderPresetList($ul, pedalId, presets) {
     const $titleRow = $("<div>").addClass("preset-title-row");
     const $name = $("<span>").addClass("preset-name");
 
-    // AI icon (solo se published === "ai")
+    // AI icon (only if source === "ai")
     if (preset.source === "ai") {
       $name.append(`
         <svg class="ai-preset-icon"
@@ -1524,10 +1575,7 @@ function renderPresetList($ul, pedalId, presets) {
       `);
     }
 
-    // Nome preset
-    $name.append(
-      document.createTextNode(" " + (preset.presetName || preset._id))
-    );
+    $name.append( document.createTextNode(" " + (preset.presetName || preset._id)) );
 
     // ℹ icon with tooltip event
     const $info = $("<span>").addClass("preset-info").html(' <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="12" height="12" viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M17 22L17 14 13 14 13 16 15 16 15 22 12 22 12 24 20 24 20 22 17 22zM16 8a1.5 1.5 0 101.5 1.5A1.5 1.5 0 0016 8z"></path><path d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30ZM16,4A12,12,0,1,0,28,16,12,12,0,0,0,16,4Z"></path><title>Information</title></svg>');
@@ -1584,29 +1632,25 @@ function renderPresetList($ul, pedalId, presets) {
   });
 }
 
-
-
 window.presetCatalogCache = window.presetCatalogCache || {};
 
 
 
-// HELPER FUNCTIONS AI PRESET DROPDOWN =======
+// HELPER
 $(document).on("click", function () {
   $(".preset-dropdown-wrapper").removeClass("is-open");
 });
 
 
 
-// Build Preset from AI Catalog
+// HELPER Build Preset from AI Catalog
 async function buildPresetDropdown($ul, pedalId) {
 
-  // 1️⃣ Cache hit → nessuna fetch
   if (window.presetCatalogCache[pedalId]) {
     renderPresetList($ul, pedalId, window.presetCatalogCache[pedalId]);
     return;
   }
 
-  // 2️⃣ Stato loading (una sola volta)
   $ul
     .empty()
     .append("<li class='loading'>Loading SubPlexes</li>");
@@ -1619,14 +1663,15 @@ async function buildPresetDropdown($ul, pedalId) {
 
   try {
     const res = await fetch(
-      "https://api.pedalplex.com/GET_PRESETS_BY_PEDAL.php",
-      {
+      "https://api.pedalplex.com/GET_PRESETS_BY_PEDAL.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + token
         },
-        body: JSON.stringify({ pedalId })
+        body: JSON.stringify({
+          pedalId
+        })
       }
     );
 
@@ -1637,7 +1682,6 @@ async function buildPresetDropdown($ul, pedalId) {
     const data = await res.json();
     const presets = Array.isArray(data.presets) ? data.presets : [];
 
-    // 3️⃣ Salva in cache
     window.presetCatalogCache[pedalId] = presets;
 
     renderPresetList($ul, pedalId, presets);
