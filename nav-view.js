@@ -1,10 +1,10 @@
-// ========================== UTILITY ==========================
+// Utility
 function getPedalIdFromURL() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id"); // null se non presente
 }
 
-// ========================== NAVBAR ==========================
+// Navbar
 function renderNavBar(userRole = "guest") {
   const navHtml = `
     <header style="display: flex; align-items: center; justify-content: space-between; padding: 1rem;">
@@ -38,7 +38,7 @@ function renderNavBar(userRole = "guest") {
   $("#closeMenu").on("click", () => $("#fullscreenMenu").removeClass("active"));
 }
 
-// ========================== NAV INIT ==========================
+// Navbar init
 $(document).ready(() => {
   const token = localStorage.getItem("authToken");
   const userRole = token ? window.currentUser?.role || "user" : "guest";

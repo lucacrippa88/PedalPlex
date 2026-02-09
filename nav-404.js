@@ -16,9 +16,6 @@ function initNav404() {
   // Prepend the navigation HTML to the body
   $("body").prepend(navHtml);
 
-  // Add fullscreen menu HTML from external file
-  // $("body").append(window.fullscreenMenuHtml);
-
   // Fullscreen menu toggle with quote
   $("#menuToggle").on("click", function () {
     const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];

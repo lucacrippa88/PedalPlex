@@ -62,17 +62,17 @@ function initNavPedalboard(userRole) {
   `;
 
   $("body").prepend(navHtml);
-  // $("body").append(window.fullscreenMenuHtml);
 
   $("#menuToggle").on("click", function () {
     const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
     $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
     $("#fullscreenMenu").addClass("active");
   });
-  $("#closeMenu").on("click", function() { $("#fullscreenMenu").removeClass("active"); });
+  $("#closeMenu").on("click", function () {
+    $("#fullscreenMenu").removeClass("active");
+  });
 
 
-  
   $("#toggleFilterBtn").on("click", function (e) {
     e.stopPropagation();
     $("#pedalFilterInput").show().focus();
@@ -88,27 +88,24 @@ function initNavPedalboard(userRole) {
   });
 
 
+  // Check for catalog existance
+  window.catalog = window.catalog || [];
 
-
-
-
-// Assicurati che catalog esista
-window.catalog = window.catalog || [];
-
-// --- Debounce helper ---
-function debounce(func, wait) {
+  // HELPER: debounce function to limit API calls while typing
+  function debounce(func, wait) {
     let timeout;
-    return function() {
-        const context = this, args = arguments;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(context, args), wait);
+    return function () {
+      const context = this,
+        args = arguments;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(context, args), wait);
     };
-}
+  }
 
-$("#pedalFilterInput").attr("placeholder", "Search pedals...");
+  $("#pedalFilterInput").attr("placeholder", "Search pedals...");
 
-// --- Funzione di posizionamento dropdown ---
-function positionDropdown() {
+  // Dropdown positioning function
+  function positionDropdown() {
     const input = document.getElementById('pedalFilterInput');
     const dropdown = document.getElementById('pedalAddDropdownContainer');
     if (!dropdown) return;
@@ -116,38 +113,38 @@ function positionDropdown() {
     dropdown.style.top = window.scrollY + rect.bottom + 'px';
     dropdown.style.left = window.scrollX + rect.left + 'px';
     dropdown.style.width = rect.width + 'px';
-}
+  }
 
-// --- Funzione per creare dropdown se non esiste ---
-function getOrCreateDropdown() {
+  // Dropdown creation/retrieval function
+  function getOrCreateDropdown() {
     let dropdown = document.getElementById('pedalAddDropdownContainer');
     if (!dropdown) {
-        dropdown = document.createElement('div');
-        dropdown.id = 'pedalAddDropdownContainer';
-        dropdown.style.position = 'absolute';
-        dropdown.style.background = 'white';
-        dropdown.style.border = '1px solid #ccc';
-        dropdown.style.borderRadius = '4px';
-        dropdown.style.maxHeight = '200px';
-        dropdown.style.overflowY = 'auto';
-        dropdown.style.display = 'none';
-        dropdown.style.zIndex = 3000;
-        document.body.appendChild(dropdown);
+      dropdown = document.createElement('div');
+      dropdown.id = 'pedalAddDropdownContainer';
+      dropdown.style.position = 'absolute';
+      dropdown.style.background = 'white';
+      dropdown.style.border = '1px solid #ccc';
+      dropdown.style.borderRadius = '4px';
+      dropdown.style.maxHeight = '200px';
+      dropdown.style.overflowY = 'auto';
+      dropdown.style.display = 'none';
+      dropdown.style.zIndex = 3000;
+      document.body.appendChild(dropdown);
     }
     return dropdown;
-}
+  }
 
-// --- Event listener input con debounce ---
-$("#pedalFilterInput").on("input", debounce(async function() {
+  // Event listener input with debounce
+  $("#pedalFilterInput").on("input", debounce(async function () {
     const query = $(this).val().trim().toLowerCase();
     const dropdown = getOrCreateDropdown();
 
     if (!query) {
-        dropdown.style.display = 'none';
-        return;
+      dropdown.style.display = 'none';
+      return;
     }
 
-    // Mostra spinner loader
+    // Spinner while loading
     dropdown.innerHTML = `
         <div style="padding: 10px; display: flex; justify-content: center;">
             <div class="bx--loading bx--loading--small bx--loading--active" role="alert" aria-live="assertive">
@@ -161,159 +158,170 @@ $("#pedalFilterInput").on("input", debounce(async function() {
     positionDropdown();
 
     try {
-        // const res = await fetch(`https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`);
-        // const data = await res.json();
-        const authToken = localStorage.getItem('authToken');
+      const authToken = localStorage.getItem('authToken');
 
-        const res = await fetch(
-            `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + authToken // <--- Passiamo il JWT
-                }
-            }
-        );
-        const data = await res.json();
-
-        dropdown.innerHTML = '';
-
-        if (!data || !Array.isArray(data) || data.length === 0) {
-            const noResult = document.createElement('div');
-            noResult.textContent = 'No pedals found';
-            noResult.style.padding = '6px';
-            dropdown.appendChild(noResult);
-            positionDropdown();
-            return;
+      const res = await fetch(
+        `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + authToken
+          }
         }
+      );
+      const data = await res.json();
 
-        // --- Popola dropdown ---
-        data.forEach(pedal => {
-            const item = document.createElement('div');
-            item.style.display = 'flex';
-            item.style.justifyContent = 'space-between';
-            item.style.alignItems = 'center';
-            item.style.padding = '6px';
+      dropdown.innerHTML = '';
 
-            const label = document.createElement('span');
-            label.textContent = pedal._id;
-            label.style.color = 'black';
-            item.appendChild(label);
+      if (!data || !Array.isArray(data) || data.length === 0) {
+        const noResult = document.createElement('div');
+        noResult.textContent = 'No pedals found';
+        noResult.style.padding = '6px';
+        dropdown.appendChild(noResult);
+        positionDropdown();
+        return;
+      }
 
-            const btn = document.createElement('button');
-            btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm');
-            btn.style.padding = '2px 6px';
-            btn.innerHTML = `
+      // Dropdown population
+      data.forEach(pedal => {
+        const item = document.createElement('div');
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.alignItems = 'center';
+        item.style.padding = '6px';
+
+        const label = document.createElement('span');
+        label.textContent = pedal._id;
+        label.style.color = 'black';
+        item.appendChild(label);
+
+        const btn = document.createElement('button');
+        btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm');
+        btn.style.padding = '2px 6px';
+        btn.innerHTML = `
                 <svg focusable="false" preserveAspectRatio="xMidYMid meet" 
                      xmlns="http://www.w3.org/2000/svg" fill="currentColor" 
                      width="8" height="8" viewBox="0 0 16 16" aria-hidden="true">
                      <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>`;
 
-            btn.addEventListener('click', async () => {
-                const { value: rotationStr } = await Swal.fire({
-                title: 'Enter rotation',
-                input: 'select',
-                inputOptions: {0:'0°', 90:'90°', 180:'180°', 270:'270°'},
-                inputValue: '0',
-                showCancelButton: true,
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel',
-                customClass: {
-                    confirmButton: 'bx--btn bx--btn--primary',
-                    cancelButton: 'bx--btn bx--btn--secondary'
+        btn.addEventListener('click', async () => {
+          const {
+            value: rotationStr
+          } = await Swal.fire({
+            title: 'Enter rotation',
+            input: 'select',
+            inputOptions: {
+              0: '0°',
+              90: '90°',
+              180: '180°',
+              270: '270°'
+            },
+            inputValue: '0',
+            showCancelButton: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary',
+              cancelButton: 'bx--btn bx--btn--secondary'
+            },
+            buttonsStyling: false
+          });
+
+          if (rotationStr === undefined) return;
+          const rotation = parseInt(rotationStr, 10);
+
+          const {
+            value: rowStr
+          } = await Swal.fire({
+            title: 'Enter row number',
+            input: 'number',
+            inputAttributes: {
+              min: 1,
+              step: 1
+            },
+            inputValue: '1',
+            showCancelButton: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary',
+              cancelButton: 'bx--btn bx--btn--secondary'
+            },
+            buttonsStyling: false
+          });
+
+          if (rowStr === undefined) return;
+          const row = parseInt(rowStr, 10);
+
+
+          // Download gear data if not in catalog
+          let pedalData = window.catalog.find(p => p._id === pedal._id);
+          if (!pedalData) {
+            try {
+              const postRes = await fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
                 },
-                buttonsStyling: false // importante per non far sovrascrivere da Swal
-            });
+                body: JSON.stringify({
+                  ids: [pedal._id]
+                })
+              });
+              const result = await postRes.json();
+              if (result?.docs?.length > 0) {
+                pedalData = result.docs[0];
+                window.catalog.push(pedalData);
+              } else {
+                console.error("Pedal not found on server:", pedal._id);
+                return;
+              }
+            } catch (err) {
+              console.error("Fetch error:", err);
+              return;
+            }
+          }
 
-            if (rotationStr === undefined) return;
-            const rotation = parseInt(rotationStr, 10);
+          // Add to pedalboard
+          window.pedalboard.pedals.push({
+            pedal_id: pedal._id,
+            rotation,
+            row
+          });
+          renderPedalboard();
 
-            const { value: rowStr } = await Swal.fire({
-                title: 'Enter row number',
-                input: 'number',
-                inputAttributes: { min: 1, step: 1 },
-                inputValue: '1',
-                showCancelButton: true,
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel',
-                customClass: {
-                    confirmButton: 'bx--btn bx--btn--primary',
-                    cancelButton: 'bx--btn bx--btn--secondary'
-                },
-                buttonsStyling: false
-            });
-
-            if (rowStr === undefined) return;
-            const row = parseInt(rowStr, 10);
-
-
-                // --- POST per scaricare pedale dal server se non esiste nel catalogo ---
-                let pedalData = window.catalog.find(p => p._id === pedal._id);
-                if (!pedalData) {
-                    try {
-                        const postRes = await fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ ids: [pedal._id] })
-                        });
-                        const result = await postRes.json();
-                        if (result?.docs?.length > 0) {
-                            pedalData = result.docs[0];
-                            window.catalog.push(pedalData);
-                        } else {
-                            console.error("Pedal not found on server:", pedal._id);
-                            return;
-                        }
-                    } catch (err) {
-                        console.error("Fetch error:", err);
-                        return;
-                    }
-                }
-
-                // Aggiungi il pedale alla pedalboard
-                window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation, row });
-                renderPedalboard();
-
-                $("#pedalFilterInput").val('');
-                dropdown.style.display = 'none';
-            });
-
-            item.appendChild(btn);
-            dropdown.appendChild(item);
+          $("#pedalFilterInput").val('');
+          dropdown.style.display = 'none';
         });
 
-        dropdown.style.display = 'block';
-        positionDropdown();
+        item.appendChild(btn);
+        dropdown.appendChild(item);
+      });
+
+      dropdown.style.display = 'block';
+      positionDropdown();
     } catch (err) {
-        console.error("Search error:", err);
-        dropdown.style.display = 'none';
+      console.error("Search error:", err);
+      dropdown.style.display = 'none';
     }
-}, 300));
+  }, 300));
 
-// --- Click fuori = chiudi search ---
-document.addEventListener("click", function () {
-  const input = $("#pedalFilterInput");
-  if (!input.is(":visible")) return;
+  // Outside click to close dropdown search
+  document.addEventListener("click", function () {
+    const input = $("#pedalFilterInput");
+    if (!input.is(":visible")) return;
 
-  input.hide().val("");
+    input.hide().val("");
 
-  const dropdown = document.getElementById("pedalAddDropdownContainer");
-  if (dropdown) dropdown.style.display = "none";
-});
+    const dropdown = document.getElementById("pedalAddDropdownContainer");
+    if (dropdown) dropdown.style.display = "none";
+  });
 
-
-// --- Aggiorna posizione al scroll/resize ---
-window.addEventListener('scroll', positionDropdown);
-window.addEventListener('resize', positionDropdown);
+  window.addEventListener('scroll', positionDropdown);
+  window.addEventListener('resize', positionDropdown);
 
 
 
-
-
-
-
-  // --- SHOW FILTER ONLY IF THERE'S AT LEAST ONE PEDALBOARD ---
+  // Show filter if there is at least one pedalboard
   function updateFilterVisibility() {
     const hasBoards = Array.isArray(window.allPedalboards) && window.allPedalboards.length > 0;
     if (hasBoards) {
@@ -347,7 +355,7 @@ window.addEventListener('resize', positionDropdown);
       </svg>
     `);
 
-    $("#saveBtn, #saveBtnMobile").on("click", function() {
+    $("#saveBtn, #saveBtnMobile").on("click", function () {
       if (typeof saveGuestPedalboard === "function") saveGuestPedalboard();
       if (window.allPedalboards.length === 1) setupPedalboardDropdownAndRender();
       updateFilterVisibility();
@@ -364,8 +372,14 @@ window.addEventListener('resize', positionDropdown);
     $("#loginBtn").before($("#pedalFilterInput"));
     $("#loginBtn").on("click", () => window.location.href = "login");
   } else {
-    $("#saveBtn").on("click", function() { if (typeof savePedalboard === "function") savePedalboard(); });
-    $("#saveBtnMobile").on("click", function() { if (typeof savePedalboard === "function") savePedalboard(); });
-    $("#createBtn").on("click", function() { if (typeof createNewPedalboard === "function") createNewPedalboard(); });
+    $("#saveBtn").on("click", function () {
+      if (typeof savePedalboard === "function") savePedalboard();
+    });
+    $("#saveBtnMobile").on("click", function () {
+      if (typeof savePedalboard === "function") savePedalboard();
+    });
+    $("#createBtn").on("click", function () {
+      if (typeof createNewPedalboard === "function") createNewPedalboard();
+    });
   }
 }
