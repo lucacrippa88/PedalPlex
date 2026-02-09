@@ -1183,6 +1183,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
         rowDiv.style.flexWrap = 'wrap';
         rowDiv.style.alignItems = 'flex-start';
         rowDiv.style.gap = '10px';
+        rowDiv.style.margin = "auto";
 
         for (const pbPedal of rowsMap[rowNum]) {
           try {
