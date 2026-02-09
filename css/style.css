@@ -242,6 +242,7 @@ html { box-sizing: content-box !important; }
   justify-content: center; /* centra orizzontalmente */
   align-items: center;     /* centra verticalmente (se necessario) */
   flex-wrap: wrap;         /* mantiene la griglia se ci sono tanti pedali */
+  margin: auto;
 }
 
 
@@ -268,7 +269,7 @@ html { box-sizing: content-box !important; }
 /* Pedal dropdowns, catalog */
 #pedalAddDropdownContainer { background: white; max-height: 300px; overflow-y: auto; width: 200px; z-index: 3000; border-radius: 4px}
 #catalog, #selected-pedals { margin-top: 1rem; min-height: 2rem; }
-#preset { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; /*max-width: 100vw;*/ white-space: normal; }
+#preset { margin: auto; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; /*max-width: 100vw;*/ white-space: normal; }
 #catalog { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 100vw; white-space: normal; }
 #pedalboard { display: flex; flex-direction: column; gap: 10px; align-items: center; }
 .pedal-catalog, .pedal { border-radius: 10px; padding: 12px; display: flex; flex-direction: column; align-items: center; position: relative; }
@@ -571,6 +572,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 10px;
+    margin: auto;
     justify-content: center;
   }
 }
@@ -669,7 +671,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 /* Mobile: stack selects vertically, keep buttons on the right of their related select */
 @media (max-width: 768px) {
 
-  #preset { display: flex; flex-wrap: wrap; gap: 10px; justify-content: left; max-width: 100vw; white-space: normal; }
+  #preset { display: flex; flex-wrap: wrap; gap: 10px; margin: auto; justify-content: left; max-width: 100vw; white-space: normal; }
 
   /* Pedalboard select can remain full-width, no button */
   #pedalboardSelect {
