@@ -1354,6 +1354,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
               position: 'relative',
               boxSizing: 'content-box',
               marginBottom: '20px',
+              margin: 'auto'
             };
 
             if (hasRotation) {
