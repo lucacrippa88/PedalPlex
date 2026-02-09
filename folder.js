@@ -1,6 +1,6 @@
-// ---------------------------
+// ----------------------------
 // folder.js (robust, unified sanitization)
-// ---------------------------
+// ----------------------------
 
 // Store folders locally (synchronized with window.folders)
 let folders = [];
@@ -19,9 +19,9 @@ function sanitizeFolderName(str) {
   // Rimuove eventuali spazi multipli consecutivi e trim
   str = str.replace(/\s+/g, ' ').trim();
 
-  return str;
+  return str; 
 }
-
+ 
 
 
 // ---------------------------
