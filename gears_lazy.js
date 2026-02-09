@@ -480,12 +480,16 @@ function updatePedalCountsFromServer(activeFilter = null) {
 
 
 function showPedalCountsLoader() {
-  $("#pedalCount").html(
-    `<span class="bx--inline-loading bx--inline-loading--small">
-       <span class="bx--inline-loading__animation">
-         <span class="bx--loading__stroke"></span>
-       </span>
-       <span class="bx--inline-loading__text">Loading…</span>
-     </span>`
-  );
+  $("#pedalCount").html(`
+    <span class="bx--inline-loading bx--inline-loading--small">
+      <div class="bx--inline-loading__animation">
+        <div class="bx--loading bx--loading--small">
+          <svg class="bx--loading__svg" viewBox="0 0 100 100">
+            <circle class="bx--loading__stroke" cx="50" cy="50" r="44"></circle>
+          </svg>
+        </div>
+      </div>
+      <span class="bx--inline-loading__text">Loading…</span>
+    </span>
+  `);
 }
