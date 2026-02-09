@@ -418,6 +418,9 @@ function createNewPedal() {
 function updatePedalCountsFromServer(activeFilter = null) {
   const token = localStorage.getItem("authToken");
 
+  // === MOSTRA LOADER INLINE ===
+  showPedalCountsLoader();
+
   fetch("https://api.pedalplex.com/GET_CATALOG_COUNTS.php", {
     headers: token ? { Authorization: "Bearer " + token } : {}
   })
@@ -426,31 +429,22 @@ function updatePedalCountsFromServer(activeFilter = null) {
 
     const isActive = f => activeFilter === f ? "active-filter" : "";
 
-    // ===== BASE =====
     let countsHtml =
       `${counts.total} gear${counts.total === 1 ? "" : "s"} (` +
       `All: <span class="status-filter ${isActive("all")}" data-filter="all">${counts.total}</span>`;
 
-    // ===== AUTH USERS =====
     if (window.currentUser?.role !== "guest") {
 
-      // Draft
       countsHtml += `, Draft: <span class="status-filter ${isActive("draft")}" data-filter="draft">${counts.draft}</span>`;
-
-      // Private
       countsHtml += `, Private: <span class="status-filter ${isActive("private")}" data-filter="private">${counts.private}</span>`;
 
-      // Reviewing (badge rosso se > 0)
       const reviewingStyle = counts.reviewing > 0
         ? 'style="background:#ff0000;color:white;border-radius:50%;padding:1px 5px;font-size:0.75rem;font-weight:bold;min-width:18px;text-align:center;"'
         : '';
 
       countsHtml += `, Review: <span class="status-filter ${isActive("reviewing")}" data-filter="reviewing" ${reviewingStyle}>${counts.reviewing}</span>`;
-
-      // Template
       countsHtml += `, Template: <span class="status-filter ${isActive("template")}" data-filter="template">${counts.template}</span>`;
 
-      // ===== SOLO COUNTER (NON CLICCABILI) =====
       countsHtml += `, By me: <span>${counts.publicByMe}</span>`;
 
       if (window.currentUser?.role === "admin") {
@@ -462,7 +456,6 @@ function updatePedalCountsFromServer(activeFilter = null) {
 
     $("#pedalCount").html(countsHtml);
 
-    // ==================== CLICK SOLO SUI FILTRI REALI ====================
     $(".status-filter[data-filter]").off("click").on("click", function () {
       const filter = $(this).data("filter");
 
@@ -475,7 +468,24 @@ function updatePedalCountsFromServer(activeFilter = null) {
       resetCatalogState();
       loadNextCatalogPage();
     });
-
   })
-  .catch(err => console.error("Counts fetch error:", err));
+  .catch(err => {
+    console.error("Counts fetch error:", err);
+    $("#pedalCount").html(""); // fallback pulito
+  });
+}
+
+
+
+
+
+function showPedalCountsLoader() {
+  $("#pedalCount").html(
+    `<span class="bx--inline-loading bx--inline-loading--small">
+       <span class="bx--inline-loading__animation">
+         <span class="bx--loading__stroke"></span>
+       </span>
+       <span class="bx--inline-loading__text">Loading…</span>
+     </span>`
+  );
 }
