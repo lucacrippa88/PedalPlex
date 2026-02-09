@@ -1,14 +1,256 @@
-
-let pedals = []; // global state
+// ==================== Global State ====================
+var currentPage = 0;
+var isLoading = false;
+var hasMore = true;
+let pedals = [];
+let catalogData = [];
+let catalogRenderIndex = 0;
 let pedalJSON = null;
+let sentinel = null;
+var searchBookmark = null;
+var currentSearchQuery = null;
+var currentCategory = 'all';
+var currentPublishedFilter = 'all'; // all | draft | private | reviewing | publicByMe | template | user
 
-// Save JSON for other scripts
-function setPedalJSON(jsonString) {
-  pedalJSON = jsonString;
+// ==================== Helpers ====================
+function setPedalJSON(jsonString) { pedalJSON = jsonString; }
+
+function resetCatalogState() {
+  currentPage = 0;
+  isLoading = false;
+  hasMore = true;
+  pedals = [];
+  catalogData = [];
+  catalogRenderIndex = 0;
+  searchBookmark = null;
+
+  const catalog = document.getElementById("catalog");
+  catalog.innerHTML = "";
+
+  if (sentinel) { sentinel.remove(); sentinel = null; }
+  setupCatalogObserver();
 }
 
+// ==================== Category Filter ====================
+$(document).on("change", "#categoryFilter", function () {
+  currentCategory = $(this).val();
+  searchBookmark = null;        // reset bookmark
+  currentSearchQuery = null;      // forziamo anche solo category
+  resetCatalogState();
+  loadNextCatalogPage();
+});
 
-// Creation of new gear pedal (only for logged-in users)
+// ==================== Lazy Catalog Render ====================
+function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
+
+  const container = document.getElementById(containerId);
+  const batch = catalogData.slice(catalogRenderIndex, catalogRenderIndex + batchSize);
+  const frag = document.createDocumentFragment();
+
+  batch.forEach(pedal => {
+    const $pedalDiv = renderPedal(pedal, userRole);
+    if (!$pedalDiv || !$pedalDiv[0]) {
+      console.warn("Pedal non renderizzato:", pedal);
+      return;
+    }
+    $pedalDiv.attr("data-author", pedal.author || "");
+    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+    frag.appendChild($pedalDiv[0]);
+  });
+
+
+  container.appendChild(frag);
+  catalogRenderIndex += batch.length;
+
+  // mantieni sentinel alla fine
+  if (sentinel) container.appendChild(sentinel);
+
+  if (userRole !== "guest") setupEditPedalHandler(batch);
+
+  // controlla se caricare batch successivo
+  checkLoadNext();
+}
+
+// ==================== Lazy Load ====================
+function loadNextCatalogPage(extraParams = {}) {
+  if (isLoading || !hasMore) return;
+  isLoading = true;
+
+  let url = "";
+  let params = [];
+
+  const token = localStorage.getItem("authToken");
+
+  // ==================== SEARCH MODE (search + category + published filter) ====================
+  const isSearchMode = currentSearchQuery !== null ||
+                       currentCategory !== 'all' ||
+                       currentPublishedFilter !== 'all' ||
+                       Object.keys(extraParams).length > 0;
+
+  if (isSearchMode) {
+    url = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
+
+    // query testo libero
+    let queryToSend = currentSearchQuery || "";
+    params.push("q=" + encodeURIComponent(queryToSend));
+    params.push("limit=100");
+
+    // filtro categoria
+    if (currentCategory && currentCategory !== "all") {
+      params.push("category=" + encodeURIComponent(currentCategory));
+    }
+
+    // filtro published
+    if (currentPublishedFilter && currentPublishedFilter !== 'all') {
+      params.push("published=" + encodeURIComponent(currentPublishedFilter));
+    }
+
+    // aggiungi extraParams al GET
+    for (let k in extraParams) {
+      params.push(k + "=" + encodeURIComponent(extraParams[k]));
+    }
+
+    // bookmark per paginazione
+    if (searchBookmark) {
+      params.push("bookmark=" + encodeURIComponent(searchBookmark));
+    }
+
+  // ==================== CATALOG MODE (nessun filtro) ====================
+  } else {
+    currentPage++;
+    url = "https://api.pedalplex.com/GET_CATALOG_LAZY.php";
+    params.push("page=" + currentPage);
+    params.push("limit=100");
+
+    if (currentCategory && currentCategory !== "all") {
+      params.push("category=" + encodeURIComponent(currentCategory));
+    }
+  }
+
+  url += "?" + params.join("&");
+
+  fetch(url, { headers: token ? { Authorization: "Bearer " + token } : {} })
+    .then(r => r.json())
+    .then(data => {
+      if (!data) {
+        hasMore = false;
+        if (sentinel) sentinel.remove();
+        return;
+      }
+
+      // ---------- SEARCH MODE ----------
+      if (isSearchMode) {
+        if (!Array.isArray(data.docs) || data.docs.length === 0) {
+          hasMore = false;
+          if (sentinel) sentinel.remove();
+          return;
+        }
+
+        catalogData = catalogData.concat(data.docs);
+        searchBookmark = data.bookmark || null;
+        hasMore = !!searchBookmark; // se c'è bookmark, ci sono altri risultati
+
+        if (!searchBookmark) {
+          hasMore = false;
+          if (sentinel) sentinel.remove();
+        }
+
+      // ---------- CATALOG MODE ----------
+      } else {
+        if (!Array.isArray(data) || data.length === 0) {
+          hasMore = false;
+          if (sentinel) sentinel.remove();
+          return;
+        }
+        catalogData = catalogData.concat(data);
+      }
+
+      renderCatalogIncremental([], "catalog", (window.currentUser?.role) || "guest", 100);
+    })
+    .catch(err => {
+      console.error("Catalog lazy error:", err);
+      isLoading = false;
+    })
+    .finally(() => {
+      isLoading = false;
+    });
+}
+
+// ==================== Scroll Observer ====================
+function checkLoadNext() {
+  if (isLoading || !hasMore || !sentinel) return;
+  const rect = sentinel.getBoundingClientRect();
+  if (rect.top - window.innerHeight < 500) loadNextCatalogPage();
+}
+
+function setupCatalogObserver() {
+  if (!sentinel) {
+    sentinel = document.createElement('div');
+    sentinel.id = 'catalog-sentinel';
+    sentinel.style.height = '1px';
+    document.getElementById('catalog').appendChild(sentinel);
+  }
+}
+
+window.addEventListener('scroll', checkLoadNext);
+window.addEventListener('resize', checkLoadNext);
+
+// ==================== Single Pedal View ====================
+function getPedalIdFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("id");
+}
+
+function initSinglePedalView(pedalId, userRole){
+  window.singlePedalMode = true;
+  const token = localStorage.getItem("authToken");
+  const resultsDiv = $("#catalog");
+  resultsDiv.empty();
+  resultsDiv.append('<div id="catalog-global-loader"></div>');
+
+  const cleanId = decodeURIComponent(pedalId.trim());
+
+  fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
+    method:"POST",
+    headers: {
+      "Content-Type":"application/json",
+      "Authorization": token ? "Bearer "+token : ""
+    },
+    body: JSON.stringify({ids:[cleanId]})
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    $("#catalog-global-loader").remove();
+    const pedals = data.docs || [];
+    if(pedals.length===0){
+      Swal.fire({icon:"error", title:"Pedal not found", confirmButtonText:"Back to Catalog"})
+        .then(()=>window.location.href="gears");
+      return;
+    }
+    catalogData = pedals;
+    catalogRenderIndex = 0;
+    renderCatalogIncremental([], 'catalog', userRole, 100);
+    if(userRole!=="guest") setupEditPedalHandler(pedals);
+  })
+  .catch(err => {
+    console.error("Single pedal fetch error:", err);
+    $("#catalog-global-loader").remove();
+  });
+}
+
+// ==================== Navigation + Init ====================
+function initNavCatalog(userRole){
+  renderNavBar(userRole);
+  updatePedalCountsFromServer();
+  const pedalIdFromURL = getPedalIdFromURL();
+  if(pedalIdFromURL) initSinglePedalView(pedalIdFromURL,userRole);
+  else {
+    setupCatalogObserver();
+    loadNextCatalogPage();
+  }
+}
+
+// ==================== CREATE NEW PEDAL ====================
 function createNewPedal() {
   if (!window.currentUser || window.currentUser.role === "guest") {
     Swal.fire('Access Denied', 'Guests cannot create pedals. Please log in.', 'warning');
@@ -41,9 +283,7 @@ function createNewPedal() {
         Swal.showValidationMessage('Builder not ready');
         return false;
       }
-
       const validation = iframe.contentWindow.getPedalValidation();
-
       if (validation.cssError) {
         Swal.showValidationMessage(`CSS Error: ${validation.cssError}`);
         return false;
@@ -56,17 +296,13 @@ function createNewPedal() {
         Swal.showValidationMessage("Duplicate control labels detected!");
         return false;
       }
-
       return validation.pedal;
     }
   }).then(result => {
     if (result.isConfirmed) {
       const newPedal = result.value;
-
-      // Attach author info
       newPedal.author = window.currentUser.username || "unknown";
       newPedal.authorId = window.currentUser.userid || null;
-
       const token = localStorage.getItem('authToken');
 
       fetch('https://api.pedalplex.com/CREATE_GEAR.php', {
@@ -86,23 +322,10 @@ function createNewPedal() {
             confirmButtonText: 'OK',
             customClass: { confirmButton: 'bx--btn bx--btn--primary' }
           }).then(() => {
-            const resultsDiv = document.getElementById("catalog");
-            const createdPedal = {
-              ...newPedal,
-              _id: data.id,
-              _rev: data.rev,
-              author: data.author || newPedal.author,
-              canEdit: true
-            };
-            pedals.push(createdPedal);
-            // const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
-            appendNewPedalWithSubPlex(createdPedal); // new with subplexes
-            $pedalDiv.attr("data-author", createdPedal.author || "");
-            $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
-            $pedalDiv.find(".edit-btn").data("pedal", createdPedal);
-            $(resultsDiv).append($pedalDiv);
-            updatePedalCounts();
-            setupEditPedalHandler(pedals);
+            pedals.push({...newPedal, _id:data.id, _rev:data.rev, canEdit:true});
+            catalogData.push({...newPedal, _id:data.id, _rev:data.rev, canEdit:true});
+            renderCatalogIncremental([], 'catalog', window.currentUser.role || "user", 12);
+            updatePedalCountsFromServer();
           });
         } else {
           Swal.fire('Error', data.error || 'Failed to create', 'error');
@@ -115,150 +338,82 @@ function createNewPedal() {
   });
 }
 
+// ==================== UPDATE PEDAL COUNTS ====================
+function updatePedalCountsFromServer(activeFilter = null) {
+  const token = localStorage.getItem("authToken");
 
-// Category keywords → accepted variants
-const pedalCategoryMap = {
-  acoustic: ["acoustic", "acoustic simulator", "ac sim", "simulator", "sim"],
-  ambient: ["ambient", "ambi", "amb", "dimension", "space"],
-  ampli: ["combo", "all-in-one", "all in one", "amplifier head", "amp head", "head", "amped", "marshall"],
-  boost: ["boost", "blst", "bst"],
-  chorus: ["chorus", "cho"],
-  compressor: ["compressor", "comp", "compr", "sustainer", "sustain"],
-  delay: ["delay", "dly", "del", "echo", "ech"],
-  distortion: ["distortion", "dist", "distort", "metal", "heavy", "dark", "feedbacker", "feedback", "overdrive", "drive", "od", "drv", "driving"],
-  drum: ["drum machine", "drum", "rhythm", "beat", "pad"],
-  eq: ["equal", "equalizer", "equaliser", "filter", "filt",],
-  expression: ["expression", "expr", "exp", "volume", "volum", "swell", "volume swell", "swl", "slow"],
-  flanger: ["flanger", "flg", "flange"],
-  fuzz: ["fuzz", "muff"],
-  looper: ["looper", "loop", "loop station", "loopstation"],
-  modulation: ["modulation", "mod"],
-  multifx: ["multifx", "multi-fx", "multi fx", "fx"],
-  octaver: ["octaver", "octave", "oct", "octa"],
-  phaser: ["phaser", "phase", "pha"],
-  pitchshifter: ["pitchshifter", "pitch shifter", "pshift", "pitch", "harmonist", "harmonizer", "shifter", "shift", "whammy"],
-  preamp: ["stack", "rig", "full rig", "amp stack", "preamp", "pre-amp", "pre amp", "irloader", "ir loader", "ir"],
-  reverb: ["reverb", "verb", "rvb", "shimmer", "shim"],
-  vibrato: ["tremolo", "trem","rotary", "rotovibe", "roto-vibe", "vibrato", "vibe", "vib"],
-  synth: ["spectrum", "enhancer", "spec", "sampler", "sample", "samp", "formant", "lfo", "synth", "synthesizer", "synthesiser", "slicer", "processor", "organ", "bitcrusher", "bit crusher", "crusher", "lofi", "lo-fi"],
-  utility: ["buffer", "bfr", "buff", "switcher", "switch", "footswitch", "loop switcher", "ab switcher", "aby", "dibox", "di box", "direct box", "utility", "util", "misc", "miscellaneous", "tuner", "tunr", "tnr", "noisegate", "noise gate", "suppressor"],
-  vocoder: ["vocoder", "voco", "vokoder", "talk box"],
-  wah: ["wah", "wah-wah"]
-};
+  // === MOSTRA LOADER INLINE ===
+  showPedalCountsLoader();
 
-// === CATEGORY FILTER LOGIC ===
-$(document).on("change", "#categoryFilter", function () {
-  const selected = $(this).val();
+  fetch("https://api.pedalplex.com/GET_CATALOG_COUNTS.php", {
+    headers: token ? { Authorization: "Bearer " + token } : {}
+  })
+  .then(r => r.json())
+  .then(counts => {
 
-  if (selected === "all") {
-    $(".pedal-catalog").show();
-    updatePedalCounts();
-    return;
-  }
-  const variants = pedalCategoryMap[selected] || [];
+    const isActive = f => activeFilter === f ? "active-filter" : "";
 
-  $(".pedal-catalog").each(function() {
-    const id = ($(this).data("pedal-id") || "").toLowerCase();
-    const matches = variants.some(keyword => id.includes(keyword));
-    $(this).toggle(matches);
-  });
+    let countsHtml =
+      `${counts.total} gear${counts.total === 1 ? "" : "s"} (` +
+      `All: <span class="status-filter ${isActive("all")}" data-filter="all">${counts.total}</span>`;
 
-  updatePedalCounts();
-});
+    if (window.currentUser?.role !== "guest") {
 
+      countsHtml += `, Draft: <span class="status-filter ${isActive("draft")}" data-filter="draft">${counts.draft}</span>`;
+      countsHtml += `, Private: <span class="status-filter ${isActive("private")}" data-filter="private">${counts.private}</span>`;
 
+      const reviewingStyle = counts.reviewing > 0
+        ? 'style="background:#ff0000;color:white;border-radius:50%;padding:1px 5px;font-size:0.75rem;font-weight:bold;min-width:18px;text-align:center;"'
+        : '';
 
+      countsHtml += `, Review: <span class="status-filter ${isActive("reviewing")}" data-filter="reviewing" ${reviewingStyle}>${counts.reviewing}</span>`;
+      countsHtml += `, Template: <span class="status-filter ${isActive("template")}" data-filter="template">${counts.template}</span>`;
 
+      countsHtml += `, By me: <span>${counts.publicByMe}</span>`;
 
-
-$(document).ready(() => {
-
-  const $goToRigs = $('#goToRigs');
-  const $addToRig = $('#addToRig');
-  const $categoryFilter = $('#categoryFilter');
-
-  const isCatalog = !window.location.search.includes('id=');
-  const isSingleGear = !isCatalog;
-
-  // Nascondiamo entrambi all’inizio
-  $goToRigs.hide();
-  $addToRig.hide();
-
-  if (isCatalog) {
-    // Solo catalogo → mostra Go to Rigs
-    $goToRigs.show();
-    $addToRig.hide();
-    $('#backToCatalog').remove(); // rimuoviamo eventuale pulsante legacy
-  }
-
-  if (isSingleGear) {
-    // Pagina singolo pedale → mostra Add to Rig e Back to Catalog
-    $addToRig.show();
-    $goToRigs.hide(); // <-- garantito nascondere Go to Rigs
-
-    // Aggiungiamo il pulsante "Back to Catalog" accanto al dropdown
-    let $backToCatalog = $('#backToCatalog');
-    if ($backToCatalog.length === 0) {
-      $backToCatalog = $(`
-        <a id="backToCatalog" href="gears" class="bx--btn bx--btn--tertiary" 
-           style="margin-left:8px; max-width:500px!important;">
-          Back to Catalog
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet"
-               xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <path d="M14 26L15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26z"></path>
-          </svg>
-        </a>
-      `);
-      $categoryFilter.after($backToCatalog);
+      if (window.currentUser?.role === "admin") {
+        countsHtml += `, By users: <span>${counts.byUsers}</span>`;
+      }
     }
-  }
 
-});
+    countsHtml += `)`;
 
+    $("#pedalCount").html(countsHtml);
 
+    $(".status-filter[data-filter]").off("click").on("click", function () {
+      const filter = $(this).data("filter");
 
+      searchBookmark = null;
+      catalogData = [];
+      catalogRenderIndex = 0;
 
+      currentPublishedFilter = filter;
 
-
-
-
-
-
-
-/**
- * Renderizza il catalogo a blocchi usando DocumentFragment per ridurre reflow/repaint
- * @param {Array} data - array di pedali
- * @param {string} containerId - ID del div container (#catalog)
- * @param {string} userRole - ruolo utente ("guest", "user", "admin")
- * @param {number} batchSize - numero di pedali per batch
- */
-function renderCatalogIncremental(data, containerId, userRole, batchSize = 50) {
-  const container = document.getElementById(containerId);
-  let index = 0;
-
-  function renderBatch() {
-    const batch = data.slice(index, index + batchSize);
-    const frag = document.createDocumentFragment(); // unico fragment per il batch
-
-    batch.forEach(pedal => {
-      const $pedalDiv = renderPedal(pedal, userRole);
-      $pedalDiv.attr("data-author", pedal.author || "");
-      $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-      frag.appendChild($pedalDiv[0]); // appendiamo elemento jQuery come DOM
+      resetCatalogState();
+      loadNextCatalogPage();
     });
-
-    container.appendChild(frag); // appendiamo tutto in un colpo
-
-    index += batchSize;
-
-    if (index < data.length) {
-      requestAnimationFrame(renderBatch); // prossimo batch al frame successivo
-    } else {
-      updatePedalCounts(); // aggiorna contatori finale
-      if (userRole !== "guest") setupEditPedalHandler(data);
-    }
-  }
-
-  renderBatch(); // avvia il primo batch
+  })
+  .catch(err => {
+    console.error("Counts fetch error:", err);
+    $("#pedalCount").html(""); // fallback pulito
+  });
 }
 
+
+
+
+// HELPER: show loader during counters fetch
+function showPedalCountsLoader() {
+  $("#pedalCount").html(`
+    <span class="bx--inline-loading bx--inline-loading--small">
+      <div class="bx--inline-loading__animation">
+        <div class="bx--loading bx--loading--small">
+          <svg class="bx--loading__svg" viewBox="0 0 100 100">
+            <circle class="bx--loading__stroke" cx="50" cy="50" r="44"></circle>
+          </svg>
+        </div>
+      </div>
+      <span class="bx--inline-loading__text">Loading counters…</span>
+    </span>
+  `);
+}

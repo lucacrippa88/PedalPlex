@@ -171,7 +171,7 @@ function setupEditPedalHandler(pedals) {
                       $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
                       $pedalDiv.find(".edit-btn").attr("data-pedal-id", createdPedal._id);
                       $("#catalog").append($pedalDiv);
-                      updatePedalCounts();
+                      updatePedalCountsFromServer();
                       setupEditPedalHandler(pedals);
 
                       Swal.fire({
@@ -248,7 +248,7 @@ function setupEditPedalHandler(pedals) {
                 const $new = renderPedal(pedals[idx], window.currentUser.role || "user");
                 $old.replaceWith($new);
               }
-              updatePedalCounts();
+              updatePedalCountsFromServer();
               Swal.fire({
                 title: 'Gear saved!',
                 icon: 'success',
@@ -299,7 +299,7 @@ function setupEditPedalHandler(pedals) {
                     const idx = pedals.findIndex(p => p._id === pedal._id);
                     if (idx !== -1) pedals.splice(idx, 1);
                     $(`[data-pedal-id="${pedal._id}"]`).remove();
-                    updatePedalCounts();
+                    updatePedalCountsFromServer();
                   });
                 } else {
                   Swal.fire({ title: 'Error', text: data.error || 'Failed to delete', icon: 'error', confirmButtonText: 'OK', customClass: { confirmButton: 'bx--btn bx--btn--primary' }});
