@@ -101,10 +101,7 @@ function loadNextCatalogPage(extraParams = {}) {
     }
 
     // filtro published
-    // if (currentPublishedFilter && currentPublishedFilter !== 'all') {
-    //   params.push("published=" + encodeURIComponent(currentPublishedFilter));
-    // }
-    if (currentPublishedFilter && currentPublishedFilter !== 'all' && window.currentUser?.role === 'admin') {
+    if (currentPublishedFilter && currentPublishedFilter !== 'all') {
       params.push("published=" + encodeURIComponent(currentPublishedFilter));
     }
 
