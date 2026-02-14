@@ -1151,9 +1151,15 @@ async function renderFullPedalboard(pedalboardOverride = null) {
         } else {
           container.innerHTML = `
             <div style="text-align: center; margin-top: 40px;">
-              <p style="font-size: 1.1em; margin-bottom: 20px;">Rig is empty.</p>
+              <p style="font-size: 1.1em; margin-bottom: 20px;">Oh no! Your Rig is empty!</p>
               <button id="createBtn" class="bx--btn bx--btn--secondary" type="button">
-                Go to Rigs
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                  <g transform="rotate(90 16 16)">
+                    <path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"></path>
+                    <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
+                  </g>
+                </svg>
+                Add your Gears here!
               </button>
             </div>
           `;
