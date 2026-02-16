@@ -105,6 +105,18 @@ function renderBackToCatalogButton() {
     return;
   }
 
+  // FXDB link preparation
+  const fxdbSearch = pedalId.toLowerCase().trim().replace(/\s+/g, '+');
+  const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
+  const fxdbButton = document.querySelector('.js-openFXDB');
+
+  if (fxdbButton) {
+    fxdbButton.setAttribute('href', urlFXDB);
+    fxdbButton.setAttribute('target', '_blank');
+    fxdbButton.setAttribute('rel', 'noopener noreferrer');
+  }
+
+
   async function fetchPedals(ids) {
     try {
       const res = await fetch('https://api.pedalplex.com/GET_PEDALS_BY_IDS.php', {
