@@ -821,7 +821,11 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       e.stopPropagation();
 
       const url = `${window.location.origin}${basePath}/view-gear?id=${encodedPedalId}`;
-      const fxdbSearch = pedalId.toLowerCase().trim().replace(/\s+/g, '+');
+      const fxdbSearch = pedalId
+        .normalize('NFKD')                 // rimuove accenti tipo é → e
+        .replace(/[^\w\s-]/g, '')          // tiene solo lettere, numeri, _, spazio e -
+        .trim()
+        .replace(/\s+/g, '+')              // spazi → +
       const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
 
       // Create dynamic buttons in the popup

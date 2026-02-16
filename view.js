@@ -106,7 +106,11 @@ function renderBackToCatalogButton() {
   }
 
   // FXDB link preparation
-  const fxdbSearch = pedalId.toLowerCase().trim().replace(/\s+/g, '+');
+  const fxdbSearch = pedalId
+    .normalize('NFKD')                 // rimuove accenti tipo é → e
+    .replace(/[^\w\s-]/g, '')          // tiene solo lettere, numeri, _, spazio e -
+    .trim()
+    .replace(/\s+/g, '+')              // spazi → +
   const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
   const fxdbButton = document.querySelector('.js-openFXDB');
 
