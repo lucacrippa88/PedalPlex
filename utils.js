@@ -877,7 +877,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
           popup.querySelector('.js-openGear')?.addEventListener('click', (e) => {
             console.log('encodedPedalId:', encodedPedalId);
             e.stopPropagation();
-            window.open(url, '_blank');
+            // window.open(url, '_blank');
           });
 
           popup.querySelector('.js-openFXDB')?.addEventListener('click', (e) => {
