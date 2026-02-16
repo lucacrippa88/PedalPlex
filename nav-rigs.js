@@ -34,7 +34,7 @@ function initNavPedalboard(userRole) {
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
           </svg>
-          Save
+          Save Rig
         </button>
 
         <button id="saveBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Save Rig"
@@ -345,7 +345,7 @@ function initNavPedalboard(userRole) {
            xmlns='http://www.w3.org/2000/svg' fill='currentColor'
            width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'>
         <path d='M24.8008 12.1362a8.8694 8.8694 0 00-.9795-2.5434L30 3.4142 28.5872 2 2 28.5872 3.4142 30l5-5H23.5a6.4974 6.4974 0 001.3008-12.8638zM23.5 23H10.4141L22.3418 11.0723a6.9049 6.9049 0 01.6006 2.0708l.0986.812.8154.0639A4.4975 4.4975 0 0123.5 23zM4.2964 23.4487l1.4313-1.4311A4.4774 4.4774 0 018.144 14.019l.8155-.0639.0991-.812a6.9867 6.9867 0 0110.63-5.0865l1.4431-1.4428A8.9859 8.9859 0 007.2 12.1362 6.4891 6.4891 0 004.2964 23.4487z'/>
-      </svg> Offline Save
+      </svg>Save Rig Offline
     `);
     $("#saveBtnMobile").html(`
       <svg focusable='false' preserveAspectRatio='xMidYMid meet'
