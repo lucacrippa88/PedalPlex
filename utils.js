@@ -1393,9 +1393,9 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
 
             // SubPlex Dropdown ======================================
-            const isLoggedIn = !!window.currentUser;
-            console.log('User logged in:', isLoggedIn, 'window.currentUser:', window.currentUser);
-            if (isLoggedIn) {
+            // const isLoggedIn = !!window.currentUser;
+            // console.log('User logged in:', isLoggedIn, 'window.currentUser:', window.currentUser);
+            // if (isLoggedIn) {
 
             const $presetContainer = $(`
               <div class="preset-container">
@@ -1499,29 +1499,29 @@ async function renderFullPedalboard(pedalboardOverride = null) {
                 }
               });
 
-            } else {
+            // } else {
               // Guest mode: show locked preset container
-              const $presetContainer = $(`
-                <div class="preset-container preset-locked">
-                  <svg class="preset-icon disabled"
-                    focusable="false"
-                    preserveAspectRatio="xMidYMid meet"
-                    fill="currentColor"
-                    width="32"
-                    height="32"
-                    viewBox="0 0 32 32"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 6H22V8H4zM4 12H22V14H4zM4 18H16V20H4zM21 18L28 23 21 28 21 18z"></path>
-                  </svg>
+            //   const $presetContainer = $(`
+            //     <div class="preset-container preset-locked">
+            //       <svg class="preset-icon disabled"
+            //         focusable="false"
+            //         preserveAspectRatio="xMidYMid meet"
+            //         fill="currentColor"
+            //         width="32"
+            //         height="32"
+            //         viewBox="0 0 32 32"
+            //         xmlns="http://www.w3.org/2000/svg">
+            //         <path d="M4 6H22V8H4zM4 12H22V14H4zM4 18H16V20H4zM21 18L28 23 21 28 21 18z"></path>
+            //       </svg>
 
-                  <div class="preset-locked-label">
-                    Login to see all SubPlexes!!!
-                  </div>
-                </div>
-              `);
+            //       <div class="preset-locked-label">
+            //         Login to see all SubPlexes!!!
+            //       </div>
+            //     </div>
+            //   `);
 
-              $wrapper.append($presetContainer);
-            }
+            //   $wrapper.append($presetContainer);
+            // }
 
             // ================================================
 
