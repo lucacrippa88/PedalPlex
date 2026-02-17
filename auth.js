@@ -10,6 +10,7 @@ $(document).on('click', '#toggleForm', function (e) {
   $('#submitBtn').text(isLogin ? 'Login' : 'Register');
   $('#email').toggle(!isLogin);
   $('#recaptchaContainer').toggle(!isLogin);
+  $('#newsletterContainer').toggle(!isLogin); // checkbox solo in registrazione
   $('#toggleText').html(
     isLogin
       ? `Don't have an account? <a href="#" id="toggleForm">Register here</a>`
@@ -48,8 +49,9 @@ $('#authForm').on('submit', function (e) {
       password, 
       email, 
       recaptcha: grecaptcha.getResponse(recaptchaWidgetId),
-      subscribe_newsletter
+      subscribe_newsletter: $('#subscribeNewsletter').is(':checked') // ✅ checkbox
     };
+
 
 
   // --- reCAPTCHA check only for registration ---
