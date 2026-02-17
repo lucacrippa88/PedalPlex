@@ -1394,6 +1394,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
             // SubPlex Dropdown ======================================
             const isLoggedIn = !!window.currentUser;
+            console.log('User logged in:', isLoggedIn, 'window.currentUser:', window.currentUser);
             if (isLoggedIn) {
 
             const $presetContainer = $(`
