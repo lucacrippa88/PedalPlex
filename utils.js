@@ -1514,7 +1514,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
                   </svg>
 
                   <div class="preset-locked-label">
-                    Login to see all SubPlexes
+                    Login to see all SubPlexes!!!
                   </div>
                 </div>
               `);
@@ -1668,7 +1668,7 @@ async function buildPresetDropdown($ul, pedalId) {
 
   const token = localStorage.getItem("authToken");
   if (!token) {
-    $ul.html("<li class='error'>Login to see all SubPlexes!!!</li>");
+    $ul.html("<li class='error'>Login to see all SubPlexes</li>");
     return;
   }
 
