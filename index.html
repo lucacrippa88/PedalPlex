@@ -787,43 +787,53 @@
 
 
 
-<!-- Toast Banner per Cookie Consent -->
-<div id="cookie-toast" class="cds--toast-notification cds--toast-notification--info" role="alert" aria-live="assertive" hidden>
-  <div class="cds--toast-notification__details">
-    <h3 class="cds--toast-notification__title">Usiamo i cookie</h3>
-    <p class="cds--toast-notification__subtitle">
-      Questo sito utilizza cookie per migliorare l'esperienza. Puoi accettare o rifiutare.
-    </p>
-  </div>
-  <div class="cds--toast-notification__caption">
-    <button id="accept-cookies" class="cds--btn cds--btn--primary cds--btn--sm">Accetta</button>
-    <button id="reject-cookies" class="cds--btn cds--btn--secondary cds--btn--sm">Rifiuta</button>
+<!-- Modal Cookie Consent -->
+<div id="cookie-modal" class="cds--modal cds--modal--lg" role="dialog" aria-modal="true" hidden>
+  <div class="cds--modal-container">
+    <div class="cds--modal-header">
+      <h2 class="cds--modal-header__heading">Usiamo i cookie 🍪</h2>
+    </div>
+    <div class="cds--modal-content">
+      <p>Questo sito utilizza cookie per migliorare la tua esperienza. Puoi accettare tutti i cookie o rifiutarli.</p>
+    </div>
+    <div class="cds--modal-footer">
+      <button id="accept-cookies" class="cds--btn cds--btn--primary">Accetta</button>
+      <button id="reject-cookies" class="cds--btn cds--btn--secondary">Rifiuta</button>
+    </div>
   </div>
 </div>
+
+<!-- Overlay -->
+<div id="cookie-overlay" class="cds--modal-overlay" hidden></div>
+
 
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const toast = document.getElementById('cookie-toast');
+    const modal = document.getElementById('cookie-modal');
+    const overlay = document.getElementById('cookie-overlay');
     const acceptBtn = document.getElementById('accept-cookies');
     const rejectBtn = document.getElementById('reject-cookies');
 
-    // Mostra il banner solo se non è già stato scelto
+    // Mostra il modal solo se non è già stato scelto
     const consent = localStorage.getItem('cookie-consent');
     if (!consent) {
-      toast.removeAttribute('hidden');
+      modal.removeAttribute('hidden');
+      overlay.removeAttribute('hidden');
     }
 
-    // Funzione per salvare scelta
     const setConsent = (value) => {
       localStorage.setItem('cookie-consent', value);
-      toast.setAttribute('hidden', true);
+      modal.setAttribute('hidden', true);
+      overlay.setAttribute('hidden', true);
       console.log(`Cookie consent: ${value}`);
-      // Qui puoi anche attivare script di tracking se accettato
     };
 
     acceptBtn.addEventListener('click', () => setConsent('accepted'));
     rejectBtn.addEventListener('click', () => setConsent('rejected'));
+
+    // Chiudi se clicchi fuori
+    overlay.addEventListener('click', () => setConsent('rejected'));
   });
 </script>
 
