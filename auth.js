@@ -31,14 +31,26 @@ $('#authForm').on('submit', function (e) {
   const username = $('#username').val().trim();
   const password = $('#password').val();
   const email = $('#email').val().trim();
+  const subscribe_newsletter = !isLogin ? $('#subscribeNewsletter').is(':checked') : undefined;
+
 
   const endpoint = isLogin
     ? 'https://api.pedalplex.com/USER_LOGIN_JWT.php'
     : 'https://api.pedalplex.com/USER_REGISTER_JWT.php';
 
+  // const data = isLogin
+  //   ? { username, password }
+  //   : { username, password, email };
   const data = isLogin
-    ? { username, password }
-    : { username, password, email };
+  ? { username, password }
+  : { 
+      username, 
+      password, 
+      email, 
+      recaptcha: grecaptcha.getResponse(recaptchaWidgetId),
+      subscribe_newsletter
+    };
+
 
   // --- reCAPTCHA check only for registration ---
   if (!isLogin) {
