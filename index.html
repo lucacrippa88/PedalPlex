@@ -786,6 +786,53 @@
 
 
 
+
+<!-- Toast Banner per Cookie Consent -->
+<div id="cookie-toast" class="cds--toast-notification cds--toast-notification--info" role="alert" aria-live="assertive" hidden>
+  <div class="cds--toast-notification__details">
+    <h3 class="cds--toast-notification__title">Usiamo i cookie</h3>
+    <p class="cds--toast-notification__subtitle">
+      Questo sito utilizza cookie per migliorare l'esperienza. Puoi accettare o rifiutare.
+    </p>
+  </div>
+  <div class="cds--toast-notification__caption">
+    <button id="accept-cookies" class="cds--btn cds--btn--primary cds--btn--sm">Accetta</button>
+    <button id="reject-cookies" class="cds--btn cds--btn--secondary cds--btn--sm">Rifiuta</button>
+  </div>
+</div>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toast = document.getElementById('cookie-toast');
+    const acceptBtn = document.getElementById('accept-cookies');
+    const rejectBtn = document.getElementById('reject-cookies');
+
+    // Mostra il banner solo se non è già stato scelto
+    const consent = localStorage.getItem('cookie-consent');
+    if (!consent) {
+      toast.removeAttribute('hidden');
+    }
+
+    // Funzione per salvare scelta
+    const setConsent = (value) => {
+      localStorage.setItem('cookie-consent', value);
+      toast.setAttribute('hidden', true);
+      console.log(`Cookie consent: ${value}`);
+      // Qui puoi anche attivare script di tracking se accettato
+    };
+
+    acceptBtn.addEventListener('click', () => setConsent('accepted'));
+    rejectBtn.addEventListener('click', () => setConsent('rejected'));
+  });
+</script>
+
+
+
+
+
+
+
   <!-- Footer -->
   <footer id="footer" style="margin-top:4rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
     © <span id="year-range"></span> PedalPlex ·
