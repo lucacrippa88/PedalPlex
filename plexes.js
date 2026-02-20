@@ -34,7 +34,7 @@ async function initPreset() {
   if (isGuest) {
   console.warn("Initializing Guest Mode");
 
-  // 1️⃣ Leggi il guest board dal localStorage
+  // Leggi il guest board dal localStorage
   const raw = localStorage.getItem("guestPedalboard");
   let guestBoards = [];
 
@@ -74,7 +74,7 @@ async function initPreset() {
     }
   });
 
-  // 2️⃣ Estrai gli ID pedali dal guest board
+  // Estrai gli ID pedali dal guest board
   const ids = [...new Set((guestBoard.pedals || []).map(p => p.pedal_id))];
 
   console.log("Fetching pedals via GET_PEDALS_BY_IDS (guest):", ids);
@@ -82,7 +82,7 @@ async function initPreset() {
   window.catalog = [];
   window.catalogMap = {};
 
-  // 3️⃣ Scarica SOLO i pedali necessari
+  // Scarica SOLO i pedali necessari
   if (ids.length > 0) {
     try {
       const res = await fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
@@ -102,10 +102,10 @@ async function initPreset() {
     }
   }
 
-  // 4️⃣ RENDER DELLA PEDALBOARD (esattamente come i loggati)
+  // RENDER DELLA PEDALBOARD (esattamente come i loggati)
   renderFullPedalboard(window.pedalboard.pedals);
 
-  // 5️⃣ Nessun preset per ospiti
+  // Nessun preset per ospiti
   window.presets = [];
   window.presetMap = {};
   populatePresetDropdownByFolder("default");
@@ -117,7 +117,7 @@ async function initPreset() {
   // Show loader overlay
   document.getElementById("pageLoader").style.display = "flex";
 
-  // 1️⃣ Scarica tutte le pedaliere per utente
+  // Scarica tutte le pedaliere per utente
   fetch('https://api.pedalplex.com/GET_PEDALBOARD.php', {
     method: 'POST',
     headers: {
@@ -134,7 +134,7 @@ async function initPreset() {
   .then(async data => {
     window.allPedalboards = data.docs && Array.isArray(data.docs) ? data.docs : [];
 
-    // 2️⃣ Estrai gli ID pedali unici da tutte le pedaliere
+    // Estrai gli ID pedali unici da tutte le pedaliere
     const pedalIds = new Set();
     window.allPedalboards.forEach(pb => {
       if (pb.pedals && Array.isArray(pb.pedals)) {
@@ -143,7 +143,7 @@ async function initPreset() {
     });
     const idsArray = Array.from(pedalIds);
 
-    // 3️⃣ Scarica solo i pedali necessari
+    // Scarica solo i pedali necessari
     let catalog = [];
     if (idsArray.length > 0) {
       const pedalRes = await fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
@@ -213,7 +213,7 @@ async function initPreset() {
         const presetSelect = document.getElementById('presetSelect');
         const folderSelect = document.getElementById('folderSelect');
 
-        // 1️⃣ Restore folder first
+        // Restore folder first
         const savedFolderId = localStorage.getItem('lastPresetFolderId') || 'default';
         if (folderSelect) {
           const folderOptionExists = Array.from(folderSelect.options)
@@ -221,11 +221,11 @@ async function initPreset() {
           folderSelect.value = folderOptionExists ? savedFolderId : 'default';
         }
 
-        // 2️⃣ Restore preset selection (NO side effects)
+        // Restore preset selection (NO side effects)
         const savedPresetId = localStorage.getItem('lastPresetId');
         populatePresetDropdownByFolder(folderSelect?.value || savedFolderId, savedPresetId);
 
-        // 3️⃣ Apply restored preset manually (NO onchange)
+        // Apply restored preset manually (NO onchange)
         if (savedPresetId && window.presetMap?.[savedPresetId]) {
           const preset = window.presetMap[savedPresetId];
 
@@ -236,12 +236,12 @@ async function initPreset() {
           applyPresetToPedalboard(preset);
         }
 
-        // 4️⃣ Restore zoom
+        // 4Restore zoom
         if (typeof restoreZoomForCurrentBoard === "function") {
           restoreZoomForCurrentBoard();
         }
 
-        // ❌ NON dispatchare change
+        // NON dispatchare change
       });
 
 
@@ -643,11 +643,11 @@ async function savePreset(presetId, updateData) {
       const $pedalDiv = $(`.pedal-catalog[data-pedal-id="${pedalName}"]`);
 
       const appliedSubplex = $pedalDiv.data('applied-subplex');
-      // ✅ salva SOLO subplex validi
+      // salva SOLO subplex validi
       if (appliedSubplex && appliedSubplex.id) {
         updateData.pedals[pedalName].subplex = appliedSubplex;
       } else {
-        // ❌ rimuovi qualunque residuo
+        // rimuovi qualunque residuo
         delete updateData.pedals[pedalName].subplex;
       }
     }
@@ -818,77 +818,6 @@ function applyPresetToPedalboard(presetDoc) {
     }
   });
 
-  // $(".pedal-catalog").each(function () {
-  //   const $pedalDiv = $(this);
-  //   const pedalId = $pedalDiv.data("pedal-id");
-
-  //   const defaultPedalFromCatalog = window.catalog.find(p => p._id === pedalId || p.name === pedalId);
-  //   if (!defaultPedalFromCatalog) return;
-
-  //   // Step 1: Deep clone the default controls from catalog
-  //   const resetPedal = JSON.parse(JSON.stringify(defaultPedalFromCatalog));
-
-  //   // Step 2: Apply preset values on top (if present)
-  //   const presetPedal = pedalsFromPreset[pedalId];
-  //   if (presetPedal) {
-  //     // apply controls
-  //     if (presetPedal.controls) {
-  //       resetPedal.controls.forEach(row => {
-  //         row.row.forEach(ctrl => {
-  //           const controlLabel = ctrl.label;
-  //           if (presetPedal.controls.hasOwnProperty(controlLabel)) {
-  //             ctrl.value = presetPedal.controls[controlLabel];
-  //           }
-  //         });
-  //       });
-  //     }
-  //     // add row info
-  //     resetPedal.row = presetPedal.row || resetPedal.row || 1;
-  //   }
-
-
-  //   // Step 3: Re-render controls
-  //   $pedalDiv.find('.row').remove();
-  //   renderPedalControls(resetPedal, $pedalDiv);
-
-  //   if (presetPedal) {
-  //     const appliedSubplex = presetPedal.subplex || presetPedal;
-
-  //     $pedalDiv.data('applied-subplex', appliedSubplex);
-  //     renderAppliedPresetInfo($pedalDiv, appliedSubplex);
-
-  //     // setupSubplexInvalidationOnDBLoad($pedalDiv);
-  //     invalidateSubplex($pedalDiv);
-  //   }
-
-
-  //   // Find existing name element (.pedal-name or .head-name)
-  //   const $existingName = $pedalDiv.find('.pedal-name, .head-name').first();
-
-  //   let nameClass = 'pedal-name'; // default
-  //   let $referenceNode = null;
-
-  //   if ($existingName.length) {
-  //     nameClass = $existingName.hasClass('head-name') ? 'head-name' : 'pedal-name';
-  //     $referenceNode = $existingName.next(); // Save position relative to next sibling
-  //     $existingName.remove(); // Remove it before re-adding
-  //   }
-
-  //   // Create new name element
-  //   const $nameDiv = $("<div>")
-  //     .addClass(nameClass)
-  //     .html(resetPedal.name)
-  //     .attr("style", resetPedal.logo || "");
-
-  //   // Insert it back in the correct place
-  //   if ($referenceNode && $referenceNode.length) {
-  //     $nameDiv.insertBefore($referenceNode);
-  //   } else {
-  //     $pedalDiv.prepend($nameDiv); // fallback if no reference point
-  //   }
-
-  // });
-
 
 // Dentro applyPresetToPedalboard, per ogni pedal-catalog
 $(".pedal-catalog").each(function () {
@@ -933,7 +862,7 @@ $(".pedal-catalog").each(function () {
     // Render info SubPlex (nome, icona ecc.)
     renderAppliedPresetInfo($pedalDiv, appliedSubplex);
 
-    // ✅ Registrazione listener per dirty state
+    // Registrazione listener per dirty state
     setupSubplexInvalidationOnDBLoad($pedalDiv); 
   }
 
@@ -1351,7 +1280,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
 
   presetSelect.innerHTML = '';
 
-  // 1️⃣ Filtra solo preset della pedaliera corrente
+  // 1️Filtra solo preset della pedaliera corrente
   const presetsForBoard = window.presets.filter(p => p.board_id === window.pedalboard._id);
 
   let filteredPresets = [];
@@ -1410,7 +1339,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     let selectedPreset = null;
     if (preferredPresetId) {
       selectedPreset = filteredPresets.find(p => p._id === preferredPresetId);
-      // ⛔ NON fare fallback automatico
+      // NON fare fallback automatico
       if (!selectedPreset) {
         console.warn('Preferred preset not found in folder:', preferredPresetId);
         return; // esci senza toccare stato o localStorage
@@ -1427,6 +1356,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
 
     // Update save button state based on new selection
     // updateSavePresetButtonState();
+    presetSelect.dispatchEvent(new Event('change', { bubbles: true }));
 
     // Applica preset SOLO se appartiene alla pedaliera corrente
     if (selectedPreset.board_id === window.pedalboard._id) {
