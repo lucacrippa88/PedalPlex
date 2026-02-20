@@ -1425,6 +1425,9 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     currentPresetRev = selectedPreset._rev;
     presetSelect.value = selectedPreset._id;
 
+    // Update save button state based on new selection
+    updateSavePresetButtonState();
+
     // Applica preset SOLO se appartiene alla pedaliera corrente
     if (selectedPreset.board_id === window.pedalboard._id) {
       applyPresetToPedalboard(selectedPreset);
