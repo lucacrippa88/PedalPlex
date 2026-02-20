@@ -1659,6 +1659,35 @@ async function initGuestMode() {
 
 
 
+// // Assicurati che il DOM sia pronto
+// document.addEventListener("DOMContentLoaded", () => {
+//   const leds = document.querySelectorAll(".pedal-catalog .led");
+
+//   leds.forEach(led => {
+//     const pedal = led.closest(".pedal-catalog");
+//     const pedalName = pedal.dataset.pedalName || "Pedale sconosciuto";
+//     const controlLabel = led.dataset.controlLabel || "LED";
+
+//     // Funzione per loggare il colore
+//     const logColor = () => {
+//       const style = getComputedStyle(led);
+//       const bgColor = style.backgroundColor;
+//       const boxShadow = style.boxShadow;
+//       console.log(`🎛️ ${pedalName} → ${controlLabel}: bg=${bgColor}, shadow=${boxShadow}`);
+//     };
+
+//     // Log immediato per debug
+//     logColor();
+
+//     // Log quando clicchi il LED
+//     led.addEventListener("click", logColor);
+
+//     // Observer per catturare cambiamenti di style
+//     const observer = new MutationObserver(logColor);
+//     observer.observe(led, { attributes: true, attributeFilter: ["style"] });
+//   });
+// });
+
 // Assicurati che il DOM sia pronto
 document.addEventListener("DOMContentLoaded", () => {
   const leds = document.querySelectorAll(".pedal-catalog .led");
@@ -1673,17 +1702,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const style = getComputedStyle(led);
       const bgColor = style.backgroundColor;
       const boxShadow = style.boxShadow;
-      console.log(`🎛️ ${pedalName} → ${controlLabel}: bg=${bgColor}, shadow=${boxShadow}`);
+      const classes = Array.from(led.classList).join(" ");
+      console.log(`🎛️ ${pedalName} → ${controlLabel}: bg=${bgColor}, shadow=${boxShadow}, classes=${classes}`);
     };
 
-    // Log immediato per debug
-    logColor();
+    // Log immediato per debug, con piccolo delay per mobile
+    setTimeout(logColor, 50);
 
-    // Log quando clicchi il LED
+    // Log quando clicchi o tocchi il LED
     led.addEventListener("click", logColor);
+    led.addEventListener("pointerdown", logColor); // garantisce compatibilità touch
 
-    // Observer per catturare cambiamenti di style
+    // Observer per catturare cambiamenti di style o classi
     const observer = new MutationObserver(logColor);
-    observer.observe(led, { attributes: true, attributeFilter: ["style"] });
+    observer.observe(led, { 
+      attributes: true, 
+      attributeFilter: ["style", "class"] // aggiunta class per mobile
+    });
   });
 });
