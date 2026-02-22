@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PedalPlex</title>
+  <link rel="icon" href="logos/pedalplex_logo_gradient.png" type="image/x-icon">
+
+  <!-- Anticipate Carbon Design load -->
+  <link rel="dns-prefetch" href="https://1.www.s81c.com">
+  <link rel="preconnect" href="https://1.www.s81c.com" crossorigin>
+  <link rel="stylesheet" href="css/carbon-components.min.css" />
+  <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BX9P5WN5HH');
+  </script>
+
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+<div id="pedal-container"></div>
+
+<script>
+// L'_id del pedale da mostrare
+const pedalId = "1981 Inventions DRV (Hyperfade white)";
+
+// Funzione per aggiungere logo e hr personalizzati
+function renderPedalLogo(container, pedal) {
+    const logoDiv = document.createElement('div');
+    logoDiv.className = 'pedal-logo';
+    logoDiv.style.cssText = pedal.logo;
+
+    // Inserisci il codice HTML del logo (color span + hr)
+    logoDiv.innerHTML = pedal.name;
+
+    container.appendChild(logoDiv);
+}
+
+// Chiama SEARCH_GEAR_LAZY.php per ottenere il pedale
+fetch(`https://api.pedalplex.com/SEARCH_GEAR_LAZY.php?q=${encodeURIComponent(pedalId)}&limit=1`)
+  .then(res => res.json())
+  .then(data => {
+      if (!data.docs || data.docs.length === 0) {
+          console.error("Pedale non trovato!");
+          return;
+      }
+      const pedal = data.docs[0];
+      const container = document.getElementById('pedal-container');
+
+      // Render del pedale con le tue funzioni esistenti
+      renderFullPedalboard(container, [pedal]);
+
+      // Render del logo e delle linee colorate sopra
+      renderPedalLogo(container, pedal);
+  })
+  .catch(err => console.error(err));
+</script>
+
+
+    <!-- Load scripts after content is visible -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="helpers.js"></script>
+    <script src="utils.js"></script>
+    <script src="subplexes.js"></script>
+    <script src="gears.js"></script>
+    <script src="fullscreen-menu.js"></script>
+    <!-- <script src="nav-gears.js"></script> -->
+    <script src="add-to-rig.js"></script>
+    <script src="nav-view.js"></script>
+    <script src="view.js"></script>
+    <script src="edit-handler.js"></script>
+
+</body>
+</html>
