@@ -479,6 +479,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 @font-face { font-family: shadow44; src: url("../fonts/44shadow.ttf"); }
 @font-face { font-family: lucidasans; src: url("../fonts/lucida.ttf"); }
 @font-face { font-family: myriad_bold; src: url("../fonts/Myriad\ Pro\ Bold.ttf"); }
+@font-face { font-family: chiller; src: url("../fonts/chiller.ttf"); }
 
 .verified-badge {
   display: inline-flex;
