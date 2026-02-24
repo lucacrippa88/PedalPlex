@@ -55,9 +55,9 @@
       <span id="toggleText">Don't have an account? <a href="#" id="toggleForm">Register here</a></span>
     </div>
 
-    <!-- <div style="margin-top: 15px;">
+    <div style="margin-top: 15px;">
       <a href="#" id="forgotPasswordLink">Forgot Password?</a>
-    </div> -->
+    </div>
     <br><br>or<br><br>
 
     <div style="display: flex; justify-content: center; width: 100%; padding-bottom: 50px;">
@@ -109,6 +109,71 @@
       grecaptcha.reset(recaptchaWidgetId); // reset del widget
     }
   </script>
+
+
+
+<script>
+  // --- Forgot Password Modal ---
+$(document).ready(function () {
+  $('#forgotPasswordLink').on('click', function (e) {
+    e.preventDefault();
+
+    Swal.fire({
+      title: 'Forgot Password',
+      input: 'email',
+      inputLabel: 'Enter your email address',
+      inputPlaceholder: 'you@example.com',
+      showCancelButton: true,
+      confirmButtonText: 'Send reset link',
+      cancelButtonText: 'Cancel',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary',
+        cancelButton: 'bx--btn bx--btn--secondary'
+      },
+      inputValidator: (value) => {
+        if (!value || !value.trim()) return 'Please enter your email!';
+        return null;
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const email = result.value.trim().toLowerCase();
+
+        $.ajax({
+          url: 'https://api.pedalplex.com/USER_FORGOT_PASSWORD.php',
+          method: 'POST',
+          contentType: 'application/json',
+          dataType: 'json',
+          data: JSON.stringify({ email }),
+          success: function () {
+            Swal.fire({
+              icon: 'success',
+              title: 'Check your email',
+              text: 'If this email exists, you will receive a password reset link shortly.',
+              timer: 2000,
+              showConfirmButton: false,
+              allowOutsideClick: false
+            });
+          },
+          error: function (xhr) {
+            let msg = 'Server error, please try again.';
+            try {
+              const json = JSON.parse(xhr.responseText);
+              if (json.error) msg = json.error;
+            } catch {}
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: msg,
+              confirmButtonText: 'OK',
+              customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+            });
+          }
+        });
+      }
+    });
+  });
+});
+</script>
 
 </body>
 </html>
