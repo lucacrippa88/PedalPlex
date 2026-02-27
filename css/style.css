@@ -114,7 +114,7 @@ header {
 
 
 /* Inputs */
-#username, #password, #email, #newPassword, #oldPassword {
+#username, #password, #email, #newPassword, #oldPassword, #confirmPassword {
   font-size: 0.875rem;
   padding: 6px 12px;
   border: 1px solid rgb(140, 140, 140);
@@ -201,7 +201,7 @@ html { box-sizing: content-box !important; }
 }
 
 /* Inputs override */
-#username, #password, #email, #newPassword, #oldPassword {
+#username, #password, #email, #newPassword, #oldPassword, #confirmPassword {
   width: 100% !important;   /* fill available space */
   max-width: 100% !important;
   height: auto;             /* let Carbon style dictate height */
