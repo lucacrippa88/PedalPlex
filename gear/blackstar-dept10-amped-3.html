@@ -5,21 +5,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- SEO Tags -->
   <title>Blackstar Dept.10 Amped 3 | PedalPlex</title>
-  <meta name="description" content="Blackstar Dept.10 Amped 3 guitar pedal on PedalPlex. Explore controls, knobs and pedal layout.">
+  <meta name="description" content="Blackstar Dept.10 Amped 3 guitar pedal on PedalPlex. Explore controls, knobs, and pedal layout.">
   <link rel="canonical" href="https://pedalplex.com/gear/blackstar-dept10-amped-3.html">
-
-  <!-- Favicon -->
   <link rel="icon" href="../logos/pedalplex_logo_gradient.png" type="image/x-icon">
 
-  <!-- Carbon Design prefetch -->
+  <!-- Carbon Design preconnect -->
   <link rel="dns-prefetch" href="https://1.www.s81c.com">
   <link rel="preconnect" href="https://1.www.s81c.com" crossorigin>
   <link rel="stylesheet" href="../css/carbon-components.min.css" />
   <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
 
-  <!-- Google Analytics -->
+  <!-- Google tag -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -28,61 +25,61 @@
     gtag('config', 'G-BX9P5WN5HH');
   </script>
 
-  <!-- Custom Styles -->
   <link rel="stylesheet" href="../css/style.css" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-  <!-- ==================== PEDAL CONFIG (SEO + FXDB link) ==================== -->
+  <!-- PEDAL CONFIG -->
   <script>
     window.PEDAL_ID = "Blackstar Dept.10 Amped 3";
     window.FXDB_URL = "https://www.effectsdatabase.com/model/blackstar/dept10/amped3";
   </script>
-
 </head>
 
 <body>
+  <!-- MOCK CATALOG per gears.js -->
+  <div id="catalog" style="display:none;">
+    <div class="gear-item" data-id="Blackstar Dept.10 Amped 3"></div>
+  </div>
 
   <div id="page-content" style="display:none;">
 
-    <!-- Pedalboard controls (Carbon buttons) -->
     <div id="pedalboard-controls" style="display:flex;align-items:center;gap:8px;width:100%;">
       <a id="backToCatalog" href="../gears" class="bx--btn bx--btn--tertiary"
-         style="margin-left:8px; max-width:500px!important;">
+         style="margin-left:8px;max-width:500px!important;">
         Back to Catalog
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
-             fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
-             class="bx--btn__icon">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+             xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16"
+             viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
           <path d="M14 26L15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26z"></path>
         </svg>
       </a>
 
       <a id="addToRig" href="#" class="bx--btn bx--btn--primary"
-         style="margin-left:auto!important; max-width:500px!important;">
+         style="margin-left:auto!important;max-width:500px!important;display:block;">
         Add to a Rig
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
-             fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
-             class="bx--btn__icon">
-          <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/>
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+             xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16"
+             viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z" />
         </svg>
       </a>
 
-      <a class="js-openFXDB bx--btn bx--btn--danger">
+      <a class="js-openFXDB bx--btn bx--btn--danger"
+         href="https://www.effectsdatabase.com/model/blackstar/dept10/amped3" target="_blank" rel="noopener noreferrer">
         Open in FXDB
       </a>
     </div>
 
     <br>
 
-    <!-- Pedal name for SEO + display -->
-    <h1 id="gearName" style="text-align:center;">Blackstar Dept.10 Amped 3</h1>
+    <h3 id="gearName" style="text-align:center;">Blackstar Dept.10 Amped 3</h3>
 
     <br><br>
 
-    <!-- Pedalboard placeholder -->
     <div id="preset"></div>
     <div id="results"></div>
 
-    <!-- External JS Libraries -->
+    <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../helpers.js"></script>
     <script src="../utils.js"></script>
@@ -117,7 +114,6 @@
         return;
       }
 
-      // Authenticated user check
       $.ajax({
         url: 'https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php',
         method: 'GET',
