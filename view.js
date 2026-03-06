@@ -207,6 +207,19 @@ if (window.FXDB_URL) {
     }]
   };
 
+
+  // ======= fallback catalog statico minimo =======
+if (!window.catalogMap || !window.catalogMap[pedalId]) {
+  window.catalogMap = window.catalogMap || {};
+  window.catalogMap[pedalId] = {
+    _id: pedalId,
+    name: pedalId
+  };
+  window.catalog = [window.catalogMap[pedalId]]; // necessario per renderFullPedalboard
+  console.log('[VIEW.JS] Fallback catalog aggiunto per pedale statico');
+}
+// ==============================================
+
   /* ================= RENDER ================= */
   try {
     $('#gearName').text(pedalId);
