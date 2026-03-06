@@ -111,18 +111,45 @@ function renderBackToCatalogButton() {
   }
 
   // FXDB link preparation
+  // const fxdbSearch = pedalId
+  //   .normalize('NFKD')                 // rimuove accenti tipo é → e
+  //   .replace(/[^\w\s-]/g, '')          // tiene solo lettere, numeri, _, spazio e -
+  //   .trim()
+  //   .replace(/\s+/g, '+')              // spazi → +
+  // const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
+  // const fxdbButton = document.querySelector('.js-openFXDB');
+
+  // if (fxdbButton) {
+  //   fxdbButton.setAttribute('href', urlFXDB);
+  //   fxdbButton.setAttribute('target', '_blank');
+  //   fxdbButton.setAttribute('rel', 'noopener noreferrer');
+  // }
+  let urlFXDB;
+
+if (window.FXDB_URL) {
+
+  // usa il link diretto se definito nella pagina statica
+  urlFXDB = window.FXDB_URL;
+
+} else {
+
+  // fallback: search su EffectsDatabase
   const fxdbSearch = pedalId
-    .normalize('NFKD')                 // rimuove accenti tipo é → e
-    .replace(/[^\w\s-]/g, '')          // tiene solo lettere, numeri, _, spazio e -
+    .normalize('NFKD')
+    .replace(/[^\w\s-]/g, '')
     .trim()
-    .replace(/\s+/g, '+')              // spazi → +
-  const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
+    .replace(/\s+/g, '+');
+
+    urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
+
+  }
+
   const fxdbButton = document.querySelector('.js-openFXDB');
 
   if (fxdbButton) {
-    fxdbButton.setAttribute('href', urlFXDB);
-    fxdbButton.setAttribute('target', '_blank');
-    fxdbButton.setAttribute('rel', 'noopener noreferrer');
+    fxdbButton.href = urlFXDB;
+    fxdbButton.target = '_blank';
+    fxdbButton.rel = 'noopener noreferrer';
   }
 
 
