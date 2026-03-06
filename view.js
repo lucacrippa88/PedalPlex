@@ -99,9 +99,14 @@ function renderBackToCatalogButton() {
   }
 
   // ===================== CARICAMENTO PEDALE =====================
-  const pedalId = urlParams.get('id');
+  // const pedalId = urlParams.get('id');
+  // if (!pedalId) {
+  //   resultsDiv.textContent = 'Usa ?id=<PEDAL_ID>';
+  //   return;
+  // }
+  const pedalId = urlParams.get('id') || window.PEDAL_ID;
   if (!pedalId) {
-    resultsDiv.textContent = 'Usa ?id=<PEDAL_ID>';
+    resultsDiv.textContent = 'Pedal ID missing';
     return;
   }
 
