@@ -7,7 +7,8 @@ $(document).ready(() => {
 
   // Get gear from url and show "Add to Rig" if present
   const params = new URLSearchParams(window.location.search);
-  const pedalId = params.get('id');
+  // const pedalId = params.get('id');
+  const pedalId = params.get('id') || window.PEDAL_ID;
   if (pedalId) {
     selectedPedalId = pedalId;
     $('#addToRig').show();
@@ -35,7 +36,8 @@ document.addEventListener('DOMContentLoaded', observeCatalogLoaded);
 // Detect pedal from url and add to rig
 function detectPedalFromUrl() {
   const params = new URLSearchParams(window.location.search);
-  const pedalId = params.get('id');
+  // const pedalId = params.get('id');
+  const pedalId = params.get('id') || window.PEDAL_ID;
 
   if (pedalId) {
     selectedPedalId = pedalId;
