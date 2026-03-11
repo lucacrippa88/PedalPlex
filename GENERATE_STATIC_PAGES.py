@@ -10,6 +10,9 @@ MAPPING_FILE = "mapping.json"
 # --- Limite per test (None = tutti, oppure un numero intero) ---
 LIMIT = 10  # prova con 10 pedali, poi metti None per tutti
 
+# --- Flag interno per sovrascrivere file esistenti ---
+OVERWRITE = False
+
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def slugify(text):
@@ -50,7 +53,7 @@ for pedal in pedals:
 
     output_file = os.path.join(OUTPUT_DIR, f"{slug}.html")
 
-    if os.path.exists(output_file):
+    if os.path.exists(output_file) and not OVERWRITE:
         skipped += 1
         continue
 
@@ -185,6 +188,15 @@ window.PEDAL_ID = "{name}";
 
 <body>
 
+<!-- SPINNER DI CARICAMENTO -->
+<div id="loadingSpinner" class="bx--inline-loading" data-active>
+  <svg class="bx--inline-loading__svg" viewBox="0 0 10 10">
+    <circle class="bx--inline-loading__background" cx="5" cy="5" r="5"></circle>
+    <circle class="bx--inline-loading__stroke" cx="5" cy="5" r="5"></circle>
+  </svg>
+  <span class="bx--inline-loading__text">Loading pedal...</span>
+</div>
+
 <div id="catalog" style="display:none;">
 <div class="gear-item" data-id="{name}"></div>
 </div>
@@ -245,6 +257,7 @@ const token = localStorage.getItem('authToken');
 function startAppAs(role, userInfo = {{}}) {{
 
 $('#page-content').show();
+$('#loadingSpinner').hide();  // hide spinner
 window.currentUser = Object.assign({{ role }}, userInfo);
 
 if (typeof initNavCatalog === 'function')
@@ -315,7 +328,7 @@ sitemap += "\n</urlset>"
 with open("sitemap.xml","w",encoding="utf-8") as f:
     f.write(sitemap)
 
-print("\\n-------------------")
+print("\n-------------------")
 print("Pedals:",len(pedals))
 print("Pages created:",created)
 print("Pages skipped:",skipped)
