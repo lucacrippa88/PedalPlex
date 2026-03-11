@@ -12,4 +12,4 @@ other/
 plex/
 
 # Python
-*.py
+GENERATE_STATIC_PAGES.py

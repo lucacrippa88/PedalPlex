@@ -8,7 +8,7 @@ OUTPUT_DIR = "gear"
 MAPPING_FILE = "mapping.json"
 
 # --- Limite per test (None = tutti, oppure un numero intero) ---
-LIMIT = 10  # prova con 10 pedali, poi metti None per tutti
+LIMIT = None  # prova con 10 pedali, poi metti None per tutti
 
 # --- Flag interno per sovrascrivere file esistenti ---
 OVERWRITE = False
