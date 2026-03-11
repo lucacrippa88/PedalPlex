@@ -660,7 +660,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}`
     }),
     ...(isImage ? {
-      backgroundImage: `url("${insideColorRaw}")`,
+      backgroundImage: `url("/${insideColorRaw}")`,
       backgroundSize: 'cover',
       backgroundPosition: 'center'
     } : {
@@ -1240,7 +1240,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
                 boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
               }),
               ...(isImage ? {
-                backgroundImage: `url("${insideColorRaw}")`,
+                backgroundImage: `url("/${insideColorRaw}")`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               } : {
