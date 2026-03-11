@@ -1,5 +1,33 @@
 const editMode = window.isEditMode
 
+// Utility function to slugify pedal names for URL generation
+function slugify(text) {
+
+  // Normalizzazione unicode (é -> e)
+  text = text.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+
+  // lowercase
+  text = text.toLowerCase();
+
+  // rimuove caratteri non alfanumerici (tranne spazio e -)
+  text = text.replace(/[^a-z0-9\s-]/g, "");
+
+  // spazi multipli -> singolo
+  text = text.replace(/\s+/g, " ").trim();
+
+  // spazi -> -
+  text = text.replace(/ /g, "-");
+
+  // collassa trattini multipli
+  text = text.replace(/-+/g, "-");
+
+  // rimuove trattini iniziali/finali
+  text = text.replace(/^-+|-+$/g, "");
+
+  return text;
+}
+
+
 // Function to render pedal controls dynamically --------------------------------------
 function renderPedalControls(pedal, $pedalDiv) {
 
@@ -817,82 +845,92 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       function () { $shareIcon.css('opacity', 0); }
     );
 
+
     $shareIcon.on('click', (e) => {
       e.stopPropagation();
 
-      const url = `${window.location.origin}${basePath}/view-gear?id=${encodedPedalId}`;
-      const fxdbSearch = pedalId
-        .normalize('NFKD')                 // rimuove accenti tipo é → e
-        .replace(/[^\w\s-]/g, '')          // tiene solo lettere, numeri, _, spazio e -
-        .trim()
-        .replace(/\s+/g, '+')              // spazi → +
-      const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
+      const slug = slugify(pedalName);
+      const url = `/gear/${slug}`;
 
-      // Create dynamic buttons in the popup
-      let buttonsHTML = `<button class="js-copyLink bx--btn bx--btn--secondary">
-                          Copy Link
-                          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
-                               fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
-                               class="bx--btn__icon">
-                            <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path><path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
-                          </svg>
-                        </button>`;
-
-      buttonsHTML += `<button class="js-openFXDB bx--btn bx--btn--danger">
-                          Open in FXDB
-                          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
-                               fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
-                               class="bx--btn__icon">
-                            <path fill="none" d="M16,8a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,16,8Zm4,13.875H17.125v-8H13v2.25h1.875v5.75H12v2.25h8Z" data-icon-path="inner-path"></path><path d="M26,4H6A2,2,0,0,0,4,6V26a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2V6A2,2,0,0,0,26,4ZM16,8a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,16,8Zm4,16.125H12v-2.25h2.875v-5.75H13v-2.25h4.125v8H20Z"></path>
-                          </svg>
-                        </button>`;
-
-      // Add open gear button
-      if (!window.location.search.includes('id=')) {
-        buttonsHTML += `<button class="js-openGear bx--btn bx--btn--tertiary">
-                        Open Gear
-                        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
-                             fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
-                             class="bx--btn__icon">
-                          <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"></path>
-                        </svg>
-                      </button>`;
-      }
-
-      // Open gear swal
-      Swal.fire({
-        title: 'Open this Gear',
-        showConfirmButton: false,
-        showCloseButton: false,
-        allowOutsideClick: true,
-        position: 'top-end',
-        width: 'auto',
-        html: `<div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">
-               ${buttonsHTML}
-             </div>`,
-        didOpen: () => {
-          const popup = Swal.getPopup();
-
-          popup.querySelector('.js-copyLink')?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            navigator.clipboard.writeText(url);
-          });
-
-          popup.querySelector('.js-openGear')?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            window.location.href = url;
-          });
-
-          popup.querySelector('.js-openFXDB')?.addEventListener('click', (e) => {
-            console.log('pedalId:', pedalId);
-            e.stopPropagation();
-            window.open(urlFXDB, '_blank');
-          });
-        }
-
-      });
-
+      window.location.href = url;
     });
+
+    // $shareIcon.on('click', (e) => {
+    //   e.stopPropagation();
+
+    //   const url = `${window.location.origin}${basePath}/view-gear?id=${encodedPedalId}`;
+    //   const fxdbSearch = pedalId
+    //     .normalize('NFKD')                 // rimuove accenti tipo é → e
+    //     .replace(/[^\w\s-]/g, '')          // tiene solo lettere, numeri, _, spazio e -
+    //     .trim()
+    //     .replace(/\s+/g, '+')              // spazi → +
+    //   const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
+
+    //   // Create dynamic buttons in the popup
+    //   let buttonsHTML = `<button class="js-copyLink bx--btn bx--btn--secondary">
+    //                       Copy Link
+    //                       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+    //                            fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
+    //                            class="bx--btn__icon">
+    //                         <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path><path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
+    //                       </svg>
+    //                     </button>`;
+
+    //   buttonsHTML += `<button class="js-openFXDB bx--btn bx--btn--danger">
+    //                       Open in FXDB
+    //                       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+    //                            fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
+    //                            class="bx--btn__icon">
+    //                         <path fill="none" d="M16,8a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,16,8Zm4,13.875H17.125v-8H13v2.25h1.875v5.75H12v2.25h8Z" data-icon-path="inner-path"></path><path d="M26,4H6A2,2,0,0,0,4,6V26a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2V6A2,2,0,0,0,26,4ZM16,8a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,16,8Zm4,16.125H12v-2.25h2.875v-5.75H13v-2.25h4.125v8H20Z"></path>
+    //                       </svg>
+    //                     </button>`;
+
+    //   // Add open gear button
+    //   if (!window.location.search.includes('id=')) {
+    //     buttonsHTML += `<button class="js-openGear bx--btn bx--btn--tertiary">
+    //                     Open Gear
+    //                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+    //                          fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
+    //                          class="bx--btn__icon">
+    //                       <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"></path>
+    //                     </svg>
+    //                   </button>`;
+    //   }
+
+    //   // Open gear swal
+    //   Swal.fire({
+    //     title: 'Open this Gear',
+    //     showConfirmButton: false,
+    //     showCloseButton: false,
+    //     allowOutsideClick: true,
+    //     position: 'top-end',
+    //     width: 'auto',
+    //     html: `<div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">
+    //            ${buttonsHTML}
+    //          </div>`,
+    //     didOpen: () => {
+    //       const popup = Swal.getPopup();
+
+    //       popup.querySelector('.js-copyLink')?.addEventListener('click', (e) => {
+    //         e.stopPropagation();
+    //         navigator.clipboard.writeText(url);
+    //       });
+
+    //       popup.querySelector('.js-openGear')?.addEventListener('click', (e) => {
+    //         e.stopPropagation();
+    //         window.location.href = url;
+    //       });
+
+    //       popup.querySelector('.js-openFXDB')?.addEventListener('click', (e) => {
+    //         console.log('pedalId:', pedalId);
+    //         e.stopPropagation();
+    //         window.open(urlFXDB, '_blank');
+    //       });
+    //     }
+
+    //   });
+
+    // });
   }
   // ===========
 
