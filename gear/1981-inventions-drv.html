@@ -110,6 +110,15 @@ window.FXDB_URL = "https://www.effectsdatabase.com/model/1981inventions/drv";
 
 <body>
 
+<!-- SPINNER DI CARICAMENTO -->
+<div id="loadingSpinner" class="bx--inline-loading" data-active>
+  <svg class="bx--inline-loading__svg" viewBox="0 0 10 10">
+    <circle class="bx--inline-loading__background" cx="5" cy="5" r="5"></circle>
+    <circle class="bx--inline-loading__stroke" cx="5" cy="5" r="5"></circle>
+  </svg>
+  <span class="bx--inline-loading__text">Loading pedal...</span>
+</div>
+
 <div id="catalog" style="display:none;">
 <div class="gear-item" data-id="1981 Inventions DRV"></div>
 </div>
@@ -175,6 +184,7 @@ const token = localStorage.getItem('authToken');
 function startAppAs(role, userInfo = {}) {
 
 $('#page-content').show();
+$('#loadingSpinner').hide();  // hide spinner
 window.currentUser = Object.assign({ role }, userInfo);
 
 if (typeof initNavCatalog === 'function')
