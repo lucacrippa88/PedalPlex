@@ -178,12 +178,13 @@ const token = localStorage.getItem('authToken');
 
 function startAppAs(role, userInfo = {}) {
 
-$('#page-content').show();
-$('#loadingSpinner').hide();  // hide spinner
 window.currentUser = Object.assign({ role }, userInfo);
 
 if (typeof initNavCatalog === 'function')
 initNavCatalog(role);
+
+$('#loadingSpinner').hide();  // hide spinner
+$('#page-content').show();
 
 }
 
