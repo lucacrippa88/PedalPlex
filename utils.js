@@ -849,7 +849,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     $shareIcon.on('click', (e) => {
       e.stopPropagation();
 
-      const slug = slugify(pedalName);
+      const slug = slugify(pedalId);
       const url = `/gear/${slug}`;
 
       window.location.href = url;
