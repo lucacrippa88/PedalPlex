@@ -1,42 +1,107 @@
 import json
 import os
+import re
 from datetime import datetime
 
 BASE_URL = "https://pedalplex.com"
 OUTPUT_DIR = "gear"
 MAPPING_FILE = "mapping.json"
 
+# --- Limite per test (None = tutti, oppure un numero intero) ---
+LIMIT = 10  # prova con 10 pedali, poi metti None per tutti
+
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+def slugify(text):
+    text = text.lower()
+    text = re.sub(r'[^a-z0-9]+', '-', text)
+    return text.strip('-')
+
+def shorten_description(text, length=155):
+    if len(text) <= length:
+        return text
+    return text[:length].rsplit(" ",1)[0] + "..."
 
 with open(MAPPING_FILE, encoding="utf-8") as f:
     pedals = json.load(f)
 
-TEMPLATE = """<!DOCTYPE html>
+if LIMIT:
+    pedals = pedals[:LIMIT]
+
+created = 0
+skipped = 0
+sitemap_urls = []
+
+for pedal in pedals:
+
+    name = pedal["pedalplex_id"]
+    slug = pedal["pedalplex_url"].split("/")[-1]
+    description_full = pedal.get("seo_description","")
+    description_short = shorten_description(description_full)
+
+    brand = pedal.get("brand","")
+    category = pedal.get("category","guitar effects pedal")
+
+    status = pedal.get("status")
+    fxdb = pedal.get("fxdb_url")
+
+    url = f"{BASE_URL}/gear/{slug}.html"
+    sitemap_urls.append(url)
+
+    output_file = os.path.join(OUTPUT_DIR, f"{slug}.html")
+
+    if os.path.exists(output_file):
+        skipped += 1
+        continue
+
+    if status == "found" and fxdb:
+
+        fxdb_button = f"""
+<a class="js-openFXDB bx--btn bx--btn--danger"
+href="{fxdb}" target="_blank" rel="noopener noreferrer">
+Open in FXDB
+</a>
+"""
+
+        fxdb_script = f'window.FXDB_URL = "{fxdb}";'
+
+        sameas = f'"sameAs": "{fxdb}",'
+
+    else:
+
+        fxdb_button = ""
+        fxdb_script = ""
+        sameas = ""
+
+    html = f"""<!DOCTYPE html>
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<title>{name} Pedal – Controls, Specs & Rig Builder | PedalPlex</title>
+<title>{name} – Controls, Specs & Pedalboard Builder | PedalPlex</title>
 
-<meta name="description" content="{description}">
+<meta name="description" content="{description_short}">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="author" content="PedalPlex">
 <meta name="theme-color" content="#0f0f0f">
 
 <meta property="og:type" content="product">
 <meta property="og:title" content="{name}">
-<meta property="og:description" content="{description}">
+<meta property="og:description" content="{description_short}">
 <meta property="og:url" content="{url}">
 <meta property="og:site_name" content="PedalPlex">
+<meta property="og:image" content="{BASE_URL}/img/pedals/{slug}.jpg">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{name}">
-<meta name="twitter:description" content="{description}">
+<meta name="twitter:description" content="{description_short}">
+<meta name="twitter:image" content="{BASE_URL}/img/pedals/{slug}.jpg">
 
 <link rel="canonical" href="{url}">
-<link rel="icon" href="../logos/pedalplex_logo_gradient.png" type="image/x-icon">
+<link rel="icon" href="../logos/pedalplex_logo_gradient.png">
 
 <link rel="dns-prefetch" href="https://1.www.s81c.com">
 <link rel="preconnect" href="https://1.www.s81c.com" crossorigin>
@@ -51,6 +116,69 @@ TEMPLATE = """<!DOCTYPE html>
 <script>
 window.PEDAL_ID = "{name}";
 {fxdb_script}
+</script>
+
+<script type="application/ld+json">
+{{
+"@context": "https://schema.org",
+"@type": "Product",
+"name": "{name}",
+"description": "{description_short}",
+"brand": {{
+"@type": "Brand",
+"name": "{brand}"
+}},
+"category": "{category}",
+"url": "{url}",
+{sameas}
+"isRelatedTo": {{
+"@type": "SoftwareApplication",
+"name": "PedalPlex",
+"applicationCategory": "MusicApplication",
+"url": "{BASE_URL}"
+}}
+}}
+</script>
+
+<script type="application/ld+json">
+{{
+"@context": "https://schema.org",
+"@type": "BreadcrumbList",
+"itemListElement": [
+{{
+"@type": "ListItem",
+"position": 1,
+"name": "PedalPlex",
+"item": "{BASE_URL}"
+}},
+{{
+"@type": "ListItem",
+"position": 2,
+"name": "Guitar Pedals",
+"item": "{BASE_URL}/gears"
+}},
+{{
+"@type": "ListItem",
+"position": 3,
+"name": "{name}",
+"item": "{url}"
+}}
+]
+}}
+</script>
+
+<script type="application/ld+json">
+{{
+"@context": "https://schema.org",
+"@type": "WebSite",
+"name": "PedalPlex",
+"url": "{BASE_URL}",
+"potentialAction": {{
+"@type": "SearchAction",
+"target": "{BASE_URL}/gears?q={{search_term_string}}",
+"query-input": "required name=search_term_string"
+}}
+}}
 </script>
 
 </head>
@@ -92,7 +220,7 @@ Add to a Rig
 <br><br>
 
 <p style="max-width:700px;margin:auto;text-align:center;">
-{description}
+{description_full}
 </p>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -117,7 +245,6 @@ const token = localStorage.getItem('authToken');
 function startAppAs(role, userInfo = {{}}) {{
 
 $('#page-content').show();
-
 window.currentUser = Object.assign({{ role }}, userInfo);
 
 if (typeof initNavCatalog === 'function')
@@ -152,64 +279,19 @@ startAppAs('guest');
 </script>
 
 <nav style="display:none">
-<a href="https://pedalplex.com/gears">Guitar Pedal Catalog</a>
-<a href="https://pedalplex.com/rigs">Pedalboard Builder</a>
+<a href="{BASE_URL}/gears">Guitar Pedal Catalog</a>
+<a href="{BASE_URL}/rigs">Pedalboard Builder</a>
 </nav>
 
 </body>
 </html>
 """
 
-created = 0
-skipped = 0
-sitemap_urls = []
-
-for pedal in pedals:
-
-    name = pedal["pedalplex_id"]
-    slug = pedal["pedalplex_url"].split("/")[-1]
-    description = pedal.get("seo_description", "")
-
-    status = pedal.get("status")
-    fxdb = pedal.get("fxdb_url")
-
-    url = f"{BASE_URL}/gear/{slug}.html"
-    sitemap_urls.append(url)
-
-    output_path = os.path.join(OUTPUT_DIR, f"{slug}.html")
-
-    if os.path.exists(output_path):
-        skipped += 1
-        continue
-
-    if status == "found" and fxdb:
-
-        fxdb_button = f'''
-<a class="js-openFXDB bx--btn bx--btn--danger"
-href="{fxdb}" target="_blank" rel="noopener noreferrer">
-Open in FXDB
-</a>
-'''
-
-        fxdb_script = f'window.FXDB_URL = "{fxdb}";'
-
-    else:
-        fxdb_button = ""
-        fxdb_script = ""
-
-    html = TEMPLATE.format(
-        name=name,
-        description=description,
-        url=url,
-        fxdb_button=fxdb_button,
-        fxdb_script=fxdb_script
-    )
-
-    with open(output_path, "w", encoding="utf-8") as f:
+    with open(output_file,"w",encoding="utf-8") as f:
         f.write(html)
 
     created += 1
-    print("Created:", slug)
+    print("Created:",slug)
 
 today = datetime.utcnow().strftime("%Y-%m-%d")
 
@@ -230,12 +312,12 @@ for url in sitemap_urls:
 
 sitemap += "\n</urlset>"
 
-with open("sitemap.xml", "w", encoding="utf-8") as f:
+with open("sitemap.xml","w",encoding="utf-8") as f:
     f.write(sitemap)
 
-print("\n-------------")
-print("Pedals:", len(pedals))
-print("Pages created:", created)
-print("Pages skipped:", skipped)
-print("Sitemap URLs:", len(sitemap_urls))
-print("-------------")
+print("\\n-------------------")
+print("Pedals:",len(pedals))
+print("Pages created:",created)
+print("Pages skipped:",skipped)
+print("Sitemap URLs:",len(sitemap_urls))
+print("-------------------")

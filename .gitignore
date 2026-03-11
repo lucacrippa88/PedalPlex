@@ -10,3 +10,6 @@ other/
 
 # Plex
 plex/
+
+# Python
+*.py
