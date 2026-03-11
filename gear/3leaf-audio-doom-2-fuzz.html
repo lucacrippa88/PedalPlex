@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>3Leaf Audio Doom 2 Fuzz Pedal – Controls, Specs & Rig Builder | PedalPlex</title>
+
+<meta name="description" content="The 3Leaf Audio Doom 2 is a modern fuzz pedal designed to deliver powerful low-end response and aggressive saturation. Originally developed with bass players in mind, the Doom 2 also performs exceptionally well with guitar, producing thick fuzz tones that remain articulate and punchy. The pedal blends fuzz with a clean signal path, preserving clarity while adding massive harmonic texture. This makes it ideal for players who want heavy fuzz tones without losing definition in the mix. Known for its dynamic feel and strong output, the Doom 2 can easily drive amplifiers and other pedals. Discover tone settings and pedalboard combinations for the 3Leaf Audio Doom 2 Fuzz on PedalPlex.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="author" content="PedalPlex">
+<meta name="theme-color" content="#0f0f0f">
+
+<meta property="og:type" content="product">
+<meta property="og:title" content="3Leaf Audio Doom 2 Fuzz">
+<meta property="og:description" content="The 3Leaf Audio Doom 2 is a modern fuzz pedal designed to deliver powerful low-end response and aggressive saturation. Originally developed with bass players in mind, the Doom 2 also performs exceptionally well with guitar, producing thick fuzz tones that remain articulate and punchy. The pedal blends fuzz with a clean signal path, preserving clarity while adding massive harmonic texture. This makes it ideal for players who want heavy fuzz tones without losing definition in the mix. Known for its dynamic feel and strong output, the Doom 2 can easily drive amplifiers and other pedals. Discover tone settings and pedalboard combinations for the 3Leaf Audio Doom 2 Fuzz on PedalPlex.">
+<meta property="og:url" content="https://pedalplex.com/gear/3leaf-audio-doom-2-fuzz.html">
+<meta property="og:site_name" content="PedalPlex">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="3Leaf Audio Doom 2 Fuzz">
+<meta name="twitter:description" content="The 3Leaf Audio Doom 2 is a modern fuzz pedal designed to deliver powerful low-end response and aggressive saturation. Originally developed with bass players in mind, the Doom 2 also performs exceptionally well with guitar, producing thick fuzz tones that remain articulate and punchy. The pedal blends fuzz with a clean signal path, preserving clarity while adding massive harmonic texture. This makes it ideal for players who want heavy fuzz tones without losing definition in the mix. Known for its dynamic feel and strong output, the Doom 2 can easily drive amplifiers and other pedals. Discover tone settings and pedalboard combinations for the 3Leaf Audio Doom 2 Fuzz on PedalPlex.">
+
+<link rel="canonical" href="https://pedalplex.com/gear/3leaf-audio-doom-2-fuzz.html">
+<link rel="icon" href="../logos/pedalplex_logo_gradient.png" type="image/x-icon">
+
+<link rel="dns-prefetch" href="https://1.www.s81c.com">
+<link rel="preconnect" href="https://1.www.s81c.com" crossorigin>
+
+<link rel="stylesheet" href="../css/carbon-components.min.css"/>
+<script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
+
+<link rel="stylesheet" href="../css/style.css"/>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+window.PEDAL_ID = "3Leaf Audio Doom 2 Fuzz";
+window.FXDB_URL = "https://www.effectsdatabase.com/model/3leaf/youredoom";
+</script>
+
+</head>
+
+<body>
+
+<div id="catalog" style="display:none;">
+<div class="gear-item" data-id="3Leaf Audio Doom 2 Fuzz"></div>
+</div>
+
+<div id="page-content" style="display:none;">
+
+<div id="pedalboard-controls" style="display:flex;align-items:center;gap:8px;width:100%;">
+
+<a id="backToCatalog" href="../gears" class="bx--btn bx--btn--tertiary">
+Back to Catalog
+</a>
+
+<a id="addToRig" href="#" class="bx--btn bx--btn--primary"
+style="margin-left:auto!important;display:block;">
+Add to a Rig
+</a>
+
+
+<a class="js-openFXDB bx--btn bx--btn--danger"
+href="https://www.effectsdatabase.com/model/3leaf/youredoom" target="_blank" rel="noopener noreferrer">
+Open in FXDB
+</a>
+
+
+</div>
+
+<br>
+
+<h1 id="gearName" style="text-align:center;font-size:1.5rem;font-weight:400">
+3Leaf Audio Doom 2 Fuzz
+</h1>
+
+<br><br>
+
+<div id="preset"></div>
+<div id="results"></div>
+
+<br><br>
+
+<p style="max-width:700px;margin:auto;text-align:center;">
+The 3Leaf Audio Doom 2 is a modern fuzz pedal designed to deliver powerful low-end response and aggressive saturation. Originally developed with bass players in mind, the Doom 2 also performs exceptionally well with guitar, producing thick fuzz tones that remain articulate and punchy. The pedal blends fuzz with a clean signal path, preserving clarity while adding massive harmonic texture. This makes it ideal for players who want heavy fuzz tones without losing definition in the mix. Known for its dynamic feel and strong output, the Doom 2 can easily drive amplifiers and other pedals. Discover tone settings and pedalboard combinations for the 3Leaf Audio Doom 2 Fuzz on PedalPlex.
+</p>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../helpers.js"></script>
+<script src="../utils.js"></script>
+<script src="../subplexes.js"></script>
+<script src="../gears.js"></script>
+<script src="../fullscreen-menu.js"></script>
+<script src="../add-to-rig.js"></script>
+<script src="../nav-view.js"></script>
+<script src="../view.js"></script>
+<script src="../edit-handler.js"></script>
+
+</div>
+
+<script>
+
+$(document).ready(function () {
+
+const token = localStorage.getItem('authToken');
+
+function startAppAs(role, userInfo = {}) {
+
+$('#page-content').show();
+
+window.currentUser = Object.assign({ role }, userInfo);
+
+if (typeof initNavCatalog === 'function')
+initNavCatalog(role);
+
+}
+
+if (!token) {
+startAppAs('guest');
+return;
+}
+
+$.ajax({
+
+url: 'https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php',
+method: 'GET',
+dataType: 'json',
+headers: { 'Authorization': 'Bearer ' + token },
+
+success: function (userFromServer) {
+startAppAs(userFromServer.role, userFromServer);
+},
+
+error: function () {
+localStorage.removeItem('authToken');
+startAppAs('guest');
+}
+
+});
+
+});
+</script>
+
+<nav style="display:none">
+<a href="https://pedalplex.com/gears">Guitar Pedal Catalog</a>
+<a href="https://pedalplex.com/rigs">Pedalboard Builder</a>
+</nav>
+
+</body>
+</html>
