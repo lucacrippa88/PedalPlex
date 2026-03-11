@@ -11,7 +11,7 @@ MAPPING_FILE = "mapping.json"
 LIMIT = None  # prova con 10 pedali, poi metti None per tutti
 
 # --- Flag interno per sovrascrivere file esistenti ---
-OVERWRITE = False
+OVERWRITE = True  # se False, salta i file già esistenti
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -256,12 +256,13 @@ const token = localStorage.getItem('authToken');
 
 function startAppAs(role, userInfo = {{}}) {{
 
-$('#page-content').show();
-$('#loadingSpinner').hide();  // hide spinner
 window.currentUser = Object.assign({{ role }}, userInfo);
 
 if (typeof initNavCatalog === 'function')
 initNavCatalog(role);
+
+$('#loadingSpinner').hide();  // hide spinner
+$('#page-content').show();
 
 }}
 
