@@ -110,13 +110,14 @@ window.FXDB_URL = "https://www.effectsdatabase.com/model/1981inventions/drv";
 
 <body>
 
-<!-- SPINNER DI CARICAMENTO -->
-<div id="loadingSpinner" class="bx--inline-loading" data-active>
-  <svg class="bx--inline-loading__svg" viewBox="0 0 10 10">
-    <circle class="bx--inline-loading__background" cx="5" cy="5" r="5"></circle>
-    <circle class="bx--inline-loading__stroke" cx="5" cy="5" r="5"></circle>
-  </svg>
-  <span class="bx--inline-loading__text">Loading pedal...</span>
+<!-- Loading spinner -->
+<div class="bx--loading-overlay" id="loadingSpinner">
+  <div class="bx--loading" role="status">
+    <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+      <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+      <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+    </svg>
+  </div>
 </div>
 
 <div id="catalog" style="display:none;">
