@@ -567,6 +567,26 @@ function resetSubplexOnSinglePedal($pedalDiv) {
 
 
 
+// function updateSubplexButtonsUI($pedalDiv) {
+//   const $wrapper = $pedalDiv.closest('.pedal-wrapper');
+//   const $presetContainer = $wrapper.find('.preset-container');
+
+//   const $newBtn = $presetContainer.find(".new-subplex-btn");
+//   const $resetBtn = $presetContainer.find(".reset-subplex-btn");
+
+//   const hasApplied =
+//     !!$pedalDiv.attr("data-applied-preset") ||
+//     !!$pedalDiv.data("applied-subplex");
+
+//   if (hasApplied) {
+//     $newBtn.hide();
+//     $resetBtn.show();
+//   } else {
+//     $newBtn.show();
+//     $resetBtn.hide();
+//   }
+// }
+
 function updateSubplexButtonsUI($pedalDiv) {
   const $wrapper = $pedalDiv.closest('.pedal-wrapper');
   const $presetContainer = $wrapper.find('.preset-container');
@@ -574,10 +594,20 @@ function updateSubplexButtonsUI($pedalDiv) {
   const $newBtn = $presetContainer.find(".new-subplex-btn");
   const $resetBtn = $presetContainer.find(".reset-subplex-btn");
 
+  const isEditMode = !!window.SUBPLEX_EDIT_MODE;
+
   const hasApplied =
     !!$pedalDiv.attr("data-applied-preset") ||
     !!$pedalDiv.data("applied-subplex");
 
+  // 🔒 READ-ONLY MODE (catalogo / pagine statiche)
+  if (!isEditMode) {
+    $newBtn.hide();
+    $resetBtn.hide();
+    return;
+  }
+
+  // ✏️ EDIT MODE (plexes.html)
   if (hasApplied) {
     $newBtn.hide();
     $resetBtn.show();
