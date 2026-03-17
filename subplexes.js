@@ -602,8 +602,14 @@ function updateSubplexButtonsUI($pedalDiv) {
 
   // 🔒 READ-ONLY MODE (catalogo / pagine statiche)
   if (!isEditMode) {
-    $newBtn.hide();
-    $resetBtn.hide();
+    $newBtn.hide(); // ❌ mai mostrare il +
+
+    if (hasApplied) {
+      $resetBtn.show();  // ✅ permetti reset (opzionale UX)
+    } else {
+      $resetBtn.hide();
+    }
+
     return;
   }
 
