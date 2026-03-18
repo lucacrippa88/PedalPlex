@@ -854,83 +854,6 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
 
       window.location.href = url;
     });
-
-    // $shareIcon.on('click', (e) => {
-    //   e.stopPropagation();
-
-    //   const url = `${window.location.origin}${basePath}/view-gear?id=${encodedPedalId}`;
-    //   const fxdbSearch = pedalId
-    //     .normalize('NFKD')                 // rimuove accenti tipo é → e
-    //     .replace(/[^\w\s-]/g, '')          // tiene solo lettere, numeri, _, spazio e -
-    //     .trim()
-    //     .replace(/\s+/g, '+')              // spazi → +
-    //   const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
-
-    //   // Create dynamic buttons in the popup
-    //   let buttonsHTML = `<button class="js-copyLink bx--btn bx--btn--secondary">
-    //                       Copy Link
-    //                       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
-    //                            fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
-    //                            class="bx--btn__icon">
-    //                         <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path><path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
-    //                       </svg>
-    //                     </button>`;
-
-    //   buttonsHTML += `<button class="js-openFXDB bx--btn bx--btn--danger">
-    //                       Open in FXDB
-    //                       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
-    //                            fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
-    //                            class="bx--btn__icon">
-    //                         <path fill="none" d="M16,8a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,16,8Zm4,13.875H17.125v-8H13v2.25h1.875v5.75H12v2.25h8Z" data-icon-path="inner-path"></path><path d="M26,4H6A2,2,0,0,0,4,6V26a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2V6A2,2,0,0,0,26,4ZM16,8a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,16,8Zm4,16.125H12v-2.25h2.875v-5.75H13v-2.25h4.125v8H20Z"></path>
-    //                       </svg>
-    //                     </button>`;
-
-    //   // Add open gear button
-    //   if (!window.location.search.includes('id=')) {
-    //     buttonsHTML += `<button class="js-openGear bx--btn bx--btn--tertiary">
-    //                     Open Gear
-    //                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
-    //                          fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"
-    //                          class="bx--btn__icon">
-    //                       <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"></path>
-    //                     </svg>
-    //                   </button>`;
-    //   }
-
-    //   // Open gear swal
-    //   Swal.fire({
-    //     title: 'Open this Gear',
-    //     showConfirmButton: false,
-    //     showCloseButton: false,
-    //     allowOutsideClick: true,
-    //     position: 'top-end',
-    //     width: 'auto',
-    //     html: `<div style="padding-bottom:22px; display:flex; gap:10px; justify-content:center;">
-    //            ${buttonsHTML}
-    //          </div>`,
-    //     didOpen: () => {
-    //       const popup = Swal.getPopup();
-
-    //       popup.querySelector('.js-copyLink')?.addEventListener('click', (e) => {
-    //         e.stopPropagation();
-    //         navigator.clipboard.writeText(url);
-    //       });
-
-    //       popup.querySelector('.js-openGear')?.addEventListener('click', (e) => {
-    //         e.stopPropagation();
-    //         window.location.href = url;
-    //       });
-
-    //       popup.querySelector('.js-openFXDB')?.addEventListener('click', (e) => {
-    //         console.log('pedalId:', pedalId);
-    //         e.stopPropagation();
-    //         window.open(urlFXDB, '_blank');
-    //       });
-    //     }
-
-    //   });
-
-    // });
   }
   // ===========
 
@@ -1431,10 +1354,6 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
 
             // SubPlex Dropdown ======================================
-            // const isLoggedIn = !!window.currentUser;
-            // console.log('User logged in:', isLoggedIn, 'window.currentUser:', window.currentUser);
-            // if (isLoggedIn) {
-
             const $presetContainer = $(`
               <div class="preset-container">
 
@@ -1536,30 +1455,6 @@ async function renderFullPedalboard(pedalboardOverride = null) {
                   buildPresetDropdown($ul, pedal._id);
                 }
               });
-
-            // } else {
-              // Guest mode: show locked preset container
-            //   const $presetContainer = $(`
-            //     <div class="preset-container preset-locked">
-            //       <svg class="preset-icon disabled"
-            //         focusable="false"
-            //         preserveAspectRatio="xMidYMid meet"
-            //         fill="currentColor"
-            //         width="32"
-            //         height="32"
-            //         viewBox="0 0 32 32"
-            //         xmlns="http://www.w3.org/2000/svg">
-            //         <path d="M4 6H22V8H4zM4 12H22V14H4zM4 18H16V20H4zM21 18L28 23 21 28 21 18z"></path>
-            //       </svg>
-
-            //       <div class="preset-locked-label">
-            //         Login to see all SubPlexes!!!
-            //       </div>
-            //     </div>
-            //   `);
-
-            //   $wrapper.append($presetContainer);
-            // }
 
             // ================================================
 
