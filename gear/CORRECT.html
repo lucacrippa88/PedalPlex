@@ -167,14 +167,19 @@ Controls & Features
 <div id="results"></div> -->
 <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
-  <div class="bx--loading-overlay" id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
-    <div class="bx--loading" role="status">
-      <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-        <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
-        <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
-      </svg>
-    </div>
+<div id="presetSpinner"
+     style="position:absolute;inset:0;z-index:10;
+            display:flex;align-items:center;justify-content:center;
+            background: rgba(255,255,255,0.6);">
+
+  <div class="bx--loading" role="status">
+    <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+      <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+      <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+    </svg>
   </div>
+
+</div>
 
   <div id="preset"></div>
   <div id="results"></div>
@@ -287,33 +292,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.getElementById('page-content').style.display = 'block';
 
-  const results = document.getElementById("results");
+  const preset = document.getElementById("preset");
   const spinner = document.getElementById("presetSpinner");
 
-  if (!results || !spinner) return;
+  if (!preset || !spinner) return;
 
   const hide = () => spinner.style.display = "none";
 
-  // 🔍 CHECK REALE: quando il pedale è visivamente presente
-  const isRendered = () => {
-    return results.children.length > 0 ||
-           results.querySelector("canvas") ||
-           results.querySelector("svg");
-  };
-
-  // ⏱ polling leggero (ultra affidabile)
-  const interval = setInterval(() => {
-    if (isRendered()) {
+  const observer = new MutationObserver(() => {
+    if (preset.children.length > 0) {
       hide();
-      clearInterval(interval);
+      observer.disconnect();
     }
-  }, 100);
+  });
 
-  // fallback sicurezza
-  setTimeout(() => {
-    hide();
-    clearInterval(interval);
-  }, 4000);
+  observer.observe(preset, { childList: true });
 
 });
 </script>
