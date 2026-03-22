@@ -1,6 +1,5 @@
 import os
 import json
-import argparse
 import re
 
 # =========================
@@ -10,20 +9,15 @@ import re
 OUTPUT_DIR = "gear"
 BASE_URL = "https://pedalplex.com"
 
-CATEGORY_COLOR_MAP = {
-    "distortion": "red",
-    "overdrive": "orange",
-    "fuzz": "magenta",
-    "delay": "blue",
-    "reverb": "cyan",
-    "chorus": "teal",
-    "flanger": "purple",
-    "phaser": "green",
-    "compressor": "cool-gray",
-    "eq": "warm-gray",
-    "filter": "yellow",
-    "utility": "gray"
-}
+# =========================
+# FLAGS
+# =========================
+
+# --- Limite per test (None = tutti, oppure un numero intero) ---
+LIMIT = 1  # es: 10 per test
+
+# --- Sovrascrittura file ---
+OVERWRITE = True  # False = skip se esiste
 
 # =========================
 # HELPERS
@@ -35,19 +29,19 @@ def slugify(text):
 def build_tags(brand, category):
     tags_html = []
 
-    # BRAND → sempre purple
-    tags_html.append(
-        f'<span style="font-size:12px" class="bx--tag bx--tag--purple">{brand}</span>'
-    )
+    # BRAND → purple
+    if brand:
+        tags_html.append(
+            f'<span style="font-size:12px" class="bx--tag bx--tag--purple">{brand}</span>'
+        )
 
-    # CATEGORY (multi)
+    # CATEGORY → tutte teal
     if category:
         categories = [c.strip().lower() for c in category.split("/")]
 
         for cat in categories:
-            color = CATEGORY_COLOR_MAP.get(cat, "gray")
             tags_html.append(
-                f'<span style="font-size:12px" class="bx--tag bx--tag--{color}">{cat}</span>'
+                f'<span style="font-size:12px" class="bx--tag bx--tag--teal">{cat}</span>'
             )
 
     return "\n".join(tags_html)
@@ -80,8 +74,14 @@ def generate_html(entry):
    href="{fxdb_url}"
    target="_blank"
    rel="noopener noreferrer">
-Open in FXDB
-<img src="../logos/fxdb_icon.png" class="bx--btn__icon" style="width:32px;height:32px;" />
+
+  Open in FXDB
+
+  <img src="../logos/fxdb_icon.png"
+       alt="FXDB"
+       class="bx--btn__icon"
+       style="width:32px;height:32px;object-fit:contain;" />
+
 </a>
 </div>
 """
@@ -89,6 +89,7 @@ Open in FXDB
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8"/>
@@ -256,8 +257,10 @@ View more {brand} pedals
 <script>
 // Spinner OFF quando il pedale è pronto
 document.addEventListener("DOMContentLoaded", function () {{
+
   const observer = new MutationObserver(() => {{
     const results = document.getElementById("results");
+
     if (results && results.children.length > 0) {{
       const spinner = document.getElementById("pedalSpinner");
       if (spinner) spinner.style.display = "none";
@@ -266,6 +269,7 @@ document.addEventListener("DOMContentLoaded", function () {{
   }});
 
   observer.observe(document.getElementById("results"), {{ childList: true }});
+
 }});
 </script>
 
@@ -284,17 +288,13 @@ document.addEventListener("DOMContentLoaded", function () {{
 # =========================
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--limit", type=int, help="Limit number of pedals")
-    parser.add_argument("--overwrite", action="store_true")
-
-    args = parser.parse_args()
 
     with open("mapping.json") as f:
         data = json.load(f)
 
-    if args.limit:
-        data = data[:args.limit]
+    # LIMIT
+    if LIMIT is not None:
+        data = data[:LIMIT]
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -302,7 +302,8 @@ def main():
         slug = slugify(entry["pedalplex_id"])
         filepath = os.path.join(OUTPUT_DIR, f"{slug}.html")
 
-        if os.path.exists(filepath) and not args.overwrite:
+        # OVERWRITE
+        if os.path.exists(filepath) and not OVERWRITE:
             print(f"Skipping {slug}")
             continue
 
