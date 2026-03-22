@@ -26,7 +26,7 @@ function renderNavBar(userRole = "guest") {
   $("body").prepend(navHtml);
 
   // Login button click
-  $("#loginBtn").on("click", () => window.location.href = "login");
+  $("#loginBtn").on("click", () => window.location.href = "/login");
 
   // Menu toggle
   $("#menuToggle").on("click", function () {
