@@ -167,7 +167,7 @@ Controls & Features
 <div id="results"></div> -->
 <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
-  <div class="bx--loading-overlay" id="presetSpinner" style="position:absolute;inset:0;z-index:10;">
+  <div class="bx--loading-overlay" id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
     <div class="bx--loading" role="status">
       <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
         <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
@@ -285,25 +285,35 @@ startAppAs('guest');
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-  const target = document.getElementById("results"); // ⚠️ QUI è la chiave
+  document.getElementById('page-content').style.display = 'block';
+
+  const results = document.getElementById("results");
   const spinner = document.getElementById("presetSpinner");
 
-  if (!target || !spinner) return;
+  if (!results || !spinner) return;
 
   const hide = () => spinner.style.display = "none";
 
-  const observer = new MutationObserver(() => {
-    // if (target.children.length > 0 || target.innerHTML.trim().length > 0) {
-    if (target.children.length > 0){
-      hide();
-      observer.disconnect();
-    }
-  });
+  // 🔍 CHECK REALE: quando il pedale è visivamente presente
+  const isRendered = () => {
+    return results.children.length > 0 ||
+           results.querySelector("canvas") ||
+           results.querySelector("svg");
+  };
 
-  observer.observe(target, { childList: true, subtree: true });
+  // ⏱ polling leggero (ultra affidabile)
+  const interval = setInterval(() => {
+    if (isRendered()) {
+      hide();
+      clearInterval(interval);
+    }
+  }, 100);
 
   // fallback sicurezza
-  setTimeout(hide, 4000);
+  setTimeout(() => {
+    hide();
+    clearInterval(interval);
+  }, 4000);
 
 });
 </script>
