@@ -230,7 +230,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/3leaf/octabvre",
     "pedalplex_url": "https://www.pedalplex.com/gear/3leaf-audio-octabvre-analog-octave-generator",
     "brand": "3Leaf Audio",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "The 3Leaf Audio Octabvre is a highly regarded analog octave generator designed primarily for bass but equally effective with guitar. The pedal produces deep, musical octave-down tones with excellent tracking and strong low-frequency response. Built using an analog circuit, the Octabvre delivers warm and organic octave textures that blend naturally with the original signal. Players can dial in subtle octave reinforcement or thick synth-like sounds depending on their settings. Its responsive tracking and rich tone make it a popular choice for funk, fusion, and modern bass styles. Discover tone settings and pedalboard applications for the 3Leaf Audio Octabvre on PedalPlex."
   },
   {
@@ -1400,7 +1400,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/atomic/amplifirebox",
     "pedalplex_url": "https://www.pedalplex.com/gear/atomic-ampli-firebox-amp-modeling-cab-simulator",
     "brand": "Atomic",
-    "category": "amp modeler",
+    "category": "preamp",
     "seo_description": "The Atomic Ampli-Firebox is a compact amp modeling and cabinet simulation pedal designed to deliver realistic amplifier tones without a traditional amp. Featuring advanced digital modeling technology, the pedal recreates the sound and response of classic amplifiers and speaker cabinets. It can be used for direct recording, silent practice, or live performance setups with FRFR systems. Discover modern amp modeling solutions with the Atomic Ampli-Firebox on PedalPlex."
   },
   {
@@ -1472,7 +1472,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/bananana/aurora-pitch-shift",
     "pedalplex_url": "https://www.pedalplex.com/gear/bananana-effects-aurora-pitch-shift",
     "brand": "Bananana Effects",
-    "category": "pitch",
+    "category": "pitch shifter",
     "seo_description": "The Bananana Effects Aurora Pitch Shift is a creative pitch-shifting pedal designed to explore harmonies, octave effects, and experimental tonal transformations. Pitch shifting allows guitarists to alter the pitch of their signal in real time, creating harmonized leads, octave textures, or unusual detuned effects. The Aurora focuses on playful sound design and compact usability, making it ideal for experimental guitarists and modern pedalboard setups. Discover pitch-shifting textures and creative harmonic effects with the Bananana Effects Aurora on PedalPlex."
   },
   {
@@ -1481,7 +1481,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/bananana/mandala-glitch",
     "pedalplex_url": "https://www.pedalplex.com/gear/bananana-effects-mandala-glitch",
     "brand": "Bananana Effects",
-    "category": "glitch",
+    "category": "bitcrusher",
     "seo_description": "The Bananana Effects Mandala Glitch is a unique experimental pedal designed to produce rhythmic glitches, stutters, and digital artifacts. Glitch effects manipulate the audio signal in unpredictable ways, creating fragmented textures often used in electronic music and avant-garde guitar playing. The Mandala enables creative sound design by turning traditional guitar tones into dynamic rhythmic patterns and digital-style sonic textures. Discover glitch-inspired sound design with the Bananana Effects Mandala on PedalPlex."
   },
   {
@@ -1517,7 +1517,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/behringer/69vibe",
     "pedalplex_url": "https://www.pedalplex.com/gear/behringer-69-vibe",
     "brand": "Behringer",
-    "category": "vibe",
+    "category": "vibrato",
     "seo_description": "The Behringer 69 Vibe is a modulation pedal inspired by classic Uni-Vibe style effects popularized in late-1960s psychedelic rock. Vibe pedals combine elements of chorus and phaser modulation to produce a swirling, three-dimensional sound. The 69 Vibe delivers vintage-inspired modulation suitable for blues, psychedelic rock, and expressive lead playing. Discover classic vibe textures with the Behringer 69 Vibe on PedalPlex."
   },
   {
@@ -1769,7 +1769,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/behringer/octavedivider",
     "pedalplex_url": "https://www.pedalplex.com/gear/behringer-octave-divider",
     "brand": "Behringer",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "The Behringer Octave Divider generates additional octave tones below the original guitar signal, creating thick and synth-like textures. Octave pedals track the incoming pitch and produce harmonically related signals to expand the tonal range of the instrument. Discover octave effects with the Behringer Octave Divider on PedalPlex."
   },
   {
@@ -1859,7 +1859,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/behringer/compact/uo300",
     "pedalplex_url": "https://www.pedalplex.com/gear/behringer-ultra-octaver-uo300",
     "brand": "Behringer",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "The Behringer UO300 Ultra Octaver generates additional octave signals above and below the original guitar pitch. Octave effects can produce thick layered tones or synth-style textures. Discover octave effects with the Behringer UO300 on PedalPlex."
   },
   {
@@ -1940,7 +1940,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/blackstar/dept10/amped1",
     "pedalplex_url": "https://www.pedalplex.com/gear/blackstar-dept10-amped-1",
     "brand": "Blackstar",
-    "category": "amp",
+    "category": "head",
     "seo_description": "The Blackstar Dept.10 Amped 1 is a compact pedalboard amplifier designed to power guitar cabinets while delivering authentic tube-style tones. Combining modern digital control with analog-style response, the Amped 1 offers versatile amp voices and connectivity for live performance and studio setups. Discover pedalboard amplifier solutions with the Blackstar Dept.10 Amped 1 on PedalPlex."
   },
   {
@@ -1949,7 +1949,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/blackstar/dept10/amped2",
     "pedalplex_url": "https://www.pedalplex.com/gear/blackstar-dept10-amped-2",
     "brand": "Blackstar",
-    "category": "amp",
+    "category": "head",
     "seo_description": "The Blackstar Dept.10 Amped 2 is a pedalboard-friendly amplifier designed to provide flexible amp tones and direct recording options. With multiple amp voicings and modern connectivity, the unit can drive cabinets or feed recording interfaces directly. Discover modern guitar amp solutions with the Blackstar Dept.10 Amped 2 on PedalPlex."
   },
   {
@@ -1958,7 +1958,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/blackstar/dept10/amped3",
     "pedalplex_url": "https://www.pedalplex.com/gear/blackstar-dept10-amped-3",
     "brand": "Blackstar",
-    "category": "amp",
+    "category": "head",
     "seo_description": "The Blackstar Dept.10 Amped 3 is a compact pedalboard amplifier designed to combine high-quality amp modeling with powerful stage output. Built for flexible performance setups, it supports cabinet output and direct recording solutions. Discover pedalboard amplifier technology with the Blackstar Dept.10 Amped 3 on PedalPlex."
   },
   {
@@ -2075,7 +2075,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/ac2",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-acoustic-simulator-ac-2",
     "brand": "Boss",
-    "category": "simulator",
+    "category": "acoustic simulator",
     "seo_description": "The Boss AC-2 Acoustic Simulator is designed to transform the tone of an electric guitar into an acoustic-style sound. Using specialized EQ curves and harmonic processing, the pedal recreates the resonance and tonal character associated with acoustic guitars. It offers several simulation modes to emulate different acoustic body styles. Discover acoustic simulation effects with the Boss AC-2 on PedalPlex."
   },
   {
@@ -2084,7 +2084,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/ac3",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-acoustic-simulator-ac-3",
     "brand": "Boss",
-    "category": "simulator",
+    "category": "acoustic simulator",
     "seo_description": "The Boss AC-3 Acoustic Simulator expands on earlier acoustic modeling designs with improved tonal realism and control. The pedal allows electric guitarists to access convincing acoustic-style sounds without switching instruments. With multiple acoustic body modes and built-in reverb, the AC-3 delivers versatile acoustic simulation for live and studio applications. Discover acoustic simulation tones with the Boss AC-3 on PedalPlex."
   },
   {
@@ -2102,7 +2102,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/ir2",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-amp-cabinet-ir-2",
     "brand": "Boss",
-    "category": "amp",
+    "category": "amp simulator/ir loader",
     "seo_description": "The Boss IR-2 Amp & Cabinet is a compact amp simulation pedal designed for direct recording and silent practice setups. Using impulse response technology, the pedal recreates the sound of guitar amplifiers and speaker cabinets with high realism. Its compact design makes it ideal for pedalboard-based rigs that require direct-to-interface or headphone monitoring. Discover amp simulation solutions with the Boss IR-2 on PedalPlex."
   },
   {
@@ -2111,7 +2111,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/twin/gp20",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-amp-factory-gp-20",
     "brand": "Boss",
-    "category": "amp modeler",
+    "category": "preamp",
     "seo_description": "The Boss GP-20 Amp Factory is a digital amp modeling processor designed to emulate a variety of classic amplifier tones. Amp modelers recreate amplifier gain structure, tone shaping, and cabinet response using digital processing. Discover amplifier modeling capabilities with the Boss GP-20 on PedalPlex."
   },
   {
@@ -2120,7 +2120,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/200/ir200",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-ampir-cabinet-ir-200",
     "brand": "Boss",
-    "category": "amp modeler",
+    "category": "preamp",
     "seo_description": "The Boss IR-200 Amp & IR Cabinet is a powerful amp simulation and cabinet impulse response processor designed for modern pedalboard rigs. The unit combines high-quality amp modeling with customizable cabinet IR loading, allowing players to build studio-grade tones directly into their pedalboard. Discover advanced amp modeling with the Boss IR-200 on PedalPlex."
   },
   {
@@ -2597,7 +2597,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/ps2",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-digital-pitch-shifterdelay-ps-2",
     "brand": "Boss",
-    "category": "pitch",
+    "category": "pitch shifter",
     "seo_description": "The Boss PS-2 Digital Pitch Shifter/Delay combines pitch shifting and digital delay in a single compact pedal. It allows players to shift the guitar signal up or down in pitch while adding delay repeats for spacious harmonic textures. The pedal became popular for its ability to create harmonized leads and experimental soundscapes. Discover creative pitch shifting effects with the Boss PS-2 on PedalPlex."
   },
   {
@@ -2606,7 +2606,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/ps3",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-digital-pitch-shifterdelay-ps-3",
     "brand": "Boss",
-    "category": "pitch",
+    "category": "pitch shifter",
     "seo_description": "The Boss PS-3 Digital Pitch Shifter/Delay is a versatile multi-effect pedal combining pitch shifting, delay, and unique modulation modes. Known for its experimental capabilities, it includes several pitch-delay algorithms that create harmonized echoes and evolving textures. The PS-3 has gained a cult following among guitarists exploring ambient and experimental sounds. Discover creative pitch-delay effects with the Boss PS-3 on PedalPlex."
   },
   {
@@ -2759,7 +2759,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-dual-foot-switch-fs-7",
     "brand": "Boss",
-    "category": "controller",
+    "category": "footswitch",
     "seo_description": "The FS-7 Dual Foot Switch allows simultaneous control of multiple functions, effects, and loops. Compact and durable, it's perfect for live use or as an expansion to MIDI and pedalboard setups."
   },
   {
@@ -2831,7 +2831,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-expression-ev-1-wl",
     "brand": "Boss",
-    "category": "controller",
+    "category": "expression",
     "seo_description": "The EV-1-WL Expression Pedal provides dynamic control over compatible effects like volume, wah, or modulation depth. Its smooth, reliable design is ideal for expressive performances."
   },
   {
@@ -2840,7 +2840,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-expression-ev-5",
     "brand": "Boss",
-    "category": "controller",
+    "category": "expression",
     "seo_description": "The EV-5 Expression Pedal is a compact, reliable controller for volume, modulation, and effect parameters. Durable and precise for stage and studio use."
   },
   {
@@ -2921,7 +2921,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-foot-controller-ga-fc",
     "brand": "Boss",
-    "category": "controller",
+    "category": "footswitch",
     "seo_description": "The GA-FC Foot Controller is designed for switching and controlling amps and effects with multiple robust footswitches."
   },
   {
@@ -2975,7 +2975,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/multi/gt1000",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-guitar-effects-processor-gt-1000",
     "brand": "Boss",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "The GT-1000 is a flagship multi-effects processor offering premium amp modeling, effects, and flexible routing for professional guitarists."
   },
   {
@@ -2984,7 +2984,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/multi/gt1000/core",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-guitar-effects-processor-gt-1000core",
     "brand": "Boss",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "The GT-1000CORE is a compact version of the flagship processor, offering high-quality amp modeling and effects in a pedalboard-friendly format."
   },
   {
@@ -2993,7 +2993,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/multi/gx10",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-guitar-effects-processor-gx-10",
     "brand": "Boss",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "The GX-10 is a versatile guitar effects processor with multiple amp models, effects, and performance features for stage and studio."
   },
   {
@@ -3002,7 +3002,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/multi/gx100",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-guitar-effects-processor-gx-100",
     "brand": "Boss",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "The GX-100 offers comprehensive effects and amp modeling, providing a wide tonal palette for guitarists of all styles."
   },
   {
@@ -3011,7 +3011,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/hr2",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-harmonist-hr-2",
     "brand": "Boss",
-    "category": "pitch",
+    "category": "pitch shifter",
     "seo_description": "The HR-2 Harmonist creates harmonized notes in real-time, allowing guitarists to add perfect intervals above or below the original pitch."
   },
   {
@@ -3020,7 +3020,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/ps6",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-harmonist-ps-6",
     "brand": "Boss",
-    "category": "pitch",
+    "category": "pitch shifter",
     "seo_description": "The PS-6 Harmonist offers pitch shifting, detune, and harmony effects, expanding creative possibilities for lead and rhythm playing."
   },
   {
@@ -3083,7 +3083,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-katana-head-gen-3",
     "brand": "Boss",
-    "category": "amp",
+    "category": "head",
     "seo_description": "The Katana Head Gen 3 is a versatile guitar amplifier head with premium Boss amp modeling, onboard effects, and extensive tonal flexibility for live and studio use."
   },
   {
@@ -3101,7 +3101,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/ls2",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-line-selector-ls-2",
     "brand": "Boss",
-    "category": "switcher",
+    "category": "footswitch",
     "seo_description": "The LS-2 Line Selector lets you route multiple signal paths, blend effects loops, or switch between instruments. Compact, flexible, and essential for complex pedalboards."
   },
   {
@@ -3263,7 +3263,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/oc2",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-octave-oc-2",
     "brand": "Boss",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "The OC-2 adds one or two octaves below the input signal for deep, synth-like sounds. Classic analog octave effect with rich tracking."
   },
   {
@@ -3272,7 +3272,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/oc5",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-octave-oc-5",
     "brand": "Boss",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "The OC-5 offers polyphonic octave tracking, synth-like textures, and multiple mode options for creative octave layering."
   },
   {
@@ -3353,7 +3353,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/px1",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-plugout-fx-px-1",
     "brand": "Boss",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "The PX-1 Plugout FX is a digital multi-effect pedal integrating amp modeling and effect presets from Roland/Boss, perfect for studio and stage."
   },
   {
@@ -3362,7 +3362,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/twin/oc20g",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-poly-octave-oc-20g",
     "brand": "Boss",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "The OC-20G Poly Octave provides polyphonic octave effects with enhanced tracking and gain, suitable for bass and guitar applications."
   },
   {
@@ -3371,7 +3371,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/xs1",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-poly-shifter-xs-1",
     "brand": "Boss",
-    "category": "pitch",
+    "category": "pitch shifter",
     "seo_description": "The XS-1 Poly Shifter offers polyphonic pitch shifting, harmonizing, and detuning capabilities for creative performance and studio use."
   },
   {
@@ -3398,7 +3398,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/psm5",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-power-supply-master-switch-psm-5",
     "brand": "Boss",
-    "category": "power",
+    "category": "power supply",
     "seo_description": "The PSM-5 provides regulated power for multiple pedals and a master switching function for pedalboard convenience."
   },
   {
@@ -3452,7 +3452,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/sl2",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-slicer-sl-2",
     "brand": "Boss",
-    "category": "stutter",
+    "category": "modulation",
     "seo_description": "The SL-2 Slicer generates rhythmic gate patterns and stutter effects for creative modulation and dynamic textures."
   },
   {
@@ -3461,7 +3461,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/twin/sl20",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-slicer-sl-20",
     "brand": "Boss",
-    "category": "stutter",
+    "category": "modulation",
     "seo_description": "The SL-20 advanced Slicer adds programmable patterns, multiple gate types, and MIDI sync for complex rhythmic effects."
   },
   {
@@ -3533,7 +3533,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/oc3",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-super-octave-oc-3",
     "brand": "Boss",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "The OC-3 Super Octave provides polyphonic octave effects with analog-like tracking, suitable for bass and guitar applications."
   },
   {
@@ -3578,7 +3578,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/boss/compact/ps5",
     "pedalplex_url": "https://www.pedalplex.com/gear/boss-super-shifter-ps-5",
     "brand": "Boss",
-    "category": "pitch",
+    "category": "pitch shifter",
     "seo_description": "The PS-5 Super Shifter offers harmonizing, pitch shifting, and detune effects, enabling creative melodies and innovative sonic textures."
   },
   {
@@ -4064,7 +4064,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/crazytube/superconductor",
     "pedalplex_url": "https://www.pedalplex.com/gear/crazy-tube-circuits-super-conductor-boosterfeedback",
     "brand": "Crazy Tube Circuits",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "The Super Conductor provides a warm, clean boost with enhanced harmonic response and optional feedback control for creative tonal experimentation."
   },
   {
@@ -4181,7 +4181,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/digitech/whammy/wh1",
     "pedalplex_url": "https://www.pedalplex.com/gear/digitech-wh-1-whammy",
     "brand": "DigiTech",
-    "category": "pitch",
+    "category": "pitch shifter",
     "seo_description": "The WH-1 Whammy pedal allows dramatic pitch-shifting effects, dive bombs, and harmonized tones, perfect for expressive guitar solos."
   },
   {
@@ -4262,7 +4262,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/donner-aby-box",
     "brand": "Donner",
-    "category": "switcher",
+    "category": "footswitch",
     "seo_description": "The ABY Box allows routing a single input to two outputs or combining signals, ideal for switching between amps or parallel effects."
   },
   {
@@ -4370,7 +4370,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/donner-embark-06-octave",
     "brand": "Donner",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "EMBARK 06 Octave produces clean octave-up and octave-down tones with clear articulation and low latency for creative playing."
   },
   {
@@ -4379,7 +4379,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/donner-emo-amp-controller",
     "brand": "Donner",
-    "category": "controller",
+    "category": "attenuator",
     "seo_description": "The Emo Amp Controller allows remote switching and control of amplifier channels and effects for versatile live setups."
   },
   {
@@ -4406,7 +4406,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/donner/mini/harmonicsquare",
     "pedalplex_url": "https://www.pedalplex.com/gear/donner-harmonic-square-pitch-shifter-ec966",
     "brand": "Donner",
-    "category": "pitch",
+    "category": "pitch shifter",
     "seo_description": "EC966 Harmonic Square provides pitch-shifting and harmonizing effects with clear tracking and versatile tonal options."
   },
   {
@@ -4451,7 +4451,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/donner-triple-threat-ec6792",
     "brand": "Donner",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "Triple Threat combines overdrive, delay, and modulation effects in one unit, providing versatile tonal options for live and studio use."
   },
   {
@@ -4460,7 +4460,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/donner-triple-threat-ec6792-black",
     "brand": "Donner",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "The Triple Threat EC6792 Black combines overdrive, delay, and modulation effects in one versatile unit. Perfect for live and studio use, it offers dynamic tonal options with easy control for creative sound shaping."
   },
   {
@@ -4748,7 +4748,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/earthquaker/utility/ab-box",
     "pedalplex_url": "https://www.pedalplex.com/gear/earthquaker-devices-ab-box-utlity",
     "brand": "EarthQuaker Devices",
-    "category": "switcher",
+    "category": "footswitch",
     "seo_description": "A/B Box Utility allows routing of input signals to multiple outputs, perfect for amp switching or signal management in complex setups."
   },
   {
@@ -4829,7 +4829,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/earthquaker/arrows",
     "pedalplex_url": "https://www.pedalplex.com/gear/earthquaker-devices-arrows-v1-pre-amp-booster",
     "brand": "EarthQuaker Devices",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "Arrows V1 Pre-Amp Booster provides warm, transparent boost for enhancing amp dynamics, tone, and sustain without coloration."
   },
   {
@@ -4838,7 +4838,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/earthquaker/arrows",
     "pedalplex_url": "https://www.pedalplex.com/gear/earthquaker-devices-arrows-v1-pre-amp-booster-black",
     "brand": "EarthQuaker Devices",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "Black edition of Arrows V1 offers the same transparent boost with sleek aesthetics and responsive touch dynamics."
   },
   {
@@ -4847,7 +4847,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/earthquaker/arrows",
     "pedalplex_url": "https://www.pedalplex.com/gear/earthquaker-devices-arrows-v2-pre-amp-booster",
     "brand": "EarthQuaker Devices",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "Arrows V2 provides improved tonal clarity and touch-sensitive preamp boost, enhancing dynamics and harmonics for guitar players."
   },
   {
@@ -4865,7 +4865,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/earthquaker/aurelius",
     "pedalplex_url": "https://www.pedalplex.com/gear/earthquaker-devices-aurelius-chorusvibratorotary",
     "brand": "EarthQuaker Devices",
-    "category": "modulation",
+    "category": "chorus/vibrato/rotary",
     "seo_description": "Aurelius delivers versatile modulation effects including chorus, vibrato, and rotary speaker emulation for rich, animated tones."
   },
   {
@@ -4901,7 +4901,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/earthquaker/blackeye",
     "pedalplex_url": "https://www.pedalplex.com/gear/earthquaker-devices-black-eye-booster",
     "brand": "EarthQuaker Devices",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "Black Eye Booster provides clean, transparent gain boost, enhancing amp dynamics and sustain without altering your core tone."
   },
   {
@@ -5567,7 +5567,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/earthquaker/tonejob",
     "pedalplex_url": "https://www.pedalplex.com/gear/earthquaker-devices-tone-job-v2-eq-and-boost-pedal",
     "brand": "EarthQuaker Devices",
-    "category": "eq",
+    "category": "equalizer",
     "seo_description": "Tone Job V2 combines equalization and clean boost in a single pedal, providing precise tonal shaping and dynamic volume control."
   },
   {
@@ -5630,7 +5630,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/earthquaker/zapmachine",
     "pedalplex_url": "https://www.pedalplex.com/gear/earthquaker-devices-zap-machine-fuzzboostdrive",
     "brand": "EarthQuaker Devices",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Zap Machine combines fuzz, boost, and drive in one pedal, offering versatile tonal options and dynamic control for creative expression."
   },
   {
@@ -5720,7 +5720,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/eh/xo/howitzer",
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-15watt-howitzer-power-amp",
     "brand": "Electro-Harmonix",
-    "category": "amplifier",
+    "category": "power amp",
     "seo_description": "15W Howitzer Power Amp delivers high-quality tube-inspired power amplification with clear tone and dynamic headroom for live or studio use."
   },
   {
@@ -5729,7 +5729,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/eh/nano/44magnum",
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-44-magnum-power-amp",
     "brand": "Electro-Harmonix",
-    "category": "amplifier",
+    "category": "power amp",
     "seo_description": "44 Magnum provides robust power amplification with punchy tone, flexible routing, and reliability for live performance and recording."
   },
   {
@@ -5738,7 +5738,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/eh/nano/5mm",
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-5mm-power-amp",
     "brand": "Electro-Harmonix",
-    "category": "amplifier",
+    "category": "power amp",
     "seo_description": "5MM Power Amp delivers compact, high-quality amplification with clean tone and responsive dynamics for pedalboards and small setups."
   },
   {
@@ -5756,7 +5756,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/eh/xo/8stepprogram",
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-8-step-program",
     "brand": "Electro-Harmonix",
-    "category": "sequencer",
+    "category": "synth",
     "seo_description": "8 Step Program provides programmable 8-step sequencing with precise timing control for synths, effects, and experimental textures."
   },
   {
@@ -5789,10 +5789,10 @@
   {
     "pedalplex_id": "Electro-Harmonix Attack Decay",
     "status": "found",
-    "fxdb_url": "https://www.effectsdatabase.com/model/eh/attack-decay",
+    "fxdb_url": "https://www.effectsdatabase.com/model/eh/attackdecay",
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-attack-decay",
     "brand": "Electro-Harmonix",
-    "category": "envelope",
+    "category": "filter",
     "seo_description": "Attack Decay provides dynamic envelope shaping for guitar and synth, offering responsive control over attack and decay characteristics."
   },
   {
@@ -5846,7 +5846,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/eh/xo/metaphors",
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-bass-metaphors",
     "brand": "Electro-Harmonix",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Bass Metaphors combines modulation, pitch, and filter effects for creative bass tone shaping and experimental textures."
   },
   {
@@ -6170,7 +6170,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/eh/doublemuff",
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-double-muff-fuzz-overdrive",
     "brand": "Electro-Harmonix",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Double Muff blends fuzz and overdrive circuits into one pedal, providing versatile tones, dynamic response, and seamless transitions between effects."
   },
   {
@@ -6206,7 +6206,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/eh/xo/epitome",
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-epitome-multi-effects",
     "brand": "Electro-Harmonix",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Epitome Multi Effects combines delay, reverb, modulation, and overdrive in one pedal for complete tone shaping and versatile guitar sound design."
   },
   {
@@ -6314,7 +6314,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/eh/nano/mainframe",
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-mainframe-bit-crusher",
     "brand": "Electro-Harmonix",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Mainframe Bit Crusher provides digital distortion, glitch effects, and sample-rate reduction for creative, experimental, and textured guitar sounds."
   },
   {
@@ -6512,7 +6512,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/eh/pico/pitchfork",
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-pico-pitch-fork",
     "brand": "Electro-Harmonix",
-    "category": "pitch",
+    "category": "pitch shifter",
     "seo_description": "Pico Pitch Fork offers precise polyphonic pitch shifting with compact controls, enabling harmonies, octave effects, and creative interval shifting."
   },
   {
@@ -6530,7 +6530,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/eh/pico/pog",
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-pico-pog-polyphone-octave-generator",
     "brand": "Electro-Harmonix",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "Pico POG delivers the iconic polyphonic octave generator sound in a compact format, producing precise octave tracking and organ-like textures for guitar and bass."
   },
   {
@@ -6548,7 +6548,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/eh/pico/triboro",
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-pico-triboro-bridge-overdrive-distortion-fuzz",
     "brand": "Electro-Harmonix",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Pico Triboro Bridge combines overdrive, distortion, and fuzz circuits in one compact pedal, offering versatile gain stages and wide tonal flexibility."
   },
   {
@@ -6557,7 +6557,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/electro-harmonix-pitch-fork",
     "brand": "Electro-Harmonix",
-    "category": "pitch",
+    "category": "pitch shifter",
     "seo_description": "Pitch Fork provides precise polyphonic pitch shifting with extensive interval options, expression control, and harmonization for creative guitar textures."
   },
   {
@@ -6764,7 +6764,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/evh-5150-iconic-series-15w-el34-head",
     "brand": "EVH",
-    "category": "amp",
+    "category": "head",
     "seo_description": "The 5150 15W EL34 Head delivers iconic EVH tones with high-gain capability, classic midrange punch, and expressive dynamics in a compact form."
   },
   {
@@ -6773,7 +6773,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/evh-5150-iconic-series-80w-head",
     "brand": "EVH",
-    "category": "amp",
+    "category": "head",
     "seo_description": "The 80W head provides high-gain EVH tones with full-spectrum clarity, tight lows, and aggressive mids for studio and live use."
   },
   {
@@ -6782,7 +6782,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/evh-5150-iconic-series-el34-80w-head",
     "brand": "EVH",
-    "category": "amp",
+    "category": "head",
     "seo_description": "EL34 80W Head delivers classic EVH high-gain tones with rich harmonic content, tight low-end, and responsive dynamics for powerful performance."
   },
   {
@@ -6845,7 +6845,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/fender/efx/compugilist",
     "pedalplex_url": "https://www.pedalplex.com/gear/fender-compugilist-compressordistortion",
     "brand": "Fender",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Compugilist combines compressor and distortion circuits, allowing tight dynamic control and aggressive guitar tones."
   },
   {
@@ -6854,7 +6854,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/fender/efx/downtownexpress",
     "pedalplex_url": "https://www.pedalplex.com/gear/fender-downtown-express-bass-multi-effect",
     "brand": "Fender",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Downtown Express Bass Multi-Effect combines compression, overdrive, and EQ in one pedal for comprehensive bass tone shaping."
   },
   {
@@ -7079,7 +7079,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/fender/efx/reflectingpool",
     "pedalplex_url": "https://www.pedalplex.com/gear/fender-reflecting-pool-delay-reverb",
     "brand": "Fender",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Reflecting Pool combines delay and reverb effects in one pedal, producing spacious ambience and versatile guitar soundscapes."
   },
   {
@@ -7142,7 +7142,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/fender-the-pinwheel-rotary-speaker-emulator",
     "brand": "Fender",
-    "category": "modulation",
+    "category": "rotary",
     "seo_description": "Pinwheel emulates classic rotary speaker effects, producing swirling modulation reminiscent of vintage organ cabinets."
   },
   {
@@ -7160,7 +7160,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/fender-tone-master-twin-reverb-amp",
     "brand": "Fender",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Tone Master Twin Reverb recreates the legendary Fender Twin amplifier tone using modern digital technology."
   },
   {
@@ -7169,7 +7169,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/fender/efx/treverb",
     "pedalplex_url": "https://www.pedalplex.com/gear/fender-tre-verb-digital-reverbtremolo",
     "brand": "Fender",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Tre-Verb combines digital reverb and tremolo inspired by classic Fender amps for vintage-style ambience and modulation."
   },
   {
@@ -7259,7 +7259,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/formula-b-edge-echo-verb",
     "brand": "Formula B",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Edge Echo Verb combines delay and reverb to create spacious ambient textures and immersive soundscapes."
   },
   {
@@ -7349,7 +7349,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/friedman-be-50-deluxe-3-channel-50-watt-tube-head",
     "brand": "Friedman",
-    "category": "amp",
+    "category": "head",
     "seo_description": "BE-50 Deluxe is a powerful 3-channel tube amplifier head delivering legendary Friedman high-gain tones."
   },
   {
@@ -7412,7 +7412,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/friedman/ird",
     "pedalplex_url": "https://www.pedalplex.com/gear/friedman-ir-d",
     "brand": "Friedman",
-    "category": "amp-simulator",
+    "category": "amp simulator/ir loader",
     "seo_description": "Friedman IR-D delivers amp-style tones with built-in impulse response cabinet simulation, offering powerful direct recording and live performance capabilities."
   },
   {
@@ -7421,7 +7421,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/friedman/irj",
     "pedalplex_url": "https://www.pedalplex.com/gear/friedman-ir-j",
     "brand": "Friedman",
-    "category": "amp-simulator",
+    "category": "amp simulator/ir loader",
     "seo_description": "Friedman IR-J provides authentic amplifier tones combined with impulse response cabinet simulation for studio-quality guitar sound without a traditional amp."
   },
   {
@@ -7430,7 +7430,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/friedman/irx",
     "pedalplex_url": "https://www.pedalplex.com/gear/friedman-ir-x",
     "brand": "Friedman",
-    "category": "amp-simulator",
+    "category": "amp simulator/ir loader",
     "seo_description": "Friedman IR-X combines tube-driven preamp tones with impulse response cabinet simulation for versatile amp-like performance in a compact format."
   },
   {
@@ -7448,7 +7448,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/friedman/smallbox",
     "pedalplex_url": "https://www.pedalplex.com/gear/friedman-smallbox",
     "brand": "Friedman",
-    "category": "amp",
+    "category": "amp simulator",
     "seo_description": "Friedman Smallbox amplifier delivers classic British-inspired tube tones with dynamic response and powerful high-gain capabilities."
   },
   {
@@ -7511,7 +7511,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/hotone/skyline/gate",
     "pedalplex_url": "https://www.pedalplex.com/gear/hotone-gate-noise-gate",
     "brand": "Hotone",
-    "category": "noise-gate",
+    "category": "noise gate",
     "seo_description": "Hotone Gate Noise Gate removes unwanted noise and hum while maintaining the natural dynamics of your guitar signal."
   },
   {
@@ -7547,7 +7547,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/hotone-tuner-press-volume-expression-buffer",
     "brand": "Hotone",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Hotone Tuner Press combines tuner, volume pedal, expression controller, and buffer in a compact multifunction design."
   },
   {
@@ -7592,7 +7592,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/hugheskettner-grandmeister-deluxe-40",
     "brand": "Hughes & Kettner",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Grandmeister Deluxe 40 is a programmable tube amplifier delivering versatile high-quality guitar tones."
   },
   {
@@ -7601,7 +7601,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/hugheskettner-spirit-of-metal",
     "brand": "Hughes & Kettner",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Spirit of Metal provides compact amplifier power with aggressive high-gain tones for metal guitar."
   },
   {
@@ -7610,7 +7610,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/hugheskettner-spirit-of-rock",
     "brand": "Hughes & Kettner",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Spirit of Rock delivers classic rock amplifier tones in a compact pedal-style amplifier format."
   },
   {
@@ -7619,7 +7619,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/hugheskettner-spirit-of-vintage",
     "brand": "Hughes & Kettner",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Spirit of Vintage produces warm vintage-style amplifier tones inspired by classic tube circuits."
   },
   {
@@ -7628,7 +7628,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/hugheskettner-triamp-mark-3",
     "brand": "Hughes & Kettner",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Triamp Mark 3 is a professional multi-channel tube amplifier offering exceptional tonal versatility."
   },
   {
@@ -7637,7 +7637,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/hugheskettner-tubemeister-deluxe-20",
     "brand": "Hughes & Kettner",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Tubemeister Deluxe 20 delivers authentic tube amp tone with modern features for recording and live performance."
   },
   {
@@ -7646,7 +7646,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/hugheskettner-tubemeister-deluxe-40",
     "brand": "Hughes & Kettner",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Tubemeister Deluxe 40 offers powerful tube amplification with versatile channel options."
   },
   {
@@ -7763,7 +7763,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/ibanez/pentatone/ptgate",
     "pedalplex_url": "https://www.pedalplex.com/gear/ibanez-pentatone-gate",
     "brand": "Ibanez",
-    "category": "noise-gate",
+    "category": "noise gate",
     "seo_description": "Ibanez Pentatone Gate removes unwanted noise and hum while preserving guitar dynamics."
   },
   {
@@ -8204,7 +8204,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/jhspedals/series3/chorus/rotary",
     "pedalplex_url": "https://www.pedalplex.com/gear/jhs-rotary-chorus-3-series",
     "brand": "JHS",
-    "category": "modulation",
+    "category": "rotary/chorus",
     "seo_description": "The JHS 3 Series Rotary Chorus blends traditional chorus modulation with rotary speaker-style movement. The effect recreates the swirling character of vintage rotating speaker cabinets while maintaining the lush modulation of a chorus pedal. Players can adjust the speed and intensity of the modulation to achieve subtle shimmer or dramatic rotating textures. This makes the pedal suitable for classic rock, psychedelic music, and ambient styles. The Rotary Chorus offers a unique hybrid modulation effect in a compact and easy-to-use format."
   },
   {
@@ -8672,7 +8672,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/keeley/beachboys/californiagirls",
     "pedalplex_url": "https://www.pedalplex.com/gear/keeley-california-girls-twelve-string-acoustic-simulator",
     "brand": "Keeley",
-    "category": "simulator",
+    "category": "acoustic simulator",
     "seo_description": "The Keeley California Girls Twelve String Acoustic Simulator recreates the shimmering tone of a classic twelve-string acoustic guitar. Designed to transform a standard electric guitar signal into a bright and resonant twelve-string texture, the pedal adds octave harmonics and sparkling modulation that emulate the natural chorus effect produced by doubled strings. This makes it ideal for jangly rhythm parts, folk-rock textures, and classic pop sounds reminiscent of vintage recordings. Players can blend the effect with their original signal to control the intensity of the simulated twelve-string tone. The California Girls pedal works well with clean amplifier settings and pairs beautifully with reverb and delay effects. Built with Keeley\u2019s signature attention to detail, it provides authentic twelve-string style shimmer in a compact pedalboard format."
   },
   {
@@ -8726,7 +8726,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/keeley/dynomyroto",
     "pedalplex_url": "https://www.pedalplex.com/gear/keeley-dyno-my-roto-tri-chorus-rotary-flange",
     "brand": "Keeley",
-    "category": "modulation",
+    "category": "rotary/flanger/chorus",
     "seo_description": "The Keeley Dyno My Roto Tri-Chorus Rotary Flange is a multi-modulation pedal inspired by the lush rack effects used in iconic studio recordings of the 1980s. The pedal combines three modulation styles\u2014tri-chorus, rotary speaker simulation, and flanger\u2014allowing players to explore a wide range of rich and spacious modulation textures. Each mode recreates the shimmering movement and depth associated with vintage rack processors used by legendary guitarists. The tri-chorus mode produces wide stereo-style chorus tones, while the rotary mode simulates the swirling sound of a rotating speaker cabinet. The flanger mode adds dramatic sweeping modulation. Designed with Keeley\u2019s signature attention to detail, the Dyno My Roto brings classic studio modulation sounds to modern pedalboards."
   },
   {
@@ -8735,7 +8735,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/keeley/dynomyroto",
     "pedalplex_url": "https://www.pedalplex.com/gear/keeley-dyno-my-roto-tri-chorus-rotary-flange-shocking-pink",
     "brand": "Keeley",
-    "category": "modulation",
+    "category": "rotary/flanger/chorus",
     "seo_description": "The Keeley Dyno My Roto Tri-Chorus Rotary Flange Shocking Pink edition offers the same iconic multi-modulation engine as the standard model with a distinctive custom finish. Inspired by legendary rack effects units from the 1980s, the pedal combines tri-chorus, rotary speaker simulation, and flanger modulation in a single versatile unit. The tri-chorus mode produces lush, wide modulation textures, while the rotary mode captures the swirling motion of a rotating speaker cabinet. The flanger mode adds dramatic movement for experimental tones. Perfect for players who want classic studio modulation sounds in pedal form, the Dyno My Roto Shocking Pink edition pairs boutique tone with bold visual style."
   },
   {
@@ -8744,7 +8744,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/keeley/eccos",
     "pedalplex_url": "https://www.pedalplex.com/gear/keeley-eccos-delaylooper",
     "brand": "Keeley",
-    "category": "delay",
+    "category": "delay/looper",
     "seo_description": "The Keeley Eccos Delay/Looper is a versatile delay pedal that combines high-quality digital delay with an advanced looper in a compact format. Designed to deliver both modern and vintage-style echoes, the pedal offers a wide range of delay textures including tape-style modulation and rhythmic digital repeats. The integrated looper provides extensive looping capabilities for songwriting, practice, and live performance. Guitarists can stack delay and loop layers while maintaining excellent clarity and sound quality. The Eccos also includes modulation controls that add warmth and movement to the delay repeats, emulating classic tape echo machines. With its intuitive interface and powerful features, the Keeley Eccos Delay/Looper is a highly flexible tool for creative guitarists."
   },
   {
@@ -8753,7 +8753,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/keeley/eccos",
     "pedalplex_url": "https://www.pedalplex.com/gear/keeley-eccos-delaylooper-black",
     "brand": "Keeley",
-    "category": "delay",
+    "category": "delay/looper",
     "seo_description": "The Keeley Eccos Delay/Looper Black edition features the same advanced delay and looping engine as the standard version but with a sleek black enclosure. The pedal delivers a wide range of delay textures including clean digital repeats and warm tape-style echoes enhanced by modulation controls. Its integrated looper allows musicians to capture phrases and build layered performances during practice or live shows. The Eccos is known for its high-fidelity signal path and intuitive interface, making it easy to switch between delay and looping functions. Built with Keeley\u2019s commitment to quality, the Black edition provides versatile delay and looping capabilities in a pedalboard-friendly design."
   },
   {
@@ -8762,7 +8762,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/keeley/eccos",
     "pedalplex_url": "https://www.pedalplex.com/gear/keeley-eccos-delaylooper-shell-pink",
     "brand": "Keeley",
-    "category": "delay",
+    "category": "delay/looper",
     "seo_description": "The Keeley Eccos Delay/Looper Shell Pink edition offers the same powerful delay and looping features as the standard model with a distinctive pastel finish. The pedal provides high-quality digital delay with tape-style modulation options that add warmth and character to the repeats. The integrated looper allows players to record and layer phrases for creative performance and practice applications. Known for its intuitive controls and pristine audio quality, the Eccos makes it easy to explore complex delay patterns and looping textures. With its eye-catching Shell Pink enclosure and versatile functionality, this version combines boutique aesthetics with professional-grade performance."
   },
   {
@@ -8897,7 +8897,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/keeley-remote-switcher-dream",
     "brand": "Keeley",
-    "category": "utility",
+    "category": "footswitch",
     "seo_description": "The Keeley Remote Switcher for the Dream pedal is an accessory designed to provide convenient external control for Keeley\u2019s Dream effects unit. By connecting the remote switch, players can toggle functions or activate preset features without needing to reach the pedal itself. This is particularly useful during live performances where quick changes are required. The remote switch integrates seamlessly with compatible Keeley pedals and features rugged construction for stage reliability. Its compact design allows easy placement on pedalboards. For players using Keeley\u2019s Dream series pedals, the Remote Switcher provides enhanced performance control and convenience."
   },
   {
@@ -8906,7 +8906,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/keeley-remote-switcher-eccos",
     "brand": "Keeley",
-    "category": "utility",
+    "category": "footswitch",
     "seo_description": "The Keeley Remote Switcher for the Eccos Delay/Looper expands the control capabilities of the Eccos pedal during live performance. By connecting the external switch, players can access additional functions such as loop control or delay activation without interrupting their playing. This allows smoother operation when managing complex delay and looping setups. The remote switch is compact, durable, and designed to integrate seamlessly with Keeley pedals. For musicians who rely on the Eccos for live looping and delay effects, the Remote Switcher offers improved control and performance flexibility."
   },
   {
@@ -8915,7 +8915,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/keeley-remote-switcher-halo-black",
     "brand": "Keeley",
-    "category": "utility",
+    "category": "footswitch",
     "seo_description": "The Keeley Remote Switcher for the Halo Delay Black edition provides external control for the Halo delay pedal during live performance. This accessory allows players to activate functions or change delay modes without adjusting the pedal directly. The compact switch integrates easily into pedalboards and features durable construction suitable for stage use. Designed specifically for the Halo delay series, the remote switch helps musicians manage complex delay settings more efficiently while performing."
   },
   {
@@ -8924,7 +8924,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/keeley-remote-switcher-halo-red",
     "brand": "Keeley",
-    "category": "utility",
+    "category": "footswitch",
     "seo_description": "The Keeley Remote Switcher for the Halo Delay Red edition is an external control accessory designed to expand the functionality of the Halo delay pedal. By connecting the remote switch, players can trigger additional functions or toggle delay features while performing. The switch provides quick and reliable control without interrupting playing. Its compact size and durable design make it easy to integrate into professional pedalboards. The Halo Remote Switcher helps guitarists manage complex delay setups with greater ease during live performance."
   },
   {
@@ -8933,7 +8933,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/keeley-remote-switcher-hydra",
     "brand": "Keeley",
-    "category": "utility",
+    "category": "footswitch",
     "seo_description": "The Keeley Remote Switcher for the Hydra pedal allows external control of the Hydra\u2019s reverb and tremolo functions during live performance. This accessory provides convenient access to switching features without needing to reach the main pedal. The compact switch integrates seamlessly with Keeley\u2019s Hydra effects unit and is built with durable components for stage reliability. Guitarists using the Hydra for ambient textures and rhythmic tremolo can benefit from the added flexibility provided by the Remote Switcher."
   },
   {
@@ -9041,7 +9041,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/line6/am4",
     "pedalplex_url": "https://www.pedalplex.com/gear/line-6-am4-amp-modeler",
     "brand": "Line 6",
-    "category": "amp modeler",
+    "category": "preamp",
     "seo_description": "The Line 6 AM4 Amp Modeler is a versatile modeling pedal that recreates the sound of several classic guitar amplifiers in a compact stompbox format. Using Line 6 digital modeling technology, the AM4 provides access to a range of iconic amp tones including vintage clean amps, classic British crunch, and modern high-gain sounds. Players can easily switch between models and adjust gain, EQ, and output levels to match their rig. The pedal works well as a direct tone-shaping tool or as a front-end gain stage into a clean amplifier. Rugged construction and intuitive controls make it suitable for both live performance and studio use. The Line 6 AM4 Amp Modeler offers guitarists a flexible solution for exploring multiple amplifier sounds within a single pedal."
   },
   {
@@ -9095,7 +9095,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/machete-pedals-rangemaster-boost",
     "brand": "Machete Pedals",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "The Machete Pedals Rangemaster Boost is a transparent boost pedal inspired by the classic Rangemaster circuit. It provides harmonic-rich gain enhancement without coloring the original tone, ideal for solos and pedal stacking."
   },
   {
@@ -9131,7 +9131,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-1959-modified",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Marshall 1959 Modified delivers the iconic Plexi tone with modern enhancements. Known for its powerful, crunchy overdrive and dynamic response, it suits classic rock, hard rock, and heavy blues playing."
   },
   {
@@ -9140,7 +9140,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/marshall/1959",
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-1959-overdrive",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "overdrive",
     "seo_description": "The Marshall 1959 Overdrive offers a rich, harmonically complex overdrive tone inspired by the classic 1959 Plexi. It provides warm, saturated gain with responsive dynamics for both rhythm and lead guitar."
   },
   {
@@ -9149,7 +9149,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-2555x-silver-jubilee",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Marshall 2555X Silver Jubilee is a legendary amplifier delivering high-gain tones with clarity and punch. Its versatile channel options make it ideal for both studio recording and live performance."
   },
   {
@@ -9158,7 +9158,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-afd100-slash-signature",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Marshall AFD100 Slash Signature amp delivers the legendary sound of Slash, combining rich overdrive with tight low-end. Perfect for rock, hard rock, and heavy metal styles, it provides authentic stage-ready tones."
   },
   {
@@ -9167,7 +9167,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/marshall/bluesbreaker",
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-bluesbreaker-vintage-reissue",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "overdrive",
     "seo_description": "The Marshall BluesBreaker Vintage Reissue recreates the classic BluesBreaker tone with warm, smooth overdrive. Ideal for blues, classic rock, and expressive playing, it provides dynamic, touch-sensitive response."
   },
   {
@@ -9176,7 +9176,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/marshall/drivemaster",
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-drivemaster-vintage-reissue",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "overdrive",
     "seo_description": "The Marshall Drivemaster Vintage Reissue captures the classic vintage drive tones of early Marshall amps. Its crunchy overdrive is ideal for blues, classic rock, and expressive lead playing."
   },
   {
@@ -9185,7 +9185,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/marshall/dsl",
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-dsl-overdrive",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "overdrive",
     "seo_description": "The Marshall DSL Overdrive delivers versatile overdrive tones with rich harmonics. Its dual channels provide clean and high-gain options, suitable for studio, rehearsal, or live rock performance."
   },
   {
@@ -9194,7 +9194,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-dsl1-head",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Marshall DSL1 Head is a compact, all-tube amplifier delivering classic Marshall tones in a portable format. Perfect for practice and small gigs, it provides both clean and overdriven tones with natural dynamics."
   },
   {
@@ -9212,7 +9212,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/marshall/jcm800",
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-jcm-800-overdrive",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "overdrive",
     "seo_description": "The Marshall JCM 800 Overdrive delivers classic high-gain rock tones with punchy mids and tight low-end. It is a staple for hard rock and heavy metal guitarists seeking aggressive, articulate overdrive."
   },
   {
@@ -9221,7 +9221,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-jcm-slash-signature-100w",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Marshall JCM Slash Signature 100W provides Slash\u2019s iconic tone with dynamic response, rich harmonics, and stage-ready overdrive. Suitable for high-gain rock and lead playing with clarity and sustain."
   },
   {
@@ -9230,7 +9230,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-jcm800",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Marshall JCM800 is the quintessential high-gain amplifier delivering aggressive rock and metal tones. Known for its tight low-end, rich mids, and responsive overdrive, it remains a favorite for guitarists worldwide."
   },
   {
@@ -9239,7 +9239,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-jcm800-2205-head-tom-morello-signature",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Marshall JCM800 2205 Head Tom Morello Signature delivers Tom Morello\u2019s signature tone with expressive overdrive and harmonic clarity. Perfect for heavy rhythm and lead tones, it excels in live and studio environments."
   },
   {
@@ -9248,7 +9248,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/marshall/jcm800",
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-jcm800-lead-series",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Marshall JCM800 Lead Series provides punchy, articulate lead tones with dynamic overdrive. Its all-tube circuitry ensures responsiveness, ideal for solos and classic rock rhythm tones."
   },
   {
@@ -9257,7 +9257,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-jcm800-modified",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Marshall JCM800 Modified delivers the classic high-gain sound of the JCM800 with modern tonal enhancements. It provides a versatile range from smooth overdrive to aggressive crunch tones."
   },
   {
@@ -9266,7 +9266,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/marshall/jcm900",
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-jcm900-overdrive",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "overdrive",
     "seo_description": "The Marshall JCM900 Overdrive offers high-gain tones with enhanced clarity and harmonic richness. Its dual channels allow seamless switching between clean and saturated overdrive sounds for versatile rock playing."
   },
   {
@@ -9275,7 +9275,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-jcm900-studio",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Marshall JCM900 Studio is a versatile all-tube amp delivering modern high-gain tones and classic Marshall overdrive. Ideal for recording and live performance, it combines clean headroom with aggressive crunch."
   },
   {
@@ -9284,7 +9284,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/marshall/jvm",
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-jvm-overdrive",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "overdrive",
     "seo_description": "The Marshall JVM Overdrive provides multiple channels of overdrive and distortion with full tonal control. Its modern circuitry allows for classic and contemporary high-gain sounds suitable for all rock styles."
   },
   {
@@ -9293,7 +9293,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-jvm410-head",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Marshall JVM410 Head delivers 100W of all-tube power with four independent channels. Versatile and dynamic, it is perfect for heavy rock, metal, and studio recording applications."
   },
   {
@@ -9302,7 +9302,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-mg10-combo",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "combo",
     "seo_description": "The Marshall MG10 Combo is a compact, affordable practice amplifier with clean and overdrive channels. Ideal for beginners and home use, it delivers classic Marshall tones in a portable format."
   },
   {
@@ -9311,7 +9311,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-ms2-micro-stack",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "combo",
     "seo_description": "The Marshall MS2 Micro Stack is a pocket-sized amplifier delivering classic Marshall sound. Perfect for practice or novelty use, it reproduces the iconic tone in a highly portable format."
   },
   {
@@ -9320,7 +9320,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-ms2-micro-stack-classic-grey",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "combo",
     "seo_description": "The Marshall MS2 Micro Stack Classic Grey provides the same iconic tone as the original MS2 with a stylish grey finish. Its compact size makes it ideal for travel and practice."
   },
   {
@@ -9329,7 +9329,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-ms2-micro-stack-red",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "combo",
     "seo_description": "The Marshall MS2 Micro Stack Red is a mini amp offering classic Marshall tones in a portable red enclosure. Perfect for practice, jamming, or collectors seeking a unique piece of gear."
   },
   {
@@ -9338,7 +9338,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-ms4-micro-stack",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "combo",
     "seo_description": "The Marshall MS4 Micro Stack delivers compact yet powerful amplification with classic Marshall sound. Ideal for practice or desktop use, it features clean and overdrive channels in a portable format."
   },
   {
@@ -9356,7 +9356,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/marshall-studio-900-head",
     "brand": "Marshall",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Marshall Studio 900 Head provides powerful all-tube amplification with multiple channels. Its versatile tonal range makes it suitable for studio recording, rehearsal, and live performance."
   },
   {
@@ -9446,7 +9446,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/meris/enzo",
     "pedalplex_url": "https://www.pedalplex.com/gear/meris-enzo-multi-voice-instrument-synthesizer",
     "brand": "Meris",
-    "category": "synthesizer",
+    "category": "synth",
     "seo_description": "The Meris Enzo is a multi-voice synthesizer for guitar and bass, delivering lush, polyphonic textures. It transforms your instrument into a versatile synth, perfect for ambient, experimental, and modern music."
   },
   {
@@ -9473,7 +9473,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/meris/ottobit/jr",
     "pedalplex_url": "https://www.pedalplex.com/gear/meris-ottobit-jr",
     "brand": "Meris",
-    "category": "bit crusher",
+    "category": "bitcrusher",
     "seo_description": "The Meris Ottobit Jr. is a 16-bit lo-fi effect pedal that adds gritty textures, bit crushing, and sample-rate reduction. Perfect for experimental and electronic tones with expressive control."
   },
   {
@@ -9491,7 +9491,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mesaboogie-90s-dual-rectifier",
     "brand": "Mesa/Boogie",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Mesa/Boogie 90s Dual Rectifier delivers classic high-gain metal and rock tones with tight low-end and aggressive midrange. Perfect for heavy rhythm riffs and soaring lead tones."
   },
   {
@@ -9500,7 +9500,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mesaboogie-dual-rectifier-head-black-bronco",
     "brand": "Mesa/Boogie",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Mesa/Boogie Dual Rectifier Head Black Bronco offers iconic high-gain tones with dual channels, delivering punchy distortion and crisp dynamics for modern rock and metal."
   },
   {
@@ -9509,7 +9509,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mesaboogie-mark-iic-1x12-hardwood-combo-limited-edition-evm12l-classic",
     "brand": "Mesa/Boogie",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "This limited edition Mesa/Boogie Mark IIC+ combo provides classic tube-amp tones with smooth overdrive and expressive dynamics. Its 1x12 hardwood cabinet ensures rich, resonant sound for studio and stage."
   },
   {
@@ -9518,7 +9518,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mesaboogie-mark-v-tube-amplifier-head-90-watts",
     "brand": "Mesa/Boogie",
-    "category": "amplifier",
+    "category": "head",
     "seo_description": "The Mesa/Boogie Mark V Head 90W delivers versatile multi-channel tube amplification. From sparkling cleans to saturated high-gain tones, it\u2019s ideal for professional rock, metal, and studio use."
   },
   {
@@ -9554,7 +9554,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mooer/micro/aby",
     "pedalplex_url": "https://www.pedalplex.com/gear/mooer-aby-mk2-line-switch",
     "brand": "Mooer",
-    "category": "switcher",
+    "category": "footswitch",
     "seo_description": "The Mooer ABY MK2 Line Switch allows seamless switching between two amps or signal paths. Compact and reliable, ideal for live setups or complex routing on pedalboards."
   },
   {
@@ -9644,7 +9644,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mooer/7/e7",
     "pedalplex_url": "https://www.pedalplex.com/gear/mooer-e7-polyphonic-guitar-synth",
     "brand": "Mooer",
-    "category": "synthesizer",
+    "category": "synth",
     "seo_description": "The Mooer E7 Polyphonic Guitar Synth transforms your guitar into a polyphonic synthesizer. Offers creative textures, synth tones, and experimental sounds for modern guitarists."
   },
   {
@@ -9680,7 +9680,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mooer/micro/funkymonkey",
     "pedalplex_url": "https://www.pedalplex.com/gear/mooer-funky-monkey-auto-wah",
     "brand": "Mooer",
-    "category": "auto-wah",
+    "category": "filter",
     "seo_description": "The Mooer Funky Monkey Auto Wah provides dynamic, touch-sensitive auto-wah effects. Ideal for funk, rhythm, and expressive lead playing."
   },
   {
@@ -9743,7 +9743,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mooer/micro/lofimachine",
     "pedalplex_url": "https://www.pedalplex.com/gear/mooer-lofi-machine-sample-reducing",
     "brand": "Mooer",
-    "category": "bit crusher",
+    "category": "bitcrusher",
     "seo_description": "The Mooer Lofi Machine reduces bit depth and sample rate, creating gritty, vintage digital textures. Perfect for experimental, electronic, and creative sound design applications."
   },
   {
@@ -9761,7 +9761,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mooer/micro/microdi",
     "pedalplex_url": "https://www.pedalplex.com/gear/mooer-micro-di",
     "brand": "Mooer",
-    "category": "di box",
+    "category": "di",
     "seo_description": "The Mooer Micro DI is a compact direct box for bass or guitar, offering clean signal routing to PA systems or recording interfaces while preserving natural tone."
   },
   {
@@ -9914,7 +9914,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mooer/micro/sweeper",
     "pedalplex_url": "https://www.pedalplex.com/gear/mooer-sweeper-dynamic-envelope",
     "brand": "Mooer",
-    "category": "envelope filter",
+    "category": "filter",
     "seo_description": "The Mooer Sweeper is an envelope filter that reacts to your picking dynamics. Ideal for funky, wah-like sounds and expressive tonal control."
   },
   {
@@ -9923,7 +9923,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mooer/7/tonecapture",
     "pedalplex_url": "https://www.pedalplex.com/gear/mooer-tone-capture-gtr",
     "brand": "Mooer",
-    "category": "tone capture",
+    "category": "amp simulator",
     "seo_description": "The Mooer Tone Capture GTR allows you to capture and replicate your amp\u2019s tone. Ideal for recording, live performance, or re-amping with consistent sound."
   },
   {
@@ -9995,7 +9995,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/moog/moogerfooger/mf102",
     "pedalplex_url": "https://www.pedalplex.com/gear/moog-mf-102-ring-modulator",
     "brand": "Moog",
-    "category": "ring modulator",
+    "category": "modulation",
     "seo_description": "The Moog MF-102 Ring Modulator is an analog effects pedal capable of producing a wide range of unique and experimental sounds. Ring modulation multiplies two signals together, generating complex harmonic textures, metallic tones, and synth-like effects. The MF-102 includes controls for carrier frequency, modulation amount, and mix, allowing players to dial in subtle movement or extreme sonic transformations. Built-in LFO modulation expands the creative possibilities even further. Guitarists and sound designers use the MF-102 for everything from subtle harmonic coloration to wild experimental effects. As part of the Moogerfooger series, the pedal is built with premium analog circuitry and rugged construction."
   },
   {
@@ -10067,7 +10067,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/moog/minifooger/ring",
     "pedalplex_url": "https://www.pedalplex.com/gear/moog-minifooger-ring-modulator",
     "brand": "Moog",
-    "category": "ring modulator",
+    "category": "modulation",
     "seo_description": "The Moog Minifooger Ring Modulator is a compact analog pedal designed to generate complex harmonic textures and experimental sounds. Ring modulation multiplies two signals together, producing metallic tones, bell-like overtones, and unusual modulation effects. The Minifooger version provides intuitive controls for carrier frequency and modulation amount, allowing both subtle and extreme sonic transformations. Expression pedal input enables dynamic real-time control during performance. Built with Moog\u2019s renowned analog circuitry, the pedal delivers rich and distinctive sound design possibilities for guitarists and synthesizer users alike."
   },
   {
@@ -10103,7 +10103,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-ab-switch-box",
     "brand": "Mosky Audio",
-    "category": "switcher",
+    "category": "footswitch",
     "seo_description": "The Mosky Audio A/B Switch Box enables routing a single instrument to two amps or channels, with clean switching and signal integrity."
   },
   {
@@ -10139,7 +10139,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-betal-ultra-bass-distortion-di-eq",
     "brand": "Mosky Audio",
-    "category": "bass distortion",
+    "category": "bass/distortion",
     "seo_description": "The Mosky Audio Betal Ultra Bass Distortion DI EQ delivers high-gain bass distortion with direct out and EQ shaping for recording or live use."
   },
   {
@@ -10157,7 +10157,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-black-juice-preamp-bass",
     "brand": "Mosky Audio",
-    "category": "bass preamp",
+    "category": "bass/preamp",
     "seo_description": "The Mosky Audio Black Juice Preamp Bass shapes your bass tone with warm, punchy preamp control, suitable for live or studio performance."
   },
   {
@@ -10373,7 +10373,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-dtc-multi-effect",
     "brand": "Mosky Audio",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "The Mosky Audio DTC Multi Effect offers a compact multi-effects solution, combining modulation, delay, and distortion in one pedal."
   },
   {
@@ -10382,7 +10382,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-dual-foot-switch",
     "brand": "Mosky Audio",
-    "category": "foot switch",
+    "category": "footswitch",
     "seo_description": "The Mosky Audio Dual Foot Switch allows easy control of multiple effects or amp channels, streamlining live performance setups."
   },
   {
@@ -10400,7 +10400,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-dual-momentary-foot-switch",
     "brand": "Mosky Audio",
-    "category": "foot switch",
+    "category": "footswitch",
     "seo_description": "The Mosky Audio Dual Momentary Foot Switch offers precise momentary control for effects, amp channels, or MIDI devices in live performance."
   },
   {
@@ -10418,7 +10418,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-fireworks-bassdrive-di",
     "brand": "Mosky Audio",
-    "category": "bass overdrive",
+    "category": "bass/overdrive",
     "seo_description": "The Mosky Audio Fireworks BassDrive + DI delivers overdrive, tone shaping, and direct output for bass, ideal for live and recording applications."
   },
   {
@@ -10436,7 +10436,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-foot-switch",
     "brand": "Mosky Audio",
-    "category": "foot switch",
+    "category": "footswitch",
     "seo_description": "The Mosky Audio Foot Switch allows remote control of pedals or amp channels with reliable switching and minimal signal loss."
   },
   {
@@ -10472,7 +10472,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-gamma-bass-preamp",
     "brand": "Mosky Audio",
-    "category": "bass preamp",
+    "category": "bass/preamp",
     "seo_description": "The Mosky Audio Gamma Bass Preamp shapes and boosts your bass signal, delivering punchy, clean tones with versatile EQ control."
   },
   {
@@ -10607,7 +10607,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-multi-effects-be-5",
     "brand": "Mosky Audio",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "The Mosky Audio Multi Effects BE-5 combines modulation, delay, reverb, and distortion effects into a single compact unit for versatile tone shaping."
   },
   {
@@ -10697,7 +10697,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mosky/redfox",
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-red-fox-multi-effect",
     "brand": "Mosky Audio",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "The Mosky Audio Red Fox Multi Effect combines delay, modulation, and overdrive in one pedal, ideal for versatile tone experimentation."
   },
   {
@@ -10778,7 +10778,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-super-octo-bass-optical-compressor",
     "brand": "Mosky Audio",
-    "category": "bass compressor",
+    "category": "bass/compressor",
     "seo_description": "The Mosky Audio Super Octo is an optical bass compressor offering smooth dynamic control and sustain for professional bass tones."
   },
   {
@@ -10796,7 +10796,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-tap-switch",
     "brand": "Mosky Audio",
-    "category": "tap switch",
+    "category": "footswitch",
     "seo_description": "The Mosky Audio Tap Switch allows precise tempo control for delay and modulation pedals with convenient footswitch operation."
   },
   {
@@ -10805,7 +10805,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-third-space-multi-bass-amplifier",
     "brand": "Mosky Audio",
-    "category": "bass preamp/overdrive",
+    "category": "bass/preamp",
     "seo_description": "The Mosky Audio Third Space is a multi-function bass amplifier pedal combining preamp, overdrive, and EQ for complete bass tone control."
   },
   {
@@ -10823,7 +10823,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mosky/tonemaker",
     "pedalplex_url": "https://www.pedalplex.com/gear/mosky-audio-tone-makestation-mp-54-multi-fx",
     "brand": "Mosky Audio",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "The Mosky Audio Tone Makestation MP-54 combines multiple effects like overdrive, delay, reverb, and modulation into a single unit."
   },
   {
@@ -10895,7 +10895,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mxr/dunlop/m196",
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-ab-box-m196",
     "brand": "MXR",
-    "category": "switcher",
+    "category": "footswitch",
     "seo_description": "The MXR A/B Box M196 is a versatile signal routing tool that allows musicians to switch between two amplifiers or outputs seamlessly. Built with rugged construction and true bypass, it ensures reliable signal integrity. Perfect for live performances or studio setups, this pedal provides flexibility and instant switching with no tonal loss."
   },
   {
@@ -10913,7 +10913,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mxr/dunlop/m188",
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-bass-auto-q",
     "brand": "MXR",
-    "category": "envelope filter",
+    "category": "filter",
     "seo_description": "The MXR Bass Auto Q is an envelope-controlled filter that adds dynamic, expressive tonal shaping to bass guitars. Responding to your playing attack, it produces wah-like sweeps and funky textures. With adjustable sensitivity and filter settings, it is perfect for slap, fingerstyle, and grooving bass lines that demand movement and character."
   },
   {
@@ -10958,7 +10958,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mxr/dunlop/m82",
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-bass-envelope-filter-m82",
     "brand": "MXR",
-    "category": "envelope filter",
+    "category": "filter",
     "seo_description": "The MXR Bass Envelope Filter M82 produces funky, responsive filter effects for bass guitars. Its touch-sensitive controls allow the pedal to react dynamically to picking intensity, delivering wah-like sweeps and expressive grooves. Adjustable Q and sensitivity make it versatile for various genres, from slap to fingerstyle bass."
   },
   {
@@ -10976,7 +10976,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-bass-octave-deluxe-m288",
     "brand": "MXR",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "The MXR Bass Octave Deluxe M288 adds rich octave effects to your bass signal, giving an extra dimension to your sound. Featuring sub-octave and blend controls, it allows for subtle enhancement or aggressive octave layering. Perfect for live and studio settings, it enhances solos, riffs, and low-end textures."
   },
   {
@@ -11021,7 +11021,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-blackout-series-bass-envelope-filter-m82b",
     "brand": "MXR",
-    "category": "envelope filter",
+    "category": "filter",
     "seo_description": "The MXR Blackout Series Bass Envelope Filter M82B offers touch-sensitive, dynamic filtering effects for bass. Its enhanced response allows precise funk, slap, and groove tones. With adjustable Q and sensitivity, it maintains low-end clarity while adding expressive modulation for live or studio use."
   },
   {
@@ -11039,7 +11039,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-booster-mini-m293",
     "brand": "MXR",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "The MXR Booster Mini M293 provides a compact, transparent boost for guitarists seeking subtle volume enhancement or push for overdrive pedals. Its mini size makes it pedalboard-friendly while maintaining signal clarity. Perfect for solos, dynamics, and subtle gain shaping without coloring the tone."
   },
   {
@@ -11048,7 +11048,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mxr/dunlop/mc401",
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-cae-boostline-driver-mc401",
     "brand": "MXR",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "The MXR CAE Boost/Line Driver MC401 enhances signal strength and clarity while providing transparent boost. Designed for pedalboards and studio setups, it allows precise tone shaping without coloring the original signal. Ideal for driving long cable runs, amps, or other pedals with consistent tone integrity."
   },
   {
@@ -11453,7 +11453,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mxr/dunlop/m307",
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-layers-m307",
     "brand": "MXR",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "The MXR Layers M307 is a multi-layer effects pedal offering stacked modulation and delay effects. With intuitive controls, it allows guitarists to combine textures creatively, producing lush, complex soundscapes for both live and studio performances."
   },
   {
@@ -11462,7 +11462,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mxr/dunlop/m233",
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-micro-amp-m233",
     "brand": "MXR",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "The MXR Micro Amp + M233 is a compact boost pedal that enhances signal volume and drive. Transparent and reliable, it adds punch for solos or to push other overdrive pedals without coloring the original tone."
   },
   {
@@ -11471,7 +11471,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mxr/dunlop/m133",
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-micro-amp-m133",
     "brand": "MXR",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "The MXR Micro Amp M133 provides a clean, transparent boost for guitar and bass. Its simple design delivers consistent volume enhancement and dynamic control, perfect for solos, pedalboard integration, and subtle tone shaping."
   },
   {
@@ -11561,7 +11561,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mxr/dunlop/m306",
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-poly-blue-octave-m306",
     "brand": "MXR",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "The MXR Poly Blue Octave M306 delivers thick, polyphonic octave effects for guitar and bass. With blend and level controls, it enhances tones with subtle or pronounced octave layers, ideal for solos, riffs, and experimental sounds."
   },
   {
@@ -11624,7 +11624,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mxr/dunlop/rockman/x100",
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-rockman-x100-analog-tone-processor-mx100",
     "brand": "MXR",
-    "category": "multi-effects",
+    "category": "multi-fx",
     "seo_description": "The MXR Rockman X100 Analog Tone Processor MX100 emulates classic Rockman amp tones in a compact pedal. Offering chorus, compression, and distortion in one unit, it delivers polished, iconic '80s guitar sounds for studio and live use."
   },
   {
@@ -11795,7 +11795,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mxr/dunlop/m199",
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-tap-tempo-switch-m199",
     "brand": "MXR",
-    "category": "utility",
+    "category": "footswitch",
     "seo_description": "The MXR Tap Tempo Switch M199 provides foot-operated control for delay pedals and other tempo-synced effects. Compact and reliable, it allows guitarists to set accurate delay times during live performance without interrupting their playing."
   },
   {
@@ -11858,7 +11858,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mxr/dunlop/m231",
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-trs-split-tap-m231",
     "brand": "MXR",
-    "category": "utility",
+    "category": "footswitch/splitter",
     "seo_description": "The MXR TRS Split + Tap M231 allows splitting of TRS signals with tap functionality for versatile routing. Perfect for complex pedalboards, it provides reliable switching and signal integrity for live and studio setups."
   },
   {
@@ -11876,7 +11876,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mxr/dunlop/m280",
     "pedalplex_url": "https://www.pedalplex.com/gear/mxr-vintage-bass-octave-m280",
     "brand": "MXR",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "The MXR Vintage Bass Octave M280 delivers classic octave-up and octave-down effects for bass. Its analog circuitry provides rich, warm tones with harmonic complexity, perfect for vintage bass sounds or creative octave layers."
   },
   {
@@ -12002,7 +12002,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mythos/argo",
     "pedalplex_url": "https://www.pedalplex.com/gear/mythos-pedals-argo-octave-fuzz-v1",
     "brand": "Mythos Pedals",
-    "category": "fuzz/octave",
+    "category": "fuzz/octaver",
     "seo_description": "The Argo Octave Fuzz V1 combines classic fuzz with octave-up effects, delivering rich harmonics and vintage-style fuzz tones."
   },
   {
@@ -12011,7 +12011,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mythos/argo",
     "pedalplex_url": "https://www.pedalplex.com/gear/mythos-pedals-argo-octave-fuzz-v2",
     "brand": "Mythos Pedals",
-    "category": "fuzz/octave",
+    "category": "fuzz/octaver",
     "seo_description": "The Argo Octave Fuzz V2 refines the original design, offering tighter fuzz response and more pronounced octave effect for dynamic playing."
   },
   {
@@ -12020,7 +12020,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mythos/argonaut",
     "pedalplex_url": "https://www.pedalplex.com/gear/mythos-pedals-argonaut-octave",
     "brand": "Mythos Pedals",
-    "category": "fuzz/octave",
+    "category": "fuzz/octaver",
     "seo_description": "The Argonaut Octave delivers classic fuzz tones with an integrated octave-up effect, providing thick, harmonically rich soundscapes."
   },
   {
@@ -12029,7 +12029,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mythos/argonaut",
     "pedalplex_url": "https://www.pedalplex.com/gear/mythos-pedals-argonaut-octave-v2",
     "brand": "Mythos Pedals",
-    "category": "fuzz/octave",
+    "category": "fuzz/octaver",
     "seo_description": "The Argonaut Octave V2 improves upon the original with enhanced clarity, tighter fuzz, and a more pronounced octave effect."
   },
   {
@@ -12119,7 +12119,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/mythos/hephaestus",
     "pedalplex_url": "https://www.pedalplex.com/gear/mythos-pedals-hephaestus-sub-octave-fuzz-v2",
     "brand": "Mythos Pedals",
-    "category": "fuzz/octave",
+    "category": "fuzz/octaver",
     "seo_description": "The Hephaestus V2 provides sub-octave fuzz for thick, growling tones with enhanced low-end presence and harmonic richness."
   },
   {
@@ -12402,12 +12402,12 @@
     "seo_description": "Nobels Tremolo TR-X offers classic analog tremolo tones with adjustable speed and depth in a compact pedal."
   },
   {
-    "pedalplex_id": "Noble Dual Vacuum Tube Preamp/DI",
+    "pedalplex_id": "Noble Dual Vacuum Tube Preamp/di",
     "status": "missing",
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/noble-dual-vacuum-tube-preampdi",
     "brand": "Noble",
-    "category": "preamp/DI",
+    "category": "preamp/di",
     "seo_description": "Noble Dual Vacuum Tube Preamp/DI combines warm tube preamp tones with direct output for recording and live use."
   },
   {
@@ -12425,7 +12425,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/nux/verdugo/ampacademy",
     "pedalplex_url": "https://www.pedalplex.com/gear/nux-amp-academy-stompbox-amp-modeler",
     "brand": "NUX",
-    "category": "amp modeller",
+    "category": "preamp",
     "seo_description": "The NUX Amp Academy is a stompbox amp modeler providing multiple amp simulations and effects for flexible tone shaping."
   },
   {
@@ -12434,7 +12434,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/nux/core/ampcore/studio",
     "pedalplex_url": "https://www.pedalplex.com/gear/nux-amp-core-studio",
     "brand": "NUX",
-    "category": "amp modeller",
+    "category": "preamp",
     "seo_description": "NUX Amp Core Studio delivers comprehensive amp modeling with studio-quality effects and IR cab simulations for recording and practice."
   },
   {
@@ -12515,7 +12515,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/nux/reissue/59bassguy",
     "pedalplex_url": "https://www.pedalplex.com/gear/nux-fender-59-bassman-fbm-159-bassguy-reissue",
     "brand": "NUX",
-    "category": "overdrive/amp modeller",
+    "category": "overdrive/preamp",
     "seo_description": "NUX Fender NRO-7 '59 Bassguy Reissue emulates classic Fender amp tones with warm, vintage-inspired overdrive."
   },
   {
@@ -12641,7 +12641,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/nux/verdugo/nbp5",
     "pedalplex_url": "https://www.pedalplex.com/gear/nux-mld-bass-preamp-di",
     "brand": "NUX",
-    "category": "preamp/DI",
+    "category": "preamp/di",
     "seo_description": "NUX MLD Bass Preamp provides high-quality preamp and DI capabilities for bass, offering tone shaping and direct output."
   },
   {
@@ -12668,7 +12668,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/nux/verdugo/optimaair",
     "pedalplex_url": "https://www.pedalplex.com/gear/nux-optima-air-acoustic-simulator-ir-loader",
     "brand": "NUX",
-    "category": "acoustic simulator/IR",
+    "category": "acoustic simulator/ir loader",
     "seo_description": "NUX Optima Air emulates acoustic guitar tones with IR loading and flexible tone shaping options."
   },
   {
@@ -12686,7 +12686,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/nux/minicore/pulse",
     "pedalplex_url": "https://www.pedalplex.com/gear/nux-pulse-mini-ir-loader",
     "brand": "NUX",
-    "category": "IR loader",
+    "category": "ir loader",
     "seo_description": "NUX Pulse Mini allows loading and playing IRs with compact form factor and high-quality cabinet simulation."
   },
   {
@@ -12722,7 +12722,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/nux/verdugo/solidstudio",
     "pedalplex_url": "https://www.pedalplex.com/gear/nux-solid-studio-ir-power-amp-simulator",
     "brand": "NUX",
-    "category": "IR/power amp simulator",
+    "category": "ir loader/power amp",
     "seo_description": "NUX Solid Studio provides professional IR and power amp simulation for recording and live performance."
   },
   {
@@ -12731,7 +12731,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/nux/verdugo/stageman/floor",
     "pedalplex_url": "https://www.pedalplex.com/gear/nux-stageman-floor-acoustic-preamp-di",
     "brand": "NUX",
-    "category": "preamp/DI",
+    "category": "preamp/di",
     "seo_description": "NUX Stageman Floor combines acoustic preamp with DI capabilities, EQ, and effects for live performance."
   },
   {
@@ -12794,7 +12794,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/nux/minicore/nch3",
     "pedalplex_url": "https://www.pedalplex.com/gear/nux-voodoo-vibe-mini",
     "brand": "NUX",
-    "category": "modulation",
+    "category": "vibrato/rotary",
     "seo_description": "NUX Voodoo Vibe Mini recreates classic rotary/vibe modulation tones with expressive depth and motion."
   },
   {
@@ -12830,7 +12830,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/orange/acousticpedal",
     "pedalplex_url": "https://www.pedalplex.com/gear/orange-acoustic-pedal",
     "brand": "Orange",
-    "category": "acoustic preamp",
+    "category": "acoustic simulator",
     "seo_description": "Orange Acoustic Pedal provides tone shaping, compression, and preamp capabilities tailored for acoustic guitars."
   },
   {
@@ -12839,7 +12839,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/orange-ad30",
     "brand": "Orange",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Orange AD30 is a high-quality amp head delivering classic British tone with warm overdrive and dynamic response."
   },
   {
@@ -12857,7 +12857,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/orange-crush-mini",
     "brand": "Orange",
-    "category": "amp",
+    "category": "combo",
     "seo_description": "Orange Crush Mini is a compact practice amp delivering classic Orange tones in a portable format."
   },
   {
@@ -12866,7 +12866,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/orange-dark-terror",
     "brand": "Orange",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Orange Dark Terror is a high-gain mini amp head with aggressive tones and touch-sensitive dynamics."
   },
   {
@@ -12884,7 +12884,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/orange-dual-terror",
     "brand": "Orange",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Orange Dual Terror provides two-channel mini amp head with classic and high-gain tones in one compact unit."
   },
   {
@@ -12956,7 +12956,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/orange-micro-dark",
     "brand": "Orange",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Orange Micro Dark is a compact amp head delivering high-gain tones with classic Orange character."
   },
   {
@@ -12965,7 +12965,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/orange-micro-terror",
     "brand": "Orange",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Orange Micro Terror mini amp head offers powerful tones in a compact, portable design."
   },
   {
@@ -13001,7 +13001,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/orange-terror-stamp",
     "brand": "Orange",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Orange Terror Stamp is a mini amp head with punchy, high-gain tones suitable for guitarists needing portable power."
   },
   {
@@ -13190,7 +13190,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/origin/revivaldrive",
     "pedalplex_url": "https://www.pedalplex.com/gear/origin-effects-revivaldrive-switcher-interface",
     "brand": "Origin Effects",
-    "category": "switcher",
+    "category": "footswitch",
     "seo_description": "Switcher Interface for RevivalDRIVE allows easy routing and switching between multiple overdrive channels."
   },
   {
@@ -13289,7 +13289,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/pavement-pedal-super-freak-head",
     "brand": "Pavement Pedal",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Super Freak Head provides mini amp head-style tones with high gain and versatile EQ shaping."
   },
   {
@@ -13298,7 +13298,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/pavement-pedal-super-verb-head",
     "brand": "Pavement Pedal",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Super Verb Head delivers versatile amp head tones with built-in reverb and dynamic response."
   },
   {
@@ -13307,7 +13307,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/pavement-pedal-super-x-13-octave-fuzz",
     "brand": "Pavement Pedal",
-    "category": "octave/fuzz",
+    "category": "octaver/fuzz",
     "seo_description": "Super X-13 combines octave effects with aggressive fuzz for unique, dynamic guitar textures."
   },
   {
@@ -13316,7 +13316,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/pavement-pedals-body-snatcher-sub-octave-fuzz",
     "brand": "Pavement Pedal",
-    "category": "sub-octave/fuzz",
+    "category": "octaver/fuzz",
     "seo_description": "Body Snatcher provides sub-octave fuzz tones with thick low end and harmonically rich fuzz character."
   },
   {
@@ -13334,7 +13334,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/peavey/legacy/decade",
     "pedalplex_url": "https://www.pedalplex.com/gear/peavey-decade-preamp-effects",
     "brand": "Peavey",
-    "category": "preamp/effects",
+    "category": "preamp",
     "seo_description": "Decade Preamp Effects provides versatile tone shaping and multi-effect capabilities in a compact Peavey pedal."
   },
   {
@@ -13487,7 +13487,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/prs-archon-50w-head",
     "brand": "PRS",
-    "category": "amp",
+    "category": "head",
     "seo_description": "PRS Archon 50W Head delivers high-gain amp tones with aggressive mids, tight low end, and versatile voicing."
   },
   {
@@ -13496,7 +13496,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/r2r-electric-two-knob-treble-booster",
     "brand": "R2R Electric",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "Two Knob Treble Booster delivers focused treble enhancement with simple control for cutting through mixes and solos."
   },
   {
@@ -13604,7 +13604,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/revv/northernmauler",
     "pedalplex_url": "https://www.pedalplex.com/gear/revv-northern-mauler-glenn-fricker-signature",
     "brand": "Revv",
-    "category": "amp",
+    "category": "amp simulator/distortion",
     "seo_description": "Northern Mauler Signature amp delivers aggressive high-gain tones with dynamic touch response for modern metal."
   },
   {
@@ -13631,7 +13631,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/revv/tilt/boost",
     "pedalplex_url": "https://www.pedalplex.com/gear/revv-tilt-boost",
     "brand": "Revv",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "Tilt Boost delivers transparent boost with flexible EQ tilt for solos or signal stacking."
   },
   {
@@ -13649,7 +13649,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/roland-spdone-electro-drum-pad",
     "brand": "Roland",
-    "category": "drum pad",
+    "category": "drum machine",
     "seo_description": "SPD::ONE Electro provides electronic drum sounds in a compact pad for practice, performance, or recording."
   },
   {
@@ -13658,7 +13658,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/roland-spdone-kick-pad",
     "brand": "Roland",
-    "category": "drum pad",
+    "category": "drum machine",
     "seo_description": "Kick Pad delivers realistic electronic bass drum sounds in a compact, responsive trigger pad."
   },
   {
@@ -13667,7 +13667,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/roland-spdone-percussion-pad",
     "brand": "Roland",
-    "category": "drum pad",
+    "category": "drum machine",
     "seo_description": "Percussion Pad offers a variety of electronic percussion sounds for live performance or studio use."
   },
   {
@@ -13676,7 +13676,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/roland-spdone-wav-pad",
     "brand": "Roland",
-    "category": "drum pad",
+    "category": "drum machine",
     "seo_description": "Wav Pad allows users to trigger custom WAV samples or percussion sounds in a compact Roland pad format."
   },
   {
@@ -13685,7 +13685,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/solarguitars/chug/eqboost",
     "pedalplex_url": "https://www.pedalplex.com/gear/solar-chug-eq-boost",
     "brand": "Solar Chug",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "EQ-Boost by Solar Chug provides precise tonal shaping with a clean boost, perfect for solos and stacking."
   },
   {
@@ -13712,7 +13712,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/solarguitars/chug/tuner",
     "pedalplex_url": "https://www.pedalplex.com/gear/solar-chug-tuner-booster",
     "brand": "Solar Chug",
-    "category": "tuner/booster",
+    "category": "tuner/boost",
     "seo_description": "Tuner+ Booster combines accurate tuning with a transparent clean boost for seamless performance."
   },
   {
@@ -13721,7 +13721,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-100-purple-panel-head-signed",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Signed Purple Panel SLO-100 offers iconic high-gain Soldano tones with collectible appeal."
   },
   {
@@ -13730,7 +13730,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-100-snakeskin-head",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Snakeskin SLO-100 Head delivers the same legendary tones with a unique, textured aesthetic finish."
   },
   {
@@ -13739,7 +13739,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-100-white-head-purple-panel-signed",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "head",
     "seo_description": "White Head with Purple Panel provides classic Soldano tones in a limited signed edition for collectors."
   },
   {
@@ -13748,7 +13748,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-astro-20-combo",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "combo",
     "seo_description": "Astro-20 Combo delivers iconic Soldano high-gain tones in a compact combo amplifier form."
   },
   {
@@ -13757,7 +13757,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-astro-20-head",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Astro-20 Head provides professional high-gain Soldano tones with versatile control for live or studio use."
   },
   {
@@ -13766,7 +13766,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-midi-footswitch",
     "brand": "Soldano",
-    "category": "controller",
+    "category": "footswitch",
     "seo_description": "MIDI Footswitch allows remote control of Soldano amp functions with reliable MIDI switching."
   },
   {
@@ -13775,7 +13775,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-mini-head",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "head",
     "seo_description": "SLO Mini Head delivers the legendary Super Lead Overdrive tones in a compact head format."
   },
   {
@@ -13829,7 +13829,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-100-classic-head",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "head",
     "seo_description": "SLO-100 Classic Head provides full-range high-gain tones with precise control, ideal for stage and studio use."
   },
   {
@@ -13838,7 +13838,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-100-footswitch-and-cable",
     "brand": "Soldano",
-    "category": "controller",
+    "category": "footswitch",
     "seo_description": "Footswitch with cable for Soldano SLO-100 allows seamless channel and effect switching during performance."
   },
   {
@@ -13847,7 +13847,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-100-purple-head",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Purple SLO-100 Head combines the legendary Super Lead tones with a visually striking finish."
   },
   {
@@ -13856,7 +13856,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-30-112-combo-black",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "combo",
     "seo_description": "SLO-30 112 Combo in Black delivers full Super Lead tone in a compact, stage-ready amplifier."
   },
   {
@@ -13865,7 +13865,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-30-112-combo-purple",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "combo",
     "seo_description": "Purple SLO-30 112 Combo combines classic Soldano tones with an eye-catching color finish."
   },
   {
@@ -13874,7 +13874,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-30-112-combo-snakeskin",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "combo",
     "seo_description": "Snakeskin SLO-30 Combo offers iconic high-gain tones in a distinctive snakeskin-patterned amp casing."
   },
   {
@@ -13883,7 +13883,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-30-classic-head",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "head",
     "seo_description": "SLO-30 Classic Head provides legendary Super Lead tones in a versatile compact head format."
   },
   {
@@ -13892,7 +13892,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-30-footswitch-and-cable",
     "brand": "Soldano",
-    "category": "controller",
+    "category": "footswitch",
     "seo_description": "Footswitch and cable for SLO-30 allows easy channel switching and control during live performance."
   },
   {
@@ -13901,7 +13901,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-30-head-purple",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Purple SLO-30 Head delivers classic Soldano tones with a bold, visually appealing finish."
   },
   {
@@ -13910,7 +13910,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-30-head-purple-panel-signed",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Signed Purple Panel edition offers legendary SLO-30 tones with collectible aesthetics."
   },
   {
@@ -13919,7 +13919,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-30-head-snakeskin",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "head",
     "seo_description": "Snakeskin SLO-30 Head delivers high-gain tones in a distinctive patterned design."
   },
   {
@@ -13928,7 +13928,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/soldano-slo-30-head-white-purple-panel-signed",
     "brand": "Soldano",
-    "category": "amp",
+    "category": "head",
     "seo_description": "White SLO-30 Head with Purple Panel provides classic tones in a signed, collectible edition."
   },
   {
@@ -14009,7 +14009,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/sonicake/mini/sonicaby",
     "pedalplex_url": "https://www.pedalplex.com/gear/sonicake-one-loop-ab-line-selector",
     "brand": "Sonicake",
-    "category": "switcher",
+    "category": "footswitch",
     "seo_description": "One Loop A/B Line Selector allows routing of a single signal path to multiple outputs with precision."
   },
   {
@@ -14054,7 +14054,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/sonicake/mini/sonicsupermaster",
     "pedalplex_url": "https://www.pedalplex.com/gear/sonicake-sonic-super-master-mini-clean-boost",
     "brand": "Sonicake",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "Super Master Mini Clean Boost delivers transparent gain increase for solos or signal chain boosting."
   },
   {
@@ -14153,7 +14153,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/strymon/deco",
     "pedalplex_url": "https://www.pedalplex.com/gear/strymon-deco-tape-saturation-doubletracker",
     "brand": "Strymon",
-    "category": "tape emulation",
+    "category": "delay",
     "seo_description": "Deco offers authentic tape saturation, tape delay emulation, and double-tracking effects for analog warmth and depth."
   },
   {
@@ -14171,7 +14171,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/strymon/ec1",
     "pedalplex_url": "https://www.pedalplex.com/gear/strymon-ec-1",
     "brand": "Strymon",
-    "category": "envelope filter",
+    "category": "filter",
     "seo_description": "EC-1 provides classic envelope-controlled modulation, adding dynamic, expressive filtering to your signal."
   },
   {
@@ -14198,7 +14198,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/strymon/iridium",
     "pedalplex_url": "https://www.pedalplex.com/gear/strymon-iridium",
     "brand": "Strymon",
-    "category": "amp simulator",
+    "category": "preamp",
     "seo_description": "Iridium is a compact amp and cab simulator delivering realistic guitar amp tones with selectable amp and cabinet models."
   },
   {
@@ -14207,7 +14207,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/strymon/lexrotary",
     "pedalplex_url": "https://www.pedalplex.com/gear/strymon-lex-rotary",
     "brand": "Strymon",
-    "category": "rotary speaker",
+    "category": "rotary",
     "seo_description": "Lex Rotary recreates authentic rotary speaker effects with adjustable speed and depth, perfect for vintage organ and guitar tones."
   },
   {
@@ -14270,7 +14270,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/supro-1696rth-black-magick-rev-head",
     "brand": "Supro",
-    "category": "amp",
+    "category": "head",
     "seo_description": "1696RTH Black Magick Rev Head delivers vintage-inspired tones with rich overdrive, crisp cleans, and responsive dynamics."
   },
   {
@@ -14369,7 +14369,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/mini/bodyrez",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-bodyrez-acustic-pickup-enhancer",
     "brand": "TC Electronic",
-    "category": "acoustic enhancer",
+    "category": "enhancer",
     "seo_description": "Bodyrez enhances acoustic pickup tone with clarity, warmth, and improved dynamics for live and recording setups."
   },
   {
@@ -14450,7 +14450,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/smorgasbord/crescendo",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-crescendo-auto-swell",
     "brand": "TC Electronic",
-    "category": "volume swell",
+    "category": "volume",
     "seo_description": "Crescendo Auto Swell produces smooth volume swells for ambient and expressive playing, ideal for clean or overdriven tones."
   },
   {
@@ -14855,7 +14855,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/mimiq",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-mimiq-doubler",
     "brand": "TC Electronic",
-    "category": "doubler",
+    "category": "delay",
     "seo_description": "Mimiq Doubler adds authentic doubled tones to guitar signals, emulating classic studio double-tracking effects."
   },
   {
@@ -14864,7 +14864,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/mini/mimiq",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-mimiq-mini-doubler",
     "brand": "TC Electronic",
-    "category": "doubler",
+    "category": "delay",
     "seo_description": "Compact Mimiq Mini Doubler provides stereo doubling effects with precise pitch control and low-noise circuitry."
   },
   {
@@ -14900,7 +14900,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/smorgasbord/nether",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-nether-octaver",
     "brand": "TC Electronic",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "Nether Octaver generates rich, dynamic octave tones for guitar and bass, expanding harmonic possibilities."
   },
   {
@@ -14918,7 +14918,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/toneprint/plethora/x1",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-plethora-x1",
     "brand": "TC Electronic",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Plethora X1 is a powerful multi-effects processor with integrated TonePrint support and flexible routing for guitarists."
   },
   {
@@ -14927,7 +14927,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/toneprint/plethora/x3",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-plethora-x3",
     "brand": "TC Electronic",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Plethora X3 offers three simultaneously active effects chains with TonePrint integration for ultimate versatility."
   },
   {
@@ -14936,7 +14936,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/toneprint/plethora/x5",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-plethora-x5",
     "brand": "TC Electronic",
-    "category": "multi-effect",
+    "category": "multi-fx",
     "seo_description": "Plethora X5 delivers five active effect slots with TonePrint technology, ideal for professional guitarists and complex rigs."
   },
   {
@@ -14999,7 +14999,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/toneprint/quintessence",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-quintessence-harmony",
     "brand": "TC Electronic",
-    "category": "harmony",
+    "category": "harmonizer",
     "seo_description": "Quintessence Harmony generates clean, adjustable harmony voices that follow your playing for expressive performances."
   },
   {
@@ -15008,7 +15008,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/smorgasbord/rush",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-rush-booster",
     "brand": "TC Electronic",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "Rush Booster provides transparent signal boost with added presence and dynamics for solos or stacking with other effects."
   },
   {
@@ -15089,7 +15089,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/spark",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-spark-booster",
     "brand": "TC Electronic",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "Spark Booster adds transparent gain and presence, enhancing dynamics and articulation without coloring your tone."
   },
   {
@@ -15098,7 +15098,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/mini/spark/mini",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-spark-mini-booster",
     "brand": "TC Electronic",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "Spark Mini Booster delivers compact, pedalboard-friendly transparent boost for solos or stacking with other effects."
   },
   {
@@ -15125,7 +15125,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/mini/subnup",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-sub-n-up-mini-octaver",
     "brand": "TC Electronic",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "Sub 'N' Up Mini Octaver adds full-range octave effects in a compact pedal, including sub-octave and upper-octave layers."
   },
   {
@@ -15134,7 +15134,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/toneprint/subnup",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-sub-n-up-octaver",
     "brand": "TC Electronic",
-    "category": "octave",
+    "category": "octaver",
     "seo_description": "Sub 'N' Up Octaver provides thick octave tones with sub and upper-octave layering for guitarists seeking massive harmonic content."
   },
   {
@@ -15224,7 +15224,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/toneprint/viscousvibe",
     "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-viscous-vibe",
     "brand": "TC Electronic",
-    "category": "vibe",
+    "category": "vibrato",
     "seo_description": "Viscous Vibe provides warm, uni-vibe style modulation with adjustable depth and speed for vintage chorus/vibrato sounds."
   },
   {
@@ -15287,7 +15287,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/thorpyfx-dinosaural-3rd-law-booster",
     "brand": "ThorpyFx",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "3rd Law Booster provides transparent gain enhancement, adding warmth, presence, and dynamic touch sensitivity."
   },
   {
@@ -15305,7 +15305,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/thorpyfx-dinosaural-dan-solo-booster",
     "brand": "ThorpyFx",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "Dan Solo Booster offers clean gain boost with tonal clarity and responsive dynamics for solos and stacking effects."
   },
   {
@@ -15350,7 +15350,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/thorpyfx/haveblue",
     "pedalplex_url": "https://www.pedalplex.com/gear/thorpyfx-have-blue-germanium-boost",
     "brand": "ThorpyFx",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "HAVE BLUE Germanium Boost delivers transparent, warm gain with germanium-infused tonal coloration."
   },
   {
@@ -15359,7 +15359,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/thorpyfx/heavywater",
     "pedalplex_url": "https://www.pedalplex.com/gear/thorpyfx-heavy-water-mkii-dual-high-headroom-boost",
     "brand": "ThorpyFx",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "Heavy Water MKII Dual Boost offers high-headroom transparent gain with dynamic control for stacking or solos."
   },
   {
@@ -15422,7 +15422,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/thorpyfx/thedane/mk2",
     "pedalplex_url": "https://www.pedalplex.com/gear/thorpyfx-the-dane-mkii-drive-boost",
     "brand": "ThorpyFx",
-    "category": "overdrive/booster",
+    "category": "overdrive/boost",
     "seo_description": "The DANE MKII combines overdrive and transparent boost for dynamic tonal shaping and expressive playing."
   },
   {
@@ -15566,7 +15566,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/volta-1987-pro-hot-rod-multichannel-plexi",
     "brand": "Volta",
-    "category": "amp",
+    "category": "amp simulator",
     "seo_description": "The 1987 Pro Hot Rod MultiChannel Plexi offers high-gain, multi-channel Plexi tones with dynamic response and rich harmonics."
   },
   {
@@ -15575,7 +15575,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/volta-1987-pro-midi-hot-rod-multichannel-plexi",
     "brand": "Volta",
-    "category": "amp",
+    "category": "amp simulator",
     "seo_description": "Midi 1987 Pro Hot Rod Plexi provides full multi-channel Plexi tones with MIDI control for seamless switching and versatility."
   },
   {
@@ -15584,7 +15584,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/volta-1987-v2-hot-rod-dual-channel-plexi",
     "brand": "Volta",
-    "category": "amp",
+    "category": "amp simulator",
     "seo_description": "1987 v2 Hot Rod Dual Channel Plexi delivers dual-channel Plexi tones with enhanced gain and tonal versatility."
   },
   {
@@ -15593,7 +15593,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/volta-black-tweed",
     "brand": "Volta",
-    "category": "amp",
+    "category": "amp simulator",
     "seo_description": "Black Tweed offers classic tweed-style overdrive and clean tones with warm, vintage character."
   },
   {
@@ -15602,7 +15602,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/volta-black-tweed-plus",
     "brand": "Volta",
-    "category": "amp",
+    "category": "amp simulator",
     "seo_description": "Black Tweed Plus provides enhanced tweed amp tones with added gain, dynamic touch response, and tonal flexibility."
   },
   {
@@ -15647,7 +15647,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/vox-ac30",
     "brand": "Vox",
-    "category": "amp",
+    "category": "head",
     "seo_description": "The legendary Vox AC30 delivers classic British chime, rich overdrive, and dynamic tube amp response."
   },
   {
@@ -15656,7 +15656,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/vox/valvenergy/mysticedge",
     "pedalplex_url": "https://www.pedalplex.com/gear/vox-mystic-edge",
     "brand": "Vox",
-    "category": "effect",
+    "category": "distortion",
     "seo_description": "Mystic Edge combines unique tonal shaping and dynamic response, ideal for expressive modulation and overdrive sounds."
   },
   {
@@ -15737,7 +15737,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/walrus/fable",
     "pedalplex_url": "https://www.pedalplex.com/gear/walrus-audio-fable-granular-soundscape-generator",
     "brand": "Walrus Audio",
-    "category": "ambient/effect",
+    "category": "ambient",
     "seo_description": "Fable generates expansive granular soundscapes, textures, and ambient effects for creative guitar and synth processing."
   },
   {
@@ -15746,7 +15746,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/walrus/fable",
     "pedalplex_url": "https://www.pedalplex.com/gear/walrus-audio-fable-granular-soundscape-generator-fall-limited-2025",
     "brand": "Walrus Audio",
-    "category": "ambient/effect",
+    "category": "ambient",
     "seo_description": "Limited Fall 2025 edition of Fable, offering granular soundscape generation with enhanced features and textures."
   },
   {
@@ -15881,7 +15881,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/walrus/lore",
     "pedalplex_url": "https://www.pedalplex.com/gear/walrus-audio-lore-reverse-soundscape-generator",
     "brand": "Walrus Audio",
-    "category": "ambient/effect",
+    "category": "ambient",
     "seo_description": "Lore generates evolving reverse soundscapes, textures, and ambient layers for creative guitar and synth applications."
   },
   {
@@ -15890,7 +15890,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/walrus/lore",
     "pedalplex_url": "https://www.pedalplex.com/gear/walrus-audio-lore-reverse-soundscape-generator-fall-limited-2025",
     "brand": "Walrus Audio",
-    "category": "ambient/effect",
+    "category": "ambient",
     "seo_description": "Limited Fall 2025 edition of Lore, creating evolving reverse soundscapes and ambient textures with expanded features."
   },
   {
@@ -15908,7 +15908,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/walrus/lum",
     "pedalplex_url": "https://www.pedalplex.com/gear/walrus-audio-lum-texture-engine",
     "brand": "Walrus Audio",
-    "category": "ambient/effect",
+    "category": "ambient",
     "seo_description": "L\u00fcm provides complex sound textures and modulation effects, ideal for creating unique ambient and experimental tones."
   },
   {
@@ -15917,7 +15917,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/walrus/melee",
     "pedalplex_url": "https://www.pedalplex.com/gear/walrus-audio-melee-wall-of-noise",
     "brand": "Walrus Audio",
-    "category": "noise/fuzz",
+    "category": "reverb/distortion",
     "seo_description": "Melee produces intense noise textures and wall-of-sound effects for experimental and avant-garde soundscapes."
   },
   {
@@ -15926,7 +15926,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/walrus/melee",
     "pedalplex_url": "https://www.pedalplex.com/gear/walrus-audio-melee-wall-of-noise-black",
     "brand": "Walrus Audio",
-    "category": "noise/fuzz",
+    "category": "reverb/distortion",
     "seo_description": "Black edition of Melee delivers the same extreme noise and experimental textures with a sleek aesthetic."
   },
   {
@@ -16052,7 +16052,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/wayhuge/dunlop/whe900",
     "pedalplex_url": "https://www.pedalplex.com/gear/way-huge-atreides-analog-weirding-module",
     "brand": "Way Huge",
-    "category": "experimental",
+    "category": "fuzz",
     "seo_description": "Atreides Analog Weirding Module produces experimental tones and textures with unique analog modulation."
   },
   {
@@ -16385,7 +16385,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/whirlwind-selector-ab-box",
     "brand": "Whirlwind",
-    "category": "switcher",
+    "category": "footswitch",
     "seo_description": "Selector A/B Box allows seamless routing between two signal paths for guitars, basses, or effects loops."
   },
   {
