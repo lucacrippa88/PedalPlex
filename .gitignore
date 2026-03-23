@@ -2,14 +2,12 @@
 .DS_Store
 Thumbs.db
 
-# Test
-#test.html
-
 # Other
 other/
 
 # Plex
 plex/
 
-# Python
-GENERATE_STATIC_PAGES.py
+# Templates
+static_template.html
+generate_pages.py
