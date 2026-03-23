@@ -688,7 +688,8 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}`
     }),
     ...(isImage ? {
-      backgroundImage: `url("/${insideColorRaw}")`,
+      // backgroundImage: `url("/${insideColorRaw}")`,
+      backgroundImage: `url("${resolveImageUrl(insideColorRaw)}")`,
       backgroundSize: 'cover',
       backgroundPosition: 'center'
     } : {
@@ -1184,7 +1185,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
                 colorOnly = match[1];
                 inside = match[2] || "";
               }
-            }
+            } 
 
             const widthValue = parseFloat(getPedalWidth(pedal.width));
 
@@ -1201,7 +1202,8 @@ async function renderFullPedalboard(pedalboardOverride = null) {
                 boxShadow: `inset 0 0 0 3px ${pedal["inside-border"]}` // Only if inside-border exists
               }),
               ...(isImage ? {
-                backgroundImage: `url("/${insideColorRaw}")`,
+                // backgroundImage: `url("/${insideColorRaw}")`,
+                backgroundImage: `url("${resolveImageUrl(insideColorRaw)}")`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               } : {
@@ -1635,4 +1637,23 @@ async function buildPresetDropdown($ul, pedalId) {
     console.error("Preset dropdown error:", err);
     $ul.html("<li class='error'>Error loading SubPlexes</li>");
   }
+}
+
+
+function resolveImageUrl(path) {
+  if (!path) return "";
+
+  const trimmed = path.trim();
+
+  // URL esterna → NON toccare
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+
+  // Data URI → NON toccare
+  if (/^data:image\//i.test(trimmed)) return trimmed;
+
+  // Già assoluta (parte con /) → ok così
+  if (trimmed.startsWith("/")) return trimmed;
+
+  // Locale → forzo root (QUESTO è il punto chiave)
+  return `/${trimmed}`;
 }
