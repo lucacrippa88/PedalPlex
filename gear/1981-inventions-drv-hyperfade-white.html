@@ -143,7 +143,7 @@
 
     <div id="pedalboard-controls" style="display:flex;align-items:center;gap:8px;width:100%;">
 
-      <a id="backToCatalog" href="../gears" class="bx--btn bx--btn--tertiary">
+      <a id="backToCatalog" href="#" class="bx--btn bx--btn--tertiary">
         Back to Catalog
         <svg width="16" height="16" viewBox="0 0 32 32" class="bx--btn__icon">
           <path d="M14 26L15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26z"></path>
@@ -299,6 +299,21 @@
 
     });
   </script>
+
+  <script>
+    document.getElementById('backToCatalog')?.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        if (document.referrer && window.history.length > 1) {
+            window.history.back();
+        } else {
+            // fallback se l'utente entra diretto nella pagina
+            window.location.href = '../gears';
+        }
+    });
+  </script>
+
+
 
 </body>
 </html>
