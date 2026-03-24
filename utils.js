@@ -1610,7 +1610,7 @@ async function buildPresetDropdown($ul, pedalId) {
 
   try {
     const res = await fetch(
-      "https://api.pedalplex.com/GET_PRESETS_BY_PEDAL.php", {
+      "https://api.pedalplex.com/GET_PLEX_BY_GEAR.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

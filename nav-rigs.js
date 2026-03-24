@@ -258,7 +258,7 @@ function initNavPedalboard(userRole) {
           let pedalData = window.catalog.find(p => p._id === pedal._id);
           if (!pedalData) {
             try {
-              const postRes = await fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
+              const postRes = await fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
                 method: "POST",
                   headers: {
                     "Content-Type": "application/json",
