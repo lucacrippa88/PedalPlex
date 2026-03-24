@@ -260,9 +260,10 @@ function initNavPedalboard(userRole) {
             try {
               const postRes = await fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                },
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + authToken
+                  },
                 body: JSON.stringify({
                   ids: [pedal._id]
                 })
