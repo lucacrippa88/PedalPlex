@@ -1086,7 +1086,8 @@ async function renderFullPedalboard(pedalboardOverride = null) {
     window.pedalboard = pedalboardOverride;
   }
 
-  return new Promise((resolve) => {
+  // return new Promise((resolve) => { // per abilitare funzioni await
+  return new Promise(async (resolve) => {
 
     try {
       if (!resultsDiv) {
@@ -1159,11 +1160,44 @@ async function renderFullPedalboard(pedalboardOverride = null) {
         for (const pbPedal of rowsMap[rowNum]) {
           try {
             const id = String(pbPedal.pedal_id || "").trim();
-            const pedalData = window.catalogMap[id] || window.catalogMap[id.normalize()];
+            // const pedalData = window.catalogMap[id] || window.catalogMap[id.normalize()];
+
+            // if (!pedalData) {
+            //   console.warn(`Pedal not found in catalog: ${pbPedal.pedal_id}`);
+            //   continue;
+            // }
+
+            let pedalData = window.catalogMap[id] || window.catalogMap[id.normalize?.()];
 
             if (!pedalData) {
-              console.warn(`Pedal not found in catalog: ${pbPedal.pedal_id}`);
-              continue;
+              try {
+                const authToken = localStorage.getItem('authToken');
+
+                const res = await fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + authToken
+                  },
+                  body: JSON.stringify({ ids: [id] })
+                });
+
+                const data = await res.json();
+
+                if (data?.docs?.length > 0) {
+                  pedalData = data.docs[0];
+
+                  // 🔥 fondamentale: cache locale
+                  window.catalogMap[id] = pedalData;
+                } else {
+                  console.warn(`Pedal not returned by API: ${id}`);
+                  continue;
+                }
+
+              } catch (err) {
+                console.error("Fetch error for pedal:", id, err);
+                continue;
+              }
             }
 
             const pedal = pedalData;
