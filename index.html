@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="css/style.css">
 
 
-  <!-- Google tag (gtag.js) -->
+  <!-- Google tag (gtag.js)
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -33,6 +33,70 @@
     }
     gtag('js', new Date());
     gtag('config', 'G-BX9P5WN5HH');
+  </script> -->
+
+  <!-- Cookie Consent Banner (homepage only) -->
+  <script>
+  (function() {
+    // Check if we're on homepage
+    if (window.location.pathname !== '/') return;
+
+    // Create banner HTML
+    const banner = document.createElement('div');
+    banner.id = 'cookie-banner';
+    banner.style = "position:fixed;bottom:0;left:0;width:100%;background:#222;color:#fff;padding:15px;text-align:center;z-index:9999;font-size:1rem;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;";
+    banner.innerHTML = `
+      <span style="flex:1 1 100%;margin-bottom:8px;">
+        We use cookies to improve your experience. By clicking "Accept", you consent to analytics cookies.
+      </span>
+      <div style="flex:1 1 auto;">
+        <button id="cookie-accept" style="margin-right:10px;padding:8px 15px;background:#0f62fe;color:#fff;border:none;border-radius:4px;cursor:pointer;">Accept</button>
+        <button id="cookie-reject" style="margin-right:10px;padding:8px 15px;background:#888;color:#fff;border:none;border-radius:4px;cursor:pointer;">Reject</button>
+        <a href="/cookie-policy" style="color:#0f62fe;text-decoration:underline;padding:8px 15px;">Learn more</a>
+      </div>
+    `;
+    document.body.appendChild(banner);
+
+    const acceptBtn = document.getElementById('cookie-accept');
+    const rejectBtn = document.getElementById('cookie-reject');
+
+    // Check existing consent
+    const consent = localStorage.getItem('pedalplex_cookie_consent');
+    if (consent) {
+      banner.style.display = 'none';
+      if (consent === 'accept') loadGA();
+    }
+
+    // Accept
+    acceptBtn.addEventListener('click', function() {
+      localStorage.setItem('pedalplex_cookie_consent', 'accept');
+      banner.style.display = 'none';
+      loadGA();
+    });
+
+    // Reject
+    rejectBtn.addEventListener('click', function() {
+      localStorage.setItem('pedalplex_cookie_consent', 'reject');
+      banner.style.display = 'none';
+    });
+
+    // GA loader
+    function loadGA() {
+      if (window.gtagLoaded) return;
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-BX9P5WN5HH');
+
+      window.gtagLoaded = true;
+    }
+  })();
   </script>
 
   <script type="application/ld+json">
@@ -786,13 +850,6 @@
 
 
 
-
-
-
-
-
-
-
   <!-- Footer -->
   <footer id="footer" style="margin-top:4rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
     © <span id="year-range"></span> PedalPlex ·
@@ -805,7 +862,7 @@
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script src="nav.js"></script>
-  <script type="text/javascript" charset="UTF-8" src="//cdn.cookie-script.com/s/6d9d5d6dc73c7ce2b1a6d5698029fb47.js"></script>
+  <!-- <script type="text/javascript" charset="UTF-8" src="//cdn.cookie-script.com/s/6d9d5d6dc73c7ce2b1a6d5698029fb47.js"></script> -->
 
   <script>
     $(document).ready(function () {

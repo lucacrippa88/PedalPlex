@@ -7,6 +7,28 @@
   <link rel="icon" href="logos/pedalplex_logo_gradient.png" type="image/x-icon">
   <link rel="stylesheet" href="css/carbon-components.min.css">
   <link rel="stylesheet" href="css/style.css">
+
+<script>
+(function() {
+  const consent = localStorage.getItem('pedalplex_cookie_consent');
+  if (consent === 'accept') {
+    if (!window.gtagLoaded) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-BX9P5WN5HH');
+      window.gtagLoaded = true;
+    }
+  }
+})();
+</script>
+
 </head>
 <body>
 
@@ -14,83 +36,141 @@
     <div class="pedalplex-logo-fullscreen-menu"></div><br><br>
     <h1 style="font-size:2.25rem; font-weight:700;">Terms & Conditions</h1>
 
-    <p><b>Effective date: Sept. 29, 2025</b></p><br>
+    <p><b>Effective date: Mar 24, 2026</b></p><br>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    Welcome to PedalPlex! Please read these Terms & Conditions carefully before using the app.<br>
-    By using our services, you agree to these terms.
+    Welcome to PedalPlex. These Terms & Conditions (“Terms”) govern your access to and use of our web application and related services (“Service”).<br>
+    By accessing or using PedalPlex, you agree to be bound by these Terms.
     </p><br><br>
 
-    <h4>1. Your Account</h4>
+    <h4>1. About the service</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    To use our app fully, you may need to create an account.<br>
-    You are responsible for keeping your login credentials safe and secure.<br>
-    You agree to provide accurate, current, and complete information when creating your account.<br>
-    You must notify us immediately of any unauthorized use of your account.
+    PedalPlex is a web application that allows users to explore, create, and manage virtual pedalboards, presets, and gear configurations for musical purposes.
     </p><br><br>
 
-    <h4>2. User Content</h4>
+    <h4>2. Eligibility</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    You retain ownership of any content you create within the app, including pedalboards, presets, and related data.<br>
-    By creating or uploading content, you grant PedalPlex a non-exclusive, worldwide, royalty-free license to store, display, and use your content in the app.<br>
-    You agree not to upload content that is illegal, offensive, infringes third-party rights, or violates these Terms.<br>
+    You must be at least 16 years old to use the Service. By using PedalPlex, you represent and warrant that you meet this requirement.
     </p><br><br>
 
-    <h4>3. Third-Party Brands & Catalog</h4>
+    <h4>3. User Accounts</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    Our catalog includes gear from third-party brands such as Boss, Marshall, TC Electronic, Electro-Harmonix, Ibanez, and others.<br>
-    All trademarks, product names, and images are property of their respective owners.<br>
-    PedalPlex is not affiliated with, endorsed, or sponsored by these brands.<br>
-    Users may not use brand names or logos for commercial purposes without proper authorization.<br>
+    To access certain features, you may be required to create an account.<br>
+    You agree to:<br>
+    - Provide accurate and complete information<br>
+    - Keep your login credentials secure<br>
+    - Be responsible for all activities under your account<br><br>
+    We reserve the right to suspend or terminate accounts that violate these Terms.
     </p><br><br>
 
-    <h4>4. Prohibited Conduct</h4>
+    <h4>4. User Content</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
+    You retain ownership of any content you create, upload, or share within the Service (“User Content”), including pedalboards and presets.<br>
+    By submitting User Content, you grant PedalPlex a non-exclusive, worldwide, royalty-free license to:<br>
+    - Host, store, reproduce, modify, adapt<br>
+    - Display and distribute your content within the Service<br>
+    - Improve and operate the platform<br><br>
+
+    You represent and warrant that:<br>
+    - You own or have the necessary rights to your content<br>
+    - Your content does not violate any laws or third-party rights<br><br>
+
+    We reserve the right to remove or modify User Content at our sole discretion.
+    </p><br><br>
+
+    <h4>5. Acceptable Use</h4>
+    <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
+    You agree not to:<br>
+    - Use the Service for unlawful purposes<br>
+    - Upload harmful, abusive, defamatory, or infringing content<br>
+    - Attempt to gain unauthorized access to systems or data<br>
+    - Interfere with or disrupt the Service
+    </p><br><br>
+
+    <h4>6. Intellectual Property</h4>
+    <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
+    All content and materials provided by PedalPlex (excluding User Content), including design, structure, and database organization, are protected by intellectual property laws.<br>
     You may not:<br>
-    Reverse-engineer, copy, or distribute the app or its catalog.<br>
-    Sell, resell, or commercialize any content from the app without permission.<br>
-    Harm, harass, or interfere with other users.<br>
-    Violate any applicable laws or regulations.<br>
+    - Copy, reproduce, distribute, or exploit any part of the Service<br>
+    - Scrape, extract, or reuse data from the platform without permission
     </p><br><br>
 
-    <h4>5. Disclaimers</h4>
+    <h4>7. Third-Party Brands and Content</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    The app and its catalog are provided “as is” without warranties of any kind, whether express or implied.<br>
-    We do not guarantee that all information in the catalog is accurate, complete, or up-to-date.<br>
-    Each item, configuration or product depicted in this app is purely for educational purposes and may not reflect the actual product or its performance.<br>
+    The Service includes references to third-party brands such as Boss, Marshall, TC Electronic, Electro-Harmonix, Ibanez, and others.<br>
+    All trademarks, product names, and images are the property of their respective owners.<br><br>
+
+    PedalPlex:<br>
+    - Is not affiliated with, endorsed by, or sponsored by these brands<br>
+    - Uses such references for identification and informational purposes only<br><br>
+
+    PedalPlex does have agreements with some gear builders: agreed and approved gears are labeled with a "Verified" badge.
     </p><br><br>
 
-    <h4>6. Limitation of Liability</h4>
+    <h4>8. Third-Party Links and Affiliate Disclosure</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    We are not liable for any damages, losses, or errors resulting from your use of the app, including lost or corrupted presets, incorrect gear info, or technical issues.<br>
+    The Service may include links to third-party websites.<br>
+    We may participate in affiliate programs, meaning we may earn commissions from qualifying purchases made through these links.<br><br>
+
+    We are not responsible for:<br>
+    - Third-party content<br>
+    - Availability of external sites<br>
+    - Transactions made outside our platform
     </p><br><br>
 
-    <h4>7. GDPR Compliance</h4>
+    <h4>9. Service Availability</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    Your use of the app is governed by our Privacy Policy, which explains how we collect, process, and protect your personal data.<br>
-    You may exercise your GDPR rights at any time by contacting us at any time via GitHub.<br>
+    We do not guarantee that the Service will be uninterrupted, secure, error-free.<br>
+    We may modify, suspend, or discontinue any part of the Service at any time without notice.
     </p><br><br>
 
-    <h4>8. Account Termination</h4>
+    <h4>10. Disclaimer of Warranties</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    We may suspend or terminate your account if you violate these Terms.<br>
-    You may delete your account at any time, and all your associated data will be removed permanently.<br>
+    The Service is provided “as is” and “as available”.<br>
+    To the maximum extent permitted by law, PedalPlex disclaims all warranties, express or implied, including:<br>
+    - Accuracy or completeness of content<br>
+    - Fitness for a particular purpose<br>
+    - Reliability of gear information or configurations<br><br>
+
+    All gear representations are for informational and educational purposes only and may not reflect real-world performance.
     </p><br><br>
 
-    <h4>9. Changes to Terms</h4>
+    <h4>11. Limitation of Liability</h4>
+    <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
+    To the maximum extent permitted by applicable law, PedalPlex shall not be liable for:<br>
+    - Indirect, incidental, or consequential damages<br>
+    - Loss of data, presets, or configurations<br>
+    - Inaccuracies in the catalog<br>
+    - Service interruptions or technical issues<br><br>
+
+    Nothing in these Terms excludes liability where it cannot be excluded under applicable law.
+    </p><br><br>
+
+    <h4>12. Account Termination</h4>
+    <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
+    We may suspend or terminate your account if you violate these Terms or misuse the Service.<br>
+    You may delete your account at any time.<br>
+    Upon deletion, your data will be deleted or anonymized, except where retention is required by law.
+    </p><br><br>
+
+    <h4>13. Privacy</h4>
+    <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
+    Your use of the Service is also governed by our Privacy Policy, which explains how we process your personal data in accordance with applicable data protection laws, including GDPR.
+    </p><br><br>
+
+    <h4>14. Changes to the Terms</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
     We may update these Terms from time to time.<br>
-    Continued use of the app after updates constitutes acceptance of the new Terms.<br>
+    We will notify users of significant changes where required. Continued use of the Service constitutes acceptance of the updated Terms.
     </p><br><br>
 
-    <h4>10. Governing Law</h4>
+    <h4>15. Governing Law</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    These Terms are governed by the laws of Italy.<br>
-    Any disputes arising from these Terms will be subject to the jurisdiction of Italian courts.<br>
+    These Terms are governed by the laws of Italy.
     </p><br><br>
 
-    <h4>11. Contact Information</h4>
+    <h4>16. Contact</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    If you have any questions or concerns regarding these Terms, contact us via GitHub.<br>
+    For any questions regarding these Terms, you can contact us via email at support@pedalplex.com.
     </p><br><br>
 
 </main>

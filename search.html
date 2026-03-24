@@ -13,14 +13,26 @@
   <link rel="stylesheet" href="css/carbon-components.min.css" />
   <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
-  <script>
+<script>
+(function() {
+  const consent = localStorage.getItem('pedalplex_cookie_consent');
+  if (consent === 'accept') {
+    if (!window.gtagLoaded) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+      document.head.appendChild(script);
+
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
       gtag('js', new Date());
       gtag('config', 'G-BX9P5WN5HH');
-  </script>
+      window.gtagLoaded = true;
+    }
+  }
+})();
+</script>
 
   <link rel="stylesheet" href="css/style.css" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
