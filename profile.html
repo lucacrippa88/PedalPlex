@@ -10,6 +10,28 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+(function() {
+  const consent = localStorage.getItem('pedalplex_cookie_consent');
+  if (consent === 'accept') {
+    if (!window.gtagLoaded) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-BX9P5WN5HH');
+      window.gtagLoaded = true;
+    }
+  }
+})();
+</script>
+
 </head>
 <body>
 

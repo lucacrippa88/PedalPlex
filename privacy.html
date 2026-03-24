@@ -8,108 +8,161 @@
   <link rel="stylesheet" href="css/carbon-components.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
+<script>
+(function() {
+  const consent = localStorage.getItem('pedalplex_cookie_consent');
+  if (consent === 'accept') {
+    if (!window.gtagLoaded) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-BX9P5WN5HH');
+      window.gtagLoaded = true;
+    }
+  }
+})();
+</script>
+
 <body>
 
   <main id="page-content" style="margin-top:20px; text-align:center; margin-bottom:50px;">
     <div class="pedalplex-logo-fullscreen-menu"></div><br><br>
     <h1 style="font-size:2.25rem; font-weight:700;">Privacy Policy</h1>
-    <p><b>Effective date: Sept. 29, 2025</b></p><br>
+    <p><b>Effective date: Mar 24, 2026</b></p><br>
+
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    Welcome to PedalPlex! Protecting your privacy is very important to us.<br>
-    This Privacy Policy explains in detail what personal data we collect, how we use it, the legal grounds for processing under the General Data Protection Regulation (GDPR), your rights, and how you can contact us.<br>
-    By using our web app, you are agreeing to the practices described in this policy.<br>
+    Welcome to PedalPlex. Protecting your personal data is a priority.<br>
+    This Privacy Policy explains how we collect, use, and protect your personal data in accordance with applicable data protection laws, including the GDPR.<br>
+    By using our web app, you agree to the practices described in this policy.<br>
     </p><br><br>
 
     <h4>1. Data Controller</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    PedalPlex is the controller of your personal data.<br>
-    Contact information: You can contact us at any time regarding your personal data, questions about privacy, or requests to exercise your rights via GitHub<br>
+    The data controller is:<br>
+    Email: support@pedalplex.com<br>
+    Location: Milan, Italy
     </p><br><br>
 
     <h4>2. Types of Data We Collect</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    We collect the following types of data from our users:<br>
-    - Account Information: when you sign up, we may ask for your email, username, and password to create and maintain your account.<br>
-    - User Content: pedalboards, presets, and any other content you create within the app. This content is stored so you can recall, share, and manage your creations.<br>
-    - Usage Data: information about how you interact with the app, including your device type, operating system, browser type, IP address, session times, and navigation within the app.<br>
-    - Cookies and Analytics Data: data collected through cookies or similar technologies to help us understand how users interact with the app, optimize functionality, and improve the user experience.<br>
+    We may collect the following categories of personal data:<br><br>
+
+    - <b>Account Data</b><br>
+    Email address, username, and encrypted password.<br><br>
+
+    - <b>User Content</b><br>
+    Pedalboards, presets, and configurations you create within the app.<br><br>
+
+    - <b>Usage Data</b><br>
+    IP address, device and browser information, pages visited, interactions, and session timestamps.<br><br>
+
+    - <b>Cookies and Tracking Technologies</b><br>
+    Technical cookies required for functionality and, where applicable, analytics cookies.
     </p><br><br>
 
-    <h4>3. How We Use Your Data</h4>
+    <h4>3. Purposes of Processing</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    Your personal data is used for the following purposes:<br>
-    - To provide and maintain our service:<br>
-    Saving your pedalboards, presets, and other user content.<br>
-    Allowing you to access your account and personalized content.<br>
-    - To improve our app:<br>
-    Analyzing usage trends and technical performance to enhance features and usability.<br>
-    - To communicate with you:<br>
-    Sending updates, notifications, or newsletters (if you have opted in).<br>
-    - To comply with legal obligations:<br>
-    Responding to lawful requests or preventing potential illegal activities.<br>
+    Your personal data is used for the following purposes:<br><br>
+
+    - <b>Service provision</b><br>
+    To create and manage your account and provide core features.<br><br>
+
+    - <b>Platform improvement</b><br>
+    To analyze performance, debug issues, and improve usability.<br><br>
+
+    - <b>Communication</b><br>
+    To send service-related communications and, where consent is given, newsletters.<br><br>
+
+    - <b>Security and fraud prevention</b><br>
+    To protect the integrity of the Service.<br><br>
+
+    - <b>Legal compliance</b><br>
+    To comply with applicable laws and legal obligations.
     </p><br><br>
 
     <h4>4. Legal Basis for Processing (GDPR)</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
     We process your data under the following legal grounds:<br>
-    Performance of a contract: To provide the services you requested (Art. 6(1)(b) GDPR).<br>
-    Consent: When you voluntarily agree to receive newsletters or other communications (Art. 6(1)(a) GDPR).<br>
-    Legitimate interest: To improve our services, detect technical issues, and maintain app security (Art. 6(1)(f) GDPR).<br>
-    </p><br><br>
-    
-    <h4>5. Sharing Your Data</h4>
-    <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    We do not sell or rent your personal data. However, we may share data in the following situations:
-    With service providers: Third-party companies assisting with hosting, analytics, or email communications. These partners are contractually bound to keep your data secure and only use it to provide services for us.
-    Legal obligations: When required to comply with law or protect our rights, property, or safety.
+
+    Performance of a contract (Art. 6(1)(b)) – to provide the Service.<br>
+
+    Consent (Art. 6(1)(a)) – for optional communications and non-essential cookies.<br>
+
+    Legitimate interest (Art. 6(1)(f)) – to ensure security, prevent abuse, and improve the Service, balanced against your rights.
     </p><br><br>
 
-    <h4>6. Third-Party Brand Disclaimers</h4>
+    <h4>5. Sharing Your Data</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    Our app includes a catalog of guitar and bass gear, including pedals, amplifiers, and other accessories. Many of these products are trademarks or intellectual property of third-party brands such as Boss, Marshall, TC Electronic, Electro-Harmonix, Ibanez, and others.<br>
-    We are not affiliated with, endorsed by, or sponsored by these brands.<br>
-    All brand names, product names, and images are used for identification and reference purposes only.<br>
-    Users may not use these brand names or images for commercial purposes without proper authorization.<br>
+    We do not sell your personal data.<br>
+    We may share your data with:<br>
+    - Service providers (e.g. hosting, analytics, infrastructure), acting under contractual obligations.<br>
+    - Authorities, where required by law or to protect our legal rights.
+    </p><br><br>
+
+    <h4>6. International Data Transfers</h4>
+    <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
+    Some of our service providers may be located outside the European Economic Area (EEA).<br>
+    In such cases, we ensure appropriate safeguards are in place, such as Standard Contractual Clauses (SCCs).
     </p><br><br>
 
     <h4>7. Data Retention</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    We store your account information and content only for as long as your account exists.<br>
-    If you choose to delete your account, all your associated data, including pedalboards and presets, will be permanently deleted.<br>
+    We retain personal data only as long as necessary:<br>
+    - Account data: for the duration of your account<br>
+    - User content: until deletion or account removal<br><br>
+
+    Upon account deletion, data will be deleted or anonymized unless retention is required by law.
     </p><br><br>
 
     <h4>8. Your GDPR Rights</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    Under the GDPR, you have the following rights:<br>
-    - Access: Request a copy of your personal data.<br>
-    - Rectification: Correct inaccurate or incomplete data.<br>
-    - Erasure: Request deletion of your data (“right to be forgotten”).<br>
-    - Restriction of processing: Limit how your data is used.<br>
-    - Data portability: Receive your data in a structured, machine-readable format.<br>
-    - Objection: Object to certain types of processing.<br>
-    - Withdrawal of consent: Withdraw any consent you have given.<br>
-    To exercise any of these rights, contact us via GitHub. We will respond promptly in accordance with GDPR requirements.<br>
+    You have the following rights:<br><br>
+
+    - Access your personal data<br>
+    - Rectify inaccurate data<br>
+    - Request deletion (“right to be forgotten”)<br>
+    - Restrict processing<br>
+    - Data portability<br>
+    - Object to processing<br>
+    - Withdraw consent at any time<br><br>
+
+    To exercise your rights, contact: [EMAIL]<br><br>
+
+    You also have the right to lodge a complaint with the Italian Data Protection Authority (Garante per la protezione dei dati personali).
     </p><br><br>
 
     <h4>9. Security Measures</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    We implement reasonable technical and organizational measures to protect your data from unauthorized access, disclosure, alteration, or destruction. You are responsible for keeping your login credentials secure.<br>
+    We implement appropriate technical and organizational measures to protect your data.<br>
+    However, no system can be guaranteed to be completely secure.
     </p><br><br>
 
     <h4>10. Cookies</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    We use cookies and similar technologies to provide essential functionality, analyze usage, and improve your experience. You can manage or disable cookies in your browser settings, but some features of the app may not function properly if cookies are disabled.<br>
+    We use cookies and similar technologies to provide essential functionality and, where applicable, analyze usage.<br>
+    Where required, we request your consent before using non-essential cookies.<br><br>
+
+    You can manage your preferences via the cookie banner or your browser settings.
     </p><br><br>
 
     <h4>11. Changes to This Policy</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    We may update this Privacy Policy periodically to reflect changes in the law, technology, or our practices.<br>
-    Your continued use of the app after such updates constitutes acceptance of the revised policy.</br>
+    We may update this Privacy Policy periodically to reflect changes in law, technology, or our practices.<br>
+    Continued use of the Service constitutes acceptance of the updated policy.
     </p><br><br>
 
     <h4>12. Contact Information</h4>
     <p style="font-size:1.25rem; margin-top:1rem; color:#666;">
-    If you have any questions or concerns regarding these Terms, contact us via GitHub.<br>
+    For any questions regarding this Privacy Policy:<br><br>
+
+    Email: support@pedalplex.com<br>
     </p><br><br>
 
   </main>
