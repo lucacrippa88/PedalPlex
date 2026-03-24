@@ -90,7 +90,7 @@ async function ensurePedalboardExists() {
   }
 
   // Logged-in =======
-  const res = await fetch('https://api.pedalplex.com/GET_PEDALBOARD.php', {
+  const res = await fetch('https://api.pedalplex.com/GET_RIG.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ user_id: window.currentUser.userid })
@@ -115,7 +115,7 @@ async function ensurePedalboardExists() {
     if (!boardName) throw 'cancelled';
 
     const token = localStorage.getItem('authToken');
-    await fetch('https://api.pedalplex.com/CREATE_PEDALBOARD.php', {
+    await fetch('https://api.pedalplex.com/CREATE_RIG.php', {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + token,

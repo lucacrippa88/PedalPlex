@@ -210,7 +210,7 @@ function initSinglePedalView(pedalId, userRole){
 
   const cleanId = decodeURIComponent(pedalId.trim());
 
-  fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
+  fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
     method:"POST",
     headers: {
       "Content-Type":"application/json",

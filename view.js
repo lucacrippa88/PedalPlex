@@ -155,7 +155,7 @@ if (window.FXDB_URL) {
 
   async function fetchPedals(ids) {
     try {
-      const res = await fetch('https://api.pedalplex.com/GET_PEDALS_BY_IDS.php', {
+      const res = await fetch('https://api.pedalplex.com/GET_GEARS_BY_IDS.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

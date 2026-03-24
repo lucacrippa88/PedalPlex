@@ -319,7 +319,7 @@ function setupEditPedalHandler(pedals) {
     if (!pedal.controls || pedal.controls.length === 0) {
       const token = localStorage.getItem('authToken');
 
-      fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
+      fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
