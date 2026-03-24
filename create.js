@@ -201,7 +201,8 @@ function buildJSON() {
 
     // Published: editable via custom select (defaults to draft if not set)
     const selectedText = $("#pedal-published-button").text().trim().toLowerCase();
-    const validStatuses = ["draft", "private", "reviewing", "template", "public"];
+    // const validStatuses = ["draft", "private", "reviewing", "template", "public"];
+    const validStatuses = ["draft", "reviewing", "template", "public"];
     pedal.published = validStatuses.includes(selectedText) ? selectedText : "draft";
 
 
@@ -737,7 +738,8 @@ function syncUIFromJSON(pedal) {
 
 // --- Published (custom dropdown) ---
 if ($("#pedal-published-button").length) {
-    const validStatuses = ["draft", "private", "reviewing", "template", "public"];
+    // const validStatuses = ["draft", "private", "reviewing", "template", "public"];
+    const validStatuses = ["draft", "reviewing", "template", "public"];
     const status = validStatuses.includes(pedal.published) ? pedal.published : "draft";
 
     // Set the button text to reflect the current status

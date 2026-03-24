@@ -10,7 +10,7 @@ let sentinel = null;
 var searchBookmark = null;
 var currentSearchQuery = null;
 var currentCategory = 'all';
-var currentPublishedFilter = 'all'; // all | draft | private | reviewing | publicByMe | template | user
+var currentPublishedFilter = 'all'; // all | draft | reviewing | publicByMe | template | user
 
 // ==================== Helpers ====================
 function setPedalJSON(jsonString) { pedalJSON = jsonString; }
@@ -360,7 +360,7 @@ function updatePedalCountsFromServer(activeFilter = null) {
     if (window.currentUser?.role !== "guest") {
 
       countsHtml += `, Draft: <span class="status-filter ${isActive("draft")}" data-filter="draft">${counts.draft}</span>`;
-      countsHtml += `, Private: <span class="status-filter ${isActive("private")}" data-filter="private">${counts.private}</span>`;
+      // countsHtml += `, Private: <span class="status-filter ${isActive("private")}" data-filter="private">${counts.private}</span>`;
 
       const reviewingStyle = counts.reviewing > 0
         ? 'style="background:#ff0000;color:white;border-radius:50%;padding:1px 5px;font-size:0.75rem;font-weight:bold;min-width:18px;text-align:center;"'
