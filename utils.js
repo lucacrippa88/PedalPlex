@@ -781,7 +781,8 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       if (showAuthor) {
         let authorText = `By: ${pedal.author}`;
         const published = (pedal.published || '').toLowerCase();
-        const showPublishedStatuses = ['private', 'draft', 'reviewing', 'template'];
+        // const showPublishedStatuses = ['private', 'draft', 'reviewing', 'template'];
+        const showPublishedStatuses = ['draft', 'reviewing', 'template'];
 
         if (showPublishedStatuses.indexOf(published) !== -1) { authorText += `, ${published}`; }
 
