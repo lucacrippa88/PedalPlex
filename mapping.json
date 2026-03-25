@@ -1251,6 +1251,15 @@
     "seo_description": "The AMT GR-4 Guitar Switch is a utility pedal designed for flexible signal routing and instrument switching. Built for complex stage setups, the GR-4 allows players to connect multiple guitars or signal paths and quickly switch between them during performance. Its robust switching mechanism ensures reliable operation without unwanted noise or signal loss. Utility pedals like the GR-4 are especially useful in professional live rigs where efficient signal management is essential. Discover pedalboard routing ideas and stage setups using the AMT GR-4 Guitar Switch on PedalPlex."
   },
   {
+    "pedalplex_id": "AMT HR-1 Heater JFET Overdrive",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/amt/heater",
+    "pedalplex_url": "https://www.pedalplex.com/gear/amt-hr-1-heater-jfet-overdrive",
+    "brand": "AMT",
+    "category": "overdrive/boost",
+    "seo_description": "The AMT Electronics HR-1 Heater is a compact JFET-based overdrive and booster that reimagines the classic Tube Screamer-style circuit, functioning as a clean boost, a mid-focused overdrive, or a more aggressive distortion. Its drive section features film capacitors and premium components, while the true bypass design ensures your instrument’s signal remains pristine when the effect is disengaged."
+  },
+  {
     "pedalplex_id": "AMT LLM-2 ZERO Little Loudmouth Optical Volume",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/amt/llm2",
