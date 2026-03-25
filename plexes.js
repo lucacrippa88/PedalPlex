@@ -440,7 +440,10 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     },
     footer: `
       <button id="duplicatePresetBtn" type="button" class="bx--btn bx--btn--tertiary">
-        Duplicate
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M28,8h2V4a2.0021,2.0021,0,0,0-2-2H24V4h4Z"></path><path d="M17 2H21V4H17z"></path><path d="M28 11H30V15H28z"></path><path d="M28,18v4H24V10a2.0023,2.0023,0,0,0-2-2H10V4h4V2H10A2.0023,2.0023,0,0,0,8,4V8H4a2.0023,2.0023,0,0,0-2,2V28a2.0023,2.0023,0,0,0,2,2H22a2.0023,2.0023,0,0,0,2-2V24h4a2.0023,2.0023,0,0,0,2-2V18ZM22,28H4V10H22Z"></path>
+        </svg>
+        Clone
       </button>
     `,
     didOpen: () => {
@@ -677,7 +680,7 @@ async function savePreset(presetId, updateData) {
 
 
 
-// Duplicate preset with proper confirmation
+// Cloned preset with proper confirmation
 async function duplicatePreset(presetId, newName, folderId) {
   try {
     const original = window.presetMap && window.presetMap[presetId];
@@ -696,7 +699,7 @@ async function duplicatePreset(presetId, newName, folderId) {
 
     // Show loading UI
     Swal.fire({
-      title: 'Duplicating Plex...',
+      title: 'Cloning Plex...',
       allowOutsideClick: false,
       didOpen: () => Swal.showLoading()
     });
@@ -736,7 +739,7 @@ async function duplicatePreset(presetId, newName, folderId) {
       Swal.close();
       Swal.fire({
         title: 'Error',
-        text: 'Could not duplicate Plex',
+        text: 'Could not clone Plex',
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary'
@@ -769,8 +772,8 @@ async function duplicatePreset(presetId, newName, folderId) {
     // Show success briefly (auto-closes), await it, then reload
     await Swal.fire({
       icon: 'success',
-      title: 'Plex Duplicated',
-      text: `Plex duplicated as "${duplicated.preset_name}"`,
+      title: 'Plex Cloned!',
+      text: `Plex cloned as "${duplicated.preset_name}"`,
       timer: 1000,
       showConfirmButton: false,
       allowOutsideClick: false
@@ -784,7 +787,7 @@ async function duplicatePreset(presetId, newName, folderId) {
     Swal.close();
     Swal.fire({
       title: 'Error',
-      text: 'Unexpected error duplicating Plex.',
+      text: 'Unexpected error cloning Plex.',
       icon: 'error',
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary'
