@@ -2,7 +2,6 @@ $(document).ready(function () {
 
   const navHtml = `
     <header style="display: flex; align-items: center; justify-content: space-between;">
-      <!-- Left: menu toggle + title -->
       <div style="display: flex; align-items: center; gap: 1rem;">
         <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
           <div class="pedalplex-logo"></div>
@@ -17,24 +16,44 @@ $(document).ready(function () {
 
 
   // ==========================
-  // Sync fullscreen menu state
+  // GESTIONE AUTH (come nav-plexes)
   // ==========================
 
-  function syncMenu() {
-    if (typeof updateFullscreenMenu === 'function') {
-      updateFullscreenMenu();
-    }
-  }
+  const applyAuthToMenu = () => {
+    const isGuest = !window.currentUser || window.currentUser.role === "guest";
 
-  // Caso 1: currentUser già disponibile (best case)
+    const loginBtn = document.getElementById("loginFullscreenBtn");
+    const guestMsg = document.getElementById("guestLoginMessage");
+    const profileBtn = document.getElementById("profileBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (!loginBtn || !profileBtn || !logoutBtn || !guestMsg) return;
+
+    if (isGuest) {
+      loginBtn.style.display = "flex";
+      guestMsg.style.display = "block";
+
+      profileBtn.style.display = "none";
+      logoutBtn.style.display = "none";
+    } else {
+      loginBtn.style.display = "none";
+      guestMsg.style.display = "none";
+
+      profileBtn.style.display = "flex";
+      logoutBtn.style.display = "flex";
+    }
+  };
+
+
+  // Caso 1: currentUser già disponibile
   if (window.currentUser !== undefined) {
-    syncMenu();
+    applyAuthToMenu();
   } else {
-    // Caso 2: arriva async (fallback robusto)
+    // Caso 2: async (come fai già in altri punti)
     const waitForUser = setInterval(() => {
       if (window.currentUser !== undefined) {
         clearInterval(waitForUser);
-        syncMenu();
+        applyAuthToMenu();
       }
     }, 50);
   }
