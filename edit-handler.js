@@ -67,7 +67,11 @@ function setupEditPedalHandler(pedals) {
         confirmButtonText: 'Save',
         denyButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        footer: `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--tertiary">Duplicate</button></span>`,
+        footer: `<span class="modal-footer"><button id="duplicateBtn" class="bx--btn bx--btn--tertiary">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M28,8h2V4a2.0021,2.0021,0,0,0-2-2H24V4h4Z"></path><path d="M17 2H21V4H17z"></path><path d="M28 11H30V15H28z"></path><path d="M28,18v4H24V10a2.0023,2.0023,0,0,0-2-2H10V4h4V2H10A2.0023,2.0023,0,0,0,8,4V8H4a2.0023,2.0023,0,0,0-2,2V28a2.0023,2.0023,0,0,0,2,2H22a2.0023,2.0023,0,0,0,2-2V24h4a2.0023,2.0023,0,0,0,2-2V18ZM22,28H4V10H22Z"></path>
+          </svg>
+          Clone</button></span>`,
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary',
           denyButton: 'bx--btn bx--btn--danger',
@@ -94,7 +98,7 @@ function setupEditPedalHandler(pedals) {
             }, 100);
           });
 
-          // Handle Duplicate button
+          // Handle Clone button
           $("#duplicateBtn").on("click", () => {
             const newPedal = JSON.parse(JSON.stringify(pedal));
             delete newPedal._id;
@@ -105,7 +109,7 @@ function setupEditPedalHandler(pedals) {
 
             setTimeout(() => {
               Swal.fire({
-                title: `Duplicate of ${pedal._id}`,
+                title: `Clone of ${pedal._id}`,
                 html: `<iframe src="create.html" style="width:100%; height:80vh; border:none;" id="swal-duplicate-iframe"></iframe>`,
                 width: '100%',
                 showConfirmButton: true,
@@ -175,14 +179,14 @@ function setupEditPedalHandler(pedals) {
                       setupEditPedalHandler(pedals);
 
                       Swal.fire({
-                        title: 'Duplicated!',
-                        text: 'Your gear has been copied.',
+                        title: 'Cloned!',
+                        text: 'Your gear has been cloned.',
                         icon: 'success',
                         confirmButtonText: 'OK',
                         customClass: { confirmButton: 'bx--btn bx--btn--primary' }
                       });
                     } else {
-                      Swal.fire({ title: 'Error', text: data.error || 'Failed to save duplicate', icon: 'error', confirmButtonText: 'OK', customClass: { confirmButton: 'bx--btn bx--btn--primary' }});
+                      Swal.fire({ title: 'Error', text: data.error || 'Failed to save clone', icon: 'error', confirmButtonText: 'OK', customClass: { confirmButton: 'bx--btn bx--btn--primary' }});
                     }
                   });
                 }
