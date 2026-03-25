@@ -17,15 +17,27 @@ $(document).ready(function () {
 
   $("body").prepend(navHtml);
 
-  // Fullscreen menu toggle with quote
-  $(document).on("click", "#menuToggle", function () {
-    const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
-    $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
-    $("#fullscreenMenu").addClass("active");
-  });
+  // // Fullscreen menu toggle with quote
+  // $(document).on("click", "#menuToggle", function () {
+  //   const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
+  //   $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
+  //   $("#fullscreenMenu").addClass("active");
+  // });
 
-  $(document).on("click", "#closeMenu", () => {
-    $("#fullscreenMenu").removeClass("active");
-  });
+  // $(document).on("click", "#closeMenu", () => {
+  //   $("#fullscreenMenu").removeClass("active");
+  // });
+
+
+  // Ensure fullscreen menu reflects correct auth state
+  const waitForUser = setInterval(() => {
+    if (window.currentUser !== undefined) {
+      clearInterval(waitForUser);
+
+      if (typeof updateFullscreenMenu === 'function') {
+        updateFullscreenMenu();
+      }
+    }
+  }, 50);
 
 });
