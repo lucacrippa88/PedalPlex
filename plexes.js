@@ -903,6 +903,13 @@ $(".pedal-catalog").each(function () {
 // Create preset function
 async function createPreset() {
 
+  // -------------------------------
+  // 1. Get currently selected pedalboard
+  // -------------------------------
+  const pedalboardSelect = document.getElementById('pedalboardSelect');
+  const selectedBoardId = pedalboardSelect?.value;
+  const selectedBoardName = pedalboardSelect?.selectedOptions[0]?.text;
+
   const { value: presetName, isConfirmed, isDenied } = await Swal.fire({
     title: `New Plex for "${selectedBoardName}"`,
     input: 'text',
@@ -960,9 +967,9 @@ async function createPreset() {
   // -------------------------------
   // 3. Get currently selected pedalboard
   // -------------------------------
-  const pedalboardSelect = document.getElementById('pedalboardSelect');
-  const selectedBoardId = pedalboardSelect?.value;
-  const selectedBoardName = pedalboardSelect?.selectedOptions[0]?.text;
+  // const pedalboardSelect = document.getElementById('pedalboardSelect');
+  // const selectedBoardId = pedalboardSelect?.value;
+  // const selectedBoardName = pedalboardSelect?.selectedOptions[0]?.text;
 
   if (!selectedBoardId) {
     Swal.fire({
