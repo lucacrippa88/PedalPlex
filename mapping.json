@@ -13031,6 +13031,15 @@
     "category": "boost",
     "seo_description": "Orange Two Stroke Clean Boost enhances your guitar signal with transparent clean gain and dynamic touch response."
   },
+    {
+    "pedalplex_id": "Origin Effects RevivalTREM Bias Tremolo",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/origin/revivaltrem",
+    "pedalplex_url": "https://www.pedalplex.com/gear/origin-effects-revivaltrem-bias-tremolo",
+    "brand": "Origin Effects",
+    "category": "tremolo",
+    "seo_description": "The RevivalTREM is the first pedal to authentically replicate the power tube bias tremolo, the iconic effect featured in a select group of classic amplifiers from the late 1950s and early 1960s."
+  },
   {
     "pedalplex_id": "Origin Effects Bassrig '64 Black Panel' Bass Preamp",
     "status": "found",
