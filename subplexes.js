@@ -382,7 +382,7 @@ function editCustomSubplexUI($pedalDiv) {
   });
 
   Swal.fire({
-    title: 'Edit Custom SubPlex',
+    title: 'Add SubPlex',
     html: `
       <div style="text-align:left">
 
@@ -393,17 +393,14 @@ function editCustomSubplexUI($pedalDiv) {
               placeholder="Name (max 20 chars)" 
               value="${currentName}">
 
-        <label class="bx--label" style="margin-top:10px;">Style Tags (Scroll)</label>
+        <label class="bx--label" style="margin-top:10px;">Scroll to select Style Tags - Hold Cmd/Ctrl for multi-select</label>
         <select id="swal-subplex-tags"
                 class="bx--select-input"
                 multiple
                 style="width:30%; min-height:60px; position:relative; left:28px">
           ${tagOptionsHtml}
         </select>
-        <div style="font-size:0.8rem; color:#666; margin-top:6px;">
-          Hold Ctrl / Cmd to select multiple tags.
-        </div>
-
+        
         <label class="bx--label" style="margin-top:10px;">Description</label>
         <textarea id="swal-subplex-desc"
                   class="bx--text-area swal2-textarea"
