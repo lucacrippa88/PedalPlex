@@ -11,6 +11,7 @@ $(document).on('click', '#toggleForm', function (e) {
   $('#email').toggle(!isLogin);
   $('#recaptchaContainer').toggle(!isLogin);
   $('#newsletterContainer').toggle(!isLogin); // checkbox solo in registrazione
+
   $('#toggleText').html(
     isLogin
       ? `Don't have an account? <a href="#" id="toggleForm">Register here</a>`
@@ -18,10 +19,24 @@ $(document).on('click', '#toggleForm', function (e) {
   );
 
   // Render reCAPTCHA solo se non è già stato renderizzato
-  if (!isLogin && recaptchaWidgetId === null) {
-    recaptchaWidgetId = grecaptcha.render('recaptchaContainer', {
-      sitekey: '6LerYkksAAAAAMbhqqezJ-JOvmUVyZkQMT9Q6fm1'
-    });
+// 👉 SOLO qui gestisci reCAPTCHA
+  if (!isLogin) {
+    if (recaptchaWidgetId === null) {
+      if (typeof grecaptcha !== 'undefined') {
+        grecaptcha.ready(function () {
+          recaptchaWidgetId = grecaptcha.render('recaptchaContainer', {
+            sitekey: '6LerYkksAAAAAMbhqqezJ-JOvmUVyZkQMT9Q6fm1'
+          });
+        });
+      } else {
+        console.error('grecaptcha not loaded');
+      }
+    }
+  } else {
+    // opzionale: reset quando torni a login
+    if (recaptchaWidgetId !== null && typeof grecaptcha !== 'undefined') {
+      grecaptcha.reset(recaptchaWidgetId);
+    }
   }
 });
 
