@@ -297,7 +297,7 @@ function setupFilterUI(pedals) {
       const {
         value: rowStr
       } = await Swal.fire({
-        title: 'Set row position',
+        title: 'Set row number',
         input: 'number',
         inputAttributes: {
           min: 1,
