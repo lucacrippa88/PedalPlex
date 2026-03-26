@@ -413,7 +413,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
   `;
 
   const result = await Swal.fire({
-    title: "Edit Plex name and Folder",
+    title: "Edit Plex",
     html: htmlContent,
     showCancelButton: false,
     showDenyButton: true,
