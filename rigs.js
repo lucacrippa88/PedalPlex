@@ -507,7 +507,7 @@ function openEditPedalModal(pbPedal) {
           
           <!-- Rotation Dropdown (no Carbon classes) -->
           <div style="flex: 1;">
-            <label for="rotationSelect" class="bx--label">Rotation</label>
+            <label for="rotationSelect" class="bx--label">Gear rotation</label>
             <select id="rotationSelect" style="width: 100%; padding: 0.5em; border: 1px solid #8d8d8d; border-radius: 0.25em; height: 40px; font-size: initial;">
               <option value="0" ${pbPedal.rotation === 0 ? 'selected' : ''}>0°</option>
               <option value="90" ${pbPedal.rotation === 90 ? 'selected' : ''}>90°</option>
@@ -518,7 +518,7 @@ function openEditPedalModal(pbPedal) {
 
           <!-- Row Input (no Carbon classes) -->
           <div style="flex: 1;">
-            <label for="rowInput" class="bx--label">Row</label>
+            <label for="rowInput" class="bx--label">Row number</label>
             <input id="rowInput" type="number" min="1" value="${pbPedal.row}" 
               style="width: 100%; padding: 0.5em; border: 1px solid #8d8d8d; border-radius: 0.25em; font-size: initial; height: 24px;">
           </div>
@@ -526,10 +526,9 @@ function openEditPedalModal(pbPedal) {
         </div>
       </div>
     `,
-    showCancelButton: true,
+    showCloseButton: true,
     showConfirmButton: true,
-    confirmButtonText: 'Save',
-    cancelButtonText: 'Cancel',
+    confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Save",
     customClass: {
       actions: 'swal2-actions-with-remove'
     },
@@ -542,7 +541,7 @@ function openEditPedalModal(pbPedal) {
       const removeBtn = document.createElement('button');
       removeBtn.id = 'removePedalBtn';
       removeBtn.className = 'bx--btn bx--btn--danger';
-      removeBtn.textContent = 'Remove';
+      removeBtn.textContent = "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M16,4c6.6,0,12,5.4,12,12s-5.4,12-12,12S4,22.6,4,16S9.4,4,16,4 M16,2C8.3,2,2,8.3,2,16s6.3,14,14,14s14-6.3,14-14 S23.7,2,16,2z'></path><path d='M8 15H24V17H8z'></path></svg>Remove";
       actions.insertBefore(removeBtn, actions.firstChild);
 
       removeBtn.addEventListener('click', () => {
@@ -551,8 +550,8 @@ function openEditPedalModal(pbPedal) {
           text: 'This will remove the selected gear from your pedalboard.',
           icon: 'warning',
           showCancelButton: true,
-          confirmButtonText: 'Yes, remove it',
-          cancelButtonText: 'Cancel',
+          confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M16,4c6.6,0,12,5.4,12,12s-5.4,12-12,12S4,22.6,4,16S9.4,4,16,4 M16,2C8.3,2,2,8.3,2,16s6.3,14,14,14s14-6.3,14-14 S23.7,2,16,2z'></path><path d='M8 15H24V17H8z'></path></svg>Yes, Remove",
+          cancelButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>No, Cancel",
           didOpen: () => {
             Swal.getConfirmButton().className = 'bx--btn bx--btn--danger';
             Swal.getCancelButton().className = 'bx--btn bx--btn--secondary';
@@ -764,7 +763,6 @@ $(document).ready(function () {
       title: 'Build new Rig',
       input: 'text',
       inputPlaceholder: 'Enter Rig name...',
-      showCancelButton: true,
       confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M23.1,16l6.3-6.3c0.8-0.8,0.8-2,0-2.8l-4.2-4.2c-0.8-0.8-2-0.8-2.8,0L16,8.9L9.7,2.6c-0.8-0.8-2-0.8-2.8,0L2.6,6.8 c-0.8,0.8-0.8,2,0,2.8L8.9,16L2,22.9V30h7.1l6.9-6.9l6.3,6.3c0.8,0.8,2,0.8,2.8,0l4.2-4.2c0.8-0.8,0.8-2,0-2.8L23.1,16z M23.8,4 L28,8.2l-6.3,6.3l-4.2-4.2L23.8,4z M8.2,28H4v-4.2l6.3-6.3l4.2,4.2L8.2,28z M23.8,28L4,8.2L8.2,4l3.5,3.5L9.6,9.6l1.4,1.4l2.1-2.1 l4.2,4.2l-2.1,2.1l1.4,1.4l2.1-2.1l4.2,4.2L21,20.9l1.4,1.4l2.1-2.1l3.5,3.5L23.8,28z'></path></svg>Build Rig",
       // cancelButtonText: 'Cancel',
       showCloseButton: true,
@@ -926,14 +924,14 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
   const currentName = currentBoard.board_name || `Rig ${selectedBoardIndex + 1}`;
 
   Swal.fire({
-    title: 'Rename Rig',
+    title: 'Edit this Rig',
     input: 'text',
     inputValue: currentName,
-    showCancelButton: true,
+    showCancelButton: false,
     showDenyButton: true,
-    confirmButtonText: 'Rename',
-    cancelButtonText: 'Cancel',
-    denyButtonText: 'Delete',
+    showCloseButton: true,
+    confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M2 26H30V28H2z'></path><path d='M25.4,9c0.8-0.8,0.8-2,0-2.8c0,0,0,0,0,0l-3.6-3.6c-0.8-0.8-2-0.8-2.8,0c0,0,0,0,0,0l-15,15V24h6.4L25.4,9z M20.4,4L24,7.6 l-3,3L17.4,7L20.4,4z M6,22v-3.6l10-10l3.6,3.6l-10,10H6z'></path></svg>Rename Rig",
+    denyButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>Delete Rig",
     customClass: {
       confirmButton: "bx--btn bx--btn--primary",
       cancelButton: "bx--btn bx--btn--secondary",
@@ -998,8 +996,8 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
           text: 'This will remove the Rig locally and cannot be undone.',
           icon: 'warning',
           showCancelButton: true,
-          confirmButtonText: 'Yes, delete it',
-          cancelButtonText: 'Cancel',
+          confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>Yes, Delete",
+          cancelButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>No, Cancel",
           customClass: {
             confirmButton: "bx--btn bx--btn--danger",
             cancelButton: "bx--btn bx--btn--secondary",
