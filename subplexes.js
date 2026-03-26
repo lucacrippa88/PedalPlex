@@ -386,18 +386,18 @@ function editCustomSubplexUI($pedalDiv) {
     html: `
       <div style="text-align:left">
 
-        <label class="bx--label">Name</label>
-        <input id="swal-subplex-name"
-               class="bx--text-input swal2-input"
-               maxlength="20" style="width:83%"
-               placeholder="Name (max 20 chars)"
-               value="${currentName}">
+        <label class="bx--label">Name</label>        
+        <input id="swal-subplex-name" 
+              style="width:90%; margin:auto;" 
+              class="swal2-input" 
+              placeholder="Name (max 20 chars)" 
+              value="${currentName}">
 
-        <label class="bx--label" style="margin-top:10px;">Style Tags</label>
+        <label class="bx--label" style="margin-top:10px;">Style Tags (Scroll)</label>
         <select id="swal-subplex-tags"
                 class="bx--select-input"
                 multiple
-                style="width:30%; min-height:120px; position:relative; left:28px">
+                style="width:30%; min-height:60px; position:relative; left:28px">
           ${tagOptionsHtml}
         </select>
         <div style="font-size:0.8rem; color:#666; margin-top:6px;">
@@ -407,20 +407,21 @@ function editCustomSubplexUI($pedalDiv) {
         <label class="bx--label" style="margin-top:10px;">Description</label>
         <textarea id="swal-subplex-desc"
                   class="bx--text-area swal2-textarea"
-                  maxlength="100" style="width:83%"
+                  maxlength="100" style="width:83%; height:40px"
                   placeholder="Description (max 100 chars)">${currentDesc}</textarea>
 
       </div>
     `,
-    showCancelButton: true,
+    showCancelButton: false,
+    showCloseButton: true,
     showConfirmButton: true,
     focusConfirm: false,
     customClass: {
       confirmButton: 'bx--btn bx--btn--primary',
       cancelButton: 'bx--btn bx--btn--secondary'
     },
-    confirmButtonText: 'Save',
-    cancelButtonText: 'Cancel',
+    confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Save SubPlex",
+    // cancelButtonText: 'Cancel',
     preConfirm: () => {
       const name = document.getElementById('swal-subplex-name').value.trim();
       const desc = document.getElementById('swal-subplex-desc').value.trim();
