@@ -390,8 +390,8 @@ function editCustomSubplexUI($pedalDiv) {
         <input id="swal-subplex-name" 
               style="width:90%; margin:auto;" 
               class="swal2-input" 
-              placeholder="Name (max 20 chars)" 
-              value="${currentName}">
+              placeholder="Add a name here..." 
+              value="">
 
         <label class="bx--label" style="margin-top:10px;">Scroll to select Style Tags - Hold Cmd/Ctrl for multi-select</label>
         <select id="swal-subplex-tags"
@@ -400,12 +400,12 @@ function editCustomSubplexUI($pedalDiv) {
                 style="width:30%; min-height:60px; position:relative; left:28px">
           ${tagOptionsHtml}
         </select>
-        
+
         <label class="bx--label" style="margin-top:10px;">Description</label>
         <textarea id="swal-subplex-desc"
                   class="bx--text-area swal2-textarea"
                   maxlength="100" style="width:83%; height:40px"
-                  placeholder="Description (max 100 chars)">${currentDesc}</textarea>
+                  placeholder="How would you describe your sound...?">${currentDesc}</textarea>
 
       </div>
     `,
