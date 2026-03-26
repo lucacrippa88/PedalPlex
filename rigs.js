@@ -261,7 +261,7 @@ function setupFilterUI(pedals) {
       const {
         value: rotationStr
       } = await Swal.fire({
-        title: 'Enter rotation',
+        title: 'Set Gear rotation',
         input: 'select',
         inputOptions: {
           0: '0°',
@@ -270,7 +270,9 @@ function setupFilterUI(pedals) {
           270: '270°'
         },
         inputValue: '0',
-        showCancelButton: true,
+        // showCancelButton: true,
+        showCloseButton: true,
+        confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M18 6 16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z'></path></svg>Ok, Next",
         inputValidator: value => {
           return (value === '') ? 'You need to select a rotation!' : null;
         },
@@ -295,14 +297,16 @@ function setupFilterUI(pedals) {
       const {
         value: rowStr
       } = await Swal.fire({
-        title: 'Enter row number',
+        title: 'Set row position',
         input: 'number',
         inputAttributes: {
           min: 1,
           step: 1
         },
         inputValue: '1',
-        showCancelButton: true,
+        // showCancelButton: true,
+        showCloseButton: true,
+        confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d=‘M26,30H6a2,2,0,0,1-2-2V16a2,2,0,0,1,2-2H9v2H6V28H26V16H23V14h3a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z’></path><path d=‘M13 20H19V22H13z’></path><path d=‘M20.59 8.59 17 12.17 17 2 15 2 15 12.17 11.41 8.59 10 10 16 16 22 10 20.59 8.59z’></path></svg>Drop Gear",
         inputValidator: value => {
           if (!value || isNaN(value) || value < 1) {
             return 'Row must be a number 1 or higher!';
@@ -757,12 +761,13 @@ function savePedalboard() {
 $(document).ready(function () {
   $(document).on('click', '#createBtn', function () {
     Swal.fire({
-      title: 'Enter new Rig name',
+      title: 'Build new Rig',
       input: 'text',
-      inputPlaceholder: 'Rig name...',
+      inputPlaceholder: 'Enter Rig name...',
       showCancelButton: true,
-      confirmButtonText: 'Create',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M23.1,16l6.3-6.3c0.8-0.8,0.8-2,0-2.8l-4.2-4.2c-0.8-0.8-2-0.8-2.8,0L16,8.9L9.7,2.6c-0.8-0.8-2-0.8-2.8,0L2.6,6.8 c-0.8,0.8-0.8,2,0,2.8L8.9,16L2,22.9V30h7.1l6.9-6.9l6.3,6.3c0.8,0.8,2,0.8,2.8,0l4.2-4.2c0.8-0.8,0.8-2,0-2.8L23.1,16z M23.8,4 L28,8.2l-6.3,6.3l-4.2-4.2L23.8,4z M8.2,28H4v-4.2l6.3-6.3l4.2,4.2L8.2,28z M23.8,28L4,8.2L8.2,4l3.5,3.5L9.6,9.6l1.4,1.4l2.1-2.1 l4.2,4.2l-2.1,2.1l1.4,1.4l2.1-2.1l4.2,4.2L21,20.9l1.4,1.4l2.1-2.1l3.5,3.5L23.8,28z'></path></svg>Build Rig",
+      // cancelButtonText: 'Cancel',
+      showCloseButton: true,
       customClass: {
         confirmButton: "bx--btn bx--btn--primary",
         cancelButton: "bx--btn bx--btn--secondary",
