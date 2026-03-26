@@ -121,15 +121,15 @@
 
 
     // Render reCAPTCHA solo se non renderizzato
-    if (!isLogin && recaptchaWidgetId === null) {
-      recaptchaWidgetId = grecaptcha.render('recaptchaContainer', {
-        sitekey: '6LerYkksAAAAAMbhqqezJ-JOvmUVyZkQMT9Q6fm1'
-      });
-    }
+    // if (!isLogin && recaptchaWidgetId === null) {
+    //   recaptchaWidgetId = grecaptcha.render('recaptchaContainer', {
+    //     sitekey: '6LerYkksAAAAAMbhqqezJ-JOvmUVyZkQMT9Q6fm1'
+    //   });
+    // }
 
-    if (isLogin && recaptchaWidgetId !== null) {
-      grecaptcha.reset(recaptchaWidgetId); // reset del widget
-    }
+    // if (isLogin && recaptchaWidgetId !== null) {
+    //   grecaptcha.reset(recaptchaWidgetId); // reset del widget
+    // }
   </script>
 
 
