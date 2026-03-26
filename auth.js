@@ -75,7 +75,7 @@ $('#authForm').on('submit', function (e) {
     dataType: 'json',
     data: JSON.stringify(data),
     success: function (res) {
-      console.log('Response:', res);
+      // console.log('Response:', res);
 
       if (isLogin && res.token) {
         // Login success

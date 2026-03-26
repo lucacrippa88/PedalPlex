@@ -16,7 +16,7 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
   const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || subplex.id || "SubPlex";
   
   if (!subplex || (!subplex.presetName && !subplex.name && !subplex.preset_name && !subplex.id)) {
-    console.log("No valid SubPlex found, skipping render.");
+    // console.log("No valid SubPlex found, skipping render.");
     return;
   }
 
@@ -242,7 +242,7 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   // Trova il pedale nel DOM
   const $pedalDiv = $(`.pedal-catalog[data-pedal-id="${pedalId}"]`);
   if (!$pedalDiv.length) {
-    console.warn("Pedal not found on board:", pedalId);
+    // console.warn("Pedal not found on board:", pedalId);
     return;
   }
 
@@ -265,7 +265,7 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
     window.catalogMap?.[String(pedalId).trim()];
 
   if (!defaultPedal) {
-    console.warn("Pedal not found in catalogMap:", pedalId);
+    // console.warn("Pedal not found in catalogMap:", pedalId);
     return;
   }
 
@@ -521,7 +521,7 @@ function resetSubplexOnSinglePedal($pedalDiv) {
     window.catalogMap?.[String(pedalId).trim()];
 
   if (!defaultPedal) {
-    console.warn("Default pedal not found for reset:", pedalId);
+    // console.warn("Default pedal not found for reset:", pedalId);
     return;
   }
 
@@ -588,7 +588,7 @@ function resetSubplexOnSinglePedal($pedalDiv) {
     updateSavePresetButtonState();
   }
 
-  console.log("SubPlex reset completed for pedal:", pedalId);
+  // console.log("SubPlex reset completed for pedal:", pedalId);
 }
 
 
