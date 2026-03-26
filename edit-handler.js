@@ -297,7 +297,7 @@ function setupEditPedalHandler(pedals) {
                     title: 'Deleted!',
                     text: 'The gear has been removed.',
                     icon: 'success',
-                    confirmButtonText: 'OK',
+                    confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Ok",
                     customClass: { confirmButton: 'bx--btn bx--btn--primary' }
                   }).then(() => {
                     const idx = pedals.findIndex(p => p._id === pedal._id);
