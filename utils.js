@@ -1457,8 +1457,8 @@ async function renderFullPedalboard(pedalboardOverride = null) {
                   text: 'This will remove the applied SubPlex and restore default controls.',
                   icon: 'warning',
                   showCancelButton: true,
-                  confirmButtonText: 'Remove',
-                  cancelButtonText: 'Cancel',
+                  confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M16,4c6.6,0,12,5.4,12,12s-5.4,12-12,12S4,22.6,4,16S9.4,4,16,4 M16,2C8.3,2,2,8.3,2,16s6.3,14,14,14s14-6.3,14-14 S23.7,2,16,2z'></path><path d='M8 15H24V17H8z'></path></svg>Yes, Remove",
+                  cancelButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>No, Cancel'",
                   customClass: {
                     confirmButton: 'bx--btn bx--btn--danger',
                     cancelButton: 'bx--btn bx--btn--secondary'

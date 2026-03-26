@@ -1,14 +1,6 @@
 // ===============================
-// SUBPLEX.JS – VERSIONE SEMPLIFICATA
+// SUBPLEX.JS
 // ===============================
-
-// Ottiene tutti i controlli di un SubPlex
-// function getAllSubplexControls(subplex) {
-//     if (!subplex || !Array.isArray(subplex.controls)) return [];
-//     if (!subplex.controls[0]?.row) return subplex.controls;
-//     return subplex.controls.flatMap(r => Array.isArray(r.row) ? r.row : []);
-// }
-
 
 // Render applied SubPlex info box
 function renderAppliedPresetInfo($pedalDiv, subplex) {
@@ -101,44 +93,17 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
 // ===============================
 // AGGIORNA LO STATO DEL SUBPLEX
 // ===============================
-// function updateSubplexStatus($pedalDiv) {
-
-//   // ⛔️ ignora bootstrap
-//   if ($pedalDiv.data('subplex-hydrating')) return;
-
-//   const subplex = $pedalDiv.data('applied-subplex');
-//   if (!subplex) return;
-
-//   // 🔒 finché l'utente non tocca nulla davvero, NON sporcare
-//   if (!$pedalDiv.data('subplex-dirty-enabled')) {
-//     $pedalDiv.data('subplex-dirty-enabled', true);
-//     return;
-//   }
-
-//   if (!subplex._originalName) {
-//     subplex._originalName = subplex.presetName || 'SubPlex';
-//   }
-
-//   if ($pedalDiv.data('applied-subplex-state') !== 'modified') {
-//     subplex.presetName = subplex._originalName + '*';
-//     $pedalDiv.data('applied-subplex-state', 'modified');
-//     renderAppliedPresetInfo($pedalDiv, subplex);
-//   }
-// }
-
 function updateSubplexStatus($pedalDiv) {
 
   const subplex = $pedalDiv.data('applied-subplex');
 
-  // 🔥 HARD STOP: niente SubPlex → niente logica
   if (!subplex) return;
 
-  // ⛔️ ignora bootstrap
   if ($pedalDiv.data('subplex-hydrating')) return;
 
-  // NON attivare dirty automaticamente
+  // Non attivare dirty automaticamente
   if (!$pedalDiv.data('subplex-dirty-enabled')) {
-    return; // 🔥 CAMBIO CRITICO
+    return;
   }
 
   if (!subplex._originalName) {
@@ -249,7 +214,7 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   $pedalDiv.data("subplex-listeners-armed", false);
 
 
-  // ⛔️ PREVENT DOUBLE APPLY OF SAME PRESET
+  // PREVENT DOUBLE APPLY OF SAME PRESET
   const applied = $pedalDiv.attr("data-applied-preset");
   if (applied) {
     try {
@@ -486,7 +451,7 @@ function editCustomSubplexUI($pedalDiv) {
   }).then((result) => {
     if (!result.isConfirmed || !result.value) return;
 
-    // 🔹 Aggiorna SubPlex in memoria (nomi corretti!)
+    // Aggiorna SubPlex in memoria (nomi corretti!)
     subplex.presetName = result.value.name;
     subplex.style = result.value.styles;
     subplex.description = result.value.desc;
@@ -500,7 +465,7 @@ function editCustomSubplexUI($pedalDiv) {
     // Sync UI
     renderAppliedPresetInfo($pedalDiv, subplex);
 
-    // ✅ REGISTRA PER IL SALVATAGGIO GLOBALE
+    // REGISTRA PER IL SALVATAGGIO GLOBALE
     const pedalId = $pedalDiv.data('pedal-id');
     window.currentSubPlex = window.currentSubPlex || {};
     window.currentSubPlex[pedalId] = subplex;
@@ -591,28 +556,6 @@ function resetSubplexOnSinglePedal($pedalDiv) {
   // console.log("SubPlex reset completed for pedal:", pedalId);
 }
 
-
-
-// function updateSubplexButtonsUI($pedalDiv) {
-//   const $wrapper = $pedalDiv.closest('.pedal-wrapper');
-//   const $presetContainer = $wrapper.find('.preset-container');
-
-//   const $newBtn = $presetContainer.find(".new-subplex-btn");
-//   const $resetBtn = $presetContainer.find(".reset-subplex-btn");
-
-//   const hasApplied =
-//     !!$pedalDiv.attr("data-applied-preset") ||
-//     !!$pedalDiv.data("applied-subplex");
-
-//   if (hasApplied) {
-//     $newBtn.hide();
-//     $resetBtn.show();
-//   } else {
-//     $newBtn.show();
-//     $resetBtn.hide();
-//   }
-// }
-
 function updateSubplexButtonsUI($pedalDiv) {
   const $wrapper = $pedalDiv.closest('.pedal-wrapper');
   const $presetContainer = $wrapper.find('.preset-container');
@@ -626,12 +569,12 @@ function updateSubplexButtonsUI($pedalDiv) {
     !!$pedalDiv.attr("data-applied-preset") ||
     !!$pedalDiv.data("applied-subplex");
 
-  // 🔒 READ-ONLY MODE (catalogo / pagine statiche)
+  // Read-only mode (catalogo / pagine statiche)
   if (!isEditMode) {
-    $newBtn.hide(); // ❌ mai mostrare il +
+    $newBtn.hide(); // Mai mostrare il +
 
     if (hasApplied) {
-      $resetBtn.show();  // ✅ permetti reset (opzionale UX)
+      $resetBtn.show();  // Permetti reset (opzionale UX)
     } else {
       $resetBtn.hide();
     }
@@ -639,7 +582,7 @@ function updateSubplexButtonsUI($pedalDiv) {
     return;
   }
 
-  // ✏️ EDIT MODE (plexes.html)
+  // Edit mode (plexes.html)
   if (hasApplied) {
     $newBtn.hide();
     $resetBtn.show();
