@@ -388,7 +388,7 @@ let countdownInterval;
 (function initSessionExpiration() {
     const token = localStorage.getItem('authToken');
     if (!token) {
-        console.log("Nessun token presente → nessun controllo sessione");
+        // console.log("Nessun token presente → nessun controllo sessione");
         return;
     }
 
@@ -397,12 +397,12 @@ let countdownInterval;
         if (payload.exp) {
             // exp è in secondi → converti in millisecondi
             window.sessionExpires = payload.exp * 1000;
-            console.log("Session expires at:", new Date(window.sessionExpires));
+            // console.log("Session expires at:", new Date(window.sessionExpires));
         } else {
-            console.warn("Il JWT non contiene exp → impossibile calcolare la scadenza");
+            // console.warn("Il JWT non contiene exp → impossibile calcolare la scadenza");
         }
     } catch (e) {
-        console.error("Errore nel decodificare il JWT:", e);
+        // console.error("Errore nel decodificare il JWT:", e);
     }
 })();
 
@@ -470,7 +470,7 @@ function showSessionWarningModal(initialRemaining) {
     window.sessionExpires = null;
     sessionWarningShown = true;
 
-    console.log("Sessione gestita come guest o popup chiuso: nessun nuovo prompt.");
+    // console.log("Sessione gestita come guest o popup chiuso: nessun nuovo prompt.");
 });
 
 }

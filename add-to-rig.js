@@ -169,11 +169,11 @@ async function ensurePedalboardExists() {
 
 // Add a pedal to rig
 async function addPedalToRig(pedalId) {
-  console.log('addPedalToRig CALLED', pedalId);
+  // console.log('addPedalToRig CALLED', pedalId);
 
   try {
     const { mode, boardIndex } = await ensurePedalboardExists();
-    console.log('MODE:', mode, 'BOARD:', boardIndex);
+    // console.log('MODE:', mode, 'BOARD:', boardIndex);
 
     if (mode === 'guest') {
       const boards = JSON.parse(localStorage.getItem('guestPedalboard'));

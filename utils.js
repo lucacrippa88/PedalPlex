@@ -1109,7 +1109,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
         if (storedPedalboard) {
           try {
             window.pedalboard = JSON.parse(storedPedalboard);
-            console.log('Loaded Rig from localStorage for guest');
+            // console.log('Loaded Rig from localStorage for guest');
           } catch (e) {
             console.error('Failed to parse localStorage Rig', e);
             container.innerHTML = `<p style="text-align:center;margin-top:40px;">No Rids found.</p>`;

@@ -11,7 +11,7 @@ window.allPedalboards = [];
 
 $(document).ready(function () {
   if (!localStorage.getItem('authToken')) {
-    console.warn("No auth token found — initializing guest mode.");
+    // console.warn("No auth token found — initializing guest mode.");
     initGuestMode();
   }
 
@@ -77,7 +77,7 @@ async function initPreset() {
   // Estrai gli ID pedali dal guest board
   const ids = [...new Set((guestBoard.pedals || []).map(p => p.pedal_id))];
 
-  console.log("Fetching pedals via GET_PEDALS_BY_IDS (guest):", ids);
+  // console.log("Fetching pedals via GET_PEDALS_BY_IDS (guest):", ids);
 
   window.catalog = [];
   window.catalogMap = {};
@@ -911,7 +911,7 @@ async function createPreset() {
   const selectedBoardName = pedalboardSelect?.selectedOptions[0]?.text;
 
   const { value: presetName, isConfirmed, isDenied } = await Swal.fire({
-    title: `New Tone as Plex for "${selectedBoardName}"`,
+    title: `New Tone as Plex for Rig "${selectedBoardName}"`,
     input: 'text',
     inputLabel: 'Plex Name',
     inputPlaceholder: 'Type your new Plex name here',
@@ -1148,7 +1148,7 @@ async function movePresetToFolder(presetId, targetFolderId) {
         changedFolders.set(targetFolderId, target);
       }
     } else {
-      console.warn('movePresetToFolder: target folder not found locally:', targetFolderId);
+      // console.warn('movePresetToFolder: target folder not found locally:', targetFolderId);
     }
   }
 
@@ -1353,7 +1353,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
       selectedPreset = filteredPresets.find(p => p._id === preferredPresetId);
       // NON fare fallback automatico
       if (!selectedPreset) {
-        console.warn('Preferred preset not found in folder:', preferredPresetId);
+        // console.warn('Preferred preset not found in folder:', preferredPresetId);
         return; // esci senza toccare stato o localStorage
       }
     } else {
@@ -1374,7 +1374,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     if (selectedPreset.board_id === window.pedalboard._id) {
       applyPresetToPedalboard(selectedPreset);
     } else {
-      console.warn('Selected Plex does not belong to current Rig:', selectedPreset);
+      // console.warn('Selected Plex does not belong to current Rig:', selectedPreset);
       renderFullPedalboard(window.pedalboard.pedals);
       currentPresetId = null;
       currentPresetName = null;
@@ -1436,7 +1436,7 @@ async function createPresetOnServer(presetData) {
 
 
 async function initGuestMode() {
-  console.log("Initializing Guest Mode");
+  // console.log("Initializing Guest Mode");
 
   resultsDiv = document.getElementById("page-content");
 
@@ -1550,7 +1550,7 @@ async function initGuestMode() {
   const pedalIds = window.pedalboard.pedals.map(p => p.pedal_id);
 
   if (pedalIds.length > 0) {
-    console.log("Fetching gears via GET_PEDALS_BY_IDS (guest):", pedalIds);
+    // console.log("Fetching gears via GET_PEDALS_BY_IDS (guest):", pedalIds);
 
     const response = await fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
       method: "POST",
@@ -1618,7 +1618,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const style = getComputedStyle(led);
       const bgColor = style.backgroundColor;
       const boxShadow = style.boxShadow;
-      console.log(`🎛️ ${pedalName} → ${controlLabel}: bg=${bgColor}, shadow=${boxShadow}`);
+      // console.log(`🎛️ ${pedalName} → ${controlLabel}: bg=${bgColor}, shadow=${boxShadow}`);
     };
 
     // Log immediato per debug

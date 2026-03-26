@@ -1237,7 +1237,7 @@ function importGuestPedalboard(board, userFromServer) {
         pedals: JSON.stringify(pedals)   // pass pedals too
       },
       success: function(resp) {
-        console.log("Imported guest Rig:", resp);
+        // console.log("Imported guest Rig:", resp);
         resolve(resp);
       },
       error: function(err) {

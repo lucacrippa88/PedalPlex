@@ -216,7 +216,7 @@ if (!window.catalogMap || !window.catalogMap[pedalId]) {
     name: pedalId
   };
   window.catalog = [window.catalogMap[pedalId]]; // necessario per renderFullPedalboard
-  console.log('[VIEW.JS] Fallback catalog aggiunto per pedale statico');
+  // console.log('[VIEW.JS] Fallback catalog aggiunto per pedale statico');
 }
 // ==============================================
 
@@ -225,7 +225,7 @@ if (!window.catalogMap || !window.catalogMap[pedalId]) {
     $('#gearName').text(pedalId);
     await renderFullPedalboard(fakeBoard);
   } catch (err) {
-    console.error('[TEST-PLEX] Render error:', err);
+    // console.error('[TEST-PLEX] Render error:', err);
     resultsDiv.textContent = 'Errore nel render: ' + err.message;
   }
 
