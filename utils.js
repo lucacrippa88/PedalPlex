@@ -1092,13 +1092,13 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
     try {
       if (!resultsDiv) {
-        console.error("resultsDiv not initialized yet");
+        // console.error("resultsDiv not initialized yet");
         return resolve();
       }
 
       const container = document.getElementById('preset');
       if (!container) {
-        console.warn('No #pedalboard container found');
+        // console.warn('No #pedalboard container found');
         return resolve();
       }
       container.innerHTML = '';
