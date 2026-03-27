@@ -7,7 +7,8 @@ $(document).on('click', '#toggleForm', function (e) {
   isLogin = !isLogin;
 
   $('#formTitle').text(isLogin ? 'Login' : 'Register');
-  $('#submitBtn').text(isLogin ? 'Login' : 'Register');
+  $('#submitBtn').html(isLogin ? "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z'></path><path d='M14.59 20.59 18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z'></path></svg>Login" 
+                               : "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M28,25H20a2.0027,2.0027,0,0,1-2-2V20h2v3h8V9H20v3H18V9a2.0023,2.0023,0,0,1,2-2h8a2.0023,2.0023,0,0,1,2,2V23A2.0027,2.0027,0,0,1,28,25Z'></path><path d='M8 15H12V17H8z'></path><path d='M20 15H24V17H20z'></path><path d='M14 15H18V17H14z'></path><path d='M12,25H4a2.0023,2.0023,0,0,1-2-2V9A2.002,2.002,0,0,1,4,7h8a2.002,2.002,0,0,1,2,2v3H12V9H4V23h8V20h2v3A2.0023,2.0023,0,0,1,12,25Z'></path></svg>Free Registration");
   $('#email').toggle(!isLogin);
   $('#recaptchaContainer').toggle(!isLogin);
   $('#newsletterContainer').toggle(!isLogin); // checkbox solo in registrazione
@@ -126,7 +127,7 @@ $('#authForm').on('submit', function (e) {
           icon: 'error',
           title: isLogin ? 'Login failed' : 'Registration failed',
           text: res.error || 'Invalid credentials.',
-          confirmButtonText: 'Try Again',
+          confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>Try again",
           customClass: { confirmButton: 'bx--btn bx--btn--danger' },
           buttonsStyling: false
         });
