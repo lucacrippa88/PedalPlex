@@ -157,9 +157,14 @@ if (window.FXDB_URL) {
     try {
       const res = await fetch('https://api.pedalplex.com/GET_GEARS_BY_IDS.php', {
         method: 'POST',
+        // headers: {
+        //   'Content-Type': 'application/json',
+        //   'Authorization': 'Bearer ' + token
+        // },
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
+          'Authorization': token ? 'Bearer ' + token : '',
+          ...(is404Page ? { 'X-ALLOW-PRIVATE-404': '1' } : {})
         },
         body: JSON.stringify({
           ids
