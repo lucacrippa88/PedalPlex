@@ -9018,6 +9018,15 @@
     "seo_description": "The Klon KTR is the modern successor to the legendary Klon Centaur overdrive pedal. Designed by Bill Finnegan, the KTR preserves the famous transparent overdrive tone while making the circuit available to a wider audience. Like the original Centaur, the KTR blends clean and overdriven signals to maintain clarity, articulation, and dynamic response. Guitarists appreciate its ability to act as a clean boost, subtle overdrive, or amp-pushing gain stage. The pedal features Gain, Treble, and Output controls that provide a wide tonal range while remaining easy to dial in. Internally, the KTR uses the same core design philosophy as the Centaur, delivering the signature tone that made the original pedal so revered. Compact and pedalboard-friendly, the Klon KTR offers the classic Centaur sound in a more accessible format."
   },
   {
+    "pedalplex_id": "KMA Machines GEMINUS Stereo True Double Tracker",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/kma-machines-geminus-stereo-true-double-tracker",
+    "brand": "KMA Machines",
+    "category": "delay",
+    "seo_description": "The Geminus by KMA Machines is a stereo True Double Tracker pedal designed to recreate the natural width and depth of double-tracked recordings in real time. Instead of adding gain, Geminus generates a second, slightly detuned and time-shifted signal, emulating how two separate performances interact in a studio. The result is a wide, organic stereo image that goes far beyond typical chorus or delay effects. It features independent control over timing and modulation, allowing you to dial in anything from subtle thickening to dramatic stereo spread. The pedal also includes stereo I/O and flexible routing, making it ideal for complex rigs, wet/dry setups, or direct recording. Unlike modulation effects that rely on LFOs, Geminus focuses on micro-variations and realism, avoiding the “wobble” of chorus and delivering a more natural doubling effect. It’s particularly suited for players who want to enhance riffs, leads, or clean passages with studio-grade width and dimension, whether live or in the studio."
+  },
+  {
     "pedalplex_id": "LAZY J x ThorpyFx THE J Analog Amp Emulator",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/thorpyfx/thej",
