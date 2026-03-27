@@ -10098,6 +10098,15 @@
     "seo_description": "The Moog Minifooger Tremolo is an analog tremolo pedal that delivers smooth and musical amplitude modulation inspired by classic vintage amplifiers. Controls for rate and depth allow players to shape subtle rhythmic pulsing or dramatic volume swells. The pedal\u2019s analog circuitry ensures warm and natural modulation without digital artifacts. Expression pedal compatibility allows real-time adjustment of tremolo speed or intensity during performance. With its compact design and Moog\u2019s signature sound quality, the Minifooger Tremolo provides classic tremolo tones suitable for a wide range of musical styles."
   },
   {
+    "pedalplex_id": "Morgan Amps AC20 Head",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/morgan-amps-ac20-head",
+    "brand": "Morgan Amps",
+    "category": "head",
+    "seo_description": "The Morgan Amps AC20 Head is a boutique all-tube guitar amplifier inspired by classic British chime and dynamic response. Delivering around 20 watts of Class A power, it offers rich harmonic content, touch-sensitive breakup, and a highly responsive feel that reacts naturally to a player’s picking dynamics. Designed as a modern interpretation of vintage-style circuits, the AC20 provides sparkling clean tones that transition smoothly into warm overdrive when pushed. With a simple yet effective control layout and premium components, the AC20 Head is ideal for players seeking articulate cleans, expressive edge-of-breakup tones, and studio-quality sound in a compact format."
+  },
+  {
     "pedalplex_id": "Mosky Audio 3 Loop Box",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/mosky/mini/loopbox",
