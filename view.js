@@ -164,8 +164,7 @@ if (window.FXDB_URL) {
         // },
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-          ...(window.PEDAL_ID === "Gear 404" ? { 'X-ALLOW-PRIVATE-404': '1' } : {})
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {})
         },
         body: JSON.stringify({
           ids
