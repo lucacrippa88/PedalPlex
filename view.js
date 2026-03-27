@@ -154,6 +154,9 @@ if (window.FXDB_URL) {
 
 
   async function fetchPedals(ids) {
+
+    const is404 = ids.length === 1 && ids[0] === "Gear 404";
+
     try {
       const res = await fetch('https://api.pedalplex.com/GET_GEARS_BY_IDS.php', {
         method: 'POST',
@@ -163,8 +166,8 @@ if (window.FXDB_URL) {
         // },
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token ? 'Bearer ' + token : '',
-          ...(is404Page ? { 'X-ALLOW-PRIVATE-404': '1' } : {})
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+          ...(window.PEDAL_ID === "Gear 404" ? { 'X-ALLOW-PRIVATE-404': '1' } : {})
         },
         body: JSON.stringify({
           ids
