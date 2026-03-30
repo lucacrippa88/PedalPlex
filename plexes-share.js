@@ -86,12 +86,13 @@ function openShareModal() {
                     label.textContent = "Shared";
                     container.style.display = "block";
 
-                    // Popola il link solo se esiste il token
-                    if (preset.shared_token) {
-                        input.value = window.location.origin + '/shared/plex/' + preset.shared_token;
-                    } else {
-                        input.value = '';
+                    // Genera token solo se manca
+                    if (!preset.shared_token) {
+                        preset.shared_token = uuidv4();
                     }
+
+                    input.value = window.location.origin + '/shared/plex/' + preset.shared_token;
+
                 } else {
                     label.textContent = "Private";
                     container.style.display = "none";
