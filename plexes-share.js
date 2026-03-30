@@ -56,7 +56,7 @@ function generateQR(link) {
         text: link,
         width: 180,
         height: 180,
-        correctLevel: QRCode.CorrectLevel.H // 🔥 fondamentale con logo
+        correctLevel: QRCode.CorrectLevel.H // to correct logo positioning
     });
 
     // logo centrale
@@ -68,7 +68,7 @@ function generateQR(link) {
     logo.style.left = "50%";
     logo.style.transform = "translate(-50%, -50%)";
 
-    // 🔥 dimensione ideale (NON troppo grande)
+    // Logo dimensions
     logo.style.width = "42px";
     logo.style.height = "42px";
 
