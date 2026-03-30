@@ -6,7 +6,7 @@ Thumbs.db
 other/
 
 # Plex
-plex/
+backend/
 
 # Templates
 static_template.html
