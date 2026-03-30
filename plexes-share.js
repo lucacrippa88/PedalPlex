@@ -148,6 +148,7 @@ function openShareModal() {
                 Swal.fire({
                     icon: 'success',
                     title: 'Saved!',
+                    text: 'Your Plex sharing options have been updated.',
                     showConfirmButton: false,
                     timer: 1500
                 });
