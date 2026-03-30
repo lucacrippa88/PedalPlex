@@ -114,21 +114,16 @@ function openShareModal() {
             const enabled = document.getElementById("shareToggle").checked;
             preset.shared = enabled;
 
-            // costruisci oggetto da inviare al DB
             const dbData = {
                 preset_id: currentPresetId,
                 shared: preset.shared,
                 sharedAt: enabled ? new Date().toISOString() : null,
-                shared_token: preset.shared_token, // non cambia se già esiste
+                shared_token: preset.shared_token,
                 original_author: preset.user_id
             };
 
-            console.log("Dati da salvare nel DB:", dbData);
+            // console.log("Dati da salvare nel DB:", dbData);
 
-            // ----------------------------
-            // Invio al PHP
-            // ----------------------------
-            // invio al PHP con fetch
             try {
                 const res = await fetch('https://api.pedalplex.com/UPDATE_PLEX.php', {
                     method: 'POST',
@@ -139,26 +134,26 @@ function openShareModal() {
                 });
                 const json = await res.json();
 
-                if (json.success) {
-                    // mostra SweetAlert di conferma che si chiude da solo
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Saved!',
-                        text: 'Your Plex sharing options have been successfully updated.',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    // opzionale: chiudi anche il modal Share originale subito
-                    Swal.close(); 
-                } else {
+                if (!json.success) {
                     Swal.showValidationMessage(json.error || 'Failed to save preset');
+                    return false; // tiene aperto il modal
                 }
             } catch (e) {
                 Swal.showValidationMessage('Network error: ' + e);
+                return false; // tiene aperto il modal
             }
 
-            // chiudi modal
-            return true;
+            // Tutto ok: modal Share si chiude
+            setTimeout(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Saved!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }, 100); // piccolo delay per evitare conflitti con la chiusura del modal originale
+
+            return true; // chiude modal Share
         }
     });
 }
