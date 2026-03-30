@@ -1,3 +1,16 @@
+// Start detect preview mode
+const urlParams = new URLSearchParams(window.location.search);
+const sharedToken = urlParams.get("shared_token");
+
+window.isSharedPreview = !!sharedToken;
+
+if (isPreviewMode) {
+    document.querySelectorAll('#pedalboardSelect, #folderSelectContainer, #renameFolderBtn, #presetSelectContainer, #renamePresetBtn, #sharePresetBtn').forEach(el => {
+        el.style.display = 'none';
+    });
+}
+// End detect preview mode
+
 let resultsDiv;
 let selectedBoardIndex = null;
 let currentPresetId = null;
