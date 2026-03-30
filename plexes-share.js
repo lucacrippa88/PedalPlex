@@ -24,18 +24,64 @@ function generateShareLink(preset) {
 // ----------------------------
 // Generate Share Plex QR Code
 // ----------------------------
+// function generateQR(link) {
+//     const container = document.getElementById("qrContainer");
+//     if (!container) return;
+
+//     container.innerHTML = "";
+
+//     new QRCode(container, {
+//         text: link,
+//         width: 160,
+//         height: 160,
+//         correctLevel: QRCode.CorrectLevel.H // 🔥 robusto
+//     });
+// }
 function generateQR(link) {
     const container = document.getElementById("qrContainer");
     if (!container) return;
 
     container.innerHTML = "";
+    container.style.position = "relative";
+    container.style.display = "flex";
+    container.style.justifyContent = "center";
 
-    new QRCode(container, {
+    // wrapper per QR
+    const qrWrapper = document.createElement("div");
+    qrWrapper.style.position = "relative";
+    container.appendChild(qrWrapper);
+
+    // genera QR
+    new QRCode(qrWrapper, {
         text: link,
-        width: 160,
-        height: 160,
-        correctLevel: QRCode.CorrectLevel.H // 🔥 robusto
+        width: 180,
+        height: 180,
+        correctLevel: QRCode.CorrectLevel.H // 🔥 fondamentale con logo
     });
+
+    // logo centrale
+    const logo = document.createElement("img");
+    logo.src = "/logos/pedalplex_logo_black.png";
+
+    logo.style.position = "absolute";
+    logo.style.top = "50%";
+    logo.style.left = "50%";
+    logo.style.transform = "translate(-50%, -50%)";
+
+    // 🔥 dimensione ideale (NON troppo grande)
+    logo.style.width = "42px";
+    logo.style.height = "42px";
+
+    // migliora leggibilità QR
+    logo.style.background = "white";
+    logo.style.padding = "6px";
+    logo.style.borderRadius = "8px";
+
+    // opzionale: micro shadow per staccarlo
+    logo.style.boxShadow = "0 0 4px rgba(0,0,0,0.2)";
+    logo.style.objectFit = "contain";
+
+    qrWrapper.appendChild(logo);
 }
 
 // ----------------------------
