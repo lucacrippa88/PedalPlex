@@ -330,7 +330,7 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
     // window.presets.forEach(p => {
     //   if (p && p._id) window.presetMap[p._id] = p;
     // });
-    
+
     // NEW
     window.presetMap = {};
     window.presets.forEach(p => {
@@ -339,7 +339,7 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
       // assicurati che tutti i campi necessari esistano
       window.presetMap[p._id] = {
         ...p,
-        shared: p.shared || "false",
+        shared: p.shared || false,
         sharedAt: p.sharedAt || null,
         shared_token: p.shared_token || null
       };
