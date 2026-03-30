@@ -549,7 +549,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 /* ON state */
 .pp-toggle input:checked + label .pp-toggle-switch {
-  background: #0f62fe; /* Carbon blue */
+  background: #9C54D5; /* Carbon blue */
 }
 
 .pp-toggle input:checked + label .pp-toggle-switch::after {
