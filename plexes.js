@@ -4,7 +4,7 @@ const sharedToken = urlParams.get('shared_token');
 const isPreviewMode = !!sharedToken;
 
 if (isPreviewMode) {
-    document.querySelectorAll('#pedalboardSelect, #folderSelectContainer, #renameFolderBtn, #presetSelectContainer, #renamePresetBtn, #sharePresetBtn').forEach(el => {
+    document.querySelectorAll('#savePstBtn, #createPstBtn, #addFolderBtn, #pedalboardSelect, #folderSelectContainer, #renameFolderBtn, #presetSelectContainer, #renamePresetBtn, #sharePresetBtn').forEach(el => {
         el.style.display = 'none!important';
     });
 }
