@@ -22,6 +22,23 @@ function generateShareLink(preset) {
 }
 
 // ----------------------------
+// Generate Share Plex QR Code
+// ----------------------------
+function generateQR(link) {
+    const container = document.getElementById("qrContainer");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    new QRCode(container, {
+        text: link,
+        width: 160,
+        height: 160,
+        correctLevel: QRCode.CorrectLevel.H // 🔥 robusto
+    });
+}
+
+// ----------------------------
 // Modal Share Plex
 // ----------------------------
 function openShareModal() {
@@ -43,7 +60,8 @@ function openShareModal() {
         return;
     }
 
-    const isShared = preset.shared || false;
+    // const isShared = preset.shared || false;
+    const isShared = Boolean(preset.shared);
 
     Swal.fire({
         title: 'Share Plex',
@@ -71,7 +89,11 @@ function openShareModal() {
             </button>
           </div>
           <br>
+        
+        <!-- QR container -->
+        <div id="qrContainer" style="margin-top:10px; display:none;"></div>
         </div>
+
       </div>
     `,
         showCloseButton: true,
@@ -86,37 +108,48 @@ function openShareModal() {
             const container = document.getElementById("shareLinkContainer");
             const input = document.getElementById("shareLinkInput");
             const copyBtn = document.getElementById("copyLinkBtn");
+            const qrContainer = document.getElementById("qrContainer");
 
             // inizializza toggle basandosi sul valore salvato
             toggle.checked = !!preset.shared;
+
+            let userInteracted = false;
 
             // aggiorna UI toggle + link
             function updateUI() {
                 if (toggle.checked) {
                     label.textContent = "Shared";
                     container.style.display = "block";
+                    qrContainer.style.display = "block";
 
-                    // ✅ genera SOLO se:
-                    // - non esiste già
-                    // - l'utente ha appena attivato lo share
-                    if (!preset.shared_token) {
+                    // genera SOLO dopo interazione utente
+                    if (userInteracted && !preset.shared_token) {
                         preset.shared_token = uuidv4();
                     }
 
-                    input.value = window.location.origin + '/shared/plex/' + preset.shared_token;
+                    if (preset.shared_token) {
+                        const link = window.location.origin + '/shared/plex/' + preset.shared_token;
+                        input.value = link;
+
+                        generateQR(link);
+                    }
 
                 } else {
                     label.textContent = "Private";
                     container.style.display = "none";
+                    qrContainer.style.display = "none";
                     input.value = "";
                 }
-            } 
+            }
 
             // chiamata iniziale per aggiornare l'UI
             updateUI();
 
             // cambia UI al toggle
-            toggle.addEventListener("change", updateUI);
+            toggle.addEventListener("change", () => {
+                userInteracted = true;
+                updateUI();
+            });
 
             // copy button
             copyBtn.addEventListener("click", async () => {
