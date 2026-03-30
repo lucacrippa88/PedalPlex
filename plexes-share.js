@@ -86,7 +86,9 @@ function openShareModal() {
                     label.textContent = "Shared";
                     container.style.display = "block";
 
-                    // Genera token solo se manca
+                    // ✅ genera SOLO se:
+                    // - non esiste già
+                    // - l'utente ha appena attivato lo share
                     if (!preset.shared_token) {
                         preset.shared_token = uuidv4();
                     }
