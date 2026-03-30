@@ -129,10 +129,10 @@ function openShareModal() {
       // Invio al PHP
       // ----------------------------
       try {
-        const res = await fetch('/UPDATE_PLEX.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(dbData)
+        const res = await fetch('https://api.pedalplex.com/UPDATE_PLEX.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dbData)
         });
         const result = await res.json();
 
