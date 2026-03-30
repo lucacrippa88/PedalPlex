@@ -38,21 +38,15 @@ function openShareModal() {
             confirmButton: 'bx--btn bx--btn--primary'
         },
         didOpen: () => {
-        const toggleEl = document.getElementById("shareToggle");
+        CarbonComponents.watch(); // ← QUESTA è la chiave
 
-        // inizializza SOLO il toggle
-        if (toggleEl) {
-            CarbonComponents.Toggle.init(toggleEl);
-        }
-
-        const toggle = toggleEl;
+        const toggle = document.getElementById("shareToggle");
         const linkContainer = document.getElementById("shareLinkContainer");
         const linkInput = document.getElementById("shareLinkInput");
 
         toggle.addEventListener("change", () => {
             if (toggle.checked) {
             linkContainer.style.display = "block";
-            // linkInput.value = generateShareLink(preset); (quando lo aggiungi)
             } else {
             linkContainer.style.display = "none";
             linkInput.value = "";
