@@ -1269,6 +1269,24 @@
     "seo_description": "The AMT LLM-2 ZERO Little Loudmouth is a compact optical volume pedal designed for smooth and transparent level control. Using an optical circuit instead of a traditional potentiometer, the pedal provides precise volume adjustments without mechanical wear or scratchy noise over time. Its small footprint makes it ideal for crowded pedalboards while still delivering reliable performance. Guitarists often use volume pedals like the Little Loudmouth for swells, fade-ins, and overall level management within their rigs. Discover pedalboard placement strategies and creative uses for the AMT LLM-2 ZERO on PedalPlex."
   },
   {
+  "pedalplex_id": "AMT M-1 Guitar Preamp",
+  "status": "found",
+  "fxdb_url": "https://www.effectsdatabase.com/model/amt/legendamp/m1",
+  "pedalplex_url": "https://www.pedalplex.com/gear/amt-m-1-guitar-preamp",
+  "brand": "AMT",
+  "category": "preamp",
+  "seo_description": "The AMT M-1 Guitar Preamp is a compact JFET-based preamp pedal designed to capture the tone and response of classic American-style high-gain amplifiers. It delivers tight low-end, aggressive distortion, and focused midrange, making it well suited for modern rock and metal applications. The analog JFET circuitry provides tube-like dynamics and responsiveness, allowing players to achieve expressive picking articulation and natural compression. Equipped with flexible EQ controls and strong output level, the M-1 can be used as a standalone preamp, a drive pedal in front of an amplifier, or for direct recording when paired with cabinet simulation. Its versatile design makes it a reliable solution for both live performance and studio use."
+  },
+  {
+  "pedalplex_id": "AMT WH-1 Optical Wah-Wah",
+  "status": "found",
+  "fxdb_url": "https://www.effectsdatabase.com/model/amt/wh1",
+  "pedalplex_url": "https://www.pedalplex.com/gear/amt-wh-1-optical-wah-wah",
+  "brand": "AMT",
+  "category": "wah",
+  "seo_description": "The AMT WH-1 Optical Wah-Wah is a compact and durable wah pedal that uses optical circuitry to deliver smooth and noise-free frequency sweeps. Unlike traditional potentiometer-based wah pedals, the optical design eliminates mechanical wear, ensuring long-term reliability and consistent performance. The WH-1 provides a wide sweep range with clear articulation, making it suitable for expressive lead playing, funk rhythms, and dynamic tonal shaping. Its responsive feel allows precise control over the wah effect, while the robust construction makes it ideal for both stage and studio use. With its modern optical design and classic wah character, the AMT WH-1 offers dependable performance for a variety of musical styles."
+  },
+  {
     "pedalplex_id": "Analogman Beano Boost",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/analogman/beanoboost",
