@@ -17,7 +17,8 @@ function generateShareLink(preset) {
     if (!preset.shared_token) {
         preset.shared_token = uuidv4();
     }
-    const baseUrl = window.location.origin + '/shared/plex/';
+    // hash routing
+    const baseUrl = window.location.origin + '/shared/plex/#';
     return baseUrl + preset.shared_token;
 }
 
