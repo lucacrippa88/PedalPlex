@@ -16,7 +16,7 @@ function generateShareLink(preset) {
   if (!preset.shared_token) {
     preset.shared_token = uuidv4();
   }
-  const baseUrl = window.location.origin + '/shared/';
+  const baseUrl = window.location.origin + '/shared/plex/';
   return baseUrl + preset.shared_token;
 }
 
@@ -115,7 +115,7 @@ function openShareModal() {
 
     // costruisci oggetto da inviare al DB
     const dbData = {
-        preset_id: preset.id,
+        preset_id: currentPresetId,
         shared: preset.shared,
         sharedAt: enabled ? new Date().toISOString() : null,
         shared_token: preset.shared_token,
