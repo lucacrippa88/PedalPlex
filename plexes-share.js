@@ -13,6 +13,7 @@ function uuidv4() {
 
 // Funzione per generare link condivisibile
 function generateShareLink(preset) {
+  // genera token solo se non esiste
   if (!preset.shared_token) {
     preset.shared_token = uuidv4();
   }
@@ -37,6 +38,7 @@ function openShareModal() {
   Swal.fire({
     title: 'Share Plex',
     html: `
+        Warning: this is a beta feature. Work in progress.
       <div style="text-align:left; margin-top:1rem;">
         <!-- Toggle -->
         <div class="pp-toggle">
@@ -52,7 +54,10 @@ function openShareModal() {
           <div style="display:flex; gap:8px;">
             <input id="shareLinkInput" class="bx--text-input" readonly style="flex:1;">
             <button id="copyLinkBtn" class="bx--btn bx--btn--secondary bx--btn--icon-only">
-              <svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M29.25,6.76a6,6,0,0,0-8.5,0l1.42,1.42a4,4,0,1,1,5.67,5.67l-8,8a4,4,0,1,1-5.67-5.66l1.41-1.42-1.41-1.42-1.42,1.42a6,6,0,0,0,0,8.5A6,6,0,0,0,17,25a6,6,0,0,0,4.27-1.76l8-8A6,6,0,0,0,29.25,6.76Z'></path><path d='M4.19,24.82a4,4,0,0,1,0-5.67l8-8a4,4,0,0,1,5.67,0A3.94,3.94,0,0,1,19,14a4,4,0,0,1-1.17,2.85L15.71,19l1.42,1.42,2.12-2.12a6,6,0,0,0-8.51-8.51l-8,8a6,6,0,0,0,0,8.51A6,6,0,0,0,7,28a6.07,6.07,0,0,0,4.28-1.76L9.86,24.82A4,4,0,0,1,4.19,24.82Z'></path></svg>
+              <svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'>
+                <path d='M29.25,6.76a6,6,0,0,0-8.5,0l1.42,1.42a4,4,0,1,1,5.67,5.67l-8,8a4,4,0,1,1-5.67-5.66l1.41-1.42-1.41-1.42-1.42,1.42a6,6,0,0,0,0,8.5A6,6,0,0,0,17,25a6,6,0,0,0,4.27-1.76l8-8A6,6,0,0,0,29.25,6.76Z'></path>
+                <path d='M4.19,24.82a4,4,0,0,1,0-5.67l8-8a4,4,0,0,1,5.67,0A3.94,3.94,0,0,1,19,14a4,4,0,0,1-1.17,2.85L15.71,19l1.42,1.42,2.12-2.12a6,6,0,0,0-8.51-8.51l-8,8a6,6,0,0,0,0,8.51A6,6,0,0,0,7,28a6.07,6.07,0,0,0,4.28-1.76L9.86,24.82A4,4,0,0,1,4.19,24.82Z'></path>
+              </svg>
             </button>
           </div>
           <br>
@@ -76,8 +81,6 @@ function openShareModal() {
         if (toggle.checked) {
           label.textContent = "Shared";
           container.style.display = "block";
-
-          // genera link solo se necessario
           input.value = generateShareLink(preset);
         } else {
           label.textContent = "Private";
@@ -96,7 +99,10 @@ function openShareModal() {
           await navigator.clipboard.writeText(input.value);
           copyBtn.textContent = "Copied!";
           setTimeout(() => {
-            copyBtn.innerHTML = `<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M29.25,6.76a6,6,0,0,0-8.5,0l1.42,1.42a4,4,0,1,1,5.67,5.67l-8,8a4,4,0,1,1-5.67-5.66l1.41-1.42-1.41-1.42-1.42,1.42a6,6,0,0,0,0,8.5A6,6,0,0,0,17,25a6,6,0,0,0,4.27-1.76l8-8A6,6,0,0,0,29.25,6.76Z'></path><path d='M4.19,24.82a4,4,0,0,1,0-5.67l8-8a4,4,0,0,1,5.67,0A3.94,3.94,0,0,1,19,14a4,4,0,0,1-1.17,2.85L15.71,19l1.42,1.42,2.12-2.12a6,6,0,0,0-8.51-8.51l-8,8a6,6,0,0,0,0,8.51A6,6,0,0,0,7,28a6.07,6.07,0,0,0,4.28-1.76L9.86,24.82A4,4,0,0,1,4.19,24.82Z'></path></svg>`;
+            copyBtn.innerHTML = `<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'>
+              <path d='M29.25,6.76a6,6,0,0,0-8.5,0l1.42,1.42a4,4,0,1,1,5.67,5.67l-8,8a4,4,0,1,1-5.67-5.66l1.41-1.42-1.41-1.42-1.42,1.42a6,6,0,0,0,0,8.5A6,6,0,0,0,17,25a6,6,0,0,0,4.27-1.76l8-8A6,6,0,0,0,29.25,6.76Z'></path>
+              <path d='M4.19,24.82a4,4,0,0,1,0-5.67l8-8a4,4,0,0,1,5.67,0A3.94,3.94,0,0,1,19,14a4,4,0,0,1-1.17,2.85L15.71,19l1.42,1.42,2.12-2.12a6,6,0,0,0-8.51-8.51l-8,8a6,6,0,0,0,0,8.51A6,6,0,0,0,7,28a6.07,6.07,0,0,0,4.28-1.76L9.86,24.82A4,4,0,0,1,4.19,24.82Z'></path>
+            </svg>`;
           }, 1500);
         } catch (e) {
           console.error("Copy failed", e);
@@ -104,28 +110,44 @@ function openShareModal() {
       });
     },
 
-    preConfirm: () => {
-    const enabled = document.getElementById("shareToggle").checked;
-    preset.shared = enabled;
+    preConfirm: async () => {
+      const enabled = document.getElementById("shareToggle").checked;
+      preset.shared = enabled;
 
-    // se è la prima volta che viene condiviso, genera il token
-    if (enabled && !preset.shared_token) {
-        preset.shared_token = uuidv4();
-    }
-
-    // costruisci oggetto da inviare al DB
-    const dbData = {
+      // costruisci oggetto da inviare al DB
+      const dbData = {
         preset_id: currentPresetId,
         shared: preset.shared,
         sharedAt: enabled ? new Date().toISOString() : null,
-        shared_token: preset.shared_token,
+        shared_token: preset.shared_token, // non cambia se già esiste
         original_author: preset.user_id
-    };
+      };
 
-    console.log("Dati da salvare nel DB:", dbData);
+      console.log("Dati da salvare nel DB:", dbData);
 
-    // ritorna false per evitare che SweetAlert chiuda automaticamente
-    return false;
+      // ----------------------------
+      // Invio al PHP
+      // ----------------------------
+      try {
+        const res = await fetch('/UPDATE_PLEX.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dbData)
+        });
+        const result = await res.json();
+
+        if (result.success) {
+          Swal.fire('Saved!', 'Your Plex share settings have been updated.', 'success');
+        } else {
+          Swal.fire('Error', result.error || 'Failed to save preset', 'error');
+        }
+      } catch (e) {
+        console.error(e);
+        Swal.fire('Error', 'Network or server error', 'error');
+      }
+
+      // chiudi modal
+      return true;
     }
   });
 }
