@@ -140,8 +140,16 @@ function openShareModal() {
                 const json = await res.json();
 
                 if (json.success) {
-                    // closes confirmation after 1.5s
-                    setTimeout(() => Swal.close(), 1500);
+                    // mostra SweetAlert di conferma che si chiude da solo
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Saved!',
+                        text: 'Your Plex sharing options have been successfully updated.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    // opzionale: chiudi anche il modal Share originale subito
+                    Swal.close(); 
                 } else {
                     Swal.showValidationMessage(json.error || 'Failed to save preset');
                 }
