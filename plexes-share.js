@@ -34,11 +34,11 @@ function openShareModal() {
             title: 'Error',
             text: 'No Plex selected.',
             showConfirmButton: false,
-            confirmButtonText: "Ok",
+            showCancelButton: true,
+            cancelButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>Go back",
             customClass: {
-                confirmButton: 'bx--btn bx--btn--primary'
-            },
-            timer: 1500
+                cancelButton: 'bx--btn bx--btn--secondary'
+            }
         });
         return;
     }
