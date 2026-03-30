@@ -1373,7 +1373,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     currentPresetRev = null;
   } else {
     presetSelect.style.display = 'inline-block';
-    if (editBtn) editBtn.style.display = 'inline-block';
+    if (!isPreviewMode) { if (editBtn) editBtn.style.display = 'inline-block'; }
 
     // Seleziona preset preferito se valido, altrimenti primo preset della lista
     // let selectedPreset = preferredPresetId
