@@ -60,7 +60,6 @@ function openShareModal() {
         return;
     }
 
-    // const isShared = preset.shared || false;
     const isShared = Boolean(preset.shared);
 
     Swal.fire({
@@ -91,7 +90,7 @@ function openShareModal() {
           <br>
         
         <!-- QR container -->
-        <div id="qrContainer" style="margin-top:10px; display:none;"></div>
+        <div id="qrContainer" style="margin-top:10px; display:none; justify-content:center"></div>
         </div>
 
       </div>
@@ -120,7 +119,7 @@ function openShareModal() {
                 if (toggle.checked) {
                     label.textContent = "Shared";
                     container.style.display = "block";
-                    qrContainer.style.display = "block";
+                    qrContainer.style.display = "flex";
 
                     // genera SOLO dopo interazione utente
                     if (userInteracted && !preset.shared_token) {
