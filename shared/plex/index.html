@@ -1,10 +1,8 @@
 <!-- HTML page that performs redirect from Shared Plex link to plexes.html -->
 
 <script>
-const pathParts = window.location.pathname.split('/');
-const token = pathParts[pathParts.length - 1];
-
+const token = window.location.hash.slice(1); // take all after #
 if (token) {
-  window.location.href = `/plexes.html?shared_token=${token}`;
+    window.location.href = `/plexes.html?shared_token=${token}`;
 }
 </script>
