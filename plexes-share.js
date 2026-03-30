@@ -29,7 +29,17 @@ function openShareModal() {
     const preset = window.presetMap?.[currentPresetId];
 
     if (!preset) {
-        Swal.fire('Error', 'No Plex selected', 'error');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No Plex selected.',
+            showConfirmButton: false,
+            confirmButtonText: "Ok",
+            customClass: {
+                confirmButton: 'bx--btn bx--btn--primary'
+            },
+            timer: 1500
+        });
         return;
     }
 
