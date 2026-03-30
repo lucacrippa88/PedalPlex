@@ -14,19 +14,18 @@ function openShareModal() {
     html: `
       <div style="text-align:left; margin-top:1rem;">
         
-        <!-- Carbon Toggle (STRUTTURA CORRETTA) -->
-        <div class="bx--toggle bx--form-item">
-          <input 
+        <!-- Toggle -->
+        <div class="pp-toggle">
+        <input 
             type="checkbox" 
-            class="bx--toggle-input" 
             id="shareToggle" 
             ${isShared ? 'checked' : ''}
-          >
-          <label class="bx--toggle-input__label" for="shareToggle">
-            <span class="bx--toggle__switch"></span>
-            <span class="bx--toggle__text--off">Private</span>
-            <span class="bx--toggle__text--on">Shared</span>
-          </label>
+        >
+        <label for="shareToggle">
+            <span class="pp-toggle-switch"></span>
+            <span class="pp-toggle-text off">Private</span>
+            <span class="pp-toggle-text on">Shared</span>
+        </label>
         </div>
 
         <!-- Link -->
