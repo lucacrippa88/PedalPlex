@@ -5,7 +5,7 @@ const isPreviewMode = !!sharedToken;
 
 if (isPreviewMode) {
     document.querySelectorAll('#pedalboardSelect, #folderSelectContainer, #renameFolderBtn, #presetSelectContainer, #renamePresetBtn, #sharePresetBtn').forEach(el => {
-        el.style.display = 'none';
+        el.style.display = 'none!important';
     });
 }
 // End detect preview mode
