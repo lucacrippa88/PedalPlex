@@ -174,7 +174,7 @@ function openShareModal() {
                     }
 
                     if (preset.shared_token) {
-                        const link = window.location.origin + '/shared/plex/' + preset.shared_token;
+                        const link = window.location.origin + '/shared/plex/#' + preset.shared_token;
                         input.value = link;
 
                         generateQR(link);
