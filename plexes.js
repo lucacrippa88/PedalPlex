@@ -324,9 +324,24 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
     // Store all presets globally
     window.presets = data.presets || [];
     // Build presetMap keyed by _id for easy lookup
+
+    // OLD
+    // window.presetMap = {};
+    // window.presets.forEach(p => {
+    //   if (p && p._id) window.presetMap[p._id] = p;
+    // });
+    // NEW
     window.presetMap = {};
     window.presets.forEach(p => {
-      if (p && p._id) window.presetMap[p._id] = p;
+      if (!p || !p._id) return;
+
+      // assicurati che tutti i campi necessari esistano
+      window.presetMap[p._id] = {
+        ...p,
+        shared: p.shared || false,
+        sharedAt: p.sharedAt || null,
+        shared_token: p.shared_token || null
+      };
     });
 
     // Ensure folders are loaded before we populate folder/preset selects
