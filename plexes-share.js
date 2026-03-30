@@ -100,7 +100,7 @@ function openShareModal() {
                     container.style.display = "none";
                     input.value = "";
                 }
-            }
+            } 
 
             // chiamata iniziale per aggiornare l'UI
             updateUI();
