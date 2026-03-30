@@ -1,8 +1,7 @@
 // Start detect preview mode
 const urlParams = new URLSearchParams(window.location.search);
-const sharedToken = urlParams.get("shared_token");
-
-window.isSharedPreview = !!sharedToken;
+const sharedToken = urlParams.get('shared_token');
+const isPreviewMode = !!sharedToken;
 
 if (isPreviewMode) {
     document.querySelectorAll('#pedalboardSelect, #folderSelectContainer, #renameFolderBtn, #presetSelectContainer, #renamePresetBtn, #sharePresetBtn').forEach(el => {
