@@ -76,6 +76,12 @@ function initNavPreset() {
 
   $("body").prepend(navHtml);
 
+  if (window.isPreviewMode) {
+    document.querySelectorAll('#savePstBtnMobile, #createPstBtnMobile, #savePstBtn, #createPstBtn, #addFolderBtn').forEach(el => {
+        el.style.setProperty('display', 'none', 'important');
+    });
+}
+
   // Disable Save/Create/Folder buttons and add Login for guests
   if (isGuest) {
     // Remove save buttons
