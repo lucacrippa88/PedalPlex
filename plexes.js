@@ -1,10 +1,10 @@
 // Start detect preview mode
 const urlParams = new URLSearchParams(window.location.search);
 const sharedToken = urlParams.get('shared_token');
-const isPreviewMode = !!sharedToken;
+window.isPreviewMode = !!sharedToken;
 
-if (isPreviewMode) {
-    document.querySelectorAll('#savePstBtn, #createPstBtn, #addFolderBtn, #pedalboardSelect, #folderSelectContainer, #renameFolderBtn, #presetSelectContainer, #renamePresetBtn, #sharePresetBtn').forEach(el => {
+if (window.isPreviewMode) {
+    document.querySelectorAll('#pedalboardSelect, #folderSelectContainer, #renameFolderBtn, #presetSelectContainer, #renamePresetBtn, #sharePresetBtn').forEach(el => {
         el.style.setProperty('display', 'none', 'important');
     });
 }
@@ -1373,7 +1373,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     currentPresetRev = null;
   } else {
     presetSelect.style.display = 'inline-block';
-    if (!isPreviewMode) { if (editBtn) editBtn.style.display = 'inline-block'; }
+    if (!isPreviewMode) { if (editBtn) editBtn.style.display = 'inline-block'; } // blocks visibility if in preview mode
 
     // Seleziona preset preferito se valido, altrimenti primo preset della lista
     // let selectedPreset = preferredPresetId
