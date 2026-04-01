@@ -99,31 +99,11 @@ function renderBackToCatalogButton() {
   }
 
   // ===================== CARICAMENTO PEDALE =====================
-  // const pedalId = urlParams.get('id');
-  // if (!pedalId) {
-  //   resultsDiv.textContent = 'Usa ?id=<PEDAL_ID>';
-  //   return;
-  // }
   const pedalId = urlParams.get('id') || window.PEDAL_ID;
   if (!pedalId) {
     resultsDiv.textContent = 'Pedal ID missing';
     return;
   }
-
-  // FXDB link preparation
-  // const fxdbSearch = pedalId
-  //   .normalize('NFKD')                 // rimuove accenti tipo é → e
-  //   .replace(/[^\w\s-]/g, '')          // tiene solo lettere, numeri, _, spazio e -
-  //   .trim()
-  //   .replace(/\s+/g, '+')              // spazi → +
-  // const urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
-  // const fxdbButton = document.querySelector('.js-openFXDB');
-
-  // if (fxdbButton) {
-  //   fxdbButton.setAttribute('href', urlFXDB);
-  //   fxdbButton.setAttribute('target', '_blank');
-  //   fxdbButton.setAttribute('rel', 'noopener noreferrer');
-  // }
   let urlFXDB;
 
 if (window.FXDB_URL) {
