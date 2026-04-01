@@ -3,12 +3,35 @@ const urlParams = new URLSearchParams(window.location.search);
 const sharedToken = urlParams.get('shared_token');
 window.isPreviewMode = !!sharedToken;
 
-if (window.isPreviewMode) {
-    document.querySelectorAll('#pedalboardSelect, #folderSelectContainer, #renameFolderBtn, #presetSelectContainer, #renamePresetBtn, #sharePresetBtn').forEach(el => {
-        el.style.setProperty('display', 'none', 'important');
-        el.disabled = true;
-    });
+function lockUIForPreview() {
+  if (!window.isPreviewMode) return;
+
+  const ids = [
+    "savePstBtn", "savePstBtnMobile",
+    "createPstBtn", "createPstBtnMobile",
+    "addFolderBtn",
+    "renamePresetBtn",
+    "pedalboardSelect",
+    "presetSelect",
+    "folderSelect"
+  ];
+
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.disabled = true;
+      el.style.pointerEvents = 'none';
+      el.style.opacity = '0.5';
+    }
+  });
 }
+
+// if (window.isPreviewMode) {
+//     document.querySelectorAll('#pedalboardSelect, #folderSelectContainer, #renameFolderBtn, #presetSelectContainer, #renamePresetBtn, #sharePresetBtn').forEach(el => {
+//         el.style.setProperty('display', 'none', 'important');
+//         el.disabled = true;
+//     });
+// }
 // End detect preview mode
 
 let resultsDiv;
@@ -1374,7 +1397,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     currentPresetRev = null;
   } else {
     presetSelect.style.display = 'inline-block';
-    if (!isPreviewMode) { if (editBtn) editBtn.style.display = 'inline-block'; } // blocks visibility if in preview mode
+    if (editBtn) editBtn.style.display = 'inline-block'; 
 
     // Seleziona preset preferito se valido, altrimenti primo preset della lista
     // let selectedPreset = preferredPresetId
