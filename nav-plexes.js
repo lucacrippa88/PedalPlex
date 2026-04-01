@@ -76,12 +76,6 @@ function initNavPreset() {
 
   $("body").prepend(navHtml);
 
-  if (window.isPreviewMode) {
-    document.querySelectorAll('#savePstBtnMobile, #createPstBtnMobile, #savePstBtn, #createPstBtn, #addFolderBtn').forEach(el => {
-        // el.style.setProperty('display', 'none', 'important');
-        el.disabled = true;
-    });
-}
 
   // Disable Save/Create/Folder buttons and add Login for guests
   if (isGuest) {
@@ -154,8 +148,6 @@ function initNavPreset() {
   });
 
   function updateSavePresetButtonState() {
-    if (window.isPreviewMode) return; // blocco totale
-
     const selected = $('#presetSelect').val();
     $('#savePstBtn').prop('disabled', !selected || selected.trim() === '');
     $('#savePstBtnMobile').prop('disabled', !selected || selected.trim() === '');
