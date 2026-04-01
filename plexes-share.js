@@ -286,7 +286,7 @@ function loadSharedPlexPreview() {
 
     var xhr = new XMLHttpRequest();
     xhr.open('GET', 'https://api.pedalplex.com/GET_SHARED_PLEX.php?token=' + encodeURIComponent(token), true);
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = async function() {
         if (xhr.readyState !== 4) return;
 
         if (xhr.status !== 200) {
@@ -325,7 +325,7 @@ function loadSharedPlexPreview() {
 
         $("#previewPlexData").html(html).css("display", "block");
 
-        loadSharedPlexPreviewRig(plex);
+        await loadSharedPlexPreviewRig(plex);
 
     };
 
