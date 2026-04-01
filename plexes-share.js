@@ -307,7 +307,26 @@ function loadSharedPlexPreview() {
             return;
         }
 
-        console.log('Shared Plex loaded in preview mode:', response.plex);
+        var plex = response.plex;
+        console.log('Shared Plex loaded in preview mode:', plex);
+
+        // Formattare la data in modo leggibile
+        var sharedDate = new Date(plex.sharedAt);
+        var formattedDate = sharedDate.toLocaleString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        // Popolare l'h2 con info
+        var html = 'Plex Name: <strong>' + plex.preset_name + '</strong><br>' +
+                'Author: <strong>' + plex.original_author + '</strong><br>' +
+                'Shared on: <strong>' + formattedDate + '</strong>';
+
+        $("#previewPlexData").html(html).css("display", "block");
+
     };
 
     xhr.send();
