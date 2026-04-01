@@ -7,10 +7,20 @@ function lockUIForPreview() {
   if (!window.isPreviewMode) return;
 
   const ids = [
-    "savePstBtn", "savePstBtnMobile",
-    "createPstBtn", "createPstBtnMobile",
+    "savePstBtn", 
+    "savePstBtnMobile",
+    "createPstBtn", 
+    "createPstBtnMobile",
     "addFolderBtn",
     "renamePresetBtn",
+    "renameFolderBtn",
+    "pedalboardSelect",
+    "presetSelect",
+    "folderSelect"
+  ];
+  const ids_hide = [
+    "renamePresetBtn",
+    "renameFolderBtn",
     "pedalboardSelect",
     "presetSelect",
     "folderSelect"
@@ -22,6 +32,12 @@ function lockUIForPreview() {
       el.disabled = true;
       el.style.pointerEvents = 'none';
       el.style.opacity = '0.5';
+    }
+  });
+  ids_hide.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.setProperty = ('display', 'none', 'important');
     }
   });
 }
