@@ -311,14 +311,9 @@ function loadSharedPlexPreview() {
         console.log('Shared Plex loaded in preview mode:', plex);
 
         // Formattare la data in modo leggibile
-        var sharedDate = new Date(plex.sharedAt);
-        var formattedDate = sharedDate.toLocaleString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+        var date = new Date(plex.sharedAt);
+        var options = { year: 'numeric', month: 'short', day: 'numeric' };
+        var formattedDate = date.toLocaleDateString('en-US', options) + ', ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         var author = plex.original_author.replace(/^user_/, ''); // rimuove "user_" all’inizio
 
         // Popolare l'h4 con info
