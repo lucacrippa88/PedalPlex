@@ -196,6 +196,17 @@ window.SUBPLEX_EDIT_MODE = true;
   <script src="folder.js"></script>
   <script src="nav-plexes.js"></script>
   <script src="zoom.js"></script>
+
+
+  <script>
+  // Disable UI in preview mode
+  $(document).ready(function() {
+    if (window.isPreviewMode) {
+        setupPreviewMode();
+    }
+  });
+  </script>
+
   
 
   <script>
@@ -216,7 +227,6 @@ $(document).ready(function() {
     $('#page-content, #preset-controls').show();
     $('#preset-controls').html("<p>Login to organise your Plexes in folders and save them!</p>");
     if (typeof initNavPreset === 'function') initNavPreset();
-    lockUIForPreview();
     if (typeof initPreset === 'function') initPreset();
     $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn, #zoomIn, #zoomOut, #zoomReset')
       .prop('disabled', true)
@@ -235,7 +245,6 @@ $(document).ready(function() {
       $('#page-content, #preset-controls').show();
       window.currentUser = userFromServer;
       if (typeof initNavPreset === 'function') initNavPreset();
-      lockUIForPreview();
       if (typeof initPreset === 'function') initPreset();
     },
     error: function(xhr) {
@@ -269,7 +278,6 @@ $(document).ready(function() {
             $('#page-content, #preset-controls').show();
             $('#preset-controls').html("<p>Login to organise your Plexes in folders and save them!</p>");
             if (typeof initNavPreset === 'function') initNavPreset();
-            lockUIForPreview();
             if (typeof initPreset === 'function') initPreset();
             $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn, #zoomIn, #zoomOut, #zoomReset')
               .prop('disabled', true)

@@ -3,9 +3,10 @@ const urlParams = new URLSearchParams(window.location.search);
 const sharedToken = urlParams.get('shared_token');
 window.isPreviewMode = !!sharedToken;
 
-function lockUIForPreview() {
+function setupPreviewMode() {
   if (!window.isPreviewMode) return;
-
+  
+  // Assicurati che gli elementi esistano
   const ids = [
     "savePstBtn", 
     "savePstBtnMobile",
@@ -13,6 +14,14 @@ function lockUIForPreview() {
     "createPstBtnMobile",
     "addFolderBtn"
   ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.disabled = true;
+      el.classList.add('btn-disabled');
+    }
+  });
+
   const ids_hide = [
     "renamePresetBtn",
     "renameFolderBtn",
@@ -21,21 +30,14 @@ function lockUIForPreview() {
     "folderSelect",
     "sharePresetBtn"
   ];
-
-  ids.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.disabled = true;
-      el.style.pointerEvents = 'none';
-      el.style.opacity = '0.5';
-    }
-  });
   ids_hide.forEach(id => {
     const el = document.getElementById(id);
-    if (el) {
-      el.style.setProperty('display', 'none', 'important');
-    }
+    if (el) el.remove();
   });
+
+  // badge opzionale
+  $(".rightButtons.showDesktop").prepend(`<span class="preview-badge">Preview Mode</span>`);
+  $(".rightButtons.showMobile").prepend(`<span class="preview-badge">Preview</span>`);
 }
 
 // if (window.isPreviewMode) {
