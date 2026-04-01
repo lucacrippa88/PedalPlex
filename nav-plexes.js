@@ -78,7 +78,8 @@ function initNavPreset() {
 
   if (window.isPreviewMode) {
     document.querySelectorAll('#savePstBtnMobile, #createPstBtnMobile, #savePstBtn, #createPstBtn, #addFolderBtn').forEach(el => {
-        el.style.setProperty('display', 'none', 'important');
+        // el.style.setProperty('display', 'none', 'important');
+        el.disabled = true;
     });
 }
 
