@@ -321,9 +321,9 @@ function loadSharedPlexPreview() {
         });
 
         // Popolare l'h2 con info
-        var html = 'Shared Plex preview: <strong>' + plex.preset_name + '</strong>&ensp;' +
-                'By: <strong>' + plex.original_author + '</strong>&ensp;' +
-                'Shared on: <strong>' + formattedDate + '</strong>';
+        var html = 'Previewing <strong>' + plex.preset_name + '</strong>,' +
+                'by <strong>' + plex.original_author + '</strong> - ' +
+                'shared on <strong>' + formattedDate + '</strong>';
 
         $("#previewPlexData").html(html).css("display", "block");
 
