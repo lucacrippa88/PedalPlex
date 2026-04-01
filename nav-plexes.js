@@ -155,8 +155,10 @@ function initNavPreset() {
 
   function updateSavePresetButtonState() {
     const selected = $('#presetSelect').val();
-    $('#savePstBtn').prop('disabled', !selected || selected.trim() === '');
-    $('#savePstBtnMobile').prop('disabled', !selected || selected.trim() === '');
+    if (!window.isPreviewMode) {
+      $('#savePstBtn').prop('disabled', !selected || selected.trim() === '');
+      $('#savePstBtnMobile').prop('disabled', !selected || selected.trim() === '');
+    }
   }
 
   $(document).ready(() => {
