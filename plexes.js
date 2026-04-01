@@ -16,14 +16,16 @@ function lockUIForPreview() {
     "renameFolderBtn",
     "pedalboardSelect",
     "presetSelect",
-    "folderSelect"
+    "folderSelect",
+    "sharePresetBtn"
   ];
   const ids_hide = [
     "renamePresetBtn",
     "renameFolderBtn",
     "pedalboardSelect",
     "presetSelect",
-    "folderSelect"
+    "folderSelect",
+    "sharePresetBtn"
   ];
 
   ids.forEach(id => {
