@@ -268,6 +268,11 @@ function openShareModal() {
 
 
 function loadSharedPlexPreview() {
+
+    if (!window.catalogMap) {
+        window.catalogMap = {};
+    }
+
     // helper: leggere query string
     function getQueryParam(name) {
         name = name.replace(/[\[\]]/g, "\\$&");
