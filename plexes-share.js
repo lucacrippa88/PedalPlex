@@ -304,6 +304,7 @@ function loadSharedPlexPreview() {
 
         if (!response.plex) {
             console.log('No shared plex found for this token.');
+            // METTERE SWAL CON REDIRECT A PLEXES.HTML
             return;
         }
 
@@ -317,11 +318,14 @@ function loadSharedPlexPreview() {
         var author = plex.original_author.replace(/^user_/, ''); // rimuove "user_" all’inizio
 
         // Popolare l'h4 con info
+        // SISTEMARE UI
         var html = 'Previewing <strong>' + plex.preset_name + '</strong>, ' +
                 'by <strong>' + author + '</strong> - ' +
                 'shared on ' + formattedDate;
 
         $("#previewPlexData").html(html).css("display", "block");
+
+        loadSharedPlexPreviewRig(plex);
 
     };
 
