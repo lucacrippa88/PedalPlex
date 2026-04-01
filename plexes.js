@@ -11,13 +11,7 @@ function lockUIForPreview() {
     "savePstBtnMobile",
     "createPstBtn", 
     "createPstBtnMobile",
-    "addFolderBtn",
-    "renamePresetBtn",
-    "renameFolderBtn",
-    "pedalboardSelect",
-    "presetSelect",
-    "folderSelect",
-    "sharePresetBtn"
+    "addFolderBtn"
   ];
   const ids_hide = [
     "renamePresetBtn",
