@@ -154,11 +154,11 @@ function initNavPreset() {
   });
 
   function updateSavePresetButtonState() {
+    if (window.isPreviewMode) return; // blocco totale
+
     const selected = $('#presetSelect').val();
-    if (!window.isPreviewMode) {
-      $('#savePstBtn').prop('disabled', !selected || selected.trim() === '');
-      $('#savePstBtnMobile').prop('disabled', !selected || selected.trim() === '');
-    }
+    $('#savePstBtn').prop('disabled', !selected || selected.trim() === '');
+    $('#savePstBtnMobile').prop('disabled', !selected || selected.trim() === '');
   }
 
   $(document).ready(() => {
