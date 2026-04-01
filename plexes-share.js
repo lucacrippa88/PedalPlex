@@ -319,11 +319,12 @@ function loadSharedPlexPreview() {
             hour: '2-digit',
             minute: '2-digit'
         });
+        var author = plex.original_author.replace(/^user_/, ''); // rimuove "user_" all’inizio
 
-        // Popolare l'h2 con info
-        var html = 'Previewing <strong>' + plex.preset_name + '</strong>,' +
-                'by <strong>' + plex.original_author + '</strong> - ' +
-                'shared on <strong>' + formattedDate + '</strong>';
+        // Popolare l'h4 con info
+        var html = 'Previewing <strong>' + plex.preset_name + '</strong>, ' +
+                'by <strong>' + author + '</strong> - ' +
+                'shared on ' + formattedDate;
 
         $("#previewPlexData").html(html).css("display", "block");
 
