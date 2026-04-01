@@ -262,3 +262,58 @@ function openShareModal() {
         }
     });
 }
+
+
+
+
+
+function loadSharedPlexPreview() {
+    // helper: leggere query string
+    function getQueryParam(name) {
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(window.location.href);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    var token = getQueryParam('shared_token');
+    if (!token) {
+        console.warn('No shared_token in URL');
+        return;
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://api.pedalplex.com/GET_SHARED_PLEX.php?token=' + encodeURIComponent(token), true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4) return;
+
+        if (xhr.status !== 200) {
+            console.error('Failed to fetch shared plex:', xhr.responseText);
+            return;
+        }
+
+        var response;
+        try {
+            response = JSON.parse(xhr.responseText);
+        } catch (e) {
+            console.error('Invalid JSON from server');
+            return;
+        }
+
+        if (!response.plex) {
+            console.log('No shared plex found for this token.');
+            return;
+        }
+
+        console.log('Shared Plex loaded in preview mode:', response.plex);
+    };
+
+    xhr.send();
+}
+
+// Chiamare questa funzione solo in preview mode
+if (window.isPreviewMode) {
+    loadSharedPlexPreview();
+}
