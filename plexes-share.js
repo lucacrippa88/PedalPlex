@@ -267,6 +267,7 @@ function openShareModal() {
 
 
 // =================== LOAD SHARED PLEX IN PREVIEW MODE =======================
+
 async function loadSharedPlexPreview() {
     console.log("🔹 loadSharedPlexPreview started, window.location.href:", window.location.href);
 
@@ -288,88 +289,78 @@ async function loadSharedPlexPreview() {
     }
 
     try {
-        // 1️⃣ Scarica il plex condiviso
-        const res = await fetch(`https://api.pedalplex.com/GET_SHARED_PLEX.php?token=${encodeURIComponent(token)}`);
-        console.log("🔹 fetch response ok:", res.ok, res.status);
-        if (!res.ok) throw new Error(`Failed to fetch shared plex: ${res.statusText}`);
+        // 1️⃣ Fetch del plex condiviso
+        const plexRes = await fetch(`https://api.pedalplex.com/GET_SHARED_PLEX.php?token=${encodeURIComponent(token)}`);
+        if (!plexRes.ok) throw new Error(`Failed to fetch shared plex: ${plexRes.statusText}`);
+        const plexData = await plexRes.json();
+        if (!plexData.plex) throw new Error("Shared Plex not found.");
 
-        const data = await res.json();
-        console.log("🔹 Shared Plex data:", data);
+        const plex = plexData.plex;
+        console.log("🔹 Shared plex loaded:", plex);
 
-        if (!data.plex) {
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Shared Plex not found.",
-                confirmButtonText: "Go Back"
-            }).then(() => { window.location.href = 'plexes.html'; });
-            return;
-        }
-
-        const plex = data.plex;
-        console.log("🔹 plex object loaded:", plex);
-
-        // Mostra info plex
-        const date = new Date(plex.sharedAt);
-        const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) +
-                              ', ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-        const author = plex.original_author.replace(/^user_/, '');
-        $("#previewPlexData").html(`Previewing <strong>${plex.preset_name}</strong>, by <strong>${author}</strong> - shared on ${formattedDate}`)
-                               .css("display", "block");
-
-        // 2️⃣ Scarica la rig dell’autore del plex
+        // 2️⃣ Fetch della rig dell'autore del plex
         const rigRes = await fetch('https://api.pedalplex.com/GET_RIG.php', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: plex.user_id })
         });
 
-        if (!rigRes.ok) throw new Error(`Failed to fetch author rig: ${rigRes.statusText}`);
+        if (!rigRes.ok) throw new Error(`Failed to fetch author's rig: ${rigRes.statusText}`);
         const rigData = await rigRes.json();
+        if (!rigData || !rigData.docs || rigData.docs.length === 0) throw new Error("Author's rig not found.");
 
-        if (!rigData || !rigData.docs || rigData.docs.length === 0) {
-            throw new Error("Author rig not found");
-        }
+        // Prendiamo la rig dell'autore corrispondente al board_id del plex
+        const authorRig = rigData.docs.find(doc => doc._id === plex.board_id);
+        if (!authorRig) throw new Error("No matching rig found for plex author.");
 
-        const authorRig = rigData.docs[0]; // prendiamo la prima pedalboard trovata
-        console.log("🔹 Author rig loaded:", authorRig);
+        console.log("🔹 Author's rig loaded:", authorRig);
 
-        // 3️⃣ Costruisci pedalsArray e presetDoc compatibile
-        const pedalsArray = (authorRig.pedals || []).map(p => ({
-            id: p.pedal_id,
-            name: p.pedal_id,
-            rotation: p.rotation || 0,
-            row: p.row || 1,
-            controls: (plex.pedals && plex.pedals[p.pedal_id] && plex.pedals[p.pedal_id].controls) || {},
-            subplex: (plex.pedals && plex.pedals[p.pedal_id] && plex.pedals[p.pedal_id].subplex) || null
-        }));
+        // 3️⃣ Costruisci pedalsArray combinando rig + plex
+        // Manteniamo pedali della rig e applichiamo controlli/subplex del plex
+        const pedalsArray = authorRig.pedals.map(pr => {
+            const plexPedal = plex.pedals[pr.pedal_id];
+            return {
+                ...pr,
+                controls: plexPedal?.controls || {},
+                subplex: plexPedal?.subplex || null
+            };
+        });
 
-        console.log("🔹 pedalsArray:", pedalsArray);
+        console.log("🔹 pedalsArray combined (rig + plex):", pedalsArray);
 
+        // 4️⃣ Costruisci presetDoc compatibile
         const presetDoc = {
             ...plex,
-            pedals: pedalsArray.reduce((acc, p) => { acc[p.name] = p; return acc; }, {}),
+            pedals: pedalsArray.reduce((acc, p) => { acc[p.pedal_id] = p; return acc; }, {}),
             pedalsArray,
-            chain: plex.chain || pedalsArray.map(p => p.name)
+            chain: plex.chain || pedalsArray.map(p => p.pedal_id)
         };
         console.log("🔹 presetDoc ready:", presetDoc);
 
-        // 4️⃣ Crea rig virtuale per la preview
+        // 5️⃣ Mostra info plex
+        const date = new Date(plex.sharedAt);
+        const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) +
+                              ', ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        const authorName = plex.original_author.replace(/^user_/, '');
+        $("#previewPlexData").html(`Previewing <strong>${plex.preset_name}</strong>, by <strong>${authorName}</strong> - shared on ${formattedDate}`)
+                               .css("display", "block");
+
+        // 6️⃣ Render rig virtuale
         setupVirtualRigForPreview(pedalsArray);
 
-        // 5️⃣ Costruisci pedalboard compatibile
+        // 7️⃣ Build pedalboard finta compatibile
         const pedalboard = buildPedalboardFromSharedPlex(presetDoc);
         window.pedalboard = pedalboard;
         console.log("🔹 pedalboard built:", pedalboard);
 
-        // 6️⃣ Renderizza i pedali nel DOM della preview
+        // 8️⃣ Render pedali nel DOM della preview
         await renderFullPedalboard(window.pedalboard);
 
-        // 7️⃣ Applica preset senza errori Missing gear
+        // 9️⃣ Applica preset senza errori Missing gear
         applyPresetToPedalboard(presetDoc);
 
     } catch (err) {
-        console.error('Error loading shared plex:', err);
+        console.error("Error loading shared plex:", err);
         Swal.fire({
             icon: "error",
             title: "Error",
@@ -379,7 +370,7 @@ async function loadSharedPlexPreview() {
     }
 }
 
-// =================== RENDER VIRTUAL RIG =======================
+// Setup di un rig virtuale per preview
 function setupVirtualRigForPreview(pedalsArray) {
     const $rigContainer = $("#previewRig"); // Assicurati che esista nella pagina
     $rigContainer.empty();
@@ -391,10 +382,10 @@ function setupVirtualRigForPreview(pedalsArray) {
         $rigContainer.append($pedalDiv);
     });
 
-    console.log("🔹 Virtual rig created for preview with pedals:", pedalsArray.map(p => p.name));
+    console.log("🔹 Virtual rig created for preview with pedals:", pedalsArray.map(p => p.pedal_id));
 }
 
-// =================== INIT ON PAGE LOAD =======================
+// Chiamare solo in preview mode
 window.addEventListener("load", function () {
     if (window.isPreviewMode) {
         loadSharedPlexPreview();
