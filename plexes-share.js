@@ -265,20 +265,20 @@ function openShareModal() {
 
 
 
-// =================== LOAD SHARED PLEX ON A FAKE RIG =======================
+// =================== LOAD SHARED PLEX IN PREVIEW MODE =======================
 
-// helper per leggere query string
-function getQueryParam(name) {
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(window.location.href);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
-}
+async function loadSharedPlexPreview() {
 
-// Carica il plex dal server e chiama utils.js per renderlo
-async function loadSharedPlexPreviewFromServer() {
+    // Helper: leggere query string
+    function getQueryParam(name) {
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(window.location.href);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
     const token = getQueryParam('shared_token');
     if (!token) {
         console.warn('No shared_token in URL');
@@ -287,15 +287,16 @@ async function loadSharedPlexPreviewFromServer() {
 
     try {
         const res = await fetch(`https://api.pedalplex.com/GET_SHARED_PLEX.php?token=${encodeURIComponent(token)}`);
-        if (!res.ok) throw new Error(await res.text());
-        const data = await res.json();
+        if (!res.ok) throw new Error(`Failed to fetch shared plex: ${res.statusText}`);
 
+        const data = await res.json();
         if (!data.plex) {
             console.log('No shared plex found for this token.');
             Swal.fire({
-                icon: "warning",
-                title: "Shared Plex not found",
-                text: "Redirecting to Plexes page...",
+                icon: "error",
+                title: "Oops...",
+                text: "Shared Plex not found.",
+                confirmButtonText: "Go Back"
             }).then(() => {
                 window.location.href = 'plexes.html';
             });
@@ -305,30 +306,41 @@ async function loadSharedPlexPreviewFromServer() {
         const plex = data.plex;
         console.log('Shared Plex loaded in preview mode:', plex);
 
-        // Popola info UI
+        // Mostra info plex
         const date = new Date(plex.sharedAt);
         const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) +
                               ', ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         const author = plex.original_author.replace(/^user_/, '');
-        $("#previewPlexData").html(`Previewing <strong>${plex.preset_name}</strong>, by <strong>${author}</strong> - shared on ${formattedDate}`)
-                             .css("display", "block");
 
-        // 🔹 Qui chiami la funzione di utils.js che fa tutto il rendering
-        await loadSharedPlexPreview(plex);
+        const html = `Previewing <strong>${plex.preset_name}</strong>, by <strong>${author}</strong> - shared on ${formattedDate}`;
+        $("#previewPlexData").html(html).css("display", "block");
+
+        // 1. Ricostruisci pedalboard finta
+        const pedalboard = buildPedalboardFromSharedPlex(plex);
+
+        // 2. Imposta globalmente
+        window.pedalboard = pedalboard;
+
+        // 3. Renderizza tutti i pedali nel DOM
+        await renderFullPedalboard(window.pedalboard);
+
+        // 4. Applica controlli/subplex dal preset
+        applyPresetToPedalboard(plex);
 
     } catch (err) {
-        console.error("Failed to load shared plex:", err);
+        console.error('Error loading shared plex:', err);
         Swal.fire({
             icon: "error",
-            title: "Error loading Shared Plex",
-            text: err.message || err
+            title: "Error",
+            text: "Failed to load shared plex. Check console for details.",
+            confirmButtonText: "Ok"
         });
     }
 }
 
-// Chiamare solo in preview mode
+// Chiamare questa funzione solo in preview mode
 window.addEventListener("load", function () {
     if (window.isPreviewMode) {
-        loadSharedPlexPreviewFromServer();
+        loadSharedPlexPreview();
     }
 });
