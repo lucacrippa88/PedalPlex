@@ -324,13 +324,18 @@ async function loadSharedPlexPreview() {
         if (!authorRig) throw new Error("No matching rig found for plex author.");
         console.log("🔹 Author's rig loaded:", authorRig);
 
-        // 3️⃣ Fetch dei pedali completi
+        // 3️⃣ Fetch dei pedali completi (POST con body JSON)
         const pedalIds = authorRig.pedals.map(p => p.pedal_id);
-        const gearsRes = await fetch(`https://api.pedalplex.com/GET_GEARS_BY_IDS.php?ids=${encodeURIComponent(JSON.stringify(pedalIds))}`);
+        const gearsRes = await fetch('https://api.pedalplex.com/GET_GEARS_BY_IDS.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: pedalIds })
+        });
+
         if (!gearsRes.ok) throw new Error(`Failed to fetch gears: ${gearsRes.statusText}`);
         const gearsData = await gearsRes.json();
         const gearsMap = {};
-        gearsData.gears.forEach(g => { gearsMap[g.name] = g; });
+        gearsData.docs.forEach(g => { gearsMap[g._id] = g; }); // _id è il campo usato nei documenti Cloudant
         console.log("🔹 Full gears loaded:", gearsMap);
 
         // 4️⃣ Combina rig + plex per pedalsArray
