@@ -268,6 +268,8 @@ function openShareModal() {
 // =================== LOAD SHARED PLEX IN PREVIEW MODE =======================
 
 async function loadSharedPlexPreview() {
+    console.log("🔹 loadSharedPlexPreview started, window.location.href:", window.location.href);
+
 
     // Helper: leggere query string
     function getQueryParam(name) {
@@ -280,6 +282,7 @@ async function loadSharedPlexPreview() {
     }
 
     const token = getQueryParam('shared_token');
+    console.log("🔹 shared_token:", token);
     if (!token) {
         console.warn('No shared_token in URL');
         return;
@@ -287,9 +290,11 @@ async function loadSharedPlexPreview() {
 
     try {
         const res = await fetch(`https://api.pedalplex.com/GET_SHARED_PLEX.php?token=${encodeURIComponent(token)}`);
+        console.log("🔹 fetch response ok:", res.ok, res.status);
         if (!res.ok) throw new Error(`Failed to fetch shared plex: ${res.statusText}`);
 
         const data = await res.json();
+        console.log("🔹 Shared Plex data:", data);
         if (!data.plex) {
             console.log('No shared plex found for this token.');
             Swal.fire({
@@ -304,6 +309,7 @@ async function loadSharedPlexPreview() {
         }
 
         const plex = data.plex;
+        console.log("🔹 plex object loaded:", plex);
         console.log('Shared Plex loaded in preview mode:', plex);
 
         // Mostra info plex
@@ -327,17 +333,21 @@ async function loadSharedPlexPreview() {
             }));
         }
 
+        console.log("🔹 pedalsArray:", pedalsArray);
+
         // 🔥 costruisci preset compatibile
         const presetDoc = {
             ...plex,
             pedals: pedalsArray,
             chain: plex.chain || pedalsArray.map(p => p.name)
         };
+        console.log("🔹 presetDoc ready:", presetDoc);
 
         console.log("FIXED PRESET DOC:", presetDoc);
 
         // 1. Ricostruisci pedalboard finta
         const pedalboard = buildPedalboardFromSharedPlex(presetDoc);
+        console.log("🔹 pedalboard built:", pedalboard);
 
         // 2. Imposta globalmente
         window.pedalboard = pedalboard;
