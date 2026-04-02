@@ -1699,53 +1699,36 @@ function resolveImageUrl(path) {
 
 
 
+function buildPedalboardFromSharedPlex(presetDoc) {
+  const pedals = Object.entries(presetDoc.pedals).map(([pedalId, pedalData]) => ({
+    pedal_id: pedalId,
+    rotation: 0,    // tutti angoli a 0
+    row: 1          // unica row
+  }));
 
-
-
-
-function injectSharedPlex(sharedPlex) {
-  if (!sharedPlex || !sharedPlex.pedals) return;
-
-  // Genera un ID temporaneo compatibile
-  const presetId = sharedPlex._id || `preview-${Date.now()}`;
-
-  // Costruisci la struttura compatibile
-  const pedals = {};
-  Object.entries(sharedPlex.pedals).forEach(([pedalName, pedalData]) => {
-    pedals[pedalName] = {
-      controls: pedalData.controls || {},
-      ...(pedalData.subplex ? { subplex: pedalData.subplex } : {})
-    };
-  });
-
-  const presetObj = {
-    _id: presetId,
-    preset_name: sharedPlex.preset_name || "Preview Plex",
-    pedals: pedals
-    // folder_id / folder_name non servono in preview
+  return {
+    _id: presetDoc._id,
+    name: presetDoc.board_name || "Shared Plex",
+    pedals
   };
-
-  // Inietta nel posto giusto
-  window.presetMap = window.presetMap || {};
-  window.presetMap[presetId] = presetObj;
-
-  // Imposta preset corrente
-  window.currentPresetId = presetId;
-
-  // Imposta pedalboard finta se non esiste
-  window.pedalboard = window.pedalboard || {
-    _id: sharedPlex.board_id,
-    name: sharedPlex.board_name || "Preview Board"
-  };
-
-  // Salva originalPedalControls per preservare SubPlex come fa initNavPreset
-  window.originalPedalControls = {};
-  Object.entries(presetObj.pedals).forEach(([pedalName, pedalData]) => {
-    window.originalPedalControls[pedalName] = JSON.parse(JSON.stringify(pedalData.controls));
-  });
-
-  console.log("Shared Plex injected as standard preset:", presetObj);
 }
+
+async function loadSharedPlexPreview(presetDoc) {
+  // 1. Ricostruisci pedalboard compatibile
+  const pedalboard = buildPedalboardFromSharedPlex(presetDoc);
+
+  // 2. Imposta globalmente la pedalboard
+  window.pedalboard = pedalboard;
+
+  // 3. Renderizza i pedali nel DOM
+  await renderFullPedalboard(window.pedalboard);
+
+  // 4. Applica controlli/subplex dal preset
+  applyPresetToPedalboard(presetDoc);
+}
+
+
+
 
 
 

@@ -267,83 +267,68 @@ function openShareModal() {
 
 // =================== LOAD SHARED PLEX ON A FAKE RIG =======================
 
-function loadSharedPlexPreview() {
+// helper per leggere query string
+function getQueryParam(name) {
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(window.location.href);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
-    // helper: leggere query string
-    function getQueryParam(name) {
-        name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(window.location.href);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, " "));
-    }
-
-    var token = getQueryParam('shared_token');
+// Carica il plex dal server e chiama utils.js per renderlo
+async function loadSharedPlexPreviewFromServer() {
+    const token = getQueryParam('shared_token');
     if (!token) {
         console.warn('No shared_token in URL');
         return;
     }
 
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://api.pedalplex.com/GET_SHARED_PLEX.php?token=' + encodeURIComponent(token), true);
-    xhr.onreadystatechange = async function() {
-        if (xhr.readyState !== 4) return;
+    try {
+        const res = await fetch(`https://api.pedalplex.com/GET_SHARED_PLEX.php?token=${encodeURIComponent(token)}`);
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
 
-        if (xhr.status !== 200) {
-            console.error('Failed to fetch shared plex:', xhr.responseText);
-            return;
-        }
-
-        var response;
-        try {
-            response = JSON.parse(xhr.responseText);
-        } catch (e) {
-            console.error('Invalid JSON from server');
-            return;
-        }
-
-        if (!response.plex) {
+        if (!data.plex) {
             console.log('No shared plex found for this token.');
-            // METTERE SWAL CON REDIRECT A PLEXES.HTML
+            Swal.fire({
+                icon: "warning",
+                title: "Shared Plex not found",
+                text: "Redirecting to Plexes page...",
+            }).then(() => {
+                window.location.href = 'plexes.html';
+            });
             return;
         }
 
-        var plex = response.plex;
+        const plex = data.plex;
         console.log('Shared Plex loaded in preview mode:', plex);
 
-        // Formattare la data in modo leggibile
-        var date = new Date(plex.sharedAt);
-        var options = { year: 'numeric', month: 'short', day: 'numeric' };
-        var formattedDate = date.toLocaleDateString('en-US', options) + ', ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-        var author = plex.original_author.replace(/^user_/, ''); // rimuove "user_" all’inizio
+        // Popola info UI
+        const date = new Date(plex.sharedAt);
+        const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) +
+                              ', ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        const author = plex.original_author.replace(/^user_/, '');
+        $("#previewPlexData").html(`Previewing <strong>${plex.preset_name}</strong>, by <strong>${author}</strong> - shared on ${formattedDate}`)
+                             .css("display", "block");
 
-        // Popolare l'h4 con info
-        // SISTEMARE UI
-        var html = 'Previewing <strong>' + plex.preset_name + '</strong>, ' +
-                'by <strong>' + author + '</strong> - ' +
-                'shared on ' + formattedDate;
+        // 🔹 Qui chiami la funzione di utils.js che fa tutto il rendering
+        await loadSharedPlexPreview(plex);
 
-        $("#previewPlexData").html(html).css("display", "block");
-
-        // injectSharedPlex(plex);
-        if (window.isPreviewMode && plex) {
-            injectSharedPlex(plex);
-
-            // Poi chiama la funzione che renderizza i pedali e applica i controlli
-            if (typeof applyPresetToPedalboard === "function") {
-                applyPresetToPedalboard(window.currentPresetId);
-            }
-        }
-
-    };
-
-    xhr.send();
+    } catch (err) {
+        console.error("Failed to load shared plex:", err);
+        Swal.fire({
+            icon: "error",
+            title: "Error loading Shared Plex",
+            text: err.message || err
+        });
+    }
 }
 
-// Chiamare questa funzione solo in preview mode
+// Chiamare solo in preview mode
 window.addEventListener("load", function () {
     if (window.isPreviewMode) {
-        loadSharedPlexPreview();
+        loadSharedPlexPreviewFromServer();
     }
 });
