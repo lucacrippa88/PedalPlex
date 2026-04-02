@@ -264,12 +264,10 @@ function openShareModal() {
 }
 
 
-
 // =================== LOAD SHARED PLEX IN PREVIEW MODE =======================
 
 async function loadSharedPlexPreview() {
     console.log("🔹 loadSharedPlexPreview started, window.location.href:", window.location.href);
-
 
     // Helper: leggere query string
     function getQueryParam(name) {
@@ -310,43 +308,37 @@ async function loadSharedPlexPreview() {
 
         const plex = data.plex;
         console.log("🔹 plex object loaded:", plex);
-        console.log('Shared Plex loaded in preview mode:', plex);
 
         // Mostra info plex
         const date = new Date(plex.sharedAt);
         const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) +
                               ', ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         const author = plex.original_author.replace(/^user_/, '');
-
         const html = `Previewing <strong>${plex.preset_name}</strong>, by <strong>${author}</strong> - shared on ${formattedDate}`;
         $("#previewPlexData").html(html).css("display", "block");
 
-        // 🔥 converti pedals OBJECT → ARRAY
+        // 🔥 converti pedals OBJECT → ARRAY per rendering
         let pedalsArray = [];
-
         if (plex.pedals && typeof plex.pedals === "object") {
             pedalsArray = Object.entries(plex.pedals).map(([name, data]) => ({
-                id: name, // 🔥 fondamentale
+                id: name,
                 name: name,
                 controls: data.controls || {},
                 subplex: data.subplex || null
             }));
         }
+        console.log("🔹 pedalsArray for rendering:", pedalsArray);
 
-        console.log("🔹 pedalsArray:", pedalsArray);
-
-        // 🔥 costruisci preset compatibile
+        // 🔥 costruisci preset compatibile per rendering/applyPreset
         const presetDoc = {
             ...plex,
             pedals: pedalsArray,
             chain: plex.chain || pedalsArray.map(p => p.name)
         };
-        console.log("🔹 presetDoc ready:", presetDoc);
+        console.log("🔹 presetDoc ready for applyPreset:", presetDoc);
 
-        console.log("FIXED PRESET DOC:", presetDoc);
-
-        // 1. Ricostruisci pedalboard finta
-        const pedalboard = buildPedalboardFromSharedPlex(presetDoc);
+        // 1. Ricostruisci pedalboard finta passando l'OGGETTO ORIGINALE (plex) per evitare errori TypeError
+        const pedalboard = buildPedalboardFromSharedPlex(plex);
         console.log("🔹 pedalboard built:", pedalboard);
 
         // 2. Imposta globalmente
@@ -355,7 +347,7 @@ async function loadSharedPlexPreview() {
         // 3. Renderizza tutti i pedali nel DOM
         await renderFullPedalboard(window.pedalboard);
 
-        // 4. ⚠️ QUI CAMBIA ANCHE QUESTO
+        // 4. Applica preset compatibile
         applyPresetToPedalboard(presetDoc);
 
     } catch (err) {
