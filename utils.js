@@ -1721,85 +1721,22 @@ function buildPedalboardFromSharedPlex(presetDoc) {
 }
 
 async function loadSharedPlexPreview(presetDoc) {
-  // 1. Ricostruisci pedalboard compatibile
   const pedalboard = buildPedalboardFromSharedPlex(presetDoc);
 
-  // 2. Imposta globalmente la pedalboard
   window.pedalboard = pedalboard;
 
-  // 3. Renderizza i pedali nel DOM
   await renderFullPedalboard(window.pedalboard);
 
-  // 4. Applica controlli/subplex dal plex
-  applyPresetToPedalboard({ ...plex, pedals: window.pedalboard.pedalsMap });
+  // sicurezza DOM ready
+  await new Promise(resolve => setTimeout(resolve, 0));
+
+  applyPresetToPedalboard({
+    ...presetDoc,
+    pedals: window.pedalboard.pedalsMap
+  });
 }
 
 
 
 
 
-
-
-// // Load a shared plex into a temporary rig for preview
-// async function loadSharedPlexPreviewRig(plex) {
-//   if (!plex || !plex.pedals) return;
-
-//   // Step 1: Extract pedal IDs
-//   const pedalIds = Object.keys(plex.pedals);
-
-//   // Step 2: Build temporary rig array
-//   const rigPreview = [];
-
-//   for (const pedalId of pedalIds) {
-//     let pedalData = window.catalogMap[pedalId] || window.catalogMap[pedalId.normalize?.()];
-
-//     if (!pedalData) {
-//       try {
-//         const authToken = localStorage.getItem('authToken');
-
-//         const res = await fetch("https://api.pedalplex.com/GET_PEDALS_BY_IDS.php", {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//             "Authorization": "Bearer " + authToken
-//           },
-//           body: JSON.stringify({ ids: [pedalId] })
-//         });
-
-//         const data = await res.json();
-
-//         if (data?.docs?.length > 0) {
-//           pedalData = data.docs[0];
-//           window.catalogMap[pedalId] = pedalData; // cache locally
-//         } else {
-//           console.warn(`Pedal not found in API: ${pedalId}`);
-//           continue;
-//         }
-
-//       } catch (err) {
-//         console.error("Fetch error for pedal:", pedalId, err);
-//         continue;
-//       }
-//     }
-
-//     // Step 3: Build pedalboard entry
-//     const pbPedal = {
-//       pedal_id: pedalId,
-//       rotation: 0, // default, can be randomized if needed
-//       row: 1, // can organize by row if needed
-//       subplex: plex.pedals[pedalId].subplex || null
-//     };
-
-//     rigPreview.push(pbPedal);
-//   }
-
-//   // Step 4: Assign temporary pedalboard
-//   const tempPedalboard = { pedals: rigPreview };
-
-//   window.pedalboard = tempPedalboard;
-
-//   // Step 5: Render
-//   await renderFullPedalboard(tempPedalboard);
-
-//   console.log("Preview rig loaded with shared plex:", tempPedalboard);
-// }
