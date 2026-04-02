@@ -326,7 +326,15 @@ function loadSharedPlexPreview() {
 
         $("#previewPlexData").html(html).css("display", "block");
 
-        injectSharedPlex(plex);
+        // injectSharedPlex(plex);
+        if (window.isPreviewMode && plex) {
+            injectSharedPlex(plex);
+
+            // Poi chiama la funzione che renderizza i pedali e applica i controlli
+            if (typeof applyPresetToPedalboard === "function") {
+                applyPresetToPedalboard(window.currentPresetId);
+            }
+        }
 
     };
 
