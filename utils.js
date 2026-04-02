@@ -1700,25 +1700,42 @@ function resolveImageUrl(path) {
 
 
 function buildPedalboardFromSharedPlex(presetDoc) {
-  const pedalsArray = Object.entries(presetDoc.pedals).map(([pedalId, pedalData]) => ({
-    pedal_id: pedalId,
-    rotation: 0,
-    row: 1
-  }));
+    // 🔹 Debug: verifica che presetDoc sia corretto
+    console.log("🔹 buildPedalboardFromSharedPlex called with presetDoc:", presetDoc);
 
-  // Trasformazione per compatibilità con applyPresetToPedalboard
-  const pedalsMap = {};
-  Object.entries(presetDoc.pedals).forEach(([pedalId, pedalData]) => {
-    pedalsMap[pedalId] = pedalData; // mantiene eventuali controlli/subplex
-  });
+    if (!presetDoc || !presetDoc.pedals || typeof presetDoc.pedals !== "object") {
+        console.error("❌ presetDoc.pedals non valido:", presetDoc ? presetDoc.pedals : presetDoc);
+        return [];
+    }
 
-  return {
-    _id: presetDoc._id,
-    board_name: presetDoc.board_name || "Shared Plex",
-    pedals: pedalsArray,   // array per renderFullPedalboard
-    pedalsMap              // oggetto per applyPresetToPedalboard
-  };
+    // 🔹 Trasforma pedals OBJECT -> array per la pedalboard
+    const pedalsArray = Object.entries(presetDoc.pedals).map(([pedalId, pedalData]) => ({
+        pedal_id: pedalId,
+        rotation: 0,
+        row: 1
+    }));
+
+    console.log("🔹 pedalsArray:", pedalsArray);
+
+    // 🔹 Mantieni mappa originale per applyPresetToPedalboard (controlli/subplex)
+    const pedalsMap = {};
+    Object.entries(presetDoc.pedals).forEach(([pedalId, pedalData]) => {
+        pedalsMap[pedalId] = pedalData;
+    });
+    console.log("🔹 pedalsMap:", pedalsMap);
+
+    // 🔹 Costruisci struttura finale pedalboard compatibile
+    const pedalboard = {
+        ...presetDoc,
+        pedalsArray: pedalsArray,
+        pedalsMap: pedalsMap
+    };
+
+    console.log("🔹 pedalboard built:", pedalboard);
+    return pedalboard;
 }
+
+
 
 async function loadSharedPlexPreview(presetDoc) {
   const pedalboard = buildPedalboardFromSharedPlex(presetDoc);
