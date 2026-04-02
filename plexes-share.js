@@ -271,11 +271,11 @@ function openShareModal() {
 async function loadSharedPlexPreview() {
     console.log("🔹 loadSharedPlexPreview started, window.location.href:", window.location.href);
 
-    // Helper: leggere query string
+    // Helper per leggere query string
     function getQueryParam(name) {
         name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(window.location.href);
+        const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+        const results = regex.exec(window.location.href);
         if (!results) return null;
         if (!results[2]) return '';
         return decodeURIComponent(results[2].replace(/\+/g, " "));
@@ -295,16 +295,14 @@ async function loadSharedPlexPreview() {
 
         const data = await res.json();
         console.log("🔹 Shared Plex data:", data);
+
         if (!data.plex) {
-            console.log('No shared plex found for this token.');
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
                 text: "Shared Plex not found.",
                 confirmButtonText: "Go Back"
-            }).then(() => {
-                window.location.href = 'plexes.html';
-            });
+            }).then(() => { window.location.href = 'plexes.html'; });
             return;
         }
 
@@ -316,44 +314,40 @@ async function loadSharedPlexPreview() {
         const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) +
                               ', ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         const author = plex.original_author.replace(/^user_/, '');
-        const html = `Previewing <strong>${plex.preset_name}</strong>, by <strong>${author}</strong> - shared on ${formattedDate}`;
-        $("#previewPlexData").html(html).css("display", "block");
+        $("#previewPlexData").html(`Previewing <strong>${plex.preset_name}</strong>, by <strong>${author}</strong> - shared on ${formattedDate}`)
+                               .css("display", "block");
 
-        // 🔥 Converti pedals OBJECT → ARRAY e mantieni OGGETTO per compatibilità
-        const pedalsArray = Object.entries(plex.pedals || {}).map(([name, data]) => ({
+        // 🔥 Converti pedals object → array
+        const pedalsArray = Object.entries(plex.pedals).map(([name, data]) => ({
             id: name,
             name: name,
             controls: data.controls || {},
             subplex: data.subplex || null
         }));
 
-        const pedalsMap = {};
-        pedalsArray.forEach(p => pedalsMap[p.id] = p);
-
         console.log("🔹 pedalsArray:", pedalsArray);
-        console.log("🔹 pedalsMap:", pedalsMap);
 
-        // 🔥 costruisci preset compatibile con array e object
+        // 🔥 Crea presetDoc compatibile
         const presetDoc = {
             ...plex,
-            pedals: pedalsMap,      // oggetto richiesto da applyPresetToPedalboard
-            pedalsArray,            // array utile per preview/render
+            pedals: pedalsArray.reduce((acc, p) => { acc[p.name] = p; return acc; }, {}),
+            pedalsArray,
             chain: plex.chain || pedalsArray.map(p => p.name)
         };
-
         console.log("🔹 presetDoc ready:", presetDoc);
 
-        // 1. Ricostruisci pedalboard finta
+        // 🔥 Step preliminare: rig virtuale con pedali renderizzati
+        setupVirtualRigForPreview(pedalsArray);
+
+        // 1. Ricostruisci pedalboard finta compatibile
         const pedalboard = buildPedalboardFromSharedPlex(presetDoc);
+        window.pedalboard = pedalboard;
         console.log("🔹 pedalboard built:", pedalboard);
 
-        // 2. Imposta globalmente
-        window.pedalboard = pedalboard;
-
-        // 3. Renderizza tutti i pedali nel DOM
+        // 2. Renderizza tutti i pedali nel DOM della preview
         await renderFullPedalboard(window.pedalboard);
 
-        // 4. Applica preset ai pedali
+        // 3. Applica preset senza errori Missing gear
         applyPresetToPedalboard(presetDoc);
 
     } catch (err) {
@@ -367,7 +361,22 @@ async function loadSharedPlexPreview() {
     }
 }
 
-// Chiamare questa funzione solo in preview mode
+// Setup di un rig virtuale per preview
+function setupVirtualRigForPreview(pedalsArray) {
+    const $rigContainer = $("#previewRig"); // Assicurati che esista nella pagina
+    $rigContainer.empty();
+
+    const userRole = window.currentUser?.role || 'user';
+
+    pedalsArray.forEach(pedal => {
+        const $pedalDiv = renderPedal(pedal, userRole, true);
+        $rigContainer.append($pedalDiv);
+    });
+
+    console.log("🔹 Virtual rig created for preview with pedals:", pedalsArray.map(p => p.name));
+}
+
+// Chiamare solo in preview mode
 window.addEventListener("load", function () {
     if (window.isPreviewMode) {
         loadSharedPlexPreview();
