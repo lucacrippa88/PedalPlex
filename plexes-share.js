@@ -326,7 +326,7 @@ function loadSharedPlexPreview() {
 
         $("#previewPlexData").html(html).css("display", "block");
 
-        await loadSharedPlexPreviewRig(plex);
+        injectSharedPlex(plex);
 
     };
 
@@ -339,60 +339,3 @@ window.addEventListener("load", function () {
         loadSharedPlexPreview();
     }
 });
-
-
-
-
-async function loadSharedPlexPreviewRig(plex) {
-    if (!plex || !plex.pedals) {
-        console.error("Invalid plex data");
-        return;
-    }
-
-    console.log("Building preview rig...");
-
-    // 🔥 1. Converti pedals (OGGETTO → ARRAY)
-    const pedalEntries = Object.keys(plex.pedals).map(name => {
-        return {
-            pedal_id: name
-        };
-    });
-
-    // 🔥 2. Costruisci pedalboard fake (formato compatibile col renderer)
-    window.pedalboard = {
-        board_name: plex.board_name || "Preview",
-        pedals: pedalEntries
-    };
-
-    console.log("Fake pedalboard:", window.pedalboard);
-
-    // 🔥 3. Estrai IDs
-    const pedalIds = pedalEntries.map(p => p.pedal_id);
-
-    try {
-        // 🔥 4. Fetch catalogo pedali
-        const res = await fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ ids: pedalIds })
-        });
-
-        const result = await res.json();
-
-        window.catalog = result.docs || [];
-
-        console.log("Catalog loaded:", window.catalog);
-
-        // 🔥 5. Render
-        if (typeof renderPedalboard === "function") {
-            renderPedalboard();
-        } else {
-            console.error("renderPedalboard not found");
-        }
-
-    } catch (err) {
-        console.error("Preview rig load failed:", err);
-    }
-}
