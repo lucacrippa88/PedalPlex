@@ -1700,16 +1700,23 @@ function resolveImageUrl(path) {
 
 
 function buildPedalboardFromSharedPlex(presetDoc) {
-  const pedals = Object.entries(presetDoc.pedals).map(([pedalId, pedalData]) => ({
+  const pedalsArray = Object.entries(presetDoc.pedals).map(([pedalId, pedalData]) => ({
     pedal_id: pedalId,
-    rotation: 0,    // tutti angoli a 0
-    row: 1          // unica row
+    rotation: 0,
+    row: 1
   }));
+
+  // Trasformazione per compatibilità con applyPresetToPedalboard
+  const pedalsMap = {};
+  Object.entries(presetDoc.pedals).forEach(([pedalId, pedalData]) => {
+    pedalsMap[pedalId] = pedalData; // mantiene eventuali controlli/subplex
+  });
 
   return {
     _id: presetDoc._id,
-    name: presetDoc.board_name || "Shared Plex",
-    pedals
+    board_name: presetDoc.board_name || "Shared Plex",
+    pedals: pedalsArray,   // array per renderFullPedalboard
+    pedalsMap              // oggetto per applyPresetToPedalboard
   };
 }
 
@@ -1723,8 +1730,8 @@ async function loadSharedPlexPreview(presetDoc) {
   // 3. Renderizza i pedali nel DOM
   await renderFullPedalboard(window.pedalboard);
 
-  // 4. Applica controlli/subplex dal preset
-  applyPresetToPedalboard(presetDoc);
+  // 4. Applica controlli/subplex dal plex
+  applyPresetToPedalboard({ ...plex, pedals: window.pedalboard.pedalsMap });
 }
 
 
