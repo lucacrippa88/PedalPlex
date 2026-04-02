@@ -264,16 +264,19 @@ function openShareModal() {
 }
 
 
-// =================== LOAD SHARED PLEX IN PREVIEW MODE =======================
 
+
+
+
+// =================== LOAD SHARED PLEX IN PREVIEW MODE =======================
 async function loadSharedPlexPreview() {
     console.log("🔹 loadSharedPlexPreview started, window.location.href:", window.location.href);
 
     // Helper: leggere query string
     function getQueryParam(name) {
         name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(window.location.href);
+        const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+              results = regex.exec(window.location.href);
         if (!results) return null;
         if (!results[2]) return '';
         return decodeURIComponent(results[2].replace(/\+/g, " "));
@@ -289,35 +292,40 @@ async function loadSharedPlexPreview() {
     try {
         const res = await fetch(`https://api.pedalplex.com/GET_SHARED_PLEX.php?token=${encodeURIComponent(token)}`);
         console.log("🔹 fetch response ok:", res.ok, res.status);
+
         if (!res.ok) throw new Error(`Failed to fetch shared plex: ${res.statusText}`);
 
         const data = await res.json();
         console.log("🔹 Shared Plex data:", data);
-        if (!data.plex) {
-            console.log('No shared plex found for this token.');
+
+        if (!data?.plex) {
+            console.warn('No shared plex found for this token.');
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
                 text: "Shared Plex not found.",
                 confirmButtonText: "Go Back"
-            }).then(() => {
-                window.location.href = 'plexes.html';
-            });
+            }).then(() => window.location.href = 'plexes.html');
             return;
         }
 
         const plex = data.plex;
         console.log("🔹 plex object loaded:", plex);
 
-        // Mostra info plex
-        const date = new Date(plex.sharedAt);
+        // 🔹 Mostra info plex
+        const date = new Date(plex.sharedAt || Date.now());
         const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) +
                               ', ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-        const author = plex.original_author.replace(/^user_/, '');
-        const html = `Previewing <strong>${plex.preset_name}</strong>, by <strong>${author}</strong> - shared on ${formattedDate}`;
-        $("#previewPlexData").html(html).css("display", "block");
+        const author = plex.original_author?.replace(/^user_/, '') || 'Unknown';
 
-        // 🔥 converti pedals OBJECT → ARRAY per rendering
+        const html = `Previewing <strong>${plex.preset_name || 'Unnamed Plex'}</strong>, by <strong>${author}</strong> - shared on ${formattedDate}`;
+        const previewElem = document.getElementById("previewPlexData");
+        if (previewElem) {
+            previewElem.innerHTML = html;
+            previewElem.style.display = "block";
+        }
+
+        // 🔹 Convert pedals OBJECT → ARRAY
         let pedalsArray = [];
         if (plex.pedals && typeof plex.pedals === "object") {
             pedalsArray = Object.entries(plex.pedals).map(([name, data]) => ({
@@ -327,28 +335,29 @@ async function loadSharedPlexPreview() {
                 subplex: data.subplex || null
             }));
         }
-        console.log("🔹 pedalsArray for rendering:", pedalsArray);
+        console.log("🔹 pedalsArray:", pedalsArray);
 
-        // 🔥 costruisci preset compatibile per rendering/applyPreset
+        // 🔹 Crea presetDoc robusto
         const presetDoc = {
             ...plex,
             pedals: pedalsArray,
             chain: plex.chain || pedalsArray.map(p => p.name)
         };
-        console.log("🔹 presetDoc ready for applyPreset:", presetDoc);
+        console.log("🔹 presetDoc ready:", presetDoc);
 
-        // 1. Ricostruisci pedalboard finta passando l'OGGETTO ORIGINALE (plex) per evitare errori TypeError
-        const pedalboard = buildPedalboardFromSharedPlex(plex);
-        console.log("🔹 pedalboard built:", pedalboard);
+        // 🔹 Costruisci pedalboard in sicurezza
+        let pedalboard = [];
+        if (presetDoc && presetDoc.pedals && presetDoc.pedals.length > 0) {
+            console.log("🔹 Calling buildPedalboardFromSharedPlex...");
+            pedalboard = buildPedalboardFromSharedPlex(presetDoc);
+            window.pedalboard = pedalboard;
+            await renderFullPedalboard(window.pedalboard);
+            applyPresetToPedalboard(presetDoc);
+        } else {
+            console.warn("❌ presetDoc.pedals è vuoto o non valido:", presetDoc);
+        }
 
-        // 2. Imposta globalmente
-        window.pedalboard = pedalboard;
-
-        // 3. Renderizza tutti i pedali nel DOM
-        await renderFullPedalboard(window.pedalboard);
-
-        // 4. Applica preset compatibile
-        applyPresetToPedalboard(presetDoc);
+        console.log("✅ Shared Plex loaded and pedalboard initialized.");
 
     } catch (err) {
         console.error('Error loading shared plex:', err);
@@ -367,3 +376,42 @@ window.addEventListener("load", function () {
         loadSharedPlexPreview();
     }
 });
+
+
+
+
+function buildPedalboardFromSharedPlex(presetDoc) {
+    // 🔹 Debug: verifica che presetDoc sia corretto
+    console.log("🔹 buildPedalboardFromSharedPlex called with presetDoc:", presetDoc);
+
+    if (!presetDoc || !presetDoc.pedals || typeof presetDoc.pedals !== "object") {
+        console.error("❌ presetDoc.pedals non valido:", presetDoc ? presetDoc.pedals : presetDoc);
+        return [];
+    }
+
+    // 🔹 Trasforma pedals OBJECT -> array per la pedalboard
+    const pedalsArray = Object.entries(presetDoc.pedals).map(([pedalId, pedalData]) => ({
+        pedal_id: pedalId,
+        rotation: 0,
+        row: 1
+    }));
+
+    console.log("🔹 pedalsArray:", pedalsArray);
+
+    // 🔹 Mantieni mappa originale per applyPresetToPedalboard (controlli/subplex)
+    const pedalsMap = {};
+    Object.entries(presetDoc.pedals).forEach(([pedalId, pedalData]) => {
+        pedalsMap[pedalId] = pedalData;
+    });
+    console.log("🔹 pedalsMap:", pedalsMap);
+
+    // 🔹 Costruisci struttura finale pedalboard compatibile
+    const pedalboard = {
+        ...presetDoc,
+        pedalsArray: pedalsArray,
+        pedalsMap: pedalsMap
+    };
+
+    console.log("🔹 pedalboard built:", pedalboard);
+    return pedalboard;
+}
