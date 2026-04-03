@@ -182,7 +182,6 @@ function openShareModal() {
             toggle.addEventListener("change", () => {
                 userInteracted = true;
                 updateUI();
-                $("#sharedTag").toggle(toggle.checked); // mostra/nascondi tag Shared nella lista plexes
             });
 
             // copy button
