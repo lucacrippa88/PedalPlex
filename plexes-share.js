@@ -314,20 +314,24 @@ async function loadSharedPlexPreview() {
 
         console.log("🔹 Gears loaded:", pedals);
 
-        // 3️⃣ Costruisci rig virtuale con i pedali scaricati
-        const pedalsArray = pedalIds.map(id => {
-            const pedal = pedals[id] || { _id: id, missing: true };
-            return {
-                pedal_id: id,
-                ...plex.pedals[id], // controlli e subplex del plex
-                ...pedal
-            };
+        // 3️⃣ Costruisci catalog
+        window.catalog = gearsData.docs;
+        window.catalogMap = {};
+        window.catalog.forEach(p => {
+            window.catalogMap[p._id] = p;
         });
 
-        console.log("🔹 pedalsArray ready for preview:", pedalsArray);
+        // 4️⃣ Costruisci pedalboard COMPATIBILE con plexes.js
+        window.pedalboard = {
+            board_name: "Preview",
+            pedals: pedalIds.map((id, index) => ({
+                pedal_id: id,
+                rotation: 0,
+                row: 1
+            }))
+        };
 
-        // 4️⃣ Render rig virtuale
-        setupVirtualRigForPreview(pedalsArray);
+        renderFullPedalboard();
 
         // 5️⃣ Mostra info plex
         const date = new Date(plex.sharedAt);
@@ -349,19 +353,19 @@ async function loadSharedPlexPreview() {
 }
 
 // Setup di un rig virtuale per preview
-function setupVirtualRigForPreview(pedalsArray) {
-    const $rigContainer = $("#previewRig"); // Assicurati che esista nella pagina
-    $rigContainer.empty();
+// function setupVirtualRigForPreview(pedalsArray) {
+//     const $rigContainer = $("#previewRig"); // Assicurati che esista nella pagina
+//     $rigContainer.empty();
 
-    const userRole = window.currentUser?.role || 'user';
+//     const userRole = window.currentUser?.role || 'user';
 
-    pedalsArray.forEach(pedal => {
-        const $pedalDiv = renderPedal(pedal, userRole, true);
-        $rigContainer.append($pedalDiv);
-    });
+//     pedalsArray.forEach(pedal => {
+//         const $pedalDiv = renderPedal(pedal, userRole, true);
+//         $rigContainer.append($pedalDiv);
+//     });
 
-    console.log("🔹 Virtual rig created for preview with pedals:", pedalsArray.map(p => p.pedal_id));
-}
+//     console.log("🔹 Virtual rig created for preview with pedals:", pedalsArray.map(p => p.pedal_id));
+// }
 
 // Chiamare solo in preview mode
 window.addEventListener("load", function () {

@@ -39,16 +39,9 @@ function setupPreviewMode() {
   });
 
   // badge opzionale
-  $(".rightButtons.showDesktop").prepend(`<span class="preview-badge">Preview Mode</span>`);
-  $(".rightButtons.showMobile").prepend(`<span class="preview-badge">Preview</span>`);
+  $(".rightButtons.showDesktop").prepend(`<span class="preview-badge">Preview Mode</span>`); // ???
+  $(".rightButtons.showMobile").prepend(`<span class="preview-badge">Preview</span>`); // ???
 }
-
-// if (window.isPreviewMode) {
-//     document.querySelectorAll('#pedalboardSelect, #folderSelectContainer, #renameFolderBtn, #presetSelectContainer, #renamePresetBtn, #sharePresetBtn').forEach(el => {
-//         el.style.setProperty('display', 'none', 'important');
-//         el.disabled = true;
-//     });
-// }
 // End detect preview mode
 
 let resultsDiv;
