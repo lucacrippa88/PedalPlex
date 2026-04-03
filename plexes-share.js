@@ -333,7 +333,9 @@ async function loadSharedPlexPreview() {
 
         renderFullPedalboard();
 
-        applyPresetToPedalboard(plex);
+        setTimeout(() => {
+            applyPresetToPedalboard(plex);
+        }, 100); // 100ms per lasciare completare il DOM
 
         // 5️⃣ Mostra info plex
         const date = new Date(plex.sharedAt);
@@ -354,20 +356,6 @@ async function loadSharedPlexPreview() {
     }
 }
 
-// Setup di un rig virtuale per preview
-// function setupVirtualRigForPreview(pedalsArray) {
-//     const $rigContainer = $("#previewRig"); // Assicurati che esista nella pagina
-//     $rigContainer.empty();
-
-//     const userRole = window.currentUser?.role || 'user';
-
-//     pedalsArray.forEach(pedal => {
-//         const $pedalDiv = renderPedal(pedal, userRole, true);
-//         $rigContainer.append($pedalDiv);
-//     });
-
-//     console.log("🔹 Virtual rig created for preview with pedals:", pedalsArray.map(p => p.pedal_id));
-// }
 
 // Chiamare solo in preview mode
 window.addEventListener("load", function () {
