@@ -156,7 +156,6 @@ window.SUBPLEX_EDIT_MODE = true;
     <br><br><br><br> 
 
     <div id="preset" style="flex-direction: column; align-items: center;"></div>
-    <!-- <div id="previewRig" style="flex-direction: column; align-items: center; display:none"></div> -->
   </div>
 
 
@@ -242,7 +241,9 @@ $(document).ready(function() {
     window.currentUser = null; // guest
     $('#loadingMessage').hide();
     $('#page-content, #preset-controls').show();
-    $('#preset-controls').html("<p>Login to organise your Plexes in folders and save them!</p>");
+    if (!window.isPreviewMode) { 
+      $('#preset-controls').html("<p>Login to organise your Plexes in folders and save them!</p>");
+    }
     if (typeof initNavPreset === 'function') initNavPreset();
     if (typeof initPreset === 'function') initPreset();
     $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn, #zoomIn, #zoomOut, #zoomReset')
@@ -293,7 +294,9 @@ $(document).ready(function() {
             window.currentUser = null;
             $('#loadingMessage').hide();
             $('#page-content, #preset-controls').show();
-            $('#preset-controls').html("<p>Login to organise your Plexes in folders and save them!</p>");
+            if (!window.isPreviewMode) { 
+                  $('#preset-controls').html("<p>Login to organise your Plexes in folders and save them!</p>");
+            }            
             if (typeof initNavPreset === 'function') initNavPreset();
             if (typeof initPreset === 'function') initPreset();
             $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn, #zoomIn, #zoomOut, #zoomReset')
