@@ -6,8 +6,8 @@ window.isPreviewMode = !!sharedToken;
 function setupPreviewMode() {
   if (!window.isPreviewMode) return;
 
-  $('#preset').css('display','none');
-  $('#previewRig').css('display','block');
+  // $('#preset').css('display','none');
+  // $('#previewRig').css('display','block');
   
   // Assicurati che gli elementi esistano
   const ids = [
