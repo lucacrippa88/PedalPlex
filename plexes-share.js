@@ -333,6 +333,8 @@ async function loadSharedPlexPreview() {
 
         renderFullPedalboard();
 
+        applyPresetToPedalboard(plex);
+
         // 5️⃣ Mostra info plex
         const date = new Date(plex.sharedAt);
         const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) +
