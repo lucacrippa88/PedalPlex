@@ -6,7 +6,7 @@ window.isPreviewMode = !!sharedToken;
 function setupPreviewMode() {
   if (!window.isPreviewMode) return;
 
-  $('#preset').css('outline','2px dashed #666;')
+  $('#preset').css('outline','2px dashed #666')
               .css('outline-offset','2px')
               .css('border-radius','8px')
               .css('padding','30px');
