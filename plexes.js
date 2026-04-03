@@ -3,46 +3,56 @@ const urlParams = new URLSearchParams(window.location.search);
 const sharedToken = urlParams.get('shared_token');
 window.isPreviewMode = !!sharedToken;
 
+
 function setupPreviewMode() {
-  if (!window.isPreviewMode) return;
+    if (!window.isPreviewMode) return;
 
-  $('#preset').css('outline','2px dashed #666')
-              .css('outline-offset','2px')
-              .css('border-radius','8px')
-              .css('padding','30px');
-  
-  // Assicurati che gli elementi esistano
-  const ids = [
-    "savePstBtn", 
-    "savePstBtnMobile",
-    "createPstBtn", 
-    "createPstBtnMobile",
-    "addFolderBtn"
-  ];
-  ids.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.disabled = true;
-      el.classList.add('btn-disabled');
-    }
-  });
+    // Assicuriamoci che il DOM sia pronto
+    $(document).ready(() => {
+        const $preset = $('#preset');
+        if ($preset.length) {
+            $preset.css({
+                'outline': '2px dashed #666',
+                'outline-offset': '2px',
+                'border-radius': '8px',
+                'padding': '30px'
+            });
+        }
 
-  const ids_hide = [
-    "renamePresetBtn",
-    "renameFolderBtn",
-    "pedalboardSelect",
-    "presetSelect",
-    "folderSelect",
-    "sharePresetBtn"
-  ];
-  ids_hide.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.remove();
-  });
+        // Disabilita pulsanti
+        const ids = [
+            "savePstBtn", 
+            "savePstBtnMobile",
+            "createPstBtn", 
+            "createPstBtnMobile",
+            "addFolderBtn"
+        ];
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.disabled = true;
+                el.classList.add('btn-disabled');
+            }
+        });
 
-  // badge opzionale
-  $(".rightButtons.showDesktop").prepend(`<span class="preview-badge">Preview Mode</span>`); // ???
-  $(".rightButtons.showMobile").prepend(`<span class="preview-badge">Preview</span>`); // ???
+        // Rimuove elementi
+        const ids_hide = [
+            "renamePresetBtn",
+            "renameFolderBtn",
+            "pedalboardSelect",
+            "presetSelect",
+            "folderSelect",
+            "sharePresetBtn"
+        ];
+        ids_hide.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        });
+
+        // badge opzionale
+        $(".rightButtons.showDesktop").prepend(`<span class="preview-badge">Preview Mode</span>`);
+        $(".rightButtons.showMobile").prepend(`<span class="preview-badge">Preview</span>`);
+    });
 }
 // End detect preview mode
 
