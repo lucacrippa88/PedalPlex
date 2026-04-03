@@ -98,11 +98,19 @@ window.SUBPLEX_EDIT_MODE = true;
           <p data-inline-loading-text-active class="bx--inline-loading__text">Loading folders...</p>
         </div>
       </div>
-      <button id="renameFolderBtn" class="showDesktop bx--btn bx--btn--secondary" type="button">Edit
+      <!-- <button id="renameFolderBtn" class="showDesktop bx--btn bx--btn--secondary" type="button">Edit
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
           <path d="M11.17,6l3.42,3.41.58.59H28V26H4V6h7.17m0-2H4A2,2,0,0,0,2,6V26a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2H16L12.59,4.59A2,2,0,0,0,11.17,4Z"/>
         </svg>
+      </button> -->
+
+      <button id="renameFolderBtn" class="showDesktop bx--btn bx--btn--icon-only bx--btn--secondary" type="button">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="m31.707,19.2929l-3-3c-.3906-.3906-1.0234-.3906-1.4141,0l-9.293,9.293v4.4141h4.4141l9.293-9.293c.3906-.3906.3906-1.0234,0-1.4141Zm-10.1211,8.707h-1.5859v-1.5859l5-5,1.5859,1.5859-5,5Zm6.4141-6.4141l-1.5859-1.5859,1.5859-1.5859,1.5859,1.5859-1.5859,1.5859Z" stroke="currentColor"></path>
+            <path d="M28,8H16l-3.4-3.4C12.2,4.2,11.7,4,11.2,4H4C2.9,4,2,4.9,2,6v20c0,1.1,0.9,2,2,2h14v-2H4V6h7.2l3.4,3.4l0.6,0.6H28v8h2v-8 C30,8.9,29.1,8,28,8z" stroke="currentColor"></path>
+          </svg>
       </button>
+
 
       <!-- Preset selection -->
       <div id="presetSelectContainer" style="margin-left: 8px;">
@@ -119,17 +127,24 @@ window.SUBPLEX_EDIT_MODE = true;
           <p data-inline-loading-text-active class="bx--inline-loading__text">Loading Plexes...</p>
         </div>
       </div>
-      <button id="renamePresetBtn" class="showDesktop bx--btn bx--btn--secondary" type="button">Edit
+      <!-- <button id="renamePresetBtn" class="showDesktop bx--btn bx--btn--secondary" type="button">Edit
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
           <path d="M25,4H10A2.002,2.002,0,0,0,8,6V20.5563A3.9551,3.9551,0,0,0,6,20a4,4,0,1,0,4,4V12H25v8.5562A3.9545,3.9545,0,0,0,23,20a4,4,0,1,0,4,4V6A2.0023,2.0023,0,0,0,25,4ZM6,26a2,2,0,1,1,2-2A2.0023,2.0023,0,0,1,6,26Zm17,0a2,2,0,1,1,2-2A2.0027,2.0027,0,0,1,23,26ZM10,6H25v4H10Z"/>
         </svg>
+      </button> -->
+      <button id="renamePresetBtn" class="showDesktop bx--btn--icon-only bx--btn bx--btn--secondary" type="button">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <path d="M29.707,7.293l-3-3a.9994.9994,0,0,0-1.414,0L16,13.5859V18h4.4141L29.707,8.707A.9994.9994,0,0,0,29.707,7.293ZM19.5859,16H18V14.4141l5-5L24.5859,11ZM26,9.5859,24.4141,8,26,6.4141,27.5859,8Z"></path>
+            <path d="M24,15v7.5562A3.9552,3.9552,0,0,0,22,22a4,4,0,1,0,4,4V15ZM22,28a2,2,0,1,1,2-2A2.0027,2.0027,0,0,1,22,28Z"></path>
+            <path d="M17,6H10A2.002,2.002,0,0,0,8,8V22.5562A3.9557,3.9557,0,0,0,6,22a4,4,0,1,0,4,4V8h7ZM6,28a2,2,0,1,1,2-2A2.0023,2.0023,0,0,1,6,28Z"></path><title>Music add</title></svg> 
       </button>
+
       <button id="sharePresetBtn" class="bx--btn bx--btn--tertiary bx--btn--icon-only" type="button">
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
           <path d="M23,20a5,5,0,0,0-3.89,1.89L11.8,17.32a4.46,4.46,0,0,0,0-2.64l7.31-4.57A5,5,0,1,0,18,7a4.79,4.79,0,0,0,.2,1.32l-7.31,4.57a5,5,0,1,0,0,6.22l7.31,4.57A4.79,4.79,0,0,0,18,25a5,5,0,1,0,5-5ZM23,4a3,3,0,1,1-3,3A3,3,0,0,1,23,4ZM7,19a3,3,0,1,1,3-3A3,3,0,0,1,7,19Zm16,9a3,3,0,1,1,3-3A3,3,0,0,1,23,28Z"></path>
         </svg>
       </button>
-      <span style="font-size:12px" class="bx--tag bx--tag--purple">Shared</span>
+      <span id="sharedTag" style="font-size:12px" class="bx--tag bx--tag--purple">Shared</span>
 
        <a href="rigs" class="showDesktop bx--btn bx--btn--tertiary" type="button" style="margin-left: auto!important; max-width:500px!important;">Back to Rigs
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
