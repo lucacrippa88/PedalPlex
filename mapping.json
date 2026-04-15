@@ -16630,5 +16630,14 @@
     "brand": "Dedalo FX",
     "category": "bass/compressor",
     "seo_description": "This is an analog compressor pedal designed to deliver the warm, classic opto-compression character to your bass tone. Rather than acting purely as a leveling tool, it functions as a true effect, shaping your sound with a lively, vintage-style compression. The gain reduction is handled by a dual-phase photoresistor circuit, capable of achieving up to 14 dB of attenuation."
+  },
+    {
+    "pedalplex_id": "Sonar Fx Time Box - Delay + Reverb",
+    "status": "missing",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/sonar-fx-time-box-delay-reverb",
+    "brand": "Sonar FX",
+    "category": "delay/reverb",
+    "seo_description": "This is an analog compressor pedal designed to deliver the warm, classic opto-compression character to your bass tone. Rather than acting purely as a leveling tool, it functions as a true effect, shaping your sound with a lively, vintage-style compression. The gain reduction is handled by a dual-phase photoresistor circuit, capable of achieving up to 14 dB of attenuation."
   }
 ]
