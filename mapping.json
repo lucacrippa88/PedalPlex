@@ -16621,5 +16621,14 @@
     "brand": "Zvex",
     "category": "fuzz/distortion",
     "seo_description": "Vexter edition of Woolly Mammoth delivers compact, high-gain fuzz/distortion with thick harmonics and responsive touch."
+  },
+  {
+    "pedalplex_id": "Dedalo Fx Gorila Bass Compressor",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/dedalo/gorila",
+    "pedalplex_url": "https://www.pedalplex.com/gear/dedalo-fx-gorila-bass-compressor",
+    "brand": "Dedalo FX",
+    "category": "bass/compressor",
+    "seo_description": "This is an analog compressor pedal designed to deliver the warm, classic opto-compression character to your bass tone. Rather than acting purely as a leveling tool, it functions as a true effect, shaping your sound with a lively, vintage-style compression. The gain reduction is handled by a dual-phase photoresistor circuit, capable of achieving up to 14 dB of attenuation."
   }
 ]
