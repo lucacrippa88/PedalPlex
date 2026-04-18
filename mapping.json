@@ -16666,5 +16666,16 @@
     "brand": "Boss",
     "category": "looper",
     "seo_description": "The Boss RC-600 Loop Station is a versatile looper designed for musicians who want to create complex arrangements on the fly. With its intuitive interface and powerful features, it allows you to layer multiple tracks, apply effects, and perform in real-time, making it an essential tool for live performance and studio recording."
+  },
+  {
+    "pedalplex_id": "Mad Professor Supreme Dual Overdrive",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/madprofessor/supreme",
+    "pedalplex_url": "https://www.pedalplex.com/gear/mad-professor-supreme-dual-overdrive",
+    "brand": "Mad Professor",
+    "category": "overdrive",
+    "seo_description": "The Mad Professor Supreme Dual Overdrive is a high-end dual overdrive pedal created in collaboration with Matt Schofield, built for players who need flexible drive sounds and practical stage performance. It houses two separate overdrive circuits in a single unit, making it easy to switch instantly between tones or run both channels together for increased gain, sustain, and harmonic richness."
   }
 ]
+
+
