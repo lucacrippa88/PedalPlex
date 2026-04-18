@@ -16640,13 +16640,31 @@
     "category": "delay/reverb",
     "seo_description": "The Sonar FX Time Box is a versatile ambient processor that combines delay and reverb into a single, compact unit, designed to expand your sonic space with depth and character. It offers a wide range of delay times, from tight rhythmic echoes to expansive repeats, seamlessly blending with lush reverb textures that can go from subtle room ambience to vast, atmospheric washes. Intuitive controls allow precise shaping of both effects, enabling you to dial in anything from clean, defined delays to heavily modulated, immersive soundscapes. The Time Box excels both as a subtle enhancer and as a creative tool, adding dimension, movement, and emotion to your tone. Ideal for guitar, bass, and synth setups, it can function as an always-on ambience pedal or as a centerpiece for more experimental textures. Whether you’re after clarity or deep, evolving atmospheres, the Sonar FX Time Box delivers a rich and expressive sound palette in a streamlined format."
   },
-    {
-    "pedalplex_id": "Edit EarthQuaker Devices Sunn Life Pedal Octave Distortion + Booster",
+  {
+    "pedalplex_id": "EarthQuaker Devices Sunn Life Pedal Octave Distortion + Booster",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/earthquaker/lifepedal",
     "pedalplex_url": "https://www.pedalplex.com/gear/earthquaker-devices-sunn-life-pedal-octave-distortion-booster",
     "brand": "EarthQuaker Devices",
     "category": "octaver/distortion/booster",
     "seo_description": "The EarthQuaker Devices Sunn O))) Life Pedal is a powerful multi-effect pedal created in collaboration with Sunn O))), designed to deliver massive, amp-crushing tones inspired by the band’s legendary sound. It combines three circuits in one unit: analog octave-up fuzz, RAT-style distortion, and a clean MOSFET boost, making it an all-in-one weapon for heavy riffs, soaring leads, and walls of saturation."
+  },
+  {
+    "pedalplex_id": "Pike Amplification Vulcan XL Bass Preamp",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/pike/vulcan/xl",
+    "pedalplex_url": "https://www.pedalplex.com/gear/pike-amplification-vulcan-xl-bass-preamp",
+    "brand": "Pike Amplification",
+    "category": "bass/preamp",
+    "seo_description": "The Pike Amplification Vulcan XL Bass Preamp is a high-performance bass tone tool that combines overdrive, EQ, and direct output functions in one compact unit. Designed for players who need both studio-grade clarity and aggressive character, it features dual parallel discrete drive circuits that can add anything from subtle warmth to rich, saturated grind while preserving low-end definition through the blend control."
+  },
+  {
+    "pedalplex_id": "Boss RC-600 Loop Station",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/boss/multi/rc600",
+    "pedalplex_url": "https://www.pedalplex.com/gear/boss-rc600-loop-station",
+    "brand": "Boss",
+    "category": "looper",
+    "seo_description": "The Boss RC-600 Loop Station is a versatile looper designed for musicians who want to create complex arrangements on the fly. With its intuitive interface and powerful features, it allows you to layer multiple tracks, apply effects, and perform in real-time, making it an essential tool for live performance and studio recording."
   }
 ]
