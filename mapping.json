@@ -16693,6 +16693,15 @@
     "brand": "Radial Engineering",
     "category": "footswitch",
     "seo_description": "The Radial Engineering BigShot ABY True Bypass Switcher is a high-quality switcher designed for musicians who need reliable, low-noise switching. It features true bypass technology and a robust build quality, making it an essential tool for live performance and studio recording."
+  },
+  {
+    "pedalplex_id": "Boss FV-50H Volume",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/boss/fv50h",
+    "pedalplex_url": "https://www.pedalplex.com/gear/boss-fv50h-volume",
+    "brand": "Boss",
+    "category": "volume",
+    "seo_description": "The Boss FV-50H Volume is a high-quality volume pedal designed for musicians who need reliable, low-noise switching. It features true bypass technology and a robust build quality, making it an essential tool for live performance and studio recording."
   }
 ]
 
