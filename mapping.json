@@ -16720,6 +16720,15 @@
     "brand": "M-Audio",
     "category": "volume",
     "seo_description": "The M-Audio Expression Pedal EX-P is a high-quality expression pedal designed for musicians who need reliable, low-noise switching. It features true bypass technology and a robust build quality, making it an essential tool for live performance and studio recording."
+  },
+  {
+    "pedalplex_id": "Boss FS-6 Dual Footswitch",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/boss-fs6-dual-footswitch",
+    "brand": "Boss",
+    "category": "footswitch",
+    "seo_description": "The Boss FS-6 Dual Footswitch is a high-quality footswitch designed for musicians who need reliable, low-noise switching. It features true bypass technology and a robust build quality, making it an essential tool for live performance and studio recording."
   }
 ]
 
