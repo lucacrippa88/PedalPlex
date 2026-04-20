@@ -438,7 +438,8 @@ function renderPedalboard() {
     const rowDiv = document.createElement('div');
     rowDiv.style.display = 'flex';
     rowDiv.style.flexWrap = 'wrap';
-    rowDiv.style.marginBottom = '10px';
+    // rowDiv.style.marginBottom = '10px';
+    rowDiv.style.marginTop = '-12px';
     rowDiv.style.gap = '10px';
     container.appendChild(rowDiv);
 
