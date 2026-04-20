@@ -1383,6 +1383,12 @@ async function renderFullPedalboard(pedalboardOverride = null) {
               });
             }
 
+            $pedalDiv.css({
+              position: "relative",
+              top: `${pbPedal.vert || 0}px`,
+              left: `${pbPedal.horiz || 0}px`
+            });
+
             const $wrapper = $("<div>")
               .addClass("pedal-wrapper") // For hover mouse menu catalog preset
               .css(wrapperStyles).append($pedalDiv);
