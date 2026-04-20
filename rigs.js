@@ -468,7 +468,8 @@ function renderPedalboard() {
       let wrapperStyles = {
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'flex-start',
+        // alignItems: 'flex-start',
+        alignItems: 'center',
         position: 'relative',
         boxSizing: 'content-box',
         marginBottom: '20px',
@@ -510,7 +511,7 @@ function renderPedalboard() {
       $pedalEl.css('position', 'relative');
 
       $wrapper.append($pedalEl);
-      
+
       rowDiv.appendChild($wrapper[0]);
     });
   });
