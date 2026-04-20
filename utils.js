@@ -1383,6 +1383,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
               });
             }
 
+            // Se vert/horiz esistono, applicali a .pedal-catalog
             $pedalDiv.css({
               position: "relative",
               top: `${pbPedal.vert || 0}px`,
