@@ -1151,17 +1151,12 @@ async function renderFullPedalboard(pedalboardOverride = null) {
       const sortedRows = Object.keys(rowsMap).map(r => parseInt(r, 10)).sort((a, b) => a - b);
 
       for (const rowNum of sortedRows) {
-        // const rowDiv = document.createElement('div');
-        // rowDiv.style.display = 'flex';
-        // rowDiv.style.flexWrap = 'wrap';
-        // rowDiv.style.alignItems = 'flex-start';
-        // rowDiv.style.gap = '10px';
-        // rowDiv.style.margin = "auto";
         const rowDiv = document.createElement('div');
-        rowDiv.style.position = 'relative';
-        rowDiv.style.width = '100%';
-        rowDiv.style.minHeight = '260px';
-        rowDiv.style.marginBottom = '20px';
+        rowDiv.style.display = 'flex';
+        rowDiv.style.flexWrap = 'wrap';
+        rowDiv.style.alignItems = 'flex-start';
+        rowDiv.style.gap = '10px';
+        rowDiv.style.margin = "auto";
 
         for (const pbPedal of rowsMap[rowNum]) {
           try {
@@ -1388,17 +1383,9 @@ async function renderFullPedalboard(pedalboardOverride = null) {
               });
             }
 
-            // const $wrapper = $("<div>")
-            //   .addClass("pedal-wrapper") // For hover mouse menu catalog preset
-            //   .css(wrapperStyles).append($pedalDiv);
             const $wrapper = $("<div>")
-                .addClass("pedal-wrapper")
-                .css({
-                  position: "absolute",
-                  top: `${pbPedal.vert || 0}px`,
-                  left: `${pbPedal.horiz || 0}px`
-                })
-                .append($pedalDiv);
+              .addClass("pedal-wrapper") // For hover mouse menu catalog preset
+              .css(wrapperStyles).append($pedalDiv);
 
             $wrapper.css("position", "relative");
 
