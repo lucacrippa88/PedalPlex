@@ -1,5 +1,11 @@
 const editMode = window.isEditMode
 
+// Utility function to determine if we're in mobile layout (for responsive adjustments)
+function isMobileLayout() {
+  return window.innerWidth <= 768;
+}
+
+
 // Utility function to slugify pedal names for URL generation
 function slugify(text) {
 
@@ -1398,8 +1404,8 @@ async function renderFullPedalboard(pedalboardOverride = null) {
               .css({
                 ...wrapperStyles,
                 position: "relative",
-                top: `${pbPedal.vert || 0}px`,
-                left: `${pbPedal.horiz || 0}px`
+                  top: isMobileLayout() ? "0px" : `${pbPedal.vert || 0}px`,
+                  left: isMobileLayout() ? "0px" : `${pbPedal.horiz || 0}px`
               })
               .append($pedalDiv);
 
