@@ -1384,15 +1384,24 @@ async function renderFullPedalboard(pedalboardOverride = null) {
             }
 
             // Se vert/horiz esistono, applicali a .pedal-catalog
-            $pedalDiv.css({
-              position: "relative",
-              top: `${pbPedal.vert || 0}px`,
-              left: `${pbPedal.horiz || 0}px`
-            });
+            // $pedalDiv.css({
+            //   position: "relative",
+            //   top: `${pbPedal.vert || 0}px`,
+            //   left: `${pbPedal.horiz || 0}px`
+            // });
 
+            // const $wrapper = $("<div>")
+            //   .addClass("pedal-wrapper") // For hover mouse menu catalog preset
+            //   .css(wrapperStyles).append($pedalDiv);
             const $wrapper = $("<div>")
-              .addClass("pedal-wrapper") // For hover mouse menu catalog preset
-              .css(wrapperStyles).append($pedalDiv);
+              .addClass("pedal-wrapper")
+              .css({
+                ...wrapperStyles,
+                position: "relative",
+                top: `${pbPedal.vert || 0}px`,
+                left: `${pbPedal.horiz || 0}px`
+              })
+              .append($pedalDiv);
 
             $wrapper.css("position", "relative");
 
