@@ -1389,20 +1389,20 @@ async function renderFullPedalboard(pedalboardOverride = null) {
               });
             }
 
-            //// Se vert/horiz esistono, applicali a .pedal-catalog
-            // const $wrapper = $("<div>")
-            //   .addClass("pedal-wrapper")
-            //   .css({
-            //     ...wrapperStyles,
-            //     position: "relative",
-            //       top: isMobileLayout() ? "0px" : `${pbPedal.vert || 0}px`,
-            //       left: isMobileLayout() ? "0px" : `${pbPedal.horiz || 0}px`
-            //   })
-            //   .append($pedalDiv);
-
+            // Se vert/horiz esistono, applicali a .pedal-catalog
             const $wrapper = $("<div>")
-              .addClass("pedal-wrapper") // For hover mouse menu catalog preset
-              .css(wrapperStyles).append($pedalDiv);
+              .addClass("pedal-wrapper")
+              .css({
+                ...wrapperStyles,
+                position: "relative",
+                  top: isMobileLayout() ? "0px" : `${pbPedal.vert || 0}px`,
+                  left: isMobileLayout() ? "0px" : `${pbPedal.horiz || 0}px`
+              })
+              .append($pedalDiv);
+
+            // const $wrapper = $("<div>")
+            //   .addClass("pedal-wrapper") // For hover mouse menu catalog preset
+            //   .css(wrapperStyles).append($pedalDiv);
             
 
             $wrapper.css("position", "relative");
