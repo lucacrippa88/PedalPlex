@@ -493,39 +493,28 @@ function renderPedalboard() {
         });
       }
 
-      // // const $wrapper = $("<div>").css(wrapperStyles).append($pedalEl);
+      const $wrapper = $("<div>").css(wrapperStyles).append($pedalEl);
       // const $wrapper = $("<div>").css(wrapperStyles);
 
       // // Se vert/horiz esistono, applicali a .pedal-catalog
-      // const topVal = pbPedal.vert;
-      // const leftVal = pbPedal.horiz;
+      // const $wrapper = $("<div>").css(wrapperStyles);
 
-      // if (topVal !== undefined && topVal !== null && topVal !== '') {
-      //   $pedalEl.css('top', `${parseInt(topVal, 10)}px`);
+      // // Applica vert/horiz solo se NON mobile
+      // if (!isMobileLayout()) {
+
+      //   // Se vert/horiz esistono, applicali a .pedal-catalog
+      //   const topVal = pbPedal.vert;
+      //   const leftVal = pbPedal.horiz;
+
+      //   if (topVal !== undefined && topVal !== null && topVal !== '') {
+      //     $pedalEl.css('top', `${parseInt(topVal, 10)}px`);
+      //   }
+
+      //   if (leftVal !== undefined && leftVal !== null && leftVal !== '') {
+      //     $pedalEl.css('left', `${parseInt(leftVal, 10)}px`);
+      //   }
+
       // }
-
-      // if (leftVal !== undefined && leftVal !== null && leftVal !== '') {
-      //   $pedalEl.css('left', `${parseInt(leftVal, 10)}px`);
-      // }
-      // const $wrapper = $("<div>").css(wrapperStyles).append($pedalEl);
-      const $wrapper = $("<div>").css(wrapperStyles);
-
-      // Applica vert/horiz solo se NON mobile
-      if (!isMobileLayout()) {
-
-        // Se vert/horiz esistono, applicali a .pedal-catalog
-        const topVal = pbPedal.vert;
-        const leftVal = pbPedal.horiz;
-
-        if (topVal !== undefined && topVal !== null && topVal !== '') {
-          $pedalEl.css('top', `${parseInt(topVal, 10)}px`);
-        }
-
-        if (leftVal !== undefined && leftVal !== null && leftVal !== '') {
-          $pedalEl.css('left', `${parseInt(leftVal, 10)}px`);
-        }
-
-      }
 
       // necessario per top/left
       $pedalEl.css('position', 'relative');
