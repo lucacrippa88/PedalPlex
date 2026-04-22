@@ -458,8 +458,9 @@ function renderPedalboard() {
       $pedalEl.on('click', () => openEditPedalModal(pbPedal));
 
       // Apply rotation to the pedal itself
+      // const angle = pbPedal.rotation || 0;
+      // $pedalEl.css('transform', `rotate(${angle}deg)`);
       const angle = pbPedal.rotation || 0;
-      $pedalEl.css('transform', `rotate(${angle}deg)`);
 
       // Calculate wrapper styles accounting for rotation (layout only)
       const widthPx = parseFloat(getPedalWidth(pedalData.width));
@@ -496,7 +497,13 @@ function renderPedalboard() {
       // const $wrapper = $("<div>").css(wrapperStyles).append($pedalEl);
 
       // Se vert/horiz esistono, applicali a .pedal-catalog
-      const $wrapper = $("<div>").css(wrapperStyles);
+      // const $wrapper = $("<div>").css(wrapperStyles);
+      const $wrapper = $("<div>").css({
+        ...wrapperStyles,
+        transform: `rotate(${angle}deg)`,
+        transformOrigin: 'center center'
+      });
+      $pedalEl.css('transform', 'none');
 
       // Applica vert/horiz solo se NON mobile
       if (!isMobileLayout()) {
