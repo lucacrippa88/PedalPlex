@@ -471,7 +471,7 @@ function renderPedalboard() {
         display: 'flex',
         justifyContent: 'center',
         // alignItems: 'flex-start',
-        // alignItems: 'center',
+        alignItems: 'center',
         position: 'relative',
         boxSizing: 'content-box',
         marginBottom: '20px',
