@@ -16631,6 +16631,33 @@
     "category": "bass/compressor",
     "seo_description": "This is an analog compressor pedal designed to deliver the warm, classic opto-compression character to your bass tone. Rather than acting purely as a leveling tool, it functions as a true effect, shaping your sound with a lively, vintage-style compression. The gain reduction is handled by a dual-phase photoresistor circuit, capable of achieving up to 14 dB of attenuation."
   },
+    {
+    "pedalplex_id": "Dedalo Fx byte BASS SYNTH",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/dedalo/byt1",
+    "pedalplex_url": "https://www.pedalplex.com/gear/dedalo-fx-byte-bass-synth",
+    "brand": "Dedalo FX",
+    "category": "bass/synth",
+    "seo_description": "The Dedalo Fx byte BASS SYNTH is a versatile analog synthesizer designed for bass players seeking rich, expressive tones. It offers a wide range of sounds from warm, vintage-inspired waves to modern, aggressive synth textures. The intuitive interface allows for real-time manipulation of sound parameters, enabling musicians to create unique and dynamic bass lines that stand out in any mix."
+  },
+  {
+    "pedalplex_id": "Dedalo Fx b-saurio Bass Distortion",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/dedalo/bsaurio",
+    "pedalplex_url": "https://www.pedalplex.com/gear/dedalo-fx-b-saurio-bass-distortion",
+    "brand": "Dedalo FX",
+    "category": "bass/distortion",
+    "seo_description": "The Dedalo Fx b-saurio Bass Distortion is a powerful analog distortion pedal designed to deliver aggressive, high-gain tones for bass players. It offers a wide range of distortion characteristics, from subtle overdrive to heavy, saturated saturation. The intuitive controls allow for precise shaping of the distortion sound, enabling musicians to create unique and dynamic bass lines that stand out in any mix."
+  },
+  {
+    "pedalplex_id": "Dedalo Fx mdt6 MAQUINA DEL TIEMPO / TAP TEMPODELAY",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/dedalo/maquinadeltiempo",
+    "pedalplex_url": "https://www.pedalplex.com/gear/dedalo-fx-mdt6-maquina-del-tiempo-tap-tempodelay",
+    "brand": "Dedalo FX",
+    "category": "delay",
+    "seo_description": "A delay pedal emulating vintage tape echo delays, with a wide range of delay times and a distinctive character, filtering, saturation and frequencies typical of the era."
+  },
   {
     "pedalplex_id": "Sonar Fx Time Box - Delay + Reverb",
     "status": "missing",
