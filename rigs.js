@@ -460,22 +460,41 @@ function renderPedalboard() {
       // Apply rotation to the pedal itself
       // const angle = pbPedal.rotation || 0;
       // $pedalEl.css('transform', `rotate(${angle}deg)`);
+      // const angle = pbPedal.rotation || 0;
+
+      // // Calculate wrapper styles accounting for rotation (layout only)
+      // const widthPx = parseFloat(getPedalWidth(pedalData.width));
+      // const heightPx = parseFloat(getPedalHeight(pedalData.height));
+      // const hasRotation = angle !== 0;
+
+      // let wrapperStyles = {
+      //   display: 'flex',
+      //   justifyContent: 'center',
+      //   alignItems: 'center',
+      //   position: 'relative',
+      //   boxSizing: 'content-box',
+      //   marginBottom: '20px',
+      // };
+
       const angle = pbPedal.rotation || 0;
 
       // Calculate wrapper styles accounting for rotation (layout only)
       const widthPx = parseFloat(getPedalWidth(pedalData.width));
       const heightPx = parseFloat(getPedalHeight(pedalData.height));
-      const hasRotation = angle !== 0;
+
+      // true for 90 / 270 / any odd quarter-turn
+      const hasRotation = angle % 180 !== 0;
 
       let wrapperStyles = {
         display: 'flex',
         justifyContent: 'center',
-        // alignItems: 'flex-start',
-        alignItems: 'center',
+
+        // centered for normal pedals, top-aligned for rotated pedals
+        alignItems: hasRotation ? 'flex-start' : 'center',
+
         position: 'relative',
         boxSizing: 'content-box',
         marginBottom: '20px',
-        // marginBottom: 'auto',
       };
 
       if (hasRotation) {
