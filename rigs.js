@@ -474,7 +474,8 @@ function renderPedalboard() {
         // alignItems: 'center',
         position: 'relative',
         boxSizing: 'content-box',
-        marginBottom: '20px',
+        // marginBottom: '20px',
+        marginBottom: 'auto',
       };
 
       if (hasRotation) {
