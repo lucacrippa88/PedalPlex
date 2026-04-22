@@ -498,13 +498,18 @@ function renderPedalboard() {
 
       // Se vert/horiz esistono, applicali a .pedal-catalog
       // const $wrapper = $("<div>").css(wrapperStyles);
-      const $wrapper = $("<div>").css({
-        ...wrapperStyles,
+      // const $wrapper = $("<div>").css({
+      //   ...wrapperStyles,
+      //   transform: `rotate(${angle}deg)`,
+      //   transformOrigin: 'center center'
+      // });
+      // $pedalEl.css('transform', 'none');
+      const $wrapper = $("<div>").css(wrapperStyles);
+
+      $pedalEl.css({
         transform: `rotate(${angle}deg)`,
         transformOrigin: 'center center'
       });
-      $pedalEl.css('transform', 'none');
-
       // Applica vert/horiz solo se NON mobile
       // if (!isMobileLayout()) {
 
@@ -521,39 +526,15 @@ function renderPedalboard() {
       //   }
 
       // }
+
       if (!isMobileLayout()) {
 
-        const rawTop = parseInt(pbPedal.vert || 0, 10);
-        const rawLeft = parseInt(pbPedal.horiz || 0, 10);
+        const topVal = parseInt(pbPedal.vert || 0, 10);
+        const leftVal = parseInt(pbPedal.horiz || 0, 10);
 
-        let localTop = rawTop;
-        let localLeft = rawLeft;
-
-        switch (angle) {
-
-          case 90:
-            localTop = rawLeft;
-            localLeft = -rawTop;
-            break;
-
-          case 180:
-            localTop = -rawTop;
-            localLeft = -rawLeft;
-            break;
-
-          case 270:
-            localTop = -rawLeft;
-            localLeft = rawTop;
-            break;
-
-          default: // 0°
-            localTop = rawTop;
-            localLeft = rawLeft;
-        }
-
-        $pedalEl.css({
-          top: `${localTop}px`,
-          left: `${localLeft}px`
+        $wrapper.css({
+          top: `${topVal}px`,
+          left: `${leftVal}px`
         });
 
       }
