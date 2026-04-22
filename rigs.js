@@ -506,19 +506,55 @@ function renderPedalboard() {
       $pedalEl.css('transform', 'none');
 
       // Applica vert/horiz solo se NON mobile
+      // if (!isMobileLayout()) {
+
+      //   // Se vert/horiz esistono, applicali a .pedal-catalog
+      //   const topVal = pbPedal.vert;
+      //   const leftVal = pbPedal.horiz;
+
+      //   if (topVal !== undefined && topVal !== null && topVal !== '') {
+      //     $pedalEl.css('top', `${parseInt(topVal, 10)}px`);
+      //   }
+
+      //   if (leftVal !== undefined && leftVal !== null && leftVal !== '') {
+      //     $pedalEl.css('left', `${parseInt(leftVal, 10)}px`);
+      //   }
+
+      // }
       if (!isMobileLayout()) {
 
-        // Se vert/horiz esistono, applicali a .pedal-catalog
-        const topVal = pbPedal.vert;
-        const leftVal = pbPedal.horiz;
+        const rawTop = parseInt(pbPedal.vert || 0, 10);
+        const rawLeft = parseInt(pbPedal.horiz || 0, 10);
 
-        if (topVal !== undefined && topVal !== null && topVal !== '') {
-          $pedalEl.css('top', `${parseInt(topVal, 10)}px`);
+        let localTop = rawTop;
+        let localLeft = rawLeft;
+
+        switch (angle) {
+
+          case 90:
+            localTop = rawLeft;
+            localLeft = -rawTop;
+            break;
+
+          case 180:
+            localTop = -rawTop;
+            localLeft = -rawLeft;
+            break;
+
+          case 270:
+            localTop = -rawLeft;
+            localLeft = rawTop;
+            break;
+
+          default: // 0°
+            localTop = rawTop;
+            localLeft = rawLeft;
         }
 
-        if (leftVal !== undefined && leftVal !== null && leftVal !== '') {
-          $pedalEl.css('left', `${parseInt(leftVal, 10)}px`);
-        }
+        $pedalEl.css({
+          top: `${localTop}px`,
+          left: `${localLeft}px`
+        });
 
       }
 
