@@ -1390,13 +1390,33 @@ async function renderFullPedalboard(pedalboardOverride = null) {
             }
 
             // Se vert/horiz esistono, applicali a .pedal-catalog
+            // const $wrapper = $("<div>")
+            //   .addClass("pedal-wrapper")
+            //   .css({
+            //     ...wrapperStyles,
+            //     position: "relative",
+            //       top: isMobileLayout() ? "0px" : `${pbPedal.vert || 0}px`,
+            //       left: isMobileLayout() ? "0px" : `${pbPedal.horiz || 0}px`
+            //   })
+            //   .append($pedalDiv);
+
+            const mobile = isMobileLayout();
+
             const $wrapper = $("<div>")
               .addClass("pedal-wrapper")
               .css({
                 ...wrapperStyles,
                 position: "relative",
-                  top: isMobileLayout() ? "0px" : `${pbPedal.vert || 0}px`,
-                  left: isMobileLayout() ? "0px" : `${pbPedal.horiz || 0}px`
+
+                // mobile: ignora completamente offset DB
+                top: mobile ? "0px" : `${pbPedal.vert || 0}px`,
+                left: mobile ? "50%" : `${pbPedal.horiz || 0}px`,
+
+                // mobile: centra orizzontalmente
+                transform: mobile ? "translateX(-50%)" : "",
+
+                // evita margini auto che interferiscono
+                margin: mobile ? "0 auto 20px auto" : "auto"
               })
               .append($pedalDiv);
 
