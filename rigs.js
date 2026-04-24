@@ -667,6 +667,7 @@ function renderPedalboard() {
 
 function openEditPedalModal(pbPedal) {
   Swal.fire({
+    draggable: true,
     title: `Edit pedal: ${pbPedal.pedal_id}`,
     html: `
       <div style="display:flex; flex-direction:column; gap:1em; max-width:420px; margin:auto;">
