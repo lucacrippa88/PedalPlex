@@ -457,25 +457,6 @@ function renderPedalboard() {
       $pedalEl.css('cursor', 'pointer');
       $pedalEl.on('click', () => openEditPedalModal(pbPedal));
 
-      // Apply rotation to the pedal itself
-      // const angle = pbPedal.rotation || 0;
-      // $pedalEl.css('transform', `rotate(${angle}deg)`);
-      // const angle = pbPedal.rotation || 0;
-
-      // // Calculate wrapper styles accounting for rotation (layout only)
-      // const widthPx = parseFloat(getPedalWidth(pedalData.width));
-      // const heightPx = parseFloat(getPedalHeight(pedalData.height));
-      // const hasRotation = angle !== 0;
-
-      // let wrapperStyles = {
-      //   display: 'flex',
-      //   justifyContent: 'center',
-      //   alignItems: 'center',
-      //   position: 'relative',
-      //   boxSizing: 'content-box',
-      //   marginBottom: '20px',
-      // };
-
       const angle = pbPedal.rotation || 0;
 
       // Calculate wrapper styles accounting for rotation (layout only)
@@ -516,14 +497,6 @@ function renderPedalboard() {
 
       // const $wrapper = $("<div>").css(wrapperStyles).append($pedalEl);
 
-      // Se vert/horiz esistono, applicali a .pedal-catalog
-      // const $wrapper = $("<div>").css(wrapperStyles);
-      // const $wrapper = $("<div>").css({
-      //   ...wrapperStyles,
-      //   transform: `rotate(${angle}deg)`,
-      //   transformOrigin: 'center center'
-      // });
-      // $pedalEl.css('transform', 'none');
       const $wrapper = $("<div>").css(wrapperStyles);
 
       $pedalEl.css({
@@ -531,22 +504,6 @@ function renderPedalboard() {
         transformOrigin: 'center center'
       });
       // Applica vert/horiz solo se NON mobile
-      // if (!isMobileLayout()) {
-
-      //   // Se vert/horiz esistono, applicali a .pedal-catalog
-      //   const topVal = pbPedal.vert;
-      //   const leftVal = pbPedal.horiz;
-
-      //   if (topVal !== undefined && topVal !== null && topVal !== '') {
-      //     $pedalEl.css('top', `${parseInt(topVal, 10)}px`);
-      //   }
-
-      //   if (leftVal !== undefined && leftVal !== null && leftVal !== '') {
-      //     $pedalEl.css('left', `${parseInt(leftVal, 10)}px`);
-      //   }
-
-      // }
-
       if (!isMobileLayout()) {
 
         const topVal = parseInt(pbPedal.vert || 0, 10);
@@ -570,101 +527,6 @@ function renderPedalboard() {
 }
 
 // Handle edit pedal modal
-
-// function openEditPedalModal(pbPedal) {
-//   Swal.fire({
-//     title: `Edit pedal: ${pbPedal.pedal_id}`,
-//     html: `
-//       <div style="display: flex; flex-direction: column; gap: 1em; max-width: 400px; margin: auto;">
-//         <div style="display: flex; gap: 1em; justify-content: space-between;">
-          
-//           <!-- Rotation Dropdown (no Carbon classes) -->
-//           <div style="flex: 1;">
-//             <label for="rotationSelect" class="bx--label">Gear rotation</label>
-//             <select id="rotationSelect" style="width: 100%; padding: 0.5em; border: 1px solid #8d8d8d; border-radius: 0.25em; height: 40px; font-size: initial;">
-//               <option value="0" ${pbPedal.rotation === 0 ? 'selected' : ''}>0°</option>
-//               <option value="90" ${pbPedal.rotation === 90 ? 'selected' : ''}>90°</option>
-//               <option value="180" ${pbPedal.rotation === 180 ? 'selected' : ''}>180°</option>
-//               <option value="270" ${pbPedal.rotation === 270 ? 'selected' : ''}>270°</option>
-//             </select>
-//           </div>
-
-//           <!-- Row Input (no Carbon classes) -->
-//           <div style="flex: 1;">
-//             <label for="rowInput" class="bx--label">Row number</label>
-//             <input id="rowInput" type="number" min="1" value="${pbPedal.row}" 
-//               style="width: 100%; padding: 0.5em; border: 1px solid #8d8d8d; border-radius: 0.25em; font-size: initial; height: 24px;">
-//           </div>
-
-//         </div>
-//       </div>
-//     `,
-//     showCloseButton: true,
-//     showConfirmButton: true,
-//     confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Save",
-//     customClass: {
-//       actions: 'swal2-actions-with-remove'
-//     },
-//     didOpen: () => {
-//       Swal.getConfirmButton().className = 'bx--btn bx--btn--primary';
-//       Swal.getCancelButton().className = 'bx--btn bx--btn--secondary';
-
-//       // Add "Remove pedal" button inline with Save/Cancel
-//       const actions = Swal.getActions();
-//       const removeBtn = document.createElement('button');
-//       removeBtn.id = 'removePedalBtn';
-//       removeBtn.className = 'bx--btn bx--btn--danger';
-//       removeBtn.innerHTML = "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M16,4c6.6,0,12,5.4,12,12s-5.4,12-12,12S4,22.6,4,16S9.4,4,16,4 M16,2C8.3,2,2,8.3,2,16s6.3,14,14,14s14-6.3,14-14 S23.7,2,16,2z'></path><path d='M8 15H24V17H8z'></path></svg>Remove";
-//       actions.insertBefore(removeBtn, actions.firstChild);
-
-//       removeBtn.addEventListener('click', () => {
-//         Swal.fire({
-//           title: 'Are you sure?',
-//           text: 'This will remove the selected gear from your pedalboard.',
-//           icon: 'warning',
-//           showCancelButton: true,
-//           confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M16,4c6.6,0,12,5.4,12,12s-5.4,12-12,12S4,22.6,4,16S9.4,4,16,4 M16,2C8.3,2,2,8.3,2,16s6.3,14,14,14s14-6.3,14-14 S23.7,2,16,2z'></path><path d='M8 15H24V17H8z'></path></svg>Yes, Remove",
-//           cancelButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>No, Cancel",
-//           didOpen: () => {
-//             Swal.getConfirmButton().className = 'bx--btn bx--btn--danger';
-//             Swal.getCancelButton().className = 'bx--btn bx--btn--secondary';
-//           }
-//         }).then((result) => {
-//           if (result.isConfirmed) {
-//             window.pedalboard.pedals = window.pedalboard.pedals.filter(p => p !== pbPedal);
-//             Swal.close();
-//             renderPedalboard();
-//           }
-//         });
-//       });
-//     },
-//     preConfirm: () => {
-//       const rotation = parseInt(document.getElementById('rotationSelect').value, 10);
-//       const row = parseInt(document.getElementById('rowInput').value, 10);
-
-//       if (![0, 90, 180, 270].includes(rotation)) {
-//         Swal.showValidationMessage('Rotation must be 0, 90, 180, or 270 degrees.');
-//         return false;
-//       }
-//       if (isNaN(row) || row < 1) {
-//         Swal.showValidationMessage('Row must be a number 1 or higher.');
-//         return false;
-//       }
-
-//       return {
-//         rotation,
-//         row
-//       };
-//     }
-//   }).then((result) => {
-//     if (result.isConfirmed && result.value) {
-//       pbPedal.rotation = result.value.rotation;
-//       pbPedal.row = result.value.row;
-//       renderPedalboard();
-//     }
-//   });
-// }
-
 function openEditPedalModal(pbPedal) {
   Swal.fire({
     draggable: true,
