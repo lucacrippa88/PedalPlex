@@ -1356,71 +1356,73 @@ async function renderFullPedalboard(pedalboardOverride = null) {
               $pedalDiv.append($nameDiv);
             }
 
-            // const widthPx = parseFloat(getPedalWidth(pedal.width));
-            // const heightPx = parseFloat(getPedalHeight(pedal.height));
-            // const hasRotation = angle !== 0;
+            const widthPx = parseFloat(getPedalWidth(pedal.width));
+            const heightPx = parseFloat(getPedalHeight(pedal.height));
+            const hasRotation = angle !== 0;
 
-            // let wrapperStyles = {
-            //   display: 'flex',
-            //   justifyContent: 'center',
-            //   alignItems: 'flex-start',
-            //   position: 'relative',
-            //   boxSizing: 'content-box',
-            //   marginBottom: '20px',
-            //   margin: 'auto'
-            // };
+            let wrapperStyles = {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+              position: 'relative',
+              boxSizing: 'content-box',
+              marginBottom: '20px',
+              margin: 'auto'
+            };
 
-            // if (hasRotation) {
-            //   const radians = angle * Math.PI / 180;
-            //   const sin = Math.abs(Math.sin(radians));
-            //   const cos = Math.abs(Math.cos(radians));
+            if (hasRotation) {
+              const radians = angle * Math.PI / 180;
+              const sin = Math.abs(Math.sin(radians));
+              const cos = Math.abs(Math.cos(radians));
 
-            //   const rotatedWidth = widthPx * cos + heightPx * sin;
-            //   const rotatedHeight = widthPx * sin + heightPx * cos;
+              const rotatedWidth = widthPx * cos + heightPx * sin;
+              const rotatedHeight = widthPx * sin + heightPx * cos;
 
-            //   Object.assign(wrapperStyles, {
-            //     width: `${rotatedWidth}px`,
-            //     height: `${rotatedHeight}px`,
-            //     marginLeft: `${rotatedWidth * 0.2}px`,
-            //     marginRight: `${rotatedWidth * 0.2}px`,
-            //     ...(widthPx > heightPx ? {
-            //       marginTop: '30px'
-            //     } : {})
-            //   });
-            // }
+              Object.assign(wrapperStyles, {
+                width: `${rotatedWidth}px`,
+                height: `${rotatedHeight}px`,
+                marginLeft: `${rotatedWidth * 0.2}px`,
+                marginRight: `${rotatedWidth * 0.2}px`,
+                ...(widthPx > heightPx ? {
+                  marginTop: '30px'
+                } : {})
+              });
+            }
 
             // Se vert/horiz esistono, applicali a .pedal-catalog
-            const mobile = isMobileLayout();
-
             // const $wrapper = $("<div>")
             //   .addClass("pedal-wrapper")
             //   .css({
             //     ...wrapperStyles,
             //     position: "relative",
-
-            //     // mobile: ignora completamente offset DB
-            //     top: mobile ? "0px" : `${pbPedal.vert || 0}px`,
-            //     left: mobile ? "50%" : `${pbPedal.horiz || 0}px`,
-
-            //     // mobile: centra orizzontalmente
-            //     transform: mobile ? "translateX(-50%)" : "",
-
-            //     // evita margini auto che interferiscono
-            //     margin: mobile ? "0 auto 20px auto" : "auto"
+            //       top: isMobileLayout() ? "0px" : `${pbPedal.vert || 0}px`,
+            //       left: isMobileLayout() ? "0px" : `${pbPedal.horiz || 0}px`
             //   })
             //   .append($pedalDiv);
-$pedalDiv.css({
-  position: "relative", 
-  top: mobile ? "0px" : `${v}px`,
-  left: mobile ? "0px" : `${h}px`,
-  transform: `rotate(${angle}deg)`,
-  transformOrigin: "center center",
-  margin: "10px"
-});
 
-const $wrapper = $("<div>").append($pedalDiv);
+            const mobile = isMobileLayout();
 
-            
+            const $wrapper = $("<div>")
+              .addClass("pedal-wrapper")
+              .css({
+                ...wrapperStyles,
+                position: "relative",
+
+                // mobile: ignora completamente offset DB
+                top: mobile ? "0px" : `${pbPedal.vert || 0}px`,
+                left: mobile ? "50%" : `${pbPedal.horiz || 0}px`,
+
+                // mobile: centra orizzontalmente
+                transform: mobile ? "translateX(-50%)" : "",
+
+                // evita margini auto che interferiscono
+                margin: mobile ? "0 auto 20px auto" : "auto"
+              })
+              .append($pedalDiv);
+
+            // const $wrapper = $("<div>")
+            //   .addClass("pedal-wrapper") // For hover mouse menu catalog preset
+            //   .css(wrapperStyles).append($pedalDiv);
             
 
             $wrapper.css("position", "relative");
