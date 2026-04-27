@@ -33,6 +33,18 @@ function slugify(text) {
   return text;
 }
 
+// Utility function to calculate the bounding box of a rotated rectangle (used for knob hit areas)
+function getRotatedBox(widthPx, heightPx, angleDeg) {
+  const radians = angleDeg * Math.PI / 180;
+  const sin = Math.abs(Math.sin(radians));
+  const cos = Math.abs(Math.cos(radians));
+
+  return {
+    width: widthPx * cos + heightPx * sin,
+    height: widthPx * sin + heightPx * cos
+  };
+}
+
 
 // Function to render pedal controls dynamically --------------------------------------
 function renderPedalControls(pedal, $pedalDiv) {
@@ -702,6 +714,14 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       background: colorOnly
     })
   };
+
+
+                                                                      const angle = pedal.rotation || 0;
+                                                                      const widthPx = parseFloat(getPedalWidth(pedal.width));
+                                                                      const heightPx = parseFloat(getPedalHeight(pedal.height));
+                                                                      const rotated = getRotatedBox(widthPx, heightPx, angle);
+
+
 
   let $pedalDiv;
 
@@ -1390,17 +1410,16 @@ async function renderFullPedalboard(pedalboardOverride = null) {
             }
 
             // Se vert/horiz esistono, applicali a .pedal-catalog
-            // const $wrapper = $("<div>")
-            //   .addClass("pedal-wrapper")
-            //   .css({
-            //     ...wrapperStyles,
-            //     position: "relative",
-            //       top: isMobileLayout() ? "0px" : `${pbPedal.vert || 0}px`,
-            //       left: isMobileLayout() ? "0px" : `${pbPedal.horiz || 0}px`
-            //   })
-            //   .append($pedalDiv);
-
             const mobile = isMobileLayout();
+
+
+
+const v = Number(pbPedal.vert || 0);
+const h = Number(pbPedal.horiz || 0);
+
+
+
+
 
             const $wrapper = $("<div>")
               .addClass("pedal-wrapper")
@@ -1409,21 +1428,19 @@ async function renderFullPedalboard(pedalboardOverride = null) {
                 position: "relative",
 
                 // mobile: ignora completamente offset DB
-                top: mobile ? "0px" : `${pbPedal.vert || 0}px`,
-                left: mobile ? "50%" : `${pbPedal.horiz || 0}px`,
+                // top: mobile ? "0px" : `${pbPedal.vert || 0}px`,
+                // left: mobile ? "50%" : `${pbPedal.horiz || 0}px`,
 
-                // mobile: centra orizzontalmente
-                transform: mobile ? "translateX(-50%)" : "",
+top: mobile ? "0px" : `${v}px`,
+left: mobile ? "50%" : `${h}px`,
+
+
+                transform: mobile ? "translateX(-50%)" : "", // mobile: centra orizzontalmente
 
                 // evita margini auto che interferiscono
                 margin: mobile ? "0 auto 20px auto" : "auto"
               })
-              .append($pedalDiv);
-
-            // const $wrapper = $("<div>")
-            //   .addClass("pedal-wrapper") // For hover mouse menu catalog preset
-            //   .css(wrapperStyles).append($pedalDiv);
-            
+              .append($pedalDiv);            
 
             $wrapper.css("position", "relative");
 
