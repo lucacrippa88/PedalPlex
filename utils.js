@@ -1410,7 +1410,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
             //   })
             //   .append($pedalDiv);
 $pedalDiv.css({
-  position: "relative",
+  position: "relative", 
   top: mobile ? "0px" : `${v}px`,
   left: mobile ? "0px" : `${h}px`,
   transform: `rotate(${angle}deg)`,
