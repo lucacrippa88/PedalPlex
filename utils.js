@@ -1256,7 +1256,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
               color: pedal["font-color"],
               width: getPedalWidth(pedal.width),
               height: getPedalHeight(pedal.height),
-              transform: `rotate(${angle}deg)`,
+              // transform: `rotate(${angle}deg)`,
               marginBottom: '10px',
               display: 'inline-block',
               ...(pedal["inside-border"] && {
@@ -1419,8 +1419,6 @@ const h = Number(pbPedal.horiz || 0);
 
 
 
-
-
             const $wrapper = $("<div>")
               .addClass("pedal-wrapper")
               .css({
@@ -1549,6 +1547,7 @@ left: mobile ? "50%" : `${h}px`,
               });
 
             // ================================================
+
 
             rowDiv.appendChild($wrapper[0]);
 
