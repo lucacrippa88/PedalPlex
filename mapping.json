@@ -16768,12 +16768,30 @@
   },
   {
     "pedalplex_id": "Keeley Aria Compressor / Drive",
-    "status": "missing",
-    "fxdb_url": "found",
-    "pedalplex_url": "https://www.effectsdatabase.com/model/keeley/aria",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/keeley/aria",
+    "pedalplex_url": "https://www.pedalplex.com/gear/keeley-aria-compressor-drive",
     "brand": "Keeley",
     "category": "compressor/overdrive",
     "seo_description": "The Keeley Aria Compressor / Drive is a pedal designed for musicians who need reliable, low-noise switching. It features true bypass technology and a robust build quality, making it an essential tool for live performance and studio recording. The Aria Compressor / Drive combines the functionality of a compressor and an overdrive pedal, allowing musicians to shape their tone with precision and versatility. The compressor section provides smooth, transparent compression to even out dynamics and enhance sustain, while the drive section offers a range of overdrive tones from subtle warmth to aggressive distortion. With its intuitive controls and high-quality components, the Keeley Aria Compressor / Drive is a must-have for any guitarist looking to expand their sonic palette."
+  },
+  {
+    "pedalplex_id": "Origin Effects M-EQ Driver Overdrive",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/origin/meqdriver",
+    "pedalplex_url": "https://www.pedalplex.com/gear/origin-effects-m-eq-driver-overdrive",
+    "brand": "Origin Effects",
+    "category": "overdrive",
+    "seo_description": "The Origin Effects M-EQ Driver Overdrive is a premium mid-focused overdrive and boost pedal inspired by classic 1950s Pultec studio EQ units. Rather than simply replicating vintage circuitry, it reimagines the Pultec concept for guitar, combining musical EQ shaping with harmonically rich overdrive. At its core, the pedal emphasizes the midrange—the most critical frequencies for cutting through a mix—offering selectable mid-boost frequencies and precise tonal control via Level, Drive, Mids, and Cut knobs. Its transformer-driven, valve-like output stage delivers anything from subtle clean boosts to thick, saturated overdrive and distinctive “cocked wah”-style tones."
+  },
+  {
+    "pedalplex_id": "Two Notes Revolt Guitar Preamp",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/two-notes-revolt-guitar-preamp",
+    "brand": "Two Notes",
+    "category": "preamp",
+    "seo_description": "The Two Notes ReVolt Guitar is a versatile, all-analog preamp pedal designed to deliver full amp-like tone in a compact, pedalboard-friendly format. Built around a high-voltage 12AX7 tube, it provides authentic valve response, dynamic feel, and harmonic richness typically associated with traditional amplifiers. It features three distinct channels inspired by classic amplifier archetypes: a pristine American-style clean, a British-flavored crunch, and a modern high-gain lead. This multi-channel architecture makes it suitable for a wide range of genres, from clean studio tones to aggressive rock and metal sounds."
   }
 ]
 
