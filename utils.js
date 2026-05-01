@@ -1428,7 +1428,7 @@ const $wrapper = $("<div>")
     left: `${leftVal}px`,
     margin: "0"
   })
-  // .append($pedalDiv);
+  .append($pedalDiv);
 
 
 
@@ -1474,10 +1474,7 @@ const $wrapper = $("<div>")
               </div>
             `);
 
-              // $wrapper.append($presetContainer);
-
-              $pedalDiv.append($presetContainer);
-              $wrapper.append($pedalDiv);
+              $wrapper.append($presetContainer);
 
               //SubPlex empty state (New SubPlex button) ===
               updateSubplexButtonsUI($pedalDiv);
