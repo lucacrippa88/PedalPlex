@@ -1417,7 +1417,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
                 // evita margini auto che interferiscono
                 // margin: mobile ? "0 auto 20px auto" : "auto" // bug in gear page mobile
-                margin: mobile ? "" : "auto"
+                margin: mobile ? "0px" : "auto"
               })
               .append($pedalDiv);
 
