@@ -1159,7 +1159,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
       for (const rowNum of sortedRows) {
         const rowDiv = document.createElement('div');
         // rowDiv.style.display = 'flex';
-        rowDiv.style.display = 'block';
+        // rowDiv.style.display = 'block';
         rowDiv.style.flexWrap = 'wrap';
         rowDiv.style.alignItems = 'flex-start';
         rowDiv.style.gap = '10px';
