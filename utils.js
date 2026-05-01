@@ -1479,7 +1479,7 @@ const $wrapper = $("<div>")
               </div>
             `);
 
-              $wrapper.append($presetContainer);
+              //$wrapper.append($presetContainer);
 
               //SubPlex empty state (New SubPlex button) ===
               updateSubplexButtonsUI($pedalDiv);
