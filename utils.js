@@ -1423,9 +1423,14 @@ const $wrapper = $("<div>")
   .addClass("pedal-wrapper")
   .css({
     ...wrapperStyles,
+
     position: "relative",
+
+    // IDENTICO A RIGS: solo offset DB
     top: `${topVal}px`,
     left: `${leftVal}px`,
+
+    // IMPORTANTISSIMO: niente centering implicito
     margin: "auto"
   })
   .append($pedalDiv);
