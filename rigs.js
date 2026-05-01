@@ -503,8 +503,8 @@ function renderPedalboard() {
         transform: `rotate(${angle}deg)`,
         transformOrigin: 'center center'
       });
-      // Applica vert/horiz solo se NON mobile
-      if (!isMobileLayout()) {
+      // Applica vert/horiz
+      // if (!isMobileLayout()) {
 
         const topVal = parseInt(pbPedal.vert || 0, 10);
         const leftVal = parseInt(pbPedal.horiz || 0, 10);
@@ -514,7 +514,7 @@ function renderPedalboard() {
           left: `${leftVal}px`
         });
 
-      }
+      // }
 
       // necessario per top/left
       $pedalEl.css('position', 'relative');
