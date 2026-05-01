@@ -72,6 +72,10 @@ header {
   background-position: 100% 50%;
 }
 
+.js-openFXDB {
+  margin-left:0px!important;
+}
+
 /* Logos */
 .pedalplex-logo {
   width: 25px;
