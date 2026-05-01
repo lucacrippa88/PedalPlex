@@ -1416,7 +1416,8 @@ async function renderFullPedalboard(pedalboardOverride = null) {
                 transform: mobile ? "translateX(-50%)" : "",
 
                 // evita margini auto che interferiscono
-                margin: mobile ? "0 auto 20px auto" : "auto"
+                // margin: mobile ? "0 auto 20px auto" : "auto" // bug in gear page mobile
+                margin: mobile ? "auto" : "auto"
               })
               .append($pedalDiv);
 
