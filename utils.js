@@ -1390,43 +1390,46 @@ async function renderFullPedalboard(pedalboardOverride = null) {
             }
 
             // Se vert/horiz esistono, applicali a .pedal-catalog
+
+            // const mobile = isMobileLayout();
+
             // const $wrapper = $("<div>")
             //   .addClass("pedal-wrapper")
             //   .css({
             //     ...wrapperStyles,
             //     position: "relative",
-            //       top: isMobileLayout() ? "0px" : `${pbPedal.vert || 0}px`,
-            //       left: isMobileLayout() ? "0px" : `${pbPedal.horiz || 0}px`
+
+            //     // mobile: ignora completamente offset DB
+            //     top: mobile ? "0px" : `${pbPedal.vert || 0}px`,
+            //     left: mobile ? "50%" : `${pbPedal.horiz || 0}px`,
+
+            //     // mobile: centra orizzontalmente
+            //     transform: mobile ? "translateX(-50%)" : "",
+
+            //     // evita margini auto che interferiscono
+            //     // margin: mobile ? "0 auto 20px auto" : "auto" // bug in gear page mobile
+            //     margin: mobile ? "unset" : "auto"
             //   })
             //   .append($pedalDiv);
 
-            const mobile = isMobileLayout();
+            // $wrapper.css("position", "relative");
 
-            const $wrapper = $("<div>")
-              .addClass("pedal-wrapper")
-              .css({
-                ...wrapperStyles,
-                position: "relative",
 
-                // mobile: ignora completamente offset DB
-                top: mobile ? "0px" : `${pbPedal.vert || 0}px`,
-                left: mobile ? "50%" : `${pbPedal.horiz || 0}px`,
 
-                // mobile: centra orizzontalmente
-                transform: mobile ? "translateX(-50%)" : "",
+const topVal = parseInt(pbPedal.vert || 0, 10);
+const leftVal = parseInt(pbPedal.horiz || 0, 10);
 
-                // evita margini auto che interferiscono
-                // margin: mobile ? "0 auto 20px auto" : "auto" // bug in gear page mobile
-                margin: mobile ? "unset" : "auto"
-              })
-              .append($pedalDiv);
+const $wrapper = $("<div>")
+  .addClass("pedal-wrapper")
+  .css({
+    ...wrapperStyles,
+    position: "relative",
+    top: `${topVal}px`,
+    left: `${leftVal}px`,
+    margin: "auto"
+  })
+  .append($pedalDiv);
 
-            // const $wrapper = $("<div>")
-            //   .addClass("pedal-wrapper") // For hover mouse menu catalog preset
-            //   .css(wrapperStyles).append($pedalDiv);
-            
-
-            $wrapper.css("position", "relative");
 
 
             // SubPlex Dropdown ======================================
