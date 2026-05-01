@@ -16792,7 +16792,41 @@
     "brand": "Two Notes",
     "category": "preamp",
     "seo_description": "The Two Notes ReVolt Guitar is a versatile, all-analog preamp pedal designed to deliver full amp-like tone in a compact, pedalboard-friendly format. Built around a high-voltage 12AX7 tube, it provides authentic valve response, dynamic feel, and harmonic richness typically associated with traditional amplifiers. It features three distinct channels inspired by classic amplifier archetypes: a pristine American-style clean, a British-flavored crunch, and a modern high-gain lead. This multi-channel architecture makes it suitable for a wide range of genres, from clean studio tones to aggressive rock and metal sounds."
+  },
+  {
+    "pedalplex_id": "API TranZformer LLX Bass EQ/Boost",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/api/tranzformer/llx",
+    "pedalplex_url": "",
+    "brand": "",
+    "category": "bass/boost/equalizer",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "API TranZformer GTR EQ/Boost",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/api/tranzformer/gtr",
+    "pedalplex_url": "",
+    "brand": "",
+    "category": "boost/equalizer",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Alexander Pedals Princess Clang Overdrive",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/alexander/princessclang",
+    "pedalplex_url": "",
+    "brand": "",
+    "category": "overdrive",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Alexander Pedals Oblivion Vintage Delay",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/alexander/oblivion",
+    "pedalplex_url": "",
+    "brand": "",
+    "category": "overdrive",
+    "seo_description": ""
   }
 ]
-
-
