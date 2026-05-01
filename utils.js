@@ -1423,15 +1423,10 @@ const $wrapper = $("<div>")
   .addClass("pedal-wrapper")
   .css({
     ...wrapperStyles,
-
     position: "relative",
-
-    // IDENTICO A RIGS: solo offset DB
     top: `${topVal}px`,
     left: `${leftVal}px`,
-
-    // IMPORTANTISSIMO: niente centering implicito
-    margin: "auto"
+    margin: "0"
   })
   .append($pedalDiv);
 
@@ -1479,7 +1474,7 @@ const $wrapper = $("<div>")
               </div>
             `);
 
-              //$wrapper.append($presetContainer);
+              $wrapper.append($presetContainer);
 
               //SubPlex empty state (New SubPlex button) ===
               updateSubplexButtonsUI($pedalDiv);
