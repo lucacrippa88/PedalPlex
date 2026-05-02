@@ -473,6 +473,33 @@ function editCustomSubplexUI($pedalDiv) {
 
 
 
+function clearAppliedSubplexState($pedalDiv) {
+  if (!$pedalDiv || !$pedalDiv.length) return;
+
+  const pedalId = $pedalDiv.data('pedal-id');
+
+  $pedalDiv.removeData('applied-subplex');
+  $pedalDiv.removeData('subplex-original-controls');
+  $pedalDiv.removeData('applied-subplex-state');
+  $pedalDiv.removeData('subplex-dirty-enabled');
+  $pedalDiv.removeData('subplex-listeners-armed');
+  $pedalDiv.removeData('subplexInvalidated');
+  $pedalDiv.removeAttr('data-applied-preset');
+
+  const $wrapper = $pedalDiv.closest(".pedal-wrapper");
+  $wrapper.find(".applied-preset-info").hide();
+  $wrapper.find(".applied-preset-tags").empty();
+  $wrapper.find(".applied-preset-name").empty();
+  $wrapper.find(".applied-preset-info-icon").empty();
+
+  updateSubplexButtonsUI($pedalDiv);
+
+  if (window.currentSubPlex && pedalId && window.currentSubPlex[pedalId]) {
+    delete window.currentSubPlex[pedalId];
+  }
+}
+
+
 function resetSubplexOnSinglePedal($pedalDiv) {
   if (!$pedalDiv || !$pedalDiv.length) return;
 
@@ -523,28 +550,7 @@ function resetSubplexOnSinglePedal($pedalDiv) {
   }
 
   // 7️⃣ Pulisce stato SubPlex sul DOM
-  $pedalDiv.removeData('applied-subplex');
-  $pedalDiv.removeData('subplex-original-controls');
-  $pedalDiv.removeData('applied-subplex-state');
-  $pedalDiv.removeData('subplex-dirty-enabled');
-  $pedalDiv.removeData('subplex-listeners-armed');
-
-  $pedalDiv.removeAttr('data-applied-preset');
-
-  // 8️⃣ Rimuove UI SubPlex (info box)
-  const $wrapper = $pedalDiv.closest(".pedal-wrapper");
-  $wrapper.find(".applied-preset-info").hide();
-  $wrapper.find(".applied-preset-tags").empty();
-  $wrapper.find(".applied-preset-name").empty();
-
-  // Ri-mostra il bottone "New SubPlex"
-  updateSubplexButtonsUI($pedalDiv);
-
-
-  // 9️⃣ Rimuove dal registro globale per il salvataggio
-  if (window.currentSubPlex && window.currentSubPlex[pedalId]) {
-    delete window.currentSubPlex[pedalId];
-  }
+  clearAppliedSubplexState($pedalDiv);
 
   // 🔟 Aggiorna stato del tasto Save (se esiste)
   if (typeof updateSavePresetButtonState === 'function') {

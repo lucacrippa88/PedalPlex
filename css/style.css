@@ -1011,7 +1011,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   padding-left: 8px;
   padding-right: 8px;
   position:relative;
-  top:-5px;
+  top:0;
 }
 
 
