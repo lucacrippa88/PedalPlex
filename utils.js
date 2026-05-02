@@ -1160,9 +1160,8 @@ async function renderFullPedalboard(pedalboardOverride = null) {
         const rowDiv = document.createElement('div');
         rowDiv.style.display = 'flex';
         rowDiv.style.flexWrap = 'wrap';
-        rowDiv.style.alignItems = 'flex-start';
+        rowDiv.style.marginTop = '-12px';
         rowDiv.style.gap = '10px';
-        rowDiv.style.margin = "auto";
 
         for (const pbPedal of rowsMap[rowNum]) {
           try {
@@ -1358,16 +1357,15 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
             const widthPx = parseFloat(getPedalWidth(pedal.width));
             const heightPx = parseFloat(getPedalHeight(pedal.height));
-            const hasRotation = angle !== 0;
+            const hasRotation = angle % 180 !== 0;
 
             let wrapperStyles = {
               display: 'flex',
               justifyContent: 'center',
-              alignItems: 'flex-start',
+              alignItems: hasRotation ? 'flex-start' : 'center',
               position: 'relative',
               boxSizing: 'content-box',
-              marginBottom: '20px',
-              margin: 'auto'
+              marginBottom: '20px'
             };
 
             if (hasRotation) {
@@ -1425,8 +1423,7 @@ const $wrapper = $("<div>")
     ...wrapperStyles,
     position: "relative",
     top: `${topVal}px`,
-    left: `${leftVal}px`,
-    margin: "0"
+    left: `${leftVal}px`
   })
   .append($pedalDiv);
 
