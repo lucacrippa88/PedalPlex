@@ -1081,6 +1081,30 @@ function filterPedalsWithColoredLeds(pedalsObj) {
 
 
 // Render full pedalboard in preset page --------------------------
+function positionSubplexContainer($wrapper, $pedalDiv) {
+  const wrapperEl = $wrapper?.[0];
+  const pedalEl = $pedalDiv?.[0];
+  if (!wrapperEl || !pedalEl) return;
+
+  const $presetContainer = $wrapper.find(".preset-container");
+  if (!$presetContainer.length) return;
+
+  const place = () => {
+    const wrapperRect = wrapperEl.getBoundingClientRect();
+    const pedalRect = pedalEl.getBoundingClientRect();
+
+    if (!wrapperRect.width || !wrapperRect.height || !pedalRect.width || !pedalRect.height) return;
+
+    $presetContainer.css({
+      top: `${pedalRect.top - wrapperRect.top}px`,
+      right: `${wrapperRect.right - pedalRect.right}px`
+    });
+  };
+
+  place();
+  requestAnimationFrame(place);
+}
+
 async function renderFullPedalboard(pedalboardOverride = null) {
 
   // Single pedal mode
@@ -1162,6 +1186,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
         rowDiv.style.flexWrap = 'wrap';
         rowDiv.style.marginTop = '-12px';
         rowDiv.style.gap = '10px';
+        container.appendChild(rowDiv);
 
         for (const pbPedal of rowsMap[rowNum]) {
           try {
@@ -1535,13 +1560,12 @@ const $wrapper = $("<div>")
             // ================================================
 
             rowDiv.appendChild($wrapper[0]);
+            positionSubplexContainer($wrapper, $pedalDiv);
 
           } catch (err) {
             console.error('Error fetching pedal info:', err);
           }
         }
-
-        container.appendChild(rowDiv);
       }
 
       // Save current pedals on board

@@ -929,8 +929,8 @@ $(".pedal-catalog").each(function () {
   renderPedalControls(resetPedal, $pedalDiv);
 
   // Step 4: Applica SubPlex e setup invalidazione
-  if (presetPedal) {
-    const appliedSubplex = presetPedal.subplex || presetPedal;
+  if (presetPedal?.subplex) {
+    const appliedSubplex = presetPedal.subplex;
 
     // Imposta dati sul div
     $pedalDiv.data('applied-subplex', appliedSubplex);
@@ -942,6 +942,8 @@ $(".pedal-catalog").each(function () {
 
     // Registrazione listener per dirty state
     setupSubplexInvalidationOnDBLoad($pedalDiv); 
+  } else if (typeof clearAppliedSubplexState === "function") {
+    clearAppliedSubplexState($pedalDiv);
   }
 
   // Step 5: Aggiorna nome pedale
