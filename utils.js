@@ -1092,11 +1092,12 @@ function positionSubplexContainer($wrapper, $pedalDiv) {
   const place = () => {
     const wrapperRect = wrapperEl.getBoundingClientRect();
     const pedalRect = pedalEl.getBoundingClientRect();
+    const toolbarOffset = 34;
 
     if (!wrapperRect.width || !wrapperRect.height || !pedalRect.width || !pedalRect.height) return;
 
     $presetContainer.css({
-      top: `${pedalRect.top - wrapperRect.top}px`,
+      top: `${pedalRect.top - wrapperRect.top - toolbarOffset}px`,
       right: `${wrapperRect.right - pedalRect.right}px`
     });
   };

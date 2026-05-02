@@ -942,6 +942,10 @@ $(".pedal-catalog").each(function () {
 
     // Registrazione listener per dirty state
     setupSubplexInvalidationOnDBLoad($pedalDiv); 
+
+    if (typeof updateSubplexButtonsUI === "function") {
+      updateSubplexButtonsUI($pedalDiv);
+    }
   } else if (typeof clearAppliedSubplexState === "function") {
     clearAppliedSubplexState($pedalDiv);
   }
