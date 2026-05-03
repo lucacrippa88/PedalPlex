@@ -907,18 +907,25 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
-@media (max-width: 768px) {
-  #preset, #pedalboard {
+@media (max-width: 1024px) {
+  #pedalboard,
+  #preset {
     display: flex !important;
     flex-direction: column !important;
-    gap: 1rem;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    min-width: 100% !important;
+    width: max-content !important;
+    max-width: none !important;
     overflow: visible !important;
-    transform: none !important;
-    zoom: 1 !important;
-    width: 100% !important;
+    white-space: normal !important;
   }
-  #preset > *, #pedalboard > * {
-    width: 100% !important;
+
+  #pedalboard > *,
+  #preset > * {
+    width: max-content !important;
+    max-width: none !important;
+    flex-wrap: nowrap !important;
   }
 }
 
