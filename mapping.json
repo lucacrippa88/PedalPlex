@@ -16798,35 +16798,44 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/api/tranzformer/llx",
     "pedalplex_url": "",
-    "brand": "",
+    "brand": "API",
     "category": "bass/boost/equalizer",
-    "seo_description": ""
+    "seo_description": "The API TranZformer LLX Bass EQ/Boost is a premium studio-grade bass preamp pedal designed to deliver the legendary tone-shaping capabilities of API’s renowned analog consoles directly to your pedalboard. Built around the iconic 2510 and 2520 op-amps, this compact yet powerful unit offers rich harmonic depth, punchy low-end response, and exceptional clarity that elevates any bass signal in both live and studio environments."
   },
   {
     "pedalplex_id": "API TranZformer GTR EQ/Boost",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/api/tranzformer/gtr",
-    "pedalplex_url": "",
-    "brand": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/api-tranzformer-gtr-eq-boost",
+    "brand": "API",
     "category": "boost/equalizer",
-    "seo_description": ""
+    "seo_description": "The API TranZformer GTR EQ/Boost is a high-end guitar preamp pedal that brings the unmistakable tone and punch of API’s legendary analog console circuitry straight to your pedalboard. Powered by the classic 2510 and 2520 op-amps, this unit delivers exceptional clarity, dynamic response, and harmonic richness, making it ideal for both live performance and studio applications."
   },
   {
     "pedalplex_id": "Alexander Pedals Princess Clang Overdrive",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/alexander/princessclang",
-    "pedalplex_url": "",
-    "brand": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/alexander-princess-clang-overdrive",
+    "brand": "Alexander Pedals",
     "category": "overdrive",
-    "seo_description": ""
+    "seo_description": "The Alexander Pedals Princess Clang Overdrive is a dynamic, amp-like drive pedal inspired by classic British “clang” tones. It delivers crisp articulation, chimey highs, and a tight, responsive low end that cuts through any mix without sounding harsh. With simple yet effective controls, Princess Clang lets you dial in everything from light breakup to rich, harmonically complex overdrive. It responds beautifully to picking dynamics and guitar volume changes, making it ideal for expressive players who want a natural, touch-sensitive feel. Compact and pedalboard-friendly, this overdrive is perfect for adding character, clarity, and vintage-inspired grit to your tone—whether on stage or in the studio."
   },
   {
     "pedalplex_id": "Alexander Pedals Oblivion Vintage Delay",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/alexander/oblivion",
-    "pedalplex_url": "",
-    "brand": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/alexander-oblivion-vintage-delay",
+    "brand": "Alexander Pedals",
     "category": "overdrive",
-    "seo_description": ""
+    "seo_description": "The Alexander Pedals Oblivion Vintage Delay is a versatile digital delay pedal that captures the warmth, modulation, and character of classic analog and tape echo units in a compact, modern format. Designed for players who want vintage-inspired ambience with precise control, it offers multiple delay modes ranging from subtle slapback to deep, modulated repeats with rich harmonic texture. Intuitive controls allow you to shape delay time, feedback, tone, and modulation depth, while onboard presets and tap tempo provide flexibility for both live and studio use. With its lush repeats, dynamic response, and ability to sit perfectly in the mix, the Oblivion Vintage Delay delivers expressive, atmospheric echoes that enhance everything from clean passages to driven tones."
+  },
+  {
+    "pedalplex_id": "RhPf Electronics Mosferatwo",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/rhpf/mosferatwo",
+    "pedalplex_url": "https://www.pedalplex.com/gear/rhpf-electronics-mosferatwo",
+    "brand": "RhPf Electronics",
+    "category": "overdrive",
+    "seo_description": "The RhPf Electronics Mosferatwo is a boutique high-gain overdrive/distortion pedal inspired by the legendary Marshall-in-a-box sound, delivering thick saturation, tight low end, and rich harmonic content. Designed for articulate high-gain tones, it offers excellent note definition even under heavy distortion, making it ideal for everything from classic rock to modern metal. Its responsive controls allow precise shaping of gain, tone, and output, while maintaining a smooth, amp-like feel that reacts naturally to picking dynamics. Compact and pedalboard-friendly, the Mosferatwo provides powerful, focused drive tones that cut through the mix without losing clarity."
   }
 ]
