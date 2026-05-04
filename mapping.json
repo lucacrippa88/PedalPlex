@@ -16846,5 +16846,32 @@
     "brand": "Holy Island Audio",
     "category": "fuzz",
     "seo_description": "The Holy Island Audio Micro Mountain Mover Fuzz is a compact, high-impact fuzz pedal that delivers massive saturation, thick low-end, and textured harmonic complexity in a pedalboard-friendly format. Inspired by heavy, vintage-style fuzz circuits but refined for modern players, it offers a wide gain range—from gritty, broken-up tones to full-on wall-of-sound distortion. Despite its aggressive character, the Micro Mountain Mover retains excellent clarity and note separation, making it suitable for both riff-driven playing and expansive sonic layers. Its straightforward control layout allows quick tone shaping, while its dynamic response ensures it reacts well to picking intensity and guitar volume adjustments. Ideal for guitarists seeking bold, atmospheric fuzz tones with a raw, expressive edge."
+  },
+    {
+    "pedalplex_id": "Olinthus Pillbug Compressor",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/olinthus/pillbug",
+    "pedalplex_url": "https://www.pedalplex.com/gear/olinthus-pillbug-compressor",
+    "brand": "Olinthus",
+    "category": "compressor",
+    "seo_description": "The Olinthus Pillbug Compressor is an extremely space-saving compressor pedal designed to provide smooth, musical compression that enhances the natural dynamics of your guitar. With its intuitive controls and responsive design, it offers precise gain staging and tonal shaping, making it ideal for a wide range of playing styles and musical genres. Whether you're looking to add warmth and fullness to your tone or need a reliable tool for live performance, the Pillbug delivers consistent, professional-grade results."
+  },
+    {
+    "pedalplex_id": "Olinthus Cicada Overdrive",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/olinthus/cicada",
+    "pedalplex_url": "https://www.pedalplex.com/gear/olinthus-cicada-overdrive",
+    "brand": "Olinthus",
+    "category": "overdrive",
+    "seo_description": "The Olinthus Cicada Overdrive is an extremely space-saving overdrive pedal that delivers warm, responsive gain with exceptional tone-shaping capabilities. It features a versatile control layout that allows for precise adjustment of drive, tone, and output level, making it suitable for a wide range of musical styles and applications. Whether you're looking to add warmth and character to your guitar tone or need a reliable tool for live performance, the Cicada delivers consistent, professional-grade results."
+  },
+    {
+    "pedalplex_id": "Olinthus Earwig Fuzz",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/olinthus/earwig",
+    "pedalplex_url": "https://www.pedalplex.com/gear/olinthus-earwig-fuzz",
+    "brand": "Olinthus",
+    "category": "fuzz",
+    "seo_description": "The Olinthus Earwig Fuzz is extremely space-saving, high-impact fuzz pedal that delivers massive saturation, thick low-end, and textured harmonic complexity in a pedalboard-friendly format. Inspired by heavy, vintage-style fuzz circuits but refined for modern players, it offers a wide gain range—from gritty, broken-up tones to full-on wall-of-sound distortion. Despite its aggressive character, the Earwig retains excellent clarity and note separation, making it suitable for both riff-driven playing and expansive sonic layers. Its straightforward control layout allows quick tone shaping, while its dynamic response ensures it reacts well to picking intensity and guitar volume adjustments. Ideal for guitarists seeking bold, atmospheric fuzz tones with a raw, expressive edge."
   }
 ]
