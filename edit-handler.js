@@ -238,18 +238,31 @@ function setupEditPedalHandler(pedals) {
           .then(data => {
             Swal.hideLoading();
             if (data.success) {
-              const idx = pedals.findIndex(p => p._id === updated._id);
+              const oldPedalId = pedal._id;
+              const savedPedal = {
+                ...updated,
+                _id: data.id || updated._id || oldPedalId,
+                _rev: data.rev || updated._rev,
+                canEdit: true
+              };
+
+              const idx = pedals.findIndex(p =>
+                p._id === savedPedal._id ||
+                p._id === pedal._id ||
+                p._rev === pedal._rev
+              );
+
               if (idx !== -1) {
-                pedals[idx] = {
-                  ...updated,
-                  _id: data.id || updated._id,
-                  _rev: data.rev || updated._rev,
-                  canEdit: true
-                };
+                pedals[idx] = savedPedal;
+              } else {
+                pedals.push(savedPedal);
               }
-              const $old = $(`[data-pedal-id="${updated._id}"]`);
+
+              pedal = savedPedal;
+
+              const $old = $(`[data-pedal-id="${savedPedal._id}"], [data-pedal-id="${updated._id}"], [data-pedal-id="${oldPedalId}"]`).first();
               if ($old.length) {
-                const $new = renderPedal(pedals[idx], window.currentUser.role || "user");
+                const $new = renderPedal(savedPedal, window.currentUser.role || "user");
                 $old.replaceWith($new);
               }
               updatePedalCountsFromServer();
@@ -262,6 +275,11 @@ function setupEditPedalHandler(pedals) {
             } else {
               Swal.fire('Error', data.error || 'Failed to save', 'error');
             }
+          })
+          .catch(err => {
+            Swal.hideLoading();
+            console.error("Gear save failed:", err);
+            Swal.fire('Error', err.message || 'Failed to save', 'error');
           });
         } else if (result.isDenied) {
           Swal.fire({

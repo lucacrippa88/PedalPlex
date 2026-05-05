@@ -16865,7 +16865,7 @@
     "category": "overdrive",
     "seo_description": "The Olinthus Cicada Overdrive is an extremely space-saving overdrive pedal that delivers warm, responsive gain with exceptional tone-shaping capabilities. It features a versatile control layout that allows for precise adjustment of drive, tone, and output level, making it suitable for a wide range of musical styles and applications. Whether you're looking to add warmth and character to your guitar tone or need a reliable tool for live performance, the Cicada delivers consistent, professional-grade results."
   },
-    {
+  {
     "pedalplex_id": "Olinthus Earwig Fuzz",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/olinthus/earwig",
@@ -16873,5 +16873,25 @@
     "brand": "Olinthus",
     "category": "fuzz",
     "seo_description": "The Olinthus Earwig Fuzz is extremely space-saving, high-impact fuzz pedal that delivers massive saturation, thick low-end, and textured harmonic complexity in a pedalboard-friendly format. Inspired by heavy, vintage-style fuzz circuits but refined for modern players, it offers a wide gain range—from gritty, broken-up tones to full-on wall-of-sound distortion. Despite its aggressive character, the Earwig retains excellent clarity and note separation, making it suitable for both riff-driven playing and expansive sonic layers. Its straightforward control layout allows quick tone shaping, while its dynamic response ensures it reacts well to picking intensity and guitar volume adjustments. Ideal for guitarists seeking bold, atmospheric fuzz tones with a raw, expressive edge."
+  },
+    {
+    "pedalplex_id": "Keeley Caverns V2 (Black Neon)",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/keeley-caverns-v2-black-neon",
+    "brand": "",
+    "category": "reverb/delay",
+    "seo_description": ""
+  },
+      {
+    "pedalplex_id": "Keeley Blacktop Fuzz",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/keeley-blacktop-fuzz",
+    "brand": "",
+    "category": "fuzz",
+    "seo_description": ""
   }
 ]
+
+
