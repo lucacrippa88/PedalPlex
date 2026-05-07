@@ -929,6 +929,14 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   }
 }
 
+@media (max-width: 1024px) {
+  #preset-wrapper > #preset {
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
 
 
 

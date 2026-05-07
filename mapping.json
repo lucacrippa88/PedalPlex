@@ -16883,7 +16883,7 @@
     "category": "reverb/delay",
     "seo_description": ""
   },
-      {
+  {
     "pedalplex_id": "Keeley Blacktop Fuzz",
     "status": "",
     "fxdb_url": "",
@@ -16891,7 +16891,127 @@
     "brand": "",
     "category": "fuzz",
     "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Death By Audio Soundwave Breakdown Fuzz",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/death-by-audio-soundwave-breakdown-fuzz",
+    "brand": "",
+    "category": "fuzz",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Keeley Compressor Pro",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/keeley-compressor-pro",
+    "brand": "",
+    "category": "fuzz",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Amptweaker Fat Metal Pro II",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/amptweaker-fat-metal-pro-ii",
+    "brand": "",
+    "category": "preamp/booster",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "AllPedal Devil's Triad Overdrive/Boost (Essentials)",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/allpedal-devils-triad-overdrive-boost-essentials",
+    "brand": "",
+    "category": "overdrive/booster",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/allpedal-devils-triad-overdrive-boost-reverb-delay",
+    "brand": "",
+    "category": "overdrive/booster",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "ZVEX Effects Super Duper 2 in 1 Booster",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/zvex-effects-super-duper-2-in-1-booster",
+    "brand": "",
+    "category": "booster",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Morgan Amps AC20 Head",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/morgan-amps-ac20-head",
+    "brand": "",
+    "category": "head",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Death By Audio Interstellar Overdriver Deluxe - Gold",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/death-by-audio-interstellar-overdriver-deluxe-gold",
+    "brand": "",
+    "category": "overdrive",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Death By Audio Interstellar Overdriver Deluxe",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/death-by-audio-interstellar-overdriver-deluxe",
+    "brand": "",
+    "category": "overdrive",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Death By Audio Interstellar Overdriver",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/death-by-audio-interstellar-overdriver",
+    "brand": "",
+    "category": "overdrive",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Atomic Amplifire Multi-Effects and Amp Moderler - Preamp",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/atomic-amplifire-multi-effects-and-amp-moderler-preamp",
+    "brand": "",
+    "category": "preamp",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Atomic Amplifire 6 Multi-Effects and Amp Moderler - Preamp",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/atomic-amplifire-6-multi-effects-and-amp-moderler-preamp",
+    "brand": "",
+    "category": "preamp",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Atomic Amplifire 12 Multi-Effects and Amp Moderler - Preamp",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/atomic-amplifire-12-multi-effects-and-amp-moderler-preamp",
+    "brand": "",
+    "category": "preamp",
+    "seo_description": ""
   }
+
+
+
 ]
 
 
