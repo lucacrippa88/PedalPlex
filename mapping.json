@@ -17008,6 +17008,123 @@
     "brand": "",
     "category": "preamp",
     "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Alabs NovaDrift Modulator",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/alabs-novadrift-modulator",
+    "brand": "",
+    "category": "modulation",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Alabs Orbital Pitch Shifter",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/alabs-orbital-pitch-shifter",
+    "brand": "",
+    "category": "pitch shifter",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Alabs Stereo Compact Reverb",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/alabs-stereo-compact-reverb",
+    "brand": "",
+    "category": "reverb",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Alabs TimeSlip Stereo Delay",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/alabs-timeslip-stereo-delay",
+    "brand": "",
+    "category": "delay",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Zvex Vexter Double Rock Distortion Boost",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/zvex-vexter-double-rock-distortion-boost",
+    "brand": "",
+    "category": "distortion/booster",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Aguilar Chorusaurus Bass Chorus",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/aguilar-chorusaurus-bass-chorus",
+    "brand": "",
+    "category": "chorus/bass",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Aguilar Filter Twin",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/aguilar-filter-twin",
+    "brand": "",
+    "category": "filter",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Aguilar Fuzzistor",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/aguilar-fuzzistor",
+    "brand": "",
+    "category": "fuzz",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Aguilar Octamizer Bass Octaver",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/aguilar-octamizer-bass-octaver",
+    "brand": "",
+    "category": "octaver/bass",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Aguilar DB599 Bass Compressor",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/aguilar-db599-bass-compressor",
+    "brand": "",
+    "category": "compressor/bass",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Aguilar TLC Compressor",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/aguilar-tlc-compressor",
+    "brand": "",
+    "category": "compressor",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Keeley Fuzz Bender",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/keeley-fuzz-bender",
+    "brand": "",
+    "category": "fuzz",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Keeley Custom Fuzz Bender Mono Black",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/keeley-custom-fuzz-bender-mono-black",
+    "brand": "",
+    "category": "fuzz",
+    "seo_description": ""
   }
 
 
