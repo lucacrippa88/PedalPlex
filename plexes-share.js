@@ -271,8 +271,48 @@ function openShareModal() {
 
 
 // =================== LOAD SHARED PLEX IN PREVIEW MODE =======================
+function getSharedPlexAuthorId(plex) {
+    return plex.original_author || plex.user_id || plex.owner_id || plex.author_id || null;
+}
+
+async function fetchBoardForSharedPlex(plex) {
+    const embeddedBoard = plex.board || plex.pedalboard || plex.rig;
+    if (embeddedBoard?.pedals && Array.isArray(embeddedBoard.pedals)) {
+        return embeddedBoard;
+    }
+
+    const boardId = plex.board_id || plex.boardId;
+    const authorId = getSharedPlexAuthorId(plex);
+
+    if (!boardId || !authorId) {
+        throw new Error("Shared Plex is missing board or author information.");
+    }
+
+    const rigRes = await fetch('https://api.pedalplex.com/GET_RIG.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            user_id: authorId,
+            board_id: boardId
+        })
+    });
+
+    if (!rigRes.ok) throw new Error(`Failed to fetch source rig: ${rigRes.statusText}`);
+
+    const rigData = await rigRes.json();
+    const boards = Array.isArray(rigData.docs) ? rigData.docs : [];
+    const board = boards.find(b => b._id === boardId || b.id === boardId);
+
+    if (!board) {
+        throw new Error("Source rig for shared Plex was not found.");
+    }
+
+    return board;
+}
+
 async function loadSharedPlexPreview() {
     console.log("🔹 loadSharedPlexPreview started, window.location.href:", window.location.href);
+    resultsDiv = document.getElementById("page-content");
 
     // Helper per leggere query string
     function getQueryParam(name) {
@@ -301,8 +341,15 @@ async function loadSharedPlexPreview() {
         const plex = plexData.plex;
         console.log("🔹 Shared plex loaded:", plex);
 
-        // 2️⃣ Recupera pedali dal catalogo tramite GET_GEARS_BY_IDS
-        const pedalIds = Object.keys(plex.pedals);
+        // 2️⃣ Recupera la pedaliera originale, così manteniamo ordine e posizionamento
+        const sourceBoard = await fetchBoardForSharedPlex(plex);
+        const boardPedals = Array.isArray(sourceBoard.pedals) ? sourceBoard.pedals : [];
+        const pedalIds = [...new Set(boardPedals.map(p => p.pedal_id || p._id).filter(Boolean))];
+
+        if (pedalIds.length === 0) {
+            throw new Error("Source rig has no gears.");
+        }
+
         const gearsRes = await fetch('https://api.pedalplex.com/GET_GEARS_BY_IDS.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -319,24 +366,21 @@ async function loadSharedPlexPreview() {
 
         console.log("🔹 Gears loaded:", pedals);
 
-        // 3️⃣ Costruisci catalog
+        // 3️⃣ Costruisci catalog completo della pedaliera originale
         window.catalog = gearsData.docs;
         window.catalogMap = {};
         window.catalog.forEach(p => {
             window.catalogMap[p._id] = p;
         });
 
-        // 4️⃣ Costruisci pedalboard COMPATIBILE con plexes.js
+        // 4️⃣ Usa la pedaliera originale: ordine, righe, rotazione e offset restano corretti
         window.pedalboard = {
-            board_name: "Preview",
-            pedals: pedalIds.map((id, index) => ({
-                pedal_id: id,
-                rotation: 0,
-                row: 1
-            }))
+            ...sourceBoard,
+            board_name: sourceBoard.board_name || plex.board_name || "Shared Rig",
+            pedals: boardPedals
         };
 
-        renderFullPedalboard();
+        await renderFullPedalboard(window.pedalboard);
 
         setTimeout(() => {
             applyPresetToPedalboard(plex);

@@ -247,9 +247,9 @@ $(document).ready(function() {
     $('#page-content, #preset-controls').show();
     if (!window.isPreviewMode) { 
       $('#preset-controls').html("<p>Login to organise your Plexes in folders and save them!</p>");
+      if (typeof initPreset === 'function') initPreset();
     }
     if (typeof initNavPreset === 'function') initNavPreset();
-    if (typeof initPreset === 'function') initPreset();
     $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn, #zoomIn, #zoomOut, #zoomReset')
       .prop('disabled', true)
       .addClass('btn-disabled');
@@ -267,13 +267,24 @@ $(document).ready(function() {
       $('#page-content, #preset-controls').show();
       window.currentUser = userFromServer;
       if (typeof initNavPreset === 'function') initNavPreset();
-      if (typeof initPreset === 'function') initPreset();
+      if (!window.isPreviewMode && typeof initPreset === 'function') initPreset();
     },
     error: function(xhr) {
       console.error('Auth check failed:', xhr.status, xhr.responseText);
 
       if (xhr.status === 401) {
         localStorage.removeItem('authToken');
+
+        if (window.isPreviewMode) {
+          window.currentUser = null;
+          $('#loadingMessage').hide();
+          $('#page-content, #preset-controls').show();
+          if (typeof initNavPreset === 'function') initNavPreset();
+          $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn, #zoomIn, #zoomOut, #zoomReset')
+            .prop('disabled', true)
+            .addClass('btn-disabled');
+          return;
+        }
 
         // Swal2 con scelta Login / Continua come ospite
         Swal.fire({
@@ -300,9 +311,9 @@ $(document).ready(function() {
             $('#page-content, #preset-controls').show();
             if (!window.isPreviewMode) { 
                   $('#preset-controls').html("<p>Login to organise your Plexes in folders and save them!</p>");
+                  if (typeof initPreset === 'function') initPreset();
             }            
             if (typeof initNavPreset === 'function') initNavPreset();
-            if (typeof initPreset === 'function') initPreset();
             $('#savePstBtn, #savePstBtnMobile, #createPstBtn, #createPstBtnMobile, #addFolderBtn, #zoomIn, #zoomOut, #zoomReset')
               .prop('disabled', true)
               .addClass('btn-disabled');
