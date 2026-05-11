@@ -63,6 +63,25 @@ let currentPresetRev = null;
 let currentPresetName = null;
 let isRestoringPreset = false;
 
+function isPresetShared(preset) {
+  return preset?.shared === true || preset?.shared === 'true' || preset?.shared === 1 || preset?.shared === '1';
+}
+
+function updateSharePresetButtonState(preset = null) {
+  const btn = document.getElementById('sharePresetBtn');
+  if (!btn) return;
+
+  const selectedPresetId = preset?._id || document.getElementById('presetSelect')?.value;
+  const currentPreset = preset || window.presetMap?.[selectedPresetId] || null;
+  const shared = isPresetShared(currentPreset);
+
+  btn.classList.toggle('bx--btn--primary', shared);
+  btn.classList.toggle('bx--btn--tertiary', !shared);
+  btn.setAttribute('aria-pressed', String(shared));
+}
+
+window.updateSharePresetButtonState = updateSharePresetButtonState;
+
 
 
 window.allPedalboards = [];
@@ -336,6 +355,7 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
     // presetMap keyed by _id
     const preset = window.presetMap && window.presetMap[selectedPresetId] ? window.presetMap[selectedPresetId] : (window.presets || []).find(p => p._id === selectedPresetId);
     if (preset) {
+      updateSharePresetButtonState(preset);
       // Guard: don’t re-apply the same preset
       if (window.currentPresetId === preset._id) return;
       currentPresetId = preset._id;
@@ -348,6 +368,7 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
       currentPresetId = null;
       currentPresetName = null;
       currentPresetRev = null;
+      updateSharePresetButtonState(null);
     }
   };
 
@@ -1423,6 +1444,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     currentPresetId = null;
     currentPresetName = null;
     currentPresetRev = null;
+    updateSharePresetButtonState(null);
   } else {
     presetSelect.style.display = 'inline-block';
     if (editBtn) editBtn.style.display = 'inline-block'; 
@@ -1448,6 +1470,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     currentPresetName = selectedPreset.preset_name;
     currentPresetRev = selectedPreset._rev;
     presetSelect.value = selectedPreset._id;
+    updateSharePresetButtonState(selectedPreset);
 
     // Update save button state based on new selection
     // updateSavePresetButtonState();
