@@ -204,11 +204,12 @@ function openShareModal() {
         preConfirm: async () => {
             const enabled = document.getElementById("shareToggle").checked;
             preset.shared = enabled;
+            preset.sharedAt = enabled ? new Date().toISOString() : null;
 
             const dbData = {
                 preset_id: currentPresetId,
                 shared: preset.shared,
-                sharedAt: enabled ? new Date().toISOString() : null,
+                sharedAt: preset.sharedAt,
                 shared_token: preset.shared_token,
                 original_author: preset.user_id
             };
@@ -228,6 +229,10 @@ function openShareModal() {
                 if (!json.success) {
                     Swal.showValidationMessage(json.error || 'Failed to save preset');
                     return false; // tiene aperto il modal
+                }
+
+                if (typeof window.updateSharePresetButtonState === 'function') {
+                    window.updateSharePresetButtonState(preset);
                 }
             } catch (e) {
                 Swal.showValidationMessage('Network error: ' + e);

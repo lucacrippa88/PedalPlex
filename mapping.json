@@ -17125,6 +17125,186 @@
     "brand": "",
     "category": "fuzz",
     "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Fender Godzilla Distortion",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/fender-godzilla-distortion",
+    "brand": "",
+    "category": "distortion",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Ampeg Scrambler Bass Overdrive",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/ampeg-scrambler-bass-overdrive",
+    "brand": "",
+    "category": "overdrive/bass",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Ampeg Liquifier Analog Bass Chorus",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/ampeg-liquifier-analog-bass-chorus",
+    "brand": "",
+    "category": "chorus/bass",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Ampeg Classic Bass Preamp",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/ampeg-classic-bass-preamp",
+    "brand": "",
+    "category": "preamp/bass",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Ampeg Octo Comp Bass Compressor",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/ampeg-octo-comp-bass-compressor",
+    "brand": "",
+    "category": "compressor/bass",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Ampeg SGT-DI Bass Preamp/DI",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/ampeg-sgt-di-bass-preamp-di",
+    "brand": "",
+    "category": "preamp/di/bass",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Zvex Box of Rock Vertical Vexter Overdrive",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/zvex-box-of-rock-vertical-vexter-overdrive",
+    "brand": "",
+    "category": "overdrive",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Amptweaker Tight Metal Jr.",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/amptweaker-tight-metal-jr",
+    "brand": "",
+    "category": "distortion",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Amptweaker Tight Metal Pro II",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/amptweaker-tight-metal-pro-ii",
+    "brand": "",
+    "category": "preamp/distortion/boost",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Amptweaker Big Rock Pro II",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/amptweaker-big-rock-pro-ii",
+    "brand": "",
+    "category": "preamp/distortion/boost",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Amptweaker Tight Rock Jr.",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/amptweaker-tight-rock-jr",
+    "brand": "",
+    "category": "overdrive",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Amptweaker Tight Drive Jr.",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/amptweaker-tight-drive-jr",
+    "brand": "",
+    "category": "overdrive",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Amptweaker Tight Rock II",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/amptweaker-tight-rock-ii",
+    "brand": "",
+    "category": "overdrive",
+    "seo_description": ""
+  },
+   {
+    "pedalplex_id": "Amptweaker Tight Metal",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/amptweaker-tight-metal",
+    "brand": "",
+    "category": "distortion",
+    "seo_description": ""
+  },
+    {
+    "pedalplex_id": "Amptweaker Tight Drive II",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/amptweaker-tight-drive-ii",
+    "brand": "",
+    "category": "overdrive",
+    "seo_description": ""
+  },
+      {
+    "pedalplex_id": "Amptweaker Tight Drive",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/amptweaker-tight-drive",
+    "brand": "",
+    "category": "overdrive",
+    "seo_description": ""
+  },
+      {
+    "pedalplex_id": "Arion SMM-1 Metal Master",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/arion-smm-1-metal-master",
+    "brand": "",
+    "category": "distortion",
+    "seo_description": ""
+  },
+        {
+    "pedalplex_id": "Analogman Peppermint Fuzz",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/analogman-peppermint-fuzz",
+    "brand": "",
+    "category": "fuzz",
+    "seo_description": ""
+  },
+        {
+    "pedalplex_id": "Analogman Peppermint Fuzz Dark",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/analogman-peppermint-fuzz-dark",
+    "brand": "",
+    "category": "fuzz",
+    "seo_description": ""
+  },
+        {
+    "pedalplex_id": "Analogwise Pocket Rocket",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/analogwise-pocket-rocket",
+    "brand": "",
+    "category": "overdrive",
+    "seo_description": ""
   }
 
 
