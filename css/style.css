@@ -758,6 +758,17 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   flex-wrap: nowrap;
 }
 
+#preset-controls.shared-preview-controls {
+  width: 100%;
+}
+
+#preset-controls.shared-preview-controls #previewPlexData {
+  flex: 1 1 100%;
+  width: 100%;
+  margin: 0;
+  white-space: normal;
+}
+
 /* Mobile: stack selects vertically, keep buttons on the right of their related select */
 @media (max-width: 768px) {
 
@@ -837,6 +848,14 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     flex-wrap: nowrap; /* keep them in one line */
   }
 
+  #preset-controls.shared-preview-controls {
+    flex-wrap: wrap;
+  }
+
+  #preset-controls.shared-preview-controls #previewPlexData {
+    min-width: 0;
+    max-width: 100%;
+  }
 
 
 }
