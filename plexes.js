@@ -9,15 +9,7 @@ function setupPreviewMode() {
 
     // Assicuriamoci che il DOM sia pronto
     $(document).ready(() => {
-        const $preset = $('#preset');
-        if ($preset.length) {
-            $preset.css({
-                'outline': '2px dashed #666',
-                'outline-offset': '2px',
-                'border-radius': '8px',
-                'padding': '30px'
-            });
-        }
+        document.getElementById('preset-controls')?.classList.add('shared-preview-controls');
 
         // Disabilita pulsanti
         const ids = [
@@ -42,6 +34,8 @@ function setupPreviewMode() {
             "pedalboardSelect",
             "presetSelect",
             "folderSelect",
+            "presetSelectContainer",
+            "folderSelectContainer",
             "sharePresetBtn"
         ];
         ids_hide.forEach(id => {
