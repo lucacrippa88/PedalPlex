@@ -348,6 +348,27 @@ input[type="range"].horizontal { width: 100%; height: 6px; }
 #editor { flex: 0 0 55%; min-width:300px; padding:12px; border-radius:8px; }
 #preview { flex: 0 0 40%; min-width:200px; padding:12px; border-radius:8px; color:white; }
 #pedal-box { position:relative; }
+
+
+
+#pedal-box {
+  position: relative;
+  padding: 0; /* Rimuove padding extra */
+  margin: 0; /* Assicura nessun margine */
+}
+
+#preview {
+  padding: 15px;
+}
+
+/* Assicura che il gear nel preview abbia lo stesso comportamento del catalogo */
+#pedal-box .pedal-catalog {
+  margin: 0 auto; /* Centra il gear */
+}
+
+
+
+
 .row-actions { margin-top:6px; display:flex; flex-direction:row!important; }
 .row-buttons, .controls-row { display:flex; flex-direction:row!important; gap:6px; flex-wrap:nowrap; }
 .row-buttons, .controls-row button { flex:0 0 auto; white-space:nowrap; }
