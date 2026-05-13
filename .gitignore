@@ -8,6 +8,10 @@ other/
 # Plex
 backend/
 
+# Documentation
+docs/
+README.md
+
 # Templates
 static_template.html
 generate_pages.py
