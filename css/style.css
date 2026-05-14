@@ -192,20 +192,6 @@ header {
 /* Page content */
 #page-content { padding-top: 64px; }
 .swal2-container { z-index: 99999 !important; }
-
-/* Assicura che i gear dentro lo Swal (iframe) si comportino come nel catalogo */
-.swal2-container iframe #pedal-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-}
-
-.swal2-container iframe .pedal-catalog {
-  margin: 0;
-}
-
 body { background: #2e2e2e; color: #fff; padding: 20px; font-family: 'IBM Plex Sans', sans-serif; }
 html { box-sizing: content-box !important; }
 *, *::before, *::after { box-sizing: inherit !important; }
@@ -361,28 +347,14 @@ input[type="range"].horizontal { width: 100%; height: 6px; }
 #builder { display:flex; gap:20px; flex-wrap:wrap; }
 #editor { flex: 0 0 55%; min-width:300px; padding:12px; border-radius:8px; }
 #preview { flex: 0 0 40%; min-width:200px; padding:12px; border-radius:8px; color:white; }
+#pedal-box { position:relative; }
 
-/* Pedal box - comportamento identico a .pedal-catalog */
+
+
 #pedal-box {
   position: relative;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Gear dentro pedal-box si comporta come nel catalogo */
-#pedal-box .pedal-catalog {
-  margin: 0;
-  display: inline-flex; /* Mantiene dimensioni naturali del gear */
-}
-
-/* Assicura che elementi posizionati in modo assoluto si comportino ugualmente */
-#pedal-box .pedal-catalog .pedal-name,
-#pedal-box .pedal-catalog .head-name,
-#pedal-box .pedal-catalog .pedal-author {
-  position: absolute;
+  padding: 0; /* Rimuove padding extra */
+  margin: 0; /* Assicura nessun margine */
 }
 
 #preview {
