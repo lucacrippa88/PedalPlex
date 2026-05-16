@@ -77,7 +77,7 @@ function renderPedalControls(pedal, $pedalDiv) {
         let $tooltip = null;
         let $tooltipText = null;
 
-        if (!editMode) { // Only create tooltip if not in edit mode
+        // if (!editMode) { // Only create tooltip if not in edit mode
           $tooltip = $("<div>")
             .addClass("bx--tooltip bx--tooltip--top")
             .attr("data-tooltip", "")
@@ -91,7 +91,7 @@ function renderPedalControls(pedal, $pedalDiv) {
           const $caret = $("<span>").addClass("bx--tooltip__caret");
           $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
           $tooltip.append($caret, $tooltipText);
-        }
+        // }
 
         const rotation = getRotationFromValue(control, control.value);
         knob.data("rotation", rotation);
@@ -462,7 +462,7 @@ function renderPedalControls(pedal, $pedalDiv) {
         let $tooltipText = null;
 
         // Only show tooltip if not in edit mode
-        if (!editMode) {
+        // if (!editMode) {
           $tooltip = $("<div>")
             .addClass("bx--tooltip bx--tooltip--bottom") // caret on bottom
             .css({
@@ -476,7 +476,7 @@ function renderPedalControls(pedal, $pedalDiv) {
           const $caret = $("<span>").addClass("bx--tooltip__caret");
           $tooltipText = $("<span>").addClass("bx--tooltip__label").text(control.value);
           $tooltip.append($caret, $tooltipText);
-        }
+        // }
 
         let $sliderWrapper;
         if (control.orientation === "vertical") {
