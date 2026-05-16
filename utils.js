@@ -178,7 +178,8 @@ function renderPedalControls(pedal, $pedalDiv) {
             knob.css("transform", `rotate(${newRotation}deg)`);
             if ($valueLabel) $valueLabel.text(control.value);
 
-            if (!editMode && $tooltipText) {
+            // if (!editMode && $tooltipText) {
+            if ($tooltipText) {
               $tooltipText.text(control.value);
               $tooltip.show();
             }
@@ -187,7 +188,8 @@ function renderPedalControls(pedal, $pedalDiv) {
           function endDrag() {
             $(document).off("mousemove.knob touchmove.knob", onMove);
             $(document).off("mouseup.knob touchend.knob", endDrag);
-            if (!editMode && $tooltip) $tooltip.hide();
+            // if (!editMode && $tooltip) $tooltip.hide();
+            if ($tooltip) $tooltip.hide();
           }
 
           $(document).on("mousemove.knob touchmove.knob", onMove);
@@ -226,7 +228,8 @@ function renderPedalControls(pedal, $pedalDiv) {
           })
           .append(knob);
 
-        if (!editMode && $tooltip) { $container.append($tooltip); }
+        // if (!editMode && $tooltip) { $container.append($tooltip); }
+        if ($tooltip) { $container.append($tooltip); }
 
         let $knobWrapper = $("<div>")
           .addClass("knob-wrapper") // add clas to handle css
@@ -452,7 +455,8 @@ function renderPedalControls(pedal, $pedalDiv) {
               $pedalDiv.data("subplexInvalidated", true);
               invalidateSubplex($pedalDiv); // mark SubPlex as changed
             }
-            if (!editMode && $tooltipText) {
+            // if (!editMode && $tooltipText) {
+            if ($tooltipText) {
               $tooltipText.text(control.value);
               $tooltip.show();
             }
@@ -519,7 +523,8 @@ function renderPedalControls(pedal, $pedalDiv) {
         }
 
         // Attach tooltip if not in edit mode
-        if (!editMode && $tooltip) {
+        // if (!editMode && $tooltip) {
+        if ($tooltip) {
           $sliderWrapper.append($tooltip);
           $slider.on("mousedown touchstart", () => $tooltip.show());
           $(document).on("mouseup touchend", () => $tooltip.hide());
