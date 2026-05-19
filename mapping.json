@@ -17422,5 +17422,51 @@
     "brand": "Analog Music Company",
     "category": "synth/fuzz",
     "seo_description": "Analog Music Company & Noise Space Audio’s “Evil Pumpkin” is not just a modified distortion pedal — it’s a full-blown circuit-bent sonic laboratory built around the legendary Boss DS-1 platform. Designed for experimental guitarists, synth artists, noise musicians and sound designers, this chaotic fuzz/synth machine delivers everything from glitchy oscillations and brutal fuzz textures to drone synth tones, theremin-like sweeps and unpredictable modulation."
+  },
+  {
+    "pedalplex_id": "Aguilar Fuzzistor Mk2",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/aguilar-fuzzistor-mk2",
+    "brand": "Aguilar",
+    "category": "fuzz",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "Aguilar TLC Compressor Mk2",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/aguilar-tlc-compressor-mk2",
+    "brand": "Aguilar",
+    "category": "compressor",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "AirTurn BT200 S-2 Midi Footswitch",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/airturn-bt200-s-2-midi-footswitch",
+    "brand": "AirTurn",
+    "category": "footswitch",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "AirTurn BT500 S-2 Midi Footswitch",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/airturn-bt500-s-2-midi-footswitch",
+    "brand": "AirTurn",
+    "category": "footswitch",
+    "seo_description": ""
+  },
+  {
+    "pedalplex_id": "AirTurn DUO 200 Midi Footswitch",
+    "status": "",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/airturn-duo-200-midi-footswitch",
+    "brand": "AirTurn",
+    "category": "footswitch",
+    "seo_description": ""
   }
 ]
+
