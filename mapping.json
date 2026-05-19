@@ -17386,5 +17386,41 @@
     "brand": "Headrush",
     "category": "combo/frfr",
     "seo_description": "The Headrush FRFR-Go is a compact 30W full-range flat-response speaker designed for guitarists and bassists using amp modelers and pedalboards. Featuring dual 3-inch speakers, Bluetooth audio streaming, onboard bass/treble EQ, headphone output, and up to 13 hours of battery life, it delivers accurate amp and cabinet emulations in a lightweight portable format ideal for home practice and mobile setups."
+  },
+  {
+    "pedalplex_id": "ZVEX Machine Overdrive",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/zvex/machine",
+    "pedalplex_url": "https://www.pedalplex.com/gear/zvex-machine-overdrive",
+    "brand": "Zvex",
+    "category": "overdrive",
+    "seo_description": "The ZVEX Machine Overdrive is a high-gain overdrive pedal that delivers a powerful, saturated tone with a unique, warm distortion. It features a simple control layout with a gain knob, a tone knob, and a footswitch for bypass, making it easy to dial in your desired sound. The pedal is built to last and is a favorite among guitarists looking for a reliable, high-gain overdrive effect."
+  },
+  {
+    "pedalplex_id": "Akai Professional E2 Headrush",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/akai/pedals/e2",
+    "pedalplex_url": "https://www.pedalplex.com/gear/akai-professional-e2-headrush",
+    "brand": "Akai",
+    "category": "delay/reverb",
+    "seo_description": "The Akai Professional E2 Headrush is a versatile delay and reverb pedal that offers a wide range of effects, including delay, reverb, chorus, and flanger. It features a compact design with intuitive controls, making it easy to use on stage or in the studio. The pedal is built to last and is a favorite among guitarists looking for a reliable, high-quality effects processor."
+  },
+  {
+    "pedalplex_id": "Analog Music Company & Noise Space Audio DS-1 Evil Pumpkin Mod Synth/Fuzz",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/analog-music-company-noise-space-audio-ds-1-evil-pumpkin-mod-synth-fuzz",
+    "brand": "Analog Music Company",
+    "category": "synth/fuzz",
+    "seo_description": "Analog Music Company & Noise Space Audio’s “Evil Pumpkin” is not just a modified distortion pedal — it’s a full-blown circuit-bent sonic laboratory built around the legendary Boss DS-1 platform. Designed for experimental guitarists, synth artists, noise musicians and sound designers, this chaotic fuzz/synth machine delivers everything from glitchy oscillations and brutal fuzz textures to drone synth tones, theremin-like sweeps and unpredictable modulation, now with extra modding features."
+  },
+  {
+    "pedalplex_id": "Analog Music Company & Noise Space Audio DS-1 Evil Pumpkin Synth/Fuzz",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/analog-music-company-noise-space-audio-ds-1-evil-pumpkin-synth-fuzz",
+    "brand": "Analog Music Company",
+    "category": "synth/fuzz",
+    "seo_description": "Analog Music Company & Noise Space Audio’s “Evil Pumpkin” is not just a modified distortion pedal — it’s a full-blown circuit-bent sonic laboratory built around the legendary Boss DS-1 platform. Designed for experimental guitarists, synth artists, noise musicians and sound designers, this chaotic fuzz/synth machine delivers everything from glitchy oscillations and brutal fuzz textures to drone synth tones, theremin-like sweeps and unpredictable modulation."
   }
 ]

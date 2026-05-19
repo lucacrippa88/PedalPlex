@@ -623,12 +623,19 @@ function renderPedalControls(pedal, $pedalDiv) {
         } else if (control.position === "highest") {
           $wrapper.addClass("align-top-est");
         } else if (typeof control.position === "string" && control.position.startsWith("margin-right:")) {
-          const match = control.position.match(/margin-right:\s*(\d+)px/);
-          if (match) {
-            const px = match[1] + "px";
-            $wrapper.css("margin-right", px);
-          }
-        } else if (control.position === "align-top" && $row.children().length > 0) {
+            const match = control.position.match(/margin-right:\s*(\d+)px/);
+            if (match) {
+                const px = match[1] + "px";
+                $wrapper.css("margin-right", px);
+            }
+        } else if (typeof control.position === "string" && control.position.startsWith("margin-left:")) {
+            const match = control.position.match(/margin-left:\s*(\d+)px/);
+            if (match) {
+                const px = match[1] + "px";
+                $wrapper.css("margin-left", px);
+            }
+        }
+        else if (control.position === "align-top" && $row.children().length > 0) {
           const $prev = $row.children().last();
           $prev.append($("<div>").css("margin-top", "8px").append($label, $select));
         }
