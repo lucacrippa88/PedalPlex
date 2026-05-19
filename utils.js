@@ -1648,6 +1648,7 @@ function renderPresetList($ul, pedalId, presets) {
         left: offset.left,
         zIndex: 2000,
         maxWidth: "330px",
+        width: "330px",
         backgroundColor: "rgba(0,0,0,0.85)",
         color: "#fff",
         padding: "6px 8px",
