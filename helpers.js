@@ -331,7 +331,8 @@ function colorDistanceSq(a, b) {
 
 // HELPER
 function getBoxShadow(pedal, inside, insetIfNotFull) {
-  const outerShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+  // const outerShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+  const outerShadow = "0 7px 7px rgba(0, 0, 0, 0.6)";
 
   // Handle full inside
   if (inside === "full") {
