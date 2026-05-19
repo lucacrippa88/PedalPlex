@@ -66,7 +66,7 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
         left: "50%",
         transform: "translateX(-50%)", // Center horizontally
         zIndex: 2000,
-        maxWidth: "130px",
+        maxWidth: "330px",
         backgroundColor: "rgba(0,0,0,0.85)",
         color: "#fff",
         padding: "6px 8px",

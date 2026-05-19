@@ -1647,7 +1647,7 @@ function renderPresetList($ul, pedalId, presets) {
         top: offset.top - $tooltip.outerHeight() - 5,
         left: offset.left,
         zIndex: 2000,
-        maxWidth: "130px",
+        maxWidth: "330px",
         backgroundColor: "rgba(0,0,0,0.85)",
         color: "#fff",
         padding: "6px 8px",
