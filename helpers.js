@@ -250,24 +250,21 @@ function getPedalTypeCss(pedal, baseCss, inside) {
     case "pedal":
       return {
         ...baseCss,
-        filter: 'drop-shadow(0 7px 7px rgba(0,0,0,0.6))',
         boxShadow: inside === "full" ?
-          (baseCss.boxShadow || "") :
-          `inset 0 -36px 0 0 ${pedal["color"]}`
+          `0 7px 7px rgba(0,0,0,0.6)` + (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "") :
+          `0 7px 7px rgba(0,0,0,0.6), inset 0 -36px 0 0 ${pedal["color"]}`
       };
     case "expression":
       return {
         ...baseCss,
         borderRadius: "25px",
-        filter: 'drop-shadow(0 7px 7px rgba(0,0,0,0.6))',
-        boxShadow: inside === "full" ?
-          (baseCss.boxShadow || "") :
-          `inset 0 -36px 0 0 ${pedal["color"]}`
+          boxShadow: inside === "full" ?
+          `0 7px 7px rgba(0,0,0,0.6)` + (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "") :
+          `0 7px 7px rgba(0,0,0,0.6), inset 0 -36px 0 0 ${pedal["color"]}`
       };
     case "combo":
       return {
         ...baseCss,
-        filter: inside === "full" ? 'drop-shadow(0 7px 7px rgba(0,0,0,0.6))' : '',
         boxShadow: inside === "full" ?
           baseCss.boxShadow || "" :
           `0 7px 7px rgba(0,0,0,0.6), inset 0 -80px 0 0 ${pedal["color"]}`
@@ -276,19 +273,17 @@ function getPedalTypeCss(pedal, baseCss, inside) {
     case "pedal-inverted":
       return {
         ...baseCss,
-        filter: 'drop-shadow(0 7px 7px rgba(0,0,0,0.6))',
         boxShadow: inside === "full" ?
-          (baseCss.boxShadow || "") :
-          `inset 0 80px 0 0 ${pedal["color"]}`
+          `0 7px 7px rgba(0,0,0,0.6)` + (baseCss.boxShadow ? `, ${baseCss.boxShadow}` : "") :
+          `0 7px 7px rgba(0,0,0,0.6), inset 0 80px 0 0 ${pedal["color"]}`
       };
     case "round":
       return {
         ...baseCss,
         borderRadius: "50%",
-        width: getPedalWidth(pedal.width),
-        height: getPedalWidth(pedal.width),
-        filter: 'drop-shadow(0 7px 7px rgba(0,0,0,0.6))',
-        boxShadow: `inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
+          width: getPedalWidth(pedal.width),
+          height: getPedalWidth(pedal.width),
+          boxShadow: `0 7px 7px rgba(0,0,0,0.6), inset 0 0 0 3px ${pedal["inside-border"] || pedal["color"]}`
       };
   }
   return baseCss;
@@ -336,18 +331,18 @@ function colorDistanceSq(a, b) {
 
 // HELPER
 function getBoxShadow(pedal, inside, insetIfNotFull) {
-  // Note: Outer shadow is now applied via filter: drop-shadow() in getPedalTypeCss
-  // to prevent rotation of the shadow when pedal is rotated
-  
+  // const outerShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+  const outerShadow = "0 7px 7px rgba(0, 0, 0, 0.6)";
+
   // Handle full inside
   if (inside === "full") {
     return pedal["inside-border"]
-      ? `inset 0 0 0 3px ${pedal["inside-border"]}`
-      : "";
+      ? `${outerShadow}, inset 0 0 0 3px ${pedal["inside-border"]}`
+      : outerShadow;
   }
 
   // Handle partial inside
-  return insetIfNotFull;
+  return `${outerShadow}, ${insetIfNotFull}`;
 }
 
 
