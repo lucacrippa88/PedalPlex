@@ -1,7 +1,7 @@
 // zoom.js
 
-const minZoom = 0.7;
-const maxZoom = 1.2;
+const minZoom = 0.9;
+const maxZoom = 1.1;
 const step = 0.05;
 let zoomLevel = 1.0;
 

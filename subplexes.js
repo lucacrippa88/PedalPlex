@@ -53,10 +53,19 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
 
       $("body").append($tooltip);
       const offset = $iconWrapper.offset();
+      
+      // Get the current zoom level from the zoomed container
+      const zoomTarget = document.getElementById("preset") || document.getElementById("pedalboard");
+      const currentZoom = zoomTarget ? parseFloat(zoomTarget.style.zoom || 1) : 1;
+      
+      // Adjust position based on zoom level
+      const adjustedTop = offset.top / currentZoom - $tooltip.outerHeight() - 6;
+      const adjustedLeft = offset.left / currentZoom;
+      
       $tooltip.css({
         position: "absolute",
-        top: offset.top - $tooltip.outerHeight() - 6,
-        left: offset.left,
+        top: adjustedTop,
+        left: adjustedLeft,
         zIndex: 2000,
         maxWidth: "130px",
         backgroundColor: "rgba(0,0,0,0.85)",
