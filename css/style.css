@@ -1076,6 +1076,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   height: 16px;
   cursor: pointer;
   fill: white;
+  position: relative;
+  top: 12px;
 }
 
 /* CONTENITORE GLOW */
