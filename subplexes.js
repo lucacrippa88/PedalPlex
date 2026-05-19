@@ -44,28 +44,27 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
     </svg>
   `);
 
+  // Make icon wrapper position relative so tooltip can be positioned relative to it
+  $iconWrapper.css({
+    position: "relative",
+    display: "inline-block"
+  });
+
   $iconWrapper.off("mouseenter mouseleave")
     .on("mouseenter", function () {
-      // const $tooltip = $(`<div class="preset-tooltip-popup">${description}</div>`);
       // Safe description (no HTML injection)
       const safeDescription = decodeHTMLEntities(description);
       const $tooltip = $(`<div class="preset-tooltip-popup"></div>`).text(safeDescription);
 
-      $("body").append($tooltip);
+      // Append tooltip directly to the icon wrapper (inside zoomed container)
+      $iconWrapper.append($tooltip);
       
-      // Use getBoundingClientRect() for accurate viewport positioning regardless of zoom
-      const rect = $iconWrapper[0].getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-      
-      // Position tooltip above the icon
-      const tooltipTop = rect.top + scrollTop - $tooltip.outerHeight() - 6;
-      const tooltipLeft = rect.left + scrollLeft;
-      
+      // Position tooltip relative to icon wrapper
       $tooltip.css({
         position: "absolute",
-        top: tooltipTop,
-        left: tooltipLeft,
+        bottom: "calc(100% + 6px)", // Position above the icon
+        left: "50%",
+        transform: "translateX(-50%)", // Center horizontally
         zIndex: 2000,
         maxWidth: "130px",
         backgroundColor: "rgba(0,0,0,0.85)",
@@ -73,7 +72,9 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
         padding: "6px 8px",
         borderRadius: "4px",
         fontSize: "0.85rem",
-        pointerEvents: "none"
+        pointerEvents: "none",
+        whiteSpace: "normal",
+        wordWrap: "break-word"
       });
       $iconWrapper.data("tooltipEl", $tooltip);
     })
