@@ -639,14 +639,19 @@ function hidePresetLoader() {
       return;
     }
 
+    // Create a clean copy of preset without _id, _rev, and board_id
+    const cleanPreset = { ...preset };
+    delete cleanPreset._id;
+    delete cleanPreset._rev;
+    delete cleanPreset.board_id;
+
     // Create JSON data with rig reference
     const plexData = {
       type: 'pedalplex_plex',
       version: '1.0',
       exported_at: new Date().toISOString(),
-      plex: preset,
+      plex: cleanPreset,
       rig_reference: {
-        board_id: currentBoardId,
         board_name: currentBoard?.board_name || 'Unknown'
       }
     };
