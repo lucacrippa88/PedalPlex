@@ -446,9 +446,21 @@ function hidePresetLoader() {
 
   // Apply lock state to UI
   function applyLockState(isLocked) {
-    // Disable/enable all pedal controls using CSS class
+    // Get navigation dropdowns to exclude from locking
+    const navigationSelects = [
+      document.getElementById('pedalboardSelect'),
+      document.getElementById('folderSelect'),
+      document.getElementById('presetSelect')
+    ].filter(el => el !== null);
+
+    // Disable/enable all pedal controls using CSS class, but exclude navigation dropdowns
     const allControls = document.querySelectorAll('.knob, .switch, .led, input[type="range"], select, button.pedal-control, .pedal-control-wrapper');
     allControls.forEach(control => {
+      // Skip navigation dropdowns
+      if (navigationSelects.includes(control)) {
+        return;
+      }
+
       if (isLocked) {
         control.classList.add('control-locked');
         control.setAttribute('disabled', 'true');
