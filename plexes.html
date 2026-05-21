@@ -153,6 +153,28 @@ window.SUBPLEX_EDIT_MODE = true;
         </svg>
       </button>
 
+      <button id="downloadRigBtn" class="bx--btn bx--btn--tertiary bx--btn--icon-only" type="button" title="Download Rig as JSON">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M26,24v4H6V24H4v4H4a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2h0V24Z"></path>
+          <polygon points="26 14 24.59 12.59 17 20.17 17 2 15 2 15 20.17 7.41 12.59 6 14 16 24 26 14"></polygon>
+        </svg>
+      </button>
+
+      <button id="downloadPlexBtn" class="bx--btn bx--btn--tertiary bx--btn--icon-only" type="button" title="Download Plex as JSON">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M26,24v4H6V24H4v4H4a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2h0V24Z"></path>
+          <path d="M6,12l1.41,1.41L15,5.83V22h2V5.83l7.59,7.58L26,12,16,2Z"></path>
+        </svg>
+      </button>
+
+      <button id="uploadJsonBtn" class="bx--btn bx--btn--tertiary bx--btn--icon-only" type="button" title="Upload Rig/Plex JSON">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M26,24v4H6V24H4v4H4a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2h0V24Z"></path>
+          <path d="M6,12l1.41,1.41L15,5.83V22h2V5.83l7.59,7.58L26,12,16,2Z"></path>
+        </svg>
+      </button>
+      <input type="file" id="jsonFileInput" accept=".json" style="display: none;">
+
        <a href="rigs" class="showDesktop bx--btn bx--btn--tertiary" type="button" style="margin-left: auto!important; max-width:500px!important;">Back to Rigs
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
           <path d="M14 26L15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26z"/>
@@ -607,6 +629,291 @@ function hidePresetLoader() {
       setTimeout(restoreLockState, 100);
     });
   }
+</script>
+
+<script>
+  // ===========================
+  // Download/Upload JSON functionality
+  // ===========================
+
+  // Download current rig as JSON
+  function downloadRigAsJson() {
+    const currentBoardId = document.getElementById("pedalboardSelect")?.value;
+    const currentBoard = window.allPedalboards?.find(pb => pb._id === currentBoardId);
+
+    if (!currentBoard) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No Rig selected.',
+        showConfirmButton: false,
+        timer: 1500
+      });
+      return;
+    }
+
+    // Create JSON data
+    const rigData = {
+      type: 'pedalplex_rig',
+      version: '1.0',
+      exported_at: new Date().toISOString(),
+      rig: currentBoard
+    };
+
+    // Create blob and download
+    const jsonString = JSON.stringify(rigData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rig_${currentBoard.board_name || 'unnamed'}_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Downloaded!',
+      text: 'Rig exported as JSON.',
+      showConfirmButton: false,
+      timer: 1500
+    });
+  }
+
+  // Download current plex as JSON
+  function downloadPlexAsJson() {
+    const currentPresetId = document.getElementById("presetSelect")?.value;
+    const preset = window.presetMap?.[currentPresetId];
+    const currentBoardId = document.getElementById("pedalboardSelect")?.value;
+    const currentBoard = window.allPedalboards?.find(pb => pb._id === currentBoardId);
+
+    if (!preset) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No Plex selected.',
+        showConfirmButton: false,
+        timer: 1500
+      });
+      return;
+    }
+
+    // Create JSON data with rig reference
+    const plexData = {
+      type: 'pedalplex_plex',
+      version: '1.0',
+      exported_at: new Date().toISOString(),
+      plex: preset,
+      rig_reference: {
+        board_id: currentBoardId,
+        board_name: currentBoard?.board_name || 'Unknown'
+      }
+    };
+
+    // Create blob and download
+    const jsonString = JSON.stringify(plexData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `plex_${preset.preset_name || 'unnamed'}_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Downloaded!',
+      text: 'Plex exported as JSON.',
+      showConfirmButton: false,
+      timer: 1500
+    });
+  }
+
+  // Upload and import JSON file
+  function uploadJsonFile() {
+    const fileInput = document.getElementById('jsonFileInput');
+    fileInput.click();
+  }
+
+  // Handle file selection
+  document.getElementById('jsonFileInput')?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      try {
+        const jsonData = JSON.parse(event.target.result);
+        
+        // Validate JSON structure
+        if (!jsonData.type || !jsonData.version) {
+          throw new Error('Invalid PedalPlex JSON file.');
+        }
+
+        if (jsonData.type === 'pedalplex_rig') {
+          importRigFromJson(jsonData);
+        } else if (jsonData.type === 'pedalplex_plex') {
+          importPlexFromJson(jsonData);
+        } else {
+          throw new Error('Unknown file type: ' + jsonData.type);
+        }
+
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Import Failed',
+          text: error.message || 'Invalid JSON file.',
+          confirmButtonText: 'OK',
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--primary'
+          }
+        });
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset input
+    e.target.value = '';
+  });
+
+  // Import rig from JSON
+  function importRigFromJson(jsonData) {
+    if (!window.currentUser) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Login Required',
+        text: 'You must be logged in to import rigs.',
+        confirmButtonText: 'OK',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary'
+        }
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: 'Import Rig',
+      html: `
+        <p>Import rig: <strong>${jsonData.rig.board_name || 'Unnamed'}</strong></p>
+        <p style="margin-top:1rem;">This will create a new rig in your account.</p>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Import',
+      cancelButtonText: 'Cancel',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary',
+        cancelButton: 'bx--btn bx--btn--secondary'
+      },
+      preConfirm: async () => {
+        try {
+          // Prepare rig data for server
+          const rigToImport = {
+            ...jsonData.rig,
+            user_id: window.currentUser.userid,
+            imported_at: new Date().toISOString()
+          };
+          
+          // Remove _id and _rev to create new document
+          delete rigToImport._id;
+          delete rigToImport._rev;
+
+          // TODO: Add API call to save rig to server
+          // For now, show success message
+          Swal.fire({
+            icon: 'info',
+            title: 'Feature Coming Soon',
+            text: 'Rig import will be available in a future update. The rig data has been validated successfully.',
+            confirmButtonText: 'OK',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary'
+            }
+          });
+
+        } catch (error) {
+          Swal.showValidationMessage('Import failed: ' + error.message);
+        }
+      }
+    });
+  }
+
+  // Import plex from JSON
+  function importPlexFromJson(jsonData) {
+    if (!window.currentUser) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Login Required',
+        text: 'You must be logged in to import plexes.',
+        confirmButtonText: 'OK',
+        customClass: {
+          confirmButton: 'bx--btn bx--btn--primary'
+        }
+      });
+      return;
+    }
+
+    const currentBoardId = document.getElementById("pedalboardSelect")?.value;
+    
+    Swal.fire({
+      title: 'Import Plex',
+      html: `
+        <p>Import plex: <strong>${jsonData.plex.preset_name || 'Unnamed'}</strong></p>
+        <p style="margin-top:0.5rem; font-size:0.875rem; color:#666;">
+          Original rig: ${jsonData.rig_reference?.board_name || 'Unknown'}
+        </p>
+        <p style="margin-top:1rem;">This will create a new plex in the currently selected rig.</p>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Import',
+      cancelButtonText: 'Cancel',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary',
+        cancelButton: 'bx--btn bx--btn--secondary'
+      },
+      preConfirm: async () => {
+        if (!currentBoardId) {
+          Swal.showValidationMessage('Please select a rig first.');
+          return false;
+        }
+
+        try {
+          // Prepare plex data for server
+          const plexToImport = {
+            ...jsonData.plex,
+            user_id: window.currentUser.userid,
+            board_id: currentBoardId,
+            imported_at: new Date().toISOString()
+          };
+          
+          // Remove _id and _rev to create new document
+          delete plexToImport._id;
+          delete plexToImport._rev;
+
+          // TODO: Add API call to save plex to server
+          // For now, show success message
+          Swal.fire({
+            icon: 'info',
+            title: 'Feature Coming Soon',
+            text: 'Plex import will be available in a future update. The plex data has been validated successfully.',
+            confirmButtonText: 'OK',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary'
+            }
+          });
+
+        } catch (error) {
+          Swal.showValidationMessage('Import failed: ' + error.message);
+        }
+      }
+    });
+  }
+
+  // Initialize download/upload buttons
+  document.getElementById("downloadRigBtn")?.addEventListener("click", downloadRigAsJson);
+  document.getElementById("downloadPlexBtn")?.addEventListener("click", downloadPlexAsJson);
+  document.getElementById("uploadJsonBtn")?.addEventListener("click", uploadJsonFile);
 </script>
 
 
