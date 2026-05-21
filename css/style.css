@@ -622,7 +622,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 .control-locked {
   pointer-events: none !important;
-  opacity: 0.6 !important;
+  opacity: 0.9 !important;
   cursor: not-allowed !important;
   /* filter: grayscale(20%); */
 }
