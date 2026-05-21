@@ -615,7 +615,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.1);
+  /* background: rgba(0, 0, 0, 0.1); */
   pointer-events: none;
   z-index: 1;
 }
@@ -624,7 +624,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   pointer-events: none !important;
   opacity: 0.6 !important;
   cursor: not-allowed !important;
-  filter: grayscale(20%);
+  /* filter: grayscale(20%); */
 }
 
 .control-locked:hover {
