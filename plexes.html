@@ -413,16 +413,70 @@ function hidePresetLoader() {
 </script>
 
 <script>
-  // Lock Plex functionality
-  let isPlexLocked = false;
+  // Lock Plex functionality with localStorage persistence
+  const LOCK_STORAGE_KEY = 'pedalplex_locked_plexes';
 
-  function updateLockIcon() {
+  // Get lock status for a specific preset from localStorage
+  function getPlexLockStatus(presetId) {
+    if (!presetId) return false;
+    try {
+      const lockedPlexes = JSON.parse(localStorage.getItem(LOCK_STORAGE_KEY) || '{}');
+      return lockedPlexes[presetId] === true;
+    } catch (e) {
+      console.error('Error reading lock status:', e);
+      return false;
+    }
+  }
+
+  // Save lock status for a specific preset to localStorage
+  function setPlexLockStatus(presetId, isLocked) {
+    if (!presetId) return;
+    try {
+      const lockedPlexes = JSON.parse(localStorage.getItem(LOCK_STORAGE_KEY) || '{}');
+      if (isLocked) {
+        lockedPlexes[presetId] = true;
+      } else {
+        delete lockedPlexes[presetId];
+      }
+      localStorage.setItem(LOCK_STORAGE_KEY, JSON.stringify(lockedPlexes));
+    } catch (e) {
+      console.error('Error saving lock status:', e);
+    }
+  }
+
+  // Apply lock state to UI
+  function applyLockState(isLocked) {
+    // Disable/enable all pedal controls using CSS class
+    const allControls = document.querySelectorAll('.knob, .switch, .led, input[type="range"], select, button.pedal-control, .pedal-control-wrapper');
+    allControls.forEach(control => {
+      if (isLocked) {
+        control.classList.add('control-locked');
+        control.setAttribute('disabled', 'true');
+      } else {
+        control.classList.remove('control-locked');
+        control.removeAttribute('disabled');
+      }
+    });
+
+    // Add overlay to preset container
+    const presetContainer = document.getElementById('preset');
+    if (presetContainer) {
+      if (isLocked) {
+        presetContainer.classList.add('plex-locked-overlay');
+      } else {
+        presetContainer.classList.remove('plex-locked-overlay');
+      }
+    }
+  }
+
+  // Update lock icon based on current state
+  function updateLockIcon(isLocked) {
     const lockBtn = document.getElementById("lockPresetBtn");
     const lockIcon = document.getElementById("lockIcon");
     
     if (!lockBtn || !lockIcon) return;
 
-    if (isPlexLocked) {
+    if (isLocked) {
       // Locked state - show locked icon
       lockIcon.innerHTML = '<path d="M24,14H22V10a6,6,0,0,0-12,0v4H8a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V16A2,2,0,0,0,24,14ZM12,10a4,4,0,0,1,8,0v4H12ZM24,28H8V16H24Z"></path><circle cx="16" cy="22" r="2"></circle>';
       lockBtn.classList.remove('bx--btn--tertiary');
@@ -437,6 +491,17 @@ function hidePresetLoader() {
     }
   }
 
+  // Restore lock state for current preset
+  function restoreLockState() {
+    const currentPresetId = document.getElementById("presetSelect")?.value;
+    if (!currentPresetId) return;
+    
+    const isLocked = getPlexLockStatus(currentPresetId);
+    applyLockState(isLocked);
+    updateLockIcon(isLocked);
+  }
+
+  // Toggle lock modal
   function togglePlexLock() {
     const currentPresetId = document.getElementById("presetSelect")?.value;
     const preset = window.presetMap?.[currentPresetId];
@@ -452,6 +517,8 @@ function hidePresetLoader() {
       return;
     }
 
+    const currentLockStatus = getPlexLockStatus(currentPresetId);
+
     Swal.fire({
       title: 'Read-Only mode',
       html: `
@@ -460,7 +527,7 @@ function hidePresetLoader() {
           
           <!-- Toggle -->
           <div class="pp-toggle">
-            <input type="checkbox" id="lockToggle" ${isPlexLocked ? 'checked' : ''}>
+            <input type="checkbox" id="lockToggle" ${currentLockStatus ? 'checked' : ''}>
             <label for="lockToggle">
               <span class="pp-toggle-switch"></span>
               <span id="lockToggleLabel" class="pp-toggle-text"></span>
@@ -492,37 +559,18 @@ function hidePresetLoader() {
 
       preConfirm: () => {
         const enabled = document.getElementById("lockToggle").checked;
-        isPlexLocked = enabled;
         
-        // Update lock icon
-        updateLockIcon();
+        // Save to localStorage
+        setPlexLockStatus(currentPresetId, enabled);
         
-        // Disable/enable all pedal controls using CSS class
-        const allControls = document.querySelectorAll('.knob, .switch, .led, input[type="range"], select, button.pedal-control, .pedal-control-wrapper');
-        allControls.forEach(control => {
-          if (isPlexLocked) {
-            control.classList.add('control-locked');
-            control.setAttribute('disabled', 'true');
-          } else {
-            control.classList.remove('control-locked');
-            control.removeAttribute('disabled');
-          }
-        });
-
-        // Add overlay to preset container
-        const presetContainer = document.getElementById('preset');
-        if (presetContainer) {
-          if (isPlexLocked) {
-            presetContainer.classList.add('plex-locked-overlay');
-          } else {
-            presetContainer.classList.remove('plex-locked-overlay');
-          }
-        }
+        // Apply UI changes
+        applyLockState(enabled);
+        updateLockIcon(enabled);
 
         Swal.fire({
           icon: 'success',
-          title: isPlexLocked ? 'Plex Locked' : 'Plex Unlocked',
-          text: isPlexLocked ? 'Controls are now locked.' : 'Controls are now unlocked.',
+          title: enabled ? 'Plex Locked' : 'Plex Unlocked',
+          text: enabled ? 'Controls are now locked.' : 'Controls are now unlocked.',
           showConfirmButton: false,
           timer: 1500
         });
@@ -535,8 +583,18 @@ function hidePresetLoader() {
   // Initialize lock button
   document.getElementById("lockPresetBtn")?.addEventListener("click", togglePlexLock);
   
-  // Initialize icon state
-  updateLockIcon();
+  // Restore lock state on page load
+  window.addEventListener('load', () => {
+    setTimeout(restoreLockState, 500);
+  });
+
+  // Restore lock state when preset changes
+  const presetSelectForLock = document.getElementById("presetSelect");
+  if (presetSelectForLock) {
+    presetSelectForLock.addEventListener('change', () => {
+      setTimeout(restoreLockState, 100);
+    });
+  }
 </script>
 
 
