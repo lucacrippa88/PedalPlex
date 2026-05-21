@@ -153,14 +153,12 @@ window.SUBPLEX_EDIT_MODE = true;
         </svg>
       </button>
 
-      <button id="importExportPlexBtn" class="bx--btn bx--btn--tertiary bx--btn--icon-only" type="button" title="Import/Export Plex">
+      <button id="downloadPlexBtn" class="bx--btn bx--btn--tertiary bx--btn--icon-only" type="button" title="Download Plex as JSON">
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
           <path d="M26,24v4H6V24H4v4H4a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2h0V24Z"></path>
-          <path d="M14,18h4V11h5l-7-7-7,7h5v7z"></path>
-          <path d="M14,23h4v-3h-4v3z"></path>
+          <polygon points="26 14 24.59 12.59 17 20.17 17 2 15 2 15 20.17 7.41 12.59 6 14 16 24 26 14"></polygon>
         </svg>
       </button>
-      <input type="file" id="jsonFileInput" accept=".json" style="display: none;">
 
        <a href="rigs" class="showDesktop bx--btn bx--btn--tertiary" type="button" style="margin-left: auto!important; max-width:500px!important;">Back to Rigs
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
@@ -620,70 +618,8 @@ function hidePresetLoader() {
 
 <script>
   // ===========================
-  // Import/Export Plex JSON functionality
+  // Download Plex JSON functionality
   // ===========================
-
-  // Open Import/Export modal
-  function openImportExportModal() {
-    const currentPresetId = document.getElementById("presetSelect")?.value;
-    const preset = window.presetMap?.[currentPresetId];
-
-    if (!preset) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'No Plex selected.',
-        showConfirmButton: false,
-        timer: 1500
-      });
-      return;
-    }
-
-    Swal.fire({
-      title: 'Import/Export Plex',
-      html: `
-        <div style="text-align:left; margin-top:1rem;">
-          <p style="margin-bottom:1.5rem;">Download or upload this Plex as a JSON file for backup or sharing.</p>
-          
-          <div style="display:flex; flex-direction:column; gap:1rem;">
-            <button id="modalDownloadBtn" class="bx--btn bx--btn--primary" style="width:100%;">
-              <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" style="margin-right:8px;">
-                <path d="M26,24v4H6V24H4v4H4a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2h0V24Z"></path>
-                <polygon points="26 14 24.59 12.59 17 20.17 17 2 15 2 15 20.17 7.41 12.59 6 14 16 24 26 14"></polygon>
-              </svg>
-              Download Plex as JSON
-            </button>
-            
-            <button id="modalUploadBtn" class="bx--btn bx--btn--secondary" style="width:100%;">
-              <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" style="margin-right:8px;">
-                <path d="M26,24v4H6V24H4v4H4a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2h0V24Z"></path>
-                <path d="M6,12l1.41,1.41L15,5.83V22h2V5.83l7.59,7.58L26,12,16,2Z"></path>
-              </svg>
-              Upload Plex JSON
-            </button>
-          </div>
-        </div>
-      `,
-      showCloseButton: true,
-      showConfirmButton: false,
-      customClass: {
-        popup: 'import-export-modal'
-      },
-      didOpen: () => {
-        // Download button handler
-        document.getElementById('modalDownloadBtn')?.addEventListener('click', () => {
-          Swal.close();
-          downloadPlexAsJson();
-        });
-
-        // Upload button handler
-        document.getElementById('modalUploadBtn')?.addEventListener('click', () => {
-          Swal.close();
-          uploadPlexJson();
-        });
-      }
-    });
-  }
 
   // Download current plex as JSON
   function downloadPlexAsJson() {
@@ -736,124 +672,8 @@ function hidePresetLoader() {
     });
   }
 
-  // Upload and import plex JSON file
-  function uploadPlexJson() {
-    const fileInput = document.getElementById('jsonFileInput');
-    fileInput.click();
-  }
-
-  // Handle file selection
-  document.getElementById('jsonFileInput')?.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      try {
-        const jsonData = JSON.parse(event.target.result);
-        
-        // Validate JSON structure
-        if (!jsonData.type || !jsonData.version) {
-          throw new Error('Invalid PedalPlex JSON file.');
-        }
-
-        if (jsonData.type === 'pedalplex_plex') {
-          importPlexFromJson(jsonData);
-        } else {
-          throw new Error('This file is not a Plex. Please select a valid Plex JSON file.');
-        }
-
-      } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Import Failed',
-          text: error.message || 'Invalid JSON file.',
-          confirmButtonText: 'OK',
-          customClass: {
-            confirmButton: 'bx--btn bx--btn--primary'
-          }
-        });
-      }
-    };
-    reader.readAsText(file);
-    
-    // Reset input
-    e.target.value = '';
-  });
-
-  // Import plex from JSON
-  function importPlexFromJson(jsonData) {
-    if (!window.currentUser) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Login Required',
-        text: 'You must be logged in to import plexes.',
-        confirmButtonText: 'OK',
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--primary'
-        }
-      });
-      return;
-    }
-
-    const currentBoardId = document.getElementById("pedalboardSelect")?.value;
-    
-    Swal.fire({
-      title: 'Import Plex',
-      html: `
-        <p>Import plex: <strong>${jsonData.plex.preset_name || 'Unnamed'}</strong></p>
-        <p style="margin-top:0.5rem; font-size:0.875rem; color:#666;">
-          Original rig: ${jsonData.rig_reference?.board_name || 'Unknown'}
-        </p>
-        <p style="margin-top:1rem;">This will create a new plex in the currently selected rig.</p>
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Import',
-      cancelButtonText: 'Cancel',
-      customClass: {
-        confirmButton: 'bx--btn bx--btn--primary',
-        cancelButton: 'bx--btn bx--btn--secondary'
-      },
-      preConfirm: async () => {
-        if (!currentBoardId) {
-          Swal.showValidationMessage('Please select a rig first.');
-          return false;
-        }
-
-        try {
-          // Prepare plex data for server
-          const plexToImport = {
-            ...jsonData.plex,
-            user_id: window.currentUser.userid,
-            board_id: currentBoardId,
-            imported_at: new Date().toISOString()
-          };
-          
-          // Remove _id and _rev to create new document
-          delete plexToImport._id;
-          delete plexToImport._rev;
-
-          // TODO: Add API call to save plex to server
-          // For now, show success message
-          Swal.fire({
-            icon: 'info',
-            title: 'Feature Coming Soon',
-            text: 'Plex import will be available in a future update. The plex data has been validated successfully.',
-            confirmButtonText: 'OK',
-            customClass: {
-              confirmButton: 'bx--btn bx--btn--primary'
-            }
-          });
-
-        } catch (error) {
-          Swal.showValidationMessage('Import failed: ' + error.message);
-        }
-      }
-    });
-  }
-
-  // Initialize import/export button
-  document.getElementById("importExportPlexBtn")?.addEventListener("click", openImportExportModal);
+  // Initialize download button
+  document.getElementById("downloadPlexBtn")?.addEventListener("click", downloadPlexAsJson);
 </script>
 
 
