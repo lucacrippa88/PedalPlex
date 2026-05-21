@@ -146,6 +146,13 @@ window.SUBPLEX_EDIT_MODE = true;
         </svg>
       </button>
 
+      <button id="lockPresetBtn" class="bx--btn bx--btn--tertiary bx--btn--icon-only" type="button" title="Lock Plex">
+        <svg id="lockIcon" focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M24,14H22V10a6,6,0,0,0-12,0v4H8a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V16A2,2,0,0,0,24,14ZM12,10a4,4,0,0,1,8,0v4H12ZM24,28H8V16H24Z"></path>
+          <circle cx="16" cy="22" r="2"></circle>
+        </svg>
+      </button>
+
        <a href="rigs" class="showDesktop bx--btn bx--btn--tertiary" type="button" style="margin-left: auto!important; max-width:500px!important;">Back to Rigs
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
           <path d="M14 26L15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26z"/>
@@ -403,6 +410,133 @@ function hidePresetLoader() {
 <script>
   // Share button -> logic in plexes-share.js
   document.getElementById("sharePresetBtn")?.addEventListener("click", openShareModal);
+</script>
+
+<script>
+  // Lock Plex functionality
+  let isPlexLocked = false;
+
+  function updateLockIcon() {
+    const lockBtn = document.getElementById("lockPresetBtn");
+    const lockIcon = document.getElementById("lockIcon");
+    
+    if (!lockBtn || !lockIcon) return;
+
+    if (isPlexLocked) {
+      // Locked state - show locked icon
+      lockIcon.innerHTML = '<path d="M24,14H22V10a6,6,0,0,0-12,0v4H8a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V16A2,2,0,0,0,24,14ZM12,10a4,4,0,0,1,8,0v4H12ZM24,28H8V16H24Z"></path><circle cx="16" cy="22" r="2"></circle>';
+      lockBtn.classList.remove('bx--btn--tertiary');
+      lockBtn.classList.add('bx--btn--primary');
+      lockBtn.setAttribute('title', 'Unlock Plex');
+    } else {
+      // Unlocked state - show unlocked icon
+      lockIcon.innerHTML = '<path d="M24,14H10V10a6,6,0,0,1,12,0v1h2V10A8,8,0,0,0,8,10v4H8a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V16A2,2,0,0,0,24,14ZM8,28V16H24V28Z"></path><circle cx="16" cy="22" r="2"></circle>';
+      lockBtn.classList.remove('bx--btn--primary');
+      lockBtn.classList.add('bx--btn--tertiary');
+      lockBtn.setAttribute('title', 'Lock Plex');
+    }
+  }
+
+  function togglePlexLock() {
+    const currentPresetId = document.getElementById("presetSelect")?.value;
+    const preset = window.presetMap?.[currentPresetId];
+
+    if (!preset) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No Plex selected.',
+        showConfirmButton: false,
+        timer: 1500
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: 'Lock Plex',
+      html: `
+        <div style="text-align:left; margin-top:1rem;">
+          <p style="margin-bottom:1rem;">Lock this Plex to prevent unintentional control changes.</p>
+          
+          <!-- Toggle -->
+          <div class="pp-toggle">
+            <input type="checkbox" id="lockToggle" ${isPlexLocked ? 'checked' : ''}>
+            <label for="lockToggle">
+              <span class="pp-toggle-switch"></span>
+              <span id="lockToggleLabel" class="pp-toggle-text"></span>
+            </label>
+          </div>
+        </div>
+      `,
+      showCloseButton: true,
+      confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Apply",
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary'
+      },
+
+      didOpen: () => {
+        const toggle = document.getElementById("lockToggle");
+        const label = document.getElementById("lockToggleLabel");
+
+        function updateUI() {
+          if (toggle.checked) {
+            label.textContent = "Locked";
+          } else {
+            label.textContent = "Unlocked";
+          }
+        }
+
+        updateUI();
+        toggle.addEventListener("change", updateUI);
+      },
+
+      preConfirm: () => {
+        const enabled = document.getElementById("lockToggle").checked;
+        isPlexLocked = enabled;
+        
+        // Update lock icon
+        updateLockIcon();
+        
+        // Disable/enable all pedal controls using CSS class
+        const allControls = document.querySelectorAll('.knob, .switch, .led, input[type="range"], select, button.pedal-control, .pedal-control-wrapper');
+        allControls.forEach(control => {
+          if (isPlexLocked) {
+            control.classList.add('control-locked');
+            control.setAttribute('disabled', 'true');
+          } else {
+            control.classList.remove('control-locked');
+            control.removeAttribute('disabled');
+          }
+        });
+
+        // Add overlay to preset container
+        const presetContainer = document.getElementById('preset');
+        if (presetContainer) {
+          if (isPlexLocked) {
+            presetContainer.classList.add('plex-locked-overlay');
+          } else {
+            presetContainer.classList.remove('plex-locked-overlay');
+          }
+        }
+
+        Swal.fire({
+          icon: 'success',
+          title: isPlexLocked ? 'Plex Locked' : 'Plex Unlocked',
+          text: isPlexLocked ? 'Controls are now locked.' : 'Controls are now unlocked.',
+          showConfirmButton: false,
+          timer: 1500
+        });
+
+        return true;
+      }
+    });
+  }
+
+  // Initialize lock button
+  document.getElementById("lockPresetBtn")?.addEventListener("click", togglePlexLock);
+  
+  // Initialize icon state
+  updateLockIcon();
 </script>
 
 
