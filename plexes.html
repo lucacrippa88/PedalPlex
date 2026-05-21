@@ -453,10 +453,10 @@ function hidePresetLoader() {
     }
 
     Swal.fire({
-      title: 'Lock Plex',
+      title: 'Read-Only mode',
       html: `
         <div style="text-align:left; margin-top:1rem;">
-          <p style="margin-bottom:1rem;">Lock this Plex to prevent unintentional control changes.</p>
+          <p style="margin-bottom:1rem;">Temporarily make this Plex Read-Only to prevent unintentional control changes.</p>
           
           <!-- Toggle -->
           <div class="pp-toggle">
@@ -480,9 +480,9 @@ function hidePresetLoader() {
 
         function updateUI() {
           if (toggle.checked) {
-            label.textContent = "Locked";
+            label.textContent = "Read-Only";
           } else {
-            label.textContent = "Unlocked";
+            label.textContent = "Editable";
           }
         }
 
