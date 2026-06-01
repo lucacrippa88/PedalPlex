@@ -190,7 +190,7 @@ function displayBadges(earnedBadges, badgeDefinitions) {
     // Styling for earned vs unearned badges
     const opacity = isEarned ? '1' : '0.4';
     const filter = isEarned ? 'none' : 'grayscale(100%)';
-    const borderColor = isEarned ? '#0f62fe' : '#e0e0e0';
+    const borderColor = isEarned ? '#9C54D5' : '#e0e0e0';
     const bgGradient = isEarned ?
       'linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%)' :
       'linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%)';
@@ -204,7 +204,7 @@ function displayBadges(earnedBadges, badgeDefinitions) {
         day: 'numeric'
       });
       dateInfo = `
-        <small style="font-size: 11px; color: #24a148; display: block; margin-top: 8px; font-weight: 600;">
+        <small style="font-size: 11px; color: #9C54D5; display: block; margin-top: 8px; font-weight: 600;">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" fill="currentColor" style="vertical-align: middle; margin-right: 4px;">
             <path d="M13 24l-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9 13 24z"/>
           </svg>
@@ -238,8 +238,8 @@ function displayBadges(earnedBadges, badgeDefinitions) {
         " onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)';"
            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)';">
           <img src="${badgeDef.image}" alt="${badgeDef.name}"
-               style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 12px; filter: ${filter} drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
-          <h4 style="font-size: 14px; font-weight: 600; margin: 8px 0 4px 0; color: #161616;">${badgeDef.name}</h4>
+               style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 12px; filter: ${filter} drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
+          <h4 style="text-transform:uppercase; font-size: 14px; font-weight: 600; margin: 8px 0 4px 0; color: #161616;">${badgeDef.name}</h4>
           <p style="font-size: 12px; color: #525252; margin: 4px 0; line-height: 1.4;">${badgeDef.description}</p>
           ${dateInfo}
         </div>
