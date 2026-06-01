@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings - PedalPlex</title>
+  <link rel="icon" href="logos/pedalplex_logo_gradient.png" type="image/x-icon">
+  <link rel="stylesheet" href="css/carbon-components.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+(function() {
+  const consent = localStorage.getItem('pedalplex_cookie_consent');
+  if (consent === 'accept') {
+    if (!window.gtagLoaded) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-BX9P5WN5HH');
+      window.gtagLoaded = true;
+    }
+  }
+})();
+</script>
+
+</head>
+<body>
+
+  <div id="page-content">
+
+    <h2>Account Settings</h2><br><br>
+    
+    <h3>Change Password</h3><br><br>
+    <form id="changePasswordForm" style="max-width: 400px;">
+      <!-- Old Password -->
+      <div style="position: relative; margin-bottom: 10px;">
+        <input type="password" id="oldPassword" placeholder="Old Password" required class="bx--text-input"
+            style="width: 100%;" />
+        <button type="button" id="togglePasswordOld" aria-label="Show password" 
+            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="bx--icon" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
+            <path d="M16,10a6,6,0,1,1-6,6A6,6,0,0,1,16,10Zm0-2C10.5,8,5.8,12,4,16c1.8,4,6.5,8,12,8s10.2-4,12-8C26.2,12,21.5,8,16,8Z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- New Password -->
+      <div style="position: relative; margin-bottom: 10px;">
+        <input type="password" id="newPassword" placeholder="New Password" required class="bx--text-input"
+            style="width: 100%;" />
+        <button type="button" id="togglePasswordNew" aria-label="Show password" 
+            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="bx--icon" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
+            <path d="M16,10a6,6,0,1,1-6,6A6,6,0,0,1,16,10Zm0-2C10.5,8,5.8,12,4,16c1.8,4,6.5,8,12,8s10.2-4,12-8C26.2,12,21.5,8,16,8Z"/>
+          </svg>
+        </button>
+      </div>
+
+      <br>
+
+      <button class="bx--btn bx--btn--primary" type="submit">
+        <svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'>
+          <path d='M21,2a8.9977,8.9977,0,0,0-8.6119,11.6118L2,24v6H8L18.3881,19.6118A9,9,0,1,0,21,2Zm0,16a7.0125,7.0125,0,0,1-2.0322-.3022L17.821,17.35l-.8472.8472-3.1811,3.1812L12.4141,20,11,21.4141l1.3787,1.3786-1.5859,1.586L9.4141,23,8,24.4141l1.3787,1.3786L7.1716,28H4V24.8284l9.8023-9.8023.8472-.8474-.3473-1.1467A7,7,0,1,1,21,18Z'></path><circle cx="22" cy="10" r="2"></circle>
+        </svg>
+        Change Password
+      </button>
+      <button id="linkGoogleBtn" class="bx--btn bx--btn--secondary">
+        <svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'>
+          <path d="M29.25,6.76a6,6,0,0,0-8.5,0l1.42,1.42a4,4,0,1,1,5.67,5.67l-8,8a4,4,0,1,1-5.67-5.66l1.41-1.42-1.41-1.42-1.42,1.42a6,6,0,0,0,0,8.5A6,6,0,0,0,17,25a6,6,0,0,0,4.27-1.76l8-8A6,6,0,0,0,29.25,6.76Z"></path><path d="M4.19,24.82a4,4,0,0,1,0-5.67l8-8a4,4,0,0,1,5.67,0A3.94,3.94,0,0,1,19,14a4,4,0,0,1-1.17,2.85L15.71,19l1.42,1.42,2.12-2.12a6,6,0,0,0-8.51-8.51l-8,8a6,6,0,0,0,0,8.51A6,6,0,0,0,7,28a6.07,6.07,0,0,0,4.28-1.76L9.86,24.82A4,4,0,0,1,4.19,24.82Z"></path>
+        </svg>
+        Link Google
+      </button>
+    </form>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="fullscreen-menu.js"></script>
+  <script src="nav.js"></script>
+
+  <script>
+  // Check user authentication
+  $(document).ready(function() {
+    if (window.location.protocol === 'file:') {
+      alert('Please run this app via a local HTTP server for full functionality.');
+      $('#page-content').hide();
+      return;
+    }
+
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      window.location.href = 'login';
+      return;
+    }
+
+    $.ajax({
+      url: 'https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php',
+      method: 'GET',
+      dataType: 'json',
+      headers: { 'Authorization': 'Bearer ' + token },
+      success: function(userFromServer) {
+        $('#page-content').show();
+        window.currentUser = userFromServer;
+      },
+      error: function(xhr) {
+        if (xhr.status === 401) {
+          localStorage.removeItem('authToken');
+          window.location.href = 'login';
+        } else {
+          alert('Failed to verify authentication.');
+        }
+      }
+    });
+  });
+  </script>
+
+  <script>
+    // Toggle password visibility
+    const toggleOld = document.getElementById('togglePasswordOld');
+    const toggleNew = document.getElementById('togglePasswordNew');
+    const oldInput = document.getElementById('oldPassword');
+    const newInput = document.getElementById('newPassword');
+
+    toggleOld.addEventListener('click', () => { oldInput.type = oldInput.type === 'password' ? 'text' : 'password'; });
+    toggleNew.addEventListener('click', () => { newInput.type = newInput.type === 'password' ? 'text' : 'password'; });
+
+    // Change password form submission
+    $('#changePasswordForm').submit(function (e) {
+      e.preventDefault();
+      const token = localStorage.getItem('authToken');
+
+      $.ajax({
+        url: 'https://api.pedalplex.com/USER_CHANGE_PASSWORD.php',
+        type: 'POST',
+        contentType: 'application/json',
+        headers: { 'Authorization': 'Bearer ' + token },
+        data: JSON.stringify({
+          oldPassword: $('#oldPassword').val(),
+          newPassword: $('#newPassword').val()
+        }),
+        success: function () {
+          Swal.fire({ title: 'Password changed!', icon: 'success', timer: 2000, showConfirmButton: false });
+          setTimeout(() => window.location.reload(), 2000);
+        },
+        error: function (res) {
+          let errorMsg = "Unknown error";
+          try { const json = JSON.parse(res.responseText); errorMsg = json.error || errorMsg; } catch(e){ }
+          Swal.fire({ icon: 'error', title: 'Change Failed', text: errorMsg });
+        }
+      });
+    });
+
+    // Google linking
+    document.getElementById('linkGoogleBtn').addEventListener('click', () => {
+      google.accounts.id.initialize({
+        client_id: '760340498879-qkpjocfkd0204ihu0qdmaaegr5bdp6gj.apps.googleusercontent.com',
+        callback: handleGoogleLink
+      });
+      google.accounts.id.prompt();
+    });
+
+    function handleGoogleLink(response) {
+      const id_token = response.credential;
+      const token = localStorage.getItem('authToken');
+
+      $.ajax({
+        url: 'https://api.pedalplex.com/USER_LINK_GOOGLE.php',
+        type: 'POST',
+        contentType: 'application/json',
+        headers: { 'Authorization': 'Bearer ' + token },
+        data: JSON.stringify({ id_token }),
+        success: function(res){
+          if(res.success){
+            Swal.fire('Linked!', 'Your Google account has been linked.', 'success');
+          } else {
+            Swal.fire('Error', res.error || 'Impossible to link Google account. Please retry later.', 'error');
+          }
+        },
+        error: function(){
+          Swal.fire('Server error', 'Retry later.', 'error');
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
