@@ -242,45 +242,9 @@
 <script>
 // Badge Management Functions
 function awardAndLoadBadges() {
-  const token = localStorage.getItem('authToken');
-  
-  // First, call the badge award endpoint (checks and awards eligible badges)
-  $.ajax({
-    url: 'https://api.pedalplex.com/USER_AWARD_BADGES.php',
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer ' + token },
-    success: function(response) {
-      // console.log('Badges checked:', response);
-      
-      // Show notification if new badges were awarded
-      if (response.badges_awarded && response.badges_awarded.length > 0) {
-        // Load badge definitions to show enhanced popup
-        $.getJSON('badges.json', function(badgeConfig) {
-          showBadgeAwardPopup(response.badges_awarded, badgeConfig.badges);
-        }).fail(function() {
-          // Fallback to simple notification
-          const badgeNames = response.badges_awarded.map(b => {
-            return b.id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-          }).join(', ');
-          Swal.fire({
-            icon: 'success',
-            title: 'New Achievement!',
-            text: `You earned: ${badgeNames}`,
-            timer: 3000,
-            showConfirmButton: false
-          });
-        });
-      }
-      
-      // Then load and display all badges
-      loadUserBadges();
-    },
-    error: function(xhr) {
-      console.error('Failed to check badges:', xhr);
-      // Still try to load existing badges even if award check fails
-      loadUserBadges();
-    }
-  });
+  // Simply load and display all user badges
+  // Badge awarding happens on login via auth.js
+  loadUserBadges();
 }
 
 function loadUserBadges() {
