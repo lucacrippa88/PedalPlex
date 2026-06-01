@@ -5,6 +5,24 @@
       "name": "Founding Member",
       "description": "Registered before June 10th, 2026",
       "image": "badges/founding_member.png"
+    },
+    {
+      "id": "first-plex",
+      "name": "First Plex",
+      "description": "You created your first Plex!",
+      "image": "badges/first_plex.png"
+    },
+    {
+      "id": "first-share",
+      "name": "First Shared Plex",
+      "description": "You shared your first Plex!",
+      "image": "badges/first_share.png"
+    },
+    {
+      "id": "first-gear",
+      "name": "First Gear Published",
+      "description": "You got your first Gear published!",
+      "image": "badges/first_gear.png"
     }
   ]
 }
