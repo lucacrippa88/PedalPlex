@@ -103,12 +103,18 @@ $('#authForm').on('submit', function (e) {
           method: 'POST',
           headers: { 'Authorization': 'Bearer ' + res.token },
           success: function(badgeRes) {
+            console.log('Badge API Response:', badgeRes);
+            
             // Check if new badges were awarded
             if (badgeRes.badges_awarded && badgeRes.badges_awarded.length > 0) {
+              console.log('New badges awarded:', badgeRes.badges_awarded);
+              
               // Load badge definitions to get images and descriptions
               $.getJSON('badges.json', function(badgeConfig) {
+                console.log('Badges config loaded:', badgeConfig);
                 showBadgeAwardPopup(badgeRes.badges_awarded, badgeConfig.badges);
-              }).fail(function() {
+              }).fail(function(jqxhr, textStatus, error) {
+                console.error('Failed to load badges.json:', textStatus, error);
                 // Fallback if badges.json fails to load
                 showSimpleBadgeNotification(badgeRes.badges_awarded);
               });
