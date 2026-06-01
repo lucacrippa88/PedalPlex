@@ -488,4 +488,157 @@ function formatTime(seconds) {
 }
 
 // --- Check periodico ogni 30 secondi ---
+
+// ======================================================================
+// BADGE NOTIFICATION SYSTEM
+// ======================================================================
+
+// Check for pending badges on page load
+$(document).ready(function() {
+    // Wait a bit for page to fully load
+    setTimeout(checkAndShowPendingBadges, 1500);
+});
+
+function checkAndShowPendingBadges() {
+    const pendingBadgesJson = localStorage.getItem('pendingBadges');
+    
+    if (!pendingBadgesJson) {
+        return; // No pending badges
+    }
+    
+    try {
+        const pendingBadges = JSON.parse(pendingBadgesJson);
+        
+        if (!pendingBadges || pendingBadges.length === 0) {
+            localStorage.removeItem('pendingBadges');
+            return;
+        }
+        
+        // Load badge definitions and show popup
+        $.getJSON('badges.json', function(badgeConfig) {
+            showBadgeAwardPopup(pendingBadges, badgeConfig.badges);
+            // Clear pending badges after showing
+            localStorage.removeItem('pendingBadges');
+        }).fail(function() {
+            console.error('Failed to load badges.json for notification');
+            // Show simple notification as fallback
+            showSimpleBadgeNotification(pendingBadges);
+            localStorage.removeItem('pendingBadges');
+        });
+        
+    } catch (e) {
+        console.error('Error parsing pending badges:', e);
+        localStorage.removeItem('pendingBadges');
+    }
+}
+
+function showBadgeAwardPopup(earnedBadges, badgeDefinitions) {
+    // Build HTML for each badge
+    let badgesHtml = '<div style="display: flex; flex-direction: column; gap: 20px; margin: 20px 0;">';
+    
+    earnedBadges.forEach(function(earned) {
+        const badgeDef = badgeDefinitions.find(function(b) { return b.id === earned.id; });
+        if (!badgeDef) return;
+        
+        badgesHtml += '<div style="' +
+            'display: flex;' +
+            'align-items: center;' +
+            'gap: 20px;' +
+            'padding: 20px;' +
+            'background: linear-gradient(135deg, #f4f4f4 0%, #ffffff 100%);' +
+            'border: 2px solid #0f62fe;' +
+            'border-radius: 8px;' +
+            'box-shadow: 0 2px 8px rgba(15, 98, 254, 0.2);' +
+        '">' +
+            '<img src="' + badgeDef.image + '" alt="' + badgeDef.name + '" ' +
+                 'style="width: 80px; height: 80px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">' +
+            '<div style="text-align: left; flex: 1;">' +
+                '<h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #161616;">' + badgeDef.name + '</h3>' +
+                '<p style="margin: 0; font-size: 14px; color: #525252; line-height: 1.4;">' + badgeDef.description + '</p>' +
+            '</div>' +
+        '</div>';
+    });
+    
+    badgesHtml += '</div>';
+    
+    const title = earnedBadges.length === 1 ? 'Achievement Unlocked!' : 'Achievements Unlocked!';
+    
+    Swal.fire({
+        title: title,
+        html: badgesHtml,
+        icon: null,
+        showCloseButton: true,
+        showCancelButton: true,
+        confirmButtonText: '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" style="vertical-align: middle; margin-right: 8px;"><path d="M16,4A12,12,0,1,1,4,16,12,12,0,0,1,16,4m0-2A14,14,0,1,0,30,16,14,14,0,0,0,16,2Z"></path><path d="M16,10a2,2,0,1,0,2,2A2,2,0,0,0,16,10Z"></path><path d="M16,16a1,1,0,0,0-1,1v8a1,1,0,0,0,2,0V17A1,1,0,0,0,16,16Z"></path></svg>View Profile',
+        cancelButtonText: 'Continue',
+        allowOutsideClick: true,
+        allowEscapeKey: true,
+        customClass: {
+            popup: 'badge-award-popup',
+            confirmButton: 'bx--btn bx--btn--primary',
+            cancelButton: 'bx--btn bx--btn--secondary',
+            closeButton: 'badge-close-button'
+        },
+        buttonsStyling: false,
+        width: '600px',
+        didOpen: function() {
+            // Add custom styling for close button
+            const closeBtn = document.querySelector('.badge-close-button');
+            if (closeBtn) {
+                closeBtn.style.cssText = 
+                    'position: absolute;' +
+                    'top: 16px;' +
+                    'right: 16px;' +
+                    'width: 32px;' +
+                    'height: 32px;' +
+                    'padding: 0;' +
+                    'background: transparent;' +
+                    'border: none;' +
+                    'cursor: pointer;' +
+                    'color: #525252;' +
+                    'transition: color 0.2s;';
+                closeBtn.innerHTML = 
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" fill="currentColor">' +
+                        '<path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/>' +
+                    '</svg>';
+                closeBtn.addEventListener('mouseenter', function() { closeBtn.style.color = '#161616'; });
+                closeBtn.addEventListener('mouseleave', function() { closeBtn.style.color = '#525252'; });
+            }
+        }
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            // Go to profile page
+            window.location.href = 'profile';
+        }
+    });
+}
+
+function showSimpleBadgeNotification(earnedBadges) {
+    const badgeNames = earnedBadges.map(function(b) {
+        return b.id.split('-').map(function(word) { 
+            return word.charAt(0).toUpperCase() + word.slice(1); 
+        }).join(' ');
+    }).join(', ');
+    
+    Swal.fire({
+        icon: 'success',
+        title: 'Achievement Unlocked!',
+        text: 'You earned: ' + badgeNames,
+        showCloseButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'View Profile',
+        cancelButtonText: 'Continue',
+        allowOutsideClick: true,
+        allowEscapeKey: true,
+        customClass: {
+            confirmButton: 'bx--btn bx--btn--primary',
+            cancelButton: 'bx--btn bx--btn--secondary'
+        },
+        buttonsStyling: false
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            window.location.href = 'profile';
+        }
+    });
+}
 setInterval(checkSessionTime, 30000);
