@@ -1,0 +1,10 @@
+{
+  "badges": [
+    {
+      "id": "founding-member",
+      "name": "Founding Member",
+      "description": "Registered before June 10th, 2026",
+      "image": "badges/founding_member.png"
+    }
+  ]
+}
