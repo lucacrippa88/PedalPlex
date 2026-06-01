@@ -256,18 +256,21 @@ function loadUserBadges() {
     method: 'GET',
     headers: { 'Authorization': 'Bearer ' + token },
     success: function(userData) {
+      console.log('User data received:', userData);
       const userBadges = userData.badges || [];
+      console.log('User badges:', userBadges);
       
       // Load badge definitions from badges.json
       $.getJSON('badges.json', function(badgeConfig) {
+        console.log('Badge config loaded:', badgeConfig);
         displayBadges(userBadges, badgeConfig.badges);
-      }).fail(function() {
-        console.error('Failed to load badges.json');
+      }).fail(function(jqxhr, textStatus, error) {
+        console.error('Failed to load badges.json:', textStatus, error);
         displayNoBadges('Unable to load badge information');
       });
     },
-    error: function() {
-      console.error('Failed to load user data');
+    error: function(xhr, status, error) {
+      console.error('Failed to load user data:', status, error);
       displayNoBadges('Unable to load badges');
     }
   });
@@ -424,8 +427,6 @@ function showBadgeAwardPopup(earnedBadges, badgeDefinitions) {
     // Reload badges display after closing popup
     loadUserBadges();
   });
-}
-</script>
 }
 </script>
 
