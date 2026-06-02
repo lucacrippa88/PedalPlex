@@ -255,52 +255,56 @@ function onGoogleLogin(response) {
     success: function(res) {
       if (res.token) {
         localStorage.setItem("authToken", res.token);
-        Swal.fire({
-          icon: "success",
-          title: "You are logged in!",
-          timer: 1000,
-          showConfirmButton: false
-        }).then(() => { window.location.href = "plexes"; });
+        
+        // Award badges on Google login
+        $.ajax({
+          url: 'https://api.pedalplex.com/USER_AWARD_BADGES.php',
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + res.token },
+          success: function(badgeRes) {
+            console.log('Badge API Response:', badgeRes);
+            
+            // Check if new badges were awarded
+            if (badgeRes.badges_awarded && badgeRes.badges_awarded.length > 0) {
+              console.log('New badges awarded:', badgeRes.badges_awarded);
+              
+              // Store badges in localStorage to show on next page
+              localStorage.setItem('pendingBadges', JSON.stringify(badgeRes.badges_awarded));
+            }
+            
+            // Show login success and redirect
+            Swal.fire({
+              icon: "success",
+              title: "You are logged in!",
+              timer: 1000,
+              showConfirmButton: false,
+              allowOutsideClick: false,
+              allowEscapeKey: false
+            });
+            setTimeout(() => { window.location.href = "plexes"; }, 1000);
+          },
+          error: function() {
+            // If badge check fails, still show login success
+            Swal.fire({
+              icon: "success",
+              title: "You are logged in!",
+              timer: 1000,
+              showConfirmButton: false,
+              allowOutsideClick: false,
+              allowEscapeKey: false
+            });
+            setTimeout(() => { window.location.href = "plexes"; }, 1000);
+          }
+        });
+        
       } else {
         Swal.fire("Login error", res.error || "", "error");
       }
     },
     error: function(xhr) {
-      let msg = "Errore server";
+      let msg = "Server error";
       try { const json = JSON.parse(xhr.responseText); if (json.error) msg = json.error; } catch {}
-      Swal.fire("Errore", msg, "error");
-    }
-  });
-}
-
-// --- Google Login ---
-function onGoogleLogin(response) {
-  const id_token = response.credential;
-
-  $.ajax({
-    url: "https://api.pedalplex.com/USER_LOGIN_GOOGLE.php",
-    method: "POST",
-    contentType: "application/json",
-    dataType: "json",
-    data: JSON.stringify({ id_token }),
-    xhrFields: { withCredentials: true },
-    success: function(res) {
-      if (res.token) {
-        localStorage.setItem("authToken", res.token);
-        Swal.fire({
-          icon: "success",
-          title: "You are logged in!",
-          timer: 1000,
-          showConfirmButton: false
-        }).then(() => { window.location.href = "plexes"; });
-      } else {
-        Swal.fire("Login error", res.error || "", "error");
-      }
-    },
-    error: function(xhr) {
-      let msg = "Errore server";
-      try { const json = JSON.parse(xhr.responseText); if (json.error) msg = json.error; } catch {}
-      Swal.fire("Errore", msg, "error");
+      Swal.fire("Error", msg, "error");
     }
   });
 }
