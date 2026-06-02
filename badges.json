@@ -4,49 +4,82 @@
       "id": "founding-member",
       "name": "Founding Member",
       "description": "Registered before June 10th, 2026",
-      "image": "badges/founding_member.png"
+      "image": "badges/founding_member.png",
+      "criteria": {
+        "registered_before": "2026-06-10T00:00:00Z"
+      }
     },
     {
       "id": "first-plex",
       "name": "First Plex",
       "description": "You created your first Plex!",
-      "image": "badges/first_plex.png"
-    },
-    {
-      "id": "plex-explorer",
-      "name": "Plex Explorer",
-      "description": "10 Plexes created",
-      "image": "badges/plex_explorer.png"
-    },
-    {
-      "id": "plex-builder",
-      "name": "Plex Builder",
-      "description": "25 Plexes created",
-      "image": "badges/plex_builder.png"
-    },
-    {
-      "id": "plex-creator",
-      "name": "Plex Creator",
-      "description": "50 Plexes created",
-      "image": "badges/plex_creator.png"
-    },
-    {
-      "id": "plex-architect",
-      "name": "Plex Architect",
-      "description": "100 Plexes created",
-      "image": "badges/plex_architect.png"
-    },
-    {
-      "id": "plex-legend",
-      "name": "Plex Legend",
-      "description": "200 Plexes created",
-      "image": "badges/plex_legend.png"
+      "image": "badges/first_plex.png",
+      "criteria": {
+        "created_plexes": 1
+      }
     },
     {
       "id": "first-share",
       "name": "First Shared Plex",
       "description": "You shared your first Plex!",
-      "image": "badges/first_share.png"
+      "image": "badges/first_share.png",
+      "criteria": {
+        "shared_plexes": 1
+      }
+    },
+    {
+      "id": "first-gear",
+      "name": "First Gear Published",
+      "description": "You got your first Gear published!",
+      "image": "badges/first_gear.png",
+      "criteria": {
+        "published_gears": 1
+      }
+    },
+    {
+      "id": "plex-explorer",
+      "name": "Plex Explorer",
+      "description": "10 Plexes created",
+      "image": "badges/plex_explorer.png",
+      "criteria": {
+        "created_plexes": 10
+      }
+    },
+    {
+      "id": "plex-builder",
+      "name": "Plex Builder",
+      "description": "25 Plexes created",
+      "image": "badges/plex_builder.png",
+      "criteria": {
+        "created_plexes": 25
+      }
+    },
+    {
+      "id": "plex-creator",
+      "name": "Plex Creator",
+      "description": "50 Plexes created",
+      "image": "badges/plex_creator.png",
+      "criteria": {
+        "created_plexes": 50
+      }
+    },
+    {
+      "id": "plex-architect",
+      "name": "Plex Architect",
+      "description": "100 Plexes created",
+      "image": "badges/plex_architect.png",
+      "criteria": {
+        "created_plexes": 100
+      }
+    },
+    {
+      "id": "plex-legend",
+      "name": "Plex Legend",
+      "description": "200 Plexes created",
+      "image": "badges/plex_legend.png",
+      "criteria": {
+        "created_plexes": 200
+      }
     },
     {
       "id": "sharing-explorer",
@@ -77,12 +110,6 @@
       "name": "Sharing Legend",
       "description": "150 Plexes shared",
       "image": "badges/sharing_legend.png"
-    },
-    {
-      "id": "first-gear",
-      "name": "First Gear Published",
-      "description": "You got your first Gear published!",
-      "image": "badges/first_gear.png"
     },
     {
       "id": "gear-explorer",

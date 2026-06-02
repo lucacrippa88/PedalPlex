@@ -59,6 +59,85 @@ let isRestoringPreset = false;
 
 function isPresetShared(preset) {
   return preset?.shared === true || preset?.shared === 'true' || preset?.shared === 1 || preset?.shared === '1';
+// Check plex count and award badges
+async function checkAndAwardPlexBadges(plexCount) {
+  const token = localStorage.getItem('authToken');
+  if (!token) return; // Guest users don't get badges
+  
+  try {
+    // Load badges.json to get criteria
+    const badgesRes = await fetch('badges.json');
+    const badgesData = await badgesRes.json();
+    
+    // Find all plex-related badges that user qualifies for
+    const eligibleBadges = badgesData.badges.filter(badge => {
+      if (badge.criteria && badge.criteria.created_plexes) {
+        return plexCount >= badge.criteria.created_plexes;
+      }
+      return false;
+    });
+    
+    if (eligibleBadges.length === 0) return;
+    
+    // Get user's current badges
+    const userRes = await fetch('https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!userRes.ok) return;
+    const userData = await userRes.json();
+    const currentBadges = userData.badges || [];
+    
+    // Find badges user doesn't have yet
+    const newBadges = eligibleBadges.filter(badge => 
+      !currentBadges.includes(badge.id)
+    );
+    
+    if (newBadges.length === 0) return;
+    
+    // Award each new badge
+    for (const badge of newBadges) {
+      const awardRes = await fetch('https://api.pedalplex.com/USER_AWARD_BADGE.php', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          badge_id: badge.id
+        })
+      });
+      
+      if (awardRes.ok) {
+        console.log('Badge awarded:', badge.id);
+        
+        // Store in localStorage to show popup
+        const pendingBadges = JSON.parse(localStorage.getItem('pendingBadges') || '[]');
+        pendingBadges.push({
+          id: badge.id,
+          name: badge.name,
+          description: badge.description,
+          image: badge.image,
+          awarded_at: new Date().toISOString()
+        });
+        localStorage.setItem('pendingBadges', JSON.stringify(pendingBadges));
+      }
+    }
+    
+    // Trigger badge popup check if any badges were awarded
+    if (newBadges.length > 0 && typeof window.checkAndShowPendingBadges === 'function') {
+      setTimeout(() => window.checkAndShowPendingBadges(), 500);
+    }
+    
+  } catch (error) {
+    console.error('Error checking plex badges:', error);
+  }
+}
+
 }
 
 function updateSharePresetButtonState(preset = null) {
@@ -396,6 +475,9 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
 
     // Store all presets globally
     window.presets = data.presets || [];
+    
+    // Check and award plex creation badges
+    checkAndAwardPlexBadges(window.presets.length);
     // Build presetMap keyed by _id for easy lookup
 
     // OLD
