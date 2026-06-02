@@ -94,9 +94,12 @@ async function checkAndAwardPlexBadges(plexCount) {
     const userData = await userRes.json();
     const currentBadges = userData.badges || [];
     
+    // Extract badge IDs from current badges (they're objects with {id, earned_at})
+    const currentBadgeIds = currentBadges.map(b => b.id || b);
+    
     // Find badges user doesn't have yet
-    const newBadges = eligibleBadges.filter(badge => 
-      !currentBadges.includes(badge.id)
+    const newBadges = eligibleBadges.filter(badge =>
+      !currentBadgeIds.includes(badge.id)
     );
     
     if (newBadges.length === 0) return;
