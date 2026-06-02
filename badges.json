@@ -13,16 +13,106 @@
       "image": "badges/first_plex.png"
     },
     {
+      "id": "plex-explorer",
+      "name": "Plex Explorer",
+      "description": "10 Plexes created",
+      "image": "badges/plex_explorer.png"
+    },
+    {
+      "id": "plex-builder",
+      "name": "Plex Builder",
+      "description": "25 Plexes created",
+      "image": "badges/plex_builder.png"
+    },
+    {
+      "id": "plex-creator",
+      "name": "Plex Creator",
+      "description": "50 Plexes created",
+      "image": "badges/plex_creator.png"
+    },
+    {
+      "id": "plex-architect",
+      "name": "Plex Architect",
+      "description": "100 Plexes created",
+      "image": "badges/plex_architect.png"
+    },
+    {
+      "id": "plex-legend",
+      "name": "Plex Legend",
+      "description": "200 Plexes created",
+      "image": "badges/plex_legend.png"
+    },
+    {
       "id": "first-share",
       "name": "First Shared Plex",
       "description": "You shared your first Plex!",
       "image": "badges/first_share.png"
     },
     {
+      "id": "sharing-explorer",
+      "name": "Sharing Explorer",
+      "description": "5 Plexes shared",
+      "image": "badges/sharing_explorer.png"
+    },
+    {
+      "id": "sharing-builder",
+      "name": "Sharing Builder",
+      "description": "10 Plexes shared",
+      "image": "badges/sharing_builder.png"
+    },
+    {
+      "id": "sharing-creator",
+      "name": "Sharing Creator",
+      "description": "25 Plexes shared",
+      "image": "badges/sharing_creator.png"
+    },
+    {
+      "id": "sharing-architect",
+      "name": "Sharing Architect",
+      "description": "75 Plexes shared",
+      "image": "badges/sharing_architect.png"
+    },
+    {
+      "id": "sharing-legend",
+      "name": "Sharing Legend",
+      "description": "150 Plexes shared",
+      "image": "badges/sharing_legend.png"
+    },
+    {
       "id": "first-gear",
       "name": "First Gear Published",
       "description": "You got your first Gear published!",
       "image": "badges/first_gear.png"
+    },
+    {
+      "id": "gear-explorer",
+      "name": "Gear Explorer",
+      "description": "5 Gears published",
+      "image": "badges/gear_explorer.png"
+    },
+    {
+      "id": "gear-builder",
+      "name": "Gear Builder",
+      "description": "10 Gears published",
+      "image": "badges/gear_builder.png"
+    },
+    {
+      "id": "gear-creator",
+      "name": "Gear Creator",
+      "description": "15 Gears published",
+      "image": "badges/gear_creator.png"
+    },
+    {
+      "id": "gear-architect",
+      "name": "Gear Architect",
+      "description": "20 Gears published",
+      "image": "badges/gear_architect.png"
+    },
+    {
+      "id": "gear-legend",
+      "name": "Gear Legend",
+      "description": "50 Gears published",
+      "image": "badges/gear_legend.png"
     }
   ]
 }
