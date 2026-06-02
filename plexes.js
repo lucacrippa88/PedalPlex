@@ -59,6 +59,8 @@ let isRestoringPreset = false;
 
 function isPresetShared(preset) {
   return preset?.shared === true || preset?.shared === 'true' || preset?.shared === 1 || preset?.shared === '1';
+}
+
 // Check plex count and award badges
 async function checkAndAwardPlexBadges(plexCount) {
   const token = localStorage.getItem('authToken');
@@ -136,8 +138,6 @@ async function checkAndAwardPlexBadges(plexCount) {
   } catch (error) {
     console.error('Error checking plex badges:', error);
   }
-}
-
 }
 
 function updateSharePresetButtonState(preset = null) {
