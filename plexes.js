@@ -477,7 +477,8 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
     window.presets = data.presets || [];
     
     // Check and award plex creation badges
-    checkAndAwardPlexBadges(window.presets.length);
+    await checkAndAwardPlexBadges(window.presets.length);
+    
     // Build presetMap keyed by _id for easy lookup
 
     // OLD
