@@ -225,6 +225,9 @@
       "name": "Gear Explorer",
       "description": "5 Gears published",
       "image": "badges/gear_explorer.png",
+      "criteria": {
+        "published_gears": 5
+      },
       "visibility": "active",
       "section": "gears"
     },
@@ -233,6 +236,9 @@
       "name": "Gear Builder",
       "description": "10 Gears published",
       "image": "badges/gear_builder.png",
+      "criteria": {
+        "published_gears": 10
+      },
       "visibility": "active",
       "section": "gears"
     },
@@ -241,6 +247,9 @@
       "name": "Gear Creator",
       "description": "15 Gears published",
       "image": "badges/gear_creator.png",
+      "criteria": {
+        "published_gears": 15
+      },
       "visibility": "active",
       "section": "gears"
     },
@@ -249,6 +258,9 @@
       "name": "Gear Architect",
       "description": "20 Gears published",
       "image": "badges/gear_architect.png",
+      "criteria": {
+        "published_gears": 20
+      },
       "visibility": "active",
       "section": "gears"
     },
@@ -257,6 +269,9 @@
       "name": "Gear Legend",
       "description": "50 Gears published",
       "image": "badges/gear_legend.png",
+      "criteria": {
+        "published_gears": 50
+      },
       "visibility": "active",
       "section": "gears"
     }
