@@ -8,7 +8,7 @@
       "criteria": {
         "registered_before": "2026-01-01T00:00:00Z"
       },
-      "visibility": "active",
+      "visibility": "if_achieved",
       "section": "membership"
     },
     {
@@ -41,7 +41,7 @@
       "criteria": {
         "instrument": "acoustic-guitar"
       },
-      "visibility": "false",
+      "visibility": "if_achieved",
       "section": "membership"
     },
     {
@@ -52,7 +52,7 @@
       "criteria": {
         "instrument": "electric-guitar"
       },
-      "visibility": "false",
+      "visibility": "if_achieved",
       "section": "membership"
     },
     {
@@ -63,7 +63,7 @@
       "criteria": {
         "instrument": "bass"
       },
-      "visibility": "false",
+      "visibility": "if_achieved",
       "section": "membership"
     },
     {
@@ -74,7 +74,7 @@
       "criteria": {
         "instrument": "keyboard"
       },
-      "visibility": "false",
+      "visibility": "if_achieved",
       "section": "membership"
     },
     {
@@ -85,7 +85,7 @@
       "criteria": {
         "instrument": "percussions"
       },
-      "visibility": "false",
+      "visibility": "if_achieved",
       "section": "membership"
     },
     {
@@ -96,7 +96,7 @@
       "criteria": {
         "instrument": "vocals"
       },
-      "visibility": "false",
+      "visibility": "if_achieved",
       "section": "membership"
     },
     {
@@ -107,7 +107,7 @@
       "criteria": {
         "instrument": "strings"
       },
-      "visibility": "false",
+      "visibility": "if_achieved",
       "section": "membership"
     },
     {
@@ -118,7 +118,7 @@
       "criteria": {
         "instrument": "brass"
       },
-      "visibility": "false",
+      "visibility": "if_achieved",
       "section": "membership"
     },
     {
@@ -129,7 +129,7 @@
       "criteria": {
         "instrument": "harp"
       },
-      "visibility": "false",
+      "visibility": "if_achieved",
       "section": "membership"
     },
     {
@@ -140,7 +140,7 @@
       "criteria": {
         "instrument": "harmonica"
       },
-      "visibility": "false",
+      "visibility": "if_achieved",
       "section": "membership"
     },
     {
@@ -151,7 +151,7 @@
       "criteria": {
         "instrument": "other"
       },
-      "visibility": "false",
+      "visibility": "if_achieved",
       "section": "membership"
     },
     {
