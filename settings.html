@@ -281,12 +281,21 @@
       if (window.currentUser && window.currentUser.instruments) {
         const userInstruments = window.currentUser.instruments;
         
-        // Check the checkboxes that match user's instruments
+        // First uncheck all checkboxes
+        document.querySelectorAll('.instrument-checkbox').forEach(checkbox => {
+          checkbox.checked = false;
+        });
+        
+        // Then check the ones that match user's instruments
         document.querySelectorAll('.instrument-checkbox').forEach(checkbox => {
           if (userInstruments.includes(checkbox.value)) {
             checkbox.checked = true;
           }
         });
+        
+        console.log('Loaded instruments:', userInstruments);
+      } else {
+        console.log('No instruments found for user');
       }
     }
 
