@@ -68,7 +68,7 @@
     {
       "id": "pedalplex-brand",
       "name": "Official Brand",
-      "description": "You are part of our open community!",
+      "description": "You are part of our community!",
       "image": "badges/pedalplex_brand.png",
       "criteria": {
         "brand": "true"
