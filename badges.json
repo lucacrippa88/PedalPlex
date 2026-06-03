@@ -58,7 +58,7 @@
     {
       "id": "verified-gear",
       "name": "First Gear verified!",
-      "description": "A Gear published by you got verified!",
+      "description": "Your Gear got officially verified!",
       "image": "badges/verified_gear.png",
       "criteria": {
         "verified_gears": 1
@@ -67,8 +67,8 @@
     },
     {
       "id": "pedalplex-brand",
-      "name": "Official PedalPlex Brand",
-      "description": "You are now part of our open community",
+      "name": "Official Brand",
+      "description": "You are part of our open community!",
       "image": "badges/pedalplex_brand.png",
       "criteria": {
         "brand": "true"
