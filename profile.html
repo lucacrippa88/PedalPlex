@@ -168,6 +168,9 @@ function displayBadges(earnedBadges, badgeDefinitions) {
   const container = $('#badges-container');
   container.empty();
   
+  // Create array of earned badge IDs for quick lookup
+  const earnedBadgeIds = earnedBadges.map(b => b.id);
+  
   // Show ALL badges (earned and unearned)
   if (!badgeDefinitions || badgeDefinitions.length === 0) {
     container.html(`
