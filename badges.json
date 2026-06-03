@@ -7,7 +7,8 @@
       "image": "badges/pioneer_2025.png",
       "criteria": {
         "registered_before": "2026-01-01T00:00:00Z"
-      }
+      },
+      "section": "membership"
     },
     {
       "id": "founding-member",
@@ -16,7 +17,8 @@
       "image": "badges/founding_member.png",
       "criteria": {
         "registered_before": "2026-06-10T00:00:00Z"
-      }
+      },
+      "section": "membership"
     },
     {
       "id": "growth-member",
@@ -26,7 +28,8 @@
       "criteria": {
         "registered_before": "2027-06-10T00:00:00Z"
       },
-      "visibility": "false"
+      "visibility": "false",
+      "section": "membership"
     },
     {
       "id": "first-plex",
@@ -35,7 +38,8 @@
       "image": "badges/first_plex.png",
       "criteria": {
         "created_plexes": 1
-      }
+      },
+      "section": "startup"
     },
     {
       "id": "first-share",
@@ -44,7 +48,8 @@
       "image": "badges/first_share.png",
       "criteria": {
         "shared_plexes": 1
-      }
+      },
+      "section": "startup"
     },
     {
       "id": "first-gear",
@@ -53,7 +58,8 @@
       "image": "badges/first_gear.png",
       "criteria": {
         "published_gears": 1
-      }
+      },
+      "section": "startup"
     },
     {
       "id": "verified-gear",
@@ -63,7 +69,8 @@
       "criteria": {
         "verified_gears": 1
       },
-      "visibility": "inactive"
+      "visibility": "inactive",
+      "section": "brand"
     },
     {
       "id": "pedalplex-brand",
@@ -73,7 +80,8 @@
       "criteria": {
         "brand": "true"
       },
-      "visibility": "inactive"
+      "visibility": "inactive",
+      "section": "brand"
     },
     {
       "id": "plex-explorer",
@@ -82,7 +90,8 @@
       "image": "badges/plex_explorer.png",
       "criteria": {
         "created_plexes": 10
-      }
+      },
+      "section": "plex"
     },
     {
       "id": "plex-builder",
@@ -91,7 +100,8 @@
       "image": "badges/plex_builder.png",
       "criteria": {
         "created_plexes": 25
-      }
+      },
+      "section": "plex"
     },
     {
       "id": "plex-creator",
@@ -100,7 +110,8 @@
       "image": "badges/plex_creator.png",
       "criteria": {
         "created_plexes": 50
-      }
+      },
+      "section": "plex"
     },
     {
       "id": "plex-architect",
@@ -109,7 +120,8 @@
       "image": "badges/plex_architect.png",
       "criteria": {
         "created_plexes": 100
-      }
+      },
+      "section": "plex"
     },
     {
       "id": "plex-legend",
@@ -118,7 +130,8 @@
       "image": "badges/plex_legend.png",
       "criteria": {
         "created_plexes": 200
-      }
+      },
+      "section": "plex"
     },
     {
       "id": "sharing-explorer",
@@ -127,7 +140,8 @@
       "image": "badges/sharing_explorer.png",
       "criteria": {
         "shared_plexes": 5
-      }
+      },
+      "section": "sharing"
     },
     {
       "id": "sharing-builder",
@@ -136,7 +150,8 @@
       "image": "badges/sharing_builder.png",
       "criteria": {
         "shared_plexes": 10
-      }
+      },
+      "section": "sharing"
     },
     {
       "id": "sharing-creator",
@@ -145,7 +160,8 @@
       "image": "badges/sharing_creator.png",
       "criteria": {
         "shared_plexes": 25
-      }
+      },
+      "section": "sharing"
     },
     {
       "id": "sharing-architect",
@@ -154,7 +170,8 @@
       "image": "badges/sharing_architect.png",
       "criteria": {
         "shared_plexes": 75
-      }
+      },
+      "section": "sharing"
     },
     {
       "id": "sharing-legend",
@@ -163,42 +180,48 @@
       "image": "badges/sharing_legend.png",
       "criteria": {
         "shared_plexes": 150
-      }
+      },
+      "section": "sharing"
     },
     {
       "id": "gear-explorer",
       "name": "Gear Explorer",
       "description": "5 Gears published",
       "image": "badges/gear_explorer.png",
-      "visibility": "inactive"
+      "visibility": "inactive",
+      "section": "gears"
     },
     {
       "id": "gear-builder",
       "name": "Gear Builder",
       "description": "10 Gears published",
       "image": "badges/gear_builder.png",
-      "visibility": "inactive"
+      "visibility": "inactive",
+      "section": "gears"
     },
     {
       "id": "gear-creator",
       "name": "Gear Creator",
       "description": "15 Gears published",
       "image": "badges/gear_creator.png",
-      "visibility": "inactive"
+      "visibility": "inactive",
+      "section": "gears"
     },
     {
       "id": "gear-architect",
       "name": "Gear Architect",
       "description": "20 Gears published",
       "image": "badges/gear_architect.png",
-      "visibility": "inactive"
+      "visibility": "inactive",
+      "section": "gears"
     },
     {
       "id": "gear-legend",
       "name": "Gear Legend",
       "description": "50 Gears published",
       "image": "badges/gear_legend.png",
-      "visibility": "inactive"
+      "visibility": "inactive",
+      "section": "gears"
     }
   ]
 }
