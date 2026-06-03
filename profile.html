@@ -179,10 +179,53 @@ function displayBadges(earnedBadges, badgeDefinitions) {
     return;
   }
   
-  const rowDiv = $('<div class="bx--row"></div>');
+  // Define section titles and order
+  const sections = {
+    'membership': 'Membership Achievements',
+    'startup': 'Startup Achievements',
+    'plex': 'Plex Creation Achievements',
+    'sharing': 'Sharing Achievements',
+    'gears': 'Gear Publishing Achievements',
+    'brand': 'Brand Achievements'
+  };
   
-  // Loop through ALL badge definitions (excluding hidden ones)
+  // Group badges by section
+  const badgesBySection = {};
   badgeDefinitions.forEach(badgeDef => {
+    // Skip badges with visibility set to false
+    if (badgeDef.visibility === 'false' || badgeDef.visibility === false) {
+      return;
+    }
+    
+    const section = badgeDef.section || 'other';
+    if (!badgesBySection[section]) {
+      badgesBySection[section] = [];
+    }
+    badgesBySection[section].push(badgeDef);
+  });
+  
+  // Render each section
+  Object.keys(sections).forEach(sectionKey => {
+    if (!badgesBySection[sectionKey] || badgesBySection[sectionKey].length === 0) {
+      return; // Skip empty sections
+    }
+    
+    // Add section title
+    const sectionTitle = $(`
+      <div class="bx--row" style="margin-top: 40px; margin-bottom: 20px;">
+        <div class="bx--col">
+          <h3 style="font-size: 1.5rem; font-weight: 600; color: #161616; border-bottom: 2px solid #0f62fe; padding-bottom: 10px;">
+            ${sections[sectionKey]}
+          </h3>
+        </div>
+      </div>
+    `);
+    container.append(sectionTitle);
+    
+    const rowDiv = $('<div class="bx--row"></div>');
+    
+    // Loop through badges in this section
+    badgesBySection[sectionKey].forEach(badgeDef => {
     // Skip badges with visibility set to false
     if (badgeDef.visibility === 'false' || badgeDef.visibility === false) {
       return;
@@ -264,10 +307,11 @@ function displayBadges(earnedBadges, badgeDefinitions) {
       </div>
     `;
     
-    rowDiv.append(badgeHtml);
+      rowDiv.append(badgeHtml);
+    });
+    
+    container.append(rowDiv);
   });
-  
-  container.append(rowDiv);
 }
 
 function displayNoBadges(message) {
