@@ -138,6 +138,10 @@ async function checkAndAwardPlexBadges(plexCount) {
       setTimeout(() => window.checkAndShowPendingBadges(), 500);
     }
     
+  } catch (error) {
+    console.error('Error checking plex badges:', error);
+  }
+}
 
 // Check shared plex count and award badges
 async function checkAndAwardSharingBadges(sharedPlexCount) {
@@ -218,11 +222,6 @@ async function checkAndAwardSharingBadges(sharedPlexCount) {
     
   } catch (error) {
     console.error('Error checking sharing badges:', error);
-  }
-}
-
-  } catch (error) {
-    console.error('Error checking plex badges:', error);
   }
 }
 
