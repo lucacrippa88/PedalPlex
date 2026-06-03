@@ -1,6 +1,15 @@
 {
   "badges": [
     {
+      "id": "pioneer-2025",
+      "name": "Pioneer 2025",
+      "description": "Registered in 2025",
+      "image": "badges/pioneer_2025.png",
+      "criteria": {
+        "registered_before": "2026-01-01T00:00:00Z"
+      }
+    },
+    {
       "id": "founding-member",
       "name": "Founding Member",
       "description": "Registered before June 10th, 2026",
@@ -16,7 +25,8 @@
       "image": "badges/growth_member.png",
       "criteria": {
         "registered_before": "2027-06-10T00:00:00Z"
-      }
+      },
+      "visibility": "false"
     },
     {
       "id": "first-plex",
@@ -44,6 +54,26 @@
       "criteria": {
         "published_gears": 1
       }
+    },
+    {
+      "id": "verified-gear",
+      "name": "First Gear verified!",
+      "description": "A Gear published by you got verified!",
+      "image": "badges/verified_gear.png",
+      "criteria": {
+        "verified_gears": 1
+      },
+      "visibility": "inactive"
+    },
+    {
+      "id": "pedalplex-brand",
+      "name": "Official PedalPlex Brand",
+      "description": "You are now part of our open community",
+      "image": "badges/pedalplex_brand.png",
+      "criteria": {
+        "brand": "true"
+      },
+      "visibility": "inactive"
     },
     {
       "id": "plex-explorer",
@@ -94,61 +124,71 @@
       "id": "sharing-explorer",
       "name": "Sharing Explorer",
       "description": "5 Plexes shared",
-      "image": "badges/sharing_explorer.png"
+      "image": "badges/sharing_explorer.png",
+      "visibility": "inactive"
     },
     {
       "id": "sharing-builder",
       "name": "Sharing Builder",
       "description": "10 Plexes shared",
-      "image": "badges/sharing_builder.png"
+      "image": "badges/sharing_builder.png",
+      "visibility": "inactive"
     },
     {
       "id": "sharing-creator",
       "name": "Sharing Creator",
       "description": "25 Plexes shared",
-      "image": "badges/sharing_creator.png"
+      "image": "badges/sharing_creator.png",
+      "visibility": "inactive"
     },
     {
       "id": "sharing-architect",
       "name": "Sharing Architect",
       "description": "75 Plexes shared",
-      "image": "badges/sharing_architect.png"
+      "image": "badges/sharing_architect.png",
+      "visibility": "inactive"
     },
     {
       "id": "sharing-legend",
       "name": "Sharing Legend",
       "description": "150 Plexes shared",
-      "image": "badges/sharing_legend.png"
+      "image": "badges/sharing_legend.png",
+      "visibility": "inactive"
     },
     {
       "id": "gear-explorer",
       "name": "Gear Explorer",
       "description": "5 Gears published",
-      "image": "badges/gear_explorer.png"
+      "image": "badges/gear_explorer.png",
+      "visibility": "inactive"
     },
     {
       "id": "gear-builder",
       "name": "Gear Builder",
       "description": "10 Gears published",
-      "image": "badges/gear_builder.png"
+      "image": "badges/gear_builder.png",
+      "visibility": "inactive"
     },
     {
       "id": "gear-creator",
       "name": "Gear Creator",
       "description": "15 Gears published",
-      "image": "badges/gear_creator.png"
+      "image": "badges/gear_creator.png",
+      "visibility": "inactive"
     },
     {
       "id": "gear-architect",
       "name": "Gear Architect",
       "description": "20 Gears published",
-      "image": "badges/gear_architect.png"
+      "image": "badges/gear_architect.png",
+      "visibility": "inactive"
     },
     {
       "id": "gear-legend",
       "name": "Gear Legend",
       "description": "50 Gears published",
-      "image": "badges/gear_legend.png"
+      "image": "badges/gear_legend.png",
+      "visibility": "inactive"
     }
   ]
 }
