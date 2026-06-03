@@ -57,7 +57,7 @@
     },
     {
       "id": "verified-gear",
-      "name": "First Gear verified!",
+      "name": "First Gear verified",
       "description": "Your Gear got officially verified!",
       "image": "badges/verified_gear.png",
       "criteria": {
@@ -125,35 +125,45 @@
       "name": "Sharing Explorer",
       "description": "5 Plexes shared",
       "image": "badges/sharing_explorer.png",
-      "visibility": "inactive"
+      "criteria": {
+        "shared_plexes": 5
+      }
     },
     {
       "id": "sharing-builder",
       "name": "Sharing Builder",
       "description": "10 Plexes shared",
       "image": "badges/sharing_builder.png",
-      "visibility": "inactive"
+      "criteria": {
+        "shared_plexes": 10
+      }
     },
     {
       "id": "sharing-creator",
       "name": "Sharing Creator",
       "description": "25 Plexes shared",
       "image": "badges/sharing_creator.png",
-      "visibility": "inactive"
+      "criteria": {
+        "shared_plexes": 25
+      }
     },
     {
       "id": "sharing-architect",
       "name": "Sharing Architect",
       "description": "75 Plexes shared",
       "image": "badges/sharing_architect.png",
-      "visibility": "inactive"
+      "criteria": {
+        "shared_plexes": 75
+      }
     },
     {
       "id": "sharing-legend",
       "name": "Sharing Legend",
       "description": "150 Plexes shared",
       "image": "badges/sharing_legend.png",
-      "visibility": "inactive"
+      "criteria": {
+        "shared_plexes": 150
+      }
     },
     {
       "id": "gear-explorer",
