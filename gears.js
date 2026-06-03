@@ -1,3 +1,85 @@
+// Check published gear count and award badges
+async function checkAndAwardGearBadges(publishedGearCount) {
+  const token = localStorage.getItem('authToken');
+  if (!token) return; // Guest users don't get badges
+  
+  try {
+    // Load badges.json to get criteria
+    const badgesRes = await fetch('badges.json');
+    const badgesData = await badgesRes.json();
+    
+    // Find all gear-related badges that user qualifies for
+    const eligibleBadges = badgesData.badges.filter(badge => {
+      if (badge.criteria && badge.criteria.published_gears) {
+        return publishedGearCount >= badge.criteria.published_gears;
+      }
+      return false;
+    });
+    
+    if (eligibleBadges.length === 0) return;
+    
+    // Get user's current badges
+    const userRes = await fetch('https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!userRes.ok) return;
+    const userData = await userRes.json();
+    const currentBadges = userData.badges || [];
+    
+    // Extract badge IDs from current badges (they're objects with {id, earned_at})
+    const currentBadgeIds = currentBadges.map(b => b.id || b);
+    
+    // Find badges user doesn't have yet
+    const newBadges = eligibleBadges.filter(badge => 
+      !currentBadgeIds.includes(badge.id)
+    );
+    
+    if (newBadges.length === 0) return;
+    
+    // Award each new badge
+    for (const badge of newBadges) {
+      const awardRes = await fetch('https://api.pedalplex.com/USER_AWARD_BADGE.php', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          badge_id: badge.id
+        })
+      });
+      
+      if (awardRes.ok) {
+        console.log('Gear badge awarded:', badge.id);
+        
+        // Store in localStorage to show popup
+        const pendingBadges = JSON.parse(localStorage.getItem('pendingBadges') || '[]');
+        pendingBadges.push({
+          id: badge.id,
+          name: badge.name,
+          description: badge.description,
+          image: badge.image,
+          awarded_at: new Date().toISOString()
+        });
+        localStorage.setItem('pendingBadges', JSON.stringify(pendingBadges));
+      }
+    }
+    
+    // Trigger badge popup check if any badges were awarded
+    if (newBadges.length > 0 && typeof window.checkAndShowPendingBadges === 'function') {
+      setTimeout(() => window.checkAndShowPendingBadges(), 500);
+    }
+    
+  } catch (error) {
+    console.error('Error checking gear badges:', error);
+  }
+}
+
 // ==================== Global State ====================
 var currentPage = 0;
 var isLoading = false;
@@ -379,6 +461,11 @@ function updatePedalCountsFromServer(activeFilter = null) {
     countsHtml += `)`;
 
     $("#pedalCount").html(countsHtml);
+    
+    // Check and award gear publishing badges
+    if (counts.publicByMe && window.currentUser?.role !== "guest") {
+      checkAndAwardGearBadges(counts.publicByMe);
+    }
 
     $(".status-filter[data-filter]").off("click").on("click", function () {
       const filter = $(this).data("filter");
