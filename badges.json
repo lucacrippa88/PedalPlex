@@ -8,6 +8,7 @@
       "criteria": {
         "registered_before": "2026-01-01T00:00:00Z"
       },
+      "visibility": "active",
       "section": "membership"
     },
     {
@@ -18,6 +19,7 @@
       "criteria": {
         "registered_before": "2026-06-10T00:00:00Z"
       },
+      "visibility": "active",
       "section": "membership"
     },
     {
@@ -32,6 +34,28 @@
       "section": "membership"
     },
     {
+      "id": "pedalplex-guitarist",
+      "name": "PedalPlex Artist",
+      "description": "Guitarist - Official Artist",
+      "image": "badges/pedalplex_guitarist.png",
+      "criteria": {
+        "instrument": "guitar"
+      },
+      "visibility": "active",
+      "section": "membership"
+    },
+    {
+      "id": "pedalplex-bassist",
+      "name": "PedalPlex Artist",
+      "description": "Bassist - Official Artist",
+      "image": "badges/pedalplex_bassist.png",
+      "criteria": {
+        "instrument": "bass"
+      },
+      "visibility": "active",
+      "section": "membership"
+    },
+    {
       "id": "first-plex",
       "name": "First Plex",
       "description": "You created your first Plex!",
@@ -39,6 +63,7 @@
       "criteria": {
         "created_plexes": 1
       },
+      "visibility": "active",
       "section": "startup"
     },
     {
@@ -49,6 +74,7 @@
       "criteria": {
         "shared_plexes": 1
       },
+      "visibility": "active",
       "section": "startup"
     },
     {
@@ -59,6 +85,7 @@
       "criteria": {
         "published_gears": 1
       },
+      "visibility": "active",
       "section": "startup"
     },
     {
@@ -91,6 +118,7 @@
       "criteria": {
         "created_plexes": 10
       },
+      "visibility": "active",
       "section": "plex"
     },
     {
@@ -101,6 +129,7 @@
       "criteria": {
         "created_plexes": 25
       },
+      "visibility": "active",
       "section": "plex"
     },
     {
@@ -111,6 +140,7 @@
       "criteria": {
         "created_plexes": 50
       },
+      "visibility": "active",
       "section": "plex"
     },
     {
@@ -121,6 +151,7 @@
       "criteria": {
         "created_plexes": 100
       },
+      "visibility": "active",
       "section": "plex"
     },
     {
@@ -131,6 +162,7 @@
       "criteria": {
         "created_plexes": 200
       },
+      "visibility": "active",
       "section": "plex"
     },
     {
@@ -141,6 +173,7 @@
       "criteria": {
         "shared_plexes": 5
       },
+      "visibility": "active",
       "section": "sharing"
     },
     {
@@ -151,6 +184,7 @@
       "criteria": {
         "shared_plexes": 10
       },
+      "visibility": "active",
       "section": "sharing"
     },
     {
@@ -161,6 +195,7 @@
       "criteria": {
         "shared_plexes": 25
       },
+      "visibility": "active",
       "section": "sharing"
     },
     {
@@ -171,6 +206,7 @@
       "criteria": {
         "shared_plexes": 75
       },
+      "visibility": "active",
       "section": "sharing"
     },
     {
@@ -181,6 +217,7 @@
       "criteria": {
         "shared_plexes": 150
       },
+      "visibility": "active",
       "section": "sharing"
     },
     {
@@ -188,7 +225,7 @@
       "name": "Gear Explorer",
       "description": "5 Gears published",
       "image": "badges/gear_explorer.png",
-      "visibility": "inactive",
+      "visibility": "active",
       "section": "gears"
     },
     {
@@ -196,7 +233,7 @@
       "name": "Gear Builder",
       "description": "10 Gears published",
       "image": "badges/gear_builder.png",
-      "visibility": "inactive",
+      "visibility": "active",
       "section": "gears"
     },
     {
@@ -204,7 +241,7 @@
       "name": "Gear Creator",
       "description": "15 Gears published",
       "image": "badges/gear_creator.png",
-      "visibility": "inactive",
+      "visibility": "active",
       "section": "gears"
     },
     {
@@ -212,7 +249,7 @@
       "name": "Gear Architect",
       "description": "20 Gears published",
       "image": "badges/gear_architect.png",
-      "visibility": "inactive",
+      "visibility": "active",
       "section": "gears"
     },
     {
@@ -220,7 +257,7 @@
       "name": "Gear Legend",
       "description": "50 Gears published",
       "image": "badges/gear_legend.png",
-      "visibility": "inactive",
+      "visibility": "active",
       "section": "gears"
     }
   ]
