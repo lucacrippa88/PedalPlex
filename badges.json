@@ -358,7 +358,7 @@
       "description": "20 Gears published",
       "image": "badges/gear_architect.png",
       "criteria": {
-        "published_gears": 20
+        "published_gears": 25
       },
       "visibility": "active",
       "section": "gears"
@@ -369,7 +369,7 @@
       "description": "50 Gears published",
       "image": "badges/gear_legend.png",
       "criteria": {
-        "published_gears": 50
+        "published_gears": 75
       },
       "visibility": "active",
       "section": "gears"
