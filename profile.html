@@ -181,14 +181,22 @@ function displayBadges(earnedBadges, badgeDefinitions) {
   
   const rowDiv = $('<div class="bx--row"></div>');
   
-  // Loop through ALL badge definitions
+  // Loop through ALL badge definitions (excluding hidden ones)
   badgeDefinitions.forEach(badgeDef => {
+    // Skip badges with visibility set to false
+    if (badgeDef.visibility === 'false' || badgeDef.visibility === false) {
+      return;
+    }
+    
     // Check if user has earned this badge
     const earned = earnedBadges.find(e => e.id === badgeDef.id);
     const isEarned = !!earned;
     
-    // Styling for earned vs unearned badges
-    const opacity = isEarned ? '1' : '0.4';
+    // Check if badge is inactive
+    const isInactive = badgeDef.visibility === 'inactive';
+    
+    // Styling for earned vs unearned vs inactive badges
+    const opacity = isEarned ? '1' : (isInactive ? '0.2' : '0.4');
     const filter = isEarned ? 'none' : 'grayscale(100%)';
     const borderColor = isEarned ? '#0f62fe' : '#e0e0e0';
     const bgGradient = isEarned ?
@@ -209,6 +217,16 @@ function displayBadges(earnedBadges, badgeDefinitions) {
             <path d="M13 24l-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9 13 24z"/>
           </svg>
           Earned ${formattedDate}
+        </small>
+      `;
+    } else if (isInactive) {
+      dateInfo = `
+        <small style="font-size: 11px; color: #a8a8a8; display: block; margin-top: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" fill="currentColor" style="vertical-align: middle; margin-right: 4px;">
+            <path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm0 26C9.4 28 4 22.6 4 16S9.4 4 16 4s12 5.4 12 12-5.4 12-12 12z"/>
+            <path d="M16 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2s2-.9 2-2v-6c0-1.1-.9-2-2-2z"/>
+          </svg>
+          Still not available
         </small>
       `;
     } else {
