@@ -41,7 +41,7 @@
       "criteria": {
         "instrument": "acoustic-guitar"
       },
-      "visibility": "active",
+      "visibility": "false",
       "section": "membership"
     },
     {
@@ -52,7 +52,7 @@
       "criteria": {
         "instrument": "electric-guitar"
       },
-      "visibility": "active",
+      "visibility": "false",
       "section": "membership"
     },
     {
@@ -63,7 +63,7 @@
       "criteria": {
         "instrument": "bass"
       },
-      "visibility": "active",
+      "visibility": "false",
       "section": "membership"
     },
     {
@@ -74,7 +74,7 @@
       "criteria": {
         "instrument": "keyboard"
       },
-      "visibility": "active",
+      "visibility": "false",
       "section": "membership"
     },
     {
@@ -85,7 +85,7 @@
       "criteria": {
         "instrument": "percussions"
       },
-      "visibility": "active",
+      "visibility": "false",
       "section": "membership"
     },
     {
@@ -96,7 +96,7 @@
       "criteria": {
         "instrument": "vocals"
       },
-      "visibility": "active",
+      "visibility": "false",
       "section": "membership"
     },
     {
@@ -107,7 +107,7 @@
       "criteria": {
         "instrument": "strings"
       },
-      "visibility": "active",
+      "visibility": "false",
       "section": "membership"
     },
     {
@@ -118,7 +118,7 @@
       "criteria": {
         "instrument": "brass"
       },
-      "visibility": "active",
+      "visibility": "false",
       "section": "membership"
     },
     {
@@ -129,7 +129,7 @@
       "criteria": {
         "instrument": "harp"
       },
-      "visibility": "active",
+      "visibility": "false",
       "section": "membership"
     },
     {
@@ -140,7 +140,7 @@
       "criteria": {
         "instrument": "harmonica"
       },
-      "visibility": "active",
+      "visibility": "false",
       "section": "membership"
     },
     {
@@ -151,7 +151,7 @@
       "criteria": {
         "instrument": "other"
       },
-      "visibility": "active",
+      "visibility": "false",
       "section": "membership"
     },
     {
@@ -202,7 +202,7 @@
       "id": "pedalplex-brand",
       "name": "Official Brand",
       "description": "You are part of our community!",
-      "image": "badges/pedalplex_brand.png",
+      "image": "badges/official_brand.png",
       "criteria": {
         "brand": "true"
       },
