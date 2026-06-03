@@ -204,7 +204,12 @@
       headers: { 'Authorization': 'Bearer ' + token },
       success: function(userFromServer) {
         $('#page-content').show();
+        // Initialize instruments as empty array if not present
+        if (!userFromServer.instruments) {
+          userFromServer.instruments = [];
+        }
         window.currentUser = userFromServer;
+        console.log('User loaded:', userFromServer);
       },
       error: function(xhr) {
         if (xhr.status === 401) {
