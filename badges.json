@@ -355,7 +355,7 @@
     {
       "id": "gear-architect",
       "name": "Gear Architect",
-      "description": "20 Gears published",
+      "description": "25 Gears published",
       "image": "badges/gear_architect.png",
       "criteria": {
         "published_gears": 25
@@ -366,7 +366,7 @@
     {
       "id": "gear-legend",
       "name": "Gear Legend",
-      "description": "50 Gears published",
+      "description": "75 Gears published",
       "image": "badges/gear_legend.png",
       "criteria": {
         "published_gears": 75
