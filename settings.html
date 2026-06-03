@@ -346,17 +346,22 @@
       // Wait for currentUser to be set
       const checkUser = setInterval(() => {
         if (window.currentUser) {
+          console.log('Current user loaded:', window.currentUser);
+          console.log('User instruments:', window.currentUser.instruments);
           loadUserInstruments();
           clearInterval(checkUser);
         }
       }, 100);
 
-      // Add change event to all checkboxes
-      document.querySelectorAll('.instrument-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-          saveInstruments();
+      // Add change event to all checkboxes - do this after DOM is ready
+      setTimeout(() => {
+        document.querySelectorAll('.instrument-checkbox').forEach(checkbox => {
+          checkbox.addEventListener('change', function() {
+            console.log('Checkbox changed:', this.value, 'checked:', this.checked);
+            saveInstruments();
+          });
         });
-      });
+      }, 500);
     });
   </script>
 
