@@ -7,6 +7,18 @@
   <link rel="icon" href="logos/pedalplex_logo_gradient.png" type="image/x-icon">
   <link rel="stylesheet" href="css/carbon-components.min.css">
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    #instrumentSelect option:checked {
+      background: linear-gradient(0deg, #0f62fe 0%, #0f62fe 100%);
+      color: white;
+      font-weight: 600;
+    }
+    #instrumentSelect option {
+      padding: 8px;
+      border-radius: 4px;
+      margin: 2px 0;
+    }
+  </style>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -87,9 +99,11 @@
     <form id="instrumentForm" style="max-width: 400px;">
       <div class="bx--form-item">
         <label for="instrumentSelect" class="bx--label">Select your instruments (you can select multiple)</label>
+        <div class="bx--form__helper-text" style="margin-bottom: 8px;">Selected instruments will be highlighted in blue</div>
         <div class="bx--multi-select__wrapper">
-          <select id="instrumentSelect" multiple class="bx--select-input" style="height: 200px; width: 100%;">
-            <option value="guitar">Guitar</option>
+          <select id="instrumentSelect" multiple class="bx--select-input" style="height: 200px; width: 100%; font-size: 14px; padding: 4px;">
+            <option value="electric-guitar">Electric Guitar</option>
+            <option value="acoustic-guitar">Acoustic Guitar</option>
             <option value="bass">Bass</option>
             <option value="keyboard">Keyboard</option>
             <option value="vocals">Vocals</option>

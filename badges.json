@@ -34,23 +34,122 @@
       "section": "membership"
     },
     {
-      "id": "pedalplex-guitarist",
+      "id": "pedalplex-acoustic-guitar",
       "name": "PedalPlex Artist",
-      "description": "Guitarist - Official Artist",
-      "image": "badges/pedalplex_guitarist.png",
+      "description": "Acoustic Guitarist",
+      "image": "badges/pedalplex_acoustic_guitar.png",
       "criteria": {
-        "instrument": "guitar"
+        "instrument": "acoustic-guitar"
       },
       "visibility": "active",
       "section": "membership"
     },
     {
-      "id": "pedalplex-bassist",
+      "id": "pedalplex-electric-guitar",
       "name": "PedalPlex Artist",
-      "description": "Bassist - Official Artist",
-      "image": "badges/pedalplex_bassist.png",
+      "description": "Electric Guitarist",
+      "image": "badges/pedalplex_electric_guitar.png",
+      "criteria": {
+        "instrument": "electric-guitar"
+      },
+      "visibility": "active",
+      "section": "membership"
+    },
+    {
+      "id": "pedalplex-bass",
+      "name": "PedalPlex Artist",
+      "description": "Bassist",
+      "image": "badges/pedalplex_bass.png",
       "criteria": {
         "instrument": "bass"
+      },
+      "visibility": "active",
+      "section": "membership"
+    },
+    {
+      "id": "pedalplex-keyboard",
+      "name": "PedalPlex Artist",
+      "description": "Keyboardist",
+      "image": "badges/pedalplex_keyboard.png",
+      "criteria": {
+        "instrument": "keyboard"
+      },
+      "visibility": "active",
+      "section": "membership"
+    },
+    {
+      "id": "pedalplex-percussions",
+      "name": "PedalPlex Artist",
+      "description": "Percussionist",
+      "image": "badges/pedalplex_percussions.png",
+      "criteria": {
+        "instrument": "percussions"
+      },
+      "visibility": "active",
+      "section": "membership"
+    },
+    {
+      "id": "pedalplex-vocals",
+      "name": "PedalPlex Artist",
+      "description": "Vocalist",
+      "image": "badges/pedalplex_vocals.png",
+      "criteria": {
+        "instrument": "vocals"
+      },
+      "visibility": "active",
+      "section": "membership"
+    },
+    {
+      "id": "pedalplex-strings",
+      "name": "PedalPlex Artist",
+      "description": "String Player",
+      "image": "badges/pedalplex_strings.png",
+      "criteria": {
+        "instrument": "strings"
+      },
+      "visibility": "active",
+      "section": "membership"
+    },
+    {
+      "id": "pedalplex-brass",
+      "name": "PedalPlex Artist",
+      "description": "Brass Player",
+      "image": "badges/pedalplex_brass.png",
+      "criteria": {
+        "instrument": "brass"
+      },
+      "visibility": "active",
+      "section": "membership"
+    },
+    {
+      "id": "pedalplex-harp",
+      "name": "PedalPlex Artist",
+      "description": "Harpist",
+      "image": "badges/pedalplex_harp.png",
+      "criteria": {
+        "instrument": "harp"
+      },
+      "visibility": "active",
+      "section": "membership"
+    },
+    {
+      "id": "pedalplex-harmonica",
+      "name": "PedalPlex Artist",
+      "description": "Harmonicist",
+      "image": "badges/pedalplex_harmonica.png",
+      "criteria": {
+        "instrument": "harmonica"
+      },
+      "visibility": "active",
+      "section": "membership"
+    },
+    {
+      "id": "pedalplex-other",
+      "name": "PedalPlex Artist",
+      "description": "Other Instrumentalist",
+      "image": "badges/pedalplex_other.png",
+      "criteria": {
+        "instrument": "other"
       },
       "visibility": "active",
       "section": "membership"
