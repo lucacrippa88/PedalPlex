@@ -198,6 +198,14 @@ function displayBadges(earnedBadges, badgeDefinitions) {
       return;
     }
     
+    // Skip badges with visibility "if_achieved" if user hasn't earned them
+    if (badgeDef.visibility === 'if_achieved') {
+      const hasBadge = earnedBadgeIds.includes(badgeDef.id);
+      if (!hasBadge) {
+        return;
+      }
+    }
+    
     const section = badgeDef.section || 'other';
     if (!badgesBySection[section]) {
       badgesBySection[section] = [];
