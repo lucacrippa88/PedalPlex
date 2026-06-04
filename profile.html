@@ -138,38 +138,74 @@ function awardAndLoadBadges() {
 function loadUserBadges() {
   const token = localStorage.getItem('authToken');
   
-  // Get user data which includes badges array
+  // Get user stats first
   $.ajax({
-    url: 'https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php',
+    url: 'https://api.pedalplex.com/USER_GET_STATS.php',
     method: 'GET',
     headers: { 'Authorization': 'Bearer ' + token },
-    success: function(userData) {
-      console.log('User data received:', userData);
-      const userBadges = userData.badges || [];
-      console.log('User badges:', userBadges);
+    success: function(userStats) {
+      console.log('User stats received:', userStats);
+      window.userStats = userStats;
       
-      // Load badge definitions from badges.json
-      $.getJSON('badges.json', function(badgeConfig) {
-        console.log('Badge config loaded:', badgeConfig);
-        displayBadges(userBadges, badgeConfig.badges);
-      }).fail(function(jqxhr, textStatus, error) {
-        console.error('Failed to load badges.json:', textStatus, error);
-        displayNoBadges('Unable to load badge information');
+      // Then get user data which includes badges array
+      $.ajax({
+        url: 'https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php',
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + token },
+        success: function(userData) {
+          console.log('User data received:', userData);
+          const userBadges = userData.badges || [];
+          console.log('User badges:', userBadges);
+          
+          // Load badge definitions from badges.json
+          $.getJSON('badges.json', function(badgeConfig) {
+            console.log('Badge config loaded:', badgeConfig);
+            displayBadges(userBadges, badgeConfig.badges, userStats);
+          }).fail(function(jqxhr, textStatus, error) {
+            console.error('Failed to load badges.json:', textStatus, error);
+            displayNoBadges('Unable to load badge information');
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('Failed to load user data:', status, error);
+          displayNoBadges('Unable to load badges');
+        }
       });
     },
     error: function(xhr, status, error) {
-      console.error('Failed to load user data:', status, error);
-      displayNoBadges('Unable to load badges');
+      console.error('Failed to load user stats:', status, error);
+      // Continue without stats
+      window.userStats = {};
+      
+      $.ajax({
+        url: 'https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php',
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + token },
+        success: function(userData) {
+          const userBadges = userData.badges || [];
+          $.getJSON('badges.json', function(badgeConfig) {
+            displayBadges(userBadges, badgeConfig.badges, {});
+          }).fail(function(jqxhr, textStatus, error) {
+            displayNoBadges('Unable to load badge information');
+          });
+        },
+        error: function(xhr, status, error) {
+          displayNoBadges('Unable to load badges');
+        }
+      });
     }
   });
 }
 
-function displayBadges(earnedBadges, badgeDefinitions) {
+function displayBadges(earnedBadges, badgeDefinitions, userStats) {
   const container = $('#badges-container');
   container.empty();
   
   // Create array of earned badge IDs for quick lookup
   const earnedBadgeIds = earnedBadges.map(b => b.id);
+  
+  // Ensure userStats exists
+  userStats = userStats || {};
   
   // Show ALL badges (earned and unearned)
   if (!badgeDefinitions || badgeDefinitions.length === 0) {
@@ -296,6 +332,59 @@ function displayBadges(earnedBadges, badgeDefinitions) {
       `;
     }
     
+    // Calculate progress for unearned badges with numeric criteria
+    let progressOverlay = '';
+    if (!isEarned && badgeDef.criteria && badgeDef.visibility === 'active') {
+      let currentValue = 0;
+      let targetValue = 0;
+      let criteriaKey = '';
+      
+      // Check for numeric criteria
+      if (badgeDef.criteria.created_plexes) {
+        criteriaKey = 'created_plexes';
+        targetValue = badgeDef.criteria.created_plexes;
+        currentValue = userStats.created_plexes || 0;
+      } else if (badgeDef.criteria.shared_plexes) {
+        criteriaKey = 'shared_plexes';
+        targetValue = badgeDef.criteria.shared_plexes;
+        currentValue = userStats.shared_plexes || 0;
+      } else if (badgeDef.criteria.published_gears) {
+        criteriaKey = 'published_gears';
+        targetValue = badgeDef.criteria.published_gears;
+        currentValue = userStats.published_gears || 0;
+      } else if (badgeDef.criteria.verified_gears) {
+        criteriaKey = 'verified_gears';
+        targetValue = badgeDef.criteria.verified_gears;
+        currentValue = userStats.verified_gears || 0;
+      }
+      
+      // Only show progress if we have a numeric criteria
+      if (targetValue > 0 && currentValue < targetValue) {
+        progressOverlay = `
+          <div style="
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow:
+              -2px -2px 0 #000,
+              2px -2px 0 #000,
+              -2px 2px 0 #000,
+              2px 2px 0 #000,
+              0 0 10px rgba(0,0,0,0.8);
+            opacity: 0.95;
+            pointer-events: none;
+            z-index: 10;
+          ">
+            ${currentValue}/${targetValue}
+          </div>
+        `;
+      }
+    }
+    
     const badgeHtml = `
       <div class="bx--col-sm-4 bx--col-md-3 bx--col-lg-2" style="margin-bottom: 30px;">
         <div class="badge-card" style="
@@ -308,8 +397,10 @@ function displayBadges(earnedBadges, badgeDefinitions) {
           transition: transform 0.2s, box-shadow 0.2s;
           cursor: pointer;
           opacity: ${opacity};
+          position: relative;
         " onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)';"
            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)';">
+          ${progressOverlay}
           <img src="${badgeDef.image}" alt="${badgeDef.name}"
                style="width: 180px; height: 180px; object-fit: contain; margin-bottom: 12px; filter: ${filter} drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
           <h4 style="text-transform:uppercase; font-size: 14px; font-weight: 600; margin: 8px 0 4px 0; color: #161616;">${badgeDef.name}</h4>
