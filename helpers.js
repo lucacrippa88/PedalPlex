@@ -499,7 +499,7 @@ $(document).ready(function() {
     setTimeout(checkAndShowPendingBadges, 1500);
 });
 
-function checkAndShowPendingBadges() {
+window.checkAndShowPendingBadges = function() {
     const pendingBadgesJson = localStorage.getItem('pendingBadges');
     
     if (!pendingBadgesJson) {
@@ -530,7 +530,7 @@ function checkAndShowPendingBadges() {
         console.error('Error parsing pending badges:', e);
         localStorage.removeItem('pendingBadges');
     }
-}
+};
 
 function showBadgeAwardPopup(earnedBadges, badgeDefinitions) {
     // Build HTML for each badge
