@@ -13,11 +13,13 @@ function setupPreviewMode() {
 
         // Disabilita pulsanti
         const ids = [
-            "savePstBtn", 
+            "savePstBtn",
             "savePstBtnMobile",
-            "createPstBtn", 
+            "createPstBtn",
             "createPstBtnMobile",
-            "addFolderBtn"
+            "addFolderBtn",
+            "lockPresetBtn",
+            "downloadPlexBtn"
         ];
         ids.forEach(id => {
             const el = document.getElementById(id);

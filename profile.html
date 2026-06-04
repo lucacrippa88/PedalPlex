@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="css/carbon-components.min.css">
   <link rel="stylesheet" href="css/style.css">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
@@ -38,21 +40,47 @@
   <div id="page-content">
 
     <h2>Welcome, <span id="current-user"></span></h2><br><br>
-    
-    <!-- Badges Section -->
-    <div id="badges-section">
-      <!-- <h3>Achievements</h3> -->
-      <br>
-      <div id="badges-container" class="bx--grid">
-        <div class="bx--row">
-          <div class="bx--col" style="text-align: center; padding: 20px;">
-            <p style="color: #888;">Loading badges...</p>
+
+    <div data-tabs class="bx--tabs">
+      <div class="bx--tabs-trigger" tabindex="0">
+        <a href="javascript:void(0)" class="bx--tabs-trigger-text" tabindex="-1"></a>
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M8 11L3 6 3.7 5.3 8 9.6 12.3 5.3 13 6z"></path>
+        </svg>
+      </div>
+      <ul class="bx--tabs__nav bx--tabs__nav--hidden" role="tablist">
+        <li class="bx--tabs__nav-item bx--tabs__nav-item--selected" data-target=".profile-tab-achievements" role="presentation">
+          <a tabindex="0" id="tab-achievements" class="bx--tabs__nav-link" href="javascript:void(0)" role="tab" aria-controls="tab-panel-achievements" aria-selected="true">Achievements</a>
+        </li>
+        <li class="bx--tabs__nav-item" data-target=".profile-tab-shared-plexes" role="presentation">
+          <a tabindex="-1" id="tab-shared-plexes" class="bx--tabs__nav-link" href="javascript:void(0)" role="tab" aria-controls="tab-panel-shared-plexes" aria-selected="false">Shared Plexes</a>
+        </li>
+      </ul>
+    </div>
+
+    <div id="tab-panel-achievements" class="profile-tab-achievements" role="tabpanel" aria-labelledby="tab-achievements">
+      <div id="badges-section">
+        <br>
+        <div id="badges-container" class="bx--grid">
+          <div class="bx--row">
+            <div class="bx--col" style="text-align: center; padding: 20px;">
+              <p style="color: #888;">Loading badges...</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    
+    <div id="tab-panel-shared-plexes" class="profile-tab-shared-plexes" role="tabpanel" aria-labelledby="tab-shared-plexes" hidden>
+      <br>
+      <div id="shared-plexes-container" class="bx--grid">
+        <div class="bx--row">
+          <div class="bx--col" style="text-align: center; padding: 20px;">
+            <p style="color: #888;">Loading shared Plexes...</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <br><br><br><br>
     <div id="admin-dashboard" style="display: none;">
@@ -81,6 +109,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="fullscreen-menu.js"></script>
   <script src="nav.js"></script>
+  <script src="helpers.js"></script>
 
   <script>
   // Check user authentication
@@ -111,9 +140,12 @@
         
         // If admin, load dashboard stats
         loadAdminStats();
+
+        initProfileTabs();
         
         // Award and load badges
         awardAndLoadBadges();
+        loadSharedPlexes();
       },
       error: function(xhr) {
         if (xhr.status === 401) {
@@ -511,6 +543,213 @@ function showBadgeAwardPopup(earnedBadges, badgeDefinitions) {
 </script>
 
 <script>
+function generateProfileShareQR(link) {
+  const container = document.getElementById('profileQrContainer');
+  if (!container) return;
+
+  container.innerHTML = '';
+  container.style.position = 'relative';
+  container.style.display = 'flex';
+  container.style.justifyContent = 'center';
+
+  const qrWrapper = document.createElement('div');
+  qrWrapper.style.position = 'relative';
+  container.appendChild(qrWrapper);
+
+  new QRCode(qrWrapper, {
+    text: link,
+    width: 180,
+    height: 180,
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  const logo = document.createElement('img');
+  logo.src = '/logos/pedalplex_logo_black.png';
+  logo.style.position = 'absolute';
+  logo.style.top = '50%';
+  logo.style.left = '50%';
+  logo.style.transform = 'translate(-50%, -50%)';
+  logo.style.width = '42px';
+  logo.style.height = '42px';
+  logo.style.background = 'white';
+  logo.style.padding = '6px';
+  logo.style.borderRadius = '8px';
+  logo.style.boxShadow = '0 0 4px rgba(0,0,0,0.2)';
+  logo.style.objectFit = 'contain';
+
+  qrWrapper.appendChild(logo);
+}
+
+function openSharedPlexQrModal(link, plexName) {
+  Swal.fire({
+    title: `QR Code for ${plexName}`,
+    html: `
+      <div style="text-align:center;">
+        <div id="profileQrContainer" style="margin: 0 auto 1rem; display:flex; justify-content:center;"></div>
+        <input class="bx--text-input" value="${link}" readonly style="width:100%;">
+      </div>
+    `,
+    confirmButtonText: 'Close',
+    customClass: {
+      confirmButton: 'bx--btn bx--btn--primary'
+    },
+    buttonsStyling: false,
+    didOpen: () => {
+      generateProfileShareQR(link);
+    }
+  });
+}
+
+function formatSharedDate(sharedAt) {
+  if (!sharedAt) return 'Unknown date';
+  const date = new Date(sharedAt);
+  if (Number.isNaN(date.getTime())) return 'Unknown date';
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  }) + ', ' + date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+function initProfileTabs() {
+  const tabLinks = document.querySelectorAll('.bx--tabs__nav-link');
+  const tabItems = document.querySelectorAll('.bx--tabs__nav-item');
+  const panels = [
+    document.getElementById('tab-panel-achievements'),
+    document.getElementById('tab-panel-shared-plexes')
+  ];
+
+  tabLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      const targetId = link.id === 'tab-achievements' ? 'tab-panel-achievements' : 'tab-panel-shared-plexes';
+
+      tabItems.forEach(item => item.classList.remove('bx--tabs__nav-item--selected'));
+      tabLinks.forEach(otherLink => {
+        otherLink.setAttribute('aria-selected', 'false');
+        otherLink.setAttribute('tabindex', '-1');
+      });
+      panels.forEach(panel => panel.hidden = true);
+
+      link.parentElement.classList.add('bx--tabs__nav-item--selected');
+      link.setAttribute('aria-selected', 'true');
+      link.setAttribute('tabindex', '0');
+      document.getElementById(targetId).hidden = false;
+    });
+  });
+}
+
+function loadSharedPlexes() {
+  const token = localStorage.getItem('authToken');
+  const container = $('#shared-plexes-container');
+
+  container.html(`
+    <div class="bx--row">
+      <div class="bx--col" style="text-align: center; padding: 20px;">
+        <p style="color: #888;">Loading shared Plexes...</p>
+      </div>
+    </div>
+  `);
+
+  $.ajax({
+    url: 'https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php',
+    method: 'GET',
+    headers: { 'Authorization': 'Bearer ' + token },
+    success: function(userData) {
+      const userId = userData._id || userData.id || userData.user_id;
+      if (!userId) {
+        displayNoSharedPlexes('Unable to determine current user.');
+        return;
+      }
+
+      $.ajax({
+        url: 'https://api.pedalplex.com/GET_PLEX.php',
+        method: 'POST',
+        contentType: 'application/json',
+        headers: { 'Authorization': 'Bearer ' + token },
+        data: JSON.stringify({ user_id: userId }),
+        success: function(data) {
+          const presets = Array.isArray(data.presets) ? data.presets : [];
+          const sharedPlexes = presets.filter(preset =>
+            (preset.shared === true || preset.shared === 'true' || preset.shared === 1 || preset.shared === '1') &&
+            preset.shared_token
+          );
+
+          displaySharedPlexes(sharedPlexes);
+        },
+        error: function() {
+          displayNoSharedPlexes('Unable to load shared Plexes.');
+        }
+      });
+    },
+    error: function() {
+      displayNoSharedPlexes('Unable to load shared Plexes.');
+    }
+  });
+}
+
+function displaySharedPlexes(sharedPlexes) {
+  const container = $('#shared-plexes-container');
+  container.empty();
+
+  if (!sharedPlexes || sharedPlexes.length === 0) {
+    displayNoSharedPlexes('No shared Plexes yet.');
+    return;
+  }
+
+  const sortedPlexes = [...sharedPlexes].sort((a, b) => {
+    const dateA = new Date(a.sharedAt || 0).getTime();
+    const dateB = new Date(b.sharedAt || 0).getTime();
+    return dateB - dateA;
+  });
+
+  const row = $('<div class="bx--row"></div>');
+
+  sortedPlexes.forEach((plex) => {
+    const plexName = plex.preset_name || 'Untitled Plex';
+    const sharedDate = formatSharedDate(plex.sharedAt);
+    const shareLink = `${window.location.origin}/shared/plex/#${plex.shared_token}`;
+
+    const card = $(`
+      <div class="bx--col-lg-8 bx--col-md-6 bx--col-sm-4" style="margin-bottom: 1rem;">
+        <div style="border: 1px solid #393939; border-radius: 8px; padding: 1rem; background: #161616;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
+            <div>
+              <h4 style="margin:0 0 0.5rem 0;">${plexName}</h4>
+              <p style="margin:0; color:#c6c6c6;">Shared on ${sharedDate}</p>
+            </div>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <a href="${shareLink}" target="_blank" rel="noopener noreferrer" class="bx--btn bx--btn--secondary bx--btn--sm">Open Link</a>
+              <button type="button" class="bx--btn bx--btn--tertiary bx--btn--sm profile-shared-plex-qr" data-link="${shareLink}" data-name="${plexName}">QR Code</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `);
+
+    row.append(card);
+  });
+
+  container.append(row);
+
+  $('.profile-shared-plex-qr').off('click').on('click', function() {
+    openSharedPlexQrModal($(this).data('link'), $(this).data('name'));
+  });
+}
+
+function displayNoSharedPlexes(message) {
+  const container = $('#shared-plexes-container');
+  container.html(`
+    <div class="bx--row">
+      <div class="bx--col" style="text-align: center; padding: 20px;">
+        <p style="color: #888;">${message}</p>
+      </div>
+    </div>
+  `);
+}
+
 function loadAdminStats() {
   if (!window.currentUser || window.currentUser.role !== 'admin') return;
 
