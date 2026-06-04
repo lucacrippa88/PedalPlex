@@ -213,7 +213,7 @@ $(document).ready(function () {
   // Profile button
   $(document).on('click', '#profileBtn', function () {
     if (window.currentUser && window.currentUser.role !== "guest") {
-      window.location.href = 'profile';
+      window.location.href = '/profile';
     } else {
       Swal.fire({
         icon: 'info',
@@ -227,7 +227,7 @@ $(document).ready(function () {
   // Settings button
   $(document).on('click', '#settingsBtn', function () {
     if (window.currentUser && window.currentUser.role !== "guest") {
-      window.location.href = 'settings';
+      window.location.href = '/settings';
     } else {
       Swal.fire({
         icon: 'info',
