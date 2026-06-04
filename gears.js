@@ -1,9 +1,22 @@
-// Check published gear count and award badges
-async function checkAndAwardGearBadges(publishedGearCount) {
+// Check published and verified gear counts and award badges
+async function checkAndAwardGearBadges() {
   const token = localStorage.getItem('authToken');
   if (!token) return; // Guest users don't get badges
   
   try {
+    // Get user stats from API to get TOTAL gear counts
+    const statsRes = await fetch('https://api.pedalplex.com/USER_GET_STATS.php', {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    });
+    
+    if (!statsRes.ok) return;
+    const stats = await statsRes.json();
+    const publishedGearCount = stats.published_gears || 0;
+    const verifiedGearCount = stats.verified_gears || 0;
+    
     // Load badges.json to get criteria
     const badgesRes = await fetch('badges.json');
     const badgesData = await badgesRes.json();
@@ -12,6 +25,9 @@ async function checkAndAwardGearBadges(publishedGearCount) {
     const eligibleBadges = badgesData.badges.filter(badge => {
       if (badge.criteria && badge.criteria.published_gears) {
         return publishedGearCount >= badge.criteria.published_gears;
+      }
+      if (badge.criteria && badge.criteria.verified_gears) {
+        return verifiedGearCount >= badge.criteria.verified_gears;
       }
       return false;
     });
@@ -463,8 +479,8 @@ function updatePedalCountsFromServer(activeFilter = null) {
     $("#pedalCount").html(countsHtml);
     
     // Check and award gear publishing badges
-    if (counts.publicByMe && window.currentUser?.role !== "guest") {
-      checkAndAwardGearBadges(counts.publicByMe);
+    if (window.currentUser?.role !== "guest") {
+      checkAndAwardGearBadges();
     }
 
     $(".status-filter[data-filter]").off("click").on("click", function () {
