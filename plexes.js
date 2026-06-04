@@ -62,11 +62,23 @@ function isPresetShared(preset) {
 }
 
 // Check plex count and award badges
-async function checkAndAwardPlexBadges(plexCount) {
+async function checkAndAwardPlexBadges() {
   const token = localStorage.getItem('authToken');
   if (!token) return; // Guest users don't get badges
   
   try {
+    // Get user stats from API to get TOTAL plex count across all rigs
+    const statsRes = await fetch('https://api.pedalplex.com/USER_GET_STATS.php', {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    });
+    
+    if (!statsRes.ok) return;
+    const stats = await statsRes.json();
+    const totalPlexCount = stats.created_plexes || 0;
+    
     // Load badges.json to get criteria
     const badgesRes = await fetch('badges.json');
     const badgesData = await badgesRes.json();
@@ -74,7 +86,7 @@ async function checkAndAwardPlexBadges(plexCount) {
     // Find all plex-related badges that user qualifies for
     const eligibleBadges = badgesData.badges.filter(badge => {
       if (badge.criteria && badge.criteria.created_plexes) {
-        return plexCount >= badge.criteria.created_plexes;
+        return totalPlexCount >= badge.criteria.created_plexes;
       }
       return false;
     });
@@ -144,11 +156,23 @@ async function checkAndAwardPlexBadges(plexCount) {
 }
 
 // Check shared plex count and award badges
-async function checkAndAwardSharingBadges(sharedPlexCount) {
+async function checkAndAwardSharingBadges() {
   const token = localStorage.getItem('authToken');
   if (!token) return; // Guest users don't get badges
   
   try {
+    // Get user stats from API to get TOTAL shared plex count across all rigs
+    const statsRes = await fetch('https://api.pedalplex.com/USER_GET_STATS.php', {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    });
+    
+    if (!statsRes.ok) return;
+    const stats = await statsRes.json();
+    const totalSharedPlexCount = stats.shared_plexes || 0;
+    
     // Load badges.json to get criteria
     const badgesRes = await fetch('badges.json');
     const badgesData = await badgesRes.json();
@@ -156,7 +180,7 @@ async function checkAndAwardSharingBadges(sharedPlexCount) {
     // Find all sharing-related badges that user qualifies for
     const eligibleBadges = badgesData.badges.filter(badge => {
       if (badge.criteria && badge.criteria.shared_plexes) {
-        return sharedPlexCount >= badge.criteria.shared_plexes;
+        return totalSharedPlexCount >= badge.criteria.shared_plexes;
       }
       return false;
     });
@@ -561,12 +585,11 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
     // Store all presets globally
     window.presets = data.presets || [];
     
-    // Check and award plex creation badges
-    await checkAndAwardPlexBadges(window.presets.length);
+    // Check and award plex creation badges (uses total count from API)
+    await checkAndAwardPlexBadges();
     
-    // Count shared plexes and check sharing badges
-    const sharedPlexCount = window.presets.filter(p => p.shared === true || p.shared === 'true' || p.shared === 1 || p.shared === '1').length;
-    await checkAndAwardSharingBadges(sharedPlexCount);
+    // Check sharing badges (uses total count from API)
+    await checkAndAwardSharingBadges();
     
     // Build presetMap keyed by _id for easy lookup
 
