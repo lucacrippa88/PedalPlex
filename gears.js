@@ -71,18 +71,28 @@ async function checkAndAwardGearBadges() {
       });
       
       if (awardRes.ok) {
-        console.log('Gear badge awarded:', badge.id);
+        const result = await awardRes.json();
+        console.log('Gear badge award response:', result);
         
-        // Store in localStorage to show popup
-        const pendingBadges = JSON.parse(localStorage.getItem('pendingBadges') || '[]');
-        pendingBadges.push({
-          id: badge.id,
-          name: badge.name,
-          description: badge.description,
-          image: badge.image,
-          awarded_at: new Date().toISOString()
-        });
-        localStorage.setItem('pendingBadges', JSON.stringify(pendingBadges));
+        if (result.success) {
+          console.log('Gear badge awarded successfully:', badge.id);
+          
+          // Store in localStorage to show popup
+          const pendingBadges = JSON.parse(localStorage.getItem('pendingBadges') || '[]');
+          pendingBadges.push({
+            id: badge.id,
+            name: badge.name,
+            description: badge.description,
+            image: badge.image,
+            awarded_at: new Date().toISOString()
+          });
+          localStorage.setItem('pendingBadges', JSON.stringify(pendingBadges));
+        } else {
+          console.error('Badge award failed:', result.error || 'Unknown error');
+        }
+      } else {
+        const errorText = await awardRes.text();
+        console.error('Badge award HTTP error:', awardRes.status, errorText);
       }
     }
     
