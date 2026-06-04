@@ -9,7 +9,8 @@
         "registered_before": "2026-01-01T00:00:00Z"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 1
     },
     {
       "id": "founding-member",
@@ -20,7 +21,8 @@
         "registered_before": "2026-06-10T00:00:00Z"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 2
     },
     {
       "id": "growth-member",
@@ -31,7 +33,8 @@
         "registered_before": "2027-06-10T00:00:00Z"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 3
     },
     {
       "id": "pedalplex-acoustic-guitar",
@@ -42,7 +45,8 @@
         "instrument": "acoustic-guitar"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 0
     },
     {
       "id": "pedalplex-electric-guitar",
@@ -53,7 +57,8 @@
         "instrument": "electric-guitar"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 0
     },
     {
       "id": "pedalplex-bass",
@@ -64,7 +69,8 @@
         "instrument": "bass"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 0
     },
     {
       "id": "pedalplex-keyboard",
@@ -75,7 +81,8 @@
         "instrument": "keyboard"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 0
     },
     {
       "id": "pedalplex-percussions",
@@ -86,7 +93,8 @@
         "instrument": "percussions"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 0
     },
     {
       "id": "pedalplex-vocals",
@@ -97,7 +105,8 @@
         "instrument": "vocals"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 0
     },
     {
       "id": "pedalplex-strings",
@@ -108,7 +117,8 @@
         "instrument": "strings"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 0
     },
     {
       "id": "pedalplex-brass",
@@ -119,7 +129,8 @@
         "instrument": "brass"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 0
     },
     {
       "id": "pedalplex-harp",
@@ -130,7 +141,8 @@
         "instrument": "harp"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 0
     },
     {
       "id": "pedalplex-harmonica",
@@ -141,7 +153,8 @@
         "instrument": "harmonica"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 0
     },
     {
       "id": "pedalplex-other",
@@ -152,7 +165,8 @@
         "instrument": "other"
       },
       "visibility": "if_achieved",
-      "section": "membership"
+      "section": "membership",
+      "level": 0
     },
     {
       "id": "first-plex",
@@ -199,17 +213,6 @@
       "section": "startup"
     },
     {
-      "id": "pedalplex-brand",
-      "name": "Official Brand",
-      "description": "You are part of our community!",
-      "image": "badges/official_brand.png",
-      "criteria": {
-        "brand": "true"
-      },
-      "visibility": "if_achieved",
-      "section": "brand"
-    },
-    {
       "id": "plex-explorer",
       "name": "Plex Explorer",
       "description": "10 Plexes created",
@@ -218,7 +221,8 @@
         "created_plexes": 10
       },
       "visibility": "active",
-      "section": "plex"
+      "section": "plex",
+      "level": 5
     },
     {
       "id": "plex-builder",
@@ -229,7 +233,8 @@
         "created_plexes": 25
       },
       "visibility": "active",
-      "section": "plex"
+      "section": "plex",
+      "level": 4
     },
     {
       "id": "plex-creator",
@@ -240,7 +245,8 @@
         "created_plexes": 50
       },
       "visibility": "active",
-      "section": "plex"
+      "section": "plex",
+      "level": 3
     },
     {
       "id": "plex-architect",
@@ -251,7 +257,8 @@
         "created_plexes": 100
       },
       "visibility": "active",
-      "section": "plex"
+      "section": "plex",
+      "level": 2
     },
     {
       "id": "plex-legend",
@@ -262,7 +269,8 @@
         "created_plexes": 200
       },
       "visibility": "active",
-      "section": "plex"
+      "section": "plex",
+      "level": 1
     },
     {
       "id": "sharing-explorer",
@@ -273,7 +281,8 @@
         "shared_plexes": 5
       },
       "visibility": "active",
-      "section": "sharing"
+      "section": "sharing",
+      "level": 5
     },
     {
       "id": "sharing-builder",
@@ -284,7 +293,8 @@
         "shared_plexes": 10
       },
       "visibility": "active",
-      "section": "sharing"
+      "section": "sharing",
+      "level": 4
     },
     {
       "id": "sharing-creator",
@@ -295,7 +305,8 @@
         "shared_plexes": 25
       },
       "visibility": "active",
-      "section": "sharing"
+      "section": "sharing",
+      "level": 3
     },
     {
       "id": "sharing-architect",
@@ -306,7 +317,8 @@
         "shared_plexes": 75
       },
       "visibility": "active",
-      "section": "sharing"
+      "section": "sharing",
+      "level": 2
     },
     {
       "id": "sharing-legend",
@@ -317,7 +329,8 @@
         "shared_plexes": 150
       },
       "visibility": "active",
-      "section": "sharing"
+      "section": "sharing",
+      "level": 1
     },
     {
       "id": "gear-explorer",
@@ -328,7 +341,8 @@
         "published_gears": 5
       },
       "visibility": "active",
-      "section": "gears"
+      "section": "gears",
+      "level": 5
     },
     {
       "id": "gear-builder",
@@ -339,7 +353,8 @@
         "published_gears": 10
       },
       "visibility": "active",
-      "section": "gears"
+      "section": "gears",
+      "level": 4
     },
     {
       "id": "gear-creator",
@@ -350,7 +365,8 @@
         "published_gears": 15
       },
       "visibility": "active",
-      "section": "gears"
+      "section": "gears",
+      "level": 3
     },
     {
       "id": "gear-architect",
@@ -361,7 +377,8 @@
         "published_gears": 25
       },
       "visibility": "active",
-      "section": "gears"
+      "section": "gears",
+      "level": 2
     },
     {
       "id": "gear-legend",
@@ -372,7 +389,19 @@
         "published_gears": 75
       },
       "visibility": "active",
-      "section": "gears"
+      "section": "gears",
+      "level": 1
+    },
+    {
+      "id": "pedalplex-brand",
+      "name": "Official Brand",
+      "description": "You are part of our community!",
+      "image": "badges/official_brand.png",
+      "criteria": {
+        "brand": "true"
+      },
+      "visibility": "if_achieved",
+      "section": "brand"
     }
   ]
 }
