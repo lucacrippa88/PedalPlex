@@ -698,16 +698,47 @@ function displaySharedPlexes(sharedPlexes) {
     const shareLink = `${window.location.origin}/shared/plex/#${plex.shared_token}`;
 
     const card = $(`
-      <div class="bx--col-lg-8 bx--col-md-6 bx--col-sm-4" style="margin-bottom: 1rem;">
-        <div style="border: 1px solid #393939; border-radius: 8px; padding: 1rem; background: #161616;">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
+      <div class="bx--col-lg-8 bx--col-md-6 bx--col-sm-4" style="margin-bottom: 1rem; display: flex;">
+        <div style="border: 1px solid #393939; border-radius: 8px; padding: 1rem; background: #161616; display: flex; flex-direction: column; width: 100%; min-height: 170px;">
+          <div style="display:flex; flex-direction:column; flex:1; gap:1rem;">
             <div>
               <h4 style="margin:0 0 0.5rem 0;">${plexName}</h4>
               <p style="margin:0; color:#c6c6c6;">Shared on ${sharedDate}</p>
             </div>
-            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-              <a href="${shareLink}" target="_blank" rel="noopener noreferrer" class="bx--btn bx--btn--secondary bx--btn--sm">Open Link</a>
-              <button type="button" class="bx--btn bx--btn--tertiary bx--btn--sm profile-shared-plex-qr" data-link="${shareLink}" data-name="${plexName}">QR Code</button>
+            <div style="display:flex; gap:0.5rem; margin-top:auto; justify-content:flex-end;">
+              <a
+                href="${shareLink}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="bx--btn bx--btn--secondary bx--btn--icon-only"
+                title="Open shared Plex"
+                aria-label="Open shared Plex">
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                  <path d="M26 28H10a2 2 0 0 1-2-2V10h2v16h16v-8h2v8a2 2 0 0 1-2 2z"></path>
+                  <path d="M20 4v2h4.59L14 16.59 15.41 18 26 7.41V12h2V4H20z"></path>
+                </svg>
+              </a>
+              <button
+                type="button"
+                class="bx--btn bx--btn--tertiary bx--btn--icon-only profile-shared-plex-qr"
+                data-link="${shareLink}"
+                data-name="${plexName}"
+                title="Show QR code"
+                aria-label="Show QR code">
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                  <path d="M14 14H6V6h8zm-6-2h4V8H8z"></path>
+                  <path d="M26 14H18V6h8zm-6-2h4V8h-4z"></path>
+                  <path d="M14 26H6V18h8zm-6-2h4V20H8z"></path>
+                  <path d="M18 18h2v2h-2z"></path>
+                  <path d="M22 18h2v2h-2z"></path>
+                  <path d="M26 18h2v2h-2z"></path>
+                  <path d="M18 22h2v2h-2z"></path>
+                  <path d="M22 22h6v2h-6z"></path>
+                  <path d="M18 26h2v2h-2z"></path>
+                  <path d="M22 26h2v2h-2z"></path>
+                  <path d="M26 26h2v2h-2z"></path>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
