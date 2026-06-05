@@ -68,6 +68,17 @@
       <div id="badges-section">
         <br>
         <div id="badges-container" class="bx--grid">
+
+
+      <div class="bx--row" style="margin-top: 30px; margin-bottom: 20px;">
+        <div class="bx--col">
+          <h3 style="font-size: 1.5rem; color: #ffffff; padding-bottom: 10px;">
+            ${sections[sectionKey]}
+          </h3>
+        </div>
+      </div>
+
+          
           <div class="bx--row">
             <div class="bx--col" style="text-align: center; padding: 20px;">
               <p style="color: #888;">Loading badges...</p>
@@ -300,7 +311,7 @@ function displayBadges(earnedBadges, badgeDefinitions, userStats) {
     
     // Add section title
     const sectionTitle = $(`
-      <div class="bx--row" style="margin-top: 40px; margin-bottom: 20px;">
+      <div class="bx--row" style="margin-top: 30px; margin-bottom: 20px;">
         <div class="bx--col">
           <h3 style="font-size: 1.5rem; color: #ffffff; padding-bottom: 10px;">
             ${sections[sectionKey]}
