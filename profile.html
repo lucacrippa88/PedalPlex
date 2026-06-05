@@ -658,25 +658,16 @@ function loadSharedPlexes() {
     </div>
   `);
 
-  const currentUser = window.currentUser || {};
-  const userId = currentUser._id || currentUser.id || currentUser.user_id || currentUser.username;
-
   $.ajax({
-    url: 'https://api.pedalplex.com/GET_PLEX.php',
-    method: 'POST',
-    contentType: 'application/json',
+    url: 'https://api.pedalplex.com/GET_SHARED_PLEXES.php',
+    method: 'GET',
     headers: { 'Authorization': 'Bearer ' + token },
-    data: JSON.stringify(userId ? { user_id: userId } : {}),
     success: function(data) {
-      const presets = Array.isArray(data.presets) ? data.presets : [];
-      const sharedPlexes = presets.filter(preset =>
-        (preset.shared === true || preset.shared === 'true' || preset.shared === 1 || preset.shared === '1') &&
-        preset.shared_token
-      );
-
+      const sharedPlexes = Array.isArray(data.plexes) ? data.plexes : [];
       displaySharedPlexes(sharedPlexes);
     },
-    error: function() {
+    error: function(xhr) {
+      console.error('Failed to load shared Plexes:', xhr.responseText || xhr.statusText);
       displayNoSharedPlexes('Unable to load shared Plexes.');
     }
   });
