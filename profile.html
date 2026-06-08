@@ -54,21 +54,27 @@
       </div>
     </div>
 
-    <div data-tabs class="bx--tabs">
-      <div class="bx--tabs-trigger" tabindex="0">
-        <a href="javascript:void(0)" class="bx--tabs-trigger-text" tabindex="-1"></a>
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M8 11L3 6 3.7 5.3 8 9.6 12.3 5.3 13 6z"></path>
-        </svg>
-      </div>
-      <ul class="bx--tabs__nav bx--tabs__nav--hidden" role="tablist">
-        <li class="bx--tabs__nav-item bx--tabs__nav-item--selected" data-target=".profile-tab-achievements" role="presentation">
-          <a tabindex="0" id="tab-achievements" class="bx--tabs__nav-link" href="javascript:void(0)" role="tab" aria-controls="tab-panel-achievements" aria-selected="true">Achievements</a>
-        </li>
-        <li class="bx--tabs__nav-item" data-target=".profile-tab-shared-plexes" role="presentation">
-          <a tabindex="-1" id="tab-shared-plexes" class="bx--tabs__nav-link" href="javascript:void(0)" role="tab" aria-controls="tab-panel-shared-plexes" aria-selected="false">Shared Plexes</a>
-        </li>
-      </ul>
+    <div class="bx--content-switcher" role="tablist" aria-label="Profile sections">
+      <button
+        id="switch-achievements"
+        class="bx--content-switcher-btn bx--content-switcher--selected"
+        data-target="tab-panel-achievements"
+        role="tab"
+        type="button"
+        aria-selected="true"
+        aria-controls="tab-panel-achievements">
+        <span class="bx--content-switcher__label">Achievements</span>
+      </button>
+      <button
+        id="switch-shared-plexes"
+        class="bx--content-switcher-btn"
+        data-target="tab-panel-shared-plexes"
+        role="tab"
+        type="button"
+        aria-selected="false"
+        aria-controls="tab-panel-shared-plexes">
+        <span class="bx--content-switcher__label">Shared Plexes</span>
+      </button>
     </div>
 
     <div id="tab-panel-achievements" class="profile-tab-achievements" role="tabpanel" aria-labelledby="tab-achievements">
@@ -442,15 +448,47 @@
       const shareLink = `${window.location.origin}/shared/plex/#${plex.shared_token}`;
 
       const card = $(`
-        <div class="bx--col-lg-8 bx--col-md-6 bx--col-sm-4" style="margin-bottom: 1rem;">
-          <div style="border: 1px solid #393939; border-radius: 8px; padding: 1rem; background: #161616;">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
+        <div class="bx--col-lg-8 bx--col-md-6 bx--col-sm-4" style="margin-bottom: 1rem; display: flex;">
+          <div style="border: 1px solid #393939; border-radius: 8px; padding: 1rem; background: #161616; display: flex; flex-direction: column; width: 100%; min-height: 170px;">
+            <div style="display:flex; flex-direction:column; flex:1; gap:1rem;">
               <div>
                 <h4 style="margin:0 0 0.5rem 0;">${plexName}</h4>
                 <p style="margin:0; color:#c6c6c6;">Shared on ${sharedDate}</p>
               </div>
-              <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-                <a href="${shareLink}" target="_blank" rel="noopener noreferrer" class="bx--btn bx--btn--secondary bx--btn--sm">Open Link</a>
+              <div style="display:flex; gap:0.5rem; margin-top:auto; justify-content:flex-end;">
+                <a
+                  href="${shareLink}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="bx--btn bx--btn--secondary bx--btn--icon-only"
+                  title="Open shared Plex"
+                  aria-label="Open shared Plex">
+                  <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                    <path d="M26 28H10a2 2 0 0 1-2-2V10h2v16h16v-8h2v8a2 2 0 0 1-2 2z"></path>
+                    <path d="M20 4v2h4.59L14 16.59 15.41 18 26 7.41V12h2V4H20z"></path>
+                  </svg>
+                </a>
+                <button
+                  type="button"
+                  class="bx--btn bx--btn--tertiary bx--btn--icon-only profile-shared-plex-qr"
+                  data-link="${shareLink}"
+                  data-name="${plexName}"
+                  title="Show QR code"
+                  aria-label="Show QR code">
+                  <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                    <path d="M14 14H6V6h8zm-6-2h4V8H8z"></path>
+                    <path d="M26 14H18V6h8zm-6-2h4V8h-4z"></path>
+                    <path d="M14 26H6V18h8zm-6-2h4V20H8z"></path>
+                    <path d="M18 18h2v2h-2z"></path>
+                    <path d="M22 18h2v2h-2z"></path>
+                    <path d="M26 18h2v2h-2z"></path>
+                    <path d="M18 22h2v2h-2z"></path>
+                    <path d="M22 22h6v2h-6z"></path>
+                    <path d="M18 26h2v2h-2z"></path>
+                    <path d="M22 26h2v2h-2z"></path>
+                    <path d="M26 26h2v2h-2z"></path>
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
@@ -461,6 +499,11 @@
     });
 
     container.append(row);
+
+    // Add click handlers for QR buttons
+    $('.profile-shared-plex-qr').off('click').on('click', function() {
+      openSharedPlexQrModal($(this).data('link'), $(this).data('name'));
+    });
   }
 
   function showProfileError(message) {
@@ -983,28 +1026,27 @@ function formatSharedDate(sharedAt) {
 }
 
 function initProfileTabs() {
-  const tabLinks = document.querySelectorAll('.bx--tabs__nav-link');
-  const tabItems = document.querySelectorAll('.bx--tabs__nav-item');
+  const switchButtons = document.querySelectorAll('.bx--content-switcher-btn');
   const panels = [
     document.getElementById('tab-panel-achievements'),
     document.getElementById('tab-panel-shared-plexes')
   ];
 
-  tabLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      const targetId = link.id === 'tab-achievements' ? 'tab-panel-achievements' : 'tab-panel-shared-plexes';
+  switchButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const targetId = button.dataset.target;
 
-      tabItems.forEach(item => item.classList.remove('bx--tabs__nav-item--selected'));
-      tabLinks.forEach(otherLink => {
-        otherLink.setAttribute('aria-selected', 'false');
-        otherLink.setAttribute('tabindex', '-1');
+      switchButtons.forEach(otherButton => {
+        otherButton.classList.remove('bx--content-switcher--selected');
+        otherButton.setAttribute('aria-selected', 'false');
       });
-      panels.forEach(panel => panel.hidden = true);
 
-      link.parentElement.classList.add('bx--tabs__nav-item--selected');
-      link.setAttribute('aria-selected', 'true');
-      link.setAttribute('tabindex', '0');
-      document.getElementById(targetId).hidden = false;
+      panels.forEach(panel => {
+        panel.hidden = panel.id !== targetId;
+      });
+
+      button.classList.add('bx--content-switcher--selected');
+      button.setAttribute('aria-selected', 'true');
     });
   });
 }
