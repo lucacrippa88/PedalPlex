@@ -475,14 +475,44 @@
       const plexName = plex.preset_name || 'Untitled Plex';
       const sharedDate = formatSharedDate(plex.sharedAt);
       const shareLink = `${window.location.origin}/shared/plex/#${plex.shared_token}`;
+      
+      // Build pedals display
+      let pedalsHtml = '';
+      if (plex.preset && Array.isArray(plex.preset) && plex.preset.length > 0) {
+        pedalsHtml = '<div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px;">';
+        plex.preset.forEach(gear => {
+          const gearId = gear.id || 'Unknown';
+          const bgColor = gear.gear_color || '#cccccc';
+          const textColor = gear.gear_font_color || '#000000';
+          
+          pedalsHtml += `
+            <div style="
+              background-color: ${bgColor};
+              color: ${textColor};
+              padding: 4px 8px;
+              border-radius: 4px;
+              font-size: 11px;
+              font-weight: 600;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              max-width: 150px;
+            " title="${gearId}">
+              ${gearId}
+            </div>
+          `;
+        });
+        pedalsHtml += '</div>';
+      }
 
       const card = $(`
         <div class="bx--col-lg-8 bx--col-md-6 bx--col-sm-4" style="margin-bottom: 1rem; display: flex;">
-          <div style="border: 1px solid #393939; border-radius: 8px; padding: 1rem; background: #161616; display: flex; flex-direction: column; width: 100%; min-height: 170px;">
-            <div style="display:flex; flex-direction:column; flex:1; gap:1rem;">
+          <div style="border: 1px solid #393939; border-radius: 8px; padding: 1rem; background: #161616; display: flex; flex-direction: column; width: 100%; min-height: 200px;">
+            <div style="display:flex; flex-direction:column; flex:1; gap:0.5rem;">
               <div>
                 <h4 style="margin:0 0 0.5rem 0;">${plexName}</h4>
-                <p style="margin:0; color:#c6c6c6;">Shared on ${sharedDate}</p>
+                <p style="margin:0; color:#c6c6c6; font-size: 0.875rem;">Shared on ${sharedDate}</p>
+                ${pedalsHtml}
               </div>
               <div style="display:flex; gap:0.5rem; margin-top:auto; justify-content:flex-end;">
                 <a
@@ -1182,14 +1212,44 @@ function displaySharedPlexes(sharedPlexes) {
     const plexName = plex.preset_name || 'Untitled Plex';
     const sharedDate = formatSharedDate(plex.sharedAt);
     const shareLink = `${window.location.origin}/shared/plex/#${plex.shared_token}`;
+    
+    // Build pedals display
+    let pedalsHtml = '';
+    if (plex.preset && Array.isArray(plex.preset) && plex.preset.length > 0) {
+      pedalsHtml = '<div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px;">';
+      plex.preset.forEach(gear => {
+        const gearId = gear.id || 'Unknown';
+        const bgColor = gear.gear_color || '#cccccc';
+        const textColor = gear.gear_font_color || '#000000';
+        
+        pedalsHtml += `
+          <div style="
+            background-color: ${bgColor};
+            color: ${textColor};
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            max-width: 150px;
+          " title="${gearId}">
+            ${gearId}
+          </div>
+        `;
+      });
+      pedalsHtml += '</div>';
+    }
 
     const card = $(`
       <div class="bx--col-lg-8 bx--col-md-6 bx--col-sm-4" style="margin-bottom: 1rem; display: flex;">
-        <div style="border: 1px solid #393939; border-radius: 8px; padding: 1rem; background: #161616; display: flex; flex-direction: column; width: 100%; min-height: 170px;">
-          <div style="display:flex; flex-direction:column; flex:1; gap:1rem;">
+        <div style="border: 1px solid #393939; border-radius: 8px; padding: 1rem; background: #161616; display: flex; flex-direction: column; width: 100%; min-height: 200px;">
+          <div style="display:flex; flex-direction:column; flex:1; gap:0.5rem;">
             <div>
               <h4 style="margin:0 0 0.5rem 0;">${plexName}</h4>
-              <p style="margin:0; color:#c6c6c6;">Shared on ${sharedDate}</p>
+              <p style="margin:0; color:#c6c6c6; font-size: 0.875rem;">Shared on ${sharedDate}</p>
+              ${pedalsHtml}
             </div>
             <div style="display:flex; gap:0.5rem; margin-top:auto; justify-content:flex-end;">
               <a
