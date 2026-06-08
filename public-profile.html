@@ -370,14 +370,41 @@
       const plexName = plex.preset_name || 'Untitled Plex';
       const sharedDate = formatSharedDate(plex.sharedAt);
       const shareLink = `${window.location.origin}/shared/plex/#${plex.shared_token}`;
+      
+      // Build gears display
+      let gearsHtml = '';
+      if (plex.gears_data && Array.isArray(plex.gears_data) && plex.gears_data.length > 0) {
+        gearsHtml = '<div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem;">';
+        plex.gears_data.forEach(gear => {
+          const gearName = gear.name || gear.id || 'Unknown';
+          const truncatedName = gearName.length > 25 ? gearName.substring(0, 25) + '...' : gearName;
+          const bgColor = gear.color || '#cccccc';
+          const textColor = gear.font_color || '#000000';
+          
+          gearsHtml += `
+            <span style="
+              background-color: ${bgColor};
+              color: ${textColor};
+              padding: 0.25rem 0.5rem;
+              border-radius: 4px;
+              font-size: 0.75rem;
+              font-weight: 500;
+              white-space: nowrap;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            " title="${gearName}">${truncatedName}</span>
+          `;
+        });
+        gearsHtml += '</div>';
+      }
 
       const card = $(`
         <div class="bx--col-lg-8 bx--col-md-6 bx--col-sm-4" style="margin-bottom: 1rem;">
           <div style="border: 1px solid #393939; border-radius: 8px; padding: 1rem; background: #161616;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
-              <div>
+              <div style="flex: 1;">
                 <h4 style="margin:0 0 0.5rem 0;">${plexName}</h4>
                 <p style="margin:0; color:#c6c6c6;">Shared on ${sharedDate}</p>
+                ${gearsHtml}
               </div>
               <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
                 <a href="${shareLink}" target="_blank" rel="noopener noreferrer" class="bx--btn bx--btn--secondary bx--btn--sm">Open Link</a>
