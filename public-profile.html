@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PedalPlex Profile</title>
+  <link rel="icon" href="logos/pedalplex_logo_gradient.png" type="image/x-icon">
+  <link rel="stylesheet" href="css/carbon-components.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+(function() {
+  const consent = localStorage.getItem('pedalplex_cookie_consent');
+  if (consent === 'accept') {
+    if (!window.gtagLoaded) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-BX9P5WN5HH');
+      window.gtagLoaded = true;
+    }
+  }
+})();
+</script>
+
+</head>
+<body>
+
+  <div id="page-content">
+
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <h2 id="profile-username" style="margin-bottom: 0.5rem;">Loading...</h2>
+      <p id="profile-member-since" style="color: #888; font-size: 0.9rem;"></p>
+      
+      <!-- Share Profile Button -->
+      <div style="margin-top: 1rem;">
+        <button id="share-profile-btn" class="bx--btn bx--btn--tertiary bx--btn--sm" style="display: none;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" style="margin-right: 8px;">
+            <path d="M26,24a3.9731,3.9731,0,0,0-3.4141,1.9424L13.5283,21.5288a3.9638,3.9638,0,0,0,0-3.0576l9.0576-4.4136A3.9731,3.9731,0,1,0,22,12a3.9638,3.9638,0,0,0,.0717.6424L13.0141,17.0566a4,4,0,1,0,0,5.8868l9.0576,4.4136A3.9731,3.9731,0,1,0,26,24Z"></path>
+          </svg>
+          Share Profile
+        </button>
+      </div>
+    </div>
+
+    <div data-tabs class="bx--tabs">
+      <div class="bx--tabs-trigger" tabindex="0">
+        <a href="javascript:void(0)" class="bx--tabs-trigger-text" tabindex="-1"></a>
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M8 11L3 6 3.7 5.3 8 9.6 12.3 5.3 13 6z"></path>
+        </svg>
+      </div>
+      <ul class="bx--tabs__nav bx--tabs__nav--hidden" role="tablist">
+        <li class="bx--tabs__nav-item bx--tabs__nav-item--selected" data-target=".profile-tab-achievements" role="presentation">
+          <a tabindex="0" id="tab-achievements" class="bx--tabs__nav-link" href="javascript:void(0)" role="tab" aria-controls="tab-panel-achievements" aria-selected="true">Achievements</a>
+        </li>
+        <li class="bx--tabs__nav-item" data-target=".profile-tab-shared-plexes" role="presentation">
+          <a tabindex="-1" id="tab-shared-plexes" class="bx--tabs__nav-link" href="javascript:void(0)" role="tab" aria-controls="tab-panel-shared-plexes" aria-selected="false">Shared Plexes</a>
+        </li>
+      </ul>
+    </div>
+
+    <div id="tab-panel-achievements" class="profile-tab-achievements" role="tabpanel" aria-labelledby="tab-achievements">
+      <div id="badges-section">
+        <br>
+        <div id="badges-container" class="bx--grid">
+          <div class="bx--row">
+            <div class="bx--col" style="text-align: center; padding: 20px;">
+              <p style="color: #888;">Loading badges...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-panel-shared-plexes" class="profile-tab-shared-plexes" role="tabpanel" aria-labelledby="tab-shared-plexes" hidden>
+      <br>
+      <div id="shared-plexes-container" class="bx--grid">
+        <div class="bx--row">
+          <div class="bx--col" style="text-align: center; padding: 20px;">
+            <p style="color: #888;">Loading shared Plexes...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="fullscreen-menu.js"></script>
+  <script src="nav.js"></script>
+  <script src="helpers.js"></script>
+
+  <script>
+  // Extract username from URL
+  function getUsernameFromURL() {
+    const hash = window.location.hash.substring(1); // Remove #
+    const path = window.location.pathname;
+    
+    // Support both /@username and #username formats
+    if (hash) {
+      return hash;
+    } else if (path.startsWith('/@')) {
+      return path.substring(2);
+    }
+    return null;
+  }
+
+  // Load public profile
+  $(document).ready(function() {
+    const username = getUsernameFromURL();
+    
+    if (!username) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Profile',
+        text: 'No username specified in URL.',
+        confirmButtonText: 'Go to Home',
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+        buttonsStyling: false
+      }).then(() => {
+        window.location.href = '/';
+      });
+      return;
+    }
+
+    // Update page title
+    document.title = `@${username} - PedalPlex`;
+    
+    // Load user profile data
+    loadPublicProfile(username);
+    
+    // Initialize tabs
+    initProfileTabs();
+  });
+
+  function loadPublicProfile(username) {
+    $.ajax({
+      url: 'https://api.pedalplex.com/USER_GET_PUBLIC_PROFILE.php',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ username: username }),
+      success: function(data) {
+        if (data.error) {
+          showProfileError(data.error);
+          return;
+        }
+        
+        displayPublicProfile(data);
+      },
+      error: function(xhr) {
+        let msg = 'Unable to load profile.';
+        try {
+          const json = JSON.parse(xhr.responseText);
+          if (json.error) msg = json.error;
+        } catch (e) {}
+        showProfileError(msg);
+      }
+    });
+  }
+
+  function displayPublicProfile(profileData) {
+    // Display username
+    $('#profile-username').text('@' + profileData.username);
+    
+    // Display member since date
+    if (profileData.created_at) {
+      const memberDate = new Date(profileData.created_at);
+      const formattedDate = memberDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long'
+      });
+      $('#profile-member-since').text('Member since ' + formattedDate);
+    }
+    
+    // Show share button
+    $('#share-profile-btn').show().on('click', function() {
+      showShareProfileModal(profileData.username);
+    });
+    
+    // Load badges
+    loadPublicBadges(profileData.badges || [], profileData.stats || {});
+    
+    // Load shared plexes
+    loadPublicSharedPlexes(profileData.user_id);
+  }
+
+  function loadPublicBadges(userBadges, userStats) {
+    $.getJSON('badges.json', function(badgeConfig) {
+      displayPublicBadges(userBadges, badgeConfig.badges, userStats);
+    }).fail(function() {
+      displayNoBadges('Unable to load badge information');
+    });
+  }
+
+  function displayPublicBadges(earnedBadges, badgeDefinitions, userStats) {
+    const container = $('#badges-container');
+    container.empty();
+    
+    const earnedBadgeIds = earnedBadges.map(b => b.id);
+    userStats = userStats || {};
+    
+    if (!badgeDefinitions || badgeDefinitions.length === 0) {
+      container.html(`
+        <div class="bx--row">
+          <div class="bx--col" style="text-align: center; padding: 20px;">
+            <p style="color: #888;">No badges available.</p>
+          </div>
+        </div>
+      `);
+      return;
+    }
+    
+    const sections = {
+      'membership': 'Membership Achievements',
+      'startup': 'Startup Achievements',
+      'plex': 'Plex Creation Achievements',
+      'sharing': 'Sharing Achievements',
+      'gears': 'Gear Publishing Achievements',
+      'brand': 'Brand Achievements'
+    };
+    
+    const badgesBySection = {};
+    badgeDefinitions.forEach(badgeDef => {
+      // Only show earned badges or active badges
+      if (badgeDef.visibility === 'false' || badgeDef.visibility === false) {
+        return;
+      }
+      
+      if (badgeDef.visibility === 'if_achieved') {
+        const hasBadge = earnedBadgeIds.includes(badgeDef.id);
+        if (!hasBadge) return;
+      }
+      
+      // For public profiles, only show earned badges
+      const hasBadge = earnedBadgeIds.includes(badgeDef.id);
+      if (!hasBadge) return;
+      
+      const section = badgeDef.section || 'other';
+      if (!badgesBySection[section]) {
+        badgesBySection[section] = [];
+      }
+      badgesBySection[section].push(badgeDef);
+    });
+    
+    Object.keys(sections).forEach(sectionKey => {
+      if (!badgesBySection[sectionKey] || badgesBySection[sectionKey].length === 0) {
+        return;
+      }
+      
+      const sectionTitle = $(`
+        <div class="bx--row" style="margin-top: 40px; margin-bottom: 20px;">
+          <div class="bx--col">
+            <h3 style="font-size: 1.5rem; color: #ffffff; padding-bottom: 10px;">
+              ${sections[sectionKey]}
+            </h3>
+          </div>
+        </div>
+      `);
+      container.append(sectionTitle);
+      
+      const rowDiv = $('<div class="bx--row"></div>');
+      
+      badgesBySection[sectionKey].forEach(badgeDef => {
+        const earned = earnedBadges.find(e => e.id === badgeDef.id);
+        
+        let dateInfo = '';
+        if (earned) {
+          const earnedDate = new Date(earned.earned_at);
+          const formattedDate = earnedDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+          dateInfo = `
+            <small style="font-size: 11px; color: #9C54D5; display: block; margin-top: 8px; font-weight: 600;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" fill="currentColor" style="vertical-align: middle; margin-right: 4px;">
+                <path d="M13 24l-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9 13 24z"/>
+              </svg>
+              Earned ${formattedDate}
+            </small>
+          `;
+        }
+        
+        const badgeHtml = `
+          <div class="bx--col-sm-4 bx--col-md-3 bx--col-lg-2" style="margin-bottom: 30px;">
+            <div class="badge-card" style="
+              text-align: center;
+              padding: 20px 15px;
+              border: 2px solid #0f62fe;
+              border-radius: 8px;
+              background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%);
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+              transition: transform 0.2s, box-shadow 0.2s;
+              cursor: pointer;
+            " onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)';"
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)';">
+              <img src="${badgeDef.image}" alt="${badgeDef.name}"
+                   style="width: 180px; height: 180px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
+              <h4 style="text-transform:uppercase; font-size: 14px; font-weight: 600; margin: 8px 0 4px 0; color: #161616;">${badgeDef.name}</h4>
+              <p style="font-size: 12px; color: #525252; margin: 4px 0; line-height: 1.4;">${badgeDef.description}</p>
+              ${dateInfo}
+            </div>
+          </div>
+        `;
+        
+        rowDiv.append(badgeHtml);
+      });
+      
+      container.append(rowDiv);
+    });
+    
+    // If no earned badges
+    if (Object.keys(badgesBySection).length === 0) {
+      container.html(`
+        <div class="bx--row">
+          <div class="bx--col" style="text-align: center; padding: 20px;">
+            <p style="color: #888;">No badges earned yet.</p>
+          </div>
+        </div>
+      `);
+    }
+  }
+
+  function loadPublicSharedPlexes(userId) {
+    const container = $('#shared-plexes-container');
+    
+    $.ajax({
+      url: 'https://api.pedalplex.com/GET_PUBLIC_SHARED_PLEXES.php',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ user_id: userId }),
+      success: function(data) {
+        const sharedPlexes = Array.isArray(data.plexes) ? data.plexes : [];
+        displayPublicSharedPlexes(sharedPlexes);
+      },
+      error: function() {
+        displayNoSharedPlexes('Unable to load shared Plexes.');
+      }
+    });
+  }
+
+  function displayPublicSharedPlexes(sharedPlexes) {
+    const container = $('#shared-plexes-container');
+    container.empty();
+
+    if (!sharedPlexes || sharedPlexes.length === 0) {
+      displayNoSharedPlexes('No shared Plexes yet.');
+      return;
+    }
+
+    const sortedPlexes = [...sharedPlexes].sort((a, b) => {
+      const dateA = new Date(a.sharedAt || 0).getTime();
+      const dateB = new Date(b.sharedAt || 0).getTime();
+      return dateB - dateA;
+    });
+
+    const row = $('<div class="bx--row"></div>');
+
+    sortedPlexes.forEach((plex) => {
+      const plexName = plex.preset_name || 'Untitled Plex';
+      const sharedDate = formatSharedDate(plex.sharedAt);
+      const shareLink = `${window.location.origin}/shared/plex/#${plex.shared_token}`;
+
+      const card = $(`
+        <div class="bx--col-lg-8 bx--col-md-6 bx--col-sm-4" style="margin-bottom: 1rem;">
+          <div style="border: 1px solid #393939; border-radius: 8px; padding: 1rem; background: #161616;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
+              <div>
+                <h4 style="margin:0 0 0.5rem 0;">${plexName}</h4>
+                <p style="margin:0; color:#c6c6c6;">Shared on ${sharedDate}</p>
+              </div>
+              <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                <a href="${shareLink}" target="_blank" rel="noopener noreferrer" class="bx--btn bx--btn--secondary bx--btn--sm">Open Link</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      row.append(card);
+    });
+
+    container.append(row);
+  }
+
+  function displayNoSharedPlexes(message) {
+    const container = $('#shared-plexes-container');
+    container.html(`
+      <div class="bx--row">
+        <div class="bx--col" style="text-align: center; padding: 20px;">
+          <p style="color: #888;">${message}</p>
+        </div>
+      </div>
+    `);
+  }
+
+  function displayNoBadges(message) {
+    const container = $('#badges-container');
+    container.html(`
+      <div class="bx--row">
+        <div class="bx--col" style="text-align: center; padding: 20px;">
+          <p style="color: #888;">${message}</p>
+        </div>
+      </div>
+    `);
+  }
+
+  function formatSharedDate(sharedAt) {
+    if (!sharedAt) return 'Unknown date';
+    const date = new Date(sharedAt);
+    if (Number.isNaN(date.getTime())) return 'Unknown date';
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    }) + ', ' + date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  function showProfileError(message) {
+    $('#page-content').html(`
+      <div style="text-align: center; padding: 40px;">
+        <h2>Profile Not Found</h2>
+        <p style="color: #888; margin: 20px 0;">${message}</p>
+        <a href="/" class="bx--btn bx--btn--primary">Go to Home</a>
+      </div>
+    `);
+  }
+
+  function initProfileTabs() {
+    const tabLinks = document.querySelectorAll('.bx--tabs__nav-link');
+    const tabItems = document.querySelectorAll('.bx--tabs__nav-item');
+    const panels = [
+      document.getElementById('tab-panel-achievements'),
+      document.getElementById('tab-panel-shared-plexes')
+    ];
+
+    tabLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        const targetId = link.id === 'tab-achievements' ? 'tab-panel-achievements' : 'tab-panel-shared-plexes';
+
+        tabItems.forEach(item => item.classList.remove('bx--tabs__nav-item--selected'));
+        tabLinks.forEach(otherLink => {
+          otherLink.setAttribute('aria-selected', 'false');
+          otherLink.setAttribute('tabindex', '-1');
+        });
+        panels.forEach(panel => panel.hidden = true);
+
+        link.parentElement.classList.add('bx--tabs__nav-item--selected');
+        link.setAttribute('aria-selected', 'true');
+        link.setAttribute('tabindex', '0');
+        document.getElementById(targetId).hidden = false;
+      });
+    });
+  }
+
+  function showShareProfileModal(username) {
+    const profileUrl = `${window.location.origin}/@${username}`;
+    
+    Swal.fire({
+      title: 'Share Profile',
+      html: `
+        <div style="text-align:center;">
+          <div id="profileQrContainer" style="margin: 0 auto 1rem; display:flex; justify-content:center;"></div>
+          <input class="bx--text-input" id="profile-url-input" value="${profileUrl}" readonly style="width:100%; margin-bottom: 1rem;">
+          <button id="copy-profile-url" class="bx--btn bx--btn--secondary bx--btn--sm" style="width: 100%;">
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" style="margin-right: 8px;">
+              <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path>
+              <path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
+            </svg>
+            Copy Link
+          </button>
+        </div>
+      `,
+      showConfirmButton: false,
+      showCloseButton: true,
+      customClass: {
+        closeButton: 'badge-close-button'
+      },
+      buttonsStyling: false,
+      didOpen: () => {
+        generateProfileShareQR(profileUrl);
+        
+        $('#copy-profile-url').on('click', function() {
+          const input = document.getElementById('profile-url-input');
+          input.select();
+          document.execCommand('copy');
+          
+          $(this).html(`
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" style="margin-right: 8px;">
+              <path d="M13 24l-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9 13 24z"/>
+            </svg>
+            Copied!
+          `);
+          
+          setTimeout(() => {
+            $(this).html(`
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" style="margin-right: 8px;">
+                <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path>
+                <path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
+              </svg>
+              Copy Link
+            `);
+          }, 2000);
+        });
+      }
+    });
+  }
+
+  function generateProfileShareQR(link) {
+    const container = document.getElementById('profileQrContainer');
+    if (!container) return;
+
+    container.innerHTML = '';
+    container.style.position = 'relative';
+    container.style.display = 'flex';
+    container.style.justifyContent = 'center';
+
+    const qrWrapper = document.createElement('div');
+    qrWrapper.style.position = 'relative';
+    container.appendChild(qrWrapper);
+
+    new QRCode(qrWrapper, {
+      text: link,
+      width: 180,
+      height: 180,
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    const logo = document.createElement('img');
+    logo.src = '/logos/pedalplex_logo_black.png';
+    logo.style.position = 'absolute';
+    logo.style.top = '50%';
+    logo.style.left = '50%';
+    logo.style.transform = 'translate(-50%, -50%)';
+    logo.style.width = '42px';
+    logo.style.height = '42px';
+    logo.style.background = 'white';
+    logo.style.padding = '6px';
+    logo.style.borderRadius = '8px';
+    logo.style.boxShadow = '0 0 4px rgba(0,0,0,0.2)';
+    logo.style.objectFit = 'contain';
+
+    qrWrapper.appendChild(logo);
+  }
+  </script>
+
+</body>
+</html>
