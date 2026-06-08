@@ -215,7 +215,7 @@
     {
       "id": "plex-explorer",
       "name": "Plex Explorer",
-      "description": "10 Plexes created",
+      "description": "10+ Plexes created",
       "image": "badges/plex_explorer.png",
       "criteria": {
         "created_plexes": 10
@@ -227,7 +227,7 @@
     {
       "id": "plex-builder",
       "name": "Plex Builder",
-      "description": "25 Plexes created",
+      "description": "25+ Plexes created",
       "image": "badges/plex_builder.png",
       "criteria": {
         "created_plexes": 25
@@ -239,7 +239,7 @@
     {
       "id": "plex-creator",
       "name": "Plex Creator",
-      "description": "50 Plexes created",
+      "description": "50+ Plexes created",
       "image": "badges/plex_creator.png",
       "criteria": {
         "created_plexes": 50
@@ -251,7 +251,7 @@
     {
       "id": "plex-architect",
       "name": "Plex Architect",
-      "description": "100 Plexes created",
+      "description": "100+ Plexes created",
       "image": "badges/plex_architect.png",
       "criteria": {
         "created_plexes": 100
@@ -263,7 +263,7 @@
     {
       "id": "plex-legend",
       "name": "Plex Legend",
-      "description": "200 Plexes created",
+      "description": "200+ Plexes created",
       "image": "badges/plex_legend.png",
       "criteria": {
         "created_plexes": 200
@@ -275,7 +275,7 @@
     {
       "id": "sharing-explorer",
       "name": "Sharing Explorer",
-      "description": "5 Plexes shared",
+      "description": "5+ Plexes shared",
       "image": "badges/sharing_explorer.png",
       "criteria": {
         "shared_plexes": 5
@@ -287,7 +287,7 @@
     {
       "id": "sharing-builder",
       "name": "Sharing Builder",
-      "description": "10 Plexes shared",
+      "description": "10+ Plexes shared",
       "image": "badges/sharing_builder.png",
       "criteria": {
         "shared_plexes": 10
@@ -299,7 +299,7 @@
     {
       "id": "sharing-creator",
       "name": "Sharing Creator",
-      "description": "25 Plexes shared",
+      "description": "25+ Plexes shared",
       "image": "badges/sharing_creator.png",
       "criteria": {
         "shared_plexes": 25
@@ -311,7 +311,7 @@
     {
       "id": "sharing-architect",
       "name": "Sharing Architect",
-      "description": "75 Plexes shared",
+      "description": "75+ Plexes shared",
       "image": "badges/sharing_architect.png",
       "criteria": {
         "shared_plexes": 75
@@ -323,7 +323,7 @@
     {
       "id": "sharing-legend",
       "name": "Sharing Legend",
-      "description": "150 Plexes shared",
+      "description": "150+ Plexes shared",
       "image": "badges/sharing_legend.png",
       "criteria": {
         "shared_plexes": 150
@@ -335,7 +335,7 @@
     {
       "id": "gear-explorer",
       "name": "Gear Explorer",
-      "description": "5 Gears published",
+      "description": "5+ Gears published",
       "image": "badges/gear_explorer.png",
       "criteria": {
         "published_gears": 5
@@ -347,7 +347,7 @@
     {
       "id": "gear-builder",
       "name": "Gear Builder",
-      "description": "10 Gears published",
+      "description": "10+ Gears published",
       "image": "badges/gear_builder.png",
       "criteria": {
         "published_gears": 10
@@ -359,7 +359,7 @@
     {
       "id": "gear-creator",
       "name": "Gear Creator",
-      "description": "15 Gears published",
+      "description": "15+ Gears published",
       "image": "badges/gear_creator.png",
       "criteria": {
         "published_gears": 15
@@ -371,7 +371,7 @@
     {
       "id": "gear-architect",
       "name": "Gear Architect",
-      "description": "25 Gears published",
+      "description": "25+ Gears published",
       "image": "badges/gear_architect.png",
       "criteria": {
         "published_gears": 25
@@ -383,7 +383,7 @@
     {
       "id": "gear-legend",
       "name": "Gear Legend",
-      "description": "75 Gears published",
+      "description": "75+ Gears published",
       "image": "badges/gear_legend.png",
       "criteria": {
         "published_gears": 75
