@@ -997,18 +997,47 @@ function openSharedPlexQrModal(link, plexName) {
     html: `
       <div style="text-align:center;">
         <div id="profileQrContainer" style="margin: 0 auto 1rem; display:flex; justify-content:center;"></div>
-        <input class="bx--text-input" value="${link}" readonly style="width:100%;">
+        <input class="bx--text-input" id="plex-url-input" value="${link}" readonly style="width:100%; margin-bottom: 1rem;">
+        <button id="copy-plex-url" class="bx--btn bx--btn--secondary bx--btn--sm" style="width: 100%;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" style="margin-right: 8px;">
+            <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path>
+            <path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
+          </svg>
+          Copy Link
+        </button>
       </div>
     `,
-    confirmButtonText: 'Copy',
+    showConfirmButton: false,
     showCloseButton: true,
-    showConfirmButton: true,
     customClass: {
-      confirmButton: 'bx--btn bx--btn--primary'
+      closeButton: 'badge-close-button'
     },
     buttonsStyling: false,
     didOpen: () => {
       generateProfileShareQR(link);
+      
+      $('#copy-plex-url').on('click', function() {
+        const input = document.getElementById('plex-url-input');
+        input.select();
+        document.execCommand('copy');
+        
+        $(this).html(`
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" style="margin-right: 8px;">
+            <path d="M13 24l-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9 13 24z"/>
+          </svg>
+          Copied!
+        `);
+        
+        setTimeout(() => {
+          $(this).html(`
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" style="margin-right: 8px;">
+              <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path>
+              <path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
+            </svg>
+            Copy Link
+          `);
+        }, 2000);
+      });
 
       $('#copy-profile-url').on('click', function() {
           const input = document.getElementById('profile-url-input');
