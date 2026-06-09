@@ -39,10 +39,10 @@
     {
       "id": "anniversary-creator",
       "name": "Anniversary Creator",
-      "description": "Create and Share a Plex in 2026",
+      "description": "Create & Share a Plex in Summer 2026",
       "image": "badges/anniversary_creator.png",
       "criteria": {
-        "create_before": "2027-01-01T00:00:00Z"
+        "create_before": "2026-09-21T00:00:00Z"
       },
       "visibility": "active",
       "section": "membership",
