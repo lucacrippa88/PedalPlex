@@ -182,8 +182,8 @@
         window.currentUser = userFromServer;
         window.isPublicProfile = false;
 
-        // Display username with @ and member since
-        $('#profile-username').text('@' + (window.currentUser.username || ''));
+        // Display username with # and member since
+        $('#profile-username').text('#' + (window.currentUser.username || ''));
         if (window.currentUser.registered_at) {
           const memberDate = new Date(window.currentUser.registered_at);
           const formattedDate = memberDate.toLocaleDateString('en-US', {
@@ -220,7 +220,7 @@
 
   // Load public profile data
   function loadPublicProfile(username) {
-    document.title = `@${username} - PedalPlex`;
+    document.title = `#${username} - PedalPlex`;
     
     $.ajax({
       url: 'https://api.pedalplex.com/USER_GET_PUBLIC_PROFILE.php',
@@ -247,8 +247,8 @@
   }
 
   function displayPublicProfile(profileData) {
-    // Display username with @
-    $('#profile-username').text('@' + profileData.username);
+    // Display username with #
+    $('#profile-username').text('#' + profileData.username);
     
     // Display member since date
     if (profileData.created_at) {
