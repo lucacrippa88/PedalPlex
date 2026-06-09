@@ -163,6 +163,28 @@ async function checkAndAwardSharingBadges() {
   if (!token) return; // Guest users don't get badges
   
   try {
+    // First, check for membership badges (including anniversary-creator)
+    const membershipBadgesRes = await fetch('https://api.pedalplex.com/USER_AWARD_BADGES.php', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    });
+    
+    if (membershipBadgesRes.ok) {
+      const membershipData = await membershipBadgesRes.json();
+      if (membershipData.badges_awarded && membershipData.badges_awarded.length > 0) {
+        console.log('Membership badges awarded:', membershipData.badges_awarded);
+        
+        // Store in localStorage to show popup
+        const pendingBadges = JSON.parse(localStorage.getItem('pendingBadges') || '[]');
+        membershipData.badges_awarded.forEach(badge => {
+          pendingBadges.push(badge);
+        });
+        localStorage.setItem('pendingBadges', JSON.stringify(pendingBadges));
+      }
+    }
+    
     // Get user stats from API to get TOTAL shared plex count across all rigs
     const statsRes = await fetch('https://api.pedalplex.com/USER_GET_STATS.php', {
       method: 'GET',
