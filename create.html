@@ -206,6 +206,15 @@
             </div>
             <br>
 
+            <!-- Verified checkbox (admin only) -->
+            <div id="verified-container" style="display:none;">
+                <label>
+                    <input type="checkbox" id="pedal-verified">
+                    <span style="font-weight:bold; color:#24a148;">Verified Gear</span>
+                </label>
+                <br><br>
+            </div>
+
             <button class="bx--btn bx--btn--sm bx--btn--secondary" id="toggle-preview" style="color:white;">
                 <svg fill="white" class="icon-eye" xmlns="http://www.w3.org/2000/svg" 
                     viewBox="0 0 32 32" width="16" height="16" aria-hidden="true" focusable="false" 
@@ -790,6 +799,14 @@ $(function() {
         }
       });
     });
+  }
+});
+
+// Show verified checkbox only for admins
+$(function() {
+  const isAdmin = (parent?.window?.currentUser?.role || '').toLowerCase() === 'admin';
+  if (isAdmin) {
+    $('#verified-container').show();
   }
 });
 </script>
