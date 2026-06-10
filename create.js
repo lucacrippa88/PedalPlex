@@ -767,7 +767,7 @@ if ($("#pedal-published-button").length) {
 
     // Restore verified checkbox (admin only)
     const isAdmin = (parent?.window?.currentUser?.role || '').toLowerCase() === 'admin';
-    if (isAdmin && pedal.verified === true) {
+    if (isAdmin && pedal.verified === "true") {
         $("#pedal-verified").prop("checked", true);
     } else {
         $("#pedal-verified").prop("checked", false);
