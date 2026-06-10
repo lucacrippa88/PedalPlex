@@ -205,8 +205,11 @@ function buildJSON() {
     const validStatuses = ["draft", "reviewing", "template", "public"];
     pedal.published = validStatuses.includes(selectedText) ? selectedText : "draft";
 
-
-
+    // Verified field (admin only)
+    const isAdmin = (parent?.window?.currentUser?.role || '').toLowerCase() === 'admin';
+    if (isAdmin && $("#pedal-verified").is(":checked")) {
+        pedal.verified = "true";
+    }
 
     // Rebuild JSON whenever publication status changes
     $(function() {
@@ -762,6 +765,13 @@ if ($("#pedal-published-button").length) {
     });
 }
 
+    // Restore verified checkbox (admin only)
+    const isAdmin = (parent?.window?.currentUser?.role || '').toLowerCase() === 'admin';
+    if (isAdmin && pedal.verified === true) {
+        $("#pedal-verified").prop("checked", true);
+    } else {
+        $("#pedal-verified").prop("checked", false);
+    }
 
     // Re-render pedal
     $("#pedal-box").empty();
