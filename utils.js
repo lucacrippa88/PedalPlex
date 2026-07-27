@@ -1609,12 +1609,24 @@ function renderPresetList($ul, pedalId, presets) {
     return;
   }
 
+  const currentUsername = window.currentUser && window.currentUser.username ? window.currentUser.username : null;
+
   presets.forEach(preset => {
     const $li = $("<li>").addClass("preset-item");
+
+    const isPrivateOwner = !!(preset.private === true && currentUsername && preset.private_owner === currentUsername);
+    if (isPrivateOwner) {
+      $li.addClass("preset-item--private");
+    }
 
     const description = preset.description || "No description available";
     const $titleRow = $("<div>").addClass("preset-title-row");
     const $name = $("<span>").addClass("preset-name");
+
+    // Lock icon for private subplexes
+    if (isPrivateOwner) {
+      $name.append(`<svg style="vertical-align:middle;margin-right:3px" focusable="false" fill="currentColor" width="11" height="11" viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M24 14h-2v-4a6 6 0 00-12 0v4H8a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V16a2 2 0 00-2-2zm-8 10a2 2 0 110-4 2 2 0 010 4zm4-10H12v-4a4 4 0 018 0z"></path></svg>`);
+    }
 
     // AI icon (only if source === "ai")
     if (preset.source === "ai") {
@@ -1666,6 +1678,31 @@ function renderPresetList($ul, pedalId, presets) {
     });
 
     $titleRow.append($name, $info);
+
+    // Edit / Delete buttons for private subplexes owned by caller
+    if (isPrivateOwner) {
+      const $editBtn = $(`<button class="bx--btn bx--btn--ghost bx--btn--sm bx--btn--icon-only preset-item-edit" title="Edit SubPlex" style="padding:2px 4px; min-height:unset; margin-left:4px;">
+        <svg focusable="false" fill="currentColor" width="14" height="14" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M2 26h28v2H2zM25.4 9c.8-.8.8-2 0-2.8l-3.6-3.6c-.8-.8-2-.8-2.8 0l-15 15V24h6.4l15-15zm-5-5L24 7.6l-3 3L17.4 7l3-3zM6 22v-3.6l10-10 3.6 3.6-10 10H6z"></path></svg>
+      </button>`);
+      const $deleteBtn = $(`<button class="bx--btn bx--btn--ghost bx--btn--sm bx--btn--icon-only preset-item-delete" title="Delete SubPlex" style="padding:2px 4px; min-height:unset; margin-left:2px; color:#da1e28;">
+        <svg focusable="false" fill="currentColor" width="14" height="14" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M12 12H14V24H12z"></path><path d="M18 12H20V24H18z"></path><path d="M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z"></path><path d="M12 2H20V4H12z"></path></svg>
+      </button>`);
+
+      $editBtn.on("click", function (e) {
+        e.stopPropagation();
+        $(".preset-dropdown-wrapper").removeClass("is-open");
+        openEditPrivateSubplexModal(preset, pedalId, $ul);
+      });
+
+      $deleteBtn.on("click", function (e) {
+        e.stopPropagation();
+        $(".preset-dropdown-wrapper").removeClass("is-open");
+        deletePrivateSubplex(preset, pedalId, $ul);
+      });
+
+      $titleRow.append($editBtn, $deleteBtn);
+    }
+
     $li.append($titleRow);
 
     // Style tags
@@ -1680,8 +1717,9 @@ function renderPresetList($ul, pedalId, presets) {
       });
     }
 
-    // Click handler
+    // Click handler (only on non-action areas)
     $li.on("click", function (e) {
+      if ($(e.target).closest(".preset-item-edit, .preset-item-delete").length) return;
       e.stopPropagation();
       applyCatalogPresetToSinglePedal(pedalId, preset);
       $(".preset-dropdown-wrapper").removeClass("is-open");
@@ -1689,6 +1727,123 @@ function renderPresetList($ul, pedalId, presets) {
 
     $ul.append($li);
   });
+}
+
+
+// Edit a private subplex from the dropdown
+async function openEditPrivateSubplexModal(preset, pedalId, $ul) {
+  const currentStyles = preset.style || [];
+  let tagOptionsHtml = '';
+  Object.keys(STYLE_TAG_MAP).forEach(tag => {
+    const selected = currentStyles.includes(tag) ? 'selected' : '';
+    tagOptionsHtml += `<option value="${tag}" ${selected}>${tag}</option>`;
+  });
+
+  const result = await Swal.fire({
+    title: 'Edit SubPlex',
+    html: `
+      <div style="text-align:left">
+        <label class="bx--label">Name</label>
+        <input id="swal-edit-sp-name" class="swal2-input" style="width:90%;margin:auto;"
+               value="${preset.presetName || ''}" maxlength="20">
+        <label class="bx--label" style="margin-top:10px;">Style Tags (Cmd/Ctrl for multi)</label>
+        <select id="swal-edit-sp-tags" class="bx--select-input" multiple style="width:30%;min-height:60px;position:relative;left:28px">
+          ${tagOptionsHtml}
+        </select>
+        <label class="bx--label" style="margin-top:10px;">Description</label>
+        <textarea id="swal-edit-sp-desc" class="bx--text-area swal2-textarea"
+                  maxlength="100" style="width:83%;height:40px">${preset.description || ''}</textarea>
+      </div>
+    `,
+    showCancelButton: false,
+    showCloseButton: true,
+    focusConfirm: false,
+    confirmButtonText: "<svg focusable='false' fill='currentColor' width='16' height='16' viewBox='0 0 32 32'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg> Save",
+    customClass: {
+      confirmButton: 'bx--btn bx--btn--primary',
+    },
+    preConfirm: () => {
+      const name = document.getElementById('swal-edit-sp-name').value.trim();
+      const desc = document.getElementById('swal-edit-sp-desc').value.trim();
+      const tags = Array.from(document.getElementById('swal-edit-sp-tags').selectedOptions).map(o => o.value);
+      if (!name) { Swal.showValidationMessage('Name cannot be empty'); return false; }
+      if (name.length > 20) { Swal.showValidationMessage('Name must be max 20 characters'); return false; }
+      return { name, desc, tags };
+    }
+  });
+
+  if (!result.isConfirmed || !result.value) return;
+
+  const token = localStorage.getItem('authToken');
+  try {
+    Swal.fire({ title: 'Saving...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+    const res = await fetch('https://api.pedalplex.com/UPDATE_SUBPLEX.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({
+        subplex_id: preset._id,
+        presetName: result.value.name,
+        description: result.value.desc,
+        style: result.value.tags
+      })
+    });
+    const data = await res.json();
+    Swal.close();
+    if (data.ok) {
+      // Update in-memory cache and re-render
+      preset.presetName  = result.value.name;
+      preset.description = result.value.desc;
+      preset.style       = result.value.tags;
+      if (window.presetCatalogCache) delete window.presetCatalogCache[pedalId];
+      renderPresetList($ul, pedalId, window.presetCatalogCache[pedalId] || []);
+      // Force fresh fetch
+      buildPresetDropdown($ul, pedalId);
+      Swal.fire({ icon: 'success', title: 'SubPlex updated', timer: 1000, showConfirmButton: false });
+    } else {
+      Swal.fire('Error', data.error || 'Failed to update', 'error');
+    }
+  } catch (err) {
+    Swal.close();
+    Swal.fire('Error', 'Network error', 'error');
+  }
+}
+
+
+// Delete a private subplex from the dropdown
+async function deletePrivateSubplex(preset, pedalId, $ul) {
+  const confirm = await Swal.fire({
+    title: `Delete "${preset.presetName}"?`,
+    text: 'This will permanently remove your private SubPlex.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: "<svg focusable='false' fill='currentColor' width='16' height='16' viewBox='0 0 32 32'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg> Yes, Delete",
+    cancelButtonText: "Cancel",
+    customClass: { confirmButton: 'bx--btn bx--btn--danger', cancelButton: 'bx--btn bx--btn--secondary' }
+  });
+
+  if (!confirm.isConfirmed) return;
+
+  const token = localStorage.getItem('authToken');
+  try {
+    Swal.fire({ title: 'Deleting...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+    const res = await fetch('https://api.pedalplex.com/DELETE_SUBPLEX.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ subplex_id: preset._id, subplex_rev: preset._rev })
+    });
+    const data = await res.json();
+    Swal.close();
+    if (data.ok) {
+      if (window.presetCatalogCache) delete window.presetCatalogCache[pedalId];
+      buildPresetDropdown($ul, pedalId);
+      Swal.fire({ icon: 'success', title: 'SubPlex deleted', timer: 1000, showConfirmButton: false });
+    } else {
+      Swal.fire('Error', data.error || 'Failed to delete', 'error');
+    }
+  } catch (err) {
+    Swal.close();
+    Swal.fire('Error', 'Network error', 'error');
+  }
 }
 
 window.presetCatalogCache = window.presetCatalogCache || {};
