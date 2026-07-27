@@ -504,15 +504,101 @@ function editCustomSubplexUI($pedalDiv) {
 }
 
 
+// Collect controls from a single pedal div as the {label: value} flat map
+// expected by the SubPlex catalog (same format as existing presets).
+function collectSinglePedalControlsMap($pedalDiv, pedalId) {
+  const controlsMap = {};
+  const pedalName = $pedalDiv.data('pedal-name');
+
+  // --- Knobs ---
+  $pedalDiv.find('.knob').each(function () {
+    const label = $(this).data('control-label');
+    if (!label) return;
+    const $valueLabel = $(this).closest('.knob-wrapper').children('.knob-value-label');
+    let value;
+    if ($valueLabel.length && $valueLabel.text().trim() !== '') {
+      value = $valueLabel.text().trim();
+    } else {
+      const transform = $(this).css('transform');
+      let angle = 0;
+      if (transform && transform !== 'none') {
+        const vals = transform.match(/matrix\((.+)\)/);
+        if (vals) {
+          const parts = vals[1].split(', ');
+          const a = parseFloat(parts[0]);
+          const b = parseFloat(parts[1]);
+          angle = Math.atan2(b, a) * (180 / Math.PI);
+        }
+      } else {
+        const style = $(this).attr('style');
+        const match = style && style.match(/rotate\((-?\d+)deg\)/);
+        angle = match ? parseInt(match[1], 10) : 0;
+      }
+      value = getValueFromRotation(angle);
+    }
+    controlsMap[label] = isNaN(value) ? value : parseFloat(value);
+  });
+
+  // --- Selects (multi / discrete knob) ---
+  $pedalDiv.find('select[data-control-label]').each(function () {
+    const label = $(this).data('control-label');
+    if (!label) return;
+    controlsMap[label] = $(this).val();
+  });
+
+  // --- Sliders ---
+  $pedalDiv.find('input[type="range"][data-control-label]').each(function () {
+    const label = $(this).data('control-label');
+    if (!label) return;
+    controlsMap[label] = parseFloat($(this).val());
+  });
+
+  // --- LCDs / text inputs ---
+  $pedalDiv.find('input[type="text"][data-control-label]').each(function () {
+    const label = $(this).data('control-label');
+    if (!label) return;
+    controlsMap[label] = $(this).val().trim();
+  });
+
+  // --- LEDs: store the color index (0 = off, 1+ = on) ---
+  $pedalDiv.find('.led[data-control-label]').each(function () {
+    const label = $(this).data('control-label');
+    if (!label) return;
+    const bgColor = ($(this).css('background-color') || '').trim();
+    const hexColor = typeof normalizeHex === 'function' ? normalizeHex(bgColor) : bgColor;
+
+    let matchedIndex = 0;
+    if (Array.isArray(window.catalog)) {
+      const pedalData =
+        window.catalog.find(p => p._id === pedalId) ||
+        window.catalog.find(p => p.name === pedalName);
+
+      if (pedalData && Array.isArray(pedalData.controls)) {
+        outerLoop: for (const rowWrapper of pedalData.controls) {
+          if (!Array.isArray(rowWrapper.row)) continue;
+          for (const ctrl of rowWrapper.row) {
+            if (ctrl.label === label && Array.isArray(ctrl.colors)) {
+              const catalogColors = ctrl.colors.map(c => typeof normalizeHex === 'function' ? normalizeHex(c) : c);
+              const idx = catalogColors.indexOf(hexColor);
+              if (idx !== -1) { matchedIndex = idx; break outerLoop; }
+            }
+          }
+        }
+      }
+    }
+    controlsMap[label] = matchedIndex;
+  });
+
+  return controlsMap;
+}
+
+
 // Save a custom subplex to the user's private catalog
 async function saveSubplexToPrivateCatalog($pedalDiv, subplex, pedalId) {
   const token = localStorage.getItem('authToken');
   if (!token) return;
 
-  const controls = collectSinglePedalControls($pedalDiv);
-  // Convert controls array to {label: value} map for storage
-  const controlsMap = {};
-  controls.forEach(c => { controlsMap[c.label] = c.value; });
+  const controlsMap = collectSinglePedalControlsMap($pedalDiv, pedalId);
 
   try {
     Swal.fire({ title: 'Saving SubPlex...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
