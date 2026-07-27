@@ -381,9 +381,12 @@ function editCustomSubplexUI($pedalDiv) {
   const subplex = $pedalDiv.data('applied-subplex');
   if (!subplex) return;
 
-  const currentName = subplex.presetName || subplex.name || '';
+  const currentName = (subplex.presetName || subplex.name || '').replace(/\*$/, '');
   const currentDesc = subplex.description || '';
   const currentStyles = subplex.style || [];
+  const isLoggedIn = !!(window.currentUser && window.currentUser.username);
+  // Show "save to catalog" only for purely in-memory custom subplexes (not already saved)
+  const isAlreadySaved = !!(subplex.private_id);
 
   // Costruisci options per dropdown tag
   let tagOptionsHtml = '';
@@ -392,17 +395,25 @@ function editCustomSubplexUI($pedalDiv) {
     tagOptionsHtml += `<option value="${tag}" ${selected}>${tag}</option>`;
   });
 
+  const saveToCatalogRow = isLoggedIn && !isAlreadySaved ? `
+    <label class="bx--label" style="margin-top:14px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+      <input type="checkbox" id="swal-subplex-save-private" style="width:auto; margin:0;">
+      <span>Save to my private SubPlex catalog</span>
+    </label>
+    <p style="font-size:0.78rem; color:#888; margin:2px 0 0 24px;">Only you will see it in the SubPlex dropdown.</p>
+  ` : '';
+
   Swal.fire({
     title: 'Add SubPlex',
     html: `
       <div style="text-align:left">
 
-        <label class="bx--label">Name</label>        
-        <input id="swal-subplex-name" 
-              style="width:90%; margin:auto;" 
-              class="swal2-input" 
-              placeholder="Add a name here..." 
-              value="">
+        <label class="bx--label">Name</label>
+        <input id="swal-subplex-name"
+              style="width:90%; margin:auto;"
+              class="swal2-input"
+              placeholder="Add a name here..."
+              value="${currentName}">
 
         <label class="bx--label" style="margin-top:10px;">Scroll to select Style Tags - Hold Cmd/Ctrl for multi-select</label>
         <select id="swal-subplex-tags"
@@ -418,6 +429,8 @@ function editCustomSubplexUI($pedalDiv) {
                   maxlength="100" style="width:83%; height:40px"
                   placeholder="How would you describe your sound...?">${currentDesc}</textarea>
 
+        ${saveToCatalogRow}
+
       </div>
     `,
     showCancelButton: false,
@@ -429,13 +442,14 @@ function editCustomSubplexUI($pedalDiv) {
       cancelButton: 'bx--btn bx--btn--secondary'
     },
     confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Save SubPlex",
-    // cancelButtonText: 'Cancel',
     preConfirm: () => {
       const name = document.getElementById('swal-subplex-name').value.trim();
       const desc = document.getElementById('swal-subplex-desc').value.trim();
       const select = document.getElementById('swal-subplex-tags');
+      const savePrivateEl = document.getElementById('swal-subplex-save-private');
 
       const selectedTags = Array.from(select.selectedOptions).map(opt => opt.value);
+      const savePrivate = savePrivateEl ? savePrivateEl.checked : false;
 
       // Validazioni
       if (name.length === 0) {
@@ -454,16 +468,19 @@ function editCustomSubplexUI($pedalDiv) {
       return {
         name,
         styles: selectedTags,
-        desc
+        desc,
+        savePrivate
       };
     }
-  }).then((result) => {
+  }).then(async (result) => {
     if (!result.isConfirmed || !result.value) return;
 
-    // Aggiorna SubPlex in memoria (nomi corretti!)
-    subplex.presetName = result.value.name;
-    subplex.style = result.value.styles;
-    subplex.description = result.value.desc;
+    const { name, styles, desc, savePrivate } = result.value;
+
+    // Aggiorna SubPlex in memoria
+    subplex.presetName = name;
+    subplex.style = styles;
+    subplex.description = desc;
 
     // Abilita dirty state
     $pedalDiv.data('subplex-dirty-enabled', true);
@@ -478,7 +495,72 @@ function editCustomSubplexUI($pedalDiv) {
     const pedalId = $pedalDiv.data('pedal-id');
     window.currentSubPlex = window.currentSubPlex || {};
     window.currentSubPlex[pedalId] = subplex;
+
+    // Save to private catalog if requested
+    if (savePrivate) {
+      await saveSubplexToPrivateCatalog($pedalDiv, subplex, pedalId);
+    }
   });
+}
+
+
+// Save a custom subplex to the user's private catalog
+async function saveSubplexToPrivateCatalog($pedalDiv, subplex, pedalId) {
+  const token = localStorage.getItem('authToken');
+  if (!token) return;
+
+  const controls = collectSinglePedalControls($pedalDiv);
+  // Convert controls array to {label: value} map for storage
+  const controlsMap = {};
+  controls.forEach(c => { controlsMap[c.label] = c.value; });
+
+  try {
+    Swal.fire({ title: 'Saving SubPlex...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+
+    const res = await fetch('https://api.pedalplex.com/SAVE_PRIVATE_SUBPLEX.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({
+        pedalId: pedalId,
+        presetName: subplex.presetName,
+        description: subplex.description || '',
+        style: subplex.style || [],
+        controls: controlsMap
+      })
+    });
+
+    const data = await res.json();
+    Swal.close();
+
+    if (data.ok && data.id) {
+      // Mark the subplex as saved so we don't show the checkbox again
+      subplex.private_id = data.id;
+      subplex.private_owner = window.currentUser.username;
+      $pedalDiv.data('applied-subplex', subplex);
+
+      // Invalidate dropdown cache for this pedal so private subplex appears
+      if (window.presetCatalogCache) {
+        delete window.presetCatalogCache[pedalId];
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: 'SubPlex saved!',
+        text: 'Your private SubPlex is now available in the dropdown.',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    } else {
+      Swal.fire('Error', data.error || 'Failed to save SubPlex to catalog', 'error');
+    }
+  } catch (err) {
+    Swal.close();
+    console.error('saveSubplexToPrivateCatalog error:', err);
+    Swal.fire('Error', 'Network error while saving SubPlex', 'error');
+  }
 }
 
 

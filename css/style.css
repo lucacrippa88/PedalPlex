@@ -1200,6 +1200,30 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* Private SubPlex items — subtle left border indicator */
+.preset-dropdown li.preset-item--private {
+  border-left: 2px solid rgba(255, 200, 50, 0.55);
+  padding-left: 12px;
+}
+
+/* Align edit/delete buttons inline in the title row */
+.preset-title-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.preset-item-edit,
+.preset-item-delete {
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
+.preset-item-edit:hover,
+.preset-item-delete:hover {
+  opacity: 1;
+}
+
 
 /* icona preset nascosta di default */
 .preset-container {
