@@ -6876,6 +6876,42 @@
     "seo_description": "Compugilist combines compressor and distortion circuits, allowing tight dynamic control and aggressive guitar tones."
   },
   {
+    "pedalplex_id": "Fender Pugilist V2 Distortion",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/fender-pugilist-v2-distortion",
+    "brand": "Fender",
+    "category": "distortion",
+    "seo_description": "The Pugilist V2 is a distortion pedal unlike any other, combining two independent distortion circuits in a single enclosure to deliver a rich palette of thick, full-bodied tones."
+  },
+  {
+    "pedalplex_id": "Fender The Pelt V2 Fuzz",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/fender-the-pelt-v2-fuzz",
+    "brand": "Fender",
+    "category": "fuzz",
+    "seo_description": "The Pelt V2 is a professional-grade fuzz pedal with a classic spirit. Built around silicon transistors and featuring a buffer-friendly input stage, it delivers every fuzz tone a saturation enthusiast could want, from full, cutting octave fuzz to smooth, harmonically rich distortion."
+  },
+  {
+    "pedalplex_id": "Fender The Bends V2 Compressor",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/fender-the-bends-v2-compressor",
+    "brand": "Fender",
+    "category": "compressor",
+    "seo_description": "The Bends V2 is an intuitive compressor/boost pedal that delivers low-noise compression in both modern and vintage tube-inspired styles. Ideal for both guitar and bass, it combines versatile dynamics control with a clean, musical boost."
+  },
+  {
+    "pedalplex_id": "Fender Santa Ana V2 Overdrive",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/fender-santa-ana-v2-overdrive",
+    "brand": "Fender",
+    "category": "overdrive",
+    "seo_description": "The Santa Ana V2 is a Class A JFET-based overdrive pedal with an internal 18V operating voltage. This design delivers the touch sensitivity and high-headroom overdrive players expect from a Fender tube amplifier pushed to its limits."
+  },
+  {
     "pedalplex_id": "Fender Downtown Express Bass Multi-Effect",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/fender/efx/downtownexpress",
