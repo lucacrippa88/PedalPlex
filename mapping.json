@@ -16875,6 +16875,15 @@
     "seo_description": "The RhPf Electronics Mosferatwo is a boutique high-gain overdrive/distortion pedal inspired by the legendary Marshall-in-a-box sound, delivering thick saturation, tight low end, and rich harmonic content. Designed for articulate high-gain tones, it offers excellent note definition even under heavy distortion, making it ideal for everything from classic rock to modern metal. Its responsive controls allow precise shaping of gain, tone, and output, while maintaining a smooth, amp-like feel that reacts naturally to picking dynamics. Compact and pedalboard-friendly, the Mosferatwo provides powerful, focused drive tones that cut through the mix without losing clarity."
   },
   {
+    "pedalplex_id": "RhPf Electronics Regista",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/rhpf-electronics-regista",
+    "brand": "RhPf Electronics",
+    "category": "eq",
+    "seo_description": "The RhPf Electronics Regista is a fully analog parametric EQ pedal inspired by the midrange sections of the Amek Mozart MZ15-RN console. It combines a wide 100 Hz to 10 kHz frequency range with variable bandwidth and boost or cut, allowing precise control over anything from broad tonal shaping to narrow corrective EQ. A dedicated output level control also makes it useful for matching levels or pushing the next stage in a signal chain. Designed for guitar, bass, and other instruments, Regista brings the flexibility of a studio-style parametric midrange EQ into a compact pedal format."
+  },
+  {
     "pedalplex_id": "Holy Island Micro Mountain Mover Fuzz",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/holyisland/mountainmover",
