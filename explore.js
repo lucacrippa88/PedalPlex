@@ -276,13 +276,25 @@ async function _runExplore(params) {
 }
 
 
-// ---- Pick one combination (weighted random) ----
-// At low experimentation: one pedal per category group (clean, focused).
-// At high experimentation: stacking is allowed — the more pedals a group has,
-// the higher the chance that more than one gets included.
+// ---- Pick one combination ----
+// Groups are only included if they have a SubPlex that genuinely matches the
+// request. At low exp, non-matching groups are skipped. At high exp, every
+// group gets a chance regardless. Stacking only kicks in above 70% exp.
 function _pickCombination(eligiblePedals, params, excludeSeed = null) {
   const { styles, vibes, exp } = params;
   const experimentFactor = exp / 100;
+
+  // A score > this threshold means the group has a genuinely relevant SubPlex.
+  // Scored at exp=0 so noise doesn't inflate it.
+  const RELEVANCE_THRESHOLD = 2;
+
+  function groupIsRelevant(group) {
+    return group.some(pedal =>
+      (_exploreSubplexPool[pedal.id] || []).some(sp =>
+        _scoreSubplex(sp, styles, vibes, 0) >= RELEVANCE_THRESHOLD
+      )
+    );
+  }
 
   // Group pedals by category
   const groupMap = {};
@@ -292,28 +304,31 @@ function _pickCombination(eligiblePedals, params, excludeSeed = null) {
     groupMap[g].push(pedal);
   }
 
-  // Decide how many pedals to include from each group.
-  // Base = 1. Each additional pedal in the group has a chance to be included
-  // that scales with experimentFactor: at 100% exp a group of 3 has ~60% chance
-  // of including a 2nd pedal, and ~25% chance of including a 3rd.
   const selectedPedals = [];
   for (const group of Object.values(groupMap)) {
-    // Shuffle the group so the "extra" picks aren't always the same pedal
+    const relevant = groupIsRelevant(group);
+
+    // At low exp, skip groups with no matching SubPlex entirely.
+    // At high exp, include them with increasing probability.
+    if (!relevant) {
+      // Probability of including an irrelevant group:
+      //   0% at exp≤30, ramps to 80% at exp=100
+      const includeProb = Math.max(0, (experimentFactor - 0.3) / 0.7) * 0.8;
+      if (Math.random() > includeProb) continue;
+    }
+
+    // Shuffle so Retry varies which pedal from a group is picked
     const shuffled = [...group].sort(() => Math.random() - 0.5);
 
-    // Always include one pedal from this group
+    // Always include one pedal from each accepted group
     selectedPedals.push(shuffled[0]);
 
-    // For each additional pedal, roll a die weighted by experimentFactor
+    // Stacking: only activates above 70% exp, modest probability even then
+    //   exp=0.7 → max stack prob = 0%
+    //   exp=1.0 → max stack prob = 45% for 2nd, 15% for 3rd
     for (let i = 1; i < shuffled.length; i++) {
-      // Probability of stacking decreases with each additional pedal:
-      // 2nd pedal: experimentFactor * 0.6
-      // 3rd pedal: experimentFactor * 0.25
-      // 4th+:      experimentFactor * 0.10
-      const stackProb = experimentFactor * (i === 1 ? 0.6 : i === 2 ? 0.25 : 0.10);
-      if (Math.random() < stackProb) {
-        selectedPedals.push(shuffled[i]);
-      }
+      const stackProb = Math.max(0, (experimentFactor - 0.7) / 0.3) * (i === 1 ? 0.45 : 0.15);
+      if (Math.random() < stackProb) selectedPedals.push(shuffled[i]);
     }
   }
 
