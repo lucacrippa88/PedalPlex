@@ -484,20 +484,23 @@ function _showExploreStep2(combination, params) {
         </div>
 
         <div class="explore-result-actions">
-          <button id="exploreApplyBtn" class="bx--btn bx--btn--primary bx--btn--sm">
-            ${iconApply}Apply to my Rig
+          <button id="exploreApplyBtn" class="bx--btn bx--btn--primary">
+            ${iconApply}Apply to Plex
           </button>
-          <button id="exploreTryBtn" class="bx--btn bx--btn--secondary bx--btn--sm">
-            ${iconTry}Try another
+          <button id="exploreTryBtn" class="bx--btn bx--btn--secondary">
+            ${iconTry}Retry
           </button>
-          <button id="exploreSaveBtn" class="bx--btn bx--btn--tertiary bx--btn--sm">
-            ${iconSave}Save experiment
+          <button id="exploreSaveBtn" class="bx--btn bx--btn--tertiary">
+            ${iconSave}Save to new Plex
           </button>
         </div>
+        <br>
       </div>
     `,
     showConfirmButton: false,
     showCloseButton: true,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
     customClass: { popup: "explore-popup explore-popup--result" },
     width: "640px",
 
