@@ -1745,7 +1745,7 @@ async function openEditPrivateSubplexModal(preset, pedalId, $ul) {
       <div class="explore-modal">
         <div class="explore-section">
           <div class="explore-section-header">Name</div>
-          <input id="swal-edit-sp-name" class="swal2-input" style="width:100%;box-sizing:border-box;"
+          <input id="swal-edit-sp-name" class="explore-text-input"
                  value="${preset.presetName || ''}" maxlength="20">
         </div>
         <div class="explore-section">

@@ -311,12 +311,17 @@ function _pickCombination(eligiblePedals, params, excludeSeed = null) {
     const pool = _exploreSubplexPool[pedal.id] || [];
     if (!pool.length) continue;
 
+    // Score all subplexes — keep every one regardless of score so pedals
+    // that have no style-tag match are never silently dropped.
+    // Unscored entries get a tiny random baseline so they can still be picked
+    // at high experimentation.
     const scored = pool
-      .map(sp => ({ sp, score: _scoreSubplex(sp, styles, vibes, experimentFactor) }))
-      .filter(x => x.score > 0)
+      .map(sp => {
+        let s = _scoreSubplex(sp, styles, vibes, experimentFactor);
+        if (s <= 0) s = 0.1 + Math.random() * 0.4; // tiny baseline
+        return { sp, score: s };
+      })
       .sort((a, b) => b.score - a.score);
-
-    if (!scored.length) continue;
 
     const picked = _weightedRandom(scored, experimentFactor, excludeSeed ? excludeSeed[pedal.id] : null);
     if (picked) combination.push({ pedal, subplex: picked.sp, score: picked.score });
