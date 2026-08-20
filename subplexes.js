@@ -388,46 +388,49 @@ function editCustomSubplexUI($pedalDiv) {
   // Show "save to catalog" only for purely in-memory custom subplexes (not already saved)
   const isAlreadySaved = !!(subplex.private_id);
 
-  // Costruisci options per dropdown tag
-  let tagOptionsHtml = '';
-  Object.keys(STYLE_TAG_MAP).forEach(tag => {
-    const selected = currentStyles.includes(tag) ? 'selected' : '';
-    tagOptionsHtml += `<option value="${tag}" ${selected}>${tag}</option>`;
-  });
+  // Build style tag chips
+  const tagChips = Object.keys(STYLE_TAG_MAP).map(tag => {
+    const active = currentStyles.includes(tag) ? ' explore-chip--active' : '';
+    return `<button type="button" class="explore-chip explore-chip--style${active}" data-value="${tag}">${tag}</button>`;
+  }).join('');
 
   const saveToCatalogRow = isLoggedIn && !isAlreadySaved ? `
-    <label class="bx--label" style="margin-top:14px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-      <input type="checkbox" id="swal-subplex-save-private" style="width:auto; margin:0;">
-      <span>Save to my private SubPlex catalog</span>
-    </label>
-    <p style="font-size:0.78rem; color:#888; margin:2px 0 0 24px;">Only you will see it in the SubPlex dropdown.</p>
+    <div class="explore-section" style="margin-top:4px;">
+      <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.82rem;">
+        <input type="checkbox" id="swal-subplex-save-private" style="width:auto; margin:0;">
+        <span>Save to my private SubPlex catalog</span>
+      </label>
+      <p style="font-size:0.75rem; color:#888; margin:2px 0 0 24px;">Only you will see it in the SubPlex dropdown.</p>
+    </div>
   ` : '';
 
   Swal.fire({
     title: 'Add SubPlex',
     html: `
-      <div style="text-align:left">
+      <div class="explore-modal">
 
-        <label class="bx--label">Name</label>
-        <input id="swal-subplex-name"
-              style="width:90%; margin:auto;"
-              class="swal2-input"
-              placeholder="Add a name here..."
-              value="${currentName}">
+        <div class="explore-section">
+          <div class="explore-section-header">Name</div>
+          <input id="swal-subplex-name"
+                style="width:100%; box-sizing:border-box;"
+                class="swal2-input"
+                placeholder="Add a name here..."
+                value="${currentName}">
+        </div>
 
-        <label class="bx--label" style="margin-top:10px;">Scroll to select Style Tags - Hold Cmd/Ctrl for multi-select</label>
-        <select id="swal-subplex-tags"
-                class="bx--select-input"
-                multiple
-                style="width:30%; min-height:60px; position:relative; left:28px">
-          ${tagOptionsHtml}
-        </select>
+        <div class="explore-section">
+          <div class="explore-section-header">Style <span class="explore-hint">pick one or more</span></div>
+          <div class="explore-chips" id="swal-subplex-chips">${tagChips}</div>
+        </div>
 
-        <label class="bx--label" style="margin-top:10px;">Description</label>
-        <textarea id="swal-subplex-desc"
-                  class="bx--text-area swal2-textarea"
-                  maxlength="100" style="width:83%; height:40px"
-                  placeholder="How would you describe your sound...?">${currentDesc}</textarea>
+        <div class="explore-section">
+          <div class="explore-section-header">Description <span class="explore-hint">max 100 chars</span></div>
+          <textarea id="swal-subplex-desc"
+                    class="swal2-textarea"
+                    maxlength="100"
+                    style="width:100%; box-sizing:border-box; height:52px; margin:0;"
+                    placeholder="How would you describe your sound...?">${currentDesc}</textarea>
+        </div>
 
         ${saveToCatalogRow}
 
@@ -442,13 +445,17 @@ function editCustomSubplexUI($pedalDiv) {
       cancelButton: 'bx--btn bx--btn--secondary'
     },
     confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Save SubPlex",
+    didOpen: () => {
+      document.querySelectorAll('#swal-subplex-chips .explore-chip').forEach(chip => {
+        chip.addEventListener('click', () => chip.classList.toggle('explore-chip--active'));
+      });
+    },
     preConfirm: () => {
       const name = document.getElementById('swal-subplex-name').value.trim();
       const desc = document.getElementById('swal-subplex-desc').value.trim();
-      const select = document.getElementById('swal-subplex-tags');
       const savePrivateEl = document.getElementById('swal-subplex-save-private');
 
-      const selectedTags = Array.from(select.selectedOptions).map(opt => opt.value);
+      const selectedTags = [...document.querySelectorAll('#swal-subplex-chips .explore-chip--active')].map(c => c.dataset.value);
       const savePrivate = savePrivateEl ? savePrivateEl.checked : false;
 
       // Validazioni

@@ -1733,39 +1733,48 @@ function renderPresetList($ul, pedalId, presets) {
 // Edit a private subplex from the dropdown
 async function openEditPrivateSubplexModal(preset, pedalId, $ul) {
   const currentStyles = preset.style || [];
-  let tagOptionsHtml = '';
-  Object.keys(STYLE_TAG_MAP).forEach(tag => {
-    const selected = currentStyles.includes(tag) ? 'selected' : '';
-    tagOptionsHtml += `<option value="${tag}" ${selected}>${tag}</option>`;
-  });
+
+  const tagChips = Object.keys(STYLE_TAG_MAP).map(tag => {
+    const active = currentStyles.includes(tag) ? ' explore-chip--active' : '';
+    return `<button type="button" class="explore-chip explore-chip--style${active}" data-value="${tag}">${tag}</button>`;
+  }).join('');
 
   const result = await Swal.fire({
     title: 'Edit SubPlex',
     html: `
-      <div style="text-align:left">
-        <label class="bx--label">Name</label>
-        <input id="swal-edit-sp-name" class="swal2-input" style="width:90%;margin:auto;"
-               value="${preset.presetName || ''}" maxlength="20">
-        <label class="bx--label" style="margin-top:10px;">Style Tags (Cmd/Ctrl for multi)</label>
-        <select id="swal-edit-sp-tags" class="bx--select-input" multiple style="width:30%;min-height:60px;position:relative;left:28px">
-          ${tagOptionsHtml}
-        </select>
-        <label class="bx--label" style="margin-top:10px;">Description</label>
-        <textarea id="swal-edit-sp-desc" class="bx--text-area swal2-textarea"
-                  maxlength="100" style="width:83%;height:40px">${preset.description || ''}</textarea>
+      <div class="explore-modal">
+        <div class="explore-section">
+          <div class="explore-section-header">Name</div>
+          <input id="swal-edit-sp-name" class="swal2-input" style="width:100%;box-sizing:border-box;"
+                 value="${preset.presetName || ''}" maxlength="20">
+        </div>
+        <div class="explore-section">
+          <div class="explore-section-header">Style <span class="explore-hint">pick one or more</span></div>
+          <div class="explore-chips" id="swal-edit-sp-chips">${tagChips}</div>
+        </div>
+        <div class="explore-section">
+          <div class="explore-section-header">Description <span class="explore-hint">max 100 chars</span></div>
+          <textarea id="swal-edit-sp-desc" class="swal2-textarea"
+                    maxlength="100" style="width:100%;box-sizing:border-box;height:52px;margin:0;">${preset.description || ''}</textarea>
+        </div>
       </div>
     `,
     showCancelButton: false,
     showCloseButton: true,
     focusConfirm: false,
-    confirmButtonText: "<svg focusable='false' fill='currentColor' width='16' height='16' viewBox='0 0 32 32'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg> Save",
+    confirmButtonText: "<svg focusable='false' fill='currentColor' width='16' height='16' viewBox='0 0 32 32'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Save",
     customClass: {
       confirmButton: 'bx--btn bx--btn--primary',
+    },
+    didOpen: () => {
+      document.querySelectorAll('#swal-edit-sp-chips .explore-chip').forEach(chip => {
+        chip.addEventListener('click', () => chip.classList.toggle('explore-chip--active'));
+      });
     },
     preConfirm: () => {
       const name = document.getElementById('swal-edit-sp-name').value.trim();
       const desc = document.getElementById('swal-edit-sp-desc').value.trim();
-      const tags = Array.from(document.getElementById('swal-edit-sp-tags').selectedOptions).map(o => o.value);
+      const tags = [...document.querySelectorAll('#swal-edit-sp-chips .explore-chip--active')].map(c => c.dataset.value);
       if (!name) { Swal.showValidationMessage('Name cannot be empty'); return false; }
       if (name.length > 20) { Swal.showValidationMessage('Name must be max 20 characters'); return false; }
       return { name, desc, tags };

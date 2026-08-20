@@ -27,9 +27,9 @@ function initNavPreset() {
       <div class="rightButtons showDesktop" style="display: flex; align-items: center; gap: 1rem;">
 
         <button id="exploreBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Explore"
-          style="display: flex; align-items: center; gap: 0.5rem; background: linear-gradient(45deg, #1a3a5c, #2563a8, #5EE2F0); background-size: 150% 150%; background-position: 0% 50%;">
+          style="display: flex; align-items: center; gap: 0.5rem; background: linear-gradient(45deg, #0a7a8f, #5EE2F0); background-size: 150% 150%; background-position: 0% 50%;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12zM21.65 10.35l-8.59 3.74-3.71 8.56 8.59-3.74zm-8.07 8.08 2.35-5.42 5.42 5.42-5.42 2.35z"/>
+            <path d="M16,2A14,14,0,1,0,30,16,14,14,0,0,0,16,2Zm0,26A12,12,0,1,1,28,16,12,12,0,0,1,16,28ZM22.31,10.35,13.72,14.09l-4.07,8.57,8.6-3.74ZM16,17a1,1,0,1,1,1-1A1,1,0,0,1,16,17Z"/>
           </svg>
           Explore
         </button>
@@ -62,9 +62,9 @@ function initNavPreset() {
       <div class="rightButtons showMobile" style="display: flex; align-items: center; gap: 1rem;">
 
         <button id="exploreBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Explore"
-          style="background: linear-gradient(45deg, #1a3a5c, #2563a8, #5EE2F0); background-size: 150% 150%; background-position: 0% 50%;">
+          style="background: linear-gradient(45deg, #0a7a8f, #5EE2F0); background-size: 150% 150%; background-position: 0% 50%;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12zM21.65 10.35l-8.59 3.74-3.71 8.56 8.59-3.74zm-8.07 8.08 2.35-5.42 5.42 5.42-5.42 2.35z"/>
+            <path d="M16,2A14,14,0,1,0,30,16,14,14,0,0,0,16,2Zm0,26A12,12,0,1,1,28,16,12,12,0,0,1,16,28ZM22.31,10.35,13.72,14.09l-4.07,8.57,8.6-3.74ZM16,17a1,1,0,1,1,1-1A1,1,0,0,1,16,17Z"/>
           </svg>
         </button>
 

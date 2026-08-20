@@ -1521,7 +1521,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #fff;
+  color: inherit; /* inherits from Swal theme — visible on both dark and light */
   margin-bottom: 2px;
 }
 
@@ -1560,18 +1560,20 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 .explore-result-why-text {
   font-size: 0.83rem;
-  color: #ccc;
   line-height: 1.5;
 }
 
-/* ---- Action buttons row ---- */
+/* ---- Action buttons row — single line, no wrap ---- */
 .explore-result-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
   justify-content: flex-start;
+  overflow-x: auto;
 }
 
 .explore-result-actions .bx--btn {
   font-size: 0.78rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
