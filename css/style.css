@@ -1316,3 +1316,262 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   padding:0em!important;
   margin: 1em 1em!important;
 }
+
+
+/* ===========================
+   EXPLORE YOUR RIG
+   =========================== */
+
+.explore-popup {
+  font-family: "IBM Plex Sans", -apple-system, sans-serif !important;
+}
+
+.explore-modal {
+  text-align: left;
+  padding: 0.25rem 0.5rem;
+}
+
+.explore-section {
+  margin-bottom: 1.25rem;
+}
+
+.explore-section-header {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #9C54D5;
+  margin-bottom: 0.55rem;
+}
+
+.explore-section-label {
+  font-size: 0.95rem;
+  color: #aaa;
+  margin-bottom: 1rem;
+}
+
+.explore-hint {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: #666;
+  margin-left: 6px;
+}
+
+/* ---- Chips ---- */
+.explore-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.explore-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid #444;
+  background: transparent;
+  color: #ccc;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  line-height: 1.4;
+  user-select: none;
+}
+
+.explore-chip:hover {
+  border-color: #9C54D5;
+  color: #fff;
+}
+
+.explore-chip--active {
+  background: #9C54D5;
+  border-color: #9C54D5;
+  color: #fff;
+}
+
+/* ---- Experimentation slider ---- */
+.explore-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.explore-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(to right, #9C54D5, #5EE2F0);
+  outline: none;
+  cursor: pointer;
+}
+
+.explore-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #9C54D5;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0,0,0,0.4);
+}
+
+.explore-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #9C54D5;
+  cursor: pointer;
+}
+
+.explore-slider-label {
+  font-size: 0.72rem;
+  color: #888;
+  white-space: nowrap;
+  min-width: 90px;
+}
+
+.explore-slider-label--right {
+  text-align: right;
+}
+
+
+/* ===========================
+   EXPLORE — RESULT SCREEN
+   =========================== */
+
+.explore-popup--result .swal2-html-container {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.explore-result-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+
+.explore-result-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(156, 84, 213, 0.18);
+  color: #bf87f0;
+  border: 1px solid rgba(156, 84, 213, 0.35);
+  letter-spacing: 0.04em;
+}
+
+.explore-result-badge--vibe {
+  background: rgba(94, 226, 240, 0.12);
+  color: #5EE2F0;
+  border-color: rgba(94, 226, 240, 0.3);
+}
+
+.explore-result-badge--exp {
+  background: rgba(255, 255, 255, 0.06);
+  color: #888;
+  border-color: #444;
+}
+
+/* ---- Rig rows ---- */
+.explore-result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 1rem;
+}
+
+.explore-result-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.explore-result-pedal {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #888;
+  min-width: 120px;
+  max-width: 140px;
+  padding-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.explore-result-subplex {
+  flex: 1;
+}
+
+.explore-result-sp-name {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.explore-result-desc {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.explore-result-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+/* ---- Why block ---- */
+.explore-result-why {
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: rgba(156, 84, 213, 0.07);
+  border-left: 3px solid #9C54D5;
+  margin-bottom: 1.2rem;
+}
+
+.explore-result-why-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9C54D5;
+  margin-bottom: 4px;
+}
+
+.explore-result-why-text {
+  font-size: 0.83rem;
+  color: #ccc;
+  line-height: 1.5;
+}
+
+/* ---- Action buttons row ---- */
+.explore-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.explore-result-actions .bx--btn {
+  font-size: 0.78rem;
+}

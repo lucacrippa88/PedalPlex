@@ -26,6 +26,14 @@ function initNavPreset() {
       <!-- Right: buttons -->
       <div class="rightButtons showDesktop" style="display: flex; align-items: center; gap: 1rem;">
 
+        <button id="exploreBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Explore"
+          style="display: flex; align-items: center; gap: 0.5rem; background: linear-gradient(45deg, #1a3a5c, #2563a8, #5EE2F0); background-size: 150% 150%; background-position: 0% 50%;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12zM21.65 10.35l-8.59 3.74-3.71 8.56 8.59-3.74zm-8.07 8.08 2.35-5.42 5.42 5.42-5.42 2.35z"/>
+          </svg>
+          Explore
+        </button>
+
         <button id="savePstBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Plex" disabled
           style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
@@ -53,6 +61,13 @@ function initNavPreset() {
 
       <div class="rightButtons showMobile" style="display: flex; align-items: center; gap: 1rem;">
 
+        <button id="exploreBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Explore"
+          style="background: linear-gradient(45deg, #1a3a5c, #2563a8, #5EE2F0); background-size: 150% 150%; background-position: 0% 50%;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12zM21.65 10.35l-8.59 3.74-3.71 8.56 8.59-3.74zm-8.07 8.08 2.35-5.42 5.42 5.42-5.42 2.35z"/>
+          </svg>
+        </button>
+
         <button id="savePstBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Plex" disabled
           style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
@@ -76,6 +91,11 @@ function initNavPreset() {
 
   $("body").prepend(navHtml);
 
+
+  // Explore button — always visible, but auth check is inside openExploreModal()
+  $("#exploreBtn, #exploreBtnMobile").on("click", () => {
+    if (typeof openExploreModal === "function") openExploreModal();
+  });
 
   // Disable Save/Create/Folder buttons and add Login for guests
   if (isGuest) {
