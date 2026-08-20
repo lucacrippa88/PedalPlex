@@ -388,10 +388,12 @@ function editCustomSubplexUI($pedalDiv) {
   // Show "save to catalog" only for purely in-memory custom subplexes (not already saved)
   const isAlreadySaved = !!(subplex.private_id);
 
-  // Build style tag chips
+  // Build style tag chips with per-tag Carbon color
   const tagChips = Object.keys(STYLE_TAG_MAP).map(tag => {
-    const active = currentStyles.includes(tag) ? ' explore-chip--active' : '';
-    return `<button type="button" class="explore-chip explore-chip--style${active}" data-value="${tag}">${tag}</button>`;
+    const color    = STYLE_TAG_MAP[tag] || "";
+    const active   = currentStyles.includes(tag) ? ' explore-chip--active' : '';
+    const colorCls = color ? ` explore-chip--${color}` : '';
+    return `<button type="button" class="explore-chip explore-chip--style${colorCls}${active}" data-value="${tag}">${tag}</button>`;
   }).join('');
 
   const saveToCatalogRow = isLoggedIn && !isAlreadySaved ? `
@@ -425,9 +427,9 @@ function editCustomSubplexUI($pedalDiv) {
         <div class="explore-section">
           <div class="explore-section-header">Description <span class="explore-hint">max 100 chars</span></div>
           <textarea id="swal-subplex-desc"
-                    class="swal2-textarea"
+                    class="explore-text-input"
                     maxlength="100"
-                    style="width:100%; box-sizing:border-box; height:52px; margin:0;"
+                    style="height:52px; resize:vertical;"
                     placeholder="How would you describe your sound...?">${currentDesc}</textarea>
         </div>
 

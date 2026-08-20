@@ -122,9 +122,21 @@ function _showExploreStep1(prefillState = null) {
   const prevExp     = prefillState?.exp     ?? 50;
   const prevKeyword = prefillState?.keyword || "";
 
+  // Map each style label to its STYLE_TAG_MAP color (lowercase key lookup)
+  const STYLE_CHIP_COLOR = {
+    rock: "red", "hard rock": "red", metal: "black", blues: "blue",
+    funk: "green", pop: "warm-gray", shoegaze: "magenta", ambient: "magenta",
+    "post-rock": "purple", psychedelic: "purple", experimental: "purple",
+    grunge: "cool-gray", indie: "cyan", punk: "orange", jazz: "gray",
+    folk: "yellow", prog: "purple"
+  };
+
   const styleChips = styles.map(s => {
-    const active = prevStyles.includes(s.toLowerCase()) ? " explore-chip--active" : "";
-    return `<button type="button" class="explore-chip explore-chip--style${active}" data-value="${s.toLowerCase()}">${s}</button>`;
+    const key    = s.toLowerCase();
+    const color  = STYLE_CHIP_COLOR[key] || "";
+    const active = prevStyles.includes(key) ? " explore-chip--active" : "";
+    const colorCls = color ? ` explore-chip--${color}` : "";
+    return `<button type="button" class="explore-chip explore-chip--style${colorCls}${active}" data-value="${key}">${s}</button>`;
   }).join("");
 
   const vibeChips = vibes.map(v => {
@@ -454,6 +466,7 @@ function _showExploreStep2(combination, params) {
 
   Swal.fire({
     title: `<span style="font-size:1rem; font-weight:600; letter-spacing:0.02em;">Your new experiment</span>`,
+    willOpen: () => Swal.hideLoading(),
     html: `
       <div class="explore-modal explore-modal--result">
 

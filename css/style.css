@@ -1386,11 +1386,40 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   color: #fff;
 }
 
+/* Default active (style picker in Explore step 1, no color assigned) */
 .explore-chip--active {
   background: #9C54D5;
   border-color: #9C54D5;
   color: #fff;
 }
+
+/* Per-color active states — mapped from STYLE_TAG_MAP Carbon tokens */
+.explore-chip--red.explore-chip--active    { background:#da1e28; border-color:#da1e28; color:#fff; }
+.explore-chip--red:hover                   { border-color:#da1e28; }
+.explore-chip--orange.explore-chip--active { background:#ba4e00; border-color:#ba4e00; color:#fff; }
+.explore-chip--orange:hover                { border-color:#ba4e00; }
+.explore-chip--yellow.explore-chip--active { background:#b28600; border-color:#b28600; color:#fff; }
+.explore-chip--yellow:hover                { border-color:#b28600; }
+.explore-chip--green.explore-chip--active  { background:#198038; border-color:#198038; color:#fff; }
+.explore-chip--green:hover                 { border-color:#198038; }
+.explore-chip--teal.explore-chip--active   { background:#007d79; border-color:#007d79; color:#fff; }
+.explore-chip--teal:hover                  { border-color:#007d79; }
+.explore-chip--cyan.explore-chip--active   { background:#00729e; border-color:#00729e; color:#fff; }
+.explore-chip--cyan:hover                  { border-color:#00729e; }
+.explore-chip--blue.explore-chip--active   { background:#0043ce; border-color:#0043ce; color:#fff; }
+.explore-chip--blue:hover                  { border-color:#0043ce; }
+.explore-chip--purple.explore-chip--active { background:#6929c4; border-color:#6929c4; color:#fff; }
+.explore-chip--purple:hover                { border-color:#6929c4; }
+.explore-chip--magenta.explore-chip--active { background:#9f1853; border-color:#9f1853; color:#fff; }
+.explore-chip--magenta:hover               { border-color:#9f1853; }
+.explore-chip--cool-gray.explore-chip--active { background:#4d5358; border-color:#4d5358; color:#fff; }
+.explore-chip--cool-gray:hover             { border-color:#4d5358; }
+.explore-chip--warm-gray.explore-chip--active { background:#726056; border-color:#726056; color:#fff; }
+.explore-chip--warm-gray:hover             { border-color:#726056; }
+.explore-chip--gray.explore-chip--active   { background:#525252; border-color:#525252; color:#fff; }
+.explore-chip--gray:hover                  { border-color:#525252; }
+.explore-chip--black.explore-chip--active  { background:#262626; border-color:#262626; color:#fff; }
+.explore-chip--black:hover                 { border-color:#525252; }
 
 /* ---- Experimentation slider ---- */
 .explore-slider-row {
@@ -1578,7 +1607,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   flex-shrink: 0;
 }
 
-/* Shared text input for explore-style modals (replaces swal2-input to avoid layout overrides) */
+/* Shared text input/textarea for explore-style modals */
 .explore-text-input {
   display: block;
   width: 100%;
@@ -1586,12 +1615,14 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   padding: 0.5rem 0.75rem;
   font-size: 0.9rem;
   font-family: inherit;
+  line-height: 1.5;
   border: 1px solid #555;
   border-radius: 2px;
   background: transparent;
   color: inherit;
   outline: none;
   margin: 0;
+  resize: vertical;
 }
 
 .explore-text-input:focus {
