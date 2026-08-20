@@ -1735,8 +1735,10 @@ async function openEditPrivateSubplexModal(preset, pedalId, $ul) {
   const currentStyles = preset.style || [];
 
   const tagChips = Object.keys(STYLE_TAG_MAP).map(tag => {
-    const active = currentStyles.includes(tag) ? ' explore-chip--active' : '';
-    return `<button type="button" class="explore-chip explore-chip--style${active}" data-value="${tag}">${tag}</button>`;
+    const color    = STYLE_TAG_MAP[tag] || "";
+    const active   = currentStyles.includes(tag) ? ' explore-chip--active' : '';
+    const colorCls = color ? ` explore-chip--${color}` : '';
+    return `<button type="button" class="explore-chip explore-chip--style${colorCls}${active}" data-value="${tag}">${tag}</button>`;
   }).join('');
 
   const result = await Swal.fire({
@@ -1754,8 +1756,8 @@ async function openEditPrivateSubplexModal(preset, pedalId, $ul) {
         </div>
         <div class="explore-section">
           <div class="explore-section-header">Description <span class="explore-hint">max 100 chars</span></div>
-          <textarea id="swal-edit-sp-desc" class="swal2-textarea"
-                    maxlength="100" style="width:100%;box-sizing:border-box;height:52px;margin:0;">${preset.description || ''}</textarea>
+          <textarea id="swal-edit-sp-desc" class="explore-text-input"
+                    maxlength="100" style="height:52px; resize:vertical;">${preset.description || ''}</textarea>
         </div>
       </div>
     `,
