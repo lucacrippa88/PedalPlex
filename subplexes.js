@@ -409,7 +409,7 @@ function editCustomSubplexUI($pedalDiv) {
   Swal.fire({
     title: 'Add SubPlex',
     html: `
-      <div class="explore-modal">
+      <div class="swal2-title">
 
         <div class="explore-section">
           <div class="explore-section-header">Name</div>
