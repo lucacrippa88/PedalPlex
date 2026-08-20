@@ -1592,19 +1592,12 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   line-height: 1.5;
 }
 
-/* ---- Action buttons row — single line, no wrap ---- */
+/* ---- Action buttons row ---- */
 .explore-result-actions {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-start;
-  overflow-x: auto;
-}
-
-.explore-result-actions .bx--btn {
-  font-size: 0.78rem;
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 
 /* Shared text input/textarea for explore-style modals */
