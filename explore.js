@@ -2,7 +2,7 @@
 // EXPLORE YOUR RIG — explore.js
 // ===============================
 
-// ---- Vibe → keyword mapping (matched against subplex name + description + style tags) ----
+// ---- Vibe -> keyword mapping (matched against subplex name + description + style tags) ----
 const VIBE_KEYWORDS = {
   "Huge":         ["wall", "huge", "massive", "thick", "big", "giant", "full"],
   "Aggressive":   ["aggressive", "harsh", "angry", "attack", "punchy", "hard", "brutal"],
@@ -39,8 +39,43 @@ const SKIP_CATEGORIES = new Set([
   "wireless", "buffer", "buffer/boost", "buffer/splitter"
 ]);
 
+// Category groups — used both for explanation text and for deduplication
+// (at most one pedal per group per experiment)
+const EXPLORE_CATEGORY_GROUPS = {
+  fuzz:       ["fuzz", "fuzz/distortion", "fuzz/modulation", "fuzz/octaver", "octaver/fuzz", "synth/fuzz"],
+  drive:      ["overdrive", "distortion", "boost", "booster", "overdrive/distortion", "overdrive/boost",
+               "distortion/booster", "overdrive/fuzz", "overdrive/preamp", "preamp", "preamp/boost",
+               "preamp/distortion/boost", "modulation/overdrive", "overdrive/echo/boost"],
+  modulation: ["chorus", "flanger", "phaser", "tremolo", "vibrato", "rotary", "modulation",
+               "chorus/vibrato", "chorus/flanger", "vibrato/rotary", "rotary/chorus",
+               "rotary/flanger/chorus", "fuzz/modulation"],
+  delay:      ["delay", "delay/looper", "reverb/delay"],
+  reverb:     ["reverb", "reverb/delay", "tremolo/reverb", "reverb/distortion"],
+  eq:         ["eq", "equalizer", "bass/boost/equalizer", "boost/equalizer"],
+  looper:     ["looper", "looper/drum machine", "delay/looper"],
+  pitch:      ["pitch shifter", "octaver", "harmonizer", "harmonizer/octaver", "octaver/bass",
+               "fuzz/octaver", "bitcrusher/pitch shifter/modulation"]
+};
+
+function _categoryGroup(cat) {
+  const c = (cat || "").toLowerCase();
+  for (const [g, cats] of Object.entries(EXPLORE_CATEGORY_GROUPS)) {
+    if (cats.some(x => c.includes(x))) return g;
+  }
+  return "other_" + c; // unique fallback — each "other" pedal is its own group
+}
+
 // Cached subplex pool per pedal for the current explore session
 let _exploreSubplexPool = null;
+
+// Truncate a pedal ID for display (strip special chars, max 22 chars)
+function _truncatePedalId(id, max = 22) {
+  if (!id) return "Pedal";
+  // Replace common separators with space, trim, capitalize words
+  const clean = id.replace(/[-_]/g, " ").replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  return clean.slice(0, max).trim() + "\u2026";
+}
 
 // ---- Entry point ----
 async function openExploreModal() {
@@ -98,7 +133,7 @@ function _showExploreStep1(prefillState = null) {
   }).join("");
 
   Swal.fire({
-    title: `<span style="font-size:1.1rem; font-weight:600; letter-spacing:0.02em;">&#x1F50E; Explore your Rig</span>`,
+    title: "Explore your Rig",
     html: `
       <div class="explore-modal">
         <p class="explore-section-label">What do you want to sound like?</p>
@@ -135,7 +170,7 @@ function _showExploreStep1(prefillState = null) {
       </div>
     `,
     showCancelButton: true,
-    confirmButtonText: "Explore &#x2192;",
+    confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12zM21.65 10.35l-8.59 3.74-3.71 8.56 8.59-3.74zm-8.07 8.08 2.35-5.42 5.42 5.42-5.42 2.35z'/></svg>Explore",
     cancelButtonText: "Cancel",
     customClass: {
       confirmButton: "bx--btn bx--btn--primary",
@@ -230,16 +265,52 @@ async function _runExplore(params) {
 
 
 // ---- Pick one combination (weighted random) ----
+// At low experimentation: one pedal per category group (clean, focused).
+// At high experimentation: stacking is allowed — the more pedals a group has,
+// the higher the chance that more than one gets included.
 function _pickCombination(eligiblePedals, params, excludeSeed = null) {
   const { styles, vibes, exp } = params;
-  const experimentFactor = exp / 100; // 0 = familiar, 1 = wildcard
+  const experimentFactor = exp / 100;
+
+  // Group pedals by category
+  const groupMap = {};
+  for (const pedal of eligiblePedals) {
+    const g = _categoryGroup(pedal.category);
+    if (!groupMap[g]) groupMap[g] = [];
+    groupMap[g].push(pedal);
+  }
+
+  // Decide how many pedals to include from each group.
+  // Base = 1. Each additional pedal in the group has a chance to be included
+  // that scales with experimentFactor: at 100% exp a group of 3 has ~60% chance
+  // of including a 2nd pedal, and ~25% chance of including a 3rd.
+  const selectedPedals = [];
+  for (const group of Object.values(groupMap)) {
+    // Shuffle the group so the "extra" picks aren't always the same pedal
+    const shuffled = [...group].sort(() => Math.random() - 0.5);
+
+    // Always include one pedal from this group
+    selectedPedals.push(shuffled[0]);
+
+    // For each additional pedal, roll a die weighted by experimentFactor
+    for (let i = 1; i < shuffled.length; i++) {
+      // Probability of stacking decreases with each additional pedal:
+      // 2nd pedal: experimentFactor * 0.6
+      // 3rd pedal: experimentFactor * 0.25
+      // 4th+:      experimentFactor * 0.10
+      const stackProb = experimentFactor * (i === 1 ? 0.6 : i === 2 ? 0.25 : 0.10);
+      if (Math.random() < stackProb) {
+        selectedPedals.push(shuffled[i]);
+      }
+    }
+  }
+
   const combination = [];
 
-  for (const pedal of eligiblePedals) {
+  for (const pedal of selectedPedals) {
     const pool = _exploreSubplexPool[pedal.id] || [];
     if (!pool.length) continue;
 
-    // Score every subplex in this pedal's pool
     const scored = pool
       .map(sp => ({ sp, score: _scoreSubplex(sp, styles, vibes, experimentFactor) }))
       .filter(x => x.score > 0)
@@ -292,13 +363,11 @@ function _scoreSubplex(sp, selectedStyles, selectedVibes, experimentFactor) {
 
 
 // ---- Weighted-random pick from a sorted scored list ----
-// Low exp -> steep decay (almost always rank #1)
-// High exp -> flat weights (any rank can win)
 function _weightedRandom(scoredList, experimentFactor, excludeId = null) {
   let pool = excludeId ? scoredList.filter(x => x.sp._id !== excludeId) : scoredList;
   if (!pool.length) pool = scoredList;
 
-  const steepness = 3 - experimentFactor * 2.5; // 3 (familiar) .. 0.5 (wild)
+  const steepness = 3 - experimentFactor * 2.5;
   const weights   = pool.map((_, i) => Math.exp(-steepness * i));
   const total     = weights.reduce((a, b) => a + b, 0);
 
@@ -311,45 +380,31 @@ function _weightedRandom(scoredList, experimentFactor, excludeId = null) {
 }
 
 
-// ---- Generate human-readable explanation from metadata (no AI required) ----
+// ---- Generate human-readable explanation from metadata ----
 function _generateExplanation(combination, params) {
   if (!combination.length) return "";
 
   const styleLabel = params.styles.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" / ");
   const vibeWords  = (params.vibes || []).join(" and ").toLowerCase();
 
-  const categoryGroups = {
-    fuzz:       ["fuzz", "fuzz/distortion", "fuzz/modulation", "fuzz/octaver", "octaver/fuzz", "synth/fuzz"],
-    drive:      ["overdrive", "distortion", "boost", "booster", "overdrive/distortion", "overdrive/boost", "distortion/booster"],
-    modulation: ["chorus", "flanger", "phaser", "tremolo", "vibrato", "rotary", "modulation"],
-    delay:      ["delay", "delay/looper", "reverb/delay"],
-    reverb:     ["reverb", "reverb/delay", "tremolo/reverb"]
-  };
-
-  function catGroup(cat) {
-    const c = (cat || "").toLowerCase();
-    for (const [g, cats] of Object.entries(categoryGroups)) {
-      if (cats.some(x => c.includes(x))) return g;
-    }
-    return null;
-  }
-
   const parts = [];
   const used  = new Set();
 
   for (const { pedal, subplex } of combination) {
-    const group = catGroup(pedal.category);
-    if (!group || used.has(group)) continue;
+    const group = _categoryGroup(pedal.category);
+    // Skip "other_*" groups (misc utility pedals) and duplicates
+    if (group.startsWith("other_") || used.has(group)) continue;
     used.add(group);
 
-    const name = subplex.presetName || subplex.name;
-    const base = vibeWords || styleLabel.toLowerCase();
+    const spName = subplex.presetName || subplex.name;
+    const base   = vibeWords || styleLabel.toLowerCase();
+    const pid    = _truncatePedalId(pedal.id);
 
-    if (group === "fuzz")            parts.push(`The <em>${name}</em> on <strong>${pedal.name}</strong> builds the ${base} foundation`);
-    else if (group === "drive")      parts.push(`<strong>${pedal.name}</strong> (<em>${name}</em>) adds grit and character`);
-    else if (group === "modulation") parts.push(`<strong>${pedal.name}</strong> (<em>${name}</em>) creates movement and width`);
-    else if (group === "delay")      parts.push(`<strong>${pedal.name}</strong> (<em>${name}</em>) shapes the atmospheric tail`);
-    else if (group === "reverb")     parts.push(`<strong>${pedal.name}</strong> (<em>${name}</em>) opens up the space`);
+    if (group === "fuzz")            parts.push(`The <em>${spName}</em> on <strong>${pid}</strong> builds the ${base} foundation`);
+    else if (group === "drive")      parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) adds grit and character`);
+    else if (group === "modulation") parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) creates movement and width`);
+    else if (group === "delay")      parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) shapes the atmospheric tail`);
+    else if (group === "reverb")     parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) opens up the space`);
   }
 
   if (!parts.length) return `A ${styleLabel} combination assembled from what's on your board right now.`;
@@ -367,8 +422,9 @@ function _showExploreStep2(combination, params) {
   const explanation = _generateExplanation(combination, params);
 
   const rigRows = combination.map(({ pedal, subplex }) => {
-    const spName = subplex.presetName || subplex.name || "SubPlex";
-    const spDesc = subplex.description
+    const spName   = subplex.presetName || subplex.name || "SubPlex";
+    const pedalLabel = _truncatePedalId(pedal.id);
+    const spDesc   = subplex.description
       ? `<span class="explore-result-desc">${subplex.description}</span>`
       : "";
     const tags = (subplex.style || []).map(s => {
@@ -377,7 +433,7 @@ function _showExploreStep2(combination, params) {
     }).join("");
     return `
       <div class="explore-result-row">
-        <div class="explore-result-pedal">${pedal.name}</div>
+        <div class="explore-result-pedal">${pedalLabel}</div>
         <div class="explore-result-subplex">
           <span class="explore-result-sp-name">${spName}</span>
           ${spDesc}
@@ -386,8 +442,13 @@ function _showExploreStep2(combination, params) {
       </div>`;
   }).join("");
 
+  // Carbon icons for the three action buttons
+  const iconApply = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M13 24L4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z"/></svg>`;
+  const iconTry   = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M12 10H6.78A11 11 0 1 1 5 16H3A13 13 0 1 0 6 7.22V2L0 8l6 6V9h4z"/></svg>`;
+  const iconSave  = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M27.71 9.29l-5-5A1 1 0 0 0 22 4H6a2 2 0 0 0-2 2v20a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V10a1 1 0 0 0-.29-.71zM12 6h8v4h-8zm8 20h-8v-8h8zm2 0v-8a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v8H6V6h4v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6.41L26 10v16z"/></svg>`;
+
   Swal.fire({
-    title: `<span style="font-size:1rem; font-weight:600; letter-spacing:0.02em;">&#x1F30C; Your new experiment</span>`,
+    title: `<span style="font-size:1rem; font-weight:600; letter-spacing:0.02em;">Your new experiment</span>`,
     html: `
       <div class="explore-modal explore-modal--result">
 
@@ -406,13 +467,13 @@ function _showExploreStep2(combination, params) {
 
         <div class="explore-result-actions">
           <button id="exploreApplyBtn" class="bx--btn bx--btn--primary bx--btn--sm">
-            &#x1F3DB; Apply to my Rig
+            ${iconApply}Apply to my Rig
           </button>
           <button id="exploreTryBtn" class="bx--btn bx--btn--secondary bx--btn--sm">
-            &#x1F500; Try another
+            ${iconTry}Try another
           </button>
           <button id="exploreSaveBtn" class="bx--btn bx--btn--tertiary bx--btn--sm">
-            &#x1F4BE; Save experiment
+            ${iconSave}Save experiment
           </button>
         </div>
       </div>
@@ -451,7 +512,7 @@ function _showExploreStep2(combination, params) {
 
       document.getElementById("exploreSaveBtn")?.addEventListener("click", () => {
         Swal.close();
-        _saveExploreExperiment(combination);
+        _saveExploreExperiment(combination, params);
       });
     }
   });
@@ -479,27 +540,158 @@ function _applyExploreResult(combination) {
 
 
 // ---- Save as a new Plex ----
-// Apply subplexes to the live DOM first, then delegate to the
-// existing createPreset() which reads controls from the board.
-async function _saveExploreExperiment(combination) {
-  // Silent apply — no toast
+// Creates the plex on the server with controls already included,
+// bypassing the standard createPreset() which does an empty-pedals create + reload.
+async function _saveExploreExperiment(combination, params) {
+  const styleLabel = params.styles.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" / ");
+
+  // 1. Ask for a name
+  const nameResult = await Swal.fire({
+    title: "Save experiment as Plex",
+    input: "text",
+    inputValue: `Explore: ${styleLabel}`,
+    inputPlaceholder: "Name your experiment...",
+    showCancelButton: true,
+    showCloseButton: true,
+    confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24L4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'/></svg>Save",
+    cancelButtonText: "Cancel",
+    customClass: {
+      confirmButton: "bx--btn bx--btn--primary",
+      cancelButton:  "bx--btn bx--btn--secondary"
+    },
+    inputValidator: v => {
+      if (!v || !v.trim()) return "Please enter a name.";
+      if (v.trim().length > 40) return "Name must be 40 characters or less.";
+    }
+  });
+
+  if (!nameResult.isConfirmed || !nameResult.value) return;
+  const presetName = nameResult.value.trim();
+
+  // 2. Ask for folder (reuse window.folders already loaded)
+  const folderOptions = [
+    { id: "", name: "No Folder" },
+    ...(window.folders || []).map(f => ({ id: f.id || f._id, name: f.name }))
+  ];
+  const folderHtml = `<select id="exploreFolderSelect" class="swal2-select">
+    ${folderOptions.map(f => `<option value="${f.id}">${f.name}</option>`).join("")}
+  </select>`;
+
+  const folderResult = await Swal.fire({
+    title: "Select folder for this Plex",
+    html: folderHtml,
+    showCancelButton: false,
+    showCloseButton: true,
+    confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24L4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'/></svg>Select this",
+    customClass: {
+      confirmButton: "bx--btn bx--btn--primary",
+      cancelButton:  "bx--btn bx--btn--secondary"
+    },
+    preConfirm: () => document.getElementById("exploreFolderSelect").value
+  });
+
+  if (folderResult.value === undefined) return;
+  const selectedFolderId = folderResult.value;
+
+  Swal.fire({ title: "Saving experiment...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+
+  // 3. Apply subplexes to DOM so they are visible on board
   for (const { pedal, subplex } of combination) {
     if ($(`.pedal-catalog[data-pedal-id="${pedal.id}"]`).length) {
       applyCatalogPresetToSinglePedal(pedal.id, subplex);
     }
   }
 
-  // Let the DOM settle, then open the standard create-plex flow
+  // Small pause for DOM to settle after applying subplexes
   await new Promise(r => setTimeout(r, 150));
 
-  if (typeof createPreset === "function") {
-    await createPreset();
+  // 4. Collect current control values from the live DOM
+  const collectResult = typeof collectPedalControlValues === "function"
+    ? collectPedalControlValues(presetName)
+    : null;
+
+  if (!collectResult) {
+    Swal.fire("Error", "Could not read board controls.", "error");
+    return;
+  }
+
+  const pedalArray   = collectResult[presetName] || [];
+  const pedalsObject = {};
+
+  for (const pedal of pedalArray) {
+    if (!pedal.id) continue;
+    const flatControls = {};
+    for (const ctrl of pedal.controls) {
+      const key = Object.keys(ctrl)[0];
+      flatControls[key] = ctrl[key];
+    }
+    pedalsObject[pedal.id] = { controls: flatControls };
+
+    // Carry over the subplex that was just applied
+    const matched = combination.find(c => c.pedal.id === pedal.id);
+    if (matched) {
+      pedalsObject[pedal.id].subplex = {
+        id:         matched.subplex._id,
+        presetName: matched.subplex.presetName || matched.subplex.name,
+        source:     matched.subplex.source || "catalog",
+        style:      matched.subplex.style || []
+      };
+    }
+  }
+
+  // 5. Create the plex on the server with controls included
+  const pedalboardSelect = document.getElementById("pedalboardSelect");
+  const boardId   = pedalboardSelect?.value;
+  const boardName = pedalboardSelect?.selectedOptions[0]?.text;
+
+  if (!boardId) {
+    Swal.fire("Error", "No Rig selected.", "error");
+    return;
+  }
+
+  const token = localStorage.getItem("authToken");
+
+  try {
+    const createRes = await fetch("https://api.pedalplex.com/CREATE_PLEX.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+      body: JSON.stringify({
+        board_name:  boardName,
+        board_id:    boardId,
+        preset_name: presetName,
+        pedals:      pedalsObject
+      })
+    });
+    const createData = await createRes.json();
+
+    if (!createRes.ok || !createData.ok) {
+      Swal.fire("Error", "Failed to create Plex: " + (createData.error || "Unknown error"), "error");
+      return;
+    }
+
+    const newPresetId = createData.id;
+
+    // 6. Assign to folder if selected
+    if (selectedFolderId && typeof movePresetToFolder === "function") {
+      await movePresetToFolder(newPresetId, selectedFolderId);
+    }
+
+    Swal.close();
+    Swal.fire({
+      icon: "success",
+      title: "Experiment saved!",
+      text: `Plex "${presetName}" created successfully.`,
+      timer: 1800,
+      showConfirmButton: false
+    }).then(() => window.location.reload());
+
+  } catch (err) {
+    Swal.fire("Error", "Network error: " + err.message, "error");
   }
 }
 
 
 // ---- Helper: pedals currently on the board ----
-// Returns [{id, name, category}], sourced from window.pedalboard + window.catalogMap.
 function getPedalsOnBoard() {
   const result = [];
   const pedals = window.pedalboard?.pedals || [];
