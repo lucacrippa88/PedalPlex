@@ -284,9 +284,12 @@ function _pickCombination(eligiblePedals, params, excludeSeed = null) {
   const { styles, vibes, exp } = params;
   const experimentFactor = exp / 100;
 
-  // A score > this threshold means the group has a genuinely relevant SubPlex.
+  // A score >= this threshold means the group has a genuinely relevant SubPlex.
   // Scored at exp=0 so noise doesn't inflate it.
-  const RELEVANCE_THRESHOLD = 2;
+  // Threshold=4 means only direct style-tag match (+10) or vibe keyword match (+4)
+  // qualify — adjacent-style-only matches (+2) do not, preventing unrelated pedals
+  // like delay/flanger from sneaking in on "metal" just because they have "rock" tags.
+  const RELEVANCE_THRESHOLD = 4;
 
   function groupIsRelevant(group) {
     return group.some(pedal =>
