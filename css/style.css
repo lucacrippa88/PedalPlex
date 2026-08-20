@@ -1577,3 +1577,24 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+/* Shared text input for explore-style modals (replaces swal2-input to avoid layout overrides) */
+.explore-text-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  border: 1px solid #555;
+  border-radius: 2px;
+  background: transparent;
+  color: inherit;
+  outline: none;
+  margin: 0;
+}
+
+.explore-text-input:focus {
+  border-color: #9C54D5;
+  box-shadow: 0 0 0 2px rgba(156, 84, 213, 0.25);
+}

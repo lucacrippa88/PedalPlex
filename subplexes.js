@@ -412,8 +412,7 @@ function editCustomSubplexUI($pedalDiv) {
         <div class="explore-section">
           <div class="explore-section-header">Name</div>
           <input id="swal-subplex-name"
-                style="width:100%; box-sizing:border-box;"
-                class="swal2-input"
+                class="explore-text-input"
                 placeholder="Add a name here..."
                 value="${currentName}">
         </div>
