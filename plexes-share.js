@@ -99,7 +99,6 @@ function openShareModal() {
     Swal.fire({
         title: 'Share Plex',
         html: `
-        Warning: this is a beta feature. Work in progress.
         <div style="text-align:left; margin-top:1rem;">
             <!-- Toggle -->
             <div class="pp-toggle">
