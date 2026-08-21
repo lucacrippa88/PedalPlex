@@ -649,11 +649,19 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
       window.populateFolderDropdown();
     }
 
-    // Decide which folder is currently selected (default -> 'default' means unassigned)
+    // Restore saved folder selection immediately after rebuilding the dropdown,
+    // before deciding which presets to show — otherwise it always falls back to 'default'.
     const folderSelect = document.getElementById('folderSelect');
+    const savedFolderIdForFetch = localStorage.getItem('lastPresetFolderId') || 'default';
+    if (folderSelect) {
+      const exists = Array.from(folderSelect.options).some(o => o.value === savedFolderIdForFetch);
+      folderSelect.value = exists ? savedFolderIdForFetch : 'default';
+    }
+
+    // Decide which folder is currently selected (default -> 'default' means unassigned)
     const selectedFolderId = folderSelect?.value || 'default';
 
-    // Populate presetSelect based on the currently selected folder
+    // Populate presetSelect based on the restored folder
     populatePresetDropdownByFolder(selectedFolderId);
 
     if (callback) callback();
