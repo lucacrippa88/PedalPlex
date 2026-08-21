@@ -99,6 +99,7 @@ function openShareModal() {
     Swal.fire({
         title: 'Share Plex',
         html: `
+        Share your entire Rig configuration with a friend.
         <div style="text-align:left; margin-top:1rem;">
             <!-- Toggle -->
             <div class="pp-toggle">
