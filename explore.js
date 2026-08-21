@@ -670,10 +670,11 @@ async function _saveExploreExperiment(combination, params) {
     const matched = combination.find(c => c.pedal.id === pedal.id);
     if (matched) {
       pedalsObject[pedal.id].subplex = {
-        id:         matched.subplex._id,
-        presetName: matched.subplex.presetName || matched.subplex.name,
-        source:     matched.subplex.source || "catalog",
-        style:      matched.subplex.style || []
+        id:          matched.subplex._id,
+        presetName:  matched.subplex.presetName || matched.subplex.name,
+        source:      matched.subplex.source || "catalog",
+        style:       matched.subplex.style || [],
+        description: matched.subplex.description || ""
       };
     }
   }
