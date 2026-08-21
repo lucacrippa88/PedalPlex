@@ -42,23 +42,46 @@ const SKIP_CATEGORIES = new Set([
 // Category groups — used both for explanation text and for deduplication
 // (at most one pedal per group per experiment)
 const EXPLORE_CATEGORY_GROUPS = {
-  fuzz:       ["fuzz", "fuzz/distortion", "fuzz/modulation", "fuzz/octaver", "octaver/fuzz", "synth/fuzz"],
+  fuzz:       ["fuzz", "fuzz/distortion", "fuzz/modulation", "fuzz/octaver", "octaver/fuzz", "synth/fuzz",
+               "bass/overdrive/fuzz"],
+  // "drive" is checked before "amp", so any overdrive/* or preamp/* category
+  // that also contains "amp simulator" is intentionally captured here.
   drive:      ["overdrive", "distortion", "boost", "booster", "overdrive/distortion", "overdrive/boost",
                "distortion/booster", "overdrive/fuzz", "overdrive/preamp", "preamp", "preamp/boost",
-               "preamp/distortion/boost", "modulation/overdrive", "overdrive/echo/boost"],
+               "preamp/distortion/boost", "modulation/overdrive", "overdrive/echo/boost",
+               "overdrive/bass", "bass/overdrive", "bass/preamp", "preamp/bass",
+               "distortion/overdrive/preamp", "preamp/di", "preamp/booster",
+               "vibrato/drive", "octaver/distortion/booster", "overdrive/amp simulator"],
+  amp:        ["amp simulator", "amp simulator/distortion", "amp simulator/ir loader",
+               "cab simulator", "combo", "combo/frfr",
+               "head", "power amp", "ir loader", "ir loader/power amp",
+               "acoustic simulator", "acoustic simulator/ir loader"],
   modulation: ["chorus", "flanger", "phaser", "tremolo", "vibrato", "rotary", "modulation",
                "chorus/vibrato", "chorus/flanger", "vibrato/rotary", "rotary/chorus",
-               "rotary/flanger/chorus", "fuzz/modulation"],
-  delay:      ["delay", "delay/looper", "reverb/delay"],
-  reverb:     ["reverb", "reverb/delay", "tremolo/reverb", "reverb/distortion"],
+               "rotary/flanger/chorus", "fuzz/modulation", "chorus/bass",
+               "chorus/vibrato/rotary", "vibrato/chorus"],
+  delay:      ["delay", "delay/looper", "reverb/delay", "delay/reverb"],
+  reverb:     ["reverb", "reverb/delay", "tremolo/reverb", "reverb/distortion", "delay/reverb"],
   eq:         ["eq", "equalizer", "bass/boost/equalizer", "boost/equalizer"],
   looper:     ["looper", "looper/drum machine", "delay/looper"],
   pitch:      ["pitch shifter", "octaver", "harmonizer", "harmonizer/octaver", "octaver/bass",
-               "fuzz/octaver", "bitcrusher/pitch shifter/modulation"]
+               "fuzz/octaver", "bitcrusher/pitch shifter/modulation",
+               "bitcrusher/pitch shifter/modulation/fuzz"],
+  wah:        ["wah", "wah/volume", "filter", "filter/bass", "talk box"],
+  compressor: ["compressor", "compressor/bass", "bass/compressor",
+               "limiter", "sustainer", "noise gate", "noise-gate/bass"],
+  synth:      ["synth", "bass/synth", "arpeggiator", "vocoder"],
+  volume:     ["volume", "volume/expression", "volume/attenuator", "expression"]
 };
 
 function _categoryGroup(cat) {
   const c = (cat || "").toLowerCase();
+  // Pass 1: exact match — a compound category like "amp simulator/distortion"
+  // should match "amp" (exact entry) before "drive" (substring "distortion").
+  for (const [g, cats] of Object.entries(EXPLORE_CATEGORY_GROUPS)) {
+    if (cats.includes(c)) return g;
+  }
+  // Pass 2: substring match — handles partial overlaps (e.g. "overdrive/bass" → "drive")
   for (const [g, cats] of Object.entries(EXPLORE_CATEGORY_GROUPS)) {
     if (cats.some(x => c.includes(x))) return g;
   }
@@ -437,9 +460,15 @@ function _generateExplanation(combination, params) {
 
     if (group === "fuzz")            parts.push(`The <em>${spName}</em> on <strong>${pid}</strong> builds the ${base} foundation`);
     else if (group === "drive")      parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) adds grit and character`);
+    else if (group === "amp")        parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) defines the core tone and body`);
     else if (group === "modulation") parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) creates movement and width`);
     else if (group === "delay")      parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) shapes the atmospheric tail`);
     else if (group === "reverb")     parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) opens up the space`);
+    else if (group === "wah")        parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) sculpts the frequency response`);
+    else if (group === "compressor") parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) controls the dynamics`);
+    else if (group === "eq")         parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) shapes the frequency balance`);
+    else if (group === "pitch")      parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) adds pitch colour and depth`);
+    else if (group === "synth")      parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) brings in texture and synth character`);
   }
 
   if (!parts.length) return `A ${styleLabel} combination assembled from what's on your board right now.`;

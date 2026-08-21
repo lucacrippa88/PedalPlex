@@ -347,8 +347,15 @@ $(document).ready(function() {
 
 
 <script>
+  // When true, saveCurrentSelectionToStorage() is a no-op.
+  // Set to true during the initial restore sequence so that programmatic
+  // dropdown changes don't overwrite the saved state before it is applied.
+  window._suppressStorageSave = false;
+
   // Save current selections by visible text
   function saveCurrentSelectionToStorage() {
+      if (window._suppressStorageSave) return;
+
       const pedalboardSelect = document.getElementById('pedalboardSelect');
       const presetSelect = document.getElementById('presetSelect');
       const folderSelect = document.getElementById('folderSelect');
@@ -371,8 +378,6 @@ $(document).ready(function() {
   }
 
 
-
-
   // Listen for user changes
   const pedalboardSelect = document.getElementById('pedalboardSelect');
   const presetSelect = document.getElementById('presetSelect');
@@ -380,27 +385,9 @@ $(document).ready(function() {
   if (pedalboardSelect) pedalboardSelect.addEventListener('change', saveCurrentSelectionToStorage);
   if (presetSelect) presetSelect.addEventListener('change', saveCurrentSelectionToStorage);
 
-  // Hook into async population: save selection after programmatic restore
-  function hookSaveAfterPopulation() {
-    // Pedalboard: save after restoring selection
-    if (pedalboardSelect && pedalboardSelect.selectedIndex >= 0) {
-      saveCurrentSelectionToStorage();
-    }
-
-    // Preset: save after async presets populate
-    if (presetSelect) {
-      // Poll until at least one option exists
-      const checkPresetInterval = setInterval(() => {
-        if (presetSelect.options.length > 0 && presetSelect.selectedIndex >= 0) {
-          saveCurrentSelectionToStorage();
-          clearInterval(checkPresetInterval);
-        }
-      }, 50);
-    }
-  }
-
-  // Call on page load
-  window.addEventListener('load', hookSaveAfterPopulation);
+  // Remove the polling hook — it fired too early (before restore completed)
+  // and overwrote localStorage with the default first-preset selection.
+  // Storage is now saved only on explicit user interaction.
 
 
 // Show loaders

@@ -492,6 +492,11 @@ async function initPreset() {
 
       renderFullPedalboard();
 
+      // Suppress storage writes during the restore sequence — otherwise the
+      // programmatic dropdown population overwrites localStorage before the
+      // saved values are applied.
+      window._suppressStorageSave = true;
+
       await fetchPresetsByBoardId(userId, window.pedalboard._id, () => {
         const presetSelect = document.getElementById('presetSelect');
         const folderSelect = document.getElementById('folderSelect');
@@ -519,12 +524,13 @@ async function initPreset() {
           applyPresetToPedalboard(preset);
         }
 
-        // 4Restore zoom
+        // Restore zoom
         if (typeof restoreZoomForCurrentBoard === "function") {
           restoreZoomForCurrentBoard();
         }
 
-        // NON dispatchare change
+        // Restore complete — re-enable storage saves
+        window._suppressStorageSave = false;
       });
 
 
