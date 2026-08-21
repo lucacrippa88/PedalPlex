@@ -10,7 +10,7 @@ const VIBE_KEYWORDS = {
   "Dark":         ["dark", "black", "murky", "deep", "heavy", "shadow", "doom"],
   "Warm":         ["warm", "smooth", "soft", "round", "mellow", "silky"],
   "Bright":       ["bright", "sparkle", "clear", "crisp", "airy", "chime"],
-  "Tight":        ["tight", "punchy", "clean", "precise", "focused", "controlled"],
+  "Tight":        ["tight", "punchy", "precise", "focused", "controlled", "compressed"],
   "Dirty":        ["dirty", "grit", "grunge", "raw", "filthy", "nasty", "broken"],
   "Atmospheric":  ["atmospheric", "ambient", "atmosphere", "space", "pad", "endless", "infinite", "swirl"],
   "Weird":        ["weird", "strange", "alien", "experimental", "odd", "unusual", "glitch"]
@@ -20,7 +20,7 @@ const VIBE_KEYWORDS = {
 const STYLE_RELATIVES = {
   rock:        ["rock", "stoner", "blues", "punk", "grunge", "altern"],
   "hard rock": ["rock", "stoner", "metal", "punk", "grunge"],
-  metal:       ["metal", "stoner", "rock", "prog"],
+  metal:       ["metal", "stoner", "prog"],
   blues:       ["blues", "rock", "funk", "jazz", "folk"],
   funk:        ["funk", "jazz", "pop", "beat"],
   pop:         ["pop", "indie", "folk", "beat", "chill"],
@@ -359,23 +359,36 @@ function _pickCombination(eligiblePedals, params, excludeSeed = null) {
     }
   }
 
+  // Minimum raw score (before noise) for a subplex to be selectable.
+  // At low exp we require a real match (direct tag or vibe keyword);
+  // at high exp we relax this so unrelated picks can surface.
+  // Score is calculated at exp=0 to exclude noise from the gate check.
+  const MIN_PICK_SCORE = Math.max(0, 4 - experimentFactor * 4); // 4→0 as exp goes 0→1
+
   const combination = [];
 
   for (const pedal of selectedPedals) {
     const pool = _exploreSubplexPool[pedal.id] || [];
     if (!pool.length) continue;
 
-    // Score all subplexes — keep every one regardless of score so pedals
-    // that have no style-tag match are never silently dropped.
-    // Unscored entries get a tiny random baseline so they can still be picked
-    // at high experimentation.
+    // Score all subplexes at exp=0 (noise-free) to find the best raw match.
+    // Then re-score with full experimentFactor for weighted-random selection.
     const scored = pool
       .map(sp => {
-        let s = _scoreSubplex(sp, styles, vibes, experimentFactor);
-        if (s <= 0) s = 0.1 + Math.random() * 0.4; // tiny baseline
-        return { sp, score: s };
+        const rawScore = _scoreSubplex(sp, styles, vibes, 0);
+        const fullScore = rawScore > 0
+          ? _scoreSubplex(sp, styles, vibes, experimentFactor)
+          : 0.1 + Math.random() * 0.4; // tiny baseline for zero-score entries
+        return { sp, rawScore, score: fullScore };
       })
       .sort((a, b) => b.score - a.score);
+
+    // Gate: at low exp, skip this pedal entirely if even its best SubPlex
+    // doesn't reach the minimum raw score. This prevents unrelated pedals
+    // (e.g. a blues/rock delay on a metal rig at familiar setting) from
+    // sneaking through just because they hit a loose vibe keyword like "clean".
+    const bestRaw = scored[0]?.rawScore ?? 0;
+    if (bestRaw < MIN_PICK_SCORE) continue;
 
     const picked = _weightedRandom(scored, experimentFactor, excludeSeed ? excludeSeed[pedal.id] : null);
     if (picked) combination.push({ pedal, subplex: picked.sp, score: picked.score });
