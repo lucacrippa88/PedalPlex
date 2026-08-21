@@ -61,27 +61,28 @@ function initNavPreset() {
 
       <div class="rightButtons showMobile" style="display: flex; align-items: center; gap: 1rem;">
 
-        <button id="exploreBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Explore"
+        <button id="exploreBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Explore"
           style="background: linear-gradient(45deg, #0a7a8f, #5EE2F0); background-size: 150% 150%; background-position: 0% 50%;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M16,2A14,14,0,1,0,30,16,14,14,0,0,0,16,2Zm0,26A12,12,0,1,1,28,16,12,12,0,0,1,16,28ZM22.31,10.35,13.72,14.09l-4.07,8.57,8.6-3.74ZM16,17a1,1,0,1,1,1-1A1,1,0,0,1,16,17Z"/>
           </svg>
+          Explore
         </button>
 
-        <button id="savePstBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Plex" disabled
+        <button id="savePstBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Save Plex" disabled
           style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
           </svg>
-          Lock
+          // Lock
         </button>
         
-        <button id="createPstBtnMobile" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Plex"
+        <button id="createPstBtnMobile" class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Create New Plex"
           style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M30 6L26 6 26 2 24 2 24 6 20 6 20 8 24 8 24 12 26 12 26 8 30 8 30 6zM24 15v7.5562A3.9552 3.9552 0 0022 22a4 4 0 104 4V15zM22 28a2 2 0 112-2A2.0027 2.0027 0 0122 28zM17 6H10A2.002 2.002 0 008 8V22.5562A3.9557 3.9557 0 006 22a4 4 0 104 4V8h7zM6 28a2 2 0 112-2A2.0023 2.0023 0 016 28z" stroke="currentColor"/>
           </svg>
-          New
+          // New
         </button>
 
       </div>
