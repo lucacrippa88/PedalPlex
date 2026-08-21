@@ -186,22 +186,22 @@ function _showExploreStep1(prefillState = null) {
         <div class="explore-section">
           <div class="explore-section-header">How adventurous?</div>
           <div class="explore-slider-row">
-            <span class="explore-slider-label explore-slider-label--left">Keep it familiar</span>
+            <span class="explore-slider-label explore-slider-label--left">Familiar</span>
             <input type="range" id="explorationSlider" min="0" max="100" value="${prevExp}" class="explore-slider">
             <span class="explore-slider-label explore-slider-label--right">Surprise me</span>
           </div>
         </div>
 
-        <div class="explore-section">
-          <div class="explore-section-header">Or describe what you&rsquo;re looking for <span class="explore-hint">coming soon &mdash; keyword search</span></div>
-          <input type="text"
-                 id="exploreKeyword"
-                 class="swal2-input"
-                 placeholder="e.g. huge Muse-style sound, but darker..."
-                 value="${prevKeyword}"
-                 disabled
-                 style="width:85%; margin:0.4rem auto 0; opacity:0.45; cursor:not-allowed;">
-        </div>
+        // <div class="explore-section">
+        //   <div class="explore-section-header">Or describe what you&rsquo;re looking for <span class="explore-hint">coming soon &mdash; keyword search</span></div>
+        //   <input type="text"
+        //          id="exploreKeyword"
+        //          class="swal2-input"
+        //          placeholder="e.g. huge Muse-style sound, but darker..."
+        //          value="${prevKeyword}"
+        //          disabled
+        //          style="width:85%; margin:0.4rem auto 0; opacity:0.45; cursor:not-allowed;">
+        // </div>
       </div>
     `,
     showCancelButton: true,
