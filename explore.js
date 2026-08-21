@@ -192,16 +192,14 @@ function _showExploreStep1(prefillState = null) {
           </div>
         </div>
 
-        // <div class="explore-section">
-        //   <div class="explore-section-header">Or describe what you&rsquo;re looking for <span class="explore-hint">coming soon &mdash; keyword search</span></div>
-        //   <input type="text"
-        //          id="exploreKeyword"
-        //          class="swal2-input"
-        //          placeholder="e.g. huge Muse-style sound, but darker..."
-        //          value="${prevKeyword}"
-        //          disabled
-        //          style="width:85%; margin:0.4rem auto 0; opacity:0.45; cursor:not-allowed;">
-        // </div>
+
+
+
+
+
+
+
+
       </div>
     `,
     showCancelButton: true,
@@ -239,6 +237,20 @@ function _showExploreStep1(prefillState = null) {
   });
 }
 
+
+        // ----------- TO BE PUT AFTER <div class="explore-slider-row"> SECTION
+        // <div class="explore-section">
+        //   <div class="explore-section-header">Or describe what you&rsquo;re looking for <span class="explore-hint">coming soon &mdash; keyword search</span></div>
+        //   <input type="text"
+        //          id="exploreKeyword"
+        //          class="swal2-input"
+        //          placeholder="e.g. huge Muse-style sound, but darker..."
+        //          value="${prevKeyword}"
+        //          disabled
+        //          style="width:85%; margin:0.4rem auto 0; opacity:0.45; cursor:not-allowed;">
+        // </div>
+
+        
 
 // ---- Scoring + picking engine ----
 async function _runExplore(params) {
