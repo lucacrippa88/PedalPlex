@@ -415,6 +415,7 @@ function editCustomSubplexUI($pedalDiv) {
           <div class="explore-section-header">Name</div>
           <input id="swal-subplex-name"
                 class="swal2-input"
+                style="width: 90%; position: relative; left: -7%;"
                 placeholder="Add a name here..."
                 value="${currentName}">
         </div>
@@ -429,7 +430,7 @@ function editCustomSubplexUI($pedalDiv) {
           <textarea id="swal-subplex-desc"
                     class="explore-text-input"
                     maxlength="100"
-                    style="height:52px; resize:vertical;"
+                    style="height:52px; resize:vertical; width:95%"
                     placeholder="How would you describe your sound...?">${currentDesc}</textarea>
         </div>
 
