@@ -92,7 +92,7 @@ function _categoryGroup(cat) {
 let _exploreSubplexPool = null;
 
 // Truncate a pedal ID for display (strip special chars, max 22 chars)
-function _truncatePedalId(id, max = 18) {
+function _truncatePedalId(id, max = 22) {
   if (!id) return "Pedal";
   // Replace common separators with space, trim, capitalize words
   const clean = id.replace(/[-_]/g, " ").replace(/\s+/g, " ").trim();
@@ -526,7 +526,7 @@ function _showExploreStep2(combination, params) {
   const iconSave  = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M27.71 9.29l-5-5A1 1 0 0 0 22 4H6a2 2 0 0 0-2 2v20a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V10a1 1 0 0 0-.29-.71zM12 6h8v4h-8zm8 20h-8v-8h8zm2 0v-8a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v8H6V6h4v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6.41L26 10v16z"/></svg>`;
 
   Swal.fire({
-    title: `<span style="font-size:1rem; font-weight:600; letter-spacing:0.02em;">Your new experiment</span>`,
+    title: `<span style="font-size:1rem; font-weight:600; letter-spacing:0.02em;">Your new tone experiment</span>`,
     willOpen: () => Swal.hideLoading(),
     html: `
       <div class="explore-modal explore-modal--result">
