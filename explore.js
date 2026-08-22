@@ -549,7 +549,7 @@ function _showExploreStep2(combination, params) {
             ${iconApply}Apply to Plex
           </button>
           <button id="exploreTryBtn" class="bx--btn bx--btn--secondary">
-            ${iconTry}Retry
+            ${iconTry}Try another
           </button>
           <button id="exploreSaveBtn" class="bx--btn bx--btn--tertiary">
             ${iconSave}Save to new Plex
