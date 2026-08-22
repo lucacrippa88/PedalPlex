@@ -423,7 +423,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 .pedal-author { font-size: 0.7em; color: #aaa; text-align: right; position: absolute; pointer-events: none; user-select: none; bottom: -14px; left: -3px; flex-direction: row;}
 .modal-footer { display: block; margin: auto; position: relative; padding-bottom: 40px; }
 
-.preset-wrapper { position:relative; top:25px!important; }
+#preset-wrapper { position:relative; top:25px!important; }
 
 /* Fonts (all preserved) */
 @font-face { font-family: infinit; src: url("../fonts/Infinit.ttf"); }
