@@ -92,7 +92,7 @@ function _categoryGroup(cat) {
 let _exploreSubplexPool = null;
 
 // Truncate a pedal ID for display (strip special chars, max 22 chars)
-function _truncatePedalId(id, max = 22) {
+function _truncatePedalId(id, max = 18) {
   if (!id) return "Pedal";
   // Replace common separators with space, trim, capitalize words
   const clean = id.replace(/[-_]/g, " ").replace(/\s+/g, " ").trim();
@@ -470,7 +470,7 @@ function _generateExplanation(combination, params) {
 
     const spName = subplex.presetName || subplex.name;
     const base   = vibeWords || styleLabel.toLowerCase();
-    const pid    = _truncatePedalId(pedal.id, 20);
+    const pid    = _truncatePedalId(pedal.id);
 
     if (group === "fuzz")            parts.push(`The <em>${spName}</em> on <strong>${pid}</strong> builds the ${base} foundation`);
     else if (group === "drive")      parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) adds grit and character`);
@@ -501,7 +501,7 @@ function _showExploreStep2(combination, params) {
 
   const rigRows = combination.map(({ pedal, subplex }) => {
     const spName   = subplex.presetName || subplex.name || "SubPlex";
-    const pedalLabel = _truncatePedalId(pedal.id, 20);
+    const pedalLabel = _truncatePedalId(pedal.id);
     const spDesc   = subplex.description
       ? `<span class="explore-result-desc">${subplex.description}</span>`
       : "";
