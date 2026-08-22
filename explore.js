@@ -31,6 +31,18 @@ const STYLE_RELATIVES = {
   experimental:["psych", "altern", "prog", "wave", "beat"]
 };
 
+// Styles that require gain — drive or amp must always be present in the combination
+const GAIN_STYLES = new Set([
+  "rock", "hard rock", "metal", "grunge", "punk", "stoner", "blues", "indie"
+]);
+
+// Tags on an amp/head subplex that count as "gain already covered"
+// (if the amp subplex has any of these, a separate drive pedal is not mandatory)
+const AMP_GAIN_TAGS = new Set([
+  "metal", "high gain", "distortion", "overdrive", "crunch", "heavy",
+  "hard rock", "rock", "grunge", "punk", "stoner", "gain", "saturated"
+]);
+
 // Categories to skip entirely
 const SKIP_CATEGORIES = new Set([
   "tuner", "tuner/boost",
@@ -394,7 +406,107 @@ function _pickCombination(eligiblePedals, params, excludeSeed = null) {
     if (picked) combination.push({ pedal, subplex: picked.sp, score: picked.score });
   }
 
+  // ---- Must-have rules (post-processing) ----
+  // These run after the normal scoring to guarantee that certain groups are
+  // always represented when the request semantically requires them.
+  _applyMustHaveRules(combination, eligiblePedals, styles, vibes, experimentFactor, excludeSeed);
+
   return combination;
+}
+
+
+// ---- Must-have rules ----
+// Rule 1 — Amp always present: if the board has an amp/head/combo and no amp
+//   subplex ended up in the combination (because it scored low), force the
+//   best-scoring amp subplex in anyway.
+// Rule 2 — Gain for gain styles: if the selected style requires gain (rock,
+//   metal, punk, …) and neither drive nor fuzz nor a gain-tagged amp subplex
+//   is in the combination, force the best-scoring drive/fuzz subplex in.
+//   At high exp (>60%) this rule is relaxed — surprising combos are OK.
+function _applyMustHaveRules(combination, eligiblePedals, styles, vibes, experimentFactor, excludeSeed) {
+  const groupsInCombo = new Set(combination.map(c => _categoryGroup(c.pedal.category)));
+
+  // Minimum raw score a forced subplex must reach to be considered "in line"
+  // with the request. Same scale as MIN_PICK_SCORE in _pickCombination:
+  // at exp=0 requires a real match (4); relaxes linearly to 0 at exp=1.
+  // For amps we use a slightly lower threshold (2) because amp subplexes
+  // are less likely to carry explicit style tags but are still relevant.
+  const FORCE_MIN_SCORE_DEFAULT = Math.max(0, 4 - experimentFactor * 4);
+  const FORCE_MIN_SCORE_AMP     = Math.max(0, 2 - experimentFactor * 2);
+
+  // Helper: find the best in-scope subplex for a pedal.
+  // minScore is checked against the noise-free raw score (exp=0).
+  // Returns null if nothing meets the threshold — "piuttosto si lascia perdere".
+  function forceBest(pedal, minScore) {
+    const pool = _exploreSubplexPool[pedal.id] || [];
+    if (!pool.length) return null;
+    const scored = pool
+      .map(sp => {
+        const rawScore = _scoreSubplex(sp, styles, vibes, 0);
+        const fullScore = _scoreSubplex(sp, styles, vibes, experimentFactor);
+        return { sp, rawScore, score: fullScore };
+      })
+      .filter(x => x.rawScore >= minScore)   // only keep in-scope subplexes
+      .sort((a, b) => b.score - a.score);
+    if (!scored.length) return null;         // nothing in scope → skip this pedal
+    const exclude = excludeSeed ? excludeSeed[pedal.id] : null;
+    const picked = _weightedRandom(scored, experimentFactor, exclude);
+    return picked ? { pedal, subplex: picked.sp, score: picked.score } : null;
+  }
+
+  // Helper: find all eligible pedals belonging to a given category group
+  function pedalsInGroup(groupName) {
+    return eligiblePedals.filter(p => _categoryGroup(p.category) === groupName);
+  }
+
+  // ── Rule 1: Amp must-have ──────────────────────────────────────────────────
+  // Include the best in-scope amp subplex if the board has one and nothing
+  // ended up in the combination. "In scope" means rawScore ≥ FORCE_MIN_SCORE_AMP
+  // — if even the best amp subplex is unrelated to the request, skip it.
+  if (!groupsInCombo.has("amp")) {
+    const ampPedals = pedalsInGroup("amp");
+    if (ampPedals.length) {
+      let best = null;
+      for (const pedal of ampPedals) {
+        const entry = forceBest(pedal, FORCE_MIN_SCORE_AMP);
+        if (entry && (!best || entry.score > best.score)) best = entry;
+      }
+      if (best) combination.push(best);
+    }
+  }
+
+  // ── Rule 2: Gain must-have ─────────────────────────────────────────────────
+  // Only applies when at least one selected style requires gain AND
+  // experimentation is low-to-mid (≤60% — at high exp surprising combos are ok).
+  const needsGain = styles.some(s => GAIN_STYLES.has(s));
+  if (needsGain && experimentFactor <= 0.6) {
+    const hasDrive = groupsInCombo.has("drive") || groupsInCombo.has("fuzz");
+
+    // Check if the amp already covers gain (subplex has a gain-related tag)
+    const ampEntry = combination.find(c => _categoryGroup(c.pedal.category) === "amp");
+    const ampCoversGain = ampEntry
+      ? (ampEntry.subplex.style || []).some(t => AMP_GAIN_TAGS.has(t.toLowerCase()))
+      : false;
+
+    if (!hasDrive && !ampCoversGain) {
+      // Try drive first, then fuzz as fallback.
+      // Only force if the best available subplex is actually in scope.
+      for (const groupName of ["drive", "fuzz"]) {
+        const gainPedals = pedalsInGroup(groupName);
+        if (!gainPedals.length) continue;
+
+        let best = null;
+        for (const pedal of gainPedals) {
+          const entry = forceBest(pedal, FORCE_MIN_SCORE_DEFAULT);
+          if (entry && (!best || entry.score > best.score)) best = entry;
+        }
+        if (best) {
+          combination.push(best);
+          break; // one gain source is enough
+        }
+      }
+    }
+  }
 }
 
 
