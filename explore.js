@@ -470,7 +470,7 @@ function _generateExplanation(combination, params) {
 
     const spName = subplex.presetName || subplex.name;
     const base   = vibeWords || styleLabel.toLowerCase();
-    const pid    = _truncatePedalId(pedal.id);
+    const pid    = _truncatePedalId(pedal.id, 20);
 
     if (group === "fuzz")            parts.push(`The <em>${spName}</em> on <strong>${pid}</strong> builds the ${base} foundation`);
     else if (group === "drive")      parts.push(`<strong>${pid}</strong> (<em>${spName}</em>) adds grit and character`);
@@ -501,7 +501,7 @@ function _showExploreStep2(combination, params) {
 
   const rigRows = combination.map(({ pedal, subplex }) => {
     const spName   = subplex.presetName || subplex.name || "SubPlex";
-    const pedalLabel = _truncatePedalId(pedal.id);
+    const pedalLabel = _truncatePedalId(pedal.id, 20);
     const spDesc   = subplex.description
       ? `<span class="explore-result-desc">${subplex.description}</span>`
       : "";
