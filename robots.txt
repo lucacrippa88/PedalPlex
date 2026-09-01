@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Blocca la scansione delle pagine private o di gestione
+Disallow: /profile
+Disallow: /settings
+
+# Indica a Google l'indirizzo esatto della tua sitemap XML
+Sitemap: https://pedalplex.com/sitemap.xml
