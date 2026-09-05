@@ -1304,15 +1304,18 @@ function loadAdminStats() {
       'Authorization': 'Bearer ' + localStorage.getItem('authToken')
     },
     success: function (d) {
-      $('#g-total').text(d.gears.public+d.gears.draft+d.gears.reviewing);
-      $('#g-public').text(d.gears.public);
-      $('#g-reviewing').text(d.gears.reviewing);
-      $('#g-draft').text(d.gears.draft);
+      var fmt = function(v) { return v !== null && v !== undefined ? v : '–'; };
+      var gTotal = (d.gears.public !== null && d.gears.draft !== null && d.gears.reviewing !== null)
+        ? d.gears.public + d.gears.draft + d.gears.reviewing : '–';
+      $('#g-total').text(gTotal);
+      $('#g-public').text(fmt(d.gears.public));
+      $('#g-reviewing').text(fmt(d.gears.reviewing));
+      $('#g-draft').text(fmt(d.gears.draft));
 
-      $('#c-plexes').text(d.plexes);
-      $('#c-subplexes').text(d.subplexes);
-      $('#c-users').text(d.users);
-      $('#c-rigs').text(d.rigs);
+      $('#c-plexes').text(fmt(d.plexes));
+      $('#c-subplexes').text(fmt(d.subplexes));
+      $('#c-users').text(fmt(d.users));
+      $('#c-rigs').text(fmt(d.rigs));
     },
     error: function () {
       Swal.fire('Error', 'Failed to load admin stats', 'error');
