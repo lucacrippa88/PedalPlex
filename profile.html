@@ -104,22 +104,36 @@
     </div>
 
     <br><br><br><br>
+    <style>
+      .stat-inline-loader {
+        display: inline-block;
+        vertical-align: middle;
+        width: 1em;
+        height: 1em;
+        animation: stat-spin 0.7s linear infinite;
+      }
+      @keyframes stat-spin {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+      }
+    </style>
+
     <div id="admin-dashboard" style="display: none;">
     <h3>Stats</h3><br><br>
 
       <div class="bx--grid">
         <div class="bx--row">
-          <div class="bx--col"><strong>Gears total:</strong> <span id="g-total">–</span></div>
-          <div class="bx--col"><strong>Public:</strong> <span id="g-public">–</span></div>
-          <div class="bx--col"><strong>Reviewing:</strong> <span id="g-reviewing">–</span></div>
-          <div class="bx--col"><strong>Draft:</strong> <span id="g-draft">–</span></div>
+          <div class="bx--col"><strong>Gears total:</strong> <span id="g-total"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Public:</strong> <span id="g-public"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Reviewing:</strong> <span id="g-reviewing"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Draft:</strong> <span id="g-draft"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
         </div>
         <br>
         <div class="bx--row">
-          <div class="bx--col"><strong>Users:</strong> <span id="c-users">–</span></div>
-          <div class="bx--col"><strong>Rigs:</strong> <span id="c-rigs">–</span></div>
-          <div class="bx--col"><strong>Plexes:</strong> <span id="c-plexes">–</span></div>
-          <div class="bx--col"><strong>SubPlexes:</strong> <span id="c-subplexes">–</span></div>
+          <div class="bx--col"><strong>Users:</strong> <span id="c-users"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Rigs:</strong> <span id="c-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Plexes:</strong> <span id="c-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>SubPlexes:</strong> <span id="c-subplexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
         </div>
       </div>
     </div>
