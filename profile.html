@@ -54,6 +54,20 @@
       </div>
     </div>
 
+    <style>
+      .stat-inline-loader {
+        display: inline-block;
+        vertical-align: middle;
+        width: 1em;
+        height: 1em;
+        animation: stat-spin 0.7s linear infinite;
+      }
+      @keyframes stat-spin {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+      }
+    </style>
+
     <div class="bx--content-switcher" role="tablist" aria-label="Profile sections">
       <button
         id="switch-achievements"
@@ -74,6 +88,17 @@
         aria-selected="false"
         aria-controls="tab-panel-shared-plexes">
         <span class="bx--content-switcher__label">Shared Plexes</span>
+      </button>
+      <button
+        id="switch-stats"
+        class="bx--content-switcher-btn"
+        data-target="tab-panel-stats"
+        role="tab"
+        type="button"
+        aria-selected="false"
+        aria-controls="tab-panel-stats"
+        style="display: none;">
+        <span class="bx--content-switcher__label">Stats</span>
       </button>
     </div>
 
@@ -103,25 +128,8 @@
       </div>
     </div>
 
-    <br><br><br><br>
-    <style>
-      .stat-inline-loader {
-        display: inline-block;
-        vertical-align: middle;
-        width: 1em;
-        height: 1em;
-        animation: stat-spin 0.7s linear infinite;
-      }
-      @keyframes stat-spin {
-        from { transform: rotate(0deg); }
-        to   { transform: rotate(360deg); }
-      }
-    </style>
-
-    <div id="admin-dashboard" style="display: none;">
-    <h3>Stats</h3><br><br>
-
-      <div class="bx--grid">
+    <div id="tab-panel-stats" role="tabpanel" aria-labelledby="tab-stats" hidden>
+      <div class="bx--grid" style="margin-top: 2rem;">
         <div class="bx--row">
           <div class="bx--col"><strong>Gears total:</strong> <span id="g-total"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
           <div class="bx--col"><strong>Public:</strong> <span id="g-public"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
@@ -1146,7 +1154,8 @@ function initProfileTabs() {
   const switchButtons = document.querySelectorAll('.bx--content-switcher-btn');
   const panels = [
     document.getElementById('tab-panel-achievements'),
-    document.getElementById('tab-panel-shared-plexes')
+    document.getElementById('tab-panel-shared-plexes'),
+    document.getElementById('tab-panel-stats')
   ];
 
   switchButtons.forEach(button => {
@@ -1309,7 +1318,7 @@ function displayNoSharedPlexes(message) {
 function loadAdminStats() {
   if (!window.currentUser || window.currentUser.role !== 'admin') return;
 
-  $('#admin-dashboard').show();
+  $('#switch-stats').show();
 
   $.ajax({
     url: 'https://api.pedalplex.com/ADMIN_DASHBOARD_STATS.php',
