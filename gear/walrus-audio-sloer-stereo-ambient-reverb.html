@@ -17,17 +17,17 @@
   <meta property="og:type" content="product">
   <meta property="og:title" content="Walrus Audio Slöer Stereo Ambient Reverb">
   <meta property="og:description" content="Slöer provides stereo ambient reverb with deep, evolving soundscapes and lush modulation effects.">
-  <meta property="og:url" content="https://pedalplex.com/gear/walrus-audio-sler-stereo-ambient-reverb.html">
+  <meta property="og:url" content="https://pedalplex.com/gear/walrus-audio-sloer-stereo-ambient-reverb">
   <meta property="og:site_name" content="PedalPlex">
-  <meta property="og:image" content="https://pedalplex.com/img/pedals/walrus-audio-sler-stereo-ambient-reverb.jpg">
+  <meta property="og:image" content="https://pedalplex.com/img/pedals/walrus-audio-sloer-stereo-ambient-reverb.jpg">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Walrus Audio Slöer Stereo Ambient Reverb">
   <meta name="twitter:description" content="Slöer provides stereo ambient reverb with deep, evolving soundscapes and lush modulation effects.">
-  <meta name="twitter:image" content="https://pedalplex.com/img/pedals/walrus-audio-sler-stereo-ambient-reverb.jpg">
+  <meta name="twitter:image" content="https://pedalplex.com/img/pedals/walrus-audio-sloer-stereo-ambient-reverb.jpg">
 
-  <link rel="canonical" href="https://pedalplex.com/gear/walrus-audio-sler-stereo-ambient-reverb.html">
+  <link rel="canonical" href="https://pedalplex.com/gear/walrus-audio-sloer-stereo-ambient-reverb">
   <link rel="icon" href="../logos/pedalplex_logo_gradient.png">
 
   <link rel="dns-prefetch" href="https://1.www.s81c.com">
@@ -43,12 +43,25 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
   <!-- Google tag -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-BX9P5WN5HH');
+  (function() {
+    const consent = localStorage.getItem('pedalplex_cookie_consent');
+    if (consent === 'accept') {
+      if (!window.gtagLoaded) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-BX9P5WN5HH');
+        window.gtagLoaded = true;
+      }
+    }
+  })();
   </script>
 
   <!-- Global vars -->
@@ -65,14 +78,14 @@
     "@type": "Product",
     "name": "Walrus Audio Slöer Stereo Ambient Reverb",
     "description": "Slöer provides stereo ambient reverb with deep, evolving soundscapes and lush modulation effects.",
-    "image": "https://pedalplex.com/img/pedals/walrus-audio-sler-stereo-ambient-reverb.jpg",
-    "sku": "WALRUS_AUDIO_SLER_STEREO_AMBIENT_REVERB",
+    "image": "https://pedalplex.com/img/pedals/walrus-audio-sloer-stereo-ambient-reverb.jpg",
+    "sku": "WALRUS_AUDIO_SLOER_STEREO_AMBIENT_REVERB",
     "brand": {
       "@type": "Brand",
       "name": "Walrus Audio"
     },
     "category": "reverb",
-    "url": "https://pedalplex.com/gear/walrus-audio-sler-stereo-ambient-reverb.html",
+    "url": "https://pedalplex.com/gear/walrus-audio-sloer-stereo-ambient-reverb",
     "sameAs": "https://www.effectsdatabase.com/model/walrus/sloer",
     "isRelatedTo": {
       "@type": "SoftwareApplication",
@@ -110,7 +123,7 @@
         "@type": "ListItem",
         "position": 3,
         "name": "Walrus Audio Slöer Stereo Ambient Reverb",
-        "item": "https://pedalplex.com/gear/walrus-audio-sler-stereo-ambient-reverb.html"
+        "item": "https://pedalplex.com/gear/walrus-audio-sloer-stereo-ambient-reverb"
       }
     ]
   }
@@ -202,7 +215,7 @@
     </div> -->
     <div style="text-align:center;" id="fxdb-wrapper">
     <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
+        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
         href="https://www.effectsdatabase.com/model/walrus/sloer" target="_blank" rel="noopener noreferrer">
         Open in FXDB
         <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"

@@ -17,17 +17,17 @@
   <meta property="og:type" content="product">
   <meta property="og:title" content="JHS Notadümblë">
   <meta property="og:description" content="The JHS Notadümblë is an overdrive pedal inspired by the tonal characteristics of rare boutique amplifier circuits known for their smooth sustain and rich">
-  <meta property="og:url" content="https://pedalplex.com/gear/jhs-notadmbl.html">
+  <meta property="og:url" content="https://pedalplex.com/gear/jhs-notadumble">
   <meta property="og:site_name" content="PedalPlex">
-  <meta property="og:image" content="https://pedalplex.com/img/pedals/jhs-notadmbl.jpg">
+  <meta property="og:image" content="https://pedalplex.com/img/pedals/jhs-notadumble.jpg">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="JHS Notadümblë">
   <meta name="twitter:description" content="The JHS Notadümblë is an overdrive pedal inspired by the tonal characteristics of rare boutique amplifier circuits known for their smooth sustain and rich">
-  <meta name="twitter:image" content="https://pedalplex.com/img/pedals/jhs-notadmbl.jpg">
+  <meta name="twitter:image" content="https://pedalplex.com/img/pedals/jhs-notadumble.jpg">
 
-  <link rel="canonical" href="https://pedalplex.com/gear/jhs-notadmbl.html">
+  <link rel="canonical" href="https://pedalplex.com/gear/jhs-notadumble">
   <link rel="icon" href="../logos/pedalplex_logo_gradient.png">
 
   <link rel="dns-prefetch" href="https://1.www.s81c.com">
@@ -43,12 +43,25 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
   <!-- Google tag -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-BX9P5WN5HH');
+  (function() {
+    const consent = localStorage.getItem('pedalplex_cookie_consent');
+    if (consent === 'accept') {
+      if (!window.gtagLoaded) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-BX9P5WN5HH');
+        window.gtagLoaded = true;
+      }
+    }
+  })();
   </script>
 
   <!-- Global vars -->
@@ -65,14 +78,14 @@
     "@type": "Product",
     "name": "JHS Notadümblë",
     "description": "The JHS Notadümblë is an overdrive pedal inspired by the tonal characteristics of rare boutique amplifier circuits known for their smooth sustain and rich",
-    "image": "https://pedalplex.com/img/pedals/jhs-notadmbl.jpg",
-    "sku": "JHS_NOTADMBL",
+    "image": "https://pedalplex.com/img/pedals/jhs-notadumble.jpg",
+    "sku": "JHS_NOTADUMBLE",
     "brand": {
       "@type": "Brand",
       "name": "JHS"
     },
     "category": "overdrive",
-    "url": "https://pedalplex.com/gear/jhs-notadmbl.html",
+    "url": "https://pedalplex.com/gear/jhs-notadumble",
     "sameAs": "https://www.effectsdatabase.com/model/jhspedals/notadumble",
     "isRelatedTo": {
       "@type": "SoftwareApplication",
@@ -110,7 +123,7 @@
         "@type": "ListItem",
         "position": 3,
         "name": "JHS Notadümblë",
-        "item": "https://pedalplex.com/gear/jhs-notadmbl.html"
+        "item": "https://pedalplex.com/gear/jhs-notadumble"
       }
     ]
   }
@@ -202,7 +215,7 @@
     </div> -->
     <div style="text-align:center;" id="fxdb-wrapper">
     <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
+        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
         href="https://www.effectsdatabase.com/model/jhspedals/notadumble" target="_blank" rel="noopener noreferrer">
         Open in FXDB
         <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"

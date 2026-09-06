@@ -17,7 +17,7 @@
   <meta property="og:type" content="product">
   <meta property="og:title" content="Aclam Cinnamon Drive">
   <meta property="og:description" content="The Aclam Cinnamon Drive is a boutique overdrive pedal designed to deliver warm, amp-like gain with exceptional dynamic response. Inspired by classic tube">
-  <meta property="og:url" content="https://pedalplex.com/gear/aclam-cinnamon-drive.html">
+  <meta property="og:url" content="https://pedalplex.com/gear/aclam-cinnamon-drive">
   <meta property="og:site_name" content="PedalPlex">
   <meta property="og:image" content="https://pedalplex.com/img/pedals/aclam-cinnamon-drive.jpg">
 
@@ -27,7 +27,7 @@
   <meta name="twitter:description" content="The Aclam Cinnamon Drive is a boutique overdrive pedal designed to deliver warm, amp-like gain with exceptional dynamic response. Inspired by classic tube">
   <meta name="twitter:image" content="https://pedalplex.com/img/pedals/aclam-cinnamon-drive.jpg">
 
-  <link rel="canonical" href="https://pedalplex.com/gear/aclam-cinnamon-drive.html">
+  <link rel="canonical" href="https://pedalplex.com/gear/aclam-cinnamon-drive">
   <link rel="icon" href="../logos/pedalplex_logo_gradient.png">
 
   <link rel="dns-prefetch" href="https://1.www.s81c.com">
@@ -43,12 +43,25 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
   <!-- Google tag -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-BX9P5WN5HH');
+  (function() {
+    const consent = localStorage.getItem('pedalplex_cookie_consent');
+    if (consent === 'accept') {
+      if (!window.gtagLoaded) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-BX9P5WN5HH');
+        window.gtagLoaded = true;
+      }
+    }
+  })();
   </script>
 
   <!-- Global vars -->
@@ -72,7 +85,7 @@
       "name": "Aclam"
     },
     "category": "overdrive",
-    "url": "https://pedalplex.com/gear/aclam-cinnamon-drive.html",
+    "url": "https://pedalplex.com/gear/aclam-cinnamon-drive",
     "sameAs": "https://www.effectsdatabase.com/model/aclam/cinnamondrive",
     "isRelatedTo": {
       "@type": "SoftwareApplication",
@@ -110,7 +123,7 @@
         "@type": "ListItem",
         "position": 3,
         "name": "Aclam Cinnamon Drive",
-        "item": "https://pedalplex.com/gear/aclam-cinnamon-drive.html"
+        "item": "https://pedalplex.com/gear/aclam-cinnamon-drive"
       }
     ]
   }
@@ -202,7 +215,7 @@
     </div> -->
     <div style="text-align:center;" id="fxdb-wrapper">
     <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
+        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
         href="https://www.effectsdatabase.com/model/aclam/cinnamondrive" target="_blank" rel="noopener noreferrer">
         Open in FXDB
         <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
