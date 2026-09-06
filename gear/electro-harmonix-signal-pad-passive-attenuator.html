@@ -17,7 +17,7 @@
   <meta property="og:type" content="product">
   <meta property="og:title" content="Electro-Harmonix Signal Pad Passive Attenuator">
   <meta property="og:description" content="Signal Pad Passive Attenuator reduces signal level without affecting tone, allowing better gain staging and control within pedalboards.">
-  <meta property="og:url" content="https://pedalplex.com/gear/electro-harmonix-signal-pad-passive-attenuator.html">
+  <meta property="og:url" content="https://pedalplex.com/gear/electro-harmonix-signal-pad-passive-attenuator">
   <meta property="og:site_name" content="PedalPlex">
   <meta property="og:image" content="https://pedalplex.com/img/pedals/electro-harmonix-signal-pad-passive-attenuator.jpg">
 
@@ -27,7 +27,7 @@
   <meta name="twitter:description" content="Signal Pad Passive Attenuator reduces signal level without affecting tone, allowing better gain staging and control within pedalboards.">
   <meta name="twitter:image" content="https://pedalplex.com/img/pedals/electro-harmonix-signal-pad-passive-attenuator.jpg">
 
-  <link rel="canonical" href="https://pedalplex.com/gear/electro-harmonix-signal-pad-passive-attenuator.html">
+  <link rel="canonical" href="https://pedalplex.com/gear/electro-harmonix-signal-pad-passive-attenuator">
   <link rel="icon" href="../logos/pedalplex_logo_gradient.png">
 
   <link rel="dns-prefetch" href="https://1.www.s81c.com">
@@ -43,12 +43,25 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
   <!-- Google tag -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-BX9P5WN5HH');
+  (function() {
+    const consent = localStorage.getItem('pedalplex_cookie_consent');
+    if (consent === 'accept') {
+      if (!window.gtagLoaded) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-BX9P5WN5HH');
+        window.gtagLoaded = true;
+      }
+    }
+  })();
   </script>
 
   <!-- Global vars -->
@@ -72,7 +85,7 @@
       "name": "Electro-Harmonix"
     },
     "category": "utility",
-    "url": "https://pedalplex.com/gear/electro-harmonix-signal-pad-passive-attenuator.html",
+    "url": "https://pedalplex.com/gear/electro-harmonix-signal-pad-passive-attenuator",
     "sameAs": "https://www.effectsdatabase.com/model/eh/nano/signalpad",
     "isRelatedTo": {
       "@type": "SoftwareApplication",
@@ -110,7 +123,7 @@
         "@type": "ListItem",
         "position": 3,
         "name": "Electro-Harmonix Signal Pad Passive Attenuator",
-        "item": "https://pedalplex.com/gear/electro-harmonix-signal-pad-passive-attenuator.html"
+        "item": "https://pedalplex.com/gear/electro-harmonix-signal-pad-passive-attenuator"
       }
     ]
   }
@@ -202,7 +215,7 @@
     </div> -->
     <div style="text-align:center;" id="fxdb-wrapper">
     <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
+        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
         href="https://www.effectsdatabase.com/model/eh/nano/signalpad" target="_blank" rel="noopener noreferrer">
         Open in FXDB
         <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"

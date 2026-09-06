@@ -17,7 +17,7 @@
   <meta property="og:type" content="product">
   <meta property="og:title" content="ThorpyFx The OLD TIMER - Octave Fuzz, Fuzz Face & Univibe">
   <meta property="og:description" content="OLD TIMER combines octave fuzz, Fuzz Face-inspired tones, and uni-vibe modulation for versatile vintage textures.">
-  <meta property="og:url" content="https://pedalplex.com/gear/thorpyfx-the-old-timer-octave-fuzz-fuzz-face-univibe.html">
+  <meta property="og:url" content="https://pedalplex.com/gear/thorpyfx-the-old-timer-octave-fuzz-fuzz-face-univibe">
   <meta property="og:site_name" content="PedalPlex">
   <meta property="og:image" content="https://pedalplex.com/img/pedals/thorpyfx-the-old-timer-octave-fuzz-fuzz-face-univibe.jpg">
 
@@ -27,7 +27,7 @@
   <meta name="twitter:description" content="OLD TIMER combines octave fuzz, Fuzz Face-inspired tones, and uni-vibe modulation for versatile vintage textures.">
   <meta name="twitter:image" content="https://pedalplex.com/img/pedals/thorpyfx-the-old-timer-octave-fuzz-fuzz-face-univibe.jpg">
 
-  <link rel="canonical" href="https://pedalplex.com/gear/thorpyfx-the-old-timer-octave-fuzz-fuzz-face-univibe.html">
+  <link rel="canonical" href="https://pedalplex.com/gear/thorpyfx-the-old-timer-octave-fuzz-fuzz-face-univibe">
   <link rel="icon" href="../logos/pedalplex_logo_gradient.png">
 
   <link rel="dns-prefetch" href="https://1.www.s81c.com">
@@ -43,12 +43,25 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
   <!-- Google tag -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-BX9P5WN5HH');
+  (function() {
+    const consent = localStorage.getItem('pedalplex_cookie_consent');
+    if (consent === 'accept') {
+      if (!window.gtagLoaded) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-BX9P5WN5HH');
+        window.gtagLoaded = true;
+      }
+    }
+  })();
   </script>
 
   <!-- Global vars -->
@@ -72,7 +85,7 @@
       "name": "ThorpyFx"
     },
     "category": "fuzz/modulation",
-    "url": "https://pedalplex.com/gear/thorpyfx-the-old-timer-octave-fuzz-fuzz-face-univibe.html",
+    "url": "https://pedalplex.com/gear/thorpyfx-the-old-timer-octave-fuzz-fuzz-face-univibe",
     "sameAs": "https://www.effectsdatabase.com/model/thorpyfx/oldtimer",
     "isRelatedTo": {
       "@type": "SoftwareApplication",
@@ -110,7 +123,7 @@
         "@type": "ListItem",
         "position": 3,
         "name": "ThorpyFx The OLD TIMER - Octave Fuzz, Fuzz Face & Univibe",
-        "item": "https://pedalplex.com/gear/thorpyfx-the-old-timer-octave-fuzz-fuzz-face-univibe.html"
+        "item": "https://pedalplex.com/gear/thorpyfx-the-old-timer-octave-fuzz-fuzz-face-univibe"
       }
     ]
   }
@@ -202,7 +215,7 @@
     </div> -->
     <div style="text-align:center;" id="fxdb-wrapper">
     <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
+        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
         href="https://www.effectsdatabase.com/model/thorpyfx/oldtimer" target="_blank" rel="noopener noreferrer">
         Open in FXDB
         <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"

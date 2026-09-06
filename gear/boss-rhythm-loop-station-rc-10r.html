@@ -17,7 +17,7 @@
   <meta property="og:type" content="product">
   <meta property="og:title" content="Boss Rhythm Loop Station RC-10R">
   <meta property="og:description" content="The RC-10R combines rhythm patterns and dual-track looping, enabling complex live performance layering and practice.">
-  <meta property="og:url" content="https://pedalplex.com/gear/boss-rhythm-loop-station-rc-10r.html">
+  <meta property="og:url" content="https://pedalplex.com/gear/boss-rhythm-loop-station-rc-10r">
   <meta property="og:site_name" content="PedalPlex">
   <meta property="og:image" content="https://pedalplex.com/img/pedals/boss-rhythm-loop-station-rc-10r.jpg">
 
@@ -27,7 +27,7 @@
   <meta name="twitter:description" content="The RC-10R combines rhythm patterns and dual-track looping, enabling complex live performance layering and practice.">
   <meta name="twitter:image" content="https://pedalplex.com/img/pedals/boss-rhythm-loop-station-rc-10r.jpg">
 
-  <link rel="canonical" href="https://pedalplex.com/gear/boss-rhythm-loop-station-rc-10r.html">
+  <link rel="canonical" href="https://pedalplex.com/gear/boss-rhythm-loop-station-rc-10r">
   <link rel="icon" href="../logos/pedalplex_logo_gradient.png">
 
   <link rel="dns-prefetch" href="https://1.www.s81c.com">
@@ -43,12 +43,25 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
   <!-- Google tag -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-BX9P5WN5HH');
+  (function() {
+    const consent = localStorage.getItem('pedalplex_cookie_consent');
+    if (consent === 'accept') {
+      if (!window.gtagLoaded) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-BX9P5WN5HH');
+        window.gtagLoaded = true;
+      }
+    }
+  })();
   </script>
 
   <!-- Global vars -->
@@ -72,7 +85,7 @@
       "name": "Boss"
     },
     "category": "looper",
-    "url": "https://pedalplex.com/gear/boss-rhythm-loop-station-rc-10r.html",
+    "url": "https://pedalplex.com/gear/boss-rhythm-loop-station-rc-10r",
     "sameAs": "https://www.effectsdatabase.com/model/boss/200/rc10r",
     "isRelatedTo": {
       "@type": "SoftwareApplication",
@@ -110,7 +123,7 @@
         "@type": "ListItem",
         "position": 3,
         "name": "Boss Rhythm Loop Station RC-10R",
-        "item": "https://pedalplex.com/gear/boss-rhythm-loop-station-rc-10r.html"
+        "item": "https://pedalplex.com/gear/boss-rhythm-loop-station-rc-10r"
       }
     ]
   }
@@ -202,7 +215,7 @@
     </div> -->
     <div style="text-align:center;" id="fxdb-wrapper">
     <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
+        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
         href="https://www.effectsdatabase.com/model/boss/200/rc10r" target="_blank" rel="noopener noreferrer">
         Open in FXDB
         <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"

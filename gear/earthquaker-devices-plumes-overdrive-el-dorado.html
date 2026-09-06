@@ -17,7 +17,7 @@
   <meta property="og:type" content="product">
   <meta property="og:title" content="EarthQuaker Devices Plumes Overdrive - El Dorado">
   <meta property="og:description" content="El Dorado edition of Plumes Overdrive delivers expressive, dynamic overdrive tones with premium finish and harmonic richness.">
-  <meta property="og:url" content="https://pedalplex.com/gear/earthquaker-devices-plumes-overdrive-el-dorado.html">
+  <meta property="og:url" content="https://pedalplex.com/gear/earthquaker-devices-plumes-overdrive-el-dorado">
   <meta property="og:site_name" content="PedalPlex">
   <meta property="og:image" content="https://pedalplex.com/img/pedals/earthquaker-devices-plumes-overdrive-el-dorado.jpg">
 
@@ -27,7 +27,7 @@
   <meta name="twitter:description" content="El Dorado edition of Plumes Overdrive delivers expressive, dynamic overdrive tones with premium finish and harmonic richness.">
   <meta name="twitter:image" content="https://pedalplex.com/img/pedals/earthquaker-devices-plumes-overdrive-el-dorado.jpg">
 
-  <link rel="canonical" href="https://pedalplex.com/gear/earthquaker-devices-plumes-overdrive-el-dorado.html">
+  <link rel="canonical" href="https://pedalplex.com/gear/earthquaker-devices-plumes-overdrive-el-dorado">
   <link rel="icon" href="../logos/pedalplex_logo_gradient.png">
 
   <link rel="dns-prefetch" href="https://1.www.s81c.com">
@@ -43,12 +43,25 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
   <!-- Google tag -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-BX9P5WN5HH');
+  (function() {
+    const consent = localStorage.getItem('pedalplex_cookie_consent');
+    if (consent === 'accept') {
+      if (!window.gtagLoaded) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-BX9P5WN5HH');
+        window.gtagLoaded = true;
+      }
+    }
+  })();
   </script>
 
   <!-- Global vars -->
@@ -72,7 +85,7 @@
       "name": "EarthQuaker Devices"
     },
     "category": "overdrive",
-    "url": "https://pedalplex.com/gear/earthquaker-devices-plumes-overdrive-el-dorado.html",
+    "url": "https://pedalplex.com/gear/earthquaker-devices-plumes-overdrive-el-dorado",
     "sameAs": "https://www.effectsdatabase.com/model/earthquaker/plumes",
     "isRelatedTo": {
       "@type": "SoftwareApplication",
@@ -110,7 +123,7 @@
         "@type": "ListItem",
         "position": 3,
         "name": "EarthQuaker Devices Plumes Overdrive - El Dorado",
-        "item": "https://pedalplex.com/gear/earthquaker-devices-plumes-overdrive-el-dorado.html"
+        "item": "https://pedalplex.com/gear/earthquaker-devices-plumes-overdrive-el-dorado"
       }
     ]
   }
@@ -202,7 +215,7 @@
     </div> -->
     <div style="text-align:center;" id="fxdb-wrapper">
     <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
+        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
         href="https://www.effectsdatabase.com/model/earthquaker/plumes" target="_blank" rel="noopener noreferrer">
         Open in FXDB
         <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
