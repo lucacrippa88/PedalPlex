@@ -17521,6 +17521,15 @@
     "brand": "VooDrive",
     "category": "fuzz",
     "seo_description": "The Voodrive VooFuzz is a silicon-based fuzz inspired by the legendary Diaz-style Fuzz Face, featuring a BC108 transistor for a more aggressive, defined and responsive character. Unlike a traditional vintage-style Fuzz Face, the VooFuzz delivers a tighter and more articulate fuzz with strong attack, plenty of punch and excellent interaction with your guitar's volume control. It sits between classic Fuzz Face dynamics and the thicker, more powerful Texas-style fuzz sound associated with Stevie Ray Vaughan."
+  },
+   {
+    "pedalplex_id": "Arc Effects Gamut Germanium Boost",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/arceffects/gamut",
+    "pedalplex_url": "https://www.pedalplex.com/gear/arc-effects-gamut-germanium-boost",
+    "brand": "Arc Effects",
+    "category": "boost",
+    "seo_description": "The Gamut reimagines the classic circuit for today’s players, combining vintage-inspired tones with a fresh approach and the versatility modern guitarists expect."
   }
 ]
 
