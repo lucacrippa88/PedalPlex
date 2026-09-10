@@ -5,5 +5,7 @@ Allow: /
 Disallow: /profile
 Disallow: /settings
 
-# Indica a Google l'indirizzo esatto della tua sitemap XML
+# Sitemap XML (potrebbe avere problemi di compressione gzip su GitHub Pages)
 Sitemap: https://api.pedalplex.com/sitemap.php
+# Sitemap TXT (nessuna compressione, sempre leggibile da Google)
+Sitemap: https://pedalplex.com/sitemap.txt
