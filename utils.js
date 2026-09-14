@@ -1189,6 +1189,29 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
         $authorDiv.append($authorText);
       }
 
+      // Admin-only: async plex/subplex counts — fetched lazily when card enters viewport
+      if (isAdminUser && pedalId) {
+        const $statsSpan = $("<span>").addClass("pedal-admin-stats").css({ marginLeft: '4px', opacity: '0.6', fontSize: '0.85em' });
+        $authorDiv.append($statsSpan);
+        const token = localStorage.getItem("authToken");
+        const statsObserver = new IntersectionObserver((entries, obs) => {
+          if (!entries[0].isIntersecting) return;
+          obs.disconnect();
+          fetch(
+            "https://api.pedalplex.com/GET_GEAR_ADMIN_STATS.php?pedalId=" + encodeURIComponent(pedalId),
+            { headers: token ? { Authorization: "Bearer " + token } : {} }
+          )
+            .then(r => r.ok ? r.json() : null)
+            .then(d => {
+              if (d && (d.plexes !== undefined) && (d.subplexes !== undefined)) {
+                $statsSpan.text(`P:${d.plexes} S:${d.subplexes}`);
+              }
+            })
+            .catch(() => {});
+        }, { rootMargin: '100px' });
+        statsObserver.observe($statsSpan[0]);
+      }
+
       $pedalDiv.prepend($authorDiv);
     }
   }
