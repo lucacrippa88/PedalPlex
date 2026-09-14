@@ -29,6 +29,13 @@ function initNavPedalboard(userRole) {
                style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 200px; display:none;" 
                aria-label="Filter pedals"/>
 
+        <button id="tourTriggerBtn" class="bx--btn bx--btn--ghost bx--btn--sm bx--btn--icon-only pp-tour-trigger-btn" type="button" aria-label="Start guided tour" title="Guided Tour">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/>
+            <path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/>
+          </svg>
+        </button>
+
         <button id="saveBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Rig"
                 style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
@@ -81,6 +88,12 @@ function initNavPedalboard(userRole) {
   $("#addGearsTrigger").on("click", function (e) {
     e.stopPropagation();
     $("#toggleFilterBtn").trigger("click");
+  });
+
+  $("#tourTriggerBtn").on("click", function () {
+    if (typeof window.startTour === 'function') {
+      window.startTour(0);
+    }
   });
 
   $("#pedalFilterInput").on("click", function (e) {
