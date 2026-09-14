@@ -378,7 +378,7 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     return { $knob, $wrap: $knob };
   }
   // dm-1360: inward + cerchio interno, 10 denti, depth 2, bw 4, irPct 85%
-  if (style === 'dm-1360')      return buildBossStyle(4, 10, 2, 85, innerColor || borderColor);
+  if (style === 'dm-1360')      return buildBossStyle(10, 4, 2, 85, innerColor || borderColor);
   // skirt-chrome: cerchio interno = innerColor se definito, altrimenti borderColor
   if (style === 'skirt-chrome') return buildBossStyle(24, 8, 1, 75, innerColor || borderColor);
 
