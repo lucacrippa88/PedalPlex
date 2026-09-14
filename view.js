@@ -217,17 +217,32 @@ if (!window.catalogMap || !window.catalogMap[pedalId]) {
     const checkAdmin = (attempts) => {
       if (window.currentUser) {
         if (window.currentUser.role === 'admin') {
+          // Build the stats div in JS so it works on all existing static pages
+          // without needing to regenerate them. Insert between preset-wrapper and fxdb-wrapper.
+          const $statsDiv = $('<div>')
+            .attr('id', 'admin-gear-stats')
+            .css({ textAlign: 'center', margin: '16px 0', opacity: '0.55', fontSize: '0.82em', letterSpacing: '0.03em' })
+            .text('…');
+          const $fxdb = $('#fxdb-wrapper');
+          const $preset = $('#preset-wrapper');
+          if ($fxdb.length) {
+            $statsDiv.insertBefore($fxdb);
+          } else if ($preset.length) {
+            $statsDiv.insertAfter($preset);
+          } else {
+            $('#preset').append($statsDiv);
+          }
+
           fetch(
             'https://api.pedalplex.com/GET_GEAR_ADMIN_STATS.php?pedalId=' + encodeURIComponent(pedalId),
             { headers: { Authorization: 'Bearer ' + token } }
           )
             .then(r => r.ok ? r.json() : null)
             .then(d => {
-              if (!d || d.plexes === undefined) return;
-              const $el = $('#admin-gear-stats');
-              $el.text(`P:${d.plexes}  S:${d.subplexes}`).show();
+              if (!d || d.plexes === undefined) { $statsDiv.remove(); return; }
+              $statsDiv.text(`P:${d.plexes}  S:${d.subplexes}  R:${d.rigs}`);
             })
-            .catch(() => {});
+            .catch(() => { $statsDiv.remove(); });
         }
         return;
       }
