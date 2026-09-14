@@ -128,16 +128,18 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     const rOuter = px / 2 + pad * 0.55;
     const rInner = rOuter - depth;
     const strokeW = Math.max(1.2, px * 0.04);
-    const fillInner = innerColor || color;
     const $knob = $('<div>').addClass(sizeClass).css({
       background: color, border: `${bw}px solid ${borderColor}`,
       '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
     });
     return makeExtWrap($knob, svgSz, (svg) => {
-      // Inner fill circle (overrides knob div background when innerColor is set)
+      // 1. Outer fill circle = color del knob (copre l'area sotto i denti sul pedale)
+      svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2).toFixed(2), fill: color }));
+      // 2. Inner fill circle = innerColor se specificato (area dentro il bordo)
       if (innerColor) {
-        svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2 - bw).toFixed(2), fill: fillInner }));
+        svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2 - bw).toFixed(2), fill: innerColor }));
       }
+      // 3. Corona dentata sopra
       svg.appendChild(svgEl('path', {
         d: buildExtPath(svgCx, rOuter, rInner, teeth),
         fill: 'none', stroke: borderColor,
@@ -156,16 +158,18 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     const rOuter = px / 2 + pad * 0.55;
     const rInner = rOuter - depth;
     const strokeW = Math.max(1.2, px * 0.04);
-    const fillInner = innerColor || color;
     const $knob = $('<div>').addClass(sizeClass).css({
       background: color, border: `${bw}px solid ${borderColor}`,
       '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
     });
     return makeExtWrap($knob, svgSz, (svg) => {
-      // Inner fill circle (overrides knob div background when innerColor is set)
+      // 1. Outer fill circle = color del knob
+      svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2).toFixed(2), fill: color }));
+      // 2. Inner fill circle = innerColor se specificato
       if (innerColor) {
-        svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2 - bw).toFixed(2), fill: fillInner }));
+        svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2 - bw).toFixed(2), fill: innerColor }));
       }
+      // 3. Corona dentata sopra
       svg.appendChild(svgEl('path', {
         d: buildExtPath(svgCx, rOuter, rInner, teeth),
         fill: 'none', stroke: borderColor,
