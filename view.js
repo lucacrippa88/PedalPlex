@@ -224,10 +224,8 @@ if (!window.catalogMap || !window.catalogMap[pedalId]) {
             .then(r => r.ok ? r.json() : null)
             .then(d => {
               if (!d || d.plexes === undefined) return;
-              const $info = $('<div>')
-                .css({ textAlign: 'center', marginTop: '12px', opacity: '0.6', fontSize: '0.85em' })
-                .text(`P:${d.plexes}  S:${d.subplexes}`);
-              $('#preset').append($info);
+              const $el = $('#admin-gear-stats');
+              $el.text(`P:${d.plexes}  S:${d.subplexes}`).show();
             })
             .catch(() => {});
         }
