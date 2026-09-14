@@ -210,4 +210,32 @@ if (!window.catalogMap || !window.catalogMap[pedalId]) {
     resultsDiv.textContent = 'Errore nel render: ' + err.message;
   }
 
+  /* ================= ADMIN STATS ================= */
+  // Only for admin. currentUser is set asynchronously by the auth fetch in the page,
+  // so we poll briefly until it resolves before deciding whether to call the API.
+  if (token) {
+    const checkAdmin = (attempts) => {
+      if (window.currentUser) {
+        if (window.currentUser.role === 'admin') {
+          fetch(
+            'https://api.pedalplex.com/GET_GEAR_ADMIN_STATS.php?pedalId=' + encodeURIComponent(pedalId),
+            { headers: { Authorization: 'Bearer ' + token } }
+          )
+            .then(r => r.ok ? r.json() : null)
+            .then(d => {
+              if (!d || d.plexes === undefined) return;
+              const $info = $('<div>')
+                .css({ textAlign: 'center', marginTop: '12px', opacity: '0.6', fontSize: '0.85em' })
+                .text(`P:${d.plexes}  S:${d.subplexes}`);
+              $('#preset').append($info);
+            })
+            .catch(() => {});
+        }
+        return;
+      }
+      if (attempts > 0) setTimeout(() => checkAdmin(attempts - 1), 200);
+    };
+    checkAdmin(15); // up to ~3s wait
+  }
+
 })();
