@@ -133,8 +133,8 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
       '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
     });
     return makeExtWrap($knob, svgSz, (svg) => {
-      // 1. Outer fill circle = color del knob (copre l'area sotto i denti sul pedale)
-      svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2).toFixed(2), fill: color }));
+      // 1. Outer fill circle = copre fino alla punta dei denti (rOuter)
+      svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: rOuter.toFixed(2), fill: color }));
       // 2. Inner fill circle = innerColor se specificato (area dentro il bordo)
       if (innerColor) {
         svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2 - bw).toFixed(2), fill: innerColor }));
@@ -163,8 +163,8 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
       '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
     });
     return makeExtWrap($knob, svgSz, (svg) => {
-      // 1. Outer fill circle = color del knob
-      svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2).toFixed(2), fill: color }));
+      // 1. Outer fill circle = copre fino alla punta dei denti (rOuter)
+      svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: rOuter.toFixed(2), fill: color }));
       // 2. Inner fill circle = innerColor se specificato
       if (innerColor) {
         svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2 - bw).toFixed(2), fill: innerColor }));
