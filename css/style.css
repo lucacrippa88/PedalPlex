@@ -319,6 +319,13 @@ html { box-sizing: content-box !important; }
 .largeknob.thick::after { top: -8px; height: 20px; }
 .xlargeknob.thick::after { top: -12px; }
 
+/* SVG knob: suppress ::after indicator when the SVG handles it natively */
+.no-indicator::after,
+.knob.no-indicator::after,
+.smallknob.no-indicator::after,
+.largeknob.no-indicator::after,
+.xlargeknob.no-indicator::after { display: none !important; }
+
 /* Knob labels */
 .knob-value-label { font-size: 12px; font-weight: bold; color: inherit; user-select: none; text-align: center; /*margin-top: -13px*/ }
 .label-top { /*display: inline-block;*/ text-align: center; font-size: 12px; margin-bottom: 2px; z-index: 100; }
