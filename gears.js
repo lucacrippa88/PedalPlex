@@ -173,34 +173,32 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
     }
   });
 
-  // Elements are in the DOM from this point — safe to attach IntersectionObserver
+  // Elements are in the DOM from this point — safe to read layout
   container.appendChild(frag);
   catalogRenderIndex += batch.length;
 
-  // Wire up lazy admin-stat fetches now that elements are live in the DOM
+  // Admin stats: one single batch POST for all cards in this render pass
   if (adminStatsDivs.length > 0) {
     const token = localStorage.getItem("authToken");
-    const statsObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        statsObserver.unobserve(entry.target);
-        const pid = entry.target.dataset.needsAdminStats;
-        const $span = $(entry.target).find(".pedal-admin-stats");
-        fetch(
-          "https://api.pedalplex.com/GET_GEAR_ADMIN_STATS.php?pedalId=" + encodeURIComponent(pid),
-          { headers: token ? { Authorization: "Bearer " + token } : {} }
-        )
-          .then(r => r.ok ? r.json() : null)
-          .then(d => {
-            if (d && d.plexes !== undefined && d.subplexes !== undefined) {
-              $span.text(`P:${d.plexes} S:${d.subplexes}`);
-            }
-          })
-          .catch(() => {});
-      });
-    }, { rootMargin: '100px' });
+    const pedalIds = adminStatsDivs.map(el => el.dataset.needsAdminStats);
 
-    adminStatsDivs.forEach(el => statsObserver.observe(el));
+    fetch("https://api.pedalplex.com/GET_GEAR_ADMIN_STATS.php", {
+      method: "POST",
+      headers: Object.assign({ "Content-Type": "application/json" }, token ? { Authorization: "Bearer " + token } : {}),
+      body: JSON.stringify({ pedalIds })
+    })
+      .then(r => r.ok ? r.json() : null)
+      .then(map => {
+        if (!map) return;
+        adminStatsDivs.forEach(el => {
+          const pid = el.dataset.needsAdminStats;
+          const d = map[pid];
+          if (d && d.plexes !== undefined && d.subplexes !== undefined) {
+            $(el).find(".pedal-admin-stats").text(`P:${d.plexes} S:${d.subplexes}`);
+          }
+        });
+      })
+      .catch(() => {});
   }
 
   // mantieni sentinel alla fine
