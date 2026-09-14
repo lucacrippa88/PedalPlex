@@ -1189,15 +1189,6 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
         $authorDiv.append($authorText);
       }
 
-      // Admin-only: async plex/subplex counts.
-      // The observer is NOT attached here because $pedalDiv is not in the DOM yet.
-      // renderCatalogIncremental will wire up the IntersectionObserver after appendChild.
-      if (isAdminUser && pedalId) {
-        const $statsSpan = $("<span>").addClass("pedal-admin-stats").css({ marginLeft: '4px', opacity: '0.6', fontSize: '0.85em' });
-        $authorDiv.append($statsSpan);
-        // Signal to the caller that this card needs lazy stat loading once in DOM
-        $pedalDiv.attr("data-needs-admin-stats", pedalId);
-      }
 
       $pedalDiv.prepend($authorDiv);
     }

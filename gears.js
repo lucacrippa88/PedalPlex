@@ -155,9 +155,6 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
   const batch = catalogData.slice(catalogRenderIndex, catalogRenderIndex + batchSize);
   const frag = document.createDocumentFragment();
 
-  // Collect cards that need admin stats — observer attached after appendChild
-  const adminStatsDivs = [];
-
   batch.forEach(pedal => {
     const $pedalDiv = renderPedal(pedal, userRole);
     if (!$pedalDiv || !$pedalDiv[0]) {
@@ -167,39 +164,10 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
     $pedalDiv.attr("data-author", pedal.author || "");
     $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
     frag.appendChild($pedalDiv[0]);
-
-    if ($pedalDiv.attr("data-needs-admin-stats")) {
-      adminStatsDivs.push($pedalDiv[0]);
-    }
   });
 
-  // Elements are in the DOM from this point — safe to read layout
   container.appendChild(frag);
   catalogRenderIndex += batch.length;
-
-  // Admin stats: one single batch POST for all cards in this render pass
-  if (adminStatsDivs.length > 0) {
-    const token = localStorage.getItem("authToken");
-    const pedalIds = adminStatsDivs.map(el => el.dataset.needsAdminStats);
-
-    fetch("https://api.pedalplex.com/GET_GEAR_ADMIN_STATS.php", {
-      method: "POST",
-      headers: Object.assign({ "Content-Type": "application/json" }, token ? { Authorization: "Bearer " + token } : {}),
-      body: JSON.stringify({ pedalIds })
-    })
-      .then(r => r.ok ? r.json() : null)
-      .then(map => {
-        if (!map) return;
-        adminStatsDivs.forEach(el => {
-          const pid = el.dataset.needsAdminStats;
-          const d = map[pid];
-          if (d && d.plexes !== undefined && d.subplexes !== undefined) {
-            $(el).find(".pedal-admin-stats").text(`P:${d.plexes} S:${d.subplexes}`);
-          }
-        });
-      })
-      .catch(() => {});
-  }
 
   // mantieni sentinel alla fine
   if (sentinel) container.appendChild(sentinel);
