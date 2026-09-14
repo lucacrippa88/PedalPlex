@@ -299,24 +299,27 @@ html { box-sizing: content-box !important; }
 
 /* Knobs */
 .knob-container { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 60px; }
-.knob, .smallknob, .largeknob, .xlargeknob {
+.knob, .smallknob, .largeknob, .largerknob, .xlargeknob {
   width: 40px; height: 40px; border-radius: 50%; position: relative; cursor: pointer; box-sizing: border-box; aspect-ratio: 1 / 1; flex-shrink: 0;
 }
-.smallknob { width: 26px; height: 26px; margin-bottom: 4px; }
-.largeknob { width: 52px; height: 52px; margin-bottom: 4px; }
+.smallknob  { width: 26px; height: 26px; margin-bottom: 4px; }
+.largeknob  { width: 52px; height: 52px; margin-bottom: 4px; }
+.largerknob { width: 63px; height: 63px; margin-bottom: 4px; }
 .xlargeknob { width: 75px; height: 75px; margin-bottom: 4px; }
-.knob::after, .smallknob::after, .largeknob::after, .xlargeknob::after {
+.knob::after, .smallknob::after, .largeknob::after, .largerknob::after, .xlargeknob::after {
   content: ''; position: absolute; left: 50%; transform: translateX(-50%); border-radius: 2px; background-color: var(--indicator-color, #fff);
 }
-.knob::after { top: 2px; width: 4px; height: 12px; }
-.smallknob::after { top: 0; width: 4px; height: 9px; }
-.largeknob::after { top: 5px; width: 4px; height: 16px; }
-.xlargeknob::after { top: 5px; width: 4px; height: 20px; }
+.knob::after      { top: 2px;  width: 4px; height: 12px; }
+.smallknob::after { top: 0;    width: 4px; height: 9px;  }
+.largeknob::after { top: 5px;  width: 4px; height: 16px; }
+.largerknob::after{ top: 5px;  width: 4px; height: 18px; }
+.xlargeknob::after{ top: 5px;  width: 4px; height: 20px; }
 
 /* Thick knob adjustments */
-.knob.thick::after { top: -9px; height: 20px; }
-.smallknob.thick::after { top: -9px; height: 16px; }
-.largeknob.thick::after { top: -8px; height: 20px; }
+.knob.thick::after       { top: -9px;  height: 20px; }
+.smallknob.thick::after  { top: -9px;  height: 16px; }
+.largeknob.thick::after  { top: -8px;  height: 20px; }
+.largerknob.thick::after { top: -10px; height: 22px; }
 .xlargeknob.thick::after { top: -12px; }
 
 /* SVG knob: suppress ::after indicator when the SVG handles it natively */
@@ -324,6 +327,7 @@ html { box-sizing: content-box !important; }
 .knob.no-indicator::after,
 .smallknob.no-indicator::after,
 .largeknob.no-indicator::after,
+.largerknob.no-indicator::after,
 .xlargeknob.no-indicator::after { display: none !important; }
 
 /* Knob labels */

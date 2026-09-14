@@ -31,7 +31,7 @@ function isMobileLayout() {
 // ============================================================================
 function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotDeg, innerColor) {
   const NS = 'http://www.w3.org/2000/svg';
-  const SIZES = { smallknob: 26, knob: 40, largeknob: 52, xlargeknob: 75 };
+  const SIZES = { smallknob: 26, knob: 40, largeknob: 52, largerknob: 63, xlargeknob: 75 };
   const px   = SIZES[sizeClass] ?? 40;
   const f    = px / 40;   // scale factor  (base = 40px regular knob)
   const bw   = 2;         // border width px
@@ -365,10 +365,20 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     return { $knob, $wrap: $knob };
   }
 
-  // dm-1100: cerchio interno = colore corpo (scuro)
-  if (style === 'dm-1100')      return buildBossStyle(8,  7, 4, 90, color);
-  // dm-1360: cerchio interno = innerColor se definito, altrimenti borderColor
-  if (style === 'dm-1360')      return buildBossStyle(8,  7, 4, 90, innerColor || borderColor);
+  // dm-1100: inward puro (no cerchio interno), 10 denti, depth 2, bw 7
+  if (style === 'dm-1100') {
+    const $knob = $('<div>').addClass(sizeClass).css({
+      background: color, border: 'none',
+      '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
+    });
+    const svg = svgEl('svg', { width: px, height: px, viewBox: `0 0 ${px} ${px}` });
+    svg.style.cssText = 'position:absolute; top:0; left:0; pointer-events:none; overflow:visible;';
+    svg.appendChild(svgEl('path', { d: buildIntPath(7, 10, 2), fill: borderColor, 'fill-rule': 'evenodd' }));
+    $knob[0].appendChild(svg);
+    return { $knob, $wrap: $knob };
+  }
+  // dm-1360: inward + cerchio interno, 10 denti, depth 2, bw 4, irPct 85%
+  if (style === 'dm-1360')      return buildBossStyle(4, 10, 2, 85, innerColor || borderColor);
   // skirt-chrome: cerchio interno = innerColor se definito, altrimenti borderColor
   if (style === 'skirt-chrome') return buildBossStyle(24, 8, 1, 75, innerColor || borderColor);
 
@@ -427,9 +437,10 @@ function renderPedalControls(pedal, $pedalDiv) {
 
     controlRow.row.forEach(control => {
       // Knobs ======================================================================
-      if (["knob", "smallknob", "largeknob", "xlargeknob"].includes(control.type)) {
-        const isSmall = control.type === "smallknob";
-        const isLarge = control.type === "largeknob";
+      if (["knob", "smallknob", "largeknob", "largerknob", "xlargeknob"].includes(control.type)) {
+        const isSmall  = control.type === "smallknob";
+        const isLarge  = control.type === "largeknob";
+        const isLarger = control.type === "largerknob";
         const isXLarge = control.type === "xlargeknob";
         const knobColor = control["knob-color"] ?? pedal["knobs-color"];
         const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
@@ -488,7 +499,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 .text(control.value)
                 .css({
                   textAlign: "center",
-                  marginTop: isSmall ? "-76px" : isLarge ? "-108px" : isXLarge ? "-132px" : "-89px",
+                  marginTop: isSmall ? "-76px" : isLarge ? "-108px" : isLarger ? "-120px" : isXLarge ? "-132px" : "-89px",
                 });
             } else if (control.border !== "thick") {
               $valueLabel = $("<div>")
@@ -496,7 +507,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 .text(control.value)
                 .css({
                   textAlign: "center",
-                  marginTop: isSmall ? "-67px" : isLarge ? "-93px" : isXLarge ? "-116px" : "-76px",
+                  marginTop: isSmall ? "-67px" : isLarge ? "-93px" : isLarger ? "-105px" : isXLarge ? "-116px" : "-76px",
                 });
             }
           } else {
@@ -506,7 +517,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 .text(control.value)
                 .css({
                   textAlign: "center",
-                  marginTop: isSmall ? "-12px" : isLarge ? "13px" : isXLarge ? "37px" : "2px",
+                  marginTop: isSmall ? "-12px" : isLarge ? "13px" : isLarger ? "25px" : isXLarge ? "37px" : "2px",
                 });
             } else {
               $valueLabel = $("<div>")
@@ -514,7 +525,7 @@ function renderPedalControls(pedal, $pedalDiv) {
                 .text(control.value)
                 .css({
                   textAlign: "center",
-                  marginTop: isSmall ? "-28px" : isLarge ? "0px" : isXLarge ? "22px" : "-13px",
+                  marginTop: isSmall ? "-28px" : isLarge ? "0px" : isLarger ? "11px" : isXLarge ? "22px" : "-13px",
                 });
             }
           }
@@ -626,9 +637,9 @@ function renderPedalControls(pedal, $pedalDiv) {
         if (control.labelPos === "inverted") {
           // Set different margin for different knob sizes and presence of thick border
           if (control.border === "thick") {
-            labelMarginTop = isSmall ? "1px" : isLarge ? "28px" : isXLarge ? "52px" : "15px";
+            labelMarginTop = isSmall ? "1px" : isLarge ? "28px" : isLarger ? "40px" : isXLarge ? "52px" : "15px";
           } else {
-            labelMarginTop = isSmall ? "-13px" : isLarge ? "12px" : isXLarge ? "36px" : "0px";
+            labelMarginTop = isSmall ? "-13px" : isLarge ? "12px" : isLarger ? "24px" : isXLarge ? "36px" : "0px";
           }
           $label.css("margin-top", labelMarginTop)
           $knobWrapper.addClass("label-under"); 
@@ -1180,13 +1191,40 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       if (showAuthor) {
         let authorText = `By: ${pedal.author}`;
         const published = (pedal.published || '').toLowerCase();
-        // const showPublishedStatuses = ['private', 'draft', 'reviewing', 'template'];
         const showPublishedStatuses = ['draft', 'reviewing', 'template'];
 
         if (showPublishedStatuses.indexOf(published) !== -1) { authorText += `, ${published}`; }
 
         const $authorText = $("<span>").text(authorText);
         $authorDiv.append($authorText);
+
+        // Admin-only: lazy stats (P: plexes, S: subplexes)
+        if (isAdminUser && pedal._id) {
+          const $stats = $("<span>").addClass("pedal-admin-stats").css({
+            marginLeft: "6px", color: "#888", fontSize: "10px", opacity: "0.7"
+          }).text("…");
+          $authorDiv.append($stats);
+
+          // Lazy fetch via IntersectionObserver — fires only when card enters viewport
+          const token = localStorage.getItem("authToken");
+          const observer = new IntersectionObserver((entries, obs) => {
+            if (!entries[0].isIntersecting) return;
+            obs.disconnect();
+            fetch(`https://api.pedalplex.com/GET_GEAR_ADMIN_STATS.php?pedalId=${encodeURIComponent(pedal._id)}`, {
+              headers: token ? { Authorization: "Bearer " + token } : {}
+            })
+            .then(r => r.json())
+            .then(d => {
+              if (d && typeof d.plexes !== 'undefined') {
+                $stats.text(`P:${d.plexes} S:${d.subplexes}`);
+              } else {
+                $stats.text('');
+              }
+            })
+            .catch(() => $stats.text(''));
+          }, { rootMargin: "200px" });
+          observer.observe($pedalDiv[0]);
+        }
       }
 
 
