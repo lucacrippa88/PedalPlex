@@ -29,7 +29,7 @@ function isMobileLayout() {
 //    $wrap  — the outer wrapper to insert in the layout DOM
 //             (= $knob for self-contained styles; larger div for ext-SVG styles)
 // ============================================================================
-function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotDeg) {
+function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotDeg, innerColor) {
   const NS = 'http://www.w3.org/2000/svg';
   const SIZES = { smallknob: 26, knob: 40, largeknob: 52, xlargeknob: 75 };
   const px   = SIZES[sizeClass] ?? 40;
@@ -128,11 +128,16 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     const rOuter = px / 2 + pad * 0.55;
     const rInner = rOuter - depth;
     const strokeW = Math.max(1.2, px * 0.04);
+    const fillInner = innerColor || color;
     const $knob = $('<div>').addClass(sizeClass).css({
       background: color, border: `${bw}px solid ${borderColor}`,
       '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
     });
     return makeExtWrap($knob, svgSz, (svg) => {
+      // Inner fill circle (overrides knob div background when innerColor is set)
+      if (innerColor) {
+        svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2 - bw).toFixed(2), fill: fillInner }));
+      }
       svg.appendChild(svgEl('path', {
         d: buildExtPath(svgCx, rOuter, rInner, teeth),
         fill: 'none', stroke: borderColor,
@@ -151,11 +156,16 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     const rOuter = px / 2 + pad * 0.55;
     const rInner = rOuter - depth;
     const strokeW = Math.max(1.2, px * 0.04);
+    const fillInner = innerColor || color;
     const $knob = $('<div>').addClass(sizeClass).css({
       background: color, border: `${bw}px solid ${borderColor}`,
       '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
     });
     return makeExtWrap($knob, svgSz, (svg) => {
+      // Inner fill circle (overrides knob div background when innerColor is set)
+      if (innerColor) {
+        svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2 - bw).toFixed(2), fill: fillInner }));
+      }
       svg.appendChild(svgEl('path', {
         d: buildExtPath(svgCx, rOuter, rInner, teeth),
         fill: 'none', stroke: borderColor,
@@ -212,6 +222,7 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     const bx     = cx - bwS / 2;
     const by     = cx - rInner;
     const bh     = rInner * 2;
+    const barRx  = Math.round(3 * f);    // subtle rounded corners
     const $knob = $('<div>').addClass(sizeClass).css({
       background: color, border: `${bw}px solid ${borderColor}`,
       '--indicator-color': indicatorColor,
@@ -219,10 +230,9 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     });
     const svg = svgEl('svg', { width: px, height: px, viewBox: `0 0 ${px} ${px}` });
     svg.style.cssText = 'position:absolute; top:0; left:0; pointer-events:none; border-radius:50%; overflow:hidden;';
-    // No group rotation: the knob div rotates, bar stays aligned with it
     svg.appendChild(svgEl('rect', {
       x: bx.toFixed(2), y: by.toFixed(2),
-      width: bwS, height: bh.toFixed(2), rx: 0,
+      width: bwS, height: bh.toFixed(2), rx: barRx,
       fill: indicatorColor, opacity: 0.15
     }));
     $knob[0].appendChild(svg);
@@ -298,8 +308,8 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
   }
 
   // ── BOSS FAMILY (inward ring + inner coloured circle + SVG indicator) ──────
-  // dm-1100, dm-1360, skirt-chrome share the same builder, differ in teeth/bw/irPct
-  function buildBossStyle(teeth, borderW, depth, irPct) {
+  // circleFill: colore del cerchio interno (default = color del corpo)
+  function buildBossStyle(teeth, borderW, depth, irPct, circleFill) {
     const bwS     = Math.round(borderW * f);
     const rOut    = cx;
     const rValley = rOut - bwS;
@@ -319,9 +329,10 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     for (let j = 1; j < rev.length; j++) inner += `L ${rev[j][0]},${rev[j][1]} `;
     inner += 'Z';
 
-    const rInside = cx - bwS - Math.max(1, Math.round(depth * f));
-    const rCircle = Math.max(1, rInside * (irPct / 100));
-    const indW    = Math.max(2, Math.round(px * 0.10));
+    const rInside  = cx - bwS - Math.max(1, Math.round(depth * f));
+    const rCircle  = Math.max(1, rInside * (irPct / 100));
+    const indW     = Math.max(2, Math.round(px * 0.10));
+    const circFill = circleFill || innerColor || color;
 
     const $knob = $('<div>').addClass(sizeClass + ' no-indicator').css({
       background: color, border: 'none',
@@ -330,7 +341,7 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     const svg = svgEl('svg', { width: px, height: px, viewBox: `0 0 ${px} ${px}` });
     svg.style.cssText = 'position:absolute; top:0; left:0; pointer-events:none; overflow:visible;';
     svg.appendChild(svgEl('path', { d: outer + ' ' + inner, fill: borderColor, 'fill-rule': 'evenodd' }));
-    svg.appendChild(svgEl('circle', { cx, cy: cx, r: rCircle.toFixed(2), fill: color }));
+    svg.appendChild(svgEl('circle', { cx, cy: cx, r: rCircle.toFixed(2), fill: circFill }));
     svg.appendChild(svgEl('rect', {
       x: (cx - indW / 2).toFixed(2), y: '0',
       width: indW, height: (cx * 0.55).toFixed(2),
@@ -340,9 +351,12 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     return { $knob, $wrap: $knob };
   }
 
-  if (style === 'dm-1100')      return buildBossStyle(8,  7, 4, 90);
-  if (style === 'dm-1360')      return buildBossStyle(8,  7, 4, 90);
-  if (style === 'skirt-chrome') return buildBossStyle(24, 8, 1, 75);
+  // dm-1100: cerchio interno = colore corpo (scuro)
+  if (style === 'dm-1100')      return buildBossStyle(8,  7, 4, 90, color);
+  // dm-1360: cerchio interno = borderColor (effetto hub cromato)
+  if (style === 'dm-1360')      return buildBossStyle(8,  7, 4, 90, borderColor);
+  // skirt-chrome: cerchio interno = innerColor se definito, altrimenti borderColor
+  if (style === 'skirt-chrome') return buildBossStyle(24, 8, 1, 75, innerColor || borderColor);
 
   // ── FALLBACK ───────────────────────────────────────────────────────────────
   const $knob = $('<div>').addClass(sizeClass).css({
@@ -406,6 +420,7 @@ function renderPedalControls(pedal, $pedalDiv) {
         const knobColor = control["knob-color"] ?? pedal["knobs-color"];
         const knobBorder = control["knob-border"] ?? pedal["knobs-border"];
         const knobIndicator = control["knob-indicator"] ?? pedal["knobs-indicator"];
+        const knobInner = control["knob-inner-color"] ?? pedal["knobs-inner-color"] ?? null;
         const knobStyle = control["knob-style"] ?? pedal["knobs-style"] ?? "plain";
         const labelColor = control["knob-label-color"] ?? pedal["font-color"];
         const labelBackground = control["knob-label-background"] ?? null;
@@ -416,7 +431,7 @@ function renderPedalControls(pedal, $pedalDiv) {
 
         // Build the knob element via SVG builder (falls back to plain CSS div when style="plain")
         const { $knob: knob, $wrap: knobWrap } = buildKnobSVG(
-          knobStyle, knobColor, knobBorder, knobIndicator, control.type, initialRotation
+          knobStyle, knobColor, knobBorder, knobIndicator, control.type, initialRotation, knobInner
         );
 
         // Apply thick border override for plain style (SVG styles manage their own border)

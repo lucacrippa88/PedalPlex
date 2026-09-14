@@ -33,6 +33,7 @@ function buildJSON() {
         "knobs-color": $("#knobs-color").val(),
         "knobs-border": $("#knobs-border").val(),
         "knobs-indicator": $("#knobs-indicator").val(),
+        "knobs-inner-color": $("#knobs-inner-color").val(),
         ...( $("#knobs-style").val() ? { "knobs-style": $("#knobs-style").val() } : {} ),
         controls: []
     };
@@ -132,6 +133,7 @@ function buildJSON() {
                 if ($(this).find(".ctrl-knob-color-enable").is(":checked")) ctrl["knob-color"] = $(this).find(".ctrl-knob-color").val();
                 if ($(this).find(".ctrl-knob-border-enable").is(":checked")) ctrl["knob-border"] = $(this).find(".ctrl-knob-border").val();
                 if ($(this).find(".ctrl-knob-indicator-enable").is(":checked")) ctrl["knob-indicator"] = $(this).find(".ctrl-knob-indicator").val();
+                if ($(this).find(".ctrl-knob-inner-enable").is(":checked")) ctrl["knob-inner-color"] = $(this).find(".ctrl-knob-inner").val();
                 if ($(this).find(".ctrl-knob-thick").is(":checked")) ctrl.border = "thick";
                 if ($(this).find(".ctrl-knob-label-color-enable").is(":checked")) ctrl["knob-label-color"] = $(this).find(".ctrl-knob-label-color").val();
                 if ($(this).find(".ctrl-knob-label-background-enable").is(":checked")) ctrl["knob-label-background"] = $(this).find(".ctrl-knob-label-background").val();
@@ -519,6 +521,7 @@ function syncUIFromJSON(pedal) {
     $("#knobs-color").val(pedal["knobs-color"] || "#191919");
     $("#knobs-border").val(pedal["knobs-border"] || "#424242");
     $("#knobs-indicator").val(pedal["knobs-indicator"] || "#ffffff");
+    $("#knobs-inner-color").val(pedal["knobs-inner-color"] || "#191919");
     $("#knobs-style").val(pedal["knobs-style"] || "");
 
 
@@ -651,6 +654,10 @@ function syncUIFromJSON(pedal) {
                     if (ctrl["knob-indicator"]) {
                         $ctrl.find(".ctrl-knob-indicator-enable").prop("checked", true);
                         $ctrl.find(".ctrl-knob-indicator").prop("disabled", false).val(ctrl["knob-indicator"]);
+                    }
+                    if (ctrl["knob-inner-color"]) {
+                        $ctrl.find(".ctrl-knob-inner-enable").prop("checked", true);
+                        $ctrl.find(".ctrl-knob-inner").prop("disabled", false).val(ctrl["knob-inner-color"]);
                     }
                     if (ctrl.border === "thick") {
                         $ctrl.find(".ctrl-knob-thick").prop("checked", true);
