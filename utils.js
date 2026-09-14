@@ -1533,6 +1533,8 @@ function positionSubplexContainer($wrapper, $pedalDiv) {
   requestAnimationFrame(place);
 }
 
+let activeRenderTaskId = 0;
+
 async function renderFullPedalboard(pedalboardOverride = null) {
 
   // Single pedal mode
@@ -1544,6 +1546,9 @@ async function renderFullPedalboard(pedalboardOverride = null) {
   if (pedalboardOverride && pedalboardOverride.pedals) {
     window.pedalboard = pedalboardOverride;
   }
+
+  activeRenderTaskId++;
+  const currentTaskId = activeRenderTaskId;
 
   // return new Promise((resolve) => { // per abilitare funzioni await
   return new Promise(async (resolve) => {
@@ -1641,7 +1646,15 @@ async function renderFullPedalboard(pedalboardOverride = null) {
                   body: JSON.stringify({ ids: [id] })
                 });
 
+                if (currentTaskId !== activeRenderTaskId) {
+                  return resolve();
+                }
+
                 const data = await res.json();
+
+                if (currentTaskId !== activeRenderTaskId) {
+                  return resolve();
+                }
 
                 if (data?.docs?.length > 0) {
                   pedalData = data.docs[0];
