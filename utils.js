@@ -10,63 +10,80 @@ function isMobileLayout() {
 //  KNOB SVG BUILDER
 //  Builds a realistic SVG knob element in place of the plain CSS div.
 //
-//  Supported styles:
+//  Supported styles (11 total, matching knob-showcase.html presets):
 //    "plain"        — original flat div (no SVG overlay)
-//    "ribbed-ext"   — serrated teeth outside the circle  (Marshall / amp style)
-//    "mxr"          — inward serrated ring, thin border   (MXR-style)
-//    "mxr-thick"    — inward serrated ring, thicker border (ECB-071 style)
-//    "davies"       — full-diameter translucent bar       (Davies 1510 style)
-//    "klon"         — outward triangle pointer            (Klon / Davies 1400)
-//    "chicken-head" — chickenhead knob with tail          (Rogan / Skirted)
-//    "boss"         — inward ring + inner coloured circle (Boss-style)
+//    "classic"      — ribbed ext, 24 teeth fine  (Classic ribbed)
+//    "amp-style"    — ribbed ext, 17 teeth deep  (Marshall amp-style)
+//    "ecb-071"      — inward ring, 7 teeth thick (MXR ECB-071)
+//    "dm-1250"      — inward ring, 7 teeth medium (DM-1250)
+//    "dm-1510"      — translucent full-width bar  (Davies 1510)
+//    "dm-1400"      — external triangle pointer   (Klon / DM-1400)
+//    "dm-2300"      — chicken head: beak+tail     (DM-2300)
+//    "dm-1100"      — inward ring + inner circle  (Boss DM-1100)
+//    "dm-1360"      — inward ring + inner circle  (Boss DM-1360)
+//    "skirt-chrome" — inward ring + inner circle, fine teeth (Skirt Chrome)
+//    "dm-1140"      — inward ring, 18 teeth medium (DM-1140)
 //
 //  Returns: { $knob, $wrap }
-//    $knob  — the inner div that receives rotation (use for transform / events)
-//    $wrap  — the outer wrapper to append into the layout
+//    $knob  — the inner div that receives CSS rotation + drag events
+//    $wrap  — the outer wrapper to insert in the layout DOM
+//             (= $knob for self-contained styles; larger div for ext-SVG styles)
 // ============================================================================
 function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotDeg) {
   const NS = 'http://www.w3.org/2000/svg';
   const SIZES = { smallknob: 26, knob: 40, largeknob: 52, xlargeknob: 75 };
-  const px = SIZES[sizeClass] ?? 40;
-  const f  = px / 40; // scale factor (40px = base)
-  const bwPx = 2;     // border width in px (visual)
+  const px   = SIZES[sizeClass] ?? 40;
+  const f    = px / 40;   // scale factor  (base = 40px regular knob)
+  const bw   = 2;         // border width px
 
-  // Helper: create SVG element with attributes
   function svgEl(tag, attrs) {
     const el = document.createElementNS(NS, tag);
     for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
     return el;
   }
 
-  // ── PLAIN (original behaviour) ─────────────────────────────────────────────
+  // ── PLAIN ──────────────────────────────────────────────────────────────────
   if (!style || style === 'plain') {
-    const $knob = $('<div>')
-      .addClass(sizeClass)
-      .css({
-        background: color,
-        border: `${bwPx}px solid ${borderColor}`,
-        '--indicator-color': indicatorColor
-      });
+    const $knob = $('<div>').addClass(sizeClass).css({
+      background: color, border: `${bw}px solid ${borderColor}`,
+      '--indicator-color': indicatorColor
+    });
     return { $knob, $wrap: $knob };
   }
 
-  // ── SHARED: inner knob div (receives CSS rotation) ─────────────────────────
-  // For styles with an external SVG, the div is "plain" (no indicator) and the
-  // SVG layer is absolutely positioned on top via a wrapper.
   const cx = px / 2;
 
-  // ── RIBBED-EXT ─────────────────────────────────────────────────────────────
-  // Seghettato esterno: teeth outside the circle, drawn as an SVG polygon path.
-  // The indicator is handled by the ::after pseudo-element of the knob div.
-  if (style === 'ribbed-ext') {
-    const teeth = Math.round(17 * f) % 2 === 0 ? Math.round(17 * f) : Math.round(17 * f) + 1; // keep even
-    const depth = Math.max(1, Math.round(2 * f));
-    const pad   = Math.round(px * 0.30);
-    const svgSz = px + pad * 2;
+  // ── HELPERS ────────────────────────────────────────────────────────────────
+
+  // External ring SVG: SVG larger than the div, centred absolutely.
+  // The SVG itself carries the rotation (like the showcase's svg.style.transform).
+  function makeExtWrap($knob, svgSz, buildSvgContent) {
+    const svg = svgEl('svg', { width: svgSz, height: svgSz, viewBox: `0 0 ${svgSz} ${svgSz}` });
+    svg.style.cssText = `position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(${rotDeg}deg); pointer-events:none; overflow:visible;`;
+    buildSvgContent(svg, svgSz / 2);
+    const $wrap = $('<div>').css({ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' });
+    $wrap.append($knob);
+    $knob[0].appendChild(svg);
+    return { $knob, $wrap };
+  }
+
+  // External ring SVG where the group inside rotates (klon, chicken-head).
+  // SVG is static (translate only); group has rotate(rotDeg, cx, cx).
+  function makeExtGroupWrap($knob, svgSz, buildGroup) {
     const svgCx = svgSz / 2;
-    const rOuter = px / 2 + pad * 0.55;
-    const rInner = rOuter - depth;
-    const strokeW = Math.max(1.2, px * 0.04);
+    const svg = svgEl('svg', { width: svgSz, height: svgSz, viewBox: `0 0 ${svgSz} ${svgSz}` });
+    svg.style.cssText = `position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; overflow:visible;`;
+    const g = svgEl('g', { transform: `rotate(${rotDeg}, ${svgCx}, ${svgCx})` });
+    buildGroup(g, svgCx);
+    svg.appendChild(g);
+    const $wrap = $('<div>').css({ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' });
+    $wrap.append($knob);
+    $knob[0].appendChild(svg);
+    return { $knob, $wrap };
+  }
+
+  // Build an ext-teeth path (Classic / Amp-style)
+  function buildExtPath(svgCx, rOuter, rInner, teeth) {
     const total = teeth * 2;
     let d = '';
     for (let i = 0; i < total; i++) {
@@ -76,41 +93,19 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
         (svgCx + r * Math.cos(angle)).toFixed(2) + ',' +
         (svgCx + r * Math.sin(angle)).toFixed(2) + ' ';
     }
-    d += 'Z';
-
-    const $knob = $('<div>').addClass(sizeClass).css({
-      background: color, border: `${bwPx}px solid ${borderColor}`,
-      '--indicator-color': indicatorColor,
-      position: 'relative', zIndex: 1
-    });
-    const svg = svgEl('svg', { width: svgSz, height: svgSz, viewBox: `0 0 ${svgSz} ${svgSz}` });
-    svg.style.cssText = `position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; overflow:visible;`;
-    svg.appendChild(svgEl('path', {
-      d, fill: 'none', stroke: borderColor,
-      'stroke-width': strokeW, 'stroke-linejoin': 'round'
-    }));
-    const $wrap = $('<div>').css({ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' });
-    $wrap.append($knob);
-    $knob[0].appendChild(svg);
-    return { $knob, $wrap };
+    return d + 'Z';
   }
 
-  // ── MXR / MXR-THICK ────────────────────────────────────────────────────────
-  // Inward serrated ring: outer silhouette is smooth, teeth point inward.
-  // Uses fill-rule:evenodd to cut the inner shape out of the outer disc.
-  if (style === 'mxr' || style === 'mxr-thick') {
-    const teeth  = style === 'mxr-thick' ? 7 : 18;
-    const borderW = Math.round((style === 'mxr-thick' ? 7 : 5) * f);
-    const depth  = Math.max(1, Math.round((style === 'mxr-thick' ? 3 : 2) * f));
-    const rOut    = px / 2;
-    const rValley = rOut - borderW;
-    const rPeak   = rValley + depth;
+  // Build inward-ring evenodd path (MXR family + boss)
+  function buildIntPath(borderW, teeth, depth) {
+    const bwS    = Math.round(borderW * f);
+    const rOut   = cx;
+    const rValley = rOut - bwS;
+    const rPeak   = rValley + Math.max(1, Math.round(depth * f));
     const total   = teeth * 2;
     const rotRad  = rotDeg * Math.PI / 180;
 
-    // Outer disc (clockwise)
-    let outer = `M ${(cx + rOut).toFixed(2)},${cx.toFixed(2)} A ${rOut},${rOut} 0 1 1 ${(cx - rOut).toFixed(2)},${cx.toFixed(2)} A ${rOut},${rOut} 0 1 1 ${(cx + rOut).toFixed(2)},${cx.toFixed(2)} Z`;
-    // Inner serrated ring (counter-clockwise so evenodd cuts it out)
+    const outer = `M ${(cx + rOut).toFixed(2)},${cx.toFixed(2)} A ${rOut},${rOut} 0 1 1 ${(cx - rOut).toFixed(2)},${cx.toFixed(2)} A ${rOut},${rOut} 0 1 1 ${(cx + rOut).toFixed(2)},${cx.toFixed(2)} Z`;
     const pts = [];
     for (let i = 0; i < total; i++) {
       const angle = (Math.PI * 2 * i / total) - Math.PI / 2 + rotRad;
@@ -120,146 +115,199 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     const rev = [...pts].reverse();
     let inner = `M ${rev[0][0]},${rev[0][1]} `;
     for (let j = 1; j < rev.length; j++) inner += `L ${rev[j][0]},${rev[j][1]} `;
-    inner += 'Z';
+    return outer + ' ' + inner + 'Z';
+  }
 
+  // ── CLASSIC (ribbed-ext, 24 teeth fine) ────────────────────────────────────
+  if (style === 'classic') {
+    const teeth  = 24;
+    const depth  = 1;
+    const pad    = Math.round(px * 0.30);
+    const svgSz  = px + pad * 2;
+    const svgCx  = svgSz / 2;
+    const rOuter = px / 2 + pad * 0.55;
+    const rInner = rOuter - depth;
+    const strokeW = Math.max(1.2, px * 0.04);
+    const $knob = $('<div>').addClass(sizeClass).css({
+      background: color, border: `${bw}px solid ${borderColor}`,
+      '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
+    });
+    return makeExtWrap($knob, svgSz, (svg) => {
+      svg.appendChild(svgEl('path', {
+        d: buildExtPath(svgCx, rOuter, rInner, teeth),
+        fill: 'none', stroke: borderColor,
+        'stroke-width': strokeW, 'stroke-linejoin': 'round'
+      }));
+    });
+  }
+
+  // ── AMP-STYLE (ribbed-ext, 17 teeth deep) ──────────────────────────────────
+  if (style === 'amp-style') {
+    const teeth  = 17;
+    const depth  = 2;
+    const pad    = Math.round(px * 0.30);
+    const svgSz  = px + pad * 2;
+    const svgCx  = svgSz / 2;
+    const rOuter = px / 2 + pad * 0.55;
+    const rInner = rOuter - depth;
+    const strokeW = Math.max(1.2, px * 0.04);
+    const $knob = $('<div>').addClass(sizeClass).css({
+      background: color, border: `${bw}px solid ${borderColor}`,
+      '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
+    });
+    return makeExtWrap($knob, svgSz, (svg) => {
+      svg.appendChild(svgEl('path', {
+        d: buildExtPath(svgCx, rOuter, rInner, teeth),
+        fill: 'none', stroke: borderColor,
+        'stroke-width': strokeW, 'stroke-linejoin': 'round'
+      }));
+    });
+  }
+
+  // ── ECB-071 (inward, 7 teeth thick bw=7) ───────────────────────────────────
+  if (style === 'ecb-071') {
     const $knob = $('<div>').addClass(sizeClass).css({
       background: color, border: 'none',
-      '--indicator-color': indicatorColor,
-      position: 'relative', zIndex: 1
+      '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
     });
     const svg = svgEl('svg', { width: px, height: px, viewBox: `0 0 ${px} ${px}` });
     svg.style.cssText = 'position:absolute; top:0; left:0; pointer-events:none; overflow:visible;';
-    svg.appendChild(svgEl('path', { d: outer + ' ' + inner, fill: borderColor, 'fill-rule': 'evenodd' }));
+    svg.appendChild(svgEl('path', { d: buildIntPath(7, 7, 3), fill: borderColor, 'fill-rule': 'evenodd' }));
     $knob[0].appendChild(svg);
     return { $knob, $wrap: $knob };
   }
 
-  // ── DAVIES ─────────────────────────────────────────────────────────────────
-  // Full-width translucent vertical bar (Davies 1510 style).
-  // The bar is clipped to the circle via SVG overflow:hidden + border-radius.
-  if (style === 'davies') {
-    const barW = Math.round(15 * f);
-    const opacity = 0.18;
+  // ── DM-1250 (inward, 7 teeth bw=4) ────────────────────────────────────────
+  if (style === 'dm-1250') {
     const $knob = $('<div>').addClass(sizeClass).css({
-      background: color, border: `${bwPx}px solid ${borderColor}`,
+      background: color, border: 'none',
+      '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
+    });
+    const svg = svgEl('svg', { width: px, height: px, viewBox: `0 0 ${px} ${px}` });
+    svg.style.cssText = 'position:absolute; top:0; left:0; pointer-events:none; overflow:visible;';
+    svg.appendChild(svgEl('path', { d: buildIntPath(4, 7, 3), fill: borderColor, 'fill-rule': 'evenodd' }));
+    $knob[0].appendChild(svg);
+    return { $knob, $wrap: $knob };
+  }
+
+  // ── DM-1140 (inward, 18 teeth bw=5) ───────────────────────────────────────
+  if (style === 'dm-1140') {
+    const $knob = $('<div>').addClass(sizeClass).css({
+      background: color, border: 'none',
+      '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
+    });
+    const svg = svgEl('svg', { width: px, height: px, viewBox: `0 0 ${px} ${px}` });
+    svg.style.cssText = 'position:absolute; top:0; left:0; pointer-events:none; overflow:visible;';
+    svg.appendChild(svgEl('path', { d: buildIntPath(5, 18, 2), fill: borderColor, 'fill-rule': 'evenodd' }));
+    $knob[0].appendChild(svg);
+    return { $knob, $wrap: $knob };
+  }
+
+  // ── DM-1510 (Davies: full-width translucent bar) ───────────────────────────
+  // SVG has border-radius:50% + overflow:hidden to clip the bar to the circle.
+  // Bar dimensions exactly match the showcase: by = cx - rInner, height = rInner*2.
+  if (style === 'dm-1510') {
+    const bwS    = Math.round(15 * f);   // bar width scaled
+    const rInner = cx - bw;
+    const bx     = cx - bwS / 2;
+    const by     = cx - rInner;
+    const bh     = rInner * 2;
+    const $knob = $('<div>').addClass(sizeClass).css({
+      background: color, border: `${bw}px solid ${borderColor}`,
       '--indicator-color': indicatorColor,
       position: 'relative', overflow: 'hidden', zIndex: 1
     });
-    const rInner = cx - bwPx;
     const svg = svgEl('svg', { width: px, height: px, viewBox: `0 0 ${px} ${px}` });
     svg.style.cssText = 'position:absolute; top:0; left:0; pointer-events:none; border-radius:50%; overflow:hidden;';
-    const g = svgEl('g', {}); // no rotation in SVG — rotation handled by CSS on $knob
-    g.appendChild(svgEl('rect', {
-      x: (cx - barW / 2).toFixed(2), y: (cx - rInner).toFixed(2),
-      width: barW, height: (rInner * 2).toFixed(2), rx: 1,
-      fill: indicatorColor, opacity
+    // No group rotation: the knob div rotates, bar stays aligned with it
+    svg.appendChild(svgEl('rect', {
+      x: bx.toFixed(2), y: by.toFixed(2),
+      width: bwS, height: bh.toFixed(2), rx: 0,
+      fill: indicatorColor, opacity: 0.15
     }));
-    svg.appendChild(g);
     $knob[0].appendChild(svg);
     return { $knob, $wrap: $knob };
   }
 
-  // ── KLON ───────────────────────────────────────────────────────────────────
-  // External triangle pointer that sticks out beyond the knob circle.
-  // SVG is larger than the knob div; centred absolutely.
-  if (style === 'klon') {
-    const triW  = Math.round(14 * f);
-    const triH  = Math.round(8  * f);
-    const pad   = triH + 2;
+  // ── DM-1400 (Klon: external triangle, group rotates inside static SVG) ─────
+  if (style === 'dm-1400') {
+    const tW    = Math.round(14 * f);
+    const tH    = Math.round(8  * f);
+    const pad   = tH + 2;
     const svgSz = px + pad * 2;
     const svgCx = svgSz / 2;
     const r     = px / 2;
-    const baseY = svgCx - r + bwPx * 0.5;
-    const tipY  = svgCx - r - triH;
-    const hw    = triW / 2;
-
+    const baseY = svgCx - r + bw * 0.5;
+    const tipY  = svgCx - r - tH;
+    const hw    = tW / 2;
     const $knob = $('<div>').addClass(sizeClass).css({
-      background: color, border: `${bwPx}px solid ${borderColor}`,
-      '--indicator-color': color,
+      background: color, border: `${bw}px solid ${borderColor}`,
+      '--indicator-color': color,   // hide ::after by matching body colour
       position: 'relative', zIndex: 1
     });
-    const svg = svgEl('svg', { width: svgSz, height: svgSz, viewBox: `0 0 ${svgSz} ${svgSz}` });
-    svg.style.cssText = `position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; overflow:visible;`;
-    svg.appendChild(svgEl('polygon', {
-      points:
-        `${(svgCx - hw).toFixed(2)},${baseY.toFixed(2)} ` +
-        `${(svgCx + hw).toFixed(2)},${baseY.toFixed(2)} ` +
-        `${svgCx.toFixed(2)},${tipY.toFixed(2)}`,
-      fill: borderColor
-    }));
-    const $wrap = $('<div>').css({ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' });
-    $wrap.append($knob);
-    $knob[0].appendChild(svg);
-    return { $knob, $wrap };
+    return makeExtGroupWrap($knob, svgSz, (g, svgCx) => {
+      g.appendChild(svgEl('polygon', {
+        points:
+          `${(svgCx - hw).toFixed(2)},${baseY.toFixed(2)} ` +
+          `${(svgCx + hw).toFixed(2)},${baseY.toFixed(2)} ` +
+          `${svgCx.toFixed(2)},${tipY.toFixed(2)}`,
+        fill: borderColor
+      }));
+    });
   }
 
-  // ── CHICKEN-HEAD ───────────────────────────────────────────────────────────
-  // Triangle (beak) + rectangular tail + central white indicator line.
-  // All three elements live in a single SVG group that rotates with the knob.
-  if (style === 'chicken-head') {
-    const triW  = Math.round(14 * f);
-    const triH  = Math.round(12 * f);
-    const tailW = Math.round(12 * f);
-    const tailH = Math.round(16 * f);
-    const iW    = Math.max(2, Math.round(3 * f));
-    const maxOut = Math.max(triH, tailH) + 4;
+  // ── DM-2300 (Chicken Head: beak + tail + indicator, group rotates) ─────────
+  if (style === 'dm-2300') {
+    const tW     = Math.round(14 * f);
+    const tH     = Math.round(12 * f);
+    const tlW    = Math.round(12 * f);
+    const tlH    = Math.round(16 * f);
+    const iW     = Math.max(2, Math.round(3 * f));
+    const maxOut = Math.max(tH, tlH) + 4;
     const svgSz  = px + maxOut * 2;
     const svgCx  = svgSz / 2;
     const r      = px / 2;
-    const hw     = triW / 2;
-    const triBaseY = svgCx - r + bwPx * 0.5;
-    const triTipY  = svgCx - r - triH;
-    const tailTopY = svgCx + r - bwPx * 0.5;
-    const autoDepth = triH + bwPx + (r - bwPx) / 2;
-
+    const hw     = tW / 2;
+    const triBaseY  = svgCx - r + bw * 0.5;
+    const triTipY   = svgCx - r - tH;
+    const tailTopY  = svgCx + r - bw * 0.5;
+    const autoDepth = tH + bw + (r - bw) / 2;
     const $knob = $('<div>').addClass(sizeClass + ' no-indicator').css({
-      background: color, border: `${bwPx}px solid ${borderColor}`,
+      background: color, border: `${bw}px solid ${borderColor}`,
       '--indicator-color': indicatorColor,
       position: 'relative', zIndex: 1
     });
-    const svg = svgEl('svg', { width: svgSz, height: svgSz, viewBox: `0 0 ${svgSz} ${svgSz}` });
-    svg.style.cssText = `position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; overflow:visible;`;
-
-    const g = svgEl('g', {});
-    g.appendChild(svgEl('polygon', {
-      points:
-        `${(svgCx - hw).toFixed(2)},${triBaseY.toFixed(2)} ` +
-        `${(svgCx + hw).toFixed(2)},${triBaseY.toFixed(2)} ` +
-        `${svgCx.toFixed(2)},${triTipY.toFixed(2)}`,
-      fill: borderColor
-    }));
-    g.appendChild(svgEl('rect', {
-      x: (svgCx - tailW / 2).toFixed(2), y: tailTopY.toFixed(2),
-      width: tailW, height: tailH, rx: 1, fill: borderColor
-    }));
-    g.appendChild(svgEl('rect', {
-      x: (svgCx - iW / 2).toFixed(2), y: triTipY.toFixed(2),
-      width: iW, height: autoDepth.toFixed(2),
-      rx: Math.min(iW / 2, 1.5), fill: indicatorColor
-    }));
-    svg.appendChild(g);
-
-    const $wrap = $('<div>').css({ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' });
-    $wrap.append($knob);
-    $knob[0].appendChild(svg);
-    return { $knob, $wrap };
+    return makeExtGroupWrap($knob, svgSz, (g, svgCx) => {
+      g.appendChild(svgEl('polygon', {
+        points:
+          `${(svgCx - hw).toFixed(2)},${triBaseY.toFixed(2)} ` +
+          `${(svgCx + hw).toFixed(2)},${triBaseY.toFixed(2)} ` +
+          `${svgCx.toFixed(2)},${triTipY.toFixed(2)}`,
+        fill: borderColor
+      }));
+      g.appendChild(svgEl('rect', {
+        x: (svgCx - tlW / 2).toFixed(2), y: tailTopY.toFixed(2),
+        width: tlW, height: tlH, rx: 1, fill: borderColor
+      }));
+      g.appendChild(svgEl('rect', {
+        x: (svgCx - iW / 2).toFixed(2), y: triTipY.toFixed(2),
+        width: iW, height: autoDepth.toFixed(2),
+        rx: Math.min(iW / 2, 1.5), fill: indicatorColor
+      }));
+    });
   }
 
-  // ── BOSS ───────────────────────────────────────────────────────────────────
-  // Inward serrated ring + smaller inner coloured circle (Boss-style skirted).
-  // Indicator is an SVG rect inside the inner circle (no ::after needed).
-  if (style === 'boss') {
-    const teeth  = 8;
-    const borderW = Math.round(7 * f);
-    const depth  = Math.max(1, Math.round(4 * f));
-    const irPct  = 90;
-    const rOut    = px / 2;
-    const rValley = rOut - borderW;
-    const rPeak   = rValley + depth;
+  // ── BOSS FAMILY (inward ring + inner coloured circle + SVG indicator) ──────
+  // dm-1100, dm-1360, skirt-chrome share the same builder, differ in teeth/bw/irPct
+  function buildBossStyle(teeth, borderW, depth, irPct) {
+    const bwS     = Math.round(borderW * f);
+    const rOut    = cx;
+    const rValley = rOut - bwS;
+    const rPeak   = rValley + Math.max(1, Math.round(depth * f));
     const total   = teeth * 2;
     const rotRad  = rotDeg * Math.PI / 180;
 
-    let outer = `M ${(cx + rOut).toFixed(2)},${cx.toFixed(2)} A ${rOut},${rOut} 0 1 1 ${(cx - rOut).toFixed(2)},${cx.toFixed(2)} A ${rOut},${rOut} 0 1 1 ${(cx + rOut).toFixed(2)},${cx.toFixed(2)} Z`;
+    const outer = `M ${(cx + rOut).toFixed(2)},${cx.toFixed(2)} A ${rOut},${rOut} 0 1 1 ${(cx - rOut).toFixed(2)},${cx.toFixed(2)} A ${rOut},${rOut} 0 1 1 ${(cx + rOut).toFixed(2)},${cx.toFixed(2)} Z`;
     const pts = [];
     for (let i = 0; i < total; i++) {
       const angle = (Math.PI * 2 * i / total) - Math.PI / 2 + rotRad;
@@ -271,20 +319,18 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     for (let j = 1; j < rev.length; j++) inner += `L ${rev[j][0]},${rev[j][1]} `;
     inner += 'Z';
 
-    const rInside = cx - borderW - depth;
+    const rInside = cx - bwS - Math.max(1, Math.round(depth * f));
     const rCircle = Math.max(1, rInside * (irPct / 100));
     const indW    = Math.max(2, Math.round(px * 0.10));
 
     const $knob = $('<div>').addClass(sizeClass + ' no-indicator').css({
       background: color, border: 'none',
-      '--indicator-color': indicatorColor,
-      position: 'relative', zIndex: 1
+      '--indicator-color': indicatorColor, position: 'relative', zIndex: 1
     });
     const svg = svgEl('svg', { width: px, height: px, viewBox: `0 0 ${px} ${px}` });
     svg.style.cssText = 'position:absolute; top:0; left:0; pointer-events:none; overflow:visible;';
     svg.appendChild(svgEl('path', { d: outer + ' ' + inner, fill: borderColor, 'fill-rule': 'evenodd' }));
     svg.appendChild(svgEl('circle', { cx, cy: cx, r: rCircle.toFixed(2), fill: color }));
-    // Indicator rect — fixed, not rotated (rotation comes from the parent div)
     svg.appendChild(svgEl('rect', {
       x: (cx - indW / 2).toFixed(2), y: '0',
       width: indW, height: (cx * 0.55).toFixed(2),
@@ -294,9 +340,13 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     return { $knob, $wrap: $knob };
   }
 
+  if (style === 'dm-1100')      return buildBossStyle(8,  7, 4, 90);
+  if (style === 'dm-1360')      return buildBossStyle(8,  7, 4, 90);
+  if (style === 'skirt-chrome') return buildBossStyle(24, 8, 1, 75);
+
   // ── FALLBACK ───────────────────────────────────────────────────────────────
   const $knob = $('<div>').addClass(sizeClass).css({
-    background: color, border: `${bwPx}px solid ${borderColor}`,
+    background: color, border: `${bw}px solid ${borderColor}`,
     '--indicator-color': indicatorColor
   });
   return { $knob, $wrap: $knob };
