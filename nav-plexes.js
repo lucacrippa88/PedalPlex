@@ -26,6 +26,13 @@ function initNavPreset() {
       <!-- Right: buttons -->
       <div class="rightButtons showDesktop" style="display: flex; align-items: center; gap: 1rem;">
 
+        <button id="tourTriggerBtn" class="bx--btn bx--btn--ghost bx--btn--sm bx--btn--icon-only pp-tour-trigger-btn" type="button" aria-label="Start guided tour" title="Guided Tour">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/>
+            <path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/>
+          </svg>
+        </button>
+
         <button id="exploreBtn" class="bx--btn bx--btn--danger bx--btn--sm" type="button" aria-label="Explore"
           style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
@@ -89,6 +96,17 @@ function initNavPreset() {
 
   $("body").prepend(navHtml);
 
+
+  // Tour trigger button
+  $("#tourTriggerBtn").on("click", function () {
+    if (typeof window.startTour === 'function') {
+      window.startTour(0);
+    } else {
+      localStorage.setItem('pp_tour_active', 'true');
+      localStorage.setItem('pp_tour_step', '0');
+      window.location.href = '/rigs';
+    }
+  });
 
   // Explore button — always visible, but auth check is inside openExploreModal()
   $("#exploreBtn, #exploreBtnMobile").on("click", () => {
