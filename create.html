@@ -130,7 +130,7 @@
                     <label>Knobs Color <input type="color" id="knobs-color" value="#191919"></label>&ensp;&ensp;
                     <label>Knobs Border <input type="color" id="knobs-border" value="#424242"></label>&ensp;&ensp;
                     <label>Knobs Indicator <input type="color" id="knobs-indicator" value="#ffffff"></label>&ensp;&ensp;
-                    <label>Knobs Inner <input type="color" id="knobs-inner-color" value="#191919"></label>&ensp;&ensp;
+                    <label><input type="checkbox" id="knobs-inner-enable"> Knobs Inner <input type="color" id="knobs-inner-color" value="#191919" disabled></label>&ensp;&ensp;
                     <label>Knobs Style
                       <select id="knobs-style">
                         <option value="">— default (plain) —</option>
@@ -634,6 +634,14 @@ $("#add-led").on("click", addLedControl);
         });
         $("#controls").on("change", ".ctrl-knob-indicator-enable", function () {
             $(this).siblings(".ctrl-knob-indicator").prop("disabled", !this.checked);
+            buildJSON();
+        });
+        $("#controls").on("change", ".ctrl-knob-inner-enable", function () {
+            $(this).siblings(".ctrl-knob-inner").prop("disabled", !this.checked);
+            buildJSON();
+        });
+        $("#knobs-inner-enable").on("change", function () {
+            $("#knobs-inner-color").prop("disabled", !this.checked);
             buildJSON();
         });
         $("#controls").on("change", ".ctrl-knob-label-color-enable", function () {
