@@ -33,7 +33,7 @@ function buildJSON() {
         "knobs-color": $("#knobs-color").val(),
         "knobs-border": $("#knobs-border").val(),
         "knobs-indicator": $("#knobs-indicator").val(),
-        "knobs-inner-color": $("#knobs-inner-color").val(),
+        ...( $("#knobs-inner-enable").is(":checked") ? { "knobs-inner-color": $("#knobs-inner-color").val() } : {} ),
         ...( $("#knobs-style").val() ? { "knobs-style": $("#knobs-style").val() } : {} ),
         controls: []
     };
@@ -521,7 +521,13 @@ function syncUIFromJSON(pedal) {
     $("#knobs-color").val(pedal["knobs-color"] || "#191919");
     $("#knobs-border").val(pedal["knobs-border"] || "#424242");
     $("#knobs-indicator").val(pedal["knobs-indicator"] || "#ffffff");
-    $("#knobs-inner-color").val(pedal["knobs-inner-color"] || "#191919");
+    if (pedal["knobs-inner-color"]) {
+        $("#knobs-inner-enable").prop("checked", true);
+        $("#knobs-inner-color").prop("disabled", false).val(pedal["knobs-inner-color"]);
+    } else {
+        $("#knobs-inner-enable").prop("checked", false);
+        $("#knobs-inner-color").prop("disabled", true).val("#191919");
+    }
     $("#knobs-style").val(pedal["knobs-style"] || "");
 
 
