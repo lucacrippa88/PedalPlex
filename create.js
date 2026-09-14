@@ -33,6 +33,7 @@ function buildJSON() {
         "knobs-color": $("#knobs-color").val(),
         "knobs-border": $("#knobs-border").val(),
         "knobs-indicator": $("#knobs-indicator").val(),
+        ...( $("#knobs-style").val() ? { "knobs-style": $("#knobs-style").val() } : {} ),
         controls: []
     };
 
@@ -126,6 +127,8 @@ function buildJSON() {
                 }
                 const spanVal = $(this).find(".ctrl-span").val();
                 if (spanVal) ctrl.span = spanVal;
+                const knobStyleVal = $(this).find(".ctrl-knob-style").val();
+                if (knobStyleVal) ctrl["knob-style"] = knobStyleVal;
                 if ($(this).find(".ctrl-knob-color-enable").is(":checked")) ctrl["knob-color"] = $(this).find(".ctrl-knob-color").val();
                 if ($(this).find(".ctrl-knob-border-enable").is(":checked")) ctrl["knob-border"] = $(this).find(".ctrl-knob-border").val();
                 if ($(this).find(".ctrl-knob-indicator-enable").is(":checked")) ctrl["knob-indicator"] = $(this).find(".ctrl-knob-indicator").val();
@@ -516,6 +519,7 @@ function syncUIFromJSON(pedal) {
     $("#knobs-color").val(pedal["knobs-color"] || "#191919");
     $("#knobs-border").val(pedal["knobs-border"] || "#424242");
     $("#knobs-indicator").val(pedal["knobs-indicator"] || "#ffffff");
+    $("#knobs-style").val(pedal["knobs-style"] || "");
 
 
     // --- Inside color/image setup ---
@@ -658,6 +662,9 @@ function syncUIFromJSON(pedal) {
                     if (ctrl["knob-label-background"]) {
                         $ctrl.find(".ctrl-knob-label-background-enable").prop("checked", true);
                         $ctrl.find(".ctrl-knob-label-background").prop("disabled", false).val(ctrl["knob-label-background"]);
+                    }
+                    if (ctrl["knob-style"]) {
+                        $ctrl.find(".ctrl-knob-style").val(ctrl["knob-style"]);
                     }
                     if (ctrl.labelPos === "inverted") {
                         $ctrl.find(".ctrl-knob-label-inverted").prop("checked", true);

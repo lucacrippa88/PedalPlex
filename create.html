@@ -130,6 +130,19 @@
                     <label>Knobs Color <input type="color" id="knobs-color" value="#191919"></label>&ensp;&ensp;
                     <label>Knobs Border <input type="color" id="knobs-border" value="#424242"></label>&ensp;&ensp;
                     <label>Knobs Indicator <input type="color" id="knobs-indicator" value="#ffffff"></label>&ensp;&ensp;
+                    <label>Knobs Style
+                      <select id="knobs-style">
+                        <option value="">— default (plain) —</option>
+                        <option value="plain">Plain</option>
+                        <option value="ribbed-ext">Ribbed Ext · Marshall-style</option>
+                        <option value="mxr">MXR · inward fine (18 denti)</option>
+                        <option value="mxr-thick">MXR Thick · inward grosso (7 denti)</option>
+                        <option value="davies">Davies 1510 · barra traslucente</option>
+                        <option value="klon">Klon · triangolo esterno</option>
+                        <option value="chicken-head">Chicken Head · becco + coda</option>
+                        <option value="boss">Boss · anello + cerchio interno</option>
+                      </select>
+                    </label>&ensp;&ensp;
 
                     <script>
                     $(document).ready(function () {
@@ -305,6 +318,19 @@
 
 
 
+        <label>Style
+          <select class="ctrl-knob-style">
+            <option value="">— pedal default —</option>
+            <option value="plain">Plain</option>
+            <option value="ribbed-ext">Ribbed Ext · Marshall-style</option>
+            <option value="mxr">MXR · inward fine (18 denti)</option>
+            <option value="mxr-thick">MXR Thick · inward grosso (7 denti)</option>
+            <option value="davies">Davies 1510 · barra traslucente</option>
+            <option value="klon">Klon · triangolo esterno</option>
+            <option value="chicken-head">Chicken Head · becco + coda</option>
+            <option value="boss">Boss · anello + cerchio interno</option>
+          </select>
+        </label>
         <label>
             <input type="checkbox" class="ctrl-knob-color-enable"> Knob
             <input type="color" class="ctrl-knob-color" disabled>
