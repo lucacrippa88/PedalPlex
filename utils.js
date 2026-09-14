@@ -139,11 +139,16 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
       if (innerColor) {
         svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2 - bw).toFixed(2), fill: innerColor }));
       }
-      // 3. Corona dentata sopra
+      // 3. Corona dentata
       svg.appendChild(svgEl('path', {
         d: buildExtPath(svgCx, rOuter, rInner, teeth),
         fill: 'none', stroke: borderColor,
         'stroke-width': strokeW, 'stroke-linejoin': 'round'
+      }));
+      // 4. Cerchio di bordo interno (ripristina il border del div, coperto dall'SVG)
+      svg.appendChild(svgEl('circle', {
+        cx: svgCx, cy: svgCx, r: (px / 2 - bw / 2).toFixed(2),
+        fill: 'none', stroke: borderColor, 'stroke-width': bw
       }));
     });
   }
@@ -169,11 +174,16 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
       if (innerColor) {
         svg.appendChild(svgEl('circle', { cx: svgCx, cy: svgCx, r: (px / 2 - bw).toFixed(2), fill: innerColor }));
       }
-      // 3. Corona dentata sopra
+      // 3. Corona dentata
       svg.appendChild(svgEl('path', {
         d: buildExtPath(svgCx, rOuter, rInner, teeth),
         fill: 'none', stroke: borderColor,
         'stroke-width': strokeW, 'stroke-linejoin': 'round'
+      }));
+      // 4. Cerchio di bordo interno (ripristina il border del div, coperto dall'SVG)
+      svg.appendChild(svgEl('circle', {
+        cx: svgCx, cy: svgCx, r: (px / 2 - bw / 2).toFixed(2),
+        fill: 'none', stroke: borderColor, 'stroke-width': bw
       }));
     });
   }
@@ -357,8 +367,8 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
 
   // dm-1100: cerchio interno = colore corpo (scuro)
   if (style === 'dm-1100')      return buildBossStyle(8,  7, 4, 90, color);
-  // dm-1360: cerchio interno = borderColor (effetto hub cromato)
-  if (style === 'dm-1360')      return buildBossStyle(8,  7, 4, 90, borderColor);
+  // dm-1360: cerchio interno = innerColor se definito, altrimenti borderColor
+  if (style === 'dm-1360')      return buildBossStyle(8,  7, 4, 90, innerColor || borderColor);
   // skirt-chrome: cerchio interno = innerColor se definito, altrimenti borderColor
   if (style === 'skirt-chrome') return buildBossStyle(24, 8, 1, 75, innerColor || borderColor);
 
