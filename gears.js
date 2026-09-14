@@ -155,6 +155,9 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
   const batch = catalogData.slice(catalogRenderIndex, catalogRenderIndex + batchSize);
   const frag = document.createDocumentFragment();
 
+  // Collect cards that need admin stats — observer attached after appendChild
+  const adminStatsDivs = [];
+
   batch.forEach(pedal => {
     const $pedalDiv = renderPedal(pedal, userRole);
     if (!$pedalDiv || !$pedalDiv[0]) {
@@ -164,11 +167,41 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
     $pedalDiv.attr("data-author", pedal.author || "");
     $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
     frag.appendChild($pedalDiv[0]);
+
+    if ($pedalDiv.attr("data-needs-admin-stats")) {
+      adminStatsDivs.push($pedalDiv[0]);
+    }
   });
 
-
+  // Elements are in the DOM from this point — safe to attach IntersectionObserver
   container.appendChild(frag);
   catalogRenderIndex += batch.length;
+
+  // Wire up lazy admin-stat fetches now that elements are live in the DOM
+  if (adminStatsDivs.length > 0) {
+    const token = localStorage.getItem("authToken");
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        statsObserver.unobserve(entry.target);
+        const pid = entry.target.dataset.needsAdminStats;
+        const $span = $(entry.target).find(".pedal-admin-stats");
+        fetch(
+          "https://api.pedalplex.com/GET_GEAR_ADMIN_STATS.php?pedalId=" + encodeURIComponent(pid),
+          { headers: token ? { Authorization: "Bearer " + token } : {} }
+        )
+          .then(r => r.ok ? r.json() : null)
+          .then(d => {
+            if (d && d.plexes !== undefined && d.subplexes !== undefined) {
+              $span.text(`P:${d.plexes} S:${d.subplexes}`);
+            }
+          })
+          .catch(() => {});
+      });
+    }, { rootMargin: '100px' });
+
+    adminStatsDivs.forEach(el => statsObserver.observe(el));
+  }
 
   // mantieni sentinel alla fine
   if (sentinel) container.appendChild(sentinel);
