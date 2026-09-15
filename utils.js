@@ -55,11 +55,11 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
 
   // ── HELPERS ────────────────────────────────────────────────────────────────
 
-  // External ring SVG: SVG larger than the div, centred absolutely.
-  // The SVG itself carries the rotation (like the showcase's svg.style.transform).
+  // External ring SVG: SVG larger than the div, centred inside the div.
+  // No rotation on the SVG — the div itself rotates via CSS transform (drag handler).
   function makeExtWrap($knob, svgSz, buildSvgContent) {
     const svg = svgEl('svg', { width: svgSz, height: svgSz, viewBox: `0 0 ${svgSz} ${svgSz}` });
-    svg.style.cssText = `position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(${rotDeg}deg); pointer-events:none; overflow:visible;`;
+    svg.style.cssText = `position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; overflow:visible;`;
     buildSvgContent(svg, svgSz / 2);
     const $wrap = $('<div>').css({ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' });
     $wrap.append($knob);
@@ -67,13 +67,13 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
     return { $knob, $wrap };
   }
 
-  // External ring SVG where the group inside rotates (klon, chicken-head).
-  // SVG is static (translate only); group has rotate(rotDeg, cx, cx).
+  // External ring SVG where elements are in a plain group (no rotation).
+  // Rotation is handled entirely by the div's CSS transform.
   function makeExtGroupWrap($knob, svgSz, buildGroup) {
     const svgCx = svgSz / 2;
     const svg = svgEl('svg', { width: svgSz, height: svgSz, viewBox: `0 0 ${svgSz} ${svgSz}` });
     svg.style.cssText = `position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; overflow:visible;`;
-    const g = svgEl('g', { transform: `rotate(${rotDeg}, ${svgCx}, ${svgCx})` });
+    const g = svgEl('g', {});  // no rotation — div handles it
     buildGroup(g, svgCx);
     svg.appendChild(g);
     const $wrap = $('<div>').css({ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' });
