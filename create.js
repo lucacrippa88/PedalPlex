@@ -589,6 +589,7 @@ function syncUIFromJSON(pedal) {
                     case "knob":
                     case "smallknob":
                     case "largeknob":
+                    case "largerknob":
                     case "xlargeknob":
                         templateId = "#knob-template";
                         break;
