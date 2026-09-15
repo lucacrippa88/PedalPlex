@@ -487,6 +487,7 @@ function renderPedalControls(pedal, $pedalDiv) {
 
         const rotation = initialRotation;
         knob.data("rotation", rotation);
+        knob.data("control-value", control.value);
         knob.css("transform", `rotate(${rotation}deg)`);
 
         let $valueLabel = null;
@@ -567,6 +568,7 @@ function renderPedalControls(pedal, $pedalDiv) {
 
             const newRotation = getRotationFromValue(control, control.value);
             knob.data("rotation", newRotation);
+            knob.data("control-value", control.value);
             knob.css("transform", `rotate(${newRotation}deg)`);
             if ($valueLabel) $valueLabel.text(control.value);
 
@@ -1310,27 +1312,38 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
     let hasColoredLed = false;
 
     // --- Knobs ---
-    $pedal.find('.knob').each(function () {
+    $pedal.find('.knob, .smallknob, .largeknob, .largerknob, .xlargeknob').each(function () {
       const label = $(this).data('control-label');
+      if (!label) return; // skip non-knob elements that happen to have these classes
       const $valueLabel = $(this).closest('.knob-wrapper').children('.knob-value-label');
 
       let value;
       if ($valueLabel.length && $valueLabel.text().trim() !== '') {
         value = $valueLabel.text().trim();
       } else {
-        const transform = $(this).css('transform');
-        let angle = 0;
-        if (transform && transform !== 'none') {
-          const values = transform.match(/matrix\((.+)\)/)[1].split(', ');
-          const a = parseFloat(values[0]);
-          const b = parseFloat(values[1]);
-          angle = Math.atan2(b, a) * (180 / Math.PI);
+        // Prefer the stored control value (set at render and updated on drag)
+        const storedValue = $(this).data('control-value');
+        if (storedValue !== undefined && storedValue !== null) {
+          value = storedValue;
         } else {
-          const style = $(this).attr('style');
-          const match = style && style.match(/rotate\((-?\d+)deg\)/);
-          angle = match ? parseInt(match[1], 10) : 0;
+          // Fallback: derive value from CSS transform matrix
+          const transform = $(this).css('transform');
+          let angle = 0;
+          if (transform && transform !== 'none') {
+            const match = transform.match(/matrix\((.+)\)/);
+            if (match) {
+              const parts = match[1].split(', ');
+              const a = parseFloat(parts[0]);
+              const b = parseFloat(parts[1]);
+              angle = Math.atan2(b, a) * (180 / Math.PI);
+            }
+          } else {
+            const style = $(this).attr('style');
+            const rotMatch = style && style.match(/rotate\((-?[\d.]+)deg\)/);
+            angle = rotMatch ? parseFloat(rotMatch[1]) : 0;
+          }
+          value = getValueFromRotation(angle);
         }
-        value = getValueFromRotation(angle);
       }
       controlsArray.push({
         [label]: isNaN(value) ? value : parseFloat(value)
