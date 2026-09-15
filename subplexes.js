@@ -356,7 +356,7 @@ function collectSinglePedalControls($pedalDiv) {
     let value = null;
 
     // knob con rotazione
-    if ($el.hasClass('knob')) {
+    if ($el.hasClass('knob') || $el.hasClass('smallknob') || $el.hasClass('largeknob') || $el.hasClass('largerknob') || $el.hasClass('xlargeknob')) {
       const transform = $el.css('transform');
       value = transform || null;
     }
@@ -520,7 +520,7 @@ function collectSinglePedalControlsMap($pedalDiv, pedalId) {
   const pedalName = $pedalDiv.data('pedal-name');
 
   // --- Knobs ---
-  $pedalDiv.find('.knob').each(function () {
+  $pedalDiv.find('.knob, .smallknob, .largeknob, .largerknob, .xlargeknob').each(function () {
     const label = $(this).data('control-label');
     if (!label) return;
     const $valueLabel = $(this).closest('.knob-wrapper').children('.knob-value-label');
@@ -528,22 +528,28 @@ function collectSinglePedalControlsMap($pedalDiv, pedalId) {
     if ($valueLabel.length && $valueLabel.text().trim() !== '') {
       value = $valueLabel.text().trim();
     } else {
-      const transform = $(this).css('transform');
-      let angle = 0;
-      if (transform && transform !== 'none') {
-        const vals = transform.match(/matrix\((.+)\)/);
-        if (vals) {
-          const parts = vals[1].split(', ');
-          const a = parseFloat(parts[0]);
-          const b = parseFloat(parts[1]);
-          angle = Math.atan2(b, a) * (180 / Math.PI);
-        }
+      // Prefer the stored control value (set at render and updated on drag)
+      const storedValue = $(this).data('control-value');
+      if (storedValue !== undefined && storedValue !== null) {
+        value = storedValue;
       } else {
-        const style = $(this).attr('style');
-        const match = style && style.match(/rotate\((-?\d+)deg\)/);
-        angle = match ? parseInt(match[1], 10) : 0;
+        const transform = $(this).css('transform');
+        let angle = 0;
+        if (transform && transform !== 'none') {
+          const vals = transform.match(/matrix\((.+)\)/);
+          if (vals) {
+            const parts = vals[1].split(', ');
+            const a = parseFloat(parts[0]);
+            const b = parseFloat(parts[1]);
+            angle = Math.atan2(b, a) * (180 / Math.PI);
+          }
+        } else {
+          const style = $(this).attr('style');
+          const match = style && style.match(/rotate\((-?[\d.]+)deg\)/);
+          angle = match ? parseFloat(match[1]) : 0;
+        }
+        value = getValueFromRotation(angle);
       }
-      value = getValueFromRotation(angle);
     }
     controlsMap[label] = isNaN(value) ? value : parseFloat(value);
   });
