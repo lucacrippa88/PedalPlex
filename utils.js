@@ -1199,34 +1199,6 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
 
         const $authorText = $("<span>").text(authorText);
         $authorDiv.append($authorText);
-
-        // Admin-only: lazy stats (P: plexes, S: subplexes)
-        if (isAdminUser && pedal._id) {
-          const $stats = $("<span>").addClass("pedal-admin-stats").css({
-            marginLeft: "6px", color: "#888", fontSize: "10px", opacity: "0.7"
-          }).text("…");
-          $authorDiv.append($stats);
-
-          // Lazy fetch via IntersectionObserver — fires only when card enters viewport
-          const token = localStorage.getItem("authToken");
-          const observer = new IntersectionObserver((entries, obs) => {
-            if (!entries[0].isIntersecting) return;
-            obs.disconnect();
-            fetch(`https://api.pedalplex.com/GET_GEAR_ADMIN_STATS.php?pedalId=${encodeURIComponent(pedal._id)}`, {
-              headers: token ? { Authorization: "Bearer " + token } : {}
-            })
-            .then(r => r.json())
-            .then(d => {
-              if (d && typeof d.plexes !== 'undefined') {
-                $stats.text(`P:${d.plexes} S:${d.subplexes}`);
-              } else {
-                $stats.text('');
-              }
-            })
-            .catch(() => $stats.text(''));
-          }, { rootMargin: "200px" });
-          observer.observe($pedalDiv[0]);
-        }
       }
 
 
