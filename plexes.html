@@ -613,7 +613,7 @@ function hidePresetLoader() {
     const currentPresetId = document.getElementById("presetSelect")?.value;
     const preset = window.presetMap?.[currentPresetId];
     const currentBoardId = document.getElementById("pedalboardSelect")?.value;
-    const currentBoard = window.allPedalboards?.find(pb => pb._id === currentBoardId);
+    const currentBoard = window.allPedalboards?.find(pb => pb._id === currentBoardId) ?? window.pedalboard;
 
     if (!preset) {
       Swal.fire({
