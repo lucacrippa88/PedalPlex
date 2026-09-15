@@ -59,6 +59,54 @@ let currentPresetRev = null;
 let currentPresetName = null;
 let isRestoringPreset = false;
 
+// ─── Guest Plex localStorage helpers ─────────────────────────────────────────
+const GUEST_PLEXES_KEY = 'guestPlexes';
+const GUEST_PLEX_MAX   = 5;
+
+function getGuestPlexes() {
+  try { return JSON.parse(localStorage.getItem(GUEST_PLEXES_KEY)) || []; }
+  catch(e) { return []; }
+}
+
+function saveGuestPlexes(plexes) {
+  localStorage.setItem(GUEST_PLEXES_KEY, JSON.stringify(plexes));
+}
+
+/** Returns false if at limit, otherwise creates and returns the new plex object */
+function createGuestPlex(name, boardId, pedalsObject) {
+  const plexes = getGuestPlexes();
+  if (plexes.length >= GUEST_PLEX_MAX) return false;
+  const newPlex = {
+    _id:         'guest_plex_' + Date.now(),
+    preset_name: name,
+    board_id:    boardId,
+    pedals:      pedalsObject || {}
+  };
+  plexes.push(newPlex);
+  saveGuestPlexes(plexes);
+  return newPlex;
+}
+
+/** Updates an existing guest plex by ID; returns true on success */
+function updateGuestPlex(plexId, updateData) {
+  const plexes = getGuestPlexes();
+  const idx = plexes.findIndex(p => p._id === plexId);
+  if (idx === -1) return false;
+  plexes[idx] = { ...plexes[idx], ...updateData };
+  saveGuestPlexes(plexes);
+  return true;
+}
+
+/** Deletes a guest plex by ID; returns true on success */
+function deleteGuestPlex(plexId) {
+  const plexes = getGuestPlexes();
+  const filtered = plexes.filter(p => p._id !== plexId);
+  if (filtered.length === plexes.length) return false;
+  saveGuestPlexes(filtered);
+  return true;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function isPresetShared(preset) {
   return preset?.shared === true || preset?.shared === 'true' || preset?.shared === 1 || preset?.shared === '1';
 }
@@ -329,17 +377,12 @@ async function initPreset() {
     pedals: guestBoard.pedals || []
   };
 
-  // disabilita UI non disponibile per ospiti
+  // Disabilita solo le UI non disponibili per gli ospiti (pedalboard switch, folders)
   [
     "pedalboardSelect",
-    "presetSelect",
     "folderSelect",
-    "renamePresetBtn",
-    "savePstBtn",
-    "savePstBtnMobile",
-    "createPstBtn",
-    "createPstBtnMobile",
-    "addFolderBtn"
+    "addFolderBtn",
+    "renameFolderBtn"
   ].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -348,10 +391,25 @@ async function initPreset() {
     }
   });
 
+  // Popola il select pedalboard con il nome del rig guest
+  const guestBoardSelect = document.getElementById('pedalboardSelect');
+  if (guestBoardSelect) {
+    const opt = document.createElement('option');
+    opt.value = 'guest_board';
+    opt.textContent = guestBoard.board_name || 'Guest Rig';
+    guestBoardSelect.appendChild(opt);
+  }
+
+  // Nascondi folder UI e share (non supportati in modalità locale)
+  const folderContainer = document.getElementById('folderSelectContainer');
+  if (folderContainer) folderContainer.style.display = 'none';
+  const renameFolderBtn = document.getElementById('renameFolderBtn');
+  if (renameFolderBtn) renameFolderBtn.style.display = 'none';
+  const sharePresetBtn = document.getElementById('sharePresetBtn');
+  if (sharePresetBtn) { sharePresetBtn.disabled = true; sharePresetBtn.classList.add('btn-disabled'); }
+
   // Estrai gli ID pedali dal guest board
   const ids = [...new Set((guestBoard.pedals || []).map(p => p.pedal_id))];
-
-  // console.log("Fetching pedals via GET_PEDALS_BY_IDS (guest):", ids);
 
   window.catalog = [];
   window.catalogMap = {};
@@ -379,10 +437,43 @@ async function initPreset() {
   // RENDER DELLA PEDALBOARD (esattamente come i loggati)
   renderFullPedalboard(window.pedalboard.pedals);
 
-  // Nessun preset per ospiti
-  window.presets = [];
+  // Carica i plex locali del guest
+  const guestPlexes = getGuestPlexes().filter(p => p.board_id === "guest_board");
+  window.presets = guestPlexes;
   window.presetMap = {};
+  guestPlexes.forEach(p => { window.presetMap[p._id] = p; });
+  window.folders = [];
+
+  // Wire up onchange for the preset dropdown (normally done by fetchPresetsByBoardId)
+  const guestPresetSelect = document.getElementById('presetSelect');
+  if (guestPresetSelect) {
+    guestPresetSelect.onchange = (e) => {
+      const selectedId = e.target.value;
+      const preset = window.presetMap && window.presetMap[selectedId];
+      if (preset) {
+        currentPresetId   = preset._id;
+        currentPresetName = preset.preset_name;
+        currentPresetRev  = preset._rev || null;
+        applyPresetToPedalboard(preset);
+        localStorage.setItem('lastPresetId', selectedId);
+      } else {
+        currentPresetId = null;
+        currentPresetName = null;
+        currentPresetRev = null;
+      }
+    };
+  }
+
   populatePresetDropdownByFolder("default");
+
+  // Ripristina eventuale ultimo plex selezionato
+  const lastGuestPlexId = localStorage.getItem('lastPresetId');
+  if (lastGuestPlexId && window.presetMap[lastGuestPlexId]) {
+    if (guestPresetSelect) {
+      guestPresetSelect.value = lastGuestPlexId;
+      guestPresetSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  }
 
   return; // IMPORTANTISSIMO → evita i fetch logged-in
 }
@@ -684,6 +775,63 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     return;
   }
 
+  // ── GUEST PATH ───────────────────────────────────────────────────────────
+  if (!window.currentUser || window.currentUser.role === 'guest') {
+    const guestPreset = window.presetMap && window.presetMap[currentPresetId];
+    if (!guestPreset) return;
+
+    const guestResult = await Swal.fire({
+      title: 'Edit Plex (local)',
+      html: `<input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="Plex Name" value="${guestPreset.preset_name || ''}">`,
+      showCancelButton: false,
+      showDenyButton: true,
+      confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Rename",
+      denyButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>Delete Plex",
+      showCloseButton: true,
+      focusConfirm: false,
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary',
+        denyButton: 'bx--btn bx--btn--danger'
+      },
+      preConfirm: () => {
+        const newName = document.getElementById('presetNameInput').value.trim();
+        if (!newName) { Swal.showValidationMessage('Plex name cannot be empty!'); return false; }
+        return newName;
+      }
+    });
+
+    if (guestResult.isDenied) {
+      const confirmDel = await Swal.fire({
+        title: `Delete "${guestPreset.preset_name}"?`,
+        text: 'This will remove the Plex from your browser storage.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Delete',
+        cancelButtonText: 'Cancel',
+        customClass: { confirmButton: 'bx--btn bx--btn--danger', cancelButton: 'bx--btn bx--btn--secondary' }
+      });
+      if (confirmDel.isConfirmed) {
+        deleteGuestPlex(currentPresetId);
+        currentPresetId = null;
+        currentPresetName = null;
+        currentPresetRev = null;
+        Swal.fire({ icon: 'success', title: 'Plex Deleted', timer: 900, showConfirmButton: false })
+          .then(() => location.reload());
+      }
+      return;
+    }
+
+    if (guestResult.value) {
+      updateGuestPlex(currentPresetId, { preset_name: guestResult.value });
+      if (window.presetMap[currentPresetId]) window.presetMap[currentPresetId].preset_name = guestResult.value;
+      updatePresetDropdownName(currentPresetId, guestResult.value);
+      Swal.fire({ icon: 'success', title: 'Plex Renamed', timer: 900, showConfirmButton: false })
+        .then(() => location.reload());
+    }
+    return;
+  }
+  // ── END GUEST PATH ───────────────────────────────────────────────────────
+
   const preset = Object.values(window.presetMap).find(p => p._id === currentPresetId);
   if (!preset || !currentPresetRev) {
     Swal.fire("Error", "Missing revision (_rev) info for the Plex.", "error");
@@ -949,8 +1097,18 @@ function updatePresetDropdownName(presetId, newName) {
 }
 
 
-// Update / save preset 
+// Update / save preset
 async function savePreset(presetId, updateData) {
+
+  // ── GUEST PATH ───────────────────────────────────────────────────────────
+  if (!window.currentUser || window.currentUser.role === 'guest') {
+    const ok = updateGuestPlex(presetId, updateData);
+    if (ok && window.presetMap && window.presetMap[presetId]) {
+      Object.assign(window.presetMap[presetId], updateData);
+    }
+    return ok;
+  }
+  // ── END GUEST PATH ───────────────────────────────────────────────────────
 
   const token = localStorage.getItem('authToken');
 
@@ -1221,6 +1379,55 @@ $(".pedal-catalog").each(function () {
 
 // Create preset function
 async function createPreset() {
+
+  // ── GUEST PATH ───────────────────────────────────────────────────────────
+  if (!window.currentUser || window.currentUser.role === 'guest') {
+    const existingCount = getGuestPlexes().filter(p => p.board_id === 'guest_board').length;
+    if (existingCount >= GUEST_PLEX_MAX) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Plex limit reached',
+        text: `You can save up to ${GUEST_PLEX_MAX} Plexes in local mode. Delete one to create a new one, or login to unlock unlimited Plexes.`,
+        confirmButtonText: 'Ok',
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+        buttonsStyling: false
+      });
+      return;
+    }
+
+    const { value: guestPresetName } = await Swal.fire({
+      title: 'New Tone as Plex (local)',
+      input: 'text',
+      inputLabel: 'Plex Name',
+      inputPlaceholder: 'Type your new Plex name here',
+      showCancelButton: false,
+      showCloseButton: true,
+      confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Create Plex",
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary',
+        cancelButton: 'bx--btn bx--btn--secondary'
+      },
+      inputValidator: value => !value && 'You must enter a Plex name!'
+    });
+
+    if (!guestPresetName) return;
+
+    const newPlex = createGuestPlex(guestPresetName.trim(), 'guest_board', {});
+    if (!newPlex) {
+      Swal.fire('Error', 'Could not save Plex locally.', 'error');
+      return;
+    }
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Plex Created',
+      text: `"${guestPresetName}" saved locally. (${existingCount + 1}/${GUEST_PLEX_MAX})`,
+      timer: 1200,
+      showConfirmButton: false
+    }).then(() => location.reload());
+    return;
+  }
+  // ── END GUEST PATH ───────────────────────────────────────────────────────
 
   // -------------------------------
   // 1. Get currently selected pedalboard
