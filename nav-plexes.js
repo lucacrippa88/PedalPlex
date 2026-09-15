@@ -113,17 +113,12 @@ function initNavPreset() {
     if (typeof openExploreModal === "function") openExploreModal();
   });
 
-  // Disable Save/Create/Folder buttons and add Login for guests
+  // For guests: keep Save/Create buttons active (they save locally), but
+  // disable Add Folder (not supported locally). Show a Login button.
   if (isGuest) {
-    // Remove save buttons
-    ['savePstBtn', 'savePstBtnMobile'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.remove();
-    });
-
-    // Add login button
+    // Add login button alongside the existing nav buttons
     const loginBtnHtml = `
-    <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Login" 
+    <button id="loginBtn" class="bx--btn bx--btn--ghost bx--btn--sm" type="button" aria-label="Login"
         style="display: flex; align-items: center; gap: 0.5rem;">
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
@@ -132,14 +127,13 @@ function initNavPreset() {
         Login
     </button>`;
     const loginBtnHtmlMobile = `
-    <button id="loginBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Login" 
+    <button id="loginBtnMobile" class="bx--btn bx--btn--ghost bx--btn--sm bx--btn--icon-only" type="button" aria-label="Login"
         style="display: flex; align-items: center; gap: 0.5rem;">
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
             <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
         </svg>
     </button>`;
-
 
     $(".rightButtons.showDesktop").prepend(loginBtnHtml);
     $(".rightButtons.showMobile").prepend(loginBtnHtmlMobile);
@@ -148,15 +142,13 @@ function initNavPreset() {
       window.location.href = "login";
     });
 
-    // Disable create/add preset and add folder buttons
-    ['createPstBtn', 'createPstBtnMobile', 'addFolderBtn'].forEach(id => {
+    // Disable Add Folder only (folders not supported for guests)
+    ['addFolderBtn'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
         el.disabled = true;
         el.classList.add('btn-disabled');
-        el.addEventListener('click', () => {
-          Swal.fire("Guest Mode", "Plex editing is disabled in guest mode.", "info");
-        });
+        el.title = 'Login to use folders';
       }
     });
   }
