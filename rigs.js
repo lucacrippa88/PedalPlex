@@ -26,10 +26,8 @@ function initPedalboard(userRole) {
     $("#viewPreset").hide();
 
     resultsDiv.innerHTML = `
-      <div style="text-align: center; margin-top: 40px;">
-        <p style="font-size: 1.1em; margin-bottom: 20px;">
-          No Rigs found. Create a new one!
-        </p>
+      <div class="empty-state-container">
+        <p style="font-size:1.1em; margin-bottom:20px;">No Rigs found. Create a new one!</p>
         <button id="createBtn" class="bx--btn bx--btn--secondary">Create a Rig</button>
       </div>`;
     window.allPedalboards = [];
@@ -125,10 +123,11 @@ function initPedalboard(userRole) {
     .then(data => {
       if (!data.docs || !Array.isArray(data.docs) || data.docs.length === 0) {
         $("#pedalboard-controls").css("display", "none");
-        resultsDiv.innerHTML = `You don't have any Rig yet.<br><br>
-          <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary" type="button" aria-label="Create New Pedalboard">
-            Create Rig
-          </button>`;
+        resultsDiv.innerHTML = `
+          <div class="empty-state-container">
+            <p style="font-size:1.1em; margin-bottom:20px;">You don't have any Rig yet.</p>
+            <button id="createBtn" class="bx--btn bx--btn--secondary" type="button" aria-label="Create New Rig">Create Rig</button>
+          </div>`;
         return;
       }
 
@@ -419,7 +418,7 @@ function renderPedalboard() {
   container.innerHTML = '';
 
   if (!window.pedalboard?.pedals || window.pedalboard.pedals.length === 0) {
-    container.textContent = "No gears found. Add them from the search bar above!";
+    container.innerHTML = `<div class="empty-state-container"><p>No gears found. Add them from the search bar above!</p></div>`;
     return;
   }
 
