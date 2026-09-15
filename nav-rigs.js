@@ -52,7 +52,7 @@ function initNavPedalboard(userRole) {
 
         
 
-        <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Build Rig" title="Build Rig"
+        <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Build Rig"
                 style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <g transform="rotate(90 16 16)">
@@ -60,6 +60,7 @@ function initNavPedalboard(userRole) {
               <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
             </g>
           </svg>
+          Build Rig
         </button>
 
       </div>
