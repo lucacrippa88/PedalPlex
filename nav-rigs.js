@@ -44,8 +44,7 @@ function initNavPedalboard(userRole) {
           Save Rig
         </button>
 
-        <button id="saveBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Save Rig"
-                style="display: flex; align-items: center; gap: 0.5rem;">
+        <button id="saveBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Save Rig">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M27 4H8L4 8v20a2 2 0 002 2h22a2 2 0 002-2V6a2 2 0 00-2-2zm0 24H6V8.8L8.8 6H10v8h14V6h2zm-6-18h2v6h-2z"/>
           </svg>
