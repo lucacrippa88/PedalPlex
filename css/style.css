@@ -313,6 +313,7 @@ html { box-sizing: content-box !important; }
 .knob-container { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 60px; }
 .knob, .smallknob, .largeknob, .largerknob, .xlargeknob {
   width: 40px; height: 40px; border-radius: 50%; position: relative; cursor: pointer; box-sizing: border-box; aspect-ratio: 1 / 1; flex-shrink: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 .smallknob  { width: 26px; height: 26px; margin-bottom: 4px; }
 .largeknob  { width: 52px; height: 52px; margin-bottom: 4px; }
