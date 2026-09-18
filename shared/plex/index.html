@@ -1,9 +1,9 @@
 <!-- redirect Shared Plex link to plexes.html -->
 <script>
 window.addEventListener('DOMContentLoaded', () => {
-    const token = window.location.hash.slice(1); // get everything after #
+    const token = new URLSearchParams(window.location.search).get('token');
     if (token) {
-        window.location.href = `/plexes.html?shared_token=${token}`;
+        window.location.href = '/plexes.html?shared_token=' + encodeURIComponent(token);
     }
 });
 </script>

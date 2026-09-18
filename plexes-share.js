@@ -12,14 +12,12 @@ function uuidv4() {
 }
 
 // Funzione per generare link condivisibile
-function generateShareLink(preset) { 
+function generateShareLink(preset) {
     // genera token solo se non esiste
     if (!preset.shared_token) {
         preset.shared_token = uuidv4();
     }
-    // hash routing
-    const baseUrl = window.location.origin + '/shared/plex/#';
-    return baseUrl + preset.shared_token;
+    return window.location.origin + '/shared/plex/?token=' + preset.shared_token;
 }
 
 // ---------------------------- 
@@ -73,6 +71,65 @@ function generateQR(link) {
 }
 
 // ----------------------------
+// Download QR Code as PNG
+// ----------------------------
+function downloadQR(presetName) {
+    const qrWrapper = document.querySelector("#qrContainer > div");
+    if (!qrWrapper) return;
+
+    const qrCanvas = qrWrapper.querySelector("canvas");
+    if (!qrCanvas) return;
+
+    const size = qrCanvas.width;
+
+    // canvas composito: QR + logo sopra
+    const out = document.createElement("canvas");
+    out.width = size;
+    out.height = size;
+    const ctx = out.getContext("2d");
+
+    // 1. disegna il QR
+    ctx.drawImage(qrCanvas, 0, 0);
+
+    // 2. disegna il logo sopra (già caricato nel DOM)
+    const logoImg = qrWrapper.querySelector("img");
+    if (logoImg && logoImg.complete) {
+        const logoSize = 42;
+        const padding = 6;
+        const boxSize = logoSize + padding * 2;
+        const x = (size - boxSize) / 2;
+        const y = (size - boxSize) / 2;
+        const radius = 8;
+
+        // sfondo bianco arrotondato
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + boxSize - radius, y);
+        ctx.quadraticCurveTo(x + boxSize, y, x + boxSize, y + radius);
+        ctx.lineTo(x + boxSize, y + boxSize - radius);
+        ctx.quadraticCurveTo(x + boxSize, y + boxSize, x + boxSize - radius, y + boxSize);
+        ctx.lineTo(x + radius, y + boxSize);
+        ctx.quadraticCurveTo(x, y + boxSize, x, y + boxSize - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+        ctx.fillStyle = "white";
+        ctx.fill();
+        ctx.restore();
+
+        ctx.drawImage(logoImg, x + padding, y + padding, logoSize, logoSize);
+    }
+
+    // 3. scarica
+    const filename = (presetName || "plex").replace(/[^a-z0-9_\-]/gi, "_") + "_qr.png";
+    const a = document.createElement("a");
+    a.href = out.toDataURL("image/png");
+    a.download = filename;
+    a.click();
+}
+
+// ----------------------------
 // Modal Share Plex
 // ----------------------------
 function openShareModal() {
@@ -114,10 +171,16 @@ function openShareModal() {
             <div id="shareLinkContainer" style="margin-top:1rem; display:none;">
             <div style="display:flex; gap:8px;">
                 <input id="shareLinkInput" class="bx--text-input" readonly style="flex:1;">
-                <button id="copyLinkBtn" class="bx--btn bx--btn--secondary bx--btn--icon-only">
+                <button id="copyLinkBtn" class="bx--btn bx--btn--secondary bx--btn--icon-only" title="Copy link">
                 <svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'>
                     <path d='M29.25,6.76a6,6,0,0,0-8.5,0l1.42,1.42a4,4,0,1,1,5.67,5.67l-8,8a4,4,0,1,1-5.67-5.66l1.41-1.42-1.41-1.42-1.42,1.42a6,6,0,0,0,0,8.5A6,6,0,0,0,17,25a6,6,0,0,0,4.27-1.76l8-8A6,6,0,0,0,29.25,6.76Z'></path>
                     <path d='M4.19,24.82a4,4,0,0,1,0-5.67l8-8a4,4,0,0,1,5.67,0A3.94,3.94,0,0,1,19,14a4,4,0,0,1-1.17,2.85L15.71,19l1.42,1.42,2.12-2.12a6,6,0,0,0-8.51-8.51l-8,8a6,6,0,0,0,0,8.51A6,6,0,0,0,7,28a6.07,6.07,0,0,0,4.28-1.76L9.86,24.82A4,4,0,0,1,4.19,24.82Z'></path>
+                </svg>
+                </button>
+                <button id="downloadQrBtn" class="bx--btn bx--btn--secondary bx--btn--icon-only" title="Download QR code" style="display:none;">
+                <svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'>
+                    <path d='M26 24v4H6v-4H4v4a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2v-4z'></path>
+                    <path d='M26 14l-1.41-1.41L17 20.17V2h-2v18.17l-7.59-7.58L6 14l10 10 10-10z'></path>
                 </svg>
                 </button>
             </div>
@@ -141,6 +204,7 @@ function openShareModal() {
             const container = document.getElementById("shareLinkContainer");
             const input = document.getElementById("shareLinkInput");
             const copyBtn = document.getElementById("copyLinkBtn");
+            const downloadQrBtn = document.getElementById("downloadQrBtn");
             const qrContainer = document.getElementById("qrContainer");
 
             // inizializza toggle basandosi sul valore salvato
@@ -161,16 +225,18 @@ function openShareModal() {
                     }
 
                     if (preset.shared_token) {
-                        const link = window.location.origin + '/shared/plex/#' + preset.shared_token;
+                        const link = window.location.origin + '/shared/plex/?token=' + preset.shared_token;
                         input.value = link;
 
                         generateQR(link);
+                        downloadQrBtn.style.display = "";
                     }
 
                 } else {
                     label.textContent = "Private";
                     container.style.display = "none";
                     qrContainer.style.display = "none";
+                    downloadQrBtn.style.display = "none";
                     input.value = "";
                 }
             }
@@ -182,6 +248,11 @@ function openShareModal() {
             toggle.addEventListener("change", () => {
                 userInteracted = true;
                 updateUI();
+            });
+
+            // download QR button
+            downloadQrBtn.addEventListener("click", () => {
+                downloadQR(preset.preset_name);
             });
 
             // copy button
