@@ -19,19 +19,10 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
   // const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || "SubPlex";
   const description = subplex.description || "No description available";
 
-  // Nome + icona AI
+  // Nome
   const $nameEl = $infoBox.find(".applied-preset-name");
   $nameEl.empty();
-  if (subplex.source === "ai") {
-    $nameEl.append(`
-      <svg class="ai-preset-icon" focusable="false" preserveAspectRatio="xMidYMid meet"
-        fill="currentColor" width="14" height="14" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
-        <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
-      </svg>
-    `);
-  }
-  $nameEl.append(document.createTextNode(" " + presetName));
+  $nameEl.append(document.createTextNode(presetName));
 
   // Icona info + tooltip
   const $iconWrapper = $infoBox.find(".applied-preset-info-icon");
