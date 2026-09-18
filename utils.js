@@ -2041,23 +2041,6 @@ function renderPresetList($ul, pedalId, presets) {
       $name.append(`<svg style="vertical-align:middle;margin-right:3px" focusable="false" fill="currentColor" width="11" height="11" viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M24 14h-2v-4a6 6 0 00-12 0v4H8a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V16a2 2 0 00-2-2zm-8 10a2 2 0 110-4 2 2 0 010 4zm4-10H12v-4a4 4 0 018 0z"></path></svg>`);
     }
 
-    // AI icon (only if source === "ai")
-    if (preset.source === "ai") {
-      $name.append(`
-        <svg class="ai-preset-icon"
-          focusable="false"
-          preserveAspectRatio="xMidYMid meet"
-          fill="currentColor"
-          width="14"
-          height="14"
-          viewBox="0 0 32 32"
-          aria-hidden="true">
-          <path d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z"></path>
-          <path d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
-        </svg>
-      `);
-    }
-
     $name.append( document.createTextNode(" " + (preset.presetName || preset._id)) );
 
     // ℹ icon with tooltip event
