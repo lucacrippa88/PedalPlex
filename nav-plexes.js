@@ -96,6 +96,13 @@ function initNavPreset() {
 
   $("body").prepend(navHtml);
 
+  // In preview mode, rimuove subito i bottoni non necessari
+  if (window.isPreviewMode) {
+    ["exploreBtn", "exploreBtnMobile", "savePstBtn", "savePstBtnMobile", "createPstBtn", "createPstBtnMobile"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    });
+  }
 
   // Tour trigger button
   $("#tourTriggerBtn").on("click", function () {

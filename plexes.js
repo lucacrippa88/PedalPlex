@@ -11,15 +11,9 @@ function setupPreviewMode() {
     $(document).ready(() => {
         document.getElementById('preset-controls')?.classList.add('shared-preview-controls');
 
-        // Disabilita pulsanti
+        // Disabilita pulsanti che restano visibili (nessuno per ora)
         const ids = [
-            "savePstBtn",
-            "savePstBtnMobile",
-            "createPstBtn",
-            "createPstBtnMobile",
             "addFolderBtn",
-            "lockPresetBtn",
-            "downloadPlexBtn"
         ];
         ids.forEach(id => {
             const el = document.getElementById(id);
@@ -29,7 +23,7 @@ function setupPreviewMode() {
             }
         });
 
-        // Rimuove elementi
+        // Nasconde/rimuove elementi non pertinenti in preview
         const ids_hide = [
             "renamePresetBtn",
             "renameFolderBtn",
@@ -38,7 +32,15 @@ function setupPreviewMode() {
             "folderSelect",
             "presetSelectContainer",
             "folderSelectContainer",
-            "sharePresetBtn"
+            "sharePresetBtn",
+            "lockPresetBtn",
+            "downloadPlexBtn",
+            "savePstBtn",
+            "savePstBtnMobile",
+            "createPstBtn",
+            "createPstBtnMobile",
+            "exploreBtn",
+            "exploreBtnMobile"
         ];
         ids_hide.forEach(id => {
             const el = document.getElementById(id);
