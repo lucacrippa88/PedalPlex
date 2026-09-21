@@ -496,7 +496,7 @@
     sortedPlexes.forEach((plex) => {
       const plexName = plex.preset_name || 'Untitled Plex';
       const sharedDate = formatSharedDate(plex.sharedAt);
-      const shareLink = `${window.location.origin}/shared/plex/#${plex.shared_token}`;
+      const shareLink = `${window.location.origin}/shared/plex/?token=${plex.shared_token}`;
       
       // Build gears display - show gear IDs with colors
       let gearsHtml = '';
@@ -1047,6 +1047,7 @@ function generateProfileShareQR(link) {
 
   const logo = document.createElement('img');
   logo.src = '/logos/pedalplex_logo_black.png';
+  logo.dataset.role = 'pp-logo';
   logo.style.position = 'absolute';
   logo.style.top = '50%';
   logo.style.left = '50%';
@@ -1062,6 +1063,55 @@ function generateProfileShareQR(link) {
   qrWrapper.appendChild(logo);
 }
 
+function downloadProfileQR(plexName) {
+  const qrWrapper = document.querySelector('#profileQrContainer > div');
+  if (!qrWrapper) return;
+  const qrCanvas = qrWrapper.querySelector('canvas');
+  if (!qrCanvas) return;
+
+  const size = qrCanvas.width;
+  const out = document.createElement('canvas');
+  out.width = size;
+  out.height = size;
+  const ctx = out.getContext('2d');
+
+  ctx.drawImage(qrCanvas, 0, 0);
+
+  const logoImg = qrWrapper.querySelector("img[data-role='pp-logo']");
+  if (logoImg && logoImg.complete) {
+    const logoSize = 42;
+    const padding = 6;
+    const boxSize = logoSize + padding * 2;
+    const x = (size - boxSize) / 2;
+    const y = (size - boxSize) / 2;
+    const radius = 8;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + boxSize - radius, y);
+    ctx.quadraticCurveTo(x + boxSize, y, x + boxSize, y + radius);
+    ctx.lineTo(x + boxSize, y + boxSize - radius);
+    ctx.quadraticCurveTo(x + boxSize, y + boxSize, x + boxSize - radius, y + boxSize);
+    ctx.lineTo(x + radius, y + boxSize);
+    ctx.quadraticCurveTo(x, y + boxSize, x, y + boxSize - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.restore();
+
+    ctx.drawImage(logoImg, x + padding, y + padding, logoSize, logoSize);
+  }
+
+  const filename = (plexName || 'plex').replace(/[^a-z0-9_\-]/gi, '_') + '_qr.png';
+  const a = document.createElement('a');
+  a.href = out.toDataURL('image/png');
+  a.download = filename;
+  a.click();
+}
+
 function openSharedPlexQrModal(link, plexName) {
   Swal.fire({
     title: `QR Code for ${plexName}`,
@@ -1069,13 +1119,21 @@ function openSharedPlexQrModal(link, plexName) {
       <div style="text-align:center;">
         <div id="profileQrContainer" style="margin: 0 auto 1rem; display:flex; justify-content:center;"></div>
         <input class="bx--text-input" id="plex-url-input" value="${link}" readonly style="width:80%; margin-bottom: 1rem;">
-        <button id="copy-plex-url" class="bx--btn bx--btn--secondary" style="width: 100%;">
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" style="margin-right: 8px;">
-            <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path>
-            <path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
-          </svg>
-          Copy Link
-        </button>
+        <div style="display:flex; gap:8px; justify-content:center;">
+          <button id="copy-plex-url" class="bx--btn bx--btn--secondary" style="flex:1;">
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" style="margin-right: 8px;">
+              <path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path>
+              <path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>
+            </svg>
+            Copy Link
+          </button>
+          <button id="download-plex-qr" class="bx--btn bx--btn--secondary bx--btn--icon-only" title="Download QR code">
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+              <path d="M26 24v4H6v-4H4v4a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2v-4z"></path>
+              <path d="M26 14l-1.41-1.41L17 20.17V2h-2v18.17l-7.59-7.58L6 14l10 10 10-10z"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     `,
     showConfirmButton: false,
@@ -1087,6 +1145,10 @@ function openSharedPlexQrModal(link, plexName) {
     didOpen: () => {
       generateProfileShareQR(link);
       
+      $('#download-plex-qr').on('click', function() {
+        downloadProfileQR(plexName);
+      });
+
       $('#copy-plex-url').on('click', function() {
         const input = document.getElementById('plex-url-input');
         input.select();
@@ -1224,7 +1286,7 @@ function displaySharedPlexes(sharedPlexes) {
   sortedPlexes.forEach((plex) => {
     const plexName = plex.preset_name || 'Untitled Plex';
     const sharedDate = formatSharedDate(plex.sharedAt);
-    const shareLink = `${window.location.origin}/shared/plex/#${plex.shared_token}`;
+    const shareLink = `${window.location.origin}/shared/plex/?token=${plex.shared_token}`;
     
     // Build gears display - show gear IDs with colors
     let gearsHtml = '';
