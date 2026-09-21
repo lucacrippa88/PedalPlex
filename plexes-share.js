@@ -48,6 +48,7 @@ function generateQR(link) {
     // logo centrale
     const logo = document.createElement("img");
     logo.src = "/logos/pedalplex_logo_black.png";
+    logo.dataset.role = "pp-logo";
 
     logo.style.position = "absolute";
     logo.style.top = "50%";
@@ -91,8 +92,8 @@ function downloadQR(presetName) {
     // 1. disegna il QR
     ctx.drawImage(qrCanvas, 0, 0);
 
-    // 2. disegna il logo sopra (già caricato nel DOM)
-    const logoImg = qrWrapper.querySelector("img");
+    // 2. disegna il logo sopra (già caricato nel DOM, non l'img del QR)
+    const logoImg = qrWrapper.querySelector("img[data-role='pp-logo']");
     if (logoImg && logoImg.complete) {
         const logoSize = 42;
         const padding = 6;
