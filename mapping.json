@@ -7626,7 +7626,7 @@
     "pedalplex_id": "Hotone Wally+ Looper",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/hotone/skyline/wally",
-    "pedalplex_url": "https://www.pedalplex.com/gear/hotone-wally-looper-1",
+    "pedalplex_url": "https://www.pedalplex.com/gear/hotone-wally-plus-looper",
     "brand": "Hotone",
     "category": "looper",
     "seo_description": "Hotone Wally+ Looper expands looping capabilities with extended recording time and improved functionality."
@@ -14619,7 +14619,7 @@
     "pedalplex_id": "TC Electronic Ditto+ Looper",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/tcelectronic/ditto/plus",
-    "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-ditto-looper-1",
+    "pedalplex_url": "https://www.pedalplex.com/gear/tc-electronic-ditto-plus-looper",
     "brand": "TC Electronic",
     "category": "looper",
     "seo_description": "Ditto+ Looper expands the classic Ditto with advanced features, stereo output, and extended loop control for live and studio use."
@@ -16990,15 +16990,6 @@
     "brand": "ZVEX",
     "category": "booster",
     "seo_description": "The ZVEX Effects Super Duper 2 in 1 Booster is a boost pedal designed to raise level, push amplifiers, and add presence or gain to a signal chain. Built by ZVEX, it fits the booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the ZVEX Effects Super Duper 2 in 1 Booster on PedalPlex."
-  },
-  {
-    "pedalplex_id": "Morgan Amps AC20 Head",
-    "status": "missing",
-    "fxdb_url": null,
-    "pedalplex_url": "https://www.pedalplex.com/gear/morgan-amps-ac20-head",
-    "brand": "Morgan Amps",
-    "category": "head",
-    "seo_description": "The Morgan Amps AC20 Head is a guitar amplifier head designed as the core tone source for stage, studio, and pedal-platform rigs. Built by Morgan Amps, it fits the head category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the Morgan Amps AC20 Head on PedalPlex."
   },
   {
     "pedalplex_id": "Death By Audio Interstellar Overdriver Deluxe - Gold",
