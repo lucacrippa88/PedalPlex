@@ -401,6 +401,9 @@ function slugify(text) {
   // lowercase
   text = text.toLowerCase();
 
+  // converte + in -plus prima di rimuovere i caratteri speciali
+  text = text.replace(/\+/g, "-plus");
+
   // rimuove caratteri non alfanumerici (tranne spazio e -)
   text = text.replace(/[^a-z0-9\s-]/g, "");
 
