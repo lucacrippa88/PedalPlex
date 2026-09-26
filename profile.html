@@ -143,6 +143,20 @@
           <div class="bx--col"><strong>Plexes:</strong> <span id="c-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
           <div class="bx--col"><strong>SubPlexes:</strong> <span id="c-subplexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
         </div>
+        <br><br>
+        <h4 style="font-weight: 700; margin-bottom: 1rem;">Guest (Local Mode) Stats:</h4>
+        <div class="bx--row">
+          <div class="bx--col"><strong>Total Guest Visitors:</strong> <span id="g-guest-total">–</span></div>
+          <div class="bx--col"><strong>Guests with Local Rig:</strong> <span id="g-guest-with-rig">–</span></div>
+          <div class="bx--col"><strong>Guests with Local Plexes:</strong> <span id="g-guest-with-plexes">–</span></div>
+          <div class="bx--col"><strong>Total Local Plexes:</strong> <span id="g-guest-total-plexes">–</span></div>
+        </div>
+        <br>
+        <div class="bx--row">
+          <div class="bx--col"><strong>Guests with Both (Rig & Plexes):</strong> <span id="g-guest-with-both">–</span></div>
+          <div class="bx--col"><strong>Avg Pedals per Rig:</strong> <span id="g-guest-avg-pedals">–</span></div>
+          <div class="bx--col"><strong>Plex Distribution (0 to 5):</strong> <span id="g-guest-plex-dist">–</span></div>
+        </div>
       </div>
     </div>
 
@@ -1401,6 +1415,21 @@ function loadAdminStats() {
       $('#c-subplexes').text(fmt(d.subplexes));
       $('#c-users').text(fmt(d.users));
       $('#c-rigs').text(fmt(d.rigs));
+
+      if (d.guests) {
+        $('#g-guest-total').text(fmt(d.guests.total_guests));
+        $('#g-guest-with-rig').text(fmt(d.guests.guests_with_rig));
+        $('#g-guest-with-plexes').text(fmt(d.guests.guests_with_plexes));
+        $('#g-guest-total-plexes').text(fmt(d.guests.total_plexes_saved));
+        $('#g-guest-with-both').text(fmt(d.guests.guests_with_both));
+        $('#g-guest-avg-pedals').text(fmt(d.guests.average_rig_pedals));
+        
+        if (d.guests.plex_distribution) {
+          var dist = d.guests.plex_distribution;
+          var distStr = '0: ' + fmt(dist['0']) + ' | 1: ' + fmt(dist['1']) + ' | 2: ' + fmt(dist['2']) + ' | 3: ' + fmt(dist['3']) + ' | 4: ' + fmt(dist['4']) + ' | 5: ' + fmt(dist['5']);
+          $('#g-guest-plex-dist').text(distStr);
+        }
+      }
     },
     error: function () {
       Swal.fire('Error', 'Failed to load admin stats', 'error');
