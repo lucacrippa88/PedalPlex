@@ -2334,3 +2334,85 @@ function resolveImageUrl(path) {
   // Locale → forzo root (QUESTO è il punto chiave)
   return `/${trimmed}`;
 }
+
+// Anonymous Guest Statistics Tracker
+async function triggerGuestStatsPing(force = false) {
+  try {
+    // If logged in, do not report as guest stats
+    if (localStorage.getItem('authToken')) {
+      return;
+    }
+
+    const now = Date.now();
+    const lastPing = parseInt(localStorage.getItem('guest_stats_last_ping') || '0', 10);
+    const cooldown = 24 * 60 * 60 * 1000; // 24 hours
+
+    // Only ping if forced (on local change) or if cooldown has passed
+    if (!force && (now - lastPing < cooldown)) {
+      return;
+    }
+
+    // Get anonymous ID
+    let anonId = localStorage.getItem('guest_anonymous_id');
+    if (!anonId) {
+      anonId = 'anon_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      localStorage.setItem('guest_anonymous_id', anonId);
+    }
+
+    // Check local rig
+    const guestBoardsRaw = localStorage.getItem("guestPedalboard");
+    let hasLocalRig = false;
+    let localRigPedalsCount = 0;
+    if (guestBoardsRaw) {
+      try {
+        const guestBoards = JSON.parse(guestBoardsRaw);
+        if (Array.isArray(guestBoards) && guestBoards.length > 0) {
+          const firstBoard = guestBoards[0];
+          if (firstBoard) {
+            hasLocalRig = true;
+            if (Array.isArray(firstBoard.pedals)) {
+              localRigPedalsCount = firstBoard.pedals.length;
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    // Check local plexes
+    const guestPlexesRaw = localStorage.getItem("guestPlexes") || localStorage.getItem("guest_plexes");
+    let localPlexCount = 0;
+    if (guestPlexesRaw) {
+      try {
+        const guestPlexes = JSON.parse(guestPlexesRaw);
+        if (Array.isArray(guestPlexes)) {
+          localPlexCount = guestPlexes.length;
+        }
+      } catch (e) {}
+    }
+
+    // Send payload to backend
+    await fetch('https://api.pedalplex.com/RECORD_GUEST_STATS.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        anonymous_id: anonId,
+        has_local_rig: hasLocalRig,
+        local_rig_pedals_count: localRigPedalsCount,
+        local_plex_count: localPlexCount
+      })
+    });
+
+    // Update last ping time
+    localStorage.setItem('guest_stats_last_ping', now.toString());
+  } catch (err) {
+    // Fail silently to not impact user experience
+    console.warn('Silent stats error:', err);
+  }
+}
+
+// Auto-run guest stats ping 3 seconds after load (non-blocking)
+setTimeout(() => {
+  triggerGuestStatsPing();
+}, 3000);

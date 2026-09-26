@@ -1142,6 +1142,9 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
             let guestBoards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
             guestBoards.splice(selectedBoardIndex, 1);
             localStorage.setItem('guestPedalboard', JSON.stringify(guestBoards));
+            if (typeof triggerGuestStatsPing === 'function') {
+              triggerGuestStatsPing(true);
+            }
 
             // Update in-memory
             window.allPedalboards = guestBoards;
@@ -1307,6 +1310,9 @@ function saveGuestPedalboard() {
   const guestBoards = [board]; // always save as array
   localStorage.setItem("guestPedalboard", JSON.stringify(guestBoards));
   window.allPedalboards = guestBoards;
+  if (typeof triggerGuestStatsPing === 'function') {
+    triggerGuestStatsPing(true);
+  }
   Swal.fire({
     icon: 'success',
     title: 'Saved!',
