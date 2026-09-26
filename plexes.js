@@ -72,6 +72,9 @@ function getGuestPlexes() {
 
 function saveGuestPlexes(plexes) {
   localStorage.setItem(GUEST_PLEXES_KEY, JSON.stringify(plexes));
+  if (typeof triggerGuestStatsPing === 'function') {
+    triggerGuestStatsPing(true);
+  }
 }
 
 /** Returns false if at limit, otherwise creates and returns the new plex object */
