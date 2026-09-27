@@ -159,7 +159,6 @@
           <div class="bx--col"><strong>Avg Gear per Rig:</strong> <span id="c-avg-gear-per-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
           <div class="bx--col"><strong>Avg Plexes per Rig:</strong> <span id="c-avg-plexes-per-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
           <div class="bx--col"><strong>Avg Plexes per User:</strong> <span id="c-avg-plexes-per-user"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Shared Plex Views:</strong> <span id="c-shared-plex-views"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
         </div>
 
         <br><hr style="border-color: #333;"><br>
@@ -180,6 +179,15 @@
         <br>
         <div class="bx--row">
           <div class="bx--col"><strong>Plex Distribution (0 to 5):</strong> <span id="g-guest-plex-dist"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        </div>
+
+        <br><hr style="border-color: #333;"><br>
+
+        <!-- SEZIONE 4: SHARED PLEXES -->
+        <h4 style="font-weight: 700; margin-bottom: 1rem; color: #fff;">Section 4 - Shared Plexes</h4>
+        <div class="bx--row">
+          <div class="bx--col"><strong>Shared Plexes:</strong> <span id="c-shared-plexes-total"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Shared Plex Views:</strong> <span id="c-shared-plex-views"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
         </div>
       </div>
     </div>
@@ -1441,6 +1449,8 @@ function loadAdminStats() {
       $('#c-users').text(fmt(d.users));
       $('#c-rigs').text(fmt(d.rigs));
       $('#c-plexes').text(fmt(d.plexes));
+      
+      $('#c-shared-plexes-total').text(fmt(d.shared_plex_es_total || d.shared_plexes_total));
       $('#c-shared-plex-views').text(fmt(d.shared_plex_views));
 
       if (d.registered_averages) {
