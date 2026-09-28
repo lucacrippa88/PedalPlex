@@ -155,7 +155,6 @@ function buildJSON() {
                 ctrl.min = parseInt($(this).find(".ctrl-min").val());
                 ctrl.max = parseInt($(this).find(".ctrl-max").val())
                 ctrl.value = parseInt($(this).find(".ctrl-value").val());
-                ctrl["slider-color"] = $(this).find(".ctrl-slider-color").val();
                 const pos = getPosition($(this));
                 if (pos) ctrl.position = pos;
             } else if (type === "lcd") {
@@ -725,7 +724,6 @@ function syncUIFromJSON(pedal) {
                     $ctrl.find(".ctrl-min").val(ctrl.min ?? -15);
                     $ctrl.find(".ctrl-max").val(ctrl.max ?? 15);
                     $ctrl.find(".ctrl-value").val(ctrl.value ?? 0);
-                    $ctrl.find(".ctrl-slider-color").val(ctrl["slider-color"] || "#555555");
 
                     applyPosition($ctrl, ctrl);
 
