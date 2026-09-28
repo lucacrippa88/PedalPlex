@@ -373,36 +373,39 @@ html { box-sizing: content-box !important; }
 
 /* ---- Cross-browser range input reset ---- */
 /*
- * --slider-track  : unfilled rail colour
- * --slider-fill   : filled/active portion colour (set via JS as a gradient)
- * --slider-thumb  : knob colour (per-element, set via JS style.setProperty)
+ * All sliders are rendered as horizontal range inputs.
+ * Vertical ones are rotated -90deg in JS so the same CSS applies everywhere.
+ * --slider-track : unfilled rail colour
+ * --slider-fill  : gradient set in JS — filled portion left, track right
  */
 input[type="range"] {
   --slider-track: #3a3a3a;
   --slider-thumb: #555555;
   -webkit-appearance: none;
   appearance: none;
-  /* Match the element background to the track so no bleed shows at the ends */
-  background: var(--slider-track);
-  cursor: pointer;
-}
-
-/* Track — WebKit/Blink: hidden; fill is painted on the element itself */
-input[type="range"]::-webkit-slider-runnable-track {
-  background: transparent;
-}
-
-/* Track — Firefox (unfilled rail; filled part handled by ::-moz-range-progress) */
-input[type="range"]::-moz-range-track {
   height: 5px;
   border-radius: 4px;
-  background: var(--slider-track);
+  background: var(--slider-fill, var(--slider-track));
+  cursor: pointer;
+  display: block;
+}
+
+/* Track pseudo-element — transparent, fill lives on the element bg */
+input[type="range"]::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 100%;
+}
+
+/* Firefox track — transparent; fill via ::-moz-range-progress */
+input[type="range"]::-moz-range-track {
+  height: 100%;
+  background: transparent;
   border: none;
 }
 
-/* Filled portion — Firefox only */
+/* Filled portion — Firefox */
 input[type="range"]::-moz-range-progress {
-  height: 5px;
+  height: 100%;
   border-radius: 4px;
   background: var(--slider-thumb);
 }
@@ -416,7 +419,7 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 50%;
   background: var(--slider-thumb);
   border: none;
-  /* no margin-top: on vertical sliders it shifts sideways instead of up */
+  margin-top: -5.5px; /* centre on the 5px track */
 }
 
 /* Thumb — Firefox */
@@ -429,10 +432,14 @@ input[type="range"]::-moz-range-thumb {
   box-sizing: border-box;
 }
 
-/* Orientation classes — fill painted directly on the element background */
-input[type="range"].vertical      { writing-mode: bt-lr; appearance: slider-vertical; width: 8px;  height: 100px; background: var(--slider-fill, var(--slider-track)); border-radius: 4px; }
-input[type="range"].verticalsmall { writing-mode: bt-lr; appearance: slider-vertical; width: 8px;  height: 50px;  background: var(--slider-fill, var(--slider-track)); border-radius: 4px; }
-input[type="range"].horizontal    { width: 100%;          height: 5px;                             background: var(--slider-fill, var(--slider-track)); border-radius: 4px; }
+/* Horizontal sizing */
+input[type="range"].horizontal { width: 100%; }
+
+/* Vertical: rendered as horizontal then rotated -90deg.
+   width = visual height of the slider column; height = track thickness.
+   A wrapper div (set in JS) reserves the correct visual space. */
+input[type="range"].vertical      { width: 100px; transform: rotate(-90deg); }
+input[type="range"].verticalsmall { width: 50px;  transform: rotate(-90deg); }
 
 /* Builder */
 #builder { display:flex; gap:20px; flex-wrap:wrap; }

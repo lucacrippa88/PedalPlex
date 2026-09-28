@@ -838,20 +838,16 @@ function renderPedalControls(pedal, $pedalDiv) {
       if (control.type === "slider") {
         const $label = $("<div>").text(control.label).addClass("slider-label");
 
-        const sliderThumb = control["slider-color"] || "#555555";
-        const isVertical = control.orientation === "vertical" || control.orientation === "vertical small";
-
-        // Computes the webkit fill gradient based on current value/min/max.
-        // Vertical sliders use writing-mode bt-lr so progress goes bottom→top.
+        // Computes the fill gradient: filled (dark) on the left, track on the right.
+        // Vertical sliders are rotated -90deg so "to right" = visually upward.
         function updateSliderFill(el) {
           const min = parseFloat(el.min) || 0;
           const max = parseFloat(el.max) || 100;
           const val = parseFloat(el.value) || 0;
           const pct = ((val - min) / (max - min)) * 100;
-          const dir = isVertical ? "to top" : "to right";
           el.style.setProperty(
             "--slider-fill",
-            `linear-gradient(${dir}, ${sliderThumb} ${pct}%, var(--slider-track) ${pct}%)`
+            `linear-gradient(to right, var(--slider-thumb) ${pct}%, var(--slider-track) ${pct}%)`
           );
         }
 
@@ -877,10 +873,8 @@ function renderPedalControls(pedal, $pedalDiv) {
             }
           });
 
-        // Apply thumb colour and initial fill once the element exists
-        const sliderEl = $slider[0];
-        sliderEl.style.setProperty("--slider-thumb", sliderThumb);
-        updateSliderFill(sliderEl);
+        // Set initial fill
+        updateSliderFill($slider[0]);
 
         let $tooltip = null;
         let $tooltipText = null;
@@ -905,14 +899,20 @@ function renderPedalControls(pedal, $pedalDiv) {
         let $sliderWrapper;
         if (control.orientation === "vertical") {
           $slider.addClass("vertical");
+          // The element is 100px wide (its logical width) but rotated -90deg,
+          // so it occupies 5px wide × 100px tall in the layout.
+          // We wrap it in a fixed-size box that reserves that visual space.
           $sliderWrapper = $("<div>")
             .addClass("slider-wrapper-vertical")
             .css({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              margin: "0 -12px",
-              position: "relative"
+              width: "16px",
+              height: "100px",
+              margin: "0 -4px",
+              position: "relative",
+              overflow: "visible"
             })
             .append($label, $slider);
         } else if (control.orientation === "vertical small") {
@@ -923,8 +923,11 @@ function renderPedalControls(pedal, $pedalDiv) {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              margin: "0 -12px",
-              position: "relative"
+              width: "16px",
+              height: "50px",
+              margin: "0 -4px",
+              position: "relative",
+              overflow: "visible"
             })
             .append($label, $slider);
         } else {
