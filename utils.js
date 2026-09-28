@@ -839,16 +839,19 @@ function renderPedalControls(pedal, $pedalDiv) {
         const $label = $("<div>").text(control.label).addClass("slider-label");
 
         const sliderThumb = control["slider-color"] || "#555555";
+        const isVertical = control.orientation === "vertical" || control.orientation === "vertical small";
 
-        // Computes the webkit fill gradient based on current value/min/max
+        // Computes the webkit fill gradient based on current value/min/max.
+        // Vertical sliders use writing-mode bt-lr so progress goes bottom→top.
         function updateSliderFill(el) {
           const min = parseFloat(el.min) || 0;
           const max = parseFloat(el.max) || 100;
           const val = parseFloat(el.value) || 0;
           const pct = ((val - min) / (max - min)) * 100;
+          const dir = isVertical ? "to top" : "to right";
           el.style.setProperty(
             "--slider-fill",
-            `linear-gradient(to right, ${sliderThumb} ${pct}%, var(--slider-track) ${pct}%)`
+            `linear-gradient(${dir}, ${sliderThumb} ${pct}%, var(--slider-track) ${pct}%)`
           );
         }
 
