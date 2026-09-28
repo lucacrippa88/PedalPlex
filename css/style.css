@@ -372,7 +372,11 @@ html { box-sizing: content-box !important; }
 .slider-label { margin-bottom: 4px; font-size: 12px; }
 
 /* ---- Cross-browser range input reset ---- */
-/* Default thumb colour (overridden per-element via --slider-thumb) */
+/*
+ * --slider-track  : unfilled rail colour
+ * --slider-fill   : filled/active portion colour (set via JS as a gradient)
+ * --slider-thumb  : knob colour (per-element, set via JS style.setProperty)
+ */
 input[type="range"] {
   --slider-track: #3a3a3a;
   --slider-thumb: #555555;
@@ -382,19 +386,26 @@ input[type="range"] {
   cursor: pointer;
 }
 
-/* Track — WebKit/Blink */
+/* Track — WebKit/Blink (fill simulated via background gradient set in JS) */
 input[type="range"]::-webkit-slider-runnable-track {
   height: 5px;
   border-radius: 999px;
-  background: var(--slider-track);
+  background: var(--slider-fill, var(--slider-track));
 }
 
-/* Track — Firefox */
+/* Track — Firefox (unfilled rail; filled part handled by ::-moz-range-progress) */
 input[type="range"]::-moz-range-track {
   height: 5px;
   border-radius: 999px;
   background: var(--slider-track);
   border: none;
+}
+
+/* Filled portion — Firefox only */
+input[type="range"]::-moz-range-progress {
+  height: 5px;
+  border-radius: 999px;
+  background: var(--slider-thumb);
 }
 
 /* Thumb — WebKit/Blink */
@@ -416,6 +427,7 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 50%;
   background: var(--slider-thumb);
   border: 2px solid rgba(255,255,255,0.25);
+  box-sizing: border-box;
 }
 
 /* Orientation classes (restore sizing) */

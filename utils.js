@@ -838,6 +838,20 @@ function renderPedalControls(pedal, $pedalDiv) {
       if (control.type === "slider") {
         const $label = $("<div>").text(control.label).addClass("slider-label");
 
+        const sliderThumb = control["slider-color"] || "#555555";
+
+        // Computes the webkit fill gradient based on current value/min/max
+        function updateSliderFill(el) {
+          const min = parseFloat(el.min) || 0;
+          const max = parseFloat(el.max) || 100;
+          const val = parseFloat(el.value) || 0;
+          const pct = ((val - min) / (max - min)) * 100;
+          el.style.setProperty(
+            "--slider-fill",
+            `linear-gradient(to right, ${sliderThumb} ${pct}%, var(--slider-track) ${pct}%)`
+          );
+        }
+
         const $slider = $("<input type='range'>")
           .attr({
             min: control.min,
@@ -846,9 +860,9 @@ function renderPedalControls(pedal, $pedalDiv) {
             step: (control.step ?? 1) / 2, // 2x denser
             "data-control-label": control.label
           })
-          .css("--slider-thumb", control["slider-color"] || "")
           .on("input", function () {
             control.value = parseFloat($(this).val());
+            updateSliderFill(this);
             if (!$pedalDiv.data("subplexInvalidated")) {
               $pedalDiv.data("subplexInvalidated", true);
               invalidateSubplex($pedalDiv); // mark SubPlex as changed
@@ -859,6 +873,11 @@ function renderPedalControls(pedal, $pedalDiv) {
               $tooltip.show();
             }
           });
+
+        // Apply thumb colour and initial fill once the element exists
+        const sliderEl = $slider[0];
+        sliderEl.style.setProperty("--slider-thumb", sliderThumb);
+        updateSliderFill(sliderEl);
 
         let $tooltip = null;
         let $tooltipText = null;
