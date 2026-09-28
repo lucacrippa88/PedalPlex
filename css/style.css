@@ -369,77 +369,10 @@ html { box-sizing: content-box !important; }
 
 /* Slider containers */
 .slider-container { display: flex; flex-direction: column; align-items: center; margin: 0 -12px; }
+input[type="range"].vertical { writing-mode: bt-lr; appearance: slider-vertical; width: 8px; height: 100px; background: transparent; }
+input[type="range"].verticalsmall { writing-mode: bt-lr; appearance: slider-vertical; width: 8px; height: 50px; background: transparent; }
+input[type="range"].horizontal { width: 100%; height: 6px; }
 .slider-label { margin-bottom: 4px; font-size: 12px; }
-
-/* ---- Cross-browser range input reset ---- */
-/*
- * All sliders are rendered as horizontal range inputs.
- * Vertical ones are rotated -90deg in JS so the same CSS applies everywhere.
- * --slider-track : unfilled rail colour
- * --slider-fill  : gradient set in JS — filled portion left, track right
- */
-input[type="range"] {
-  --slider-track: #3a3a3a;
-  --slider-thumb: #555555;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 5px;
-  border-radius: 4px;
-  background: var(--slider-fill, var(--slider-track));
-  cursor: pointer;
-  display: block;
-}
-
-/* Track pseudo-element — transparent, fill lives on the element bg */
-input[type="range"]::-webkit-slider-runnable-track {
-  background: transparent;
-  height: 100%;
-}
-
-/* Firefox track — transparent; fill via ::-moz-range-progress */
-input[type="range"]::-moz-range-track {
-  height: 100%;
-  background: transparent;
-  border: none;
-}
-
-/* Filled portion — Firefox */
-input[type="range"]::-moz-range-progress {
-  height: 100%;
-  border-radius: 4px;
-  background: var(--slider-thumb);
-}
-
-/* Thumb — WebKit/Blink */
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--slider-thumb);
-  border: none;
-  margin-top: -5.5px; /* centre on the 5px track */
-}
-
-/* Thumb — Firefox */
-input[type="range"]::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--slider-thumb);
-  border: none;
-  box-sizing: border-box;
-}
-
-/* Horizontal sizing */
-input[type="range"].horizontal { width: 100%; }
-
-/* Vertical: rendered as horizontal then rotated -90deg.
-   width = visual height of the slider column; height = track thickness.
-   A wrapper div (set in JS) reserves the correct visual space. */
-input[type="range"].vertical      { width: 100px; transform: rotate(-90deg); }
-input[type="range"].verticalsmall { width: 50px;  transform: rotate(-90deg); }
 
 /* Builder */
 #builder { display:flex; gap:20px; flex-wrap:wrap; }

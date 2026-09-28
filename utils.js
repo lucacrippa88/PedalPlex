@@ -838,19 +838,6 @@ function renderPedalControls(pedal, $pedalDiv) {
       if (control.type === "slider") {
         const $label = $("<div>").text(control.label).addClass("slider-label");
 
-        // Computes the fill gradient: filled (dark) on the left, track on the right.
-        // Vertical sliders are rotated -90deg so "to right" = visually upward.
-        function updateSliderFill(el) {
-          const min = parseFloat(el.min) || 0;
-          const max = parseFloat(el.max) || 100;
-          const val = parseFloat(el.value) || 0;
-          const pct = ((val - min) / (max - min)) * 100;
-          el.style.setProperty(
-            "--slider-fill",
-            `linear-gradient(to right, var(--slider-thumb) ${pct}%, var(--slider-track) ${pct}%)`
-          );
-        }
-
         const $slider = $("<input type='range'>")
           .attr({
             min: control.min,
@@ -861,7 +848,6 @@ function renderPedalControls(pedal, $pedalDiv) {
           })
           .on("input", function () {
             control.value = parseFloat($(this).val());
-            updateSliderFill(this);
             if (!$pedalDiv.data("subplexInvalidated")) {
               $pedalDiv.data("subplexInvalidated", true);
               invalidateSubplex($pedalDiv); // mark SubPlex as changed
@@ -872,9 +858,6 @@ function renderPedalControls(pedal, $pedalDiv) {
               $tooltip.show();
             }
           });
-
-        // Set initial fill
-        updateSliderFill($slider[0]);
 
         let $tooltip = null;
         let $tooltipText = null;
@@ -906,8 +889,7 @@ function renderPedalControls(pedal, $pedalDiv) {
               flexDirection: "column",
               alignItems: "center",
               margin: "0 -12px",
-              position: "relative",
-              overflow: "visible"
+              position: "relative"
             })
             .append($label, $slider);
         } else if (control.orientation === "vertical small") {
@@ -919,8 +901,7 @@ function renderPedalControls(pedal, $pedalDiv) {
               flexDirection: "column",
               alignItems: "center",
               margin: "0 -12px",
-              position: "relative",
-              overflow: "visible"
+              position: "relative"
             })
             .append($label, $slider);
         } else {
