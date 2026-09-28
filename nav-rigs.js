@@ -25,8 +25,8 @@ function initNavPedalboard(userRole) {
 
         <input type="text"
                id="pedalFilterInput"
-               placeholder="..."
-               style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 200px; display:none;" 
+               placeholder="Search pedals..."
+               style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 280px; display:none;"
                aria-label="Filter pedals"/>
 
         <button id="tourTriggerBtn" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only pp-tour-trigger-btn" type="button" aria-label="Start guided tour" title="Guided Tour">
@@ -81,7 +81,18 @@ function initNavPedalboard(userRole) {
 
   $("#toggleFilterBtn").on("click", function (e) {
     e.stopPropagation();
-    $("#pedalFilterInput").show().focus();
+    const $input = $("#pedalFilterInput");
+    $input.show().focus();
+    const currentQuery = $input.val().trim();
+    if (currentQuery) {
+      const dropdown = getOrCreateDropdown();
+      if (dropdown.children.length > 0) {
+        dropdown.style.display = "block";
+        positionDropdown();
+      } else {
+        $input.trigger("input");
+      }
+    }
   });
 
   $("#addGearsTrigger").on("click", function (e) {
@@ -120,11 +131,12 @@ function initNavPedalboard(userRole) {
   function positionDropdown() {
     const input = document.getElementById('pedalFilterInput');
     const dropdown = document.getElementById('pedalAddDropdownContainer');
-    if (!dropdown) return;
+    if (!dropdown || !input) return;
     const rect = input.getBoundingClientRect();
-    dropdown.style.top = window.scrollY + rect.bottom + 'px';
-    dropdown.style.left = window.scrollX + rect.left + 'px';
-    dropdown.style.width = rect.width + 'px';
+    dropdown.style.top = (window.scrollY + rect.bottom + 4) + 'px';
+    dropdown.style.left = (window.scrollX + rect.left) + 'px';
+    const desiredWidth = Math.max(rect.width, 320);
+    dropdown.style.width = desiredWidth + 'px';
   }
 
   // Dropdown creation/retrieval function
@@ -133,16 +145,10 @@ function initNavPedalboard(userRole) {
     if (!dropdown) {
       dropdown = document.createElement('div');
       dropdown.id = 'pedalAddDropdownContainer';
-      dropdown.style.position = 'absolute';
-      dropdown.style.background = 'white';
-      dropdown.style.border = '1px solid #ccc';
-      dropdown.style.borderRadius = '4px';
-      dropdown.style.maxHeight = '200px';
-      dropdown.style.overflowY = 'auto';
-      dropdown.style.display = 'none';
-      dropdown.style.zIndex = 3000;
       document.body.appendChild(dropdown);
     }
+    dropdown.style.position = 'absolute';
+    dropdown.style.zIndex = '3000';
     return dropdown;
   }
 
@@ -196,87 +202,45 @@ function initNavPedalboard(userRole) {
       // Dropdown population
       data.forEach(pedal => {
         const item = document.createElement('div');
-        item.style.display = 'flex';
-        item.style.justifyContent = 'space-between';
-        item.style.alignItems = 'center';
-        item.style.padding = '6px';
+        item.classList.add('pedal-dropdown-item');
 
         const label = document.createElement('span');
+        label.className = 'pedal-dropdown-label';
         label.textContent = pedal._id;
-        label.style.color = 'black';
         item.appendChild(label);
 
         const btn = document.createElement('button');
-        btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm');
-        btn.style.padding = '2px 6px';
+        btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm', 'pedal-dropdown-btn');
+        btn.setAttribute('type', 'button');
+        btn.setAttribute('aria-label', `Add ${pedal._id}`);
         btn.innerHTML = `
-                <svg focusable="false" preserveAspectRatio="xMidYMid meet" 
-                     xmlns="http://www.w3.org/2000/svg" fill="currentColor" 
-                     width="8" height="8" viewBox="0 0 16 16" aria-hidden="true">
-                     <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>`;
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+               xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+               width="16" height="16" viewBox="0 0 32 32" aria-hidden="true">
+               <path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/>
+          </svg>`;
 
-        btn.addEventListener('click', async () => {
-          const {
-            value: rotationStr
-          } = await Swal.fire({
-            title: 'Set Gear rotation',
-            input: 'select',
-            inputOptions: {
-              0: '0°',
-              90: '90°',
-              180: '180°',
-              270: '270°'
-            },
-            inputValue: '0',
-            // showCancelButton: true,
-            showCloseButton: true,
-            confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M18 6 16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z'></path></svg>Ok, Next",
-            customClass: {
-              confirmButton: 'bx--btn bx--btn--primary',
-              cancelButton: 'bx--btn bx--btn--secondary',
-              input: 'angleSelect'
-            },
-            buttonsStyling: false
-          });
+        const handleAddPedal = async (e) => {
+          e.stopPropagation();
 
-          if (rotationStr === undefined) return;
-          const rotation = parseInt(rotationStr, 10);
+          if (!window.pedalboard) {
+            console.error("No pedalboard currently loaded");
+            return;
+          }
+          if (!Array.isArray(window.pedalboard.pedals)) {
+            window.pedalboard.pedals = [];
+          }
 
-          const {
-            value: rowStr
-          } = await Swal.fire({
-            title: 'Set row number',
-            input: 'number',
-            inputAttributes: {
-              min: 1,
-              step: 1
-            },
-            inputValue: '1',
-            // showCancelButton: true,
-            showCloseButton: true,
-            confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M26,30H6a2,2,0,0,1-2-2V16a2,2,0,0,1,2-2H9v2H6V28H26V16H23V14h3a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z'></path><path d='M13 20H19V22H13z'></path><path d='M20.59 8.59 17 12.17 17 2 15 2 15 12.17 11.41 8.59 10 10 16 16 22 10 20.59 8.59z'></path></svg>Drop Gear",
-            customClass: {
-              confirmButton: 'bx--btn bx--btn--primary',
-              cancelButton: 'bx--btn bx--btn--secondary'
-            },
-            buttonsStyling: false
-          });
-
-          if (rowStr === undefined) return;
-          const row = parseInt(rowStr, 10);
-
-
-          // Download gear data if not in catalog
+          // Download gear data if not already in memory catalog
           let pedalData = window.catalog.find(p => p._id === pedal._id);
           if (!pedalData) {
             try {
               const postRes = await fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
                 method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + authToken
-                  },
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "Bearer " + authToken
+                },
                 body: JSON.stringify({
                   ids: [pedal._id]
                 })
@@ -295,17 +259,32 @@ function initNavPedalboard(userRole) {
             }
           }
 
-          // Add to pedalboard
+          // Directly add to pedalboard with default rotation 0 and row 1 (no modal)
           window.pedalboard.pedals.push({
             pedal_id: pedal._id,
-            rotation,
-            row
+            rotation: 0,
+            row: 1
           });
-          renderPedalboard();
 
-          $("#pedalFilterInput").val('');
-          dropdown.style.display = 'none';
-        });
+          if (typeof renderPedalboard === 'function') {
+            renderPedalboard();
+          }
+
+          if (typeof Swal !== 'undefined') {
+            Swal.fire({
+              icon: 'success',
+              title: `Added: ${pedal._id}`,
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 1500,
+              timerProgressBar: false
+            });
+          }
+        };
+
+        item.addEventListener('click', handleAddPedal);
+        btn.addEventListener('click', handleAddPedal);
 
         item.appendChild(btn);
         dropdown.appendChild(item);
@@ -320,14 +299,27 @@ function initNavPedalboard(userRole) {
   }, 300));
 
   // Outside click to close dropdown search
-  document.addEventListener("click", function () {
-    const input = $("#pedalFilterInput");
-    if (!input.is(":visible")) return;
-
-    input.hide().val("");
-
+  document.addEventListener("click", function (event) {
+    const input = document.getElementById("pedalFilterInput");
     const dropdown = document.getElementById("pedalAddDropdownContainer");
-    if (dropdown) dropdown.style.display = "none";
+    const toggleBtn = document.getElementById("toggleFilterBtn");
+    const addGearsTrigger = document.getElementById("addGearsTrigger");
+
+    if (
+      (input && input.contains(event.target)) ||
+      (dropdown && dropdown.contains(event.target)) ||
+      (toggleBtn && toggleBtn.contains(event.target)) ||
+      (addGearsTrigger && addGearsTrigger.contains(event.target))
+    ) {
+      return;
+    }
+
+    if (input && $(input).is(":visible")) {
+      $(input).hide();
+    }
+    if (dropdown) {
+      dropdown.style.display = "none";
+    }
   });
 
   window.addEventListener('scroll', positionDropdown);

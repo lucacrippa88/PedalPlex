@@ -290,7 +290,66 @@ html { box-sizing: content-box !important; }
 
 
 /* Pedal dropdowns, catalog */
-#pedalAddDropdownContainer { background: white; max-height: 300px; overflow-y: auto; width: 200px; z-index: 3000; border-radius: 4px}
+#pedalAddDropdownContainer {
+  background: #ffffff;
+  max-height: 420px;
+  overflow-y: auto;
+  min-width: 320px;
+  max-width: 90vw;
+  z-index: 3000;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  border: 1px solid #d1d5db;
+}
+
+.pedal-dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 12px;
+}
+
+.pedal-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.pedal-dropdown-item:hover {
+  background-color: #f4f4f4;
+}
+
+.pedal-dropdown-item:active {
+  background-color: #e5e7eb;
+}
+
+.pedal-dropdown-label {
+  color: #161616;
+  font-size: 0.925rem;
+  font-weight: 500;
+  line-height: 1.3;
+  flex: 1;
+  word-break: break-word;
+}
+
+.pedal-dropdown-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  border-radius: 4px;
+}
+
+.pedal-dropdown-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
 #catalog, #selected-pedals { margin-top: 1rem; min-height: 2rem; }
 #preset { margin: auto; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; /*max-width: 100vw;*/ white-space: normal; }
 #catalog { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 100vw; white-space: normal; }
