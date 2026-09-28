@@ -899,18 +899,13 @@ function renderPedalControls(pedal, $pedalDiv) {
         let $sliderWrapper;
         if (control.orientation === "vertical") {
           $slider.addClass("vertical");
-          // The element is 100px wide (its logical width) but rotated -90deg,
-          // so it occupies 5px wide × 100px tall in the layout.
-          // We wrap it in a fixed-size box that reserves that visual space.
           $sliderWrapper = $("<div>")
             .addClass("slider-wrapper-vertical")
             .css({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              width: "16px",
-              height: "100px",
-              margin: "0 -4px",
+              margin: "0 -12px",
               position: "relative",
               overflow: "visible"
             })
@@ -923,9 +918,7 @@ function renderPedalControls(pedal, $pedalDiv) {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              width: "16px",
-              height: "50px",
-              margin: "0 -4px",
+              margin: "0 -12px",
               position: "relative",
               overflow: "visible"
             })
