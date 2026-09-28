@@ -382,21 +382,20 @@ input[type="range"] {
   --slider-thumb: #555555;
   -webkit-appearance: none;
   appearance: none;
-  background: transparent;
+  /* Match the element background to the track so no bleed shows at the ends */
+  background: var(--slider-track);
   cursor: pointer;
 }
 
-/* Track — WebKit/Blink (fill simulated via background gradient set in JS) */
+/* Track — WebKit/Blink: hidden; fill is painted on the element itself */
 input[type="range"]::-webkit-slider-runnable-track {
-  height: 5px;
-  border-radius: 999px;
-  background: var(--slider-fill, var(--slider-track));
+  background: transparent;
 }
 
 /* Track — Firefox (unfilled rail; filled part handled by ::-moz-range-progress) */
 input[type="range"]::-moz-range-track {
   height: 5px;
-  border-radius: 999px;
+  border-radius: 4px;
   background: var(--slider-track);
   border: none;
 }
@@ -404,7 +403,7 @@ input[type="range"]::-moz-range-track {
 /* Filled portion — Firefox only */
 input[type="range"]::-moz-range-progress {
   height: 5px;
-  border-radius: 999px;
+  border-radius: 4px;
   background: var(--slider-thumb);
 }
 
@@ -412,28 +411,28 @@ input[type="range"]::-moz-range-progress {
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--slider-thumb);
-  border: 2px solid rgba(255,255,255,0.25);
-  margin-top: -5px; /* vertically centre on track */
+  border: none;
+  /* no margin-top: on vertical sliders it shifts sideways instead of up */
 }
 
 /* Thumb — Firefox */
 input[type="range"]::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--slider-thumb);
-  border: 2px solid rgba(255,255,255,0.25);
+  border: none;
   box-sizing: border-box;
 }
 
-/* Orientation classes (restore sizing) */
-input[type="range"].vertical      { writing-mode: bt-lr; appearance: slider-vertical; width: 8px; height: 100px; }
-input[type="range"].verticalsmall { writing-mode: bt-lr; appearance: slider-vertical; width: 8px; height: 50px;  }
-input[type="range"].horizontal    { width: 100%; }
+/* Orientation classes — fill painted directly on the element background */
+input[type="range"].vertical      { writing-mode: bt-lr; appearance: slider-vertical; width: 8px;  height: 100px; background: var(--slider-fill, var(--slider-track)); border-radius: 4px; }
+input[type="range"].verticalsmall { writing-mode: bt-lr; appearance: slider-vertical; width: 8px;  height: 50px;  background: var(--slider-fill, var(--slider-track)); border-radius: 4px; }
+input[type="range"].horizontal    { width: 100%;          height: 5px;                             background: var(--slider-fill, var(--slider-track)); border-radius: 4px; }
 
 /* Builder */
 #builder { display:flex; gap:20px; flex-wrap:wrap; }
