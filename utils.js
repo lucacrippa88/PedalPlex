@@ -846,6 +846,7 @@ function renderPedalControls(pedal, $pedalDiv) {
             step: (control.step ?? 1) / 2, // 2x denser
             "data-control-label": control.label
           })
+          .css("--slider-thumb", control["slider-color"] || "")
           .on("input", function () {
             control.value = parseFloat($(this).val());
             if (!$pedalDiv.data("subplexInvalidated")) {

@@ -14201,6 +14201,15 @@
     "category": "reverb",
     "seo_description": "blueSky Reverberator offers pristine digital reverb with Plate, Room, and Spring modes for professional-quality ambient sounds."
   },
+    {
+    "pedalplex_id": "Strymon blueSky Reverberator V1",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/strymon/bluesky",
+    "pedalplex_url": "https://www.pedalplex.com/gear/strymon-bluesky-reverberator",
+    "brand": "Strymon",
+    "category": "reverb",
+    "seo_description": "blueSky Reverberator offers pristine digital reverb with Plate, Room, and Spring modes for professional-quality ambient sounds."
+  },
   {
     "pedalplex_id": "Strymon Brig dBucket Delay",
     "status": "found",
