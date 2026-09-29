@@ -205,6 +205,26 @@ header {
   text-decoration: none;
   color: #161616;
 }
+.fullscreen-user-btns {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+.fullscreen-user-btns .bx--btn {
+  max-width: none !important;
+  white-space: nowrap;
+}
+@media (max-width: 768px) {
+  .fullscreen-user-btns .btn-label {
+    display: none;
+  }
+  .fullscreen-user-btns .bx--btn {
+    min-width: 0;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
 
 
 
