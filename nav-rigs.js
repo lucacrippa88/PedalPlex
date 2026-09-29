@@ -83,15 +83,12 @@ function initNavPedalboard(userRole) {
     e.stopPropagation();
     const $input = $("#pedalFilterInput");
     $input.show().focus();
-    const currentQuery = $input.val().trim();
-    if (currentQuery) {
-      const dropdown = getOrCreateDropdown();
-      if (dropdown.children.length > 0) {
-        dropdown.style.display = "block";
-        positionDropdown();
-      } else {
-        $input.trigger("input");
-      }
+    const dropdown = getOrCreateDropdown();
+    if (dropdown.children.length > 0) {
+      dropdown.style.display = "block";
+      positionDropdown();
+    } else {
+      fetchAndRenderPedals($input.val().trim());
     }
   });
 
@@ -152,15 +149,9 @@ function initNavPedalboard(userRole) {
     return dropdown;
   }
 
-  // Event listener input with debounce
-  $("#pedalFilterInput").on("input", debounce(async function () {
-    const query = $(this).val().trim().toLowerCase();
+  async function fetchAndRenderPedals(rawQuery = '') {
+    const query = (rawQuery || '').trim().toLowerCase();
     const dropdown = getOrCreateDropdown();
-
-    if (!query) {
-      dropdown.style.display = 'none';
-      return;
-    }
 
     // Spinner while loading
     dropdown.innerHTML = `
@@ -177,15 +168,16 @@ function initNavPedalboard(userRole) {
 
     try {
       const authToken = localStorage.getItem('authToken');
+      const searchUrl = query
+        ? `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`
+        : `https://api.pedalplex.com/GET_CATALOG_IDS.php`;
 
-      const res = await fetch(
-        `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + authToken
-          }
+      const res = await fetch(searchUrl, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + authToken
         }
-      );
+      });
       const data = await res.json();
 
       dropdown.innerHTML = '';
@@ -193,7 +185,9 @@ function initNavPedalboard(userRole) {
       if (!data || !Array.isArray(data) || data.length === 0) {
         const noResult = document.createElement('div');
         noResult.textContent = 'No pedals found';
-        noResult.style.padding = '6px';
+        noResult.style.padding = '12px';
+        noResult.style.color = '#525252';
+        noResult.style.fontSize = '0.875rem';
         dropdown.appendChild(noResult);
         positionDropdown();
         return;
@@ -296,6 +290,11 @@ function initNavPedalboard(userRole) {
       console.error("Search error:", err);
       dropdown.style.display = 'none';
     }
+  }
+
+  // Event listener input with debounce
+  $("#pedalFilterInput").on("input", debounce(function () {
+    fetchAndRenderPedals($(this).val());
   }, 300));
 
   // Outside click to close dropdown search
