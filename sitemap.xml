@@ -7921,6 +7921,11 @@
 <priority>0.8</priority>
 </url>
 <url>
+<loc>https://pedalplex.com/gear/strymon-bluesky-reverberator-v1</loc>
+<changefreq>monthly</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
 <loc>https://pedalplex.com/gear/strymon-brig-dbucket-delay</loc>
 <changefreq>monthly</changefreq>
 <priority>0.8</priority>
