@@ -149,11 +149,189 @@ function initNavPedalboard(userRole) {
     return dropdown;
   }
 
+  // Lazy-load state
+  let lazyPage = 1;
+  let lazyQuery = '';
+  let lazyLoading = false;
+  let lazyHasMore = true;
+  let lazySentinelObserver = null;
+
+  const LAZY_LIMIT = 30;
+  const LAZY_SPINNER_ID = 'pedalDropdownLazySpinner';
+
+  function appendPedalItems(pedalsList, dropdown) {
+    const authToken = localStorage.getItem('authToken');
+    pedalsList.forEach(pedal => {
+      const item = document.createElement('div');
+      item.classList.add('pedal-dropdown-item');
+
+      const label = document.createElement('span');
+      label.className = 'pedal-dropdown-label';
+      label.textContent = pedal._id;
+      item.appendChild(label);
+
+      const btn = document.createElement('button');
+      btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm', 'pedal-dropdown-btn');
+      btn.setAttribute('type', 'button');
+      btn.setAttribute('aria-label', `Add ${pedal._id}`);
+      btn.innerHTML = `
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+             xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+             width="16" height="16" viewBox="0 0 32 32" aria-hidden="true">
+             <path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/>
+        </svg>`;
+
+      const handleAddPedal = async (e) => {
+        e.stopPropagation();
+
+        if (!window.pedalboard) {
+          console.error("No pedalboard currently loaded");
+          return;
+        }
+        if (!Array.isArray(window.pedalboard.pedals)) {
+          window.pedalboard.pedals = [];
+        }
+
+        let pedalData = window.catalog.find(p => p._id === pedal._id);
+        if (!pedalData) {
+          try {
+            const postRes = await fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...(authToken ? { "Authorization": "Bearer " + authToken } : {})
+              },
+              body: JSON.stringify({ ids: [pedal._id] })
+            });
+            const result = await postRes.json();
+            if (result?.docs?.length > 0) {
+              pedalData = result.docs[0];
+              window.catalog.push(pedalData);
+            } else {
+              console.error("Pedal not found on server:", pedal._id);
+              return;
+            }
+          } catch (err) {
+            console.error("Fetch error:", err);
+            return;
+          }
+        }
+
+        window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation: 0, row: 1 });
+
+        if (typeof renderPedalboard === 'function') renderPedalboard();
+
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon: 'success',
+            title: `Added: ${pedal._id}`,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: false
+          });
+        }
+      };
+
+      item.addEventListener('click', handleAddPedal);
+      btn.addEventListener('click', handleAddPedal);
+      item.appendChild(btn);
+      dropdown.appendChild(item);
+    });
+  }
+
+  function getOrCreateLazySentinel(dropdown) {
+    let sentinel = dropdown.querySelector('#pedalDropdownSentinel');
+    if (!sentinel) {
+      sentinel = document.createElement('div');
+      sentinel.id = 'pedalDropdownSentinel';
+      sentinel.style.height = '1px';
+      dropdown.appendChild(sentinel);
+    }
+    return sentinel;
+  }
+
+  function attachLazyObserver(dropdown) {
+    if (lazySentinelObserver) {
+      lazySentinelObserver.disconnect();
+      lazySentinelObserver = null;
+    }
+    const sentinel = getOrCreateLazySentinel(dropdown);
+    lazySentinelObserver = new IntersectionObserver(async (entries) => {
+      if (entries[0].isIntersecting && !lazyLoading && lazyHasMore) {
+        await loadNextPage(dropdown);
+      }
+    }, { root: dropdown, threshold: 0 });
+    lazySentinelObserver.observe(sentinel);
+  }
+
+  async function loadNextPage(dropdown) {
+    if (lazyLoading || !lazyHasMore || lazyQuery) return;
+
+    lazyLoading = true;
+    const authToken = localStorage.getItem('authToken');
+
+    // Show spinner above sentinel
+    let spinner = document.getElementById(LAZY_SPINNER_ID);
+    if (!spinner) {
+      spinner = document.createElement('div');
+      spinner.id = LAZY_SPINNER_ID;
+      spinner.style.cssText = 'padding:10px; display:flex; justify-content:center;';
+      spinner.innerHTML = `<div class="bx--loading bx--loading--small bx--loading--active" role="alert" aria-live="assertive">
+        <svg class="bx--loading__svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" stroke-width="8"/></svg>
+      </div>`;
+    }
+    const sentinel = getOrCreateLazySentinel(dropdown);
+    dropdown.insertBefore(spinner, sentinel);
+
+    try {
+      lazyPage++;
+      const res = await fetch(
+        `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=${lazyPage}&limit=${LAZY_LIMIT}`, {
+          headers: { ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) }
+        }
+      );
+      const data = await res.json();
+      spinner.remove();
+
+      if (!Array.isArray(data) || data.length === 0) {
+        lazyHasMore = false;
+        if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; }
+        sentinel.remove();
+      } else {
+        data.forEach(item => {
+          if (item && item._id && !window.catalog.some(p => p._id === item._id)) {
+            window.catalog.push(item);
+          }
+        });
+        if (data.length < LAZY_LIMIT) {
+          lazyHasMore = false;
+          if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; }
+          sentinel.remove();
+        }
+        appendPedalItems(data.map(item => ({ _id: item._id })), dropdown);
+        if (lazyHasMore) getOrCreateLazySentinel(dropdown); // re-append sentinel after items
+      }
+    } catch (err) {
+      console.error("Lazy load error:", err);
+      spinner.remove();
+    }
+    lazyLoading = false;
+  }
+
   async function fetchAndRenderPedals(rawQuery = '') {
     const query = (rawQuery || '').trim().toLowerCase();
     const dropdown = getOrCreateDropdown();
 
-    // Spinner while loading
+    // Reset lazy state on every new fetch
+    lazyPage = 1;
+    lazyQuery = query;
+    lazyHasMore = !query; // lazy scroll only when no search query
+    lazyLoading = false;
+    if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; }
+
+    // Spinner while loading first page
     dropdown.innerHTML = `
         <div style="padding: 10px; display: flex; justify-content: center;">
             <div class="bx--loading bx--loading--small bx--loading--active" role="alert" aria-live="assertive">
@@ -180,25 +358,21 @@ function initNavPedalboard(userRole) {
           }
         );
         const data = await res.json();
-        if (Array.isArray(data)) {
-          pedalsList = data;
-        }
+        if (Array.isArray(data)) pedalsList = data;
       } else {
         const res = await fetch(
-          `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=1&limit=50`, {
-            headers: {
-              ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
-            }
+          `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=1&limit=${LAZY_LIMIT}`, {
+            headers: { ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) }
           }
         );
         const data = await res.json();
         if (Array.isArray(data)) {
-          // If items returned are objects, cache them directly in window.catalog
           data.forEach(item => {
             if (item && item._id && !window.catalog.some(p => p._id === item._id)) {
               window.catalog.push(item);
             }
           });
+          if (data.length < LAZY_LIMIT) lazyHasMore = false;
           pedalsList = data.map(item => ({ _id: item._id }));
         }
       }
@@ -216,96 +390,10 @@ function initNavPedalboard(userRole) {
         return;
       }
 
-      // Dropdown population
-      pedalsList.forEach(pedal => {
-        const item = document.createElement('div');
-        item.classList.add('pedal-dropdown-item');
+      appendPedalItems(pedalsList, dropdown);
 
-        const label = document.createElement('span');
-        label.className = 'pedal-dropdown-label';
-        label.textContent = pedal._id;
-        item.appendChild(label);
-
-        const btn = document.createElement('button');
-        btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm', 'pedal-dropdown-btn');
-        btn.setAttribute('type', 'button');
-        btn.setAttribute('aria-label', `Add ${pedal._id}`);
-        btn.innerHTML = `
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet"
-               xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-               width="16" height="16" viewBox="0 0 32 32" aria-hidden="true">
-               <path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/>
-          </svg>`;
-
-        const handleAddPedal = async (e) => {
-          e.stopPropagation();
-
-          if (!window.pedalboard) {
-            console.error("No pedalboard currently loaded");
-            return;
-          }
-          if (!Array.isArray(window.pedalboard.pedals)) {
-            window.pedalboard.pedals = [];
-          }
-
-          // Download gear data if not already in memory catalog
-          let pedalData = window.catalog.find(p => p._id === pedal._id);
-          if (!pedalData) {
-            try {
-              const postRes = await fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": "Bearer " + authToken
-                },
-                body: JSON.stringify({
-                  ids: [pedal._id]
-                })
-              });
-              const result = await postRes.json();
-              if (result?.docs?.length > 0) {
-                pedalData = result.docs[0];
-                window.catalog.push(pedalData);
-              } else {
-                console.error("Pedal not found on server:", pedal._id);
-                return;
-              }
-            } catch (err) {
-              console.error("Fetch error:", err);
-              return;
-            }
-          }
-
-          // Directly add to pedalboard with default rotation 0 and row 1 (no modal)
-          window.pedalboard.pedals.push({
-            pedal_id: pedal._id,
-            rotation: 0,
-            row: 1
-          });
-
-          if (typeof renderPedalboard === 'function') {
-            renderPedalboard();
-          }
-
-          if (typeof Swal !== 'undefined') {
-            Swal.fire({
-              icon: 'success',
-              title: `Added: ${pedal._id}`,
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 1500,
-              timerProgressBar: false
-            });
-          }
-        };
-
-        item.addEventListener('click', handleAddPedal);
-        btn.addEventListener('click', handleAddPedal);
-
-        item.appendChild(btn);
-        dropdown.appendChild(item);
-      });
+      // Attach infinite scroll only for no-query browsing
+      if (lazyHasMore) attachLazyObserver(dropdown);
 
       dropdown.style.display = 'block';
       positionDropdown();
