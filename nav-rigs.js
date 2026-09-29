@@ -168,21 +168,44 @@ function initNavPedalboard(userRole) {
 
     try {
       const authToken = localStorage.getItem('authToken');
-      const searchUrl = query
-        ? `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`
-        : `https://api.pedalplex.com/GET_CATALOG_IDS.php`;
+      let pedalsList = [];
 
-      const res = await fetch(searchUrl, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + authToken
+      if (query) {
+        const res = await fetch(
+          `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+            }
+          }
+        );
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          pedalsList = data;
         }
-      });
-      const data = await res.json();
+      } else {
+        const res = await fetch(
+          `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=1&limit=50`, {
+            headers: {
+              ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+            }
+          }
+        );
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          // If items returned are objects, cache them directly in window.catalog
+          data.forEach(item => {
+            if (item && item._id && !window.catalog.some(p => p._id === item._id)) {
+              window.catalog.push(item);
+            }
+          });
+          pedalsList = data.map(item => ({ _id: item._id }));
+        }
+      }
 
       dropdown.innerHTML = '';
 
-      if (!data || !Array.isArray(data) || data.length === 0) {
+      if (!pedalsList || !Array.isArray(pedalsList) || pedalsList.length === 0) {
         const noResult = document.createElement('div');
         noResult.textContent = 'No pedals found';
         noResult.style.padding = '12px';
@@ -194,7 +217,7 @@ function initNavPedalboard(userRole) {
       }
 
       // Dropdown population
-      data.forEach(pedal => {
+      pedalsList.forEach(pedal => {
         const item = document.createElement('div');
         item.classList.add('pedal-dropdown-item');
 
