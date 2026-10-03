@@ -29,7 +29,7 @@
       target: '#createBtn',
       waitFor: '#createBtn',
       title: 'Step 1 — Build a Rig',
-      text: 'Start by clicking <strong>Create a Rig</strong> to set up your first workspace. A Rig is the virtual collection of pedals and amplifiers.',
+      text: 'Start by clicking <strong>Create a Rig</strong> to set up your virtual collection of pedals and amplifiers.',
       position: 'bottom',
     },
     {
@@ -37,7 +37,7 @@
       target: '#addGearsTrigger',
       waitFor: '#addGearsTrigger',
       title: 'Step 2 — Add Pedals',
-      text: 'Use the <strong>search area</strong> at the top to find Gears and add them to your Rig. Each Gear is pulled from the catalog. Arrange Gears by clicking on them or with drag&drop.',
+      text: 'Use the <strong>search area</strong> at the top to find Gears and add them to your Rig, and arrange them by clicking or drag&drop.',
       position: 'bottom',
     },
     {
@@ -45,7 +45,7 @@
       target: '#saveBtn',
       waitFor: '#saveBtn',
       title: 'Step 3 — Save your Rig',
-      text: 'Happy with the setup? Click <strong>Save Rig</strong> to preserve your pedalboard so you can come back to it any time.',
+      text: 'Happy with the setup? Click <strong>Save Rig</strong> to preserve your Rig so you can come back to it any time.',
       position: 'bottom',
     },
     {
@@ -53,7 +53,7 @@
       target: '#viewPreset',
       waitFor: '#viewPreset',
       title: 'Step 4 — Go to Plexes',
-      text: 'When your Rig looks good, click <strong>Go to Plexes</strong> to start creating and saving presets for it.',
+      text: 'Click <strong>Go to Plexes</strong> to start creating and saving presets for the selected Rig.',
       position: 'bottom',
     },
     {
@@ -69,7 +69,7 @@
       target: '#preset',
       waitFor: '#preset',
       title: 'Step 6 — Set Controls & SubPlexes',
-      text: 'Adjust the <strong>knobs and switches</strong> on each pedal to dial in your tone. Use <strong>SubPlexes</strong> to document your configuration at Gear level, or check the list to get inspiration.',
+      text: 'Adjust the <strong>knobs and switches</strong> on each pedal to dial in your tone. Use <strong>+</strong> icon to document your configuration at Gear level, or check the list to get inspiration.',
       position: 'top',
     },
     {
