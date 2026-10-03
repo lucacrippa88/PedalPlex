@@ -1829,6 +1829,54 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   padding: 0.375rem 0.875rem;
 }
 
+/* Pause button: muted ghost style */
+#pp-tour-pause {
+  color: #a8a8a8 !important;
+  border-color: transparent !important;
+}
+#pp-tour-pause:hover {
+  color: #f4f4f4 !important;
+  background: rgba(255,255,255,0.08) !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Resume pill — fixed bottom-right, shown while tour is paused        */
+/* ------------------------------------------------------------------ */
+#pp-tour-resume-pill {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 20000;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #9C54D5;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 0.875rem;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  /* enter animation */
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.15s ease;
+}
+#pp-tour-resume-pill.pp-tour-resume-pill--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+#pp-tour-resume-pill:hover {
+  background: #7e3fb7;
+}
+.pp-tour-resume-step {
+  font-weight: 400;
+  opacity: 0.8;
+  font-size: 0.75rem;
+}
+
 /* Navbar tour trigger icon button */
 .pp-tour-trigger-btn {
   color: #9C54D5 !important;

@@ -89,11 +89,22 @@
   function saveState(step) {
     localStorage.setItem('pp_tour_active', 'true');
     localStorage.setItem('pp_tour_step', String(step));
+    localStorage.removeItem('pp_tour_paused');
   }
 
   function clearState() {
     localStorage.removeItem('pp_tour_active');
     localStorage.removeItem('pp_tour_step');
+    localStorage.removeItem('pp_tour_paused');
+  }
+
+  function setPaused() {
+    // Keep pp_tour_active + pp_tour_step intact so we can resume
+    localStorage.setItem('pp_tour_paused', 'true');
+  }
+
+  function isPaused() {
+    return localStorage.getItem('pp_tour_paused') === 'true';
   }
 
   function getSavedStep() {
@@ -246,12 +257,14 @@
       </div>
       <div class="pp-tour-footer">
         <button class="bx--btn bx--btn--secondary bx--btn--sm pp-tour-prev" id="pp-tour-prev">Back</button>
+        <button class="bx--btn bx--btn--ghost bx--btn--sm pp-tour-pause" id="pp-tour-pause" title="Pause tour and interact freely">Pause</button>
         <button class="bx--btn bx--btn--primary bx--btn--sm pp-tour-next" id="pp-tour-next">Next</button>
       </div>
     `;
     document.body.appendChild(popup);
 
     document.getElementById('pp-tour-close').addEventListener('click', stopTour);
+    document.getElementById('pp-tour-pause').addEventListener('click', pauseTour);
     document.getElementById('pp-tour-prev').addEventListener('click', prevStep);
     document.getElementById('pp-tour-next').addEventListener('click', nextStep);
   }
@@ -441,7 +454,72 @@
     const backdrop = document.getElementById('pp-tour-backdrop');
     if (popup)    popup.style.display    = 'none';
     if (backdrop) backdrop.style.display = 'none';
+    removeResumePill();
   };
+
+  // ----------------------------------------------------------
+  // Pause / Resume
+  // ----------------------------------------------------------
+
+  function pauseTour() {
+    clearHighlight();
+    setPaused();
+    const popup    = document.getElementById('pp-tour-popup');
+    const backdrop = document.getElementById('pp-tour-backdrop');
+    if (popup)    popup.style.display    = 'none';
+    if (backdrop) backdrop.style.display = 'none';
+    showResumePill();
+  }
+
+  function resumeTour() {
+    removeResumePill();
+    const step = getSavedStep();
+    // Clear the paused flag before showing — saveState inside showStep will do it,
+    // but we clear here for safety so autoResume doesn't show the pill again.
+    localStorage.removeItem('pp_tour_paused');
+    injectDOM();
+    showStep(step);
+  }
+
+  // ----------------------------------------------------------
+  // Resume pill — small persistent indicator shown while paused
+  // ----------------------------------------------------------
+
+  function showResumePill() {
+    if (document.getElementById('pp-tour-resume-pill')) return;
+    const step  = getSavedStep();
+    const total = TOUR_STEPS.length;
+
+    const pill = document.createElement('button');
+    pill.id = 'pp-tour-resume-pill';
+    pill.setAttribute('aria-label', 'Resume guided tour');
+    pill.innerHTML = `
+      <svg focusable="false" viewBox="0 0 32 32" fill="currentColor" width="14" height="14" aria-hidden="true" style="flex-shrink:0;">
+        <path d="M7 28L25 16 7 4 7 28z"/>
+      </svg>
+      <span>Resume tour <span class="pp-tour-resume-step">${step + 1}/${total}</span></span>
+    `;
+    document.body.appendChild(pill);
+
+    pill.addEventListener('click', function () {
+      // If the saved step is on a different page, navigate there
+      const targetPage = TOUR_STEPS[getSavedStep()]?.page;
+      if (targetPage && targetPage !== currentPage()) {
+        // Already paused state is kept; navigating will trigger autoResume on the other page
+        window.location.href = '/' + targetPage;
+      } else {
+        resumeTour();
+      }
+    });
+
+    // Animate in
+    setTimeout(function () { pill.classList.add('pp-tour-resume-pill--visible'); }, 50);
+  }
+
+  function removeResumePill() {
+    const pill = document.getElementById('pp-tour-resume-pill');
+    if (pill) pill.remove();
+  }
 
   // ----------------------------------------------------------
   // Nudge popup (shown on index, rigs, plexes)
@@ -510,7 +588,13 @@
   function autoResume() {
     const page = currentPage();
 
-    // Case 1: tour actively in progress — resume from saved step on the matching page
+    // Case 1a: tour is paused — show the resume pill (on any page)
+    if (localStorage.getItem('pp_tour_active') === 'true' && isPaused()) {
+      showResumePill();
+      return;
+    }
+
+    // Case 1b: tour actively in progress — resume from saved step on the matching page
     if (localStorage.getItem('pp_tour_active') === 'true') {
       const step = getSavedStep();
       if (step >= 0 && step < TOUR_STEPS.length && TOUR_STEPS[step].page === page) {
