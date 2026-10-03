@@ -122,10 +122,10 @@
 
       if (currentUser && currentUser.username) {
         // Utente loggato: mostra bottone "Vai ai tuoi Rigs"
-        ctaContainer.appendChild(createButton('plexes', 'bx--btn bx--btn--primary', 'Build your first rig', svgPlexes));
+        ctaContainer.appendChild(createButton('plexes', 'bx--btn bx--btn--primary', 'Access your workspace', svgPlexes));
       } else {
         // Guest / non loggato: mostra Start as Guest e Login
-        ctaContainer.appendChild(createButton('rigs', 'bx--btn bx--btn--tertiary', 'Build your first rig', svgGuest));
+        ctaContainer.appendChild(createButton('rigs', 'bx--btn bx--btn--tertiary', 'Start creating', svgGuest));
         ctaContainer.appendChild(createButton('login', 'bx--btn bx--btn--primary', 'Login', svgLogin));
       }
     </script>
