@@ -21,14 +21,28 @@
 
   <style>
     .about-wrap {
-      max-width: 680px;
+      max-width: 70%;
       margin: 6rem auto 5rem;
       padding: 0 1.25rem;
+    }
+    @media (max-width: 768px) {
+      .about-wrap { max-width: 100%; }
+    }
+    .about-heading {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .about-heading .pedalplex-logo {
+      flex-shrink: 0;
+      position: relative;
+      top: 1px;
     }
     .about-wrap h1 {
       font-size: 2rem;
       font-weight: 700;
-      margin-bottom: 0.5rem;
+      margin: 0;
     }
     .about-wrap .about-subtitle {
       font-size: 1.1rem;
@@ -36,10 +50,10 @@
       margin-bottom: 2.5rem;
     }
     .about-wrap p {
-      font-size: 1rem;
+      font-size: 1.25rem;
       line-height: 1.75;
-      color: #c6c6c6;
-      margin-bottom: 1.25rem;
+      color: #717171;
+      margin-bottom: 1.5rem;
     }
     .about-wrap strong {
       color: #f4f4f4;
@@ -73,62 +87,27 @@
 
   <main class="about-wrap">
 
-    <h1>The story behind PedalPlex</h1>
+    <div class="about-heading">
+      <div class="pedalplex-logo" aria-hidden="true"></div>
+      <h1>The story behind PedalPlex</h1>
+    </div>
     <p class="about-subtitle">A 1972 Eko, too many pedals, and not enough time.</p>
 
-    <p>I've always loved music.</p>
+    <p>I've always loved music. I first picked up a guitar when I was 10 years old, and it wasn't just any guitar: it was my father's 1972 Made-in-Italy Eko Ranger 12-string. I was blown away by that full, rich sound. That's where I started playing acoustic guitar, and a few years later I bought my first amplifier and started exploring the world of electric guitar too.</p>
 
-    <p>I first picked up a guitar when I was 10 years old, and it wasn't just any guitar: it was my father's 1972 Made-in-Italy Eko Ranger 12-string.</p>
+    <p>And then came the pedals. I started buying a few, one after another, and began to realize just how huge the world of effects, amplifiers, and tone chasing really was.</p>
 
-    <p>I was blown away by that full, rich sound. That's where I started playing acoustic guitar, and a few years later I bought my first amplifier and started exploring the world of electric guitar too.</p>
+    <p>But then a problem came up: <strong>space and time</strong>. With young kids at home, you don't have much of either, and playing guitar inevitably gets pushed a little further down the list. Let alone exploring new sounds: that ends up somewhere around third or fourth place.</p>
 
-    <p>And then came the pedals.</p>
+    <p>So I asked myself: <strong>How can I quickly save my tones, with the little time I have available?</strong> And, even more importantly: <strong>How can I get the most out of my pedals without constantly having to buy new ones?</strong></p>
 
-    <p>I started buying a few, one after another, and began to realize just how huge the world of effects, amplifiers, and tone chasing really was.</p>
+    <p>That's when I had the idea. And the idea was… taking pictures of my pedalboard. <strong>Just kidding.</strong></p>
 
-    <p>But then a problem came up: <strong>space and time</strong>.</p>
+    <p>Instead, I started using PowerPoint, recreating a digital version of my pedals and amplifier, turning the knobs and saving a tone on a new slide for every riff. I'll be honest: it didn't last long. While creating the very first slide, I was already thinking, <em>"what are you doing?"</em> By the end of the second one, I had already deleted everything.</p>
 
-    <p>With young kids at home, you don't have much of either, and playing guitar inevitably gets pushed a little further down the list. Let alone exploring new sounds: that ends up somewhere around third or fourth place.</p>
+    <p>The solution was to turn to my second passion: computer science. It had to be a small web app, running directly in the browser, where I could have digital versions of my pedals in a simple and fast way. And it worked. Pedalboards, effects, amplifiers, presets… I started saving all my tones with just a few clicks.</p>
 
-    <p>So I asked myself:</p>
-
-    <p><strong>How can I quickly save my tones, with the little time I have available?</strong></p>
-
-    <p>And, even more importantly:</p>
-
-    <p><strong>How can I get the most out of my pedals without constantly having to buy new ones?</strong></p>
-
-    <p>That's when I had the idea.</p>
-
-    <p>And the idea was… taking pictures of my pedalboard.</p>
-
-    <p><strong>Just kidding.</strong></p>
-
-    <p>Instead, I started using PowerPoint, recreating a digital version of my pedals and amplifier, turning the knobs and saving a tone on a new slide for every riff.</p>
-
-    <p>I'll be honest: it didn't last long.</p>
-
-    <p>While creating the very first slide, I was already thinking, <em>"what are you doing?"</em> By the end of the second one, I had already deleted everything.</p>
-
-    <p>The solution was to turn to my second passion: computer science.</p>
-
-    <p>It had to be a small web app, running directly in the browser, where I could have digital versions of my pedals in a simple and fast way.</p>
-
-    <p>And it worked.</p>
-
-    <p>Pedalboards, effects, amplifiers, presets… I started saving all my tones with just a few clicks.</p>
-
-    <p>Then I realized the idea could scale.</p>
-
-    <p>What had started as a small personal utility could become something more: an open-source project, freely available to everyone.</p>
-
-    <p>From there, the catalog grew from my original 6 pedals to a few thousand.</p>
-
-    <p>And I opened PedalPlex to everyone, with the idea of improving the experience of anyone who had the same problem I did.</p>
-
-    <p>But not only them.</p>
-
-    <p>Everyone else too, come on.</p>
+    <p>Then I realized the idea could scale. What had started as a small personal utility could become something more: an open-source project, freely available to everyone. From there, the catalog grew from my original 6 pedals to a few thousand. And I opened PedalPlex to everyone, with the idea of improving the experience of anyone who had the same problem I did. But not only them. Everyone else too, come on.</p>
 
     <p><strong>Because great tones deserve a save button. In general.</strong></p>
 
