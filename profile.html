@@ -168,6 +168,10 @@
         </div>
         <br>
         <div class="bx--row">
+          <div class="bx--col"><strong>Users with ≥1 Updated Rig:</strong> <span id="c-users-with-updated-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        </div>
+        <br>
+        <div class="bx--row">
           <div class="bx--col"><strong>Users with ≥1 Rig with ≥1 Gear:</strong> <span id="c-users-with-gear-rig-1"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
           <div class="bx--col"><strong>Users with ≥1 Rig with ≥2 Gears:</strong> <span id="c-users-with-gear-rig-2"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
           <div class="bx--col"><strong>Users with ≥1 Rig with ≥3 Gears:</strong> <span id="c-users-with-gear-rig-3"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
@@ -1483,6 +1487,7 @@ function loadAdminStats() {
           ? updCount + ' (' + updPct + '%)'
           : '–';
         $('#c-updated-plexes').text(updText);
+        $('#c-users-with-updated-rig').text(fmt(d.registered_averages.users_with_updated_rig));
         $('#c-users-with-updated-plex').text(fmt(d.registered_averages.users_with_updated_plex));
         $('#c-users-with-gear-rig-1').text(fmt(d.registered_averages.users_with_gear_rig_1));
         $('#c-users-with-gear-rig-2').text(fmt(d.registered_averages.users_with_gear_rig_2));
