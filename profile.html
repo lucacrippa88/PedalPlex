@@ -160,6 +160,10 @@
           <div class="bx--col"><strong>Avg Plexes per Rig:</strong> <span id="c-avg-plexes-per-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
           <div class="bx--col"><strong>Avg Plexes per User:</strong> <span id="c-avg-plexes-per-user"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
         </div>
+        <br>
+        <div class="bx--row">
+          <div class="bx--col"><strong>Updated Plexes (%):</strong> <span id="c-updated-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        </div>
 
         <br><hr style="border-color: #333;"><br>
 
@@ -1457,6 +1461,13 @@ function loadAdminStats() {
         $('#c-avg-gear-per-rig').text(fmt(d.registered_averages.avg_gear_per_rig));
         $('#c-avg-plexes-per-rig').text(fmt(d.registered_averages.avg_plexes_per_rig));
         $('#c-avg-plexes-per-user').text(fmt(d.registered_averages.avg_plexes_per_user));
+
+        var updCount = d.registered_averages.updated_plexes;
+        var updPct   = d.registered_averages.updated_plexes_pct;
+        var updText  = (updCount !== null && updCount !== undefined && updPct !== null && updPct !== undefined)
+          ? updCount + ' (' + updPct + '%)'
+          : '–';
+        $('#c-updated-plexes').text(updText);
       }
 
       if (d.guests) {
