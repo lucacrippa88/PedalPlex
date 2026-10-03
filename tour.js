@@ -42,9 +42,17 @@
     },
     {
       page: 'rigs',
+      target: '#saveBtn',
+      waitFor: '#saveBtn',
+      title: 'Step 3 — Save your Rig',
+      text: 'Happy with the setup? Click <strong>Save Rig</strong> to preserve your pedalboard so you can come back to it any time.',
+      position: 'bottom',
+    },
+    {
+      page: 'rigs',
       target: '#viewPreset',
       waitFor: '#viewPreset',
-      title: 'Step 3 — Go to Plexes',
+      title: 'Step 4 — Go to Plexes',
       text: 'When your Rig looks good, click <strong>Go to Plexes</strong> to start creating and saving presets for it.',
       position: 'bottom',
     },
@@ -52,7 +60,7 @@
       page: 'plexes',
       target: '#createPstBtn',
       waitFor: '#createPstBtn',
-      title: 'Step 4 — Create a Plex',
+      title: 'Step 5 — Create a Plex',
       text: 'Click the <strong>New Tone</strong> button to create a new Plex. A Plex stores all the knob and switch settings for a specific tone.',
       position: 'bottom',
     },
@@ -60,7 +68,7 @@
       page: 'plexes',
       target: '#preset',
       waitFor: '#preset',
-      title: 'Step 5 — Set Controls & SubPlexes',
+      title: 'Step 6 — Set Controls & SubPlexes',
       text: 'Adjust the <strong>knobs and switches</strong> on each pedal to dial in your tone. Use <strong>SubPlexes</strong> to document your configuration at Gear level, or check the list to get inspiration.',
       position: 'top',
     },
@@ -68,7 +76,7 @@
       page: 'plexes',
       target: '#savePstBtn',
       waitFor: '#savePstBtn',
-      title: 'Step 6 — Save your Plex',
+      title: 'Step 7 — Save your Plex',
       text: 'All done! Click <strong>Lock Tone</strong> to save your Plex. You can recall it any time from the Plexes dropdown.',
       position: 'bottom',
       isLast: true,
@@ -409,7 +417,7 @@
   function nextStep() {
     const step = TOUR_STEPS[_currentStep];
     if (step.isLast) {
-      stopTour();
+      finishTour();
       return;
     }
     showStep(_currentStep + 1);
@@ -447,6 +455,14 @@
   };
 
   window.stopTour = function () {
+    // ✕ button: pause the tour (keep state) and show the resume pill.
+    // The tour is only truly finished when the user clicks "Finish" on the last step,
+    // which calls nextStep() → isLast → stopTour is NOT called; markCompleted() is
+    // called via finishTour() instead.
+    pauseTour();
+  };
+
+  function finishTour() {
     clearHighlight();
     clearState();
     markCompleted();
@@ -455,7 +471,7 @@
     if (popup)    popup.style.display    = 'none';
     if (backdrop) backdrop.style.display = 'none';
     removeResumePill();
-  };
+  }
 
   // ----------------------------------------------------------
   // Pause / Resume
