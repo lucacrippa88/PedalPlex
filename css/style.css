@@ -1842,7 +1842,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 }
 
 /* ------------------------------------------------------------------ */
-/* Home page tour nudge                                                 */
+/* Tour nudge (index / rigs / plexes)                                   */
 /* ------------------------------------------------------------------ */
 #pp-tour-nudge {
   position: fixed;
@@ -1856,9 +1856,10 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   color: #f4f4f4;
   border: 1px solid #393939;
   border-left: 4px solid #9C54D5;
-  padding: 0.75rem 1rem;
-  min-width: 260px;
-  max-width: 340px;
+  /* top padding extra to leave room for the dismiss × button */
+  padding: 1.5rem 1rem 0.75rem 1rem;
+  min-width: 280px;
+  max-width: 360px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   font-family: 'IBM Plex Sans', sans-serif;
   /* enter animation */
@@ -1902,21 +1903,10 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   line-height: 1.45;
 }
 
+/* CTA uses Carbon bx--btn classes; only override flex-shrink */
 .pp-tour-nudge-cta {
   flex-shrink: 0;
-  background: #9C54D5;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.35rem 0.75rem;
   white-space: nowrap;
-  transition: background 0.15s ease;
-}
-
-.pp-tour-nudge-cta:hover {
-  background: #7e3fb7;
 }
 
 .pp-tour-nudge-close {

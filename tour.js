@@ -2,7 +2,12 @@
 // PedalPlex Guided Tour
 // ============================================================
 // Persists progress in localStorage across page navigations.
-// Keys: pp_tour_active ('true'|'false'), pp_tour_step (number)
+//
+// localStorage keys used:
+//   pp_tour_active     : 'true' while a tour session is in progress
+//   pp_tour_step       : current step index (number, as string)
+//   pp_tour_completed  : 'true' once the user finishes the full tour
+//   pp_tour_nudge_dismissed : 'true' once the nudge is explicitly dismissed
 // ============================================================
 
 (function () {
@@ -35,14 +40,6 @@
       text: 'Use the <strong>search area</strong> at the top to find Gears and add them to your Rig. Each Gear is pulled from the catalog. Arrange Gears by clicking on them or with drag&drop.',
       position: 'bottom',
     },
-    // {
-    //   page: 'rigs',
-    //   target: '#pedalboard',
-    //   waitFor: '#pedalboard',
-    //   title: 'Step 3 — Reorder Pedals',
-    //   text: '<strong>Drag & drop</strong> pedals to arrange the signal chain order. <strong>Click</atrong> on a Gear to access fine positioning menu.',
-    //   position: 'top',
-    // },
     {
       page: 'rigs',
       target: '#viewPreset',
@@ -78,12 +75,15 @@
     },
   ];
 
+  // Index of the first plexes step (used for the "has rig, no plexes" nudge path)
+  const FIRST_PLEXES_STEP = TOUR_STEPS.findIndex(function (s) { return s.page === 'plexes'; });
+
   // ----------------------------------------------------------
   // Helpers
   // ----------------------------------------------------------
   function currentPage() {
     const path = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '') || 'index';
-    return path; // 'rigs' | 'plexes' | etc.
+    return path; // 'rigs' | 'plexes' | 'index' | etc.
   }
 
   function saveState(step) {
@@ -100,16 +100,125 @@
     return parseInt(localStorage.getItem('pp_tour_step') || '0', 10);
   }
 
-  function markSeen() {
-    localStorage.setItem('pp_tour_seen', 'true');
+  function markCompleted() {
+    localStorage.setItem('pp_tour_completed', 'true');
   }
 
-  function hasBeenSeen() {
-    return localStorage.getItem('pp_tour_seen') === 'true';
+  function hasCompleted() {
+    return localStorage.getItem('pp_tour_completed') === 'true';
+  }
+
+  function markNudgeDismissed() {
+    localStorage.setItem('pp_tour_nudge_dismissed', 'true');
+  }
+
+  function isNudgeDismissed() {
+    return localStorage.getItem('pp_tour_nudge_dismissed') === 'true';
   }
 
   // ----------------------------------------------------------
-  // DOM injection
+  // User progress detection helpers (sync, from localStorage)
+  // ----------------------------------------------------------
+
+  /** Returns true if the user has at least one rig with at least one pedal. */
+  function hasRigWithPedals() {
+    // Guest boards
+    try {
+      const raw = localStorage.getItem('guestPedalboard');
+      if (raw) {
+        const boards = JSON.parse(raw);
+        if (Array.isArray(boards) && boards.some(function (b) {
+          return Array.isArray(b.pedals) && b.pedals.length > 0;
+        })) return true;
+      }
+    } catch (e) { /* ignore */ }
+
+    // Logged-in boards already loaded into window
+    if (Array.isArray(window.allPedalboards) && window.allPedalboards.some(function (b) {
+      return Array.isArray(b.pedals) && b.pedals.length > 0;
+    })) return true;
+
+    return false;
+  }
+
+  /** Returns true if the user has at least one saved plex. */
+  function hasPlexes() {
+    // Guest plexes
+    try {
+      const raw = localStorage.getItem('guestPlexes');
+      if (raw) {
+        const plexes = JSON.parse(raw);
+        if (Array.isArray(plexes) && plexes.length > 0) return true;
+      }
+    } catch (e) { /* ignore */ }
+
+    // Logged-in presets already loaded into window
+    if (Array.isArray(window.presets) && window.presets.length > 0) return true;
+    if (window.presetMap && Object.keys(window.presetMap).length > 0) return true;
+
+    return false;
+  }
+
+  // ----------------------------------------------------------
+  // Nudge scenario resolution
+  //
+  // Returns one of:
+  //   null                    — no nudge needed
+  //   { fromStep: 0, ... }    — show nudge starting from step 0
+  //   { fromStep: FIRST_PLEXES_STEP, title, text }
+  //                           — show nudge starting from plexes step
+  // ----------------------------------------------------------
+  function resolveNudgeScenario() {
+    // If a tour is actively in progress, no nudge
+    if (localStorage.getItem('pp_tour_active') === 'true') return null;
+
+    // If nudge was explicitly dismissed this session or permanently, no nudge
+    if (isNudgeDismissed()) return null;
+
+    const completed = hasCompleted();
+    const hasRig    = hasRigWithPedals();
+    const hasPlex   = hasPlexes();
+
+    if (!completed) {
+      // Tour never finished (never started OR dismissed early) → always show full-tour nudge
+      return {
+        fromStep: 0,
+        title: 'New to PedalPlex?',
+        text: 'Take the quick tour — it takes less than a minute.',
+        ctaLabel: 'Start tour',
+        ctaPage: '/rigs',
+      };
+    }
+
+    // Tour was completed:
+    if (!hasRig) {
+      // Completed but still hasn't built a rig → nudge from start
+      return {
+        fromStep: 0,
+        title: 'Ready to build your first Rig?',
+        text: 'Create a Rig and add your pedals to get started.',
+        ctaLabel: 'Start',
+        ctaPage: '/rigs',
+      };
+    }
+
+    if (!hasPlex) {
+      // Has a rig but no plex saved → nudge from plexes step
+      return {
+        fromStep: FIRST_PLEXES_STEP,
+        title: 'You have a Rig — now save a Plex!',
+        text: 'Dial in your tone and lock it in as a Plex to recall it any time.',
+        ctaLabel: 'Show me how',
+        ctaPage: '/plexes',
+      };
+    }
+
+    // Completed tour, has rig and plexes → nothing to nudge
+    return null;
+  }
+
+  // ----------------------------------------------------------
+  // DOM injection (tour popup)
   // ----------------------------------------------------------
   function injectDOM() {
     if (document.getElementById('pp-tour-popup')) return;
@@ -179,7 +288,6 @@
     const popup = document.getElementById('pp-tour-popup');
     if (!popup) return;
 
-    // Reset inline positioning
     popup.style.top = '';
     popup.style.left = '';
     popup.style.bottom = '';
@@ -189,7 +297,6 @@
     const target = step.target ? document.querySelector(step.target) : null;
 
     if (!target || step.position === 'center') {
-      // Center of viewport
       popup.style.top = '50%';
       popup.style.left = '50%';
       popup.style.transform = 'translate(-50%, -50%)';
@@ -222,9 +329,8 @@
       left = rect.left + rect.width / 2 - popupW / 2;
     }
 
-    // Clamp within viewport
     left = Math.max(margin, Math.min(left, vw - popupW - margin));
-    top  = Math.max(margin + 64, Math.min(top, vh - popupH - margin)); // 64 = header height
+    top  = Math.max(margin + 64, Math.min(top, vh - popupH - margin));
 
     popup.style.top  = top + 'px';
     popup.style.left = left + 'px';
@@ -235,12 +341,12 @@
   // ----------------------------------------------------------
   function renderStep(index) {
     const step = TOUR_STEPS[index];
-    const popup  = document.getElementById('pp-tour-popup');
+    const popup   = document.getElementById('pp-tour-popup');
     const counter = document.getElementById('pp-tour-counter');
-    const title  = document.getElementById('pp-tour-title');
-    const text   = document.getElementById('pp-tour-text');
-    const prev   = document.getElementById('pp-tour-prev');
-    const next   = document.getElementById('pp-tour-next');
+    const title   = document.getElementById('pp-tour-title');
+    const text    = document.getElementById('pp-tour-text');
+    const prev    = document.getElementById('pp-tour-prev');
+    const next    = document.getElementById('pp-tour-next');
     if (!popup) return;
 
     counter.textContent = (index + 1) + ' / ' + TOUR_STEPS.length;
@@ -251,7 +357,6 @@
 
     highlightElement(step.target);
 
-    // Scroll target into view
     if (step.target) {
       const el = document.querySelector(step.target);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -260,7 +365,6 @@
     popup.style.display = 'block';
     document.getElementById('pp-tour-backdrop').style.display = 'block';
 
-    // Position after a tick so offsetWidth is known
     setTimeout(function () { positionPopup(step); }, 20);
   }
 
@@ -273,7 +377,6 @@
     if (index < 0 || index >= TOUR_STEPS.length) return;
     const step = TOUR_STEPS[index];
 
-    // If this step belongs to a different page, navigate there
     if (step.page !== currentPage()) {
       saveState(index);
       window.location.href = '/' + step.page;
@@ -283,7 +386,6 @@
     _currentStep = index;
     saveState(index);
 
-    // If the target element isn't in the DOM yet, wait for it
     if (step.waitFor) {
       waitForElement(step.waitFor, function () { renderStep(index); });
     } else {
@@ -317,7 +419,6 @@
       } else if (Date.now() - start < maxMs) {
         setTimeout(poll, 150);
       } else {
-        // Element never appeared, show anyway
         callback();
       }
     })();
@@ -335,7 +436,7 @@
   window.stopTour = function () {
     clearHighlight();
     clearState();
-    markSeen();
+    markCompleted();
     const popup    = document.getElementById('pp-tour-popup');
     const backdrop = document.getElementById('pp-tour-backdrop');
     if (popup)    popup.style.display    = 'none';
@@ -343,9 +444,9 @@
   };
 
   // ----------------------------------------------------------
-  // Home page nudge — small dismissible banner inviting users to take the tour
+  // Nudge popup (shown on index, rigs, plexes)
   // ----------------------------------------------------------
-  function showHomeNudge() {
+  function showNudge(scenario) {
     if (document.getElementById('pp-tour-nudge')) return;
 
     const nudge = document.createElement('div');
@@ -365,25 +466,38 @@
         </svg>
       </div>
       <div class="pp-tour-nudge-body">
-        <p class="pp-tour-nudge-title">New to PedalPlex?</p>
-        <p class="pp-tour-nudge-text">Take the quick tour — it takes less than a minute.</p>
+        <p class="pp-tour-nudge-title">${scenario.title}</p>
+        <p class="pp-tour-nudge-text">${scenario.text}</p>
       </div>
-      <button class="pp-tour-nudge-cta" id="pp-tour-nudge-cta">Start tour</button>
+      <button class="bx--btn bx--btn--primary bx--btn--sm pp-tour-nudge-cta" id="pp-tour-nudge-cta">
+        ${scenario.ctaLabel}
+      </button>
     `;
     document.body.appendChild(nudge);
 
-    // Dismiss
+    // Dismiss permanently
     document.getElementById('pp-tour-nudge-close').addEventListener('click', function () {
       nudge.classList.add('pp-tour-nudge--hidden');
-      markSeen();
+      markNudgeDismissed();
       setTimeout(function () { nudge.remove(); }, 300);
     });
 
-    // Start tour (navigate to /rigs and begin from step 0)
+    // Start tour
     document.getElementById('pp-tour-nudge-cta').addEventListener('click', function () {
       nudge.remove();
-      saveState(0);
-      window.location.href = '/rigs';
+      if (scenario.fromStep === 0) {
+        saveState(0);
+        window.location.href = '/rigs';
+      } else {
+        // Already on the right page or navigate there
+        saveState(scenario.fromStep);
+        if (currentPage() === 'plexes') {
+          injectDOM();
+          showStep(scenario.fromStep);
+        } else {
+          window.location.href = scenario.ctaPage;
+        }
+      }
     });
 
     // Slide in after a short delay
@@ -391,39 +505,45 @@
   }
 
   // ----------------------------------------------------------
-  // Auto-resume on page load, or first-time auto-start
+  // Auto-resume on page load / first-time auto-start
   // ----------------------------------------------------------
   function autoResume() {
-    // Case 1: tour in progress — resume from saved step
+    const page = currentPage();
+
+    // Case 1: tour actively in progress — resume from saved step on the matching page
     if (localStorage.getItem('pp_tour_active') === 'true') {
       const step = getSavedStep();
-      if (step >= 0 && step < TOUR_STEPS.length && TOUR_STEPS[step].page === currentPage()) {
+      if (step >= 0 && step < TOUR_STEPS.length && TOUR_STEPS[step].page === page) {
         injectDOM();
         showStep(step);
       }
       return;
     }
 
-    // Case 2: first time ever on rigs page — start automatically
-    if (!hasBeenSeen() && currentPage() === 'rigs') {
+    // Case 2: first-time visitor on /rigs (no completed tour, no nudge dismissed) — start tour immediately
+    if (!hasCompleted() && !isNudgeDismissed() && page === 'rigs') {
       injectDOM();
       showStep(0);
       return;
     }
 
-    // Case 3: first time ever on plexes page — start tour from first plexes step
-    if (!hasBeenSeen() && currentPage() === 'plexes') {
-      const firstPlexesStep = TOUR_STEPS.findIndex(function (s) { return s.page === 'plexes'; });
-      if (firstPlexesStep >= 0) {
+    // Case 3: first-time visitor on /plexes — start from the right step based on rig state
+    if (!hasCompleted() && !isNudgeDismissed() && page === 'plexes') {
+      if (hasRigWithPedals()) {
         injectDOM();
-        showStep(firstPlexesStep);
+        showStep(FIRST_PLEXES_STEP);
+      } else {
+        // No rig yet — send them to the beginning on /rigs
+        saveState(0);
+        window.location.href = '/rigs';
       }
       return;
     }
 
-    // Case 4: home page — show nudge popup if tour has never been started
-    if (currentPage() === 'index' && !hasBeenSeen()) {
-      showHomeNudge();
+    // Case 4: index / rigs / plexes — show contextual nudge if warranted
+    if (page === 'index' || page === 'rigs' || page === 'plexes') {
+      const scenario = resolveNudgeScenario();
+      if (scenario) showNudge(scenario);
     }
   }
 
