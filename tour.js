@@ -343,6 +343,54 @@
   };
 
   // ----------------------------------------------------------
+  // Home page nudge — small dismissible banner inviting users to take the tour
+  // ----------------------------------------------------------
+  function showHomeNudge() {
+    if (document.getElementById('pp-tour-nudge')) return;
+
+    const nudge = document.createElement('div');
+    nudge.id = 'pp-tour-nudge';
+    nudge.setAttribute('role', 'complementary');
+    nudge.setAttribute('aria-label', 'Take the guided tour');
+    nudge.innerHTML = `
+      <button class="pp-tour-nudge-close" id="pp-tour-nudge-close" aria-label="Dismiss">
+        <svg focusable="false" viewBox="0 0 32 32" fill="currentColor" width="14" height="14">
+          <path d="M24 9.41L22.59 8 16 14.59 9.41 8 8 9.41 14.59 16 8 22.59 9.41 24 16 17.41 22.59 24 24 22.59 17.41 16 24 9.41z"/>
+        </svg>
+      </button>
+      <div class="pp-tour-nudge-icon" aria-hidden="true">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20" height="20" viewBox="0 0 32 32">
+          <path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/>
+          <path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/>
+        </svg>
+      </div>
+      <div class="pp-tour-nudge-body">
+        <p class="pp-tour-nudge-title">New to PedalPlex?</p>
+        <p class="pp-tour-nudge-text">Take the quick tour — it takes less than a minute.</p>
+      </div>
+      <button class="pp-tour-nudge-cta" id="pp-tour-nudge-cta">Start tour</button>
+    `;
+    document.body.appendChild(nudge);
+
+    // Dismiss
+    document.getElementById('pp-tour-nudge-close').addEventListener('click', function () {
+      nudge.classList.add('pp-tour-nudge--hidden');
+      markSeen();
+      setTimeout(function () { nudge.remove(); }, 300);
+    });
+
+    // Start tour (navigate to /rigs and begin from step 0)
+    document.getElementById('pp-tour-nudge-cta').addEventListener('click', function () {
+      nudge.remove();
+      saveState(0);
+      window.location.href = '/rigs';
+    });
+
+    // Slide in after a short delay
+    setTimeout(function () { nudge.classList.add('pp-tour-nudge--visible'); }, 800);
+  }
+
+  // ----------------------------------------------------------
   // Auto-resume on page load, or first-time auto-start
   // ----------------------------------------------------------
   function autoResume() {
@@ -360,6 +408,22 @@
     if (!hasBeenSeen() && currentPage() === 'rigs') {
       injectDOM();
       showStep(0);
+      return;
+    }
+
+    // Case 3: first time ever on plexes page — start tour from first plexes step
+    if (!hasBeenSeen() && currentPage() === 'plexes') {
+      const firstPlexesStep = TOUR_STEPS.findIndex(function (s) { return s.page === 'plexes'; });
+      if (firstPlexesStep >= 0) {
+        injectDOM();
+        showStep(firstPlexesStep);
+      }
+      return;
+    }
+
+    // Case 4: home page — show nudge popup if tour has never been started
+    if (currentPage() === 'index' && !hasBeenSeen()) {
+      showHomeNudge();
     }
   }
 
