@@ -1844,14 +1844,14 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 /* ------------------------------------------------------------------ */
 #pp-tour-resume-pill {
   position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  z-index: 20000;
+  bottom: 3.5rem;
+  right: 1.2rem;
+  z-index: 4000;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   /* background: #9C54D5; */
-  background:#5EE2F0;
+  background:linear-gradient(45deg, #5dace4, #5EE2F0);
   color: #fff;
   border: none;
   border-radius:8px;
