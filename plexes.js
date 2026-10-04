@@ -1142,6 +1142,18 @@ async function savePreset(presetId, updateData) {
 
   // ── GUEST PATH ───────────────────────────────────────────────────────────
   if (!window.currentUser || window.currentUser.role === 'guest') {
+    // Enrich pedals with applied subplex from DOM (same as logged-in path)
+    if (updateData.pedals) {
+      for (const pedalId in updateData.pedals) {
+        const $pedalDiv = $(`.pedal-catalog[data-pedal-id="${pedalId}"]`);
+        const appliedSubplex = $pedalDiv.data('applied-subplex');
+        if (appliedSubplex && appliedSubplex.id) {
+          updateData.pedals[pedalId].subplex = appliedSubplex;
+        } else {
+          delete updateData.pedals[pedalId].subplex;
+        }
+      }
+    }
     const ok = updateGuestPlex(presetId, updateData);
     if (ok && window.presetMap && window.presetMap[presetId]) {
       Object.assign(window.presetMap[presetId], updateData);
