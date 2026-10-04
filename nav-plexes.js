@@ -270,8 +270,10 @@ function initNavPreset() {
 
   // Pedalboard change event
   $('#pedalboardSelect').on('change', (e) => {
-    const idx = parseInt(e.target.value, 10);
-    window.pedalboard = window.allPedalboards[idx];
+    const selectedId = e.target.value;
+    const board = window.allPedalboards?.find(pb => pb._id === selectedId);
+    if (!board) return; // guard against NaN / empty placeholder
+    window.pedalboard = board;
 
     // Fetch folders for this pedalboard
     if (window.loadFoldersForCurrentPedalboard) {
