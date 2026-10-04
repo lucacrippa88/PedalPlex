@@ -1850,9 +1850,11 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #9C54D5;
+  /* background: #9C54D5; */
+  background:#5EE2F0;
   color: #fff;
   border: none;
+  border-radius:8px;
   cursor: pointer;
   padding: 0.5rem 0.875rem;
   font-family: 'IBM Plex Sans', sans-serif;
@@ -1869,7 +1871,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   transform: translateY(0);
 }
 #pp-tour-resume-pill:hover {
-  background: #7e3fb7;
+  background: #49afbb;
 }
 .pp-tour-resume-step {
   font-weight: 400;
@@ -1894,7 +1896,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 /* ------------------------------------------------------------------ */
 #pp-tour-nudge {
   position: fixed;
-  bottom: 1.5rem;
+  /* bottom: 1.5rem; */
+  top: 4.5rem;
   right: 1.5rem;
   z-index: 20000;
   display: flex;
@@ -1905,7 +1908,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   border: 1px solid #393939;
   border-left: 4px solid #9C54D5;
   /* top padding extra to leave room for the dismiss × button */
-  padding: 1.5rem 1rem 0.75rem 1rem;
+  padding: 1rem 1rem 0.75rem 1rem;
   min-width: 280px;
   max-width: 360px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
