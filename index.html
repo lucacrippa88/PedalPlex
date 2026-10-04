@@ -122,7 +122,7 @@
 
       if (currentUser && currentUser.username) {
         // Utente loggato: bottone che decide la destinazione in base ai Rig
-        const workspaceBtn = createButton('#', 'bx--btn bx--btn--primary', 'Access your workspace', svgPlexes);
+        const workspaceBtn = createButton('#', 'bx--btn bx--btn--primary', "Let's start", svgPlexes);
         workspaceBtn.addEventListener('click', async function(e) {
           e.preventDefault();
           workspaceBtn.disabled = true;
