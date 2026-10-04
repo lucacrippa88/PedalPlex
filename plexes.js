@@ -348,8 +348,8 @@ window.allPedalboards = [];
 
 /**
  * Auto-trigger Explore if:
- *  - the current rig has at least one pedal
- *  - at least one plex for this rig is "empty" (no saved controls)
+ *  - the current rig has at least one pedal, AND
+ *  - the rig has no plexes at all, OR at least one plex has no saved controls
  * Works for both guest and logged-in users.
  * Only fires once per session (flag stored in sessionStorage).
  */
@@ -361,8 +361,12 @@ function _maybeAutoExplore() {
 
   const boardId = window.pedalboard?._id || 'guest_board';
   const presetsForBoard = (window.presets || []).filter(p => p.board_id === boardId);
-  const hasEmptyPlex = presetsForBoard.some(p => !p.pedals || Object.keys(p.pedals).length === 0);
-  if (!hasEmptyPlex) return;
+
+  const shouldTrigger =
+    presetsForBoard.length === 0 ||
+    presetsForBoard.some(p => !p.pedals || Object.keys(p.pedals).length === 0);
+
+  if (!shouldTrigger) return;
 
   sessionStorage.setItem('_autoExploreDone', '1');
 
