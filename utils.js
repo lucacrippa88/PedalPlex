@@ -2416,3 +2416,31 @@ async function triggerGuestStatsPing(force = false) {
 setTimeout(() => {
   triggerGuestStatsPing();
 }, 3000);
+
+// Ensure every guest user has a default Rig and Plex in localStorage.
+// Runs silently on every page load; does nothing if they already exist.
+(function ensureGuestDefaults() {
+  if (localStorage.getItem('authToken')) return; // logged-in user — skip
+
+  // --- Rig ---
+  let boards = [];
+  try { boards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]'); } catch (e) { boards = []; }
+  if (!Array.isArray(boards) || boards.length === 0) {
+    localStorage.setItem('guestPedalboard', JSON.stringify([{ board_name: 'My Rig', pedals: [] }]));
+  }
+
+  // --- Plex ---
+  const GUEST_PLEXES_KEY = 'guestPlexes';
+  let plexes = [];
+  try { plexes = JSON.parse(localStorage.getItem(GUEST_PLEXES_KEY) || '[]'); } catch (e) { plexes = []; }
+  if (!Array.isArray(plexes) || !plexes.some(p => p.board_id === 'guest_board')) {
+    const defaultPlex = {
+      _id:         'guest_plex_' + Date.now(),
+      preset_name: 'My Tone',
+      board_id:    'guest_board',
+      pedals:      {}
+    };
+    plexes.push(defaultPlex);
+    localStorage.setItem(GUEST_PLEXES_KEY, JSON.stringify(plexes));
+  }
+})();

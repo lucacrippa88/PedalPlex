@@ -17,21 +17,13 @@ function initPedalboard(userRole) {
   // --- GUEST USER ---
   if (userRole === "guest") {
   const savedBoard = localStorage.getItem("guestPedalboard");   // Recupera eventuale pedalboard guest dal localStorage
-  const boards = savedBoard ? JSON.parse(savedBoard) : [];
+  let boards = savedBoard ? JSON.parse(savedBoard) : [];
 
   if (boards.length === 0) {
-    $("#pedalboard-controls").hide();
-    $("#pedalboardSelect").hide();
-    $("#renameBoardBtn").hide();
-    $("#viewPreset").hide();
-
-    resultsDiv.innerHTML = `
-      <div class="empty-state-container">
-        <p style="font-size:1.1em; margin-bottom:20px;">No Rigs found. Create a new one!</p>
-        <button id="createBtn" class="bx--btn bx--btn--secondary">Create a Rig</button>
-      </div>`;
-    window.allPedalboards = [];
-    return;
+    // Auto-create a default Rig for guest users (same as registered users)
+    const defaultBoard = { board_name: "My Rig", pedals: [] };
+    boards = [defaultBoard];
+    localStorage.setItem("guestPedalboard", JSON.stringify(boards));
   }
 
   // --- Fetch pedal data dal server ---

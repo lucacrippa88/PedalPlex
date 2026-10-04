@@ -346,6 +346,31 @@ window.updateSharePresetButtonState = updateSharePresetButtonState;
 window.allPedalboards = [];
 
 
+/**
+ * Auto-trigger Explore if:
+ *  - the current rig has at least one pedal
+ *  - at least one plex for this rig is "empty" (no saved controls)
+ * Works for both guest and logged-in users.
+ * Only fires once per session (flag stored in sessionStorage).
+ */
+function _maybeAutoExplore() {
+  if (sessionStorage.getItem('_autoExploreDone')) return;
+
+  const pedals = window.pedalboard?.pedals || [];
+  if (pedals.length === 0) return;
+
+  const boardId = window.pedalboard?._id || 'guest_board';
+  const presetsForBoard = (window.presets || []).filter(p => p.board_id === boardId);
+  const hasEmptyPlex = presetsForBoard.some(p => !p.pedals || Object.keys(p.pedals).length === 0);
+  if (!hasEmptyPlex) return;
+
+  sessionStorage.setItem('_autoExploreDone', '1');
+
+  if (typeof openExploreModal === 'function') {
+    openExploreModal();
+  }
+}
+
 
 async function initPreset() {
   const isGuest = !window.currentUser;
@@ -442,8 +467,12 @@ async function initPreset() {
   // RENDER DELLA PEDALBOARD (esattamente come i loggati)
   renderFullPedalboard(window.pedalboard.pedals);
 
-  // Carica i plex locali del guest
-  const guestPlexes = getGuestPlexes().filter(p => p.board_id === "guest_board");
+  // Carica i plex locali del guest — auto-crea un Plex di default se non ce ne sono
+  let guestPlexes = getGuestPlexes().filter(p => p.board_id === "guest_board");
+  if (guestPlexes.length === 0) {
+    const defaultPlex = createGuestPlex("My Tone", "guest_board", {});
+    if (defaultPlex) guestPlexes = [defaultPlex];
+  }
   window.presets = guestPlexes;
   window.presetMap = {};
   guestPlexes.forEach(p => { window.presetMap[p._id] = p; });
@@ -479,6 +508,9 @@ async function initPreset() {
       guestPresetSelect.dispatchEvent(new Event('change', { bubbles: true }));
     }
   }
+
+  // Auto-trigger Explore if rig has pedals and at least one empty plex
+  setTimeout(_maybeAutoExplore, 300);
 
   return; // IMPORTANTISSIMO → evita i fetch logged-in
 }
@@ -618,6 +650,9 @@ async function initPreset() {
 
         // Restore complete — re-enable storage saves
         window._suppressStorageSave = false;
+
+        // Auto-trigger Explore if rig has pedals and at least one empty plex
+        setTimeout(_maybeAutoExplore, 300);
       });
 
 

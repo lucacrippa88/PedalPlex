@@ -121,11 +121,39 @@
       let currentUser = token ? parseJwt(token) : null;
 
       if (currentUser && currentUser.username) {
-        // Utente loggato: mostra bottone "Vai ai tuoi Rigs"
-        ctaContainer.appendChild(createButton('plexes', 'bx--btn bx--btn--primary', 'Access your workspace', svgPlexes));
+        // Utente loggato: bottone che decide la destinazione in base ai Rig
+        const workspaceBtn = createButton('#', 'bx--btn bx--btn--primary', 'Access your workspace', svgPlexes);
+        workspaceBtn.addEventListener('click', async function(e) {
+          e.preventDefault();
+          workspaceBtn.disabled = true;
+          workspaceBtn.style.opacity = '0.7';
+          try {
+            const res = await fetch('https://api.pedalplex.com/GET_RIG.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+              body: JSON.stringify({ user_id: currentUser.userid })
+            });
+            const data = await res.json();
+            const hasRigWithPedals = Array.isArray(data.docs) &&
+              data.docs.some(rig => Array.isArray(rig.pedals) && rig.pedals.length > 0);
+            window.location.href = hasRigWithPedals ? 'plexes' : 'rigs';
+          } catch (err) {
+            window.location.href = 'rigs'; // fallback on error
+          }
+        });
+        ctaContainer.appendChild(workspaceBtn);
       } else {
         // Guest / non loggato: mostra Start as Guest e Login
-        ctaContainer.appendChild(createButton('rigs', 'bx--btn bx--btn--tertiary', 'Start creating', svgGuest));
+        const guestBtn = createButton('#', 'bx--btn bx--btn--tertiary', 'Start creating', svgGuest);
+        guestBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          let boards = [];
+          try { boards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]'); } catch (err) {}
+          const hasRigWithPedals = Array.isArray(boards) &&
+            boards.some(rig => Array.isArray(rig.pedals) && rig.pedals.length > 0);
+          window.location.href = hasRigWithPedals ? 'plexes' : 'rigs';
+        });
+        ctaContainer.appendChild(guestBtn);
         ctaContainer.appendChild(createButton('login', 'bx--btn bx--btn--primary', 'Login', svgLogin));
       }
     </script>
