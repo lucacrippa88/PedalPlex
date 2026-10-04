@@ -370,11 +370,6 @@ function _maybeAutoExplore() {
     : (window.presets || []);
   const presetsForBoard = allPresets.filter(p => p.board_id === boardId);
 
-  console.log('[AutoExplore] boardId:', boardId,
-    '| pedals:', pedals.length,
-    '| presetsForBoard:', presetsForBoard.length,
-    '| pedals fields:', presetsForBoard.map(p => JSON.stringify(p.pedals)));
-
   const shouldTrigger =
     presetsForBoard.length === 0 ||
     presetsForBoard.some(p => {
