@@ -354,21 +354,38 @@ window.allPedalboards = [];
  * Only fires once per session (flag stored in sessionStorage).
  */
 function _maybeAutoExplore() {
-  if (sessionStorage.getItem('_autoExploreDone')) return;
-
   const pedals = window.pedalboard?.pedals || [];
   if (pedals.length === 0) return;
 
   const boardId = window.pedalboard?._id || 'guest_board';
-  const presetsForBoard = (window.presets || []).filter(p => p.board_id === boardId);
+
+  // Guard: fire at most once per board per page load (not per session,
+  // so switching rigs or reloading re-evaluates correctly).
+  const flagKey = '_autoExploreDone_' + boardId;
+  if (window[flagKey]) return;
+
+  // Use presetMap (always up-to-date after fetchPresetsByBoardId) with fallback to presets array
+  const allPresets = Object.values(window.presetMap || {}).length > 0
+    ? Object.values(window.presetMap)
+    : (window.presets || []);
+  const presetsForBoard = allPresets.filter(p => p.board_id === boardId);
+
+  console.log('[AutoExplore] boardId:', boardId,
+    '| pedals:', pedals.length,
+    '| presetsForBoard:', presetsForBoard.length,
+    '| pedals fields:', presetsForBoard.map(p => JSON.stringify(p.pedals)));
 
   const shouldTrigger =
     presetsForBoard.length === 0 ||
-    presetsForBoard.some(p => !p.pedals || Object.keys(p.pedals).length === 0);
+    presetsForBoard.some(p => {
+      if (!p.pedals) return true;
+      if (typeof p.pedals !== 'object') return true;
+      return Object.keys(p.pedals).length === 0;
+    });
 
   if (!shouldTrigger) return;
 
-  sessionStorage.setItem('_autoExploreDone', '1');
+  window[flagKey] = true;
 
   if (typeof openExploreModal === 'function') {
     openExploreModal();
