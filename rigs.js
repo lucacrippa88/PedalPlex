@@ -112,14 +112,32 @@ function initPedalboard(userRole) {
       if (!res.ok) throw new Error(`Rig fetch failed: ${res.status}`);
       return res.json();
     })
-    .then(data => {
+    .then(async data => {
       if (!data.docs || !Array.isArray(data.docs) || data.docs.length === 0) {
-        $("#pedalboard-controls").css("display", "none");
-        resultsDiv.innerHTML = `
-          <div class="empty-state-container">
-            <p style="font-size:1.1em; margin-bottom:20px;">You don't have any Rig yet.</p>
-            <button id="createBtn" class="bx--btn bx--btn--secondary" type="button" aria-label="Create New Rig">Create Rig</button>
-          </div>`;
+        // Auto-create a default Rig for registered users who have none
+        const token = localStorage.getItem('authToken');
+        resultsDiv.innerHTML = `<div class="bx--loading-overlay"><div class="bx--loading" role="status"><svg class="bx--loading__svg" viewBox="-75 -75 150 150"><circle class="bx--loading__background" cx="0" cy="0" r="37.5"/><circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/></svg></div></div>`;
+        try {
+          const createRes = await fetch('https://api.pedalplex.com/CREATE_RIG.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': 'Bearer ' + token },
+            body: new URLSearchParams({ board_name: 'My Rig', user_id: userId })
+          });
+          const createData = await createRes.json();
+          if (createData.ok) {
+            initPedalboard(userRole);
+          } else {
+            throw new Error(createData.error || 'Create failed');
+          }
+        } catch (err) {
+          console.error('Auto-create rig failed:', err);
+          $("#pedalboard-controls").css("display", "none");
+          resultsDiv.innerHTML = `
+            <div class="empty-state-container">
+              <p style="font-size:1.1em; margin-bottom:20px;">You don't have any Rig yet.</p>
+              <button id="createBtn" class="bx--btn bx--btn--secondary" type="button" aria-label="Create New Rig">Create Rig</button>
+            </div>`;
+        }
         return;
       }
 
