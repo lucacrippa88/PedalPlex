@@ -177,7 +177,7 @@ function createCustomSubplex($pedalDiv) {
     presetName: 'Custom SubPlex',
     source: 'custom',
     description: '',
-    userId: window.currentUser.username || ''
+    userId: window.currentUser?.username || ''
   };
   $pedalDiv.data('applied-subplex', custom);
   $pedalDiv.data('subplex-original-controls', []);
