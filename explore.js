@@ -126,23 +126,6 @@ async function openExploreModal() {
     return;
   }
 
-  const token = localStorage.getItem("authToken");
-  if (!token) {
-    Swal.fire({
-      icon: "info", title: "Login required",
-      text: "Login to use the Explore feature.",
-      confirmButtonText: `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon" style="margin-right:6px"><path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/><path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/></svg>Login`,
-      showCancelButton: true,
-      cancelButtonText: "Cancel",
-      customClass: {
-        confirmButton: "bx--btn bx--btn--primary",
-        cancelButton: "bx--btn bx--btn--secondary"
-      },
-      buttonsStyling: false
-    }).then(r => { if (r.isConfirmed) window.location.href = "login"; });
-    return;
-  }
-
   _exploreSubplexPool = null; // reset cache on each fresh open
   _showExploreStep1();
 }
@@ -743,6 +726,7 @@ function _applyExploreResult(combination) {
 // Creates the plex on the server with controls already included,
 // bypassing the standard createPreset() which does an empty-pedals create + reload.
 async function _saveExploreExperiment(combination, params) {
+  const isGuest = !window.currentUser || window.currentUser.role === "guest";
   const styleLabel = params.styles.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" / ");
 
   // 1. Ask for a name
@@ -767,6 +751,70 @@ async function _saveExploreExperiment(combination, params) {
 
   if (!nameResult.isConfirmed || !nameResult.value) return;
   const presetName = nameResult.value.trim();
+
+  // ── GUEST PATH: skip folder dialog and save locally ──────────────────────
+  if (isGuest) {
+    Swal.fire({ title: "Saving experiment...", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+
+    // Apply subplexes to DOM
+    for (const { pedal, subplex } of combination) {
+      if ($(`.pedal-catalog[data-pedal-id="${pedal.id}"]`).length) {
+        applyCatalogPresetToSinglePedal(pedal.id, subplex);
+      }
+    }
+    await new Promise(r => setTimeout(r, 150));
+
+    const collectResult = typeof collectPedalControlValues === "function"
+      ? collectPedalControlValues(presetName)
+      : null;
+
+    if (!collectResult) {
+      Swal.fire("Error", "Could not read board controls.", "error");
+      return;
+    }
+
+    const pedalArray = collectResult[presetName] || [];
+    const pedalsObject = {};
+    for (const pedal of pedalArray) {
+      if (!pedal.id) continue;
+      const flatControls = {};
+      for (const ctrl of pedal.controls) {
+        const key = Object.keys(ctrl)[0];
+        flatControls[key] = ctrl[key];
+      }
+      pedalsObject[pedal.id] = { controls: flatControls };
+      const matched = combination.find(c => c.pedal.id === pedal.id);
+      if (matched) {
+        pedalsObject[pedal.id].subplex = {
+          id:          matched.subplex._id,
+          presetName:  matched.subplex.presetName || matched.subplex.name,
+          source:      matched.subplex.source || "catalog",
+          style:       matched.subplex.style || [],
+          description: matched.subplex.description || ""
+        };
+      }
+    }
+
+    const newPlex = typeof createGuestPlex === "function"
+      ? createGuestPlex(presetName, "guest_board", pedalsObject)
+      : null;
+
+    if (!newPlex) {
+      Swal.fire("Error", "Could not save Plex locally. You may have reached the limit.", "error");
+      return;
+    }
+
+    Swal.close();
+    Swal.fire({
+      icon: "success",
+      title: "Experiment saved!",
+      text: `Plex "${presetName}" created locally.`,
+      timer: 1800,
+      showConfirmButton: false
+    }).then(() => window.location.reload());
+    return;
+  }
+  // ── END GUEST PATH ────────────────────────────────────────────────────────
 
   // 2. Ask for folder (reuse window.folders already loaded)
   const folderOptions = [
