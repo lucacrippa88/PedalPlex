@@ -740,7 +740,22 @@ async function fetchPresetsByBoardId(user_id, board_id, callback) {
 
     // Store all presets globally
     window.presets = data.presets || [];
-    
+
+    // Auto-create a default empty Plex if this rig has none
+    if (window.presets.length === 0 && board_id) {
+      const boardName = window.allPedalboards?.find(b => b._id === board_id)?.board_name || '';
+      const newId = await createPresetOnServer({
+        board_name:  boardName,
+        board_id:    board_id,
+        preset_name: 'My Tone',
+        pedals:      {}
+      });
+      if (newId) {
+        const newPlex = { _id: newId, preset_name: 'My Tone', board_id: board_id, pedals: {} };
+        window.presets.push(newPlex);
+      }
+    }
+
     // Check and award plex creation badges (uses total count from API)
     await checkAndAwardPlexBadges();
     
