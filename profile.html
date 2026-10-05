@@ -194,13 +194,18 @@
         </div>
         <br>
         <div class="bx--row">
-          <div class="bx--col"><strong>Updated Rigs (%):</strong> <span id="g-guest-updated-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Updated Plexes (%):</strong> <span id="g-guest-updated-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Updated Rigs (% of all guests):</strong> <span id="g-guest-updated-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Updated Plexes (% of all guests):</strong> <span id="g-guest-updated-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
         </div>
         <br>
         <div class="bx--row">
-          <div class="bx--col"><strong>Users with ≥1 Updated Rig:</strong> <span id="g-guest-users-updated-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Users with ≥1 Updated Plex:</strong> <span id="g-guest-users-updated-plex"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Updated Local Rigs (% of local rigs):</strong> <span id="g-guest-local-updated-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Updated Local Plexes (% of local plexes):</strong> <span id="g-guest-local-updated-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        </div>
+        <br>
+        <div class="bx--row">
+          <div class="bx--col"><strong>Users with ≥1 Updated Local Rig:</strong> <span id="g-guest-local-users-updated-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Users with ≥1 Updated Local Plex:</strong> <span id="g-guest-local-users-updated-plex"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
         </div>
         <br>
         <div class="bx--row">
@@ -1536,8 +1541,11 @@ function loadAdminStats() {
 
         $('#g-guest-updated-rigs').text(fmt(d.guests.updated_rigs_count) + ' (' + fmt(d.guests.updated_rigs_pct) + '%)');
         $('#g-guest-updated-plexes').text(fmt(d.guests.updated_plexes_count) + ' (' + fmt(d.guests.updated_plexes_pct) + '%)');
-        $('#g-guest-users-updated-rig').text(fmt(d.guests.users_with_updated_rig));
-        $('#g-guest-users-updated-plex').text(fmt(d.guests.users_with_updated_plex));
+
+        $('#g-guest-local-updated-rigs').text(fmt(d.guests.local_users_with_updated_rig) + ' (' + fmt(d.guests.local_updated_rigs_pct) + '%)');
+        $('#g-guest-local-updated-plexes').text(fmt(d.guests.local_users_with_updated_plex) + ' (' + fmt(d.guests.local_updated_plexes_pct) + '%)');
+        $('#g-guest-local-users-updated-rig').text(fmt(d.guests.local_users_with_updated_rig));
+        $('#g-guest-local-users-updated-plex').text(fmt(d.guests.local_users_with_updated_plex));
 
         if (d.guests.plex_distribution) {
           var dist = d.guests.plex_distribution;
@@ -1559,7 +1567,7 @@ function loadAdminStats() {
         });
         $('#v-top-pages').html(pagesHtml);
       } else {
-        $('#v-top-pages').html('<li style="color:#6f6f6f;">No data yet</li>');
+        $('#v-top-pages').html('<span style="color:#6f6f6f;">–</span>');
       }
 
       if (d.guests && d.guests.top_referrers && Object.keys(d.guests.top_referrers).length > 0) {
@@ -1569,7 +1577,7 @@ function loadAdminStats() {
         });
         $('#v-top-referrers').html(refHtml);
       } else {
-        $('#v-top-referrers').html('<li style="color:#6f6f6f;">No data yet</li>');
+        $('#v-top-referrers').html('<span style="color:#6f6f6f;">–</span>');
       }
     },
     error: function () {
