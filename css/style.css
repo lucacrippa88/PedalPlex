@@ -1428,6 +1428,20 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   margin: 1em 1em!important;
 }
 
+/* Styled toast for pedal/rig notifications */
+.pp-toast.swal2-toast {
+  padding: 0.6rem 1rem !important;
+  gap: 0.5rem;
+}
+.pp-toast.swal2-toast .swal2-title {
+  font-size: 0.9rem;
+  padding: 0;
+  margin: 0;
+}
+.pp-toast.swal2-toast .swal2-icon {
+  margin: 0;
+}
+
 
 /* ===========================
    EXPLORE YOUR RIG

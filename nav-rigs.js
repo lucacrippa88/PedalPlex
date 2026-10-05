@@ -229,7 +229,10 @@ function initNavPedalboard(userRole) {
             position: 'top-end',
             showConfirmButton: false,
             timer: 1500,
-            timerProgressBar: false
+            timerProgressBar: false,
+            customClass: {
+              popup: 'pp-toast'
+            }
           });
         }
       };

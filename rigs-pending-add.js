@@ -54,7 +54,7 @@
       position: 'top-end',
       showConfirmButton: false,
       customClass: {
-        popup: 'bx--btn bx--btn--primary' // mantiene lo styling Carbon
+        popup: 'pp-toast'
       }
     });
 
