@@ -29,7 +29,7 @@ window.L = window.USE_PRESET_LABELS
     };
 
 // Shorthand alias — var (not const/let) so it is truly global in classic scripts
-var L = window.L;
+var L = window.L; 
 
 // ---- DOM label replacement ----
 // Replaces visible text nodes and key attributes (title, aria-label, placeholder)
