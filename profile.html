@@ -251,6 +251,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="labels.js"></script>
   <script src="fullscreen-menu.js"></script>
   <script src="nav.js"></script>
   <script src="helpers.js"></script>
@@ -426,7 +427,7 @@
     const sections = {
       'membership': 'Membership Achievements',
       'startup': 'Startup Achievements',
-      'plex': 'Plex Creation Achievements',
+      'plex': `${L.Plex} Creation Achievements`,
       'sharing': 'Sharing Achievements',
       'gears': 'Gear Publishing Achievements',
       'brand': 'Brand Achievements'
@@ -572,7 +573,7 @@
         displayPublicSharedPlexes(sharedPlexes);
       },
       error: function() {
-        displayNoSharedPlexes('Unable to load shared Plexes.');
+        displayNoSharedPlexes(`Unable to load shared ${L.Plexes}.`);
       }
     });
   }
@@ -582,7 +583,7 @@
     container.empty();
 
     if (!sharedPlexes || sharedPlexes.length === 0) {
-      displayNoSharedPlexes('No shared Plexes yet.');
+      displayNoSharedPlexes(`No shared ${L.Plexes} yet.`);
       return;
     }
 
@@ -595,7 +596,7 @@
     const row = $('<div class="bx--row"></div>');
 
     sortedPlexes.forEach((plex) => {
-      const plexName = plex.preset_name || 'Untitled Plex';
+      const plexName = plex.preset_name || `Untitled ${L.Plex}`;
       const sharedDate = formatSharedDate(plex.sharedAt);
       const shareLink = `${window.location.origin}/shared/plex/?token=${plex.shared_token}`;
       
@@ -632,8 +633,8 @@
                   target="_blank"
                   rel="noopener noreferrer"
                   class="bx--btn bx--btn--secondary bx--btn--icon-only"
-                  title="Open shared Plex"
-                  aria-label="Open shared Plex">
+                  title="Open shared ${L.Plex}"
+                  aria-label="Open shared ${L.Plex}">
                   <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
                     <path d="M26 28H10a2 2 0 0 1-2-2V10h2v16h16v-8h2v8a2 2 0 0 1-2 2z"></path>
                     <path d="M20 4v2h4.59L14 16.59 15.41 18 26 7.41V12h2V4H20z"></path>
@@ -838,7 +839,7 @@ function displayBadges(earnedBadges, badgeDefinitions, userStats) {
   const sections = {
     'membership': 'Membership Achievements',
     'startup': 'Startup Achievements',
-    'plex': 'Plex Creation Achievements',
+    'plex': `${L.Plex} Creation Achievements`,
     'sharing': 'Sharing Achievements',
     'gears': 'Gear Publishing Achievements',
     'brand': 'Brand Achievements'
@@ -1347,7 +1348,7 @@ function loadSharedPlexes() {
   container.html(`
     <div class="bx--row">
       <div class="bx--col" style="text-align: center; padding: 20px;">
-        <p style="color: #888;">Loading shared Plexes...</p>
+        <p style="color: #888;">Loading shared ${L.Plexes}...</p>
       </div>
     </div>
   `);
@@ -1361,8 +1362,8 @@ function loadSharedPlexes() {
       displaySharedPlexes(sharedPlexes);
     },
     error: function(xhr) {
-      console.error('Failed to load shared Plexes:', xhr.responseText || xhr.statusText);
-      displayNoSharedPlexes('Unable to load shared Plexes.');
+      console.error(`Failed to load shared ${L.Plexes}:`, xhr.responseText || xhr.statusText);
+      displayNoSharedPlexes(`Unable to load shared ${L.Plexes}.`);
     }
   });
 }
@@ -1372,7 +1373,7 @@ function displaySharedPlexes(sharedPlexes) {
   container.empty();
 
   if (!sharedPlexes || sharedPlexes.length === 0) {
-    displayNoSharedPlexes('No shared Plexes yet.');
+    displayNoSharedPlexes(`No shared ${L.Plexes} yet.`);
     return;
   }
 
@@ -1385,7 +1386,7 @@ function displaySharedPlexes(sharedPlexes) {
   const row = $('<div class="bx--row"></div>');
 
   sortedPlexes.forEach((plex) => {
-    const plexName = plex.preset_name || 'Untitled Plex';
+    const plexName = plex.preset_name || `Untitled ${L.Plex}`;
     const sharedDate = formatSharedDate(plex.sharedAt);
     const shareLink = `${window.location.origin}/shared/plex/?token=${plex.shared_token}`;
     
@@ -1422,8 +1423,8 @@ function displaySharedPlexes(sharedPlexes) {
                 target="_blank"
                 rel="noopener noreferrer"
                 class="bx--btn bx--btn--secondary bx--btn--icon-only"
-                title="Open shared Plex"
-                aria-label="Open shared Plex">
+                title="Open shared ${L.Plex}"
+                aria-label="Open shared ${L.Plex}">
                 <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
                   <path d="M26 28H10a2 2 0 0 1-2-2V10h2v16h16v-8h2v8a2 2 0 0 1-2 2z"></path>
                   <path d="M20 4v2h4.59L14 16.59 15.41 18 26 7.41V12h2V4H20z"></path>
