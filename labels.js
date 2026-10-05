@@ -2,7 +2,7 @@
 // Set USE_PRESET_LABELS = true  → show "Preset" / "Gear Preset" to users
 // Set USE_PRESET_LABELS = false → show "Plex" / "SubPlex" to users (original branding)
 
-const USE_PRESET_LABELS = false;
+const USE_PRESET_LABELS = true;
 
 const L = USE_PRESET_LABELS
   ? {
