@@ -836,8 +836,8 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
   if (!currentPresetId) {
     Swal.fire({
       icon: "warning",
-      title: "No Plex Selected",
-      text: "Please select a Plex to rename or assign to a folder.",
+      title: `No ${L.Plex} Selected`,
+      text: `Please select a ${L.plex} to rename or assign to a folder.`,
       confirmButtonText: "Ok",
       customClass: {
         confirmButton: "bx--btn bx--btn--primary"
@@ -852,12 +852,12 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     if (!guestPreset) return;
 
     const guestResult = await Swal.fire({
-      title: 'Edit Plex (local)',
-      html: `<input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="Plex Name" value="${guestPreset.preset_name || ''}">`,
+      title: `Edit ${L.Plex} (local)`,
+      html: `<input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="${L.Plex} Name" value="${guestPreset.preset_name || ''}">`,
       showCancelButton: false,
       showDenyButton: true,
       confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Rename",
-      denyButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>Delete Plex",
+      denyButtonText: `<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>Delete ${L.Plex}`,
       showCloseButton: true,
       focusConfirm: false,
       customClass: {
@@ -866,7 +866,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       },
       preConfirm: () => {
         const newName = document.getElementById('presetNameInput').value.trim();
-        if (!newName) { Swal.showValidationMessage('Plex name cannot be empty!'); return false; }
+        if (!newName) { Swal.showValidationMessage(`${L.Plex} name cannot be empty!`); return false; }
         return newName;
       }
     });
@@ -874,7 +874,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     if (guestResult.isDenied) {
       const confirmDel = await Swal.fire({
         title: `Delete "${guestPreset.preset_name}"?`,
-        text: 'This will remove the Plex from your browser storage.',
+        text: `This will remove the ${L.plex} from your browser storage.`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Yes, Delete',
@@ -886,7 +886,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
         currentPresetId = null;
         currentPresetName = null;
         currentPresetRev = null;
-        Swal.fire({ icon: 'success', title: 'Plex Deleted', timer: 900, showConfirmButton: false })
+        Swal.fire({ icon: 'success', title: `${L.Plex} Deleted`, timer: 900, showConfirmButton: false })
           .then(() => location.reload());
       }
       return;
@@ -896,7 +896,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       updateGuestPlex(currentPresetId, { preset_name: guestResult.value });
       if (window.presetMap[currentPresetId]) window.presetMap[currentPresetId].preset_name = guestResult.value;
       updatePresetDropdownName(currentPresetId, guestResult.value);
-      Swal.fire({ icon: 'success', title: 'Plex Renamed', timer: 900, showConfirmButton: false })
+      Swal.fire({ icon: 'success', title: `${L.Plex} Renamed`, timer: 900, showConfirmButton: false })
         .then(() => location.reload());
     }
     return;
@@ -905,7 +905,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
   const preset = Object.values(window.presetMap).find(p => p._id === currentPresetId);
   if (!preset || !currentPresetRev) {
-    Swal.fire("Error", "Missing revision (_rev) info for the Plex.", "error");
+    Swal.fire("Error", `Missing revision (_rev) info for the ${L.plex}.`, "error");
     return;
   }
 
@@ -940,25 +940,25 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
 
 
   const htmlContent = `
-    <input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="Plex Name" value="${currentPresetName}">
+    <input id="presetNameInput" style="width:90%; margin:auto;" class="swal2-input" placeholder="${L.Plex} Name" value="${currentPresetName}">
     ${folderSelectHtml}
   `;
 
   const result = await Swal.fire({
-    title: "Edit Plex",
+    title: `Edit ${L.Plex}`,
     html: htmlContent,
     showCancelButton: false,
     showDenyButton: true,
-    confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Save Plex",
+    confirmButtonText: `<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Save ${L.Plex}`,
     // cancelButtonText: "Cancel",
-    denyButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>Delete Plex",
+    denyButtonText: `<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>Delete ${L.Plex}`,
     showCloseButton: true,
     focusConfirm: false,
     preConfirm: () => {
       const newName = document.getElementById("presetNameInput").value.trim();
       const folderId = document.getElementById("folderSelectInput").value;
       if (!newName) {
-        Swal.showValidationMessage("Plex name cannot be empty!");
+        Swal.showValidationMessage(`${L.Plex} name cannot be empty!`);
         return false;
       }
       return {
@@ -976,7 +976,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M28,8h2V4a2.0021,2.0021,0,0,0-2-2H24V4h4Z"></path><path d="M17 2H21V4H17z"></path><path d="M28 11H30V15H28z"></path><path d="M28,18v4H24V10a2.0023,2.0023,0,0,0-2-2H10V4h4V2H10A2.0023,2.0023,0,0,0,8,4V8H4a2.0023,2.0023,0,0,0-2,2V28a2.0023,2.0023,0,0,0,2,2H22a2.0023,2.0023,0,0,0,2-2V24h4a2.0023,2.0023,0,0,0,2-2V18ZM22,28H4V10H22Z"></path>
         </svg>
-        Remix Plex
+        Remix ${L.Plex}
       </button>
     `,
     didOpen: () => {
@@ -990,14 +990,14 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
           const folderId = document.getElementById("folderSelectInput").value;
 
           if (!newName) {
-            Swal.showValidationMessage("Plex name cannot be empty!");
+            Swal.showValidationMessage(`${L.Plex} name cannot be empty!`);
             return;
           }
 
           // Get the preset object at modal open time
           const presetObj = window.presetMap[currentPresetId]; // use the modal's current preset
           if (!presetObj) {
-            Swal.fire("Error", "Plex not found", "error");
+            Swal.fire("Error", `${L.Plex} not found`, "error");
             return;
           }
 
@@ -1018,7 +1018,7 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
       text: "This action cannot be undone.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>Yes, Delete Plex",
+      confirmButtonText: `<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>Yes, Delete ${L.Plex}`,
       cancelButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>No, Cancel",
       customClass: {
         confirmButton: "bx--btn bx--btn--danger",
@@ -1052,13 +1052,13 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
     if (data.success) {
       Swal.fire({
           icon: "success",
-          title: "Plex Deleted",
+          title: `${L.Plex} Deleted`,
           timer: 1000,
           showConfirmButton: false
         })
         .then(() => location.reload());
     } else {
-      Swal.fire("Error", data.error || "Failed to delete Plex", "error");
+      Swal.fire("Error", data.error || `Failed to delete ${L.plex}`, "error");
     }
     return;
   }
@@ -1073,8 +1073,8 @@ if (result.value) {
   if (!newName || sanitizedName !== newName) {
     await Swal.fire({
       icon: 'error',
-      title: 'Invalid Plex name',
-      text: 'Plex name cannot be empty and cannot contain forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+      title: `Invalid ${L.Plex} name`,
+      text: `${L.Plex} name cannot be empty and cannot contain forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & ' " ! ? :).`,
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
@@ -1097,7 +1097,7 @@ if (result.value) {
       await Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Plex name rejected by server. Please use only allowed characters.',
+        text: `${L.Plex} name rejected by server. Please use only allowed characters.`,
         customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false
       });
@@ -1111,7 +1111,7 @@ if (result.value) {
       await Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Failed to update folder assignment for Plex.',
+        text: `Failed to update folder assignment for ${L.plex}.`,
         customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false
       });
@@ -1131,8 +1131,8 @@ if (result.value) {
 
     await Swal.fire({
       icon: "success",
-      title: "Plex Updated",
-      text: `Plex "${sanitizedName}" saved and assigned to folder.`,
+      title: `${L.Plex} Updated`,
+      text: `${L.Plex} "${sanitizedName}" saved and assigned to folder.`,
       timer: 1000,
       showConfirmButton: false
     });
@@ -1142,12 +1142,12 @@ if (result.value) {
 
   } catch (err) {
     Swal.close();
-    console.error("Plex save error:", err);
+    console.error(`${L.Plex} save error:`, err);
 
     await Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: err.message || 'Unexpected error occurred while saving Plex.',
+      text: err.message || `Unexpected error occurred while saving ${L.plex}.`,
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
     });
@@ -1242,7 +1242,7 @@ async function duplicatePreset(presetId, newName, folderId) {
     if (!original) {
       Swal.fire({
         title: 'Error',
-        text: 'Plex not found',
+        text: `${L.Plex} not found`,
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary'
@@ -1254,7 +1254,7 @@ async function duplicatePreset(presetId, newName, folderId) {
 
     // Show loading UI
     Swal.fire({
-      title: 'Cloning Plex...',
+      title: `Cloning ${L.Plex}...`,
       allowOutsideClick: false,
       didOpen: () => Swal.showLoading()
     });
@@ -1294,7 +1294,7 @@ async function duplicatePreset(presetId, newName, folderId) {
       Swal.close();
       Swal.fire({
         title: 'Error',
-        text: 'Could not clone Plex',
+        text: `Could not clone ${L.plex}`,
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary'
@@ -1327,8 +1327,8 @@ async function duplicatePreset(presetId, newName, folderId) {
     // Show success briefly (auto-closes), await it, then reload
     await Swal.fire({
       icon: 'success',
-      title: 'Plex Cloned!',
-      text: `Plex cloned as "${duplicated.preset_name}"`,
+      title: `${L.Plex} Cloned!`,
+      text: `${L.Plex} cloned as "${duplicated.preset_name}"`,
       timer: 1000,
       showConfirmButton: false,
       allowOutsideClick: false
@@ -1342,7 +1342,7 @@ async function duplicatePreset(presetId, newName, folderId) {
     Swal.close();
     Swal.fire({
       title: 'Error',
-      text: 'Unexpected error cloning Plex.',
+      text: `Unexpected error cloning ${L.plex}.`,
       icon: 'error',
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary'
@@ -1469,8 +1469,8 @@ async function createPreset() {
     if (existingCount >= GUEST_PLEX_MAX) {
       Swal.fire({
         icon: 'warning',
-        title: 'Plex limit reached',
-        text: `You can save up to ${GUEST_PLEX_MAX} Plexes in local mode. Delete one to create a new one, or login to unlock unlimited Plexes.`,
+        title: `${L.Plex} limit reached`,
+        text: `You can save up to ${GUEST_PLEX_MAX} ${L.Plexes} in local mode. Delete one to create a new one, or login to unlock unlimited ${L.Plexes}.`,
         confirmButtonText: 'Ok',
         customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false
@@ -1479,31 +1479,31 @@ async function createPreset() {
     }
 
     const { value: guestPresetName } = await Swal.fire({
-      title: 'New Tone as Plex (local)',
+      title: `New Tone as ${L.Plex} (local)`,
       input: 'text',
-      inputLabel: 'Plex Name',
-      inputPlaceholder: 'Type your new Plex name here',
+      inputLabel: `${L.Plex} Name`,
+      inputPlaceholder: `Type your new ${L.plex} name here`,
       showCancelButton: false,
       showCloseButton: true,
-      confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Create Plex",
+      confirmButtonText: `<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Create ${L.Plex}`,
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary',
         cancelButton: 'bx--btn bx--btn--secondary'
       },
-      inputValidator: value => !value && 'You must enter a Plex name!'
+      inputValidator: value => !value && `You must enter a ${L.plex} name!`
     });
 
     if (!guestPresetName) return;
 
     const newPlex = createGuestPlex(guestPresetName.trim(), 'guest_board', {});
     if (!newPlex) {
-      Swal.fire('Error', 'Could not save Plex locally.', 'error');
+      Swal.fire('Error', `Could not save ${L.plex} locally.`, 'error');
       return;
     }
 
     Swal.fire({
       icon: 'success',
-      title: 'Plex Created',
+      title: `${L.Plex} Created`,
       text: `"${guestPresetName}" saved locally. (${existingCount + 1}/${GUEST_PLEX_MAX})`,
       timer: 1200,
       showConfirmButton: false
@@ -1520,18 +1520,18 @@ async function createPreset() {
   const selectedBoardName = pedalboardSelect?.selectedOptions[0]?.text;
 
   const { value: presetName, isConfirmed, isDenied } = await Swal.fire({
-    title: `New Tone as Plex for Rig "${selectedBoardName}"`,
+    title: `New Tone as ${L.Plex} for Rig "${selectedBoardName}"`,
     input: 'text',
-    inputLabel: 'Plex Name',
-    inputPlaceholder: 'Type your new Plex name here',
+    inputLabel: `${L.Plex} Name`,
+    inputPlaceholder: `Type your new ${L.plex} name here`,
     showCancelButton: false,
     showCloseButton: true,
-    confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Create Plex",
+    confirmButtonText: `<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Create ${L.Plex}`,
     customClass: {
       confirmButton: "bx--btn bx--btn--primary",
       cancelButton: "bx--btn bx--btn--secondary",
     },
-    inputValidator: value => !value && 'You must enter a Plex name!'
+    inputValidator: value => !value && `You must enter a ${L.plex} name!`
   });
 
   if (isDenied) {
@@ -1561,7 +1561,7 @@ async function createPreset() {
   const {
     value: selectedFolderId
   } = await Swal.fire({
-    title: 'Select folder for this Plex',
+    title: `Select folder for this ${L.Plex}`,
     html: folderHtml,
     showCancelButton: false,
     showCloseButton: true,
@@ -1617,8 +1617,8 @@ async function createPreset() {
   const sanitizedPresetName = removeForbiddenChars(presetName);
   if (sanitizedPresetName !== presetName) {
     Swal.fire({
-      title: 'Invalid Plex name',
-      text: 'Plex name contained forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+      title: `Invalid ${L.Plex} name`,
+      text: `${L.Plex} name contained forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & ' " ! ? :).`,
       icon: 'error',
       customClass: { confirmButton: 'bx--btn bx--btn--primary' },
       buttonsStyling: false
@@ -1654,7 +1654,7 @@ async function createPreset() {
     if (!res.ok || !data.ok) {
       Swal.fire({
         title: 'Error',
-        text: 'Failed to create Plex: ' + (data.error || 'Unknown error'),
+        text: `Failed to create ${L.plex}: ` + (data.error || 'Unknown error'),
         icon: 'error',
         customClass: {
           confirmButton: 'bx--btn bx--btn--primary'
@@ -1686,7 +1686,7 @@ async function createPreset() {
   if (selectedFolderId) {
     const moveResult = await movePresetToFolder(newPresetId, selectedFolderId || null);
     if (!moveResult || moveResult.ok !== true) {
-      console.error('Failed to assign newly created Plex to folder', moveResult);
+      console.error(`Failed to assign newly created ${L.plex} to folder`, moveResult);
     }
   }
 
@@ -1707,7 +1707,7 @@ async function createPreset() {
   // -------------------------------
   Swal.fire({
     title: 'Success',
-    text: `Plex "${presetName}" created${selectedFolderId ? ' and added to folder.' : '.'}`,
+    text: `${L.Plex} "${presetName}" created${selectedFolderId ? ' and added to folder.' : '.'}`,
     icon: 'success',
     customClass: {
       confirmButton: 'bx--btn bx--btn--primary',
@@ -1931,7 +1931,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
   filteredPresets.forEach(p => {
     const opt = document.createElement('option');
     opt.value = p._id;
-    opt.textContent = p.preset_name || 'Untitled Plex';
+    opt.textContent = p.preset_name || `Untitled ${L.Plex}`;
     presetSelect.appendChild(opt);
   });
 
@@ -1940,7 +1940,7 @@ function populatePresetDropdownByFolder(folderId, preferredPresetId = null, isNe
     // Nessun preset disponibile
     const placeholder = document.createElement('option');
     placeholder.value = '';
-    placeholder.textContent = '-- No Plexes --';
+    placeholder.textContent = `-- No ${L.Plexes} --`;
     placeholder.disabled = true;
     placeholder.selected = true;
     presetSelect.innerHTML = '';
@@ -2032,7 +2032,7 @@ async function createPresetOnServer(presetData) {
     const data = await res.json();
 
     if (!res.ok || !data.ok) { // check 'ok' from PHP
-      console.error("Failed to create Plex:", data);
+      console.error(`Failed to create ${L.plex}:`, data);
       return null;
     }
 

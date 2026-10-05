@@ -5,7 +5,7 @@
 // Render applied SubPlex info box
 function renderAppliedPresetInfo($pedalDiv, subplex) {
 
-  const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || subplex.id || "SubPlex";
+  const presetName = subplex.presetName || subplex.name || subplex.preset_name || subplex._id || subplex.id || L.SubPlex;
   
   if (!subplex || (!subplex.presetName && !subplex.name && !subplex.preset_name && !subplex.id)) {
     // console.log("No valid SubPlex found, skipping render.");
@@ -109,7 +109,7 @@ function updateSubplexStatus($pedalDiv) {
   }
 
   if (!subplex._originalName) {
-    subplex._originalName = subplex.presetName || 'SubPlex';
+    subplex._originalName = subplex.presetName || L.SubPlex;
   }
 
   if ($pedalDiv.data('applied-subplex-state') !== 'modified') {
@@ -174,7 +174,7 @@ function createCustomSubplex($pedalDiv) {
   // 1️⃣ Crea SubPlex custom in memoria
   const custom = {
     id: 'custom_' + Date.now(),
-    presetName: 'Custom SubPlex',
+    presetName: `Custom ${L.SubPlex}`,
     source: 'custom',
     description: '',
     userId: window.currentUser?.username || ''
@@ -391,14 +391,14 @@ function editCustomSubplexUI($pedalDiv) {
     <div class="explore-section" style="margin-top:4px;">
       <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.82rem;">
         <input type="checkbox" id="swal-subplex-save-private" style="width:auto; margin:0;">
-        <span>Save to my private SubPlex catalog</span>
+        <span>Save to my private ${L.SubPlex} catalog</span>
       </label>
-      <p style="font-size:0.75rem; color:#888; margin:2px 0 0 24px;">Only you will see it in the SubPlex dropdown.</p>
+      <p style="font-size:0.75rem; color:#888; margin:2px 0 0 24px;">Only you will see it in the ${L.SubPlex} dropdown.</p>
     </div>
   ` : '';
 
   Swal.fire({
-    title: 'Add SubPlex',
+    title: `Add ${L.SubPlex}`,
     html: `
       <div class="swal2-title">
 
@@ -437,7 +437,7 @@ function editCustomSubplexUI($pedalDiv) {
       confirmButton: 'bx--btn bx--btn--primary',
       cancelButton: 'bx--btn bx--btn--secondary'
     },
-    confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Save SubPlex",
+    confirmButtonText: `<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Save ${L.SubPlex}`,
     didOpen: () => {
       document.querySelectorAll('#swal-subplex-chips .explore-chip').forEach(chip => {
         chip.addEventListener('click', () => chip.classList.toggle('explore-chip--active'));
@@ -607,7 +607,7 @@ async function saveSubplexToPrivateCatalog($pedalDiv, subplex, pedalId) {
   const controlsMap = collectSinglePedalControlsMap($pedalDiv, pedalId);
 
   try {
-    Swal.fire({ title: 'Saving SubPlex...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+    Swal.fire({ title: `Saving ${L.SubPlex}...`, didOpen: () => Swal.showLoading(), allowOutsideClick: false });
 
     const res = await fetch('https://api.pedalplex.com/SAVE_PRIVATE_SUBPLEX.php', {
       method: 'POST',
@@ -640,18 +640,18 @@ async function saveSubplexToPrivateCatalog($pedalDiv, subplex, pedalId) {
 
       Swal.fire({
         icon: 'success',
-        title: 'SubPlex saved!',
-        text: 'Your private SubPlex is now available in the dropdown.',
+        title: `${L.SubPlex} saved!`,
+        text: `Your private ${L.SubPlex} is now available in the dropdown.`,
         timer: 1500,
         showConfirmButton: false
       });
     } else {
-      Swal.fire('Error', data.error || 'Failed to save SubPlex to catalog', 'error');
+      Swal.fire('Error', data.error || `Failed to save ${L.subplex} to catalog`, 'error');
     }
   } catch (err) {
     Swal.close();
     console.error('saveSubplexToPrivateCatalog error:', err);
-    Swal.fire('Error', 'Network error while saving SubPlex', 'error');
+    Swal.fire('Error', `Network error while saving ${L.subplex}`, 'error');
   }
 }
 

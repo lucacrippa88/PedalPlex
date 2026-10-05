@@ -20,7 +20,7 @@ function initNavPreset() {
           <div class="pedalplex-logo"></div>
         </button>
         <a href="" style="text-decoration:none;" class="title">PedalPlex</a>
-        <a href="plexes" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">Plexes</a>
+        <a href="plexes" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">${L.Plexes}</a>
       </div>
 
       <!-- Right: buttons -->
@@ -41,14 +41,14 @@ function initNavPreset() {
           Explore
         </button>
 
-        <button id="savePstBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Plex" disabled
+        <button id="savePstBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save ${L.Plex}" disabled
           style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
           </svg>
           Lock Tone
         </button>
-        <button id="createPstBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Plex"
+        <button id="createPstBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New ${L.Plex}"
           style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M30 6L26 6 26 2 24 2 24 6 20 6 20 8 24 8 24 12 26 12 26 8 30 8 30 6zM24 15v7.5562A3.9552 3.9552 0 0022 22a4 4 0 104 4V15zM22 28a2 2 0 112-2A2.0027 2.0027 0 0122 28zM17 6H10A2.002 2.002 0 008 8V22.5562A3.9557 3.9557 0 006 22a4 4 0 104 4V8h7zM6 28a2 2 0 112-2A2.0023 2.0023 0 016 28z" stroke="currentColor"/>
@@ -75,14 +75,14 @@ function initNavPreset() {
           </svg>
         </button>
 
-        <button id="savePstBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Save Plex" disabled
+        <button id="savePstBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Save ${L.Plex}" disabled
           style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
           </svg>
         </button>
         
-        <button id="createPstBtnMobile" class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Create New Plex"
+        <button id="createPstBtnMobile" class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Create New ${L.Plex}"
           style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <path d="M30 6L26 6 26 2 24 2 24 6 20 6 20 8 24 8 24 12 26 12 26 8 30 8 30 6zM24 15v7.5562A3.9552 3.9552 0 0022 22a4 4 0 104 4V15zM22 28a2 2 0 112-2A2.0027 2.0027 0 0122 28zM17 6H10A2.002 2.002 0 008 8V22.5562A3.9557 3.9557 0 006 22a4 4 0 104 4V8h7zM6 28a2 2 0 112-2A2.0023 2.0023 0 016 28z" stroke="currentColor"/>
@@ -200,7 +200,7 @@ function initNavPreset() {
 
   // Save preset
   $('#savePstBtn, #savePstBtnMobile').on('click', async () => {
-    const presetName = $('#presetSelect option:selected').text().trim() || "Untitled Plex";
+    const presetName = $('#presetSelect option:selected').text().trim() || `Untitled ${L.Plex}`;
     const result = collectPedalControlValues(presetName);
     const pedalArray = result[presetName];
 
@@ -232,7 +232,7 @@ function initNavPreset() {
     }
 
     Swal.fire({
-      title: "Locking Tone as Plex...",
+      title: `Locking Tone as ${L.Plex}...`,
       didOpen: () => Swal.showLoading(),
       allowOutsideClick: false
     });
@@ -246,14 +246,14 @@ function initNavPreset() {
       Swal.close()
       Swal.fire({
           icon: "success",
-          title: "Plex Saved",
+          title: `${L.Plex} Saved`,
           text: `Your Tone "${presetName}" has been locked successfully.`,
           timer: 1000,
           showConfirmButton: false
         })
         .then(() => location.reload());
     } else {
-      Swal.fire("Error", "Failed to save Plex. Please retry.", "error");
+      Swal.fire("Error", `Failed to save ${L.plex}. Please retry.`, "error");
     }
   });
 

@@ -1946,8 +1946,8 @@ const $wrapper = $("<div>")
 
                 // Reset confirmation
                 Swal.fire({
-                  title: 'Remove SubPlex?',
-                  text: 'This will remove the applied SubPlex and restore default controls.',
+                  title: `Remove ${L.SubPlex}?`,
+                  text: `This will remove the applied ${L.SubPlex} and restore default controls.`,
                   icon: 'warning',
                   showCancelButton: true,
                   confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M16,4c6.6,0,12,5.4,12,12s-5.4,12-12,12S4,22.6,4,16S9.4,4,16,4 M16,2C8.3,2,2,8.3,2,16s6.3,14,14,14s14-6.3,14-14 S23.7,2,16,2z'></path><path d='M8 15H24V17H8z'></path></svg>Yes, Remove",
@@ -2021,7 +2021,7 @@ function renderPresetList($ul, pedalId, presets) {
   $ul.empty();
 
   if (!presets.length) {
-    $ul.append("<li class='empty'>No SubPlexes found</li>");
+    $ul.append(`<li class='empty'>No ${L.SubPlexes} found</li>`);
     return;
   }
 
@@ -2080,10 +2080,10 @@ function renderPresetList($ul, pedalId, presets) {
 
     // Edit / Delete buttons for private subplexes owned by caller
     if (isPrivateOwner) {
-      const $editBtn = $(`<button class="bx--btn bx--btn--ghost bx--btn--sm bx--btn--icon-only preset-item-edit" title="Edit SubPlex" style="padding:2px 4px; min-height:unset; margin-left:4px;">
+      const $editBtn = $(`<button class="bx--btn bx--btn--ghost bx--btn--sm bx--btn--icon-only preset-item-edit" title="Edit ${L.SubPlex}" style="padding:2px 4px; min-height:unset; margin-left:4px;">
         <svg focusable="false" fill="currentColor" width="14" height="14" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M2 26h28v2H2zM25.4 9c.8-.8.8-2 0-2.8l-3.6-3.6c-.8-.8-2-.8-2.8 0l-15 15V24h6.4l15-15zm-5-5L24 7.6l-3 3L17.4 7l3-3zM6 22v-3.6l10-10 3.6 3.6-10 10H6z"></path></svg>
       </button>`);
-      const $deleteBtn = $(`<button class="bx--btn bx--btn--ghost bx--btn--sm bx--btn--icon-only preset-item-delete" title="Delete SubPlex" style="padding:2px 4px; min-height:unset; margin-left:2px; color:#da1e28;">
+      const $deleteBtn = $(`<button class="bx--btn bx--btn--ghost bx--btn--sm bx--btn--icon-only preset-item-delete" title="Delete ${L.SubPlex}" style="padding:2px 4px; min-height:unset; margin-left:2px; color:#da1e28;">
         <svg focusable="false" fill="currentColor" width="14" height="14" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M12 12H14V24H12z"></path><path d="M18 12H20V24H18z"></path><path d="M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z"></path><path d="M12 2H20V4H12z"></path></svg>
       </button>`);
 
@@ -2141,7 +2141,7 @@ async function openEditPrivateSubplexModal(preset, pedalId, $ul) {
   }).join('');
 
   const result = await Swal.fire({
-    title: 'Edit SubPlex',
+    title: `Edit ${L.SubPlex}`,
     html: `
       <div class="explore-modal">
         <div class="explore-section">
@@ -2208,7 +2208,7 @@ async function openEditPrivateSubplexModal(preset, pedalId, $ul) {
       renderPresetList($ul, pedalId, window.presetCatalogCache[pedalId] || []);
       // Force fresh fetch
       buildPresetDropdown($ul, pedalId);
-      Swal.fire({ icon: 'success', title: 'SubPlex updated', timer: 1000, showConfirmButton: false });
+      Swal.fire({ icon: 'success', title: `${L.SubPlex} updated`, timer: 1000, showConfirmButton: false });
     } else {
       Swal.fire('Error', data.error || 'Failed to update', 'error');
     }
@@ -2223,7 +2223,7 @@ async function openEditPrivateSubplexModal(preset, pedalId, $ul) {
 async function deletePrivateSubplex(preset, pedalId, $ul) {
   const confirm = await Swal.fire({
     title: `Delete "${preset.presetName}"?`,
-    text: 'This will permanently remove your private SubPlex.',
+    text: `This will permanently remove your private ${L.subplex}.`,
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: "<svg focusable='false' fill='currentColor' width='16' height='16' viewBox='0 0 32 32'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg> Yes, Delete",
@@ -2246,7 +2246,7 @@ async function deletePrivateSubplex(preset, pedalId, $ul) {
     if (data.ok) {
       if (window.presetCatalogCache) delete window.presetCatalogCache[pedalId];
       buildPresetDropdown($ul, pedalId);
-      Swal.fire({ icon: 'success', title: 'SubPlex deleted', timer: 1000, showConfirmButton: false });
+      Swal.fire({ icon: 'success', title: `${L.SubPlex} deleted`, timer: 1000, showConfirmButton: false });
     } else {
       Swal.fire('Error', data.error || 'Failed to delete', 'error');
     }
@@ -2277,11 +2277,11 @@ async function buildPresetDropdown($ul, pedalId) {
 
   $ul
     .empty()
-    .append("<li class='loading'>Loading SubPlexes</li>");
+    .append(`<li class='loading'>Loading ${L.SubPlexes}</li>`);
 
   const token = localStorage.getItem("authToken");
   if (!token) {
-    $ul.html("<li class='error'>Login to see all SubPlexes</li>");
+    $ul.html(`<li class='error'>Login to see all ${L.SubPlexes}</li>`);
     return;
   }
 
@@ -2312,7 +2312,7 @@ async function buildPresetDropdown($ul, pedalId) {
 
   } catch (err) {
     console.error("Preset dropdown error:", err);
-    $ul.html("<li class='error'>Error loading SubPlexes</li>");
+    $ul.html(`<li class='error'>Error loading ${L.SubPlexes}</li>`);
   }
 }
 
