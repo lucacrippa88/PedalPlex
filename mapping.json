@@ -4211,6 +4211,15 @@
     "category": "pitch shifter",
     "seo_description": "The WH-1 Whammy pedal allows dramatic pitch-shifting effects, dive bombs, and harmonized tones, perfect for expressive guitar solos."
   },
+    {
+    "pedalplex_id": "DigiTech Whammy Mononeon Signature",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/digitech/whammy/wh1",
+    "pedalplex_url": "https://www.pedalplex.com/gear/digitech-whammy-mononeon-signature",
+    "brand": "DigiTech",
+    "category": "pitch shifter",
+    "seo_description": "The Whammy Mononeon Signature pedal allows dramatic pitch-shifting effects, dive bombs, and harmonized tones, perfect for expressive guitar solos."
+  },
   {
     "pedalplex_id": "Dirty Boy Afro Fuzz",
     "status": "found",
