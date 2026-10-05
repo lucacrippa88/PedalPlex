@@ -223,16 +223,12 @@ function initNavPedalboard(userRole) {
 
         if (typeof Swal !== 'undefined') {
           Swal.fire({
-            icon: 'success',
             title: `Added: ${pedal._id}`,
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
             timer: 1500,
-            timerProgressBar: false,
-            customClass: {
-              popup: 'pp-toast'
-            }
+            customClass: { popup: 'pp-toast' }
           });
         }
       };
