@@ -2400,7 +2400,9 @@ async function triggerGuestStatsPing(force = false) {
         anonymous_id: anonId,
         has_local_rig: hasLocalRig,
         local_rig_pedals_count: localRigPedalsCount,
-        local_plex_count: localPlexCount
+        local_plex_count: localPlexCount,
+        page: window.location.pathname,
+        referrer: document.referrer || null
       })
     });
 
