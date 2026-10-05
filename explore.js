@@ -290,7 +290,7 @@ async function _runExplore(params) {
   if (!combination || !combination.length) {
     Swal.fire({
       icon: "info", title: "No matches found",
-      text: "There are no SubPlexes available for your Rig yet. Try different settings or build your first SubPlex!",
+      text: `There are no ${L.SubPlexes} available for your Rig yet. Try different settings or build your first ${L.SubPlex}!`,
       confirmButtonText: "Got it",
       customClass: { confirmButton: "bx--btn bx--btn--primary" }
     });
@@ -601,7 +601,7 @@ function _showExploreStep2(combination, params) {
   const explanation = _generateExplanation(combination, params);
 
   const rigRows = combination.map(({ pedal, subplex }) => {
-    const spName   = subplex.presetName || subplex.name || "SubPlex";
+    const spName   = subplex.presetName || subplex.name || L.SubPlex;
     const pedalLabel = _truncatePedalId(pedal.id);
     const spDesc   = subplex.description
       ? `<span class="explore-result-desc">${subplex.description}</span>`
@@ -647,13 +647,13 @@ function _showExploreStep2(combination, params) {
 
         <div class="explore-result-actions">
           <button id="exploreApplyBtn" class="bx--btn bx--btn--primary">
-            ${iconApply}Apply to Plex
+            ${iconApply}Apply to ${L.Plex}
           </button>
           <button id="exploreTryBtn" class="bx--btn bx--btn--secondary">
             ${iconTry}Try another
           </button>
           <button id="exploreSaveBtn" class="bx--btn bx--btn--tertiary">
-            ${iconSave}Save to new Plex
+            ${iconSave}Save to new ${L.Plex}
           </button>
         </div>
         <br>
@@ -714,8 +714,8 @@ function _applyExploreResult(combination) {
   Swal.fire({
     icon: "success",
     title: "Experiment applied!",
-    html: `${applied} SubPlex${applied !== 1 ? "es" : ""} loaded onto your Rig.<br>
-           <small style="color:#888">Use <strong>Lock Tone</strong> to save it as a Plex.</small>`,
+    html: `${applied} ${L.SubPlex}${applied !== 1 ? "es" : ""} loaded onto your Rig.<br>
+           <small style="color:#888">Use <strong>Lock Tone</strong> to save it as a ${L.Plex}.</small>`,
     timer: 2500,
     showConfirmButton: false
   });
@@ -731,7 +731,7 @@ async function _saveExploreExperiment(combination, params) {
 
   // 1. Ask for a name
   const nameResult = await Swal.fire({
-    title: "Save experiment as Plex",
+    title: `Save experiment as ${L.Plex}`,
     input: "text",
     inputValue: `Explore: ${styleLabel}`,
     inputPlaceholder: "Name your experiment...",
@@ -800,7 +800,7 @@ async function _saveExploreExperiment(combination, params) {
       : null;
 
     if (!newPlex) {
-      Swal.fire("Error", "Could not save Plex locally. You may have reached the limit.", "error");
+      Swal.fire("Error", `Could not save ${L.plex} locally. You may have reached the limit.`, "error");
       return;
     }
 
@@ -808,7 +808,7 @@ async function _saveExploreExperiment(combination, params) {
     Swal.fire({
       icon: "success",
       title: "Experiment saved!",
-      text: `Plex "${presetName}" created locally.`,
+      text: `${L.Plex} "${presetName}" created locally.`,
       timer: 1800,
       showConfirmButton: false
     }).then(() => window.location.reload());
@@ -826,7 +826,7 @@ async function _saveExploreExperiment(combination, params) {
   </select>`;
 
   const folderResult = await Swal.fire({
-    title: "Select folder for this Plex",
+    title: `Select folder for this ${L.Plex}`,
     html: folderHtml,
     showCancelButton: false,
     showCloseButton: true,
@@ -914,7 +914,7 @@ async function _saveExploreExperiment(combination, params) {
     const createData = await createRes.json();
 
     if (!createRes.ok || !createData.ok) {
-      Swal.fire("Error", "Failed to create Plex: " + (createData.error || "Unknown error"), "error");
+      Swal.fire("Error", `Failed to create ${L.plex}: ` + (createData.error || "Unknown error"), "error");
       return;
     }
 
@@ -929,7 +929,7 @@ async function _saveExploreExperiment(combination, params) {
     Swal.fire({
       icon: "success",
       title: "Experiment saved!",
-      text: `Plex "${presetName}" created successfully.`,
+      text: `${L.Plex} "${presetName}" created successfully.`,
       timer: 1800,
       showConfirmButton: false
     }).then(() => window.location.reload());
