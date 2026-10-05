@@ -17530,6 +17530,24 @@
     "brand": "Arc Effects",
     "category": "boost",
     "seo_description": "The Gamut reimagines the classic circuit for today’s players, combining vintage-inspired tones with a fresh approach and the versatility modern guitarists expect."
+  },
+  {
+    "pedalplex_id": "Digitech DOD Carcosa Fuzz",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/dod/carcosa",
+    "pedalplex_url": "https://www.pedalplex.com/gear/digitech-dod-carcosa-fuzz",
+    "brand": "Digitech",
+    "category": "fuzz",
+    "seo_description": "DOD Carcosa Fuzz is a highly versatile fuzz pedal known for its aggressive, gritty character and wide range of tones. It can deliver anything from sharp, sputtery fuzz to thick, saturated distortion, with strong note definition and plenty of harmonic texture. Its controls allow precise shaping of the fuzz character, brightness, and overall output, making it suitable for everything from garage rock and alternative to stoner, doom, and heavier styles."
+  },
+    {
+    "pedalplex_id": "Strich Twister Flanger",
+    "status": "missing",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/strich-twister-flanger",
+    "brand": "Strich",
+    "category": "flanger",
+    "seo_description": "The Strich Twister Flanger is a versatile flanger pedal that delivers everything from subtle modulation and classic jet-plane sweeps to deep, swirling and psychedelic textures. Its rich modulation character works well for clean tones, atmospheric passages, rhythmic parts, and heavier sounds, adding movement and depth without losing the definition of the original signal."
   }
 ]
 
