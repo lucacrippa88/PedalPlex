@@ -185,7 +185,7 @@
     window.isEditMode = false;
     window.catalogMap = {};
     window.catalog = [];
-    var activeRenderTaskId = 0;
+    // NOTE: activeRenderTaskId is declared as `let` inside utils.js — do NOT redeclare it here
     // Swal stub — no SweetAlert on homepage
     window.Swal = { fire: () => Promise.resolve({ isConfirmed: false }), close: () => {}, showLoading: () => {}, showValidationMessage: () => {} };
   </script>
