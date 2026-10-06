@@ -179,21 +179,21 @@
   <!-- Scripts needed for pedalboard rendering -->
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script src="labels.js"></script>
+  <script>
+    // Stubs must be set BEFORE utils.js loads (utils.js reads window.isEditMode at parse time)
+    window.SUBPLEX_EDIT_MODE = false;
+    window.isEditMode = false;
+    window.catalogMap = {};
+    window.catalog = [];
+    var activeRenderTaskId = 0;
+    // Swal stub — no SweetAlert on homepage
+    window.Swal = { fire: () => Promise.resolve({ isConfirmed: false }), close: () => {}, showLoading: () => {}, showValidationMessage: () => {} };
+  </script>
   <script src="helpers.js"></script>
   <script src="subplexes.js"></script>
   <script src="utils.js"></script>
   <script>
-    // Minimal stubs so utils.js doesn't crash outside plexes/rigs context
-    window.SUBPLEX_EDIT_MODE = false;
-    window.isEditMode = false;
     var resultsDiv = document.getElementById('results');
-    var activeRenderTaskId = 0;
-    window.catalogMap = {};
-    window.catalog = [];
-    // Swal stub: Swal-based modals won't work on the homepage (no SweetAlert loaded)
-    if (typeof Swal === 'undefined') {
-      window.Swal = { fire: () => Promise.resolve({ isConfirmed: false }), close: () => {}, showLoading: () => {}, showValidationMessage: () => {} };
-    }
 
     const SPLASH_PEDALS = [
       // Row 1
@@ -248,26 +248,9 @@
       }
     }
 
-    // Wait for utils.js to define renderFullPedalboard, then init
-    document.addEventListener('DOMContentLoaded', function() {
-      if (typeof renderFullPedalboard === 'function') {
-        initSplashPedalboard();
-      } else {
-        // poll briefly in case scripts are still parsing
-        let attempts = 0;
-        const poll = setInterval(function() {
-          attempts++;
-          if (typeof renderFullPedalboard === 'function') {
-            clearInterval(poll);
-            initSplashPedalboard();
-          } else if (attempts > 30) {
-            clearInterval(poll);
-            const spinner = document.getElementById('presetSpinner');
-            if (spinner) spinner.textContent = 'Could not load pedals.';
-          }
-        }, 100);
-      }
-    });
+    // All scripts above loaded synchronously — renderFullPedalboard is defined here.
+    // Call directly (no DOMContentLoaded needed since we're mid-body and #preset already exists).
+    initSplashPedalboard();
   </script>
 
   <!-- Discord community card - after splash -->
