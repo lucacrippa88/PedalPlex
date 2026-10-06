@@ -4,7 +4,7 @@ function renderBackToCatalogButton() {
   wrapper.style.textAlign = 'center';
 
   wrapper.innerHTML = `
-    <a id="backToCatalog" href="gears" class="bx--btn bx--btn--tertiary" style="margin-left:8px; max-width:500px!important;">
+    <a id="backToCatalog" href="/gears" class="bx--btn bx--btn--tertiary" style="margin-left:8px; max-width:500px!important;">
       Not found? Browse Catalog
       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
         <path d="M14 26L15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26z"></path>
