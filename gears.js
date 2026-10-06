@@ -331,7 +331,7 @@ function initSinglePedalView(pedalId, userRole){
     const pedals = data.docs || [];
     if(pedals.length===0){
       Swal.fire({icon:"error", title:"Pedal not found", confirmButtonText:"Back to Catalog"})
-        .then(()=>window.location.href="gears");
+        .then(()=>window.location.href="/gears");
       return;
     }
     catalogData = pedals;

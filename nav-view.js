@@ -14,7 +14,7 @@ function renderNavBar(userRole = "guest") {
         </button>
 
         <div class="title">PedalPlex</div>
-        <a href="gears" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none;">View Gear</a>
+        <a href="/gears" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none;">View Gear</a>
       </div>
 
       <div>
