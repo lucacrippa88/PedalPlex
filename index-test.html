@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>PedalPlex – Guitar & Bass Pedalboard Builder, Tone Presets & Rig Memory</title>
+  <meta name="description" content="PedalPlex helps guitarists and bassists build, save, and recall pedalboard and amp settings. Create visual rigs, store tone presets, and never forget why a tone worked. Free and hardware-agnostic.">
+  <link rel="canonical" href="https://pedalplex.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PedalPlex – Save, Recall & Understand Your Guitar Tones">
+  <meta property="og:description" content="Build visual pedalboards, save knob settings as presets, and recreate your guitar or bass tones months later. PedalPlex is your tone memory.">
+  <meta property="og:url" content="https://pedalplex.com/">
+  <meta property="og:image" content="https://pedalplex.com/logos/splash.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PedalPlex – Guitar & Bass Tone Memory">
+  <meta name="twitter:description" content="A visual pedalboard builder to save, recall, and understand your guitar and bass tones.">
+  <meta name="twitter:image" content="https://pedalplex.com/logos/splash.png">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="icon" href="logos/pedalplex_logo_gradient.png" type="image/x-icon">
+  <link rel="stylesheet" href="css/carbon-components.min.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "PedalPlex",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Web",
+      "description": "PedalPlex is a web-based tool for guitarists and bassists to build pedalboards, save tone presets, and recall amp and pedal settings over time.",
+      "url": "https://pedalplex.com",
+      "featureList": [
+        "Visual pedalboard builder",
+        "Knob position memory",
+        "Tone preset saving as Plexes",
+        "Rig organization",
+        "AI-generated tone ideas as SubPlexes"
+      ],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  </script>
+
+</head>
+
+<body>
+
+  <!-- HERO SECTION -->
+  <main id="page-content" style="margin-top:20px; text-align:center; margin-bottom:50px;">
+    <div class="pedalplex-logo-fullscreen-menu"></div><br><br>
+    <!-- <h1 style="font-weight:700;">Because Great Tones Deserve a Save Button.</h1>
+    <p style="font-size:1.25rem; margin-top:1rem; color:#717171;">
+      Create a visual memory of your guitar and bass rigs.<br>
+      Save, recall, and rebuild your tones — even months later.
+    </p> -->
+    <!-- <h1 style="font-weight:700;">PedalPlex<br>A Guitar & Bass Pedalboard Builder with Tone Preset Memory</h1>
+    <p style="font-size:1.25rem; margin-top:1rem; color:#717171;">
+      Because Great Tones Deserve a Save Button.
+    </p> -->
+    <!-- <h1 style="font-weight:700;">Stop Forgetting Your Best Tones.</h1> -->
+    <h1 style="font-weight:700;">Save the tones you don't want to lose.</h1>
+    <p style="font-size:1.25rem; margin-top:1rem; color:#717171;">
+      <!-- Visually save and understand your pedal and amp settings.<br> -->
+       <!-- Build your rig, dial in your pedals and save every setting.
+       When you need that sound again, you'll know exactly how to get it back. -->
+       Build your rig, dial in your pedals, and save every setting. 
+        When you need that sound again, you'll know exactly how to recreate it.
+    </p>
+
+    <!-- CTA buttons -->
+    <div id="cta-buttons" style="margin-top:2rem; display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;"></div>
+
+    <script>
+      const ctaContainer = document.getElementById('cta-buttons');
+
+      // Create btn function
+      function createButton(href, classes, label, svgContent) {
+        const a = document.createElement('a');
+        a.href = href;
+        a.className = classes;
+        a.type = 'button';
+        a.setAttribute('aria-label', label);
+        a.style.display = 'flex';
+        a.style.alignItems = 'center';
+        a.style.gap = '0.5rem';
+        a.innerHTML = svgContent + label;
+        return a;
+      }
+
+      // SVG template dei bottoni
+      const svgGuest = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M6.34 19H17.65V21H6.34z" transform="rotate(-45 11.995 20.002)"></path>
+          <path d="M17,30a1,1,0,0,1-.37-.07,1,1,0,0,1-.62-.79l-1-7,2-.28.75,5.27L21,24.52V17a1,1,0,0,1,.29-.71l4.07-4.07A8.94,8.94,0,0,0,28,5.86V4H26.14a8.94,8.94,0,0,0-6.36,2.64l-4.07,4.07A1,1,0,0,1,15,11H7.48L4.87,14.26l5.27.75-.28,2-7-1a1,1,0,0,1-.79-.62,1,1,0,0,1,.15-1l4-5A1,1,0,0,1,7,9h7.59l3.77-3.78A10.92,10.92,0,0,1,26.14,2H28a2,2,0,0,1,2,2V5.86a10.92,10.92,0,0,1-3.22,7.78L23,17.41V25a1,1,0,0,1-.38.78l-5,4A1,1,0,0,1,17,30Z"></path>
+      </svg>`;
+
+      const svgLogin = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
+          <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
+      </svg>`;
+
+      const svgPlexes = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M25,4H10A2.002,2.002,0,0,0,8,6V20.5563A3.9551,3.9551,0,0,0,6,20a4,4,0,1,0,4,4V12H25v8.5562A3.9545,3.9545,0,0,0,23,20a4,4,0,1,0,4,4V6A2.0023,2.0023,0,0,0,25,4ZM6,26a2,2,0,1,1,2-2A2.0023,2.0023,0,0,1,6,26Zm17,0a2,2,0,1,1,2-2A2.0027,2.0027,0,0,1,23,26ZM10,6H25v4H10Z"/>
+      </svg>`;
+
+      // Funzione per decodificare JWT
+      function parseJwt(token) {
+        try {
+          const base64Url = token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          return JSON.parse(atob(base64));
+        } catch (e) {
+          return null;
+        }
+      }
+
+      // Controllo authToken
+      const token = localStorage.getItem('authToken');
+      let currentUser = token ? parseJwt(token) : null;
+
+      if (currentUser && currentUser.username) {
+        // Utente loggato: bottone che decide la destinazione in base ai Rig
+        const workspaceBtn = createButton('#', 'bx--btn bx--btn--primary', "Let's start", svgPlexes);
+        workspaceBtn.addEventListener('click', async function(e) {
+          e.preventDefault();
+          workspaceBtn.disabled = true;
+          workspaceBtn.style.opacity = '0.7';
+          try {
+            const res = await fetch('https://api.pedalplex.com/GET_RIG.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+              body: JSON.stringify({ user_id: currentUser.userid })
+            });
+            const data = await res.json();
+            const hasRigWithPedals = Array.isArray(data.docs) &&
+              data.docs.some(rig => Array.isArray(rig.pedals) && rig.pedals.length > 0);
+            window.location.href = hasRigWithPedals ? 'plexes' : 'rigs';
+          } catch (err) {
+            window.location.href = 'rigs'; // fallback on error
+          }
+        });
+        ctaContainer.appendChild(workspaceBtn);
+      } else {
+        // Guest / non loggato: mostra Start as Guest e Login
+        const guestBtn = createButton('#', 'bx--btn bx--btn--tertiary', 'Start creating', svgGuest);
+        guestBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          let boards = [];
+          try { boards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]'); } catch (err) {}
+          const hasRigWithPedals = Array.isArray(boards) &&
+            boards.some(rig => Array.isArray(rig.pedals) && rig.pedals.length > 0);
+          window.location.href = hasRigWithPedals ? 'plexes' : 'rigs';
+        });
+        ctaContainer.appendChild(guestBtn);
+        ctaContainer.appendChild(createButton('login', 'bx--btn bx--btn--primary', 'Login', svgLogin));
+      }
+    </script>
+
+    <br><br><br>
+
+    <h3 style="font-weight:700;">Completely free. No ads. Forever.</h3>
+
+  </main>
+
+  <!-- LIVE PEDALBOARD DEMO (replaces splash image) -->
+  <div id="splash-pedalboard" style="margin-top:0.5rem; overflow-x:auto; background:#1a1a1a; padding:1.5rem 1rem;">
+    <p style="text-align:center; color:#717171; font-size:0.9rem; margin-bottom:1rem; margin-top:0;">
+      ↓ Try it — knobs are interactive
+    </p>
+    <div id="preset" style="display:flex; flex-direction:column; align-items:center; gap:12px;"></div>
+    <div id="results"></div>
+    <div id="presetSpinner" style="text-align:center; padding:2rem; color:#717171;">Loading pedals…</div>
+  </div>
+
+  <!-- Scripts needed for pedalboard rendering -->
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="labels.js"></script>
+  <script src="helpers.js"></script>
+  <script src="subplexes.js"></script>
+  <script src="utils.js"></script>
+  <script>
+    // Minimal stubs so utils.js doesn't crash outside plexes/rigs context
+    window.SUBPLEX_EDIT_MODE = false;
+    window.isEditMode = false;
+    var resultsDiv = document.getElementById('results');
+    var activeRenderTaskId = 0;
+    window.catalogMap = {};
+    window.catalog = [];
+    // Swal stub: Swal-based modals won't work on the homepage (no SweetAlert loaded)
+    if (typeof Swal === 'undefined') {
+      window.Swal = { fire: () => Promise.resolve({ isConfirmed: false }), close: () => {}, showLoading: () => {}, showValidationMessage: () => {} };
+    }
+
+    const SPLASH_PEDALS = [
+      // Row 1
+      { pedal_id: "Strymon blueSky Reverberator",           row: 1, rotation: 0, subplex: [] },
+      { pedal_id: "Boss Flanger BF-3",                      row: 1, rotation: 0, subplex: [] },
+      { pedal_id: "Blackstar Dept.10 Dual Distortion",      row: 1, rotation: 0, subplex: [] },
+      { pedal_id: "Ibanez Tube Screamer TS808",             row: 1, rotation: 0, subplex: [] },
+      { pedal_id: "TC Electronic PolyTune 3 Mini",          row: 1, rotation: 0, subplex: [] },
+      // Row 2
+      { pedal_id: "TC Electronic Ditto 2 Looper",           row: 2, rotation: 0, subplex: [] },
+      { pedal_id: "MXR EVH Phase 90 EVH90",                 row: 2, rotation: 0, subplex: [] },
+      { pedal_id: "MXR Uni-Vibe Chorus/Vibrato M68",        row: 2, rotation: 0, subplex: [] },
+      { pedal_id: "Behringer Ultra Chorus UC200",           row: 2, rotation: 0, subplex: [] },
+      { pedal_id: "Boss Equalizer GE-7",                    row: 2, rotation: 0, subplex: [] },
+      { pedal_id: "Electro-Harmonix Green Russian Big Muff Pi", row: 2, rotation: 0, subplex: [] },
+    ];
+
+    async function initSplashPedalboard() {
+      const spinner = document.getElementById('presetSpinner');
+
+      try {
+        const ids = SPLASH_PEDALS.map(p => p.pedal_id);
+
+        const res = await fetch('https://api.pedalplex.com/GET_GEARS_BY_IDS.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ids })
+        });
+
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const docs = data.docs || [];
+
+        docs.forEach(pedal => {
+          window.catalogMap[pedal._id] = pedal;
+        });
+        window.catalog = docs;
+
+        window.pedalboard = {
+          _id: 'splash-demo',
+          name: 'Splash Demo',
+          pedals: SPLASH_PEDALS
+        };
+
+        if (spinner) spinner.style.display = 'none';
+
+        await renderFullPedalboard(window.pedalboard);
+
+      } catch (err) {
+        if (spinner) spinner.textContent = 'Could not load pedals.';
+        console.error('[splash] pedalboard load failed:', err);
+      }
+    }
+
+    // Wait for utils.js to define renderFullPedalboard, then init
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof renderFullPedalboard === 'function') {
+        initSplashPedalboard();
+      } else {
+        // poll briefly in case scripts are still parsing
+        let attempts = 0;
+        const poll = setInterval(function() {
+          attempts++;
+          if (typeof renderFullPedalboard === 'function') {
+            clearInterval(poll);
+            initSplashPedalboard();
+          } else if (attempts > 30) {
+            clearInterval(poll);
+            const spinner = document.getElementById('presetSpinner');
+            if (spinner) spinner.textContent = 'Could not load pedals.';
+          }
+        }, 100);
+      }
+    });
+  </script>
+
+  <!-- Discord community card - after splash -->
+     <div id="community" style="display:flex; justify-content:center; padding:1.5rem 1rem; margin:3rem 0;">
+    <a href="https://discord.gg/guitar-music" target="_blank" rel="noopener noreferrer"
+      style="display:inline-flex; align-items:center; gap:0.85rem; background:#2b2d31; border:1px solid #3d3f45; border-radius:12px; padding:0.85rem 1.25rem; max-width:340px; text-decoration:none;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 127.14 96.36" aria-hidden="true" style="flex-shrink:0;">
+        <path fill="#5865F2" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+      </svg>
+      <div>
+        <p style="margin:0 0 0.2rem; font-weight:700; color:#fff; font-size:0.85rem;">Guitar Discord Server</p>
+        <p style="margin:0; color:#b5bac1; font-size:0.75rem; line-height:1.4;">Guitar and gear community est. 2016. Join us!</p>
+      </div>
+    </a>
+  </div>
+
+
+  <!-- PROBLEM SECTION -->
+  <section id="save-and-recall" style="max-width:1100px; margin:5rem auto;text-align:center;">
+  <!-- <h2 style="font-size:2rem; color:#fff; font-weight:600">Save and Recall Guitar Pedal & Amp Settings</h2> -->
+    <h2 style="font-size:2rem; color:#fff; font-weight:600">Found a tone you love? Save it.</h2>
+
+
+    <p style="font-size:1.25rem; margin-top:1rem; color:#717171;">
+      <!-- PedalPlex lets you store exact knob positions for delay, distortion, reverb, modulation and amplifier controls. 
+      Recreate your tone settings months later without guessing.<br> -->
+      <!-- PedalPlex is a digital tool that helps guitarists and bassists save, organize and recall their pedal settings 
+      and amplifier configurations. Store knob positions and tone presets in one place. -->
+      PedalPlex remembers knobs and switches positions behind the tone of your pedals and amps,<br>
+      so you can recall it weeks or months later. <span style="color:#9C54D5">Here the main concepts:</span><br><br>
+      
+      <!-- Store exact knob and switch positions for pedals and amps. Recreate your favorite tones months later—without guessing. -->
+      <!-- Because Great Tones Deserve a <span style="color:#9C54D5">Save</span> Button. -->
+    </p>
+    <!-- <p style="font-size:1.25rem; margin-top:1rem; color:#9C54D5">PedalPlex lets you:</p><br><br> -->
+
+  <!-- <section id="what-is-pedalplex" style="max-width:800px; margin:5rem auto;text-align:center;"> -->
+    <!-- <h2 style="font-size:2rem; color:#fff; font-weight:600">What is PedalPlex?</h2> -->
+    <!-- <h2 style="font-size:2rem; color:#fff; font-weight:600">From idea to tone, and back again.</h2> -->
+    <!-- <p style="font-size:1.25rem; margin-top:1rem; margin-bottom:2rem; color:#717171;"> -->
+      <!-- PedalPlex is a web-based pedalboard and guitar rig management tool designed for guitarists and bassists.
+      It allows users to visually recreate their real pedalboards and amplifiers, save exact knob and switch
+      positions as tone presets, and organize sounds for songs, sessions, and live performances. -->
+      <!-- PedalPlex lets you to: -->
+      <!-- - <span style="color:#9C54D5">Rigs</span>: visually recreate your pedalboard and amp setup<br>
+      - <span style="color:#9C54D5">Plexes</span>: save exact overall knob and switch positions, and organise your tones for songs, sessions and live performances<br>
+      - <span style="color:#9C54D5">SubPlexes</span>: understand why a tone works on a specific gear even months later -->
+    <!-- </p> -->
+    <!-- <p style="font-size:1.25rem; margin-top:1rem; margin-bottom:2rem; color:#717171;">
+      Unlike photos or MIDI dumps, PedalPlex focuses on <span style="color:#9C54D5">tone organisation</span>: why a tone
+      works, how it evolved, and how to rebuild it months later without relying on specific hardware.
+    </p> -->
+  <!-- </section> -->
+
+  <!-- 3 STEPS SECTION -->
+
+    <!-- <div class="bx--grid">
+    <div class="bx--row">
+      <div class="bx--col">
+        <h3>Build the tone</h3>
+        <p>
+          Choose the pedals and amp you use and <span style="color:#9C54D5">build the setup behind your sound</span>.
+        </p>
+      </div>
+      <div class="bx--col">
+        <h3>Save it</h3>
+        <p>
+          <span style="color:#9C54D5">Capture every knob, switch and setting</span> when you finally get it right.
+        </p>
+      </div>
+      <div class="bx--col">
+        <h3>Come back to it</h3>
+        <p>
+          <span style="color:#9C54D5">Recall your tone later</span> without trying to remember how you set up your pedals.
+        </p>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- <h2 style="font-size:2rem; color:#fff; font-weight:600">How does PedalPlex work?</h2><br><br> -->
+    
+  <div class="bx--grid">
+    <div class="bx--row">
+      <!-- <div class="bx--col">
+        <h3><a style="color:#fff; text-decoration:none" href="/gears">Browse Gears</a></h3>
+        <p>
+          Explore a <span style="color:#9C54D5">growing library of pedals and amps</span>. Visualize and customize their controls to match your real gear.
+        </p>
+      </div> -->
+      <div class="bx--col">
+        <h3><a style="color:#fff; text-decoration:none" href="/rigs">Rigs</a></h3>
+        <p style="font-size:1.25rem; margin-bottom:1rem; color:#717171;">
+          Arrange digital twins of pedals and amps you actually use.
+          <!-- Arrange pedals and amps to create <span style="color:#9C54D5">faithful digital copies of your setups</span>. Build as many rigs as you need for songs, riffs, or gigs. -->
+        </p>
+      </div>
+      <div class="bx--col">
+        <h3><a style="color:#fff; text-decoration:none" href="/plexes">Plexes</a></h3>
+        <p style="font-size:1.25rem; margin-bottom:1rem; color:#717171;">
+          Capture the exact knob and switch positions of your rig for a song or a riff.
+          <!-- <span style="color:#9C54D5">Capture exact knob and switch positions</span> for instant recall. Organize your tones and riffs for easy access anytime. -->        </p>
+      </div>
+      <div class="bx--col">
+        <h3>SubPlexes</h3>
+        <p style="font-size:1.25rem; margin-bottom:1rem; color:#717171;">
+          Access built-in presets at Gear level or save your ones adding explainability to Plexes.
+          <!-- Discover new tone ideas and combinations. SubPlexes show <span style="color:#9C54D5">why a tone works</span> and how to creatively explore your gear. -->
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- COMPETITION SECTION -->
+  <section id="the-problem" style="margin:5rem auto; max-width:800px; text-align:center;">
+    <!-- <h2 style="font-size:2rem; color:#fff; font-weight:600">Ever tried to recreate a great tone and couldn’t remember
+      why it worked?</h2> -->
+    <h2 style="font-size:2rem; color:#fff; font-weight:600">Why PedalPlex?</h2>
+    <p style="font-size:1.25rem; margin-top:1rem; margin-bottom:2rem; color:#717171;">
+      Photos freeze the past. MIDI saves machines.<br>
+      <span style="color:#9C54D5">PedalPlex preserves your decisions.</span>
+    </p>
+    <!-- Glow border container -->
+    <!-- <div style="
+      border-radius: 12px;
+      padding: 10px; /* thickness of glow */
+      background: linear-gradient(45deg, rgb(70, 41, 100), rgb(156, 84, 213), rgb(94, 226, 240));
+      box-shadow: 0 0 15px rgba(94, 226, 240, 0.6), 0 0 25px rgba(156, 84, 213, 0.4);
+    "> -->
+    <div class="pedalplex-glow">
+      <!-- Actual table -->
+      <table class="bx--data-table bx--data-table--zebra"
+        style="width:100%; text-align:center; background-color:#3a3a3a; color:#fff; border-radius:10px; overflow:hidden;">
+        <thead style="background-color:#2e2e2e; color:#fff;">
+          <tr>
+            <th scope="col" style="padding:12px;">Feature</th>
+            <th scope="col" style="padding:12px;">Photos</th>
+            <th scope="col" style="padding:12px;">MIDIs</th>
+            <th scope="col" style="padding:12px;">PedalPlex</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Remember exact settings</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--half-->
+                <path
+                  d="M29.37,11.84a13.6,13.6,0,0,0-1.06-2.51A14.17,14.17,0,0,0,25.9,6.1a14,14,0,1,0,0,19.8,14.17,14.17,0,0,0,2.41-3.23,13.6,13.6,0,0,0,1.06-2.51,14,14,0,0,0,0-8.32ZM4,16A12,12,0,0,1,16,4V28A12,12,0,0,1,4,16Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--full-->
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--full-->
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+          </tr>
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Keep different versions</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--empty-->
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--empty-->
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--full-->
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+          </tr>
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Remember what you changed</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--empty-->
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--empty-->
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--full-->
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+          </tr>
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Works with any hardware</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--full-->
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--empty-->
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--full-->
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+          </tr>
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Share a tone with someone</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--half-->
+                <path
+                  d="M29.37,11.84a13.6,13.6,0,0,0-1.06-2.51A14.17,14.17,0,0,0,25.9,6.1a14,14,0,1,0,0,19.8,14.17,14.17,0,0,0,2.41-3.23,13.6,13.6,0,0,0,1.06-2.51,14,14,0,0,0,0-8.32ZM4,16A12,12,0,0,1,16,4V28A12,12,0,0,1,4,16Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--empty-->
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <!--full-->
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+          </tr>
+          <!-- <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">All-in-one tone organisation</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path
+                  d="M29.37,11.84a13.6,13.6,0,0,0-1.06-2.51A14.17,14.17,0,0,0,25.9,6.1a14,14,0,1,0,0,19.8,14.17,14.17,0,0,0,2.41-3.23,13.6,13.6,0,0,0,1.06-2.51,14,14,0,0,0,0-8.32ZM4,16A12,12,0,0,1,16,4V28A12,12,0,0,1,4,16Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+          </tr> -->
+          <!-- <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Learning and inspiration</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+          </tr> -->
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+
+
+  
+
+
+
+  <!-- OBJECTION HANDLING SECTION -->
+  <!-- <section style="margin-top:5rem; text-align:center;">
+    <p>Already have an account?</p>
+    <div style="margin-top:2rem; display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+      <a href="login" class="bx--btn bx--btn--primary" type="button" aria-label="Login" 
+          style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+              <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
+              <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
+          </svg>
+          Login here
+      </a>
+    </div>
+  </section> -->
+
+   <section id="save-and-recall" style="max-width:800px; margin:5rem auto;text-align:center;">
+  <h2 style="font-size:2rem; color:#fff; font-weight:600">Frequently Asked Questions</h2><br>
+    <h4>Is PedalPlex a sound modeling app?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    No. PedalPlex does not generate or simulate sound. It helps you visually document and organize real pedal and amp settings so you can recreate your tones accurately.
+    </p>
+
+    <h4>What exactly does PedalPlex save?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    PedalPlex saves your exact knob and switch positions. Tone will always depend on the amp, guitar, room, and context, but PedalPlex preserves your decisions, so you always know what you did.
+    </p>
+
+    <h4>Why not just take a photo?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    Photos freeze the past. PedalPlex lets you organize tones by songs and sessions, save multiple versions, add descriptions and tags, and understand how each piece of gear contributes to the final tone. It’s documentation, not just memory.
+    </p>
+
+    <!-- <h4>What’s the difference between a Rig, a Plex, and a SubPlex?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    A Rig is your full pedalboard and amp setup. A Plex is a complete saved configuration of that rig. A SubPlex is a saved configuration of a single piece of gear, helping you understand why that setting works.
+    </p> -->
+
+    <h4>Is PedalPlex free?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    Yes. PedalPlex is free to use and ads-free. Forever.
+    </p>
+
+    <h4>Do I need to install anything?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    No. PedalPlex runs in your browser. You can access it from desktop or mobile without installing software.
+    </p>
+
+    <h4>Can I use it for bass?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    Yes. PedalPlex works for guitar and bass rigs, and for any instrument requiring pedals or amplifiers. I saw on the Internet someone using pedals on harps and flutes!
+    </p>
+
+    <!-- <h4>Why would I need this?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    If you play live, record in different sessions, experiment with multiple tones, or use boutique or complex pedals, PedalPlex helps you stop guessing and start remembering.
+    </p> -->
+
+    <h4>I already remember my settings. Why would I need this?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    You remember your tone today. Will you remember it six months from now? Pedal settings change during rehearsals, gigs and recording sessions. PedalPlex keeps the versions you don't want to lose.
+    </p>
+
+    <!-- <h4>Isn’t this overkill for just a few pedals?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    Even simple rigs change over time. Small gain adjustments, different delay mixes, or subtle EQ tweaks matter. PedalPlex captures those micro-decisions before they’re forgotten.
+    </p> -->
+
+    <!-- <h4>What if I tweak settings constantly?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    Perfect. PedalPlex doesn’t lock you into one “correct” tone. It lets you document versions, compare them, and understand what changed.
+    </p> -->
+
+    <h4>Does this replace my ears?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    No. PedalPlex doesn’t create tone. It preserves your creative decisions so your ears can keep exploring instead of retracing steps.
+    </p>
+
+    <!-- <h4>Is this for beginners or advanced players?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    Both. Beginners learn faster by understanding why settings work. Experienced players stop losing tones they worked hard to build.
+    </p> -->
+
+    <!-- <h4>I play live. How does this help me?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    Before a gig, check your exact settings, rebuild your board quickly, and restore tones after transport or accidental knob movement. After a gig, save what worked and refine what didn’t.
+    </p> -->
+
+    <h4>Is this meant to replace analog workflow?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    Not at all. PedalPlex respects analog gear. It simply adds structure and memory to it.
+    </p>
+
+    <!-- <h4>What makes SubPlexes different?</h4>
+    <p style="font-size:1rem; margin-bottom:1rem; color:#717171;">
+    SubPlexes don’t just save knob positions. They capture intent. Instead of “Gain at 2 o’clock,” you remember tight low-gain rhythm, gated pulse fuzz, or wide ambient drive. That’s a deeper level of understanding.
+    </p> -->
+  </section>
+
+
+  <!-- FREE SECTION -->
+  <section id="why-becoming-a-pedalplexer" style="margin:5rem auto; max-width:800px; text-align:center;">
+    <!-- <h2 style="font-size:2rem; margin-bottom:2rem; color:#fff; font-weight:600">Why becoming a PedalPlexer?</h2> -->
+    <h2 style="font-size:2rem; margin-bottom:2rem; color:#fff; font-weight:600">Keep your tones with you</h2>
+    <p style="font-size:1.25rem; margin-top:1rem; margin-bottom:2rem; color:#717171;">Create a free account to sync your rigs and save unlimited tones.</p>
+
+<div class="pedalplex-glow">
+      <table class="bx--data-table bx--data-table--zebra" style="
+      width:100%; 
+      text-align:center; 
+      background-color:#3a3a3a; 
+      color:#fff; 
+      border-radius:10px; 
+      overflow:hidden;
+    ">
+        <thead style="background-color:#2e2e2e; color:#fff;">
+          <tr>
+            <th scope="col" style="padding:12px;">Feature</th>
+            <th scope="col" style="padding:12px;">Guest</th>
+            <th scope="col" style="padding:12px;">Free Account</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Rigs</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path
+                  d="M29.37,11.84a13.6,13.6,0,0,0-1.06-2.51A14.17,14.17,0,0,0,25.9,6.1a14,14,0,1,0,0,19.8,14.17,14.17,0,0,0,2.41-3.23,13.6,13.6,0,0,0,1.06-2.51,14,14,0,0,0,0-8.32ZM4,16A12,12,0,0,1,16,4V28A12,12,0,0,1,4,16Z">
+                </path>
+              </svg> 1
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg> Unlimited
+            </td>
+          </tr>
+
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Plexes</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path
+                  d="M29.37,11.84a13.6,13.6,0,0,0-1.06-2.51A14.17,14.17,0,0,0,25.9,6.1a14,14,0,1,0,0,19.8,14.17,14.17,0,0,0,2.41-3.23,13.6,13.6,0,0,0,1.06-2.51,14,14,0,0,0,0-8.32ZM4,16A12,12,0,0,1,16,4V28A12,12,0,0,1,4,16Z">
+                </path>
+              </svg> 5
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+              Unlimited
+            </td>
+          </tr>
+
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">
+              SubPlexes
+              <!-- <svg style="vertical-align:middle" class="preset-icon" focusable="false"
+                preserveAspectRatio="xMidYMid meet" width="32" height="32" viewBox="0 0 32 32"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill="#3a3a3a"
+                  d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z">
+                </path>
+                <path fill="#3a3a3a" d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
+              </svg> -->
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+          </tr>
+
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Devices sync</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- <div class="pedalplex-glow">
+      <table class="bx--data-table bx--data-table--zebra" style="
+      width:100%; 
+      text-align:center; 
+      background-color:#3a3a3a; 
+      color:#fff; 
+      border-radius:10px; 
+      overflow:hidden;
+    ">
+        <thead style="background-color:#2e2e2e; color:#fff;">
+          <tr>
+            <th scope="col" style="padding:12px;">Feature</th>
+            <th scope="col" style="padding:12px;">Guest</th>
+            <th scope="col" style="padding:12px;">Free Account</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Devices sync</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+          </tr>
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Plexes</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg> 1
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+              Unlimited
+            </td>
+          </tr>
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">
+              SubPlexes
+              <svg style="vertical-align:middle" class="preset-icon" focusable="false"
+                preserveAspectRatio="xMidYMid meet" width="32" height="32" viewBox="0 0 32 32"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill="#3a3a3a"
+                  d="M19 21v-2h1v-7h-1v-2h4v2h-1v7h1v2h-4zM15.5005 21h2l-3.5005-11h-3l-3.4966 11h1.9988l.6018-2h4.7781l.6184 2zM10.7058 17l1.6284-5.4111.2559-.0024 1.6736 5.4136h-3.5579z">
+                </path>
+                <path fill="#3a3a3a" d="M32,32H0V0h32v32ZM2,30h28V2H2v28Z"></path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path stroke-width="0"
+                  d="m16,2c-7.732,0-14,6.268-14,14s6.268,14,14,14,14-6.268,14-14S23.732,2,16,2Zm0,26c-6.6274,0-12-5.3726-12-12s5.3726-12,12-12,12,5.3726,12,12-5.3726,12-12,12Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+          </tr>
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Rigs</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path
+                  d="M29.37,11.84a13.6,13.6,0,0,0-1.06-2.51A14.17,14.17,0,0,0,25.9,6.1a14,14,0,1,0,0,19.8,14.17,14.17,0,0,0,2.41-3.23,13.6,13.6,0,0,0,1.06-2.51,14,14,0,0,0,0-8.32ZM4,16A12,12,0,0,1,16,4V28A12,12,0,0,1,4,16Z">
+                </path>
+              </svg> 1
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg> Unlimited
+            </td>
+          </tr>
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Gears</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+              All
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+              All
+            </td>
+          </tr>
+          <tr style="border-top:1px solid #555;">
+            <td style="padding:12px;">Future features</td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <path
+                  d="M29.37,11.84a13.6,13.6,0,0,0-1.06-2.51A14.17,14.17,0,0,0,25.9,6.1a14,14,0,1,0,0,19.8,14.17,14.17,0,0,0,2.41-3.23,13.6,13.6,0,0,0,1.06-2.51,14,14,0,0,0,0-8.32ZM4,16A12,12,0,0,1,16,4V28A12,12,0,0,1,4,16Z">
+                </path>
+              </svg>
+            </td>
+            <td style="padding:12px;">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="22" height="22"
+                viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                style="vertical-align: bottom;">
+                <circle cx="16" cy="16" r="14"></circle>
+              </svg>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div> -->
+
+
+    <div style="margin-top:5rem; display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+      <p style="color:#a3a3a3;">
+        PedalPlex is free and always will be.
+        If you find it useful, you can support hosting and domain costs here.
+      </p>
+    </div>
+    <div style="margin-top:2rem; display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+      <!-- Link support PayPal -->
+      <a href="https://paypal.me/lucacrippa88" target="_blank" id="support" class="bx--btn bx--btn--ghost bx--btn--sm"
+        type="button" aria-label="Support"
+        style="display: flex; align-items: center; gap: 0.5rem; color: #a3a3a3; z-index: 1000; font-weight:normal;">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns=" http://www.w3.org/2000/svg"
+          fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M13 11H20V13H13z"></path>
+          <path
+            d="M29,13H26.98A5.7791,5.7791,0,0,0,25,8.8525V5a1,1,0,0,0-1.6-.8L19.6665,7H15c-5.5095,0-9.4634,3.2412-9.9485,8H5a1.0009,1.0009,0,0,1-1-1V12H2v2a3.0033,3.0033,0,0,0,3,3h.07A9.1733,9.1733,0,0,0,9,23.5566V27a1,1,0,0,0,1,1h4a1,1,0,0,0,1-1V25h3v2a1,1,0,0,0,1,1h4a1,1,0,0,0,1-1V23.6372A5.0928,5.0928,0,0,0,26.8188,20H29a1,1,0,0,0,1-1V14A1,1,0,0,0,29,13Zm-1,5H25.124c-.3052,2.7529-.8235,3.4854-3.124,4.3154V26H20V23H13v3H11V22.3779A7.0129,7.0129,0,0,1,7,16c0-4.8354,4.0181-7,8-7h5.3335L23,7V9.7764c2.4182,1.8593,1.9126,3.186,2.0183,5.2236H28Z">
+          </path>
+          <title>Piggy bank slot</title>
+        </svg>
+        Support
+      </a>
+    </div>
+
+
+
+
+  </section>
+
+
+
+
+  <!-- Discord community section -->
+     <div style="display:flex; justify-content:center; padding:1.5rem 1rem;">
+    <div style="display:inline-flex; align-items:center; gap:1rem; background:#2b2d31; border:1px solid #3d3f45; border-radius:12px; padding:1rem 1.5rem; max-width:480px; text-align:left;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 127.14 96.36" aria-hidden="true" style="flex-shrink:0;">
+        <path fill="#5865F2" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+      </svg>
+      <div>
+        <p style="margin:0 0 0.25rem; font-weight:600; color:#fff; font-size:0.95rem;">Guitar Discord Server</p>
+        <p style="margin:0 0 0.6rem; color:#b5bac1; font-size:0.85rem; line-height:1.4;">Guitar Discord server is the main guitar and gear related online community est. in 2016. Find us there in the partner section!</p>
+        <a href="https://discord.gg/guitar-music" target="_blank" rel="noopener noreferrer"
+          style="display:inline-flex; align-items:center; gap:0.4rem; background:#5865F2; color:#fff; font-size:0.8rem; font-weight:600; padding:0.35rem 0.85rem; border-radius:6px; text-decoration:none;">
+          Join the server
+        </a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Footer -->
+  <footer id="footer" style="margin-top:4rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
+    © <span id="year-range"></span> PedalPlex ·
+    <a href="terms">Terms</a> · <a href="privacy">Privacy</a> · <a href="mailto:support@pedalplex.com">Support</a> ·
+    Developed in Italy <span
+      style="display: inline-block; width: 20px; height: 4px; background: linear-gradient(to right, #008C45 33.33%, #F4F5F0 33.33% 66.66%, #CD212A 66.66%); vertical-align: middle"></span>
+  </footer>
+
+
+  <!-- Scripts -->
+  <script src="labels.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="nav.js"></script>
+  <script src="tour.js"></script>
+  <!-- <script type="text/javascript" charset="UTF-8" src="//cdn.cookie-script.com/s/6d9d5d6dc73c7ce2b1a6d5698029fb47.js"></script> -->
+
+  <script>
+    $(document).ready(function () {
+      const startYear = 2025;
+      const currentYear = new Date().getFullYear();
+      const yearText = (currentYear > startYear) ? `${startYear}–${currentYear}` : startYear;
+      $("#year-range").text(yearText);
+    });
+  </script>
+
+
+<!-- Cookie Consent Banner (homepage only) -->
+  <script>
+  (function() {
+    // Check if we're on homepage
+    if (window.location.pathname !== '/') return;
+
+    // Create banner HTML
+    const banner = document.createElement('div');
+    banner.id = 'cookie-banner';
+    banner.style = "position:fixed;bottom:0;left:0;width:100%;background:#222;color:#fff;padding:15px;text-align:center;z-index:9999;font-size:1rem;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;";
+    banner.innerHTML = `
+      <span style="flex:1 1 100%;margin-bottom:8px;">
+        We use cookies to improve your experience. By clicking "Accept", you consent to analytics cookies.
+      </span>
+      <div style="flex:1 1 auto;">
+        <button id="cookie-accept" style="margin-right:10px;padding:8px 15px;background:#0f62fe;color:#fff;border:none;border-radius:4px;cursor:pointer;">Accept</button>
+        <button id="cookie-reject" style="margin-right:10px;padding:8px 15px;background:#888;color:#fff;border:none;border-radius:4px;cursor:pointer;">Reject</button>
+        <a href="/cookie-policy" style="color:#0f62fe;text-decoration:underline;padding:8px 15px;">Learn more</a>
+      </div>
+    `;
+    document.body.appendChild(banner);
+
+    const acceptBtn = document.getElementById('cookie-accept');
+    const rejectBtn = document.getElementById('cookie-reject');
+
+    // Check existing consent
+    const consent = localStorage.getItem('pedalplex_cookie_consent');
+    if (consent) {
+      banner.style.display = 'none';
+      if (consent === 'accept') loadGA();
+    }
+
+    // Accept
+    acceptBtn.addEventListener('click', function() {
+      localStorage.setItem('pedalplex_cookie_consent', 'accept');
+      banner.style.display = 'none';
+      loadGA();
+    });
+
+    // Reject
+    rejectBtn.addEventListener('click', function() {
+      localStorage.setItem('pedalplex_cookie_consent', 'reject');
+      banner.style.display = 'none';
+    });
+
+    // GA loader
+    function loadGA() {
+      if (window.gtagLoaded) return;
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-BX9P5WN5HH');
+
+      window.gtagLoaded = true;
+    }
+  })();
+  </script>
+
+</body>
+
+</html>
