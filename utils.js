@@ -1869,7 +1869,7 @@ async function renderFullPedalboard(pedalboardOverride = null) {
 
 
 const topVal = parseInt(pbPedal.vert || 0, 10);
-const leftVal = parseInt(pbPedal.horiz || 0, 10);
+const leftVal = isMobileLayout() ? 0 : parseInt(pbPedal.horiz || 0, 10);
 
 const $wrapper = $("<div>")
   .addClass("pedal-wrapper")
