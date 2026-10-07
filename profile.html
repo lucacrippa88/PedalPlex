@@ -130,120 +130,178 @@
 
     <div id="tab-panel-stats" role="tabpanel" aria-labelledby="tab-stats" hidden>
       <div class="bx--grid" style="margin-top: 2rem;">
-        
-        <!-- SEZIONE 1: GEARS -->
-        <h4 style="font-weight: 700; margin-bottom: 1rem; color: #fff;">Section 1 - Gears</h4>
-        <div class="bx--row">
-          <div class="bx--col"><strong>Total:</strong> <span id="g-total"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Public:</strong> <span id="g-public"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Reviewing:</strong> <span id="g-reviewing"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-        </div>
-        <br>
-        <div class="bx--row">
-          <div class="bx--col"><strong>Draft:</strong> <span id="g-draft"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Public SubPlexes:</strong> <span id="g-subplexes-public"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Private SubPlexes:</strong> <span id="g-subplexes-private"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-        </div>
-        
-        <br><hr style="border-color: #333;"><br>
 
-        <!-- SEZIONE 2: REGISTERED USERS -->
-        <h4 style="font-weight: 700; margin-bottom: 1rem; color: #fff;">Section 2 - Registered Users</h4>
+        <!-- ═══════════════════════════════════════════════════════
+             SEZIONE 0 — CATALOG (contenuto del catalogo gear)
+        ════════════════════════════════════════════════════════ -->
+        <h4 style="font-weight: 700; margin-bottom: 0.25rem; color: #fff;">Catalog</h4>
+        <p style="color: #6f6f6f; font-size: 0.8rem; margin-bottom: 1rem;">Gear disponibili nel catalogo PedalPlex</p>
         <div class="bx--row">
-          <div class="bx--col"><strong>Users:</strong> <span id="c-users"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Rigs:</strong> <span id="c-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Plexes:</strong> <span id="c-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Gear totali:</strong> <span id="g-total"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Pubblicati:</strong> <span id="g-public"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>In revisione:</strong> <span id="g-reviewing"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Bozza:</strong> <span id="g-draft"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
         </div>
         <br>
         <div class="bx--row">
-          <div class="bx--col"><strong>Avg Gear per Rig:</strong> <span id="c-avg-gear-per-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Avg Plexes per Rig:</strong> <span id="c-avg-plexes-per-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Avg Plexes per User:</strong> <span id="c-avg-plexes-per-user"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-        </div>
-        <br>
-        <div class="bx--row">
-          <div class="bx--col"><strong>Updated Rigs (%):</strong> <span id="c-updated-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Updated Plexes (%):</strong> <span id="c-updated-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Users with ≥1 Updated Plex:</strong> <span id="c-users-with-updated-plex"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-        </div>
-        <br>
-        <div class="bx--row">
-          <div class="bx--col"><strong>Users with ≥1 Updated Rig:</strong> <span id="c-users-with-updated-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-        </div>
-        <br>
-        <div class="bx--row">
-          <div class="bx--col"><strong>Users with ≥1 Rig with ≥1 Gear:</strong> <span id="c-users-with-gear-rig-1"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Users with ≥1 Rig with ≥2 Gears:</strong> <span id="c-users-with-gear-rig-2"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Users with ≥1 Rig with ≥3 Gears:</strong> <span id="c-users-with-gear-rig-3"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-        </div>
-
-        <br><hr style="border-color: #333;"><br>
-
-        <!-- SEZIONE 3: GUEST USERS -->
-        <h4 style="font-weight: 700; margin-bottom: 1rem; color: #fff;">Section 3 - Guest Users</h4>
-        <div class="bx--row">
-          <div class="bx--col"><strong>Guest Users:</strong> <span id="g-guest-total"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Local Rigs:</strong> <span id="g-guest-with-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Local Plexes:</strong> <span id="g-guest-total-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-        </div>
-        <br>
-        <div class="bx--row">
-          <div class="bx--col"><strong>Avg Local Gear per Rig:</strong> <span id="g-guest-avg-pedals"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Avg Local Plexes per User:</strong> <span id="g-guest-avg-plexes-per-user"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Guests with Both:</strong> <span id="g-guest-with-both"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-        </div>
-        <br>
-        <div class="bx--row">
-          <div class="bx--col"><strong>Updated Rigs (% of all guests):</strong> <span id="g-guest-updated-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Updated Plexes (% of all guests):</strong> <span id="g-guest-updated-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>SubPlex pubblici:</strong> <span id="g-subplexes-public"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>SubPlex privati:</strong> <span id="g-subplexes-private"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
           <div class="bx--col"></div>
-        </div>
-        <br>
-        <div class="bx--row">
-          <div class="bx--col"><strong>Updated Local Rigs (% of local rigs):</strong> <span id="g-guest-local-updated-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Updated Local Plexes (% of local plexes):</strong> <span id="g-guest-local-updated-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"></div>
-        </div>
-        <br>
-        <div class="bx--row">
-          <div class="bx--col"><strong>Users with ≥1 Updated Local Rig:</strong> <span id="g-guest-local-users-updated-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Users with ≥1 Updated Local Plex:</strong> <span id="g-guest-local-users-updated-plex"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"></div>
-        </div>
-        <br>
-        <div class="bx--row">
-          <div class="bx--col"><strong>Plex Distribution (0 to 5):</strong> <span id="g-guest-plex-dist"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-        </div>
-
-        <br><hr style="border-color: #333;"><br>
-
-        <!-- SEZIONE 4: SHARED PLEXES -->
-        <h4 style="font-weight: 700; margin-bottom: 1rem; color: #fff;">Section 4 - Shared Plexes</h4>
-        <div class="bx--row">
-          <div class="bx--col"><strong>Shared Plexes:</strong> <span id="c-shared-plexes-total"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Shared Plex Views:</strong> <span id="c-shared-plex-views"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
           <div class="bx--col"></div>
         </div>
 
         <br><hr style="border-color: #333;"><br>
 
-        <!-- SEZIONE 5: VISITS -->
-        <h4 style="font-weight: 700; margin-bottom: 1rem; color: #fff;">Section 5 - Visits</h4>
+        <!-- ═══════════════════════════════════════════════════════
+             SEZIONE 1 — FUNNEL UTENTI REGISTRATI
+             Step 1 → Registrati
+             Step 2 → Hanno costruito almeno un rig con gear
+             Step 3 → Hanno creato almeno un plex
+             Step 4 → Ritornano (aggiornano rig o plex)
+             Step 5 → Condividono un plex
+        ════════════════════════════════════════════════════════ -->
+        <h4 style="font-weight: 700; margin-bottom: 0.25rem; color: #fff;">Funnel — Utenti registrati</h4>
+        <p style="color: #6f6f6f; font-size: 0.8rem; margin-bottom: 1rem;">Quanti utenti completano ogni step del percorso principale</p>
+
+        <!-- Step 1: Base -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 1 — Acquisizione</p>
         <div class="bx--row">
-          <div class="bx--col"><strong>Total Unique Visitors (Guest):</strong> <span id="v-total-guests"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Total Registered Users:</strong> <span id="v-total-users"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Shared Plex Views:</strong> <span id="v-shared-plex-views"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Utenti registrati:</strong> <span id="c-users"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Rig totali creati:</strong> <span id="c-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Plex totali creati:</strong> <span id="c-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
         </div>
         <br>
+
+        <!-- Step 2: Costruiscono un rig -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 2 — Costruiscono il rig</p>
+        <div class="bx--row">
+          <div class="bx--col" title="Utenti che hanno almeno 1 rig con almeno 1 gear aggiunto"><strong>Utenti con ≥1 gear nel rig:</strong> <span id="c-users-with-gear-rig-1"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Utenti che hanno almeno 1 rig con almeno 2 gear — il rig inizia ad avere senso"><strong>Utenti con ≥2 gear nel rig:</strong> <span id="c-users-with-gear-rig-2"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Utenti che hanno almeno 1 rig con almeno 3 gear — rig completo"><strong>Utenti con ≥3 gear nel rig:</strong> <span id="c-users-with-gear-rig-3"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        </div>
+        <div class="bx--row" style="margin-top: 0.5rem;">
+          <div class="bx--col"><strong>Media gear per rig:</strong> <span id="c-avg-gear-per-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"></div>
+          <div class="bx--col"></div>
+        </div>
+        <br>
+
+        <!-- Step 3: Creano plex -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 3 — Creano plex</p>
+        <div class="bx--row">
+          <div class="bx--col"><strong>Media plex per rig:</strong> <span id="c-avg-plexes-per-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Media plex per utente:</strong> <span id="c-avg-plexes-per-user"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"></div>
+        </div>
+        <br>
+
+        <!-- Step 4: Ritornano e aggiornano -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 4 — Ritornano e aggiornano</p>
+        <div class="bx--row">
+          <div class="bx--col" title="Rig con almeno una modifica successiva alla creazione — quanti su totale"><strong>Rig aggiornati:</strong> <span id="c-updated-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Plex con almeno una modifica successiva alla creazione — quanti su totale"><strong>Plex aggiornati:</strong> <span id="c-updated-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"></div>
+        </div>
+        <div class="bx--row" style="margin-top: 0.5rem;">
+          <div class="bx--col" title="Utenti distinti che hanno aggiornato almeno un rig"><strong>Utenti che hanno aggiornato ≥1 rig:</strong> <span id="c-users-with-updated-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Utenti distinti che hanno aggiornato almeno un plex"><strong>Utenti che hanno aggiornato ≥1 plex:</strong> <span id="c-users-with-updated-plex"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"></div>
+        </div>
+        <br>
+
+        <!-- Step 5: Condividono -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 5 — Condividono</p>
+        <div class="bx--row">
+          <div class="bx--col"><strong>Plex condivisi (link attivi):</strong> <span id="c-shared-plexes-total"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Visualizzazioni plex condivisi:</strong> <span id="c-shared-plex-views"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"></div>
+        </div>
+
+        <br><hr style="border-color: #333;"><br>
+
+        <!-- ═══════════════════════════════════════════════════════
+             SEZIONE 2 — FUNNEL GUEST
+             Step 1 → Arrivano (unique visitors)
+             Step 2 → Creano un rig locale
+             Step 3 → Aggiungono gear al rig
+             Step 4 → Creano plex locali
+             Step 5 → Ritornano (aggiornano rig o plex locali)
+             Step 6 → Hanno sia rig che plex → pronti per la registrazione
+        ════════════════════════════════════════════════════════ -->
+        <h4 style="font-weight: 700; margin-bottom: 0.25rem; color: #fff;">Funnel — Guest</h4>
+        <p style="color: #6f6f6f; font-size: 0.8rem; margin-bottom: 1rem;">Comportamento degli utenti non registrati — ogni step indica quanti guest arrivano a quel punto</p>
+
+        <!-- Step 1 -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 1 — Arrivano</p>
+        <div class="bx--row">
+          <div class="bx--col"><strong>Guest unici (unique visitors):</strong> <span id="g-guest-total"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Rig locali totali:</strong> <span id="g-guest-with-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Plex locali totali:</strong> <span id="g-guest-total-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        </div>
+        <br>
+
+        <!-- Step 2 -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 2 — Costruiscono il rig locale</p>
+        <div class="bx--row">
+          <div class="bx--col" title="Guest che hanno almeno 1 gear nel rig locale"><strong>Guest con ≥1 gear nel rig:</strong> <span id="g-guest-with-gear-rig-1"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Guest che hanno almeno 2 gear nel rig locale — il rig inizia ad avere senso"><strong>Guest con ≥2 gear nel rig:</strong> <span id="g-guest-with-gear-rig-2"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Guest che hanno almeno 3 gear nel rig locale — rig completo"><strong>Guest con ≥3 gear nel rig:</strong> <span id="g-guest-with-gear-rig-3"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        </div>
+        <div class="bx--row" style="margin-top: 0.5rem;">
+          <div class="bx--col" title="Media gear presenti nei rig locali dei guest"><strong>Media gear per rig locale:</strong> <span id="g-guest-avg-pedals"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"></div>
+          <div class="bx--col"></div>
+        </div>
+        <br>
+
+        <!-- Step 3 -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 3 — Creano plex locali</p>
+        <div class="bx--row">
+          <div class="bx--col"><strong>Media plex per guest:</strong> <span id="g-guest-avg-plexes-per-user"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Distribuzione: quanti guest hanno 0, 1, 2, 3, 4, 5+ plex locali"><strong>Distribuzione plex (0→5):</strong> <span id="g-guest-plex-dist"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"></div>
+        </div>
+        <br>
+
+        <!-- Step 4 -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 4 — Ritornano e aggiornano</p>
+        <div class="bx--row">
+          <div class="bx--col" title="Guest che hanno modificato un rig locale dopo la prima creazione (% su tutti i guest)"><strong>Guest che hanno aggiornato il rig (% su tutti):</strong> <span id="g-guest-updated-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Guest che hanno modificato un plex locale dopo la prima creazione (% su tutti i guest)"><strong>Guest che hanno aggiornato un plex (% su tutti):</strong> <span id="g-guest-updated-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"></div>
+        </div>
+        <div class="bx--row" style="margin-top: 0.5rem;">
+          <div class="bx--col" title="Rig locali aggiornati su totale rig locali — misura la qualità dei rig, non la frequenza utente"><strong>Rig locali aggiornati (% su rig locali):</strong> <span id="g-guest-local-updated-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Plex locali aggiornati su totale plex locali"><strong>Plex locali aggiornati (% su plex locali):</strong> <span id="g-guest-local-updated-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"></div>
+        </div>
+        <br>
+
+        <!-- Step 5: Pronti per la conversione -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 5 — Pronti per la conversione (hanno sia rig che plex)</p>
+        <div class="bx--row">
+          <div class="bx--col" title="Guest con almeno un rig locale E almeno un plex locale — il profilo ideale per la conversione a registrato"><strong>Guest con rig + plex:</strong> <span id="g-guest-with-both"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"></div>
+          <div class="bx--col"></div>
+        </div>
+
+        <br><hr style="border-color: #333;"><br>
+
+        <!-- ═══════════════════════════════════════════════════════
+             SEZIONE 3 — TRAFFICO
+        ════════════════════════════════════════════════════════ -->
+        <h4 style="font-weight: 700; margin-bottom: 0.25rem; color: #fff;">Traffico</h4>
+        <p style="color: #6f6f6f; font-size: 0.8rem; margin-bottom: 1rem;">Sorgenti e pagine di atterraggio dei visitatori guest</p>
         <div class="bx--row">
           <div class="bx--col">
-            <strong>Top Landing Pages (Guest):</strong> <span id="v-top-pages"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span>
+            <strong>Top landing pages (guest):</strong> <span id="v-top-pages"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span>
           </div>
           <div class="bx--col">
-            <strong>Top Referrers (Guest):</strong> <span id="v-top-referrers"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span>
+            <strong>Top referrers (guest):</strong> <span id="v-top-referrers"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span>
           </div>
           <div class="bx--col"></div>
         </div>
+
       </div>
     </div>
 
@@ -1506,7 +1564,7 @@ function loadAdminStats() {
       $('#c-rigs').text(fmt(d.rigs));
       $('#c-plexes').text(fmt(d.plexes));
       
-      $('#c-shared-plexes-total').text(fmt(d.shared_plex_es_total || d.shared_plexes_total));
+      $('#c-shared-plexes-total').text(fmt(d.shared_plexes_total));
       $('#c-shared-plex-views').text(fmt(d.shared_plex_views));
 
       if (d.registered_averages) {
@@ -1521,7 +1579,7 @@ function loadAdminStats() {
           : '–';
         $('#c-updated-rigs').text(rigText);
 
-        var updCount = d.registered_averages.updated_plexes;
+        var updCount = d.registered_averages.updated_plexes_count;
         var updPct   = d.registered_averages.updated_plexes_pct;
         var updText  = (updCount !== null && updCount !== undefined && updPct !== null && updPct !== undefined)
           ? updCount + ' (' + updPct + '%)'
@@ -1538,7 +1596,11 @@ function loadAdminStats() {
         $('#g-guest-total').text(fmt(d.guests.total_guests));
         $('#g-guest-with-rig').text(fmt(d.guests.guests_with_rig));
         $('#g-guest-total-plexes').text(fmt(d.guests.total_plexes_saved));
-        
+
+        // TODO backend: esporre guests_with_gear_rig_1/2/3 (analoghi a registered users_with_gear_rig_1/2/3)
+        $('#g-guest-with-gear-rig-1').text(fmt(d.guests.guests_with_gear_rig_1));
+        $('#g-guest-with-gear-rig-2').text(fmt(d.guests.guests_with_gear_rig_2));
+        $('#g-guest-with-gear-rig-3').text(fmt(d.guests.guests_with_gear_rig_3));
         $('#g-guest-avg-pedals').text(fmt(d.guests.average_rig_pedals));
         $('#g-guest-avg-plexes-per-user').text(fmt(d.guests.average_plexes_per_user));
         $('#g-guest-with-both').text(fmt(d.guests.guests_with_both));
@@ -1548,21 +1610,13 @@ function loadAdminStats() {
 
         $('#g-guest-local-updated-rigs').text(fmt(d.guests.local_users_with_updated_rig) + ' (' + fmt(d.guests.local_updated_rigs_pct) + '%)');
         $('#g-guest-local-updated-plexes').text(fmt(d.guests.local_users_with_updated_plex) + ' (' + fmt(d.guests.local_updated_plexes_pct) + '%)');
-        $('#g-guest-local-users-updated-rig').text(fmt(d.guests.local_users_with_updated_rig));
-        $('#g-guest-local-users-updated-plex').text(fmt(d.guests.local_users_with_updated_plex));
 
         if (d.guests.plex_distribution) {
           var dist = d.guests.plex_distribution;
           var distStr = '0: ' + fmt(dist['0']) + ' | 1: ' + fmt(dist['1']) + ' | 2: ' + fmt(dist['2']) + ' | 3: ' + fmt(dist['3']) + ' | 4: ' + fmt(dist['4']) + ' | 5: ' + fmt(dist['5']);
           $('#g-guest-plex-dist').text(distStr);
         }
-
       }
-
-      // Section 5 - Visits
-      $('#v-total-guests').text(fmt(d.guests ? d.guests.total_guests : null));
-      $('#v-total-users').text(fmt(d.users));
-      $('#v-shared-plex-views').text(fmt(d.shared_plex_views));
 
       if (d.guests && d.guests.top_pages && Object.keys(d.guests.top_pages).length > 0) {
         var pagesHtml = '<ol style="display:inline-block; margin: 0.25rem 0 0 0.5rem; padding-left: 1.25rem; color: #c6c6c6;">';
