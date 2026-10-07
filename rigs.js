@@ -352,7 +352,7 @@ function renderPedalboard() {
       // if (!isMobileLayout()) {
 
         const topVal = parseInt(pbPedal.vert || 0, 10);
-        const leftVal = parseInt(pbPedal.horiz || 0, 10);
+        const leftVal = isMobileLayout() ? 0 : parseInt(pbPedal.horiz || 0, 10);
 
         $wrapper.css({
           top: `${topVal}px`,
