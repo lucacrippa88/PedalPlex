@@ -75,9 +75,16 @@ function initPedalboard(userRole) {
   // Check if guest pedalboard exists
   const savedGuestBoards = JSON.parse(localStorage.getItem("guestPedalboard") || "[]");
   if (savedGuestBoards.length > 0) {
+    const localGuestPlexes = (() => {
+      try { return JSON.parse(localStorage.getItem('guestPlexes') || '[]'); } catch(e) { return []; }
+    })().filter(p => p.board_id === 'guest_board');
+    const plexNote = localGuestPlexes.length > 0
+      ? ` ${localGuestPlexes.length} preset${localGuestPlexes.length > 1 ? 's' : ''} will also be imported.`
+      : '';
+
     Swal.fire({
       title: "Import local Rig?",
-      text: "You have a Rig saved locally. Do you want to import it into your account?",
+      text: "You have a Rig saved locally. Do you want to import it into your account?" + plexNote,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Yes, import",
@@ -89,8 +96,32 @@ function initPedalboard(userRole) {
     }).then(result => {
       if (result.isConfirmed) {
         importGuestPedalboard(savedGuestBoards[0])
-          .then(() => {
+          .then(async (resp) => {
             localStorage.removeItem("guestPedalboard");
+
+            // Import all local presets tied to the guest board
+            const newRigId   = resp && resp.id;
+            const rigName    = savedGuestBoards[0].board_name || 'My Rig';
+            if (newRigId && localGuestPlexes.length > 0) {
+              const token = localStorage.getItem('authToken');
+              await Promise.all(localGuestPlexes.map(plex =>
+                fetch('https://api.pedalplex.com/CREATE_PLEX.php', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                  },
+                  body: JSON.stringify({
+                    board_id:    newRigId,
+                    board_name:  rigName,
+                    preset_name: plex.preset_name || 'My Tone',
+                    pedals:      plex.pedals || {}
+                  })
+                }).catch(err => console.error("Preset import failed:", err))
+              ));
+              localStorage.removeItem('guestPlexes');
+            }
+
             initPedalboard(userRole); // reload after import
           })
           .catch(err => console.error("Import failed:", err));
