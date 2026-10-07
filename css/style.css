@@ -178,7 +178,7 @@ header {
   background: #f4f4f4;
   display: none;
   flex-direction: column;
-  z-index: 20000;
+  z-index: 200000;
 }
 .fullscreen-menu.active { display: flex; }
 .fullscreen-header {
