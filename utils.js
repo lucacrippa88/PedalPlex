@@ -2344,11 +2344,15 @@ async function triggerGuestStatsPing(force = false) {
     }
 
     const now = Date.now();
-    const lastPing = parseInt(localStorage.getItem('guest_stats_last_ping') || '0', 10);
-    const cooldown = 24 * 60 * 60 * 1000; // 24 hours
+    const lastPing     = parseInt(localStorage.getItem('guest_stats_last_ping')     || '0', 10);
+    const lastVersion  = parseInt(localStorage.getItem('guest_stats_ping_version')  || '0', 10);
+    const PING_VERSION = 2; // bump when the payload schema changes (forces re-ping)
+    const cooldown     = 24 * 60 * 60 * 1000; // 24 hours
 
-    // Only ping if forced (on local change) or if cooldown has passed
-    if (!force && (now - lastPing < cooldown)) {
+    // Re-ping immediately if the stored version is older than PING_VERSION,
+    // otherwise respect the 24-hour cooldown.
+    const versionStale = lastVersion < PING_VERSION;
+    if (!force && !versionStale && (now - lastPing < cooldown)) {
       return;
     }
 
@@ -2414,8 +2418,9 @@ async function triggerGuestStatsPing(force = false) {
       })
     });
 
-    // Update last ping time
-    localStorage.setItem('guest_stats_last_ping', now.toString());
+    // Update last ping time and version
+    localStorage.setItem('guest_stats_last_ping',    now.toString());
+    localStorage.setItem('guest_stats_ping_version', PING_VERSION.toString());
   } catch (err) {
     // Fail silently to not impact user experience
     console.warn('Silent stats error:', err);
