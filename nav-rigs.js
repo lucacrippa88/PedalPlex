@@ -220,17 +220,6 @@ function initNavPedalboard(userRole) {
         window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation: 0, row: 1 });
 
         if (typeof renderPedalboard === 'function') renderPedalboard();
-
-        if (typeof Swal !== 'undefined') {
-          Swal.fire({
-            title: `Added: ${pedal._id}`,
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 1500,
-            customClass: { popup: 'pp-toast' }
-          });
-        }
       };
 
       item.addEventListener('click', handleAddPedal);
