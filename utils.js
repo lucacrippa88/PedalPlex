@@ -2381,11 +2381,13 @@ async function triggerGuestStatsPing(force = false) {
     // Check local plexes
     const guestPlexesRaw = localStorage.getItem("guestPlexes") || localStorage.getItem("guest_plexes");
     let localPlexCount = 0;
+    let localPlexWithGearCount = 0;
     if (guestPlexesRaw) {
       try {
         const guestPlexes = JSON.parse(guestPlexesRaw);
         if (Array.isArray(guestPlexes)) {
           localPlexCount = guestPlexes.length;
+          localPlexWithGearCount = guestPlexes.filter(p => Array.isArray(p.pedals) && p.pedals.length > 0).length;
         }
       } catch (e) {}
     }
@@ -2401,6 +2403,7 @@ async function triggerGuestStatsPing(force = false) {
         has_local_rig: hasLocalRig,
         local_rig_pedals_count: localRigPedalsCount,
         local_plex_count: localPlexCount,
+        local_plex_with_gear_count: localPlexWithGearCount,
         page: window.location.pathname,
         referrer: document.referrer || null
       })
