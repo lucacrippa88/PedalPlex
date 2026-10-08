@@ -506,6 +506,7 @@ async function initPreset() {
   })
   .then(async data => {
     window.allPedalboards = data.docs && Array.isArray(data.docs) ? data.docs : [];
+    document.dispatchEvent(new CustomEvent('pp:rigsReady'));
 
     // Estrai gli ID pedali unici da tutte le pedaliere
     const pedalIds = new Set();
