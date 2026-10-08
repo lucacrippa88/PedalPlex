@@ -645,36 +645,11 @@ function savePedalboard() {
     return;
   }
 
-  // --- VALIDATION FOR SPECIAL CHARACTERS ---
+  // --- VALIDATION FOR SPECIAL CHARACTERS (board name only) ---
   const pedalboardToSave = window.allPedalboards[selectedBoardIndex];
+  const forbidden = /[$%*\\|()\[\]{}^£;<>]/;
 
-  function hasInvalidChars(obj) {
-    const forbidden = /[$%*\\|()\[\]{}^£;<>]/;
-
-    for (let key in obj) {
-      if (!obj.hasOwnProperty(key)) continue;
-
-      const val = obj[key];
-
-      if (typeof val === 'string') {
-        if (forbidden.test(val)) return true;
-      } else if (Array.isArray(val)) {
-        for (let item of val) {
-          if (typeof item === 'string') {
-            if (forbidden.test(item)) return true;
-          } else if (typeof item === 'object' && item !== null) {
-            if (hasInvalidChars(item)) return true;
-          }
-        }
-      } else if (typeof val === 'object' && val !== null) {
-        if (hasInvalidChars(val)) return true;
-      }
-    }
-
-    return false;
-  }
-
-  if (hasInvalidChars(pedalboardToSave)) {
+  if (forbidden.test(pedalboardToSave?.board_name || '')) {
     Swal.fire({
       icon: 'error',
       title: 'Invalid board name',
