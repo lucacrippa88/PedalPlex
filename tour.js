@@ -52,8 +52,8 @@
       page: 'rigs',
       target: '#viewPreset',
       waitFor: '#viewPreset',
-      title: 'Step 3 — Go to Plexes',
-      text: 'Click <strong>Go to Plexes</strong> to start creating and saving presets for the selected Rig.',
+      title: 'Step 3 — Go to Presets',
+      text: 'Click <strong>Go to Presets</strong> to start saving your tones for the selected Rig.',
       position: 'bottom',
     },
     // {
@@ -76,8 +76,8 @@
       page: 'plexes',
       target: '#savePstBtn',
       waitFor: '#savePstBtn',
-      title: 'Step 5 — Save your Plex',
-      text: 'All done! Click <strong>Lock Tone</strong> to save your Plex. You can recall it any time from the Plexes dropdown.',
+      title: 'Step 5 — Save your Preset',
+      text: 'All done! Click <strong>Lock Tone</strong> to save your Preset. You can recall it any time from the Presets dropdown.',
       position: 'bottom',
       isLast: true,
     },
@@ -627,6 +627,27 @@
       return;
     }
 
+    // Cases 2-4 depend on window.allPedalboards being populated (async fetch).
+    // If the data isn't ready yet, defer until the pp:rigsReady event fires.
+    // On /rigs the page-specific JS dispatches the event; on other pages we
+    // fall back to the same event (fired by plexes.js) or a 3 s safety timeout.
+    if (page !== 'rigs' && !Array.isArray(window.allPedalboards)) {
+      var _rigsReadyFired = false;
+      function _onRigsReady() {
+        if (_rigsReadyFired) return;
+        _rigsReadyFired = true;
+        _runNudgeLogic(page);
+      }
+      document.addEventListener('pp:rigsReady', _onRigsReady, { once: true });
+      // Safety fallback: if the event never fires (e.g. guest mode), run anyway
+      setTimeout(_onRigsReady, 3000);
+      return;
+    }
+
+    _runNudgeLogic(page);
+  }
+
+  function _runNudgeLogic(page) {
     // Case 2: first-time visitor on /rigs (no completed tour, no nudge dismissed) — start tour immediately
     if (!hasCompleted() && !isNudgeDismissed() && page === 'rigs') {
       injectDOM();
