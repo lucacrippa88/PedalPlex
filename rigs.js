@@ -55,6 +55,7 @@ function initPedalboard(userRole) {
       renderPedalboard();
       if (typeof onPedalboardLoaded === "function") setTimeout(onPedalboardLoaded, 100);
       handlePendingPedalAdd();
+      maybeConsumePresetNudgePending();
 
       dropdown.addEventListener("change", (e) => {
         const idx = parseInt(e.target.value, 10);
@@ -717,6 +718,7 @@ function savePedalboard() {
     return data;
   })
   .then(data => {
+    maybeSchedulePresetNudge();
     Swal.fire({
       icon: 'success',
       title: 'Rig saved!',
@@ -1151,6 +1153,59 @@ function getCurrentPedalboard() {
 }
 
 // Save guest pedalbpard to local storage
+// ── Preset nudge helpers ──────────────────────────────────────────────────────
+// One-time toast shown after the first Rig save with ≥1 gear, nudging the
+// user to create their first Preset.  Two entry-points:
+//   • maybeShowPresetNudge()    – fires immediately (guest path, no reload)
+//   • maybeSchedulePresetNudge() – sets a pending flag before a page reload
+//     (logged-in path); the flag is consumed on the next initPedalboard call.
+const _NUDGE_SHOWN_KEY   = 'pedalplex_preset_nudge_shown';
+const _NUDGE_PENDING_KEY = 'pedalplex_preset_nudge_pending';
+
+function _firePresetNudgeToast() {
+  Swal.fire({
+    toast: true,
+    position: 'bottom-end',
+    icon: 'info',
+    title: 'Save your tone as a Preset',
+    html: 'Your Rig is set — now capture this sound in a <strong>Preset</strong>.<br><a href="/plexes" style="color:#0f62fe;text-decoration:underline;">Go to Plexes →</a>',
+    showConfirmButton: false,
+    timer: 8000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer);
+      toast.addEventListener('mouseleave', Swal.resumeTimer);
+    }
+  });
+}
+
+// Called immediately after a guest save (no page reload).
+function maybeShowPresetNudge() {
+  if (localStorage.getItem(_NUDGE_SHOWN_KEY)) return;
+  const pedals = window.pedalboard?.pedals || [];
+  if (pedals.length < 1) return;
+  localStorage.setItem(_NUDGE_SHOWN_KEY, '1');
+  _firePresetNudgeToast();
+}
+
+// Called before a page reload (logged-in save). Sets a pending flag that
+// maybeConsumePresetNudgePending() will pick up after the reload.
+function maybeSchedulePresetNudge() {
+  if (localStorage.getItem(_NUDGE_SHOWN_KEY)) return;
+  const pedals = window.pedalboard?.pedals || [];
+  if (pedals.length < 1) return;
+  localStorage.setItem(_NUDGE_SHOWN_KEY, '1');
+  localStorage.setItem(_NUDGE_PENDING_KEY, '1');
+}
+
+// Called once the pedalboard has finished rendering after a reload.
+// Consumes the pending flag and fires the toast.
+function maybeConsumePresetNudgePending() {
+  if (!localStorage.getItem(_NUDGE_PENDING_KEY)) return;
+  localStorage.removeItem(_NUDGE_PENDING_KEY);
+  _firePresetNudgeToast();
+}
+
 function saveGuestPedalboard() {
   const board = getCurrentPedalboard();
   const guestBoards = [board]; // always save as array
@@ -1164,7 +1219,10 @@ function saveGuestPedalboard() {
     title: 'Saved!',
     text: 'Your pedalboard is temporarily saved locally.',
     timer: 1000,
-    showConfirmButton: false
+    showConfirmButton: false,
+    didClose: () => {
+      maybeShowPresetNudge();
+    }
   });
 }
 
@@ -1288,6 +1346,7 @@ function setupPedalboardDropdownAndRender() {
     renderPedalboard();
     if (typeof onPedalboardLoaded === "function") setTimeout(onPedalboardLoaded, 100);
     handlePendingPedalAdd();
+    maybeConsumePresetNudgePending();
   })
   .catch(err => console.error("Error fetching pedals:", err));
 
@@ -1389,14 +1448,6 @@ function handlePendingPedalAdd() {
   // Cleanup
   localStorage.removeItem('pendingPedalAdd');
 
-  // Render and notify
+  // Render
   renderPedalboard();
-
-  Swal.fire({
-    icon: 'success',
-    title: 'Gear added!',
-    text: 'The gear has been added to your Rig.',
-    timer: 1200,
-    showConfirmButton: false
-  });
 }

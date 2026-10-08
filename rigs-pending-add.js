@@ -46,15 +46,6 @@
 
     cleanup();
 
-    Swal.fire({
-      title: 'Pedal added to your Rig',
-      toast: true,
-      timer: 1200,
-      position: 'top-end',
-      showConfirmButton: false,
-      customClass: { popup: 'pp-toast' }
-    });
-
   }, 100);
 
   function cleanup() {
