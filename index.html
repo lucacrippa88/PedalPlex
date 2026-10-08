@@ -1046,6 +1046,19 @@
   <!-- <script type="text/javascript" charset="UTF-8" src="//cdn.cookie-script.com/s/6d9d5d6dc73c7ce2b1a6d5698029fb47.js"></script> -->
 
   <script>
+    // Set currentUser so fullscreen-menu shows the correct login/logout button.
+    (function () {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+          window.currentUser = payload.username ? payload : null;
+        } catch (e) { window.currentUser = null; }
+      } else {
+        window.currentUser = null;
+      }
+    })();
+
     $(document).ready(function () {
       const startYear = 2025;
       const currentYear = new Date().getFullYear();

@@ -370,13 +370,12 @@ function _maybeAutoExplore() {
     : (window.presets || []);
   const presetsForBoard = allPresets.filter(p => p.board_id === boardId);
 
-  const shouldTrigger =
-    presetsForBoard.length === 0 ||
-    presetsForBoard.some(p => {
-      if (!p.pedals) return true;
-      if (typeof p.pedals !== 'object') return true;
-      return Object.keys(p.pedals).length === 0;
-    });
+  const hasAnyWithPedals = presetsForBoard.some(p => {
+    if (!p.pedals || typeof p.pedals !== 'object') return false;
+    return Object.keys(p.pedals).length > 0;
+  });
+
+  const shouldTrigger = !hasAnyWithPedals;
 
   if (!shouldTrigger) return;
 
