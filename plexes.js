@@ -532,6 +532,77 @@ async function initPreset() {
 }
 
 
+  // --- CHECK FOR GUEST DATA TO IMPORT ---
+  const savedGuestBoards = (() => {
+    try { return JSON.parse(localStorage.getItem('guestPedalboard') || '[]'); } catch(e) { return []; }
+  })();
+
+  if (savedGuestBoards.length > 0) {
+    const localGuestPlexes = (() => {
+      try { return JSON.parse(localStorage.getItem('guestPlexes') || '[]'); } catch(e) { return []; }
+    })().filter(p => p.board_id === 'guest_board');
+    const plexNote = localGuestPlexes.length > 0
+      ? ` ${localGuestPlexes.length} preset${localGuestPlexes.length > 1 ? 's' : ''} will also be imported.`
+      : '';
+
+    const importResult = await Swal.fire({
+      title: 'Import local Rig?',
+      text: 'You have a Rig saved locally. Do you want to import it into your account?' + plexNote,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, import',
+      cancelButtonText: 'No, skip',
+      customClass: {
+        confirmButton: 'bx--btn bx--btn--primary',
+        cancelButton: 'bx--btn bx--btn--secondary'
+      }
+    });
+
+    if (importResult.isConfirmed) {
+      const token = localStorage.getItem('authToken');
+      const board = savedGuestBoards[0];
+      try {
+        const rigRes = await fetch('https://api.pedalplex.com/CREATE_RIG.php', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token },
+          body: (() => {
+            const fd = new FormData();
+            fd.append('board_name', board.board_name || 'My Rig');
+            fd.append('user_id', userId);
+            fd.append('pedals', JSON.stringify(board.pedals || []));
+            return fd;
+          })()
+        });
+        const rigData = await rigRes.json();
+        const newRigId = rigData && rigData.id;
+        localStorage.removeItem('guestPedalboard');
+
+        if (newRigId && localGuestPlexes.length > 0) {
+          await Promise.all(localGuestPlexes.map(plex =>
+            fetch('https://api.pedalplex.com/CREATE_PLEX.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              },
+              body: JSON.stringify({
+                board_id:    newRigId,
+                board_name:  board.board_name || 'My Rig',
+                preset_name: plex.preset_name || 'My Tone',
+                pedals:      plex.pedals || {}
+              })
+            }).catch(err => console.error('Preset import failed:', err))
+          ));
+          localStorage.removeItem('guestPlexes');
+        }
+      } catch(err) {
+        console.error('Guest Rig import failed:', err);
+      }
+    } else {
+      localStorage.removeItem('guestPedalboard');
+    }
+  }
+
   // Show loader overlay
   document.getElementById("pageLoader").style.display = "flex";
 
