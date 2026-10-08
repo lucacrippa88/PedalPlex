@@ -160,22 +160,44 @@
     return false;
   }
 
-  /** Returns true if the user has at least one saved plex. */
+  /**
+   * Returns true if the user has at least one plex with saved pedal settings
+   * on the currently selected rig.
+   * Falls back to checking any rig if no board is selected yet.
+   */
   function hasPlexes() {
+    function _hasControls(pedals) {
+      if (!pedals || typeof pedals !== 'object') return false;
+      return Object.keys(pedals).length > 0;
+    }
+
+    const currentBoardId = window.pedalboard?._id || null;
+
     // Guest plexes
     try {
       const raw = localStorage.getItem('guestPlexes');
       if (raw) {
         const plexes = JSON.parse(raw);
-        if (Array.isArray(plexes) && plexes.length > 0) return true;
+        if (Array.isArray(plexes)) {
+          const pool = currentBoardId
+            ? plexes.filter(function (p) { return p.board_id === currentBoardId; })
+            : plexes;
+          if (pool.some(function (p) { return _hasControls(p.pedals); })) return true;
+        }
       }
     } catch (e) { /* ignore */ }
 
     // Logged-in presets already loaded into window
-    if (Array.isArray(window.presets) && window.presets.length > 0) return true;
-    if (window.presetMap && Object.keys(window.presetMap).length > 0) return true;
-
-    return false;
+    var pool = [];
+    if (window.presetMap && Object.keys(window.presetMap).length > 0) {
+      pool = Object.values(window.presetMap);
+    } else if (Array.isArray(window.presets)) {
+      pool = window.presets;
+    }
+    if (currentBoardId) {
+      pool = pool.filter(function (p) { return p.board_id === currentBoardId; });
+    }
+    return pool.some(function (p) { return _hasControls(p.pedals); });
   }
 
   // ----------------------------------------------------------
@@ -225,8 +247,8 @@
       // Has a rig but no plex saved → nudge from plexes step
       return {
         fromStep: FIRST_PLEXES_STEP,
-        title: 'You have a Rig — now save a Plex!',
-        text: 'Dial in your tone and lock it in as a Plex to recall it any time.',
+        title: 'You have a Rig. Now save a Preset!',
+        text: 'Dial in your tone and lock it in as a Preset to recall it any time.',
         ctaLabel: 'Show me how',
         ctaPage: '/plexes',
       };
