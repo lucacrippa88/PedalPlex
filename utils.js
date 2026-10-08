@@ -2387,7 +2387,12 @@ async function triggerGuestStatsPing(force = false) {
         const guestPlexes = JSON.parse(guestPlexesRaw);
         if (Array.isArray(guestPlexes)) {
           localPlexCount = guestPlexes.length;
-          localPlexWithGearCount = guestPlexes.filter(p => Array.isArray(p.pedals) && p.pedals.length > 0).length;
+          // pedals is an object keyed by pedal_id (not an array) in guest plexes
+          localPlexWithGearCount = guestPlexes.filter(p => {
+            if (!p.pedals) return false;
+            if (Array.isArray(p.pedals)) return p.pedals.length > 0;
+            return typeof p.pedals === 'object' && Object.keys(p.pedals).length > 0;
+          }).length;
         }
       } catch (e) {}
     }
