@@ -455,11 +455,18 @@
   };
 
   window.stopTour = function () {
-    // ✕ button: pause the tour (keep state) and show the resume pill.
-    // The tour is only truly finished when the user clicks "Finish" on the last step,
-    // which calls nextStep() → isLast → stopTour is NOT called; markCompleted() is
-    // called via finishTour() instead.
-    pauseTour();
+    // ✕ button behaviour:
+    // - On /plexes (or any page at/past the first plexes step): mark as completed.
+    //   The user has seen the relevant part of the tour and closing it here means
+    //   "I've got it" — we should not re-show it on the next visit.
+    // - On earlier pages (/rigs): pause so they can resume later.
+    const page = currentPage();
+    const pastPlexesEntry = _currentStep >= FIRST_PLEXES_STEP;
+    if (page === 'plexes' || pastPlexesEntry) {
+      finishTour();
+    } else {
+      pauseTour();
+    }
   };
 
   function finishTour() {
