@@ -628,10 +628,9 @@
     }
 
     // Cases 2-4 depend on window.allPedalboards being populated (async fetch).
-    // If the data isn't ready yet, defer until the pp:rigsReady event fires.
-    // On /rigs the page-specific JS dispatches the event; on other pages we
-    // fall back to the same event (fired by plexes.js) or a 3 s safety timeout.
-    if (page !== 'rigs' && !Array.isArray(window.allPedalboards)) {
+    // window.allPedalboards starts as [] (empty) and is filled after GET_RIG resolves.
+    // We must wait for pp:rigsReady before evaluating — not just check Array.isArray.
+    if (page !== 'rigs' && !(window.allPedalboards && window.allPedalboards.length > 0)) {
       var _rigsReadyFired = false;
       function _onRigsReady() {
         if (_rigsReadyFired) return;
