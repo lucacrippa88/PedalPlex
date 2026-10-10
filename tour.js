@@ -633,26 +633,31 @@
   function autoResume() {
     const page = currentPage();
 
-    // Case 1a: tour is paused — show the resume pill (on any page)
-    if (localStorage.getItem('pp_tour_active') === 'true' && isPaused()) {
-      showResumePill();
-      return;
-    }
-
-    // Case 1b: tour actively in progress — resume from saved step on the matching page
-    if (localStorage.getItem('pp_tour_active') === 'true') {
-      const step = getSavedStep();
-      if (step >= 0 && step < TOUR_STEPS.length && TOUR_STEPS[step].page === page) {
-        injectDOM();
-        showStep(step);
+    // In shared/preview mode: never auto-resume or auto-start the tour.
+    // Fall through directly to nudge logic (handled inside _runNudgeLogic).
+    if (!window.isPreviewMode) {
+      // Case 1a: tour is paused — show the resume pill (on any page)
+      if (localStorage.getItem('pp_tour_active') === 'true' && isPaused()) {
+        showResumePill();
+        return;
       }
-      return;
+
+      // Case 1b: tour actively in progress — resume from saved step on the matching page
+      if (localStorage.getItem('pp_tour_active') === 'true') {
+        const step = getSavedStep();
+        if (step >= 0 && step < TOUR_STEPS.length && TOUR_STEPS[step].page === page) {
+          injectDOM();
+          showStep(step);
+        }
+        return;
+      }
     }
 
     // Cases 2-4 depend on window.allPedalboards being populated (async fetch).
     // window.allPedalboards starts as [] (empty) and is filled after GET_RIG resolves.
     // We must wait for pp:rigsReady before evaluating — not just check Array.isArray.
-    if (page !== 'rigs' && !(window.allPedalboards && window.allPedalboards.length > 0)) {
+    // In preview mode allPedalboards won't be populated; skip the wait entirely.
+    if (!window.isPreviewMode && page !== 'rigs' && !(window.allPedalboards && window.allPedalboards.length > 0)) {
       var _rigsReadyFired = false;
       function _onRigsReady() {
         if (_rigsReadyFired) return;
@@ -669,6 +674,13 @@
   }
 
   function _runNudgeLogic(page) {
+    // In shared/preview mode: skip the full tour entirely; only show the nudge (if warranted).
+    if (window.isPreviewMode) {
+      const scenario = resolveNudgeScenario();
+      if (scenario) showNudge(scenario);
+      return;
+    }
+
     // Case 2: first-time visitor on /rigs (no completed tour, no nudge dismissed) — start tour immediately
     if (!hasCompleted() && !isNudgeDismissed() && page === 'rigs') {
       injectDOM();

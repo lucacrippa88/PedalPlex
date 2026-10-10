@@ -226,6 +226,122 @@
   });
   </script>
 
+  <script>
+  // ── Handle shared plex import (redirected from plexes-share.js) ──────────────
+  (function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('import_shared_plex') !== '1') return;
+
+    const raw = sessionStorage.getItem('pp_import_shared_plex');
+    if (!raw) return;
+
+    let importPayload;
+    try { importPayload = JSON.parse(raw); } catch (e) { return; }
+    if (importPayload.source !== 'shared_plex_import') return;
+
+    // Clean up immediately so a refresh doesn't re-trigger
+    sessionStorage.removeItem('pp_import_shared_plex');
+    // Also clean the query param without reloading
+    history.replaceState(null, '', window.location.pathname);
+
+    const { plex, plex_name: plexName, board: sourceBoard } = importPayload;
+
+    // rigs.js calls onPedalboardLoaded() once the board is rendered.
+    // Hook into it to trigger the import dialog after the page is ready.
+    var _prevOnPedalboardLoaded = window.onPedalboardLoaded;
+    window.onPedalboardLoaded = function () {
+      if (typeof _prevOnPedalboardLoaded === 'function') _prevOnPedalboardLoaded();
+      var token = localStorage.getItem('authToken');
+      if (!token) return; // guest users can't use this flow
+      window.onPedalboardLoaded = _prevOnPedalboardLoaded || undefined; // restore
+      _createRigAndPlex(plex, plexName, sourceBoard, token);
+    };
+  })();
+
+  async function _createRigAndPlex(plex, plexName, sourceBoard, token) {
+    window._importSharedPlexDone = true;
+
+    const defaultRigName = (sourceBoard && sourceBoard.board_name ? sourceBoard.board_name : 'Imported Rig').substring(0, 100);
+
+    const { value: rigName } = await Swal.fire({
+      title: 'Name your new Rig',
+      html: `
+        <p style="text-align:left;margin-bottom:1rem;">A new Rig will be created with the pedals from the shared Plex.</p>
+        <label class="bx--label" style="display:block;text-align:left;margin-bottom:4px;">Rig name</label>
+        <input id="importRigName" class="bx--text-input" value="${defaultRigName.replace(/"/g, '&quot;')}" maxlength="100" style="width:100%;">`,
+      showCancelButton: true,
+      confirmButtonText: 'Create Rig & Import',
+      cancelButtonText: 'Cancel',
+      customClass: { confirmButton: 'bx--btn bx--btn--primary', cancelButton: 'bx--btn bx--btn--secondary' },
+      preConfirm: () => {
+        const name = document.getElementById('importRigName') ? document.getElementById('importRigName').value.trim() : '';
+        if (!name) { Swal.showValidationMessage('Please enter a Rig name.'); return false; }
+        return name;
+      },
+      didOpen: () => {
+        const el = document.getElementById('importRigName');
+        if (el) el.select();
+      }
+    });
+
+    if (!rigName) return; // cancelled
+
+    // 1. Create the Rig
+    let newRigId;
+    try {
+      const authPayload = JSON.parse(atob(token.split('.')[1]));
+      const userId = 'user_' + (authPayload.username || authPayload.sub || '');
+      const boardPedals = Array.isArray(sourceBoard && sourceBoard.pedals) ? sourceBoard.pedals : [];
+      const rigRes = await fetch('https://api.pedalplex.com/CREATE_RIG.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': 'Bearer ' + token },
+        body: new URLSearchParams({ board_name: rigName, user_id: userId, pedals: JSON.stringify(boardPedals) })
+      });
+      const rigData = await rigRes.json();
+      if (!rigData.ok) throw new Error(rigData.error || 'Failed to create Rig');
+      newRigId = rigData.id;
+    } catch (e) {
+      Swal.fire({ icon: 'error', title: 'Could not create Rig', text: e.message, showConfirmButton: false, timer: 2500 });
+      return;
+    }
+
+    // 2. Create the Plex on the new Rig
+    try {
+      const plexRes = await fetch('https://api.pedalplex.com/CREATE_PLEX.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({
+          board_id:    newRigId,
+          board_name:  rigName,
+          preset_name: plexName,
+          pedals:      plex.pedals || {}
+        })
+      });
+      const plexData = await plexRes.json();
+      if (!plexData.ok) throw new Error(plexData.error || 'Failed to create Plex');
+    } catch (e) {
+      Swal.fire({ icon: 'error', title: 'Rig created, but Plex import failed', text: e.message, showConfirmButton: false, timer: 2500 });
+      return;
+    }
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Rig & Plex imported!',
+      html: '<strong>' + rigName + '</strong> has been created with the Plex <strong>' + plexName + '</strong>.',
+      confirmButtonText: 'Go to Plexes',
+      showCancelButton: true,
+      cancelButtonText: 'Stay here',
+      customClass: { confirmButton: 'bx--btn bx--btn--primary', cancelButton: 'bx--btn bx--btn--secondary' }
+    }).then(function (r) {
+      if (r.isConfirmed) {
+        window.location.href = '/plexes';
+      } else {
+        window.location.reload();
+      }
+    });
+  }
+  </script>
+
 
 
 
