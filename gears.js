@@ -140,6 +140,18 @@ function resetCatalogState() {
 }
 
 // ==================== Category Filter ====================
+// Populate filter options from categories.json
+$(function () {
+  $.getJSON("categories.json").done(function (list) {
+    const $filter = $("#categoryFilter");
+    list.forEach(cat => {
+      $filter.append($("<option>").val(cat).text(cat.charAt(0).toUpperCase() + cat.slice(1)));
+    });
+  }).fail(function () {
+    console.error("Failed to load categories.json");
+  });
+});
+
 $(document).on("change", "#categoryFilter", function () {
   currentCategory = $(this).val();
   searchBookmark = null;        // reset bookmark
