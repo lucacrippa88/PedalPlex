@@ -58,7 +58,7 @@ function setupPreviewMode() {
             importBtn.id = 'importSharedPlexBtn';
             importBtn.className = 'bx--btn bx--btn--primary';
             importBtn.type = 'button';
-            importBtn.innerHTML = `Import Plex
+            importBtn.innerHTML = `Import ${L.Plex}
                 <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
                     <path d="M26 24v4H6v-4H4v4a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2v-4z"/>

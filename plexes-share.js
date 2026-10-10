@@ -141,7 +141,7 @@ function openShareModal() {
         Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'No Plex selected.',
+            text: `No ${L.plex} selected.`,
             showConfirmButton: false,
             showCancelButton: true,
             cancelButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>Go back",
@@ -155,7 +155,7 @@ function openShareModal() {
     const isShared = Boolean(preset.shared);
 
     Swal.fire({
-        title: 'Share Plex',
+        title: `Share ${L.Plex}`,
         html: `
         Share your entire Rig configuration with a friend.
         <div style="text-align:left; margin-top:1rem;">
@@ -316,7 +316,7 @@ function openShareModal() {
                 Swal.fire({
                     icon: 'success',
                     title: 'Saved!',
-                    text: 'Your Plex sharing options have been updated.',
+                    text: `Your ${L.plex} sharing options have been updated.`,
                     showConfirmButton: false,
                     timer: 1500
                 });
@@ -357,7 +357,7 @@ async function fetchBoardForSharedPlex(plex) {
     const authorId = getSharedPlexAuthorId(plex);
 
     if (!boardId || !authorId) {
-        throw new Error("Shared Plex is missing board or author information.");
+        throw new Error(`Shared ${L.Plex} is missing board or author information.`);
     }
 
     const rigRes = await fetch('https://api.pedalplex.com/GET_RIG.php', {
@@ -376,7 +376,7 @@ async function fetchBoardForSharedPlex(plex) {
     const board = boards.find(b => b._id === boardId || b.id === boardId);
 
     if (!board) {
-        throw new Error("Source rig for shared Plex was not found.");
+        throw new Error(`Source rig for shared ${L.Plex} was not found.`);
     }
 
     return board;
@@ -406,9 +406,9 @@ async function loadSharedPlexPreview() {
     try {
         // 1️⃣ Fetch del plex condiviso
         const plexRes = await fetch(`https://api.pedalplex.com/GET_SHARED_PLEX.php?token=${encodeURIComponent(token)}`);
-        if (!plexRes.ok) throw new Error(`Failed to fetch shared plex: ${plexRes.statusText}`);
+        if (!plexRes.ok) throw new Error(`Failed to fetch shared ${L.plex}: ${plexRes.statusText}`);
         const plexData = await plexRes.json();
-        if (!plexData.plex) throw new Error("Shared Plex not found.");
+        if (!plexData.plex) throw new Error(`Shared ${L.Plex} not found.`);
 
         const plex = plexData.plex;
         window.sharedPlexData = plex; // store for import
@@ -468,11 +468,11 @@ async function loadSharedPlexPreview() {
                                .css("display", "block");
 
     } catch (err) {
-        console.error("Error loading shared plex:", err);
+        console.error(`Error loading shared ${L.plex}:`, err);
         Swal.fire({
             icon: "error",
             title: "Error",
-            text: "Failed to load shared plex. Check console for details.",
+            text: `Failed to load shared ${L.plex}. Check console for details.`,
             confirmButtonText: "Ok"
         });
     }
@@ -497,7 +497,7 @@ window.addEventListener("load", function () {
 async function openImportSharedPlexModal() {
     const plex = window.sharedPlexData;
     if (!plex) {
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Shared plex data not loaded yet. Please wait and try again.', showConfirmButton: false, timer: 2000 });
+        Swal.fire({ icon: 'error', title: 'Error', text: `Shared ${L.plex} data not loaded yet. Please wait and try again.`, showConfirmButton: false, timer: 2000 });
         return;
     }
 
@@ -506,7 +506,7 @@ async function openImportSharedPlexModal() {
         Swal.fire({
             icon: 'info',
             title: 'Login required',
-            text: 'You need to be logged in to import a Plex into your account.',
+            text: `You need to be logged in to import a ${L.Plex} into your account.`,
             confirmButtonText: 'Log in',
             showCancelButton: true,
             cancelButtonText: 'Cancel',
@@ -517,15 +517,15 @@ async function openImportSharedPlexModal() {
 
     // ── Step 1: choose import mode ────────────────────────────────────────────
     const { value: mode } = await Swal.fire({
-        title: 'Import Plex',
+        title: `Import ${L.Plex}`,
         html: `
-            <p style="margin-bottom:1.25rem;text-align:left;">How do you want to import <strong>${plex.preset_name || 'this Plex'}</strong>?</p>
+            <p style="margin-bottom:1.25rem;text-align:left;">How do you want to import <strong>${plex.preset_name || ('this ' + L.Plex)}</strong>?</p>
             <div style="display:flex;flex-direction:column;gap:10px;">
                 <label style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--cds-ui-03,#e0e0e0);border-radius:4px;cursor:pointer;text-align:left;">
                     <input type="radio" name="importMode" value="new" style="margin-top:3px;flex-shrink:0;">
                     <span>
                         <strong>Create a new Rig</strong><br>
-                        <span style="font-size:0.85em;color:#6f6f6f;">A new Rig with all the pedals from this Plex will be created in your account.</span>
+                        <span style="font-size:0.85em;color:#6f6f6f;">A new Rig with all the pedals from this ${L.Plex} will be created in your account.</span>
                     </span>
                 </label>
                 <label style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--cds-ui-03,#e0e0e0);border-radius:4px;cursor:pointer;text-align:left;">
@@ -563,15 +563,15 @@ async function _importSharedPlexToNewRig(plex, token) {
         title: 'Create a new Rig',
         html: `
             <p style="text-align:left;margin-bottom:1rem;">A new Rig with the same pedals will be created. You can customise it afterwards from the <a href="/rigs">Rigs page</a>.</p>
-            <label class="bx--label" style="display:block;text-align:left;margin-bottom:4px;">Plex name</label>
-            <input id="importPlexName" class="bx--text-input" value="${(plex.preset_name || 'Imported Plex').replace(/"/g, '&quot;')}" maxlength="100" style="width:100%;">`,
+            <label class="bx--label" style="display:block;text-align:left;margin-bottom:4px;">${L.Plex} name</label>
+            <input id="importPlexName" class="bx--text-input" value="${(plex.preset_name || ('Imported ' + L.Plex)).replace(/"/g, '&quot;')}" maxlength="100" style="width:100%;">`,
         showCancelButton: true,
         confirmButtonText: 'Import',
         cancelButtonText: '← Back',
         customClass: { confirmButton: 'bx--btn bx--btn--primary', cancelButton: 'bx--btn bx--btn--secondary' },
         preConfirm: () => {
             const name = document.getElementById('importPlexName')?.value?.trim();
-            if (!name) { Swal.showValidationMessage('Please enter a Plex name.'); return false; }
+            if (!name) { Swal.showValidationMessage(`Please enter a ${L.Plex} name.`); return false; }
             return name;
         },
         didOpen: () => { document.getElementById('importPlexName')?.select(); }
@@ -679,12 +679,12 @@ async function _importSharedPlexToExistingRig(plex, token) {
     const { value: formData } = await Swal.fire({
         title: 'Apply to existing Rig',
         html: `
-            <p style="text-align:left;margin-bottom:1rem;">Choose the Rig and a name for the new Plex. Settings will be applied only to matching pedals.</p>
+            <p style="text-align:left;margin-bottom:1rem;">Choose the Rig and a name for the new ${L.Plex}. Settings will be applied only to matching pedals.</p>
             <label class="bx--label" style="display:block;text-align:left;margin-bottom:4px;">Target Rig</label>
             <select id="importRigSelect" class="bx--select-input" style="width:100%;margin-bottom:8px;">${sortedOptions}</select>
             <div id="importMatchPreview" style="min-height:40px;"></div>
-            <label class="bx--label" style="display:block;text-align:left;margin-top:12px;margin-bottom:4px;">Plex name</label>
-            <input id="importPlexName2" class="bx--text-input" value="${(plex.preset_name || 'Imported Plex').replace(/"/g, '&quot;')}" maxlength="100" style="width:100%;">`,
+            <label class="bx--label" style="display:block;text-align:left;margin-top:12px;margin-bottom:4px;">${L.Plex} name</label>
+            <input id="importPlexName2" class="bx--text-input" value="${(plex.preset_name || ('Imported ' + L.Plex)).replace(/"/g, '&quot;')}" maxlength="100" style="width:100%;">`,
         showCancelButton: true,
         confirmButtonText: 'Import',
         cancelButtonText: '← Back',
@@ -699,7 +699,7 @@ async function _importSharedPlexToExistingRig(plex, token) {
         preConfirm: () => {
             const rigIndex = parseInt(document.getElementById('importRigSelect')?.value, 10);
             const plexName = document.getElementById('importPlexName2')?.value?.trim();
-            if (!plexName) { Swal.showValidationMessage('Please enter a Plex name.'); return false; }
+            if (!plexName) { Swal.showValidationMessage(`Please enter a ${L.Plex} name.`); return false; }
             return { rigIndex, plexName };
         }
     });
@@ -726,7 +726,7 @@ async function _importSharedPlexToExistingRig(plex, token) {
         const goAnyway = await Swal.fire({
             icon: 'warning',
             title: 'No matching pedals',
-            text: 'None of the pedals in this Plex match the selected Rig. The imported Plex will have no settings. Do you want to continue anyway?',
+            text: `None of the pedals in this ${L.Plex} match the selected Rig. The imported ${L.Plex} will have no settings. Do you want to continue anyway?`,
             showCancelButton: true,
             confirmButtonText: 'Import anyway',
             cancelButtonText: 'Cancel',
@@ -752,16 +752,16 @@ async function _importSharedPlexToExistingRig(plex, token) {
 
         Swal.fire({
             icon: 'success',
-            title: 'Plex imported!',
+            title: `${L.Plex} imported!`,
             html: `<strong>${plexName}</strong> has been added to <strong>${targetBoard.board_name}</strong>.
-                   <br><a href="/plexes" style="color:var(--cds-link-01,#0f62fe);">Go to Plexes →</a>`,
-            confirmButtonText: 'Go to Plexes',
+                   <br><a href="/plexes" style="color:var(--cds-link-01,#0f62fe);">Go to ${L.Plexes} →</a>`,
+            confirmButtonText: `Go to ${L.Plexes}`,
             showCancelButton: true,
             cancelButtonText: 'Stay here',
             customClass: { confirmButton: 'bx--btn bx--btn--primary', cancelButton: 'bx--btn bx--btn--secondary' }
         }).then(r => { if (r.isConfirmed) window.location.href = '/plexes'; });
     } catch (e) {
-        Swal.fire({ icon: 'error', title: 'Import failed', text: e.message || 'Could not save the Plex. Please try again.', showConfirmButton: false, timer: 2500 });
+        Swal.fire({ icon: 'error', title: 'Import failed', text: e.message || `Could not save the ${L.Plex}. Please try again.`, showConfirmButton: false, timer: 2500 });
     }
 }
 
