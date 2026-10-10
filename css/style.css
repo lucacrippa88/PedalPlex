@@ -205,6 +205,12 @@ header {
   text-decoration: none;
   color: #161616;
 }
+.fullscreen-social a {
+  transition: opacity 0.15s ease;
+}
+.fullscreen-social a:hover {
+  opacity: 0.75;
+}
 .fullscreen-user-btns {
   display: flex;
   flex-direction: row;
