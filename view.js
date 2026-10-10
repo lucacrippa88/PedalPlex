@@ -201,6 +201,31 @@ if (!window.catalogMap || !window.catalogMap[pedalId]) {
 }
 // ==============================================
 
+  /* ================= CATEGORY (from DB) ================= */
+  const categories = (pedal.category || '').split('/').map(c => c.trim()).filter(Boolean);
+  let $catTags = $('#gear-category-tags');
+  if (!$catTags.length) {
+    // pages generated before the dynamic category: replace hardcoded tags
+    const $old = $('.bx--tag--teal');
+    $catTags = $('<span id="gear-category-tags"></span>');
+    if ($old.length) $old.first().before($catTags); else $('.bx--tag--purple').first().after($catTags);
+    $old.remove();
+  }
+  $catTags.empty();
+  categories.forEach(c => {
+    $catTags.append(' ', $('<span style="font-size:12px" class="bx--tag bx--tag--teal"></span>').text(c));
+  });
+
+  // Product schema: set category for crawlers that execute JS
+  $('script[type="application/ld+json"]').each(function () {
+    try {
+      const data = JSON.parse(this.textContent);
+      if (data['@type'] !== 'Product') return;
+      if (categories.length) data.category = categories.join('/'); else delete data.category;
+      this.textContent = JSON.stringify(data, null, 2);
+    } catch (e) { /* ignore invalid JSON-LD */ }
+  });
+
   /* ================= RENDER ================= */
   try {
     $('#gearName').text(pedalId);
