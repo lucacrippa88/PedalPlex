@@ -50,6 +50,27 @@ function setupPreviewMode() {
         // badge opzionale
         $(".rightButtons.showDesktop").prepend(`<span class="preview-badge">Preview Mode</span>`);
         $(".rightButtons.showMobile").prepend(`<span class="preview-badge">Preview</span>`);
+
+        // Bottone Import Plex
+        const presetControls = document.getElementById('preset-controls');
+        if (presetControls) {
+            const importBtn = document.createElement('button');
+            importBtn.id = 'importSharedPlexBtn';
+            importBtn.className = 'bx--btn bx--btn--primary';
+            importBtn.type = 'button';
+            importBtn.innerHTML = `Import Plex
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                    <path d="M26 24v4H6v-4H4v4a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2v-4z"/>
+                    <path d="M6 18l1.41 1.41L15 11.83V30h2V11.83l7.59 7.58L26 18 16 8 6 18z"/>
+                </svg>`;
+            presetControls.appendChild(importBtn);
+            importBtn.addEventListener('click', () => {
+                if (typeof openImportSharedPlexModal === 'function') {
+                    openImportSharedPlexModal();
+                }
+            });
+        }
     });
 }
 // End detect preview mode
