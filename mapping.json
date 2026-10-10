@@ -15606,6 +15606,14 @@
     "pedalplex_url": "https://www.pedalplex.com/gear/strich-twister-flanger",
     "brand": "Strich",
     "seo_description": "The Strich Twister Flanger is a versatile flanger pedal that delivers everything from subtle modulation and classic jet-plane sweeps to deep, swirling and psychedelic textures. Its rich modulation character works well for clean tones, atmospheric passages, rhythmic parts, and heavier sounds, adding movement and depth without losing the definition of the original signal."
+  },
+  {
+    "pedalplex_id": "AFX Acousticomp Mini Compressor",
+    "status": "missing",
+    "fxdb_url": "",
+    "pedalplex_url": "https://www.pedalplex.com/gear/afx-acousticomp-mini-compressor",
+    "brand": "AFX",
+    "seo_description": "Based on the popular Aura Spectrum Compressor, AcoustiComp provides mild, effective dynamics leveling designed specifically for acoustic instruments."
   }
 ]
 
