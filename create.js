@@ -1,5 +1,55 @@
 let lastValidation = null;
 
+// --- Gear categories (multi-select, stored as "cat1/cat2/...") ---
+const GEAR_CATEGORIES = [
+    "acoustic simulator", "ambient", "amp simulator", "arpeggiator", "attenuator", "bass", "bitcrusher",
+    "boost", "buffer", "cab simulator", "chorus", "combo", "compressor", "controller", "delay", "di",
+    "distortion", "drive", "drum machine", "echo", "enhancer", "eq", "equalizer", "expression", "filter",
+    "flanger", "footswitch", "frfr", "fuzz", "harmonizer", "head", "ir loader", "limiter", "loop switcher",
+    "looper", "midi controller", "mixer", "modulation", "multi-fx", "noise gate", "octaver", "overdrive",
+    "phaser", "pitch shifter", "power amp", "power supply", "preamp", "recorder", "reverb", "rotary",
+    "splitter", "sustainer", "switcher", "synth", "talk box", "tremolo", "tuner", "utility", "vibrato",
+    "vocoder", "volume", "wah", "wireless"
+];
+let categoryOrder = []; // keeps selection order
+
+function addCategoryOption(cat) {
+    const $opt = $('<label style="display:block; padding:4px 10px; cursor:pointer; white-space:nowrap;"></label>');
+    $opt.append($('<input type="checkbox" class="pedal-category-checkbox">').val(cat), " ", document.createTextNode(cat));
+    $("#pedal-category-options").append($opt);
+}
+
+function getSelectedCategories() {
+    const checked = $(".pedal-category-checkbox:checked").map((_, el) => el.value).get();
+    categoryOrder = categoryOrder.filter(c => checked.includes(c))
+        .concat(checked.filter(c => !categoryOrder.includes(c)));
+    $("#pedal-category-button").text(categoryOrder.length ? categoryOrder.join(", ") : "Select categories");
+    return categoryOrder;
+}
+
+function setSelectedCategories(categoryString) {
+    categoryOrder = (categoryString || "").split("/").map(c => c.trim().toLowerCase()).filter(Boolean);
+    // Keep unknown legacy categories selectable
+    categoryOrder.forEach(c => {
+        if (!$(".pedal-category-checkbox").filter((_, el) => el.value === c).length) addCategoryOption(c);
+    });
+    $(".pedal-category-checkbox").each(function () { this.checked = categoryOrder.includes(this.value); });
+    getSelectedCategories();
+}
+
+$(function () {
+    GEAR_CATEGORIES.forEach(addCategoryOption);
+});
+
+$(document).on("click", "#pedal-category-button", function (e) {
+    e.stopPropagation();
+    $("#pedal-category-options").toggle();
+});
+
+$(document).on("click", function (e) {
+    if (!$(e.target).closest("#pedal-category-wrapper").length) $("#pedal-category-options").hide();
+});
+
 
 function normalizeStyleAttributeQuotes(value) {
     if (typeof value !== "string") return value;
@@ -37,6 +87,10 @@ function buildJSON() {
         ...( $("#knobs-style").val() ? { "knobs-style": $("#knobs-style").val() } : {} ),
         controls: []
     };
+
+    // --- Category (multi-select) ---
+    const categories = getSelectedCategories();
+    if (categories.length) pedal.category = categories.join("/");
 
     // --- SAFETY: _id / _rev normalization (required for template duplicate) ---
     if (!pedal._id && pedal._rev) {
@@ -529,6 +583,7 @@ function syncUIFromJSON(pedal) {
         $("#knobs-inner-color").prop("disabled", true).val("#191919");
     }
     $("#knobs-style").val(pedal["knobs-style"] || "");
+    setSelectedCategories(pedal.category);
 
 
     // --- Inside color/image setup ---

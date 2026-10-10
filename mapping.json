@@ -16727,7 +16727,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/earthquaker/lifepedal",
     "pedalplex_url": "https://www.pedalplex.com/gear/earthquaker-devices-sunn-life-pedal-octave-distortion-booster",
     "brand": "EarthQuaker Devices",
-    "category": "octaver/distortion/booster",
+    "category": "octaver/distortion/boost",
     "seo_description": "The EarthQuaker Devices Sunn O))) Life Pedal is a powerful multi-effect pedal created in collaboration with Sunn O))), designed to deliver massive, amp-crushing tones inspired by the band’s legendary sound. It combines three circuits in one unit: analog octave-up fuzz, RAT-style distortion, and a clean MOSFET boost, making it an all-in-one weapon for heavy riffs, soaring leads, and walls of saturation."
   },
   {
@@ -16979,7 +16979,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/amptweaker/fatmetal/pro/2",
     "pedalplex_url": "https://www.pedalplex.com/gear/amptweaker-fat-metal-pro-ii",
     "brand": "Amptweaker",
-    "category": "preamp/booster",
+    "category": "preamp/boost",
     "seo_description": "The Amptweaker Fat Metal Pro II is a preamp-focused unit designed for tone shaping, direct rig flexibility, and reliable live or studio signal routing. Built by Amptweaker, it fits the preamp, booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the Amptweaker Fat Metal Pro II on PedalPlex."
   },
   {
@@ -16988,7 +16988,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/allpedal/devilstriad/essentials",
     "pedalplex_url": "https://www.pedalplex.com/gear/allpedal-devils-triad-overdrive-boost-essentials",
     "brand": "All-Pedal",
-    "category": "overdrive/booster",
+    "category": "overdrive/boost",
     "seo_description": "The AllPedal Devil's Triad Overdrive/Boost (Essentials) is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. Built by All-Pedal, it fits the overdrive, booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the AllPedal Devil's Triad Overdrive/Boost (Essentials) on PedalPlex."
   },
   {
@@ -16997,7 +16997,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/allpedal/devilstriad",
     "pedalplex_url": "https://www.pedalplex.com/gear/allpedal-devils-triad-overdrive-boost-reverb-delay",
     "brand": "All-Pedal",
-    "category": "overdrive/booster",
+    "category": "overdrive/boost",
     "seo_description": "The AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. Built by All-Pedal, it fits the overdrive, booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay on PedalPlex."
   },
   {
@@ -17006,7 +17006,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/superduper",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-effects-super-duper-2-in-1-booster",
     "brand": "ZVEX",
-    "category": "booster",
+    "category": "boost",
     "seo_description": "The ZVEX Effects Super Duper 2 in 1 Booster is a boost pedal designed to raise level, push amplifiers, and add presence or gain to a signal chain. Built by ZVEX, it fits the booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the ZVEX Effects Super Duper 2 in 1 Booster on PedalPlex."
   },
   {
@@ -17105,7 +17105,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/vexter/doublerock",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-vexter-double-rock-distortion-boost",
     "brand": "ZVEX",
-    "category": "distortion/booster",
+    "category": "distortion/boost",
     "seo_description": "The Zvex Vexter Double Rock Distortion Boost is a distortion pedal designed for focused gain, strong sustain, and powerful rhythm or lead tones. Built by ZVEX, it fits the distortion, booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the Zvex Vexter Double Rock Distortion Boost on PedalPlex."
   },
   {
@@ -17402,7 +17402,7 @@
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/amt-incinerator-ng-1-noise-gate",
     "brand": "AMT",
-    "category": "noise-gate/bass",
+    "category": "noise gate/bass",
     "seo_description": "The AMT Incinerator NG-1 Noise Gate is a compact noise suppression pedal designed to clean up high-gain guitar and bass signal chains without complicated setup. Its main Threshold control sets the level where noise reduction engages, making it easy to tame hiss, hum, and idle noise from drive pedals, preamps, and amplifiers. The NG-1 is designed for quick response when a note is played and automatic decay behavior when the signal fades, helping preserve attack while cutting unwanted noise between phrases. A built-in loop allows noisy gain pedals or preamps to be placed inside the gate circuit, so the detector can track the direct instrument signal while attenuation happens after the noisy device. With a small enclosure, simple controls, and selectable bypass behavior, the Incinerator NG-1 is a practical utility pedal for tight, quiet pedalboards and high-gain rigs. Discover signal-chain ideas and pedalboard setups for the AMT Incinerator NG-1 Noise Gate on PedalPlex."
   },
   {
@@ -17411,7 +17411,7 @@
     "fxdb_url": "https://www.effectsdatabase.com/model/amt/cp100",
     "pedalplex_url": "https://www.pedalplex.com/gear/amt-pangaea-cp-100-ir",
     "brand": "AMT",
-    "category": "ir",
+    "category": "ir loader",
     "seo_description": "The AMT PANGAEA CP-100 IR is a compact impulse response cabinet simulator designed to reproduce miked guitar cabinet tones without needing a physical speaker and microphone setup. By loading cabinet IR files into its internal memory, players can send realistic cab-sim tones directly to a mixer, audio interface, headphones, or full-range system. The CP-100 supports up to 100 impulse responses and connects to a computer as a USB storage device, making IR management straightforward. Built-in sound-shaping tools such as volume control, a five-band equalizer, and room ambience allow players to refine the cabinet response for recording, live performance, or silent practice. It can be used after a preamp, with a power amp and cabinet through connection, or as part of a direct pedalboard rig. Discover direct recording setups and pedalboard ideas for the AMT PANGAEA CP-100 IR on PedalPlex."
   },
   {
