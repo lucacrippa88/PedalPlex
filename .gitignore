@@ -16,3 +16,5 @@ README.md
 static_template.html
 generate_pages.py
 subplexes_to_import.json
+update_categories_db.py
+categories_backup_20261010_144249.json
