@@ -166,9 +166,33 @@
   <script src="nav.js"></script>
 
   <script>
-  // about-us has no auth check — set currentUser to null (guest) immediately
-  // so the fullscreen menu renders the Login button correctly.
-  window.currentUser = null;
+  (function() {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      window.currentUser = null;
+      if (typeof updateFullscreenMenu === 'function') updateFullscreenMenu();
+      return;
+    }
+
+    fetch('https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+    .then(res => {
+      if (!res.ok) {
+        if (res.status === 401) localStorage.removeItem('authToken');
+        throw new Error('Auth failed');
+      }
+      return res.json();
+    })
+    .then(user => {
+      window.currentUser = user;
+      if (typeof updateFullscreenMenu === 'function') updateFullscreenMenu();
+    })
+    .catch(() => {
+      window.currentUser = null;
+      if (typeof updateFullscreenMenu === 'function') updateFullscreenMenu();
+    });
+  })();
   </script>
 
 </body>
