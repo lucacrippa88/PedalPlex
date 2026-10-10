@@ -1,16 +1,7 @@
 let lastValidation = null;
 
-// --- Gear categories (multi-select, stored as "cat1/cat2/...") ---
-const GEAR_CATEGORIES = [
-    "acoustic simulator", "ambient", "amp simulator", "arpeggiator", "attenuator", "bass", "bitcrusher",
-    "boost", "buffer", "cab simulator", "chorus", "combo", "compressor", "controller", "delay", "di",
-    "distortion", "drive", "drum machine", "echo", "enhancer", "eq", "equalizer", "expression", "filter",
-    "flanger", "footswitch", "frfr", "fuzz", "harmonizer", "head", "ir loader", "limiter", "loop switcher",
-    "looper", "midi controller", "mixer", "modulation", "multi-fx", "noise gate", "octaver", "overdrive",
-    "phaser", "pitch shifter", "power amp", "power supply", "preamp", "recorder", "reverb", "rotary",
-    "splitter", "sustainer", "switcher", "synth", "talk box", "tremolo", "tuner", "utility", "vibrato",
-    "vocoder", "volume", "wah", "wireless"
-];
+// --- Gear categories (multi-select, stored as "cat1/cat2/..."), loaded from categories.json ---
+let GEAR_CATEGORIES = [];
 let categoryOrder = []; // keeps selection order
 
 function addCategoryOption(cat) {
@@ -38,7 +29,15 @@ function setSelectedCategories(categoryString) {
 }
 
 $(function () {
-    GEAR_CATEGORIES.forEach(addCategoryOption);
+    $.getJSON("categories.json").done(function (list) {
+        GEAR_CATEGORIES = list;
+        // Rebuild options (syncUIFromJSON may have already run) and restore selection
+        $("#pedal-category-options").empty();
+        GEAR_CATEGORIES.forEach(addCategoryOption);
+        setSelectedCategories(categoryOrder.join("/"));
+    }).fail(function () {
+        console.error("Failed to load categories.json");
+    });
 });
 
 $(document).on("click", "#pedal-category-button", function (e) {
