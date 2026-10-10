@@ -266,7 +266,7 @@
     const { value: rigName } = await Swal.fire({
       title: 'Name your new Rig',
       html: `
-        <p style="text-align:left;margin-bottom:1rem;">A new Rig will be created with the pedals from the shared Plex.</p>
+        <p style="text-align:left;margin-bottom:1rem;">A new Rig will be created with the pedals from the shared ${L.Plex}.</p>
         <label class="bx--label" style="display:block;text-align:left;margin-bottom:4px;">Rig name</label>
         <input id="importRigName" class="bx--text-input" value="${defaultRigName.replace(/"/g, '&quot;')}" maxlength="100" style="width:100%;">`,
       showCancelButton: true,
@@ -318,17 +318,17 @@
         })
       });
       const plexData = await plexRes.json();
-      if (!plexData.ok) throw new Error(plexData.error || 'Failed to create Plex');
+      if (!plexData.ok) throw new Error(plexData.error || ('Failed to create ' + L.Plex));
     } catch (e) {
-      Swal.fire({ icon: 'error', title: 'Rig created, but Plex import failed', text: e.message, showConfirmButton: false, timer: 2500 });
+      Swal.fire({ icon: 'error', title: 'Rig created, but ' + L.Plex + ' import failed', text: e.message, showConfirmButton: false, timer: 2500 });
       return;
     }
 
     Swal.fire({
       icon: 'success',
-      title: 'Rig & Plex imported!',
-      html: '<strong>' + rigName + '</strong> has been created with the Plex <strong>' + plexName + '</strong>.',
-      confirmButtonText: 'Go to Plexes',
+      title: 'Rig & ' + L.Plex + ' imported!',
+      html: '<strong>' + rigName + '</strong> has been created with the ' + L.Plex + ' <strong>' + plexName + '</strong>.',
+      confirmButtonText: 'Go to ' + L.Plexes,
       showCancelButton: true,
       cancelButtonText: 'Stay here',
       customClass: { confirmButton: 'bx--btn bx--btn--primary', cancelButton: 'bx--btn bx--btn--secondary' }
