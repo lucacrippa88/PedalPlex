@@ -660,22 +660,78 @@ async function _importSharedPlexToExistingRig(plex, token) {
 
     // ── Matching helpers ──────────────────────────────────────────────────────
 
-    /** Normalise a control label for fuzzy comparison */
+    /**
+     * Semantic synonym clusters for common pedal control labels.
+     * Each cluster is a set of normalised strings that mean the same thing.
+     * Order within a cluster doesn't matter; membership is checked both ways.
+     */
+    const LABEL_SYNONYMS = [
+        // gain / drive
+        ['gain', 'drive', 'distortion', 'dist', 'overdrive', 'fuzz', 'crunch', 'saturation', 'grit', 'grind', 'breakup', 'clip', 'clipping', 'amt'],
+        // level / volume / output
+        ['level', 'volume', 'output', 'vol', 'out', 'outputlevel', 'outputvol', 'outvolume', 'master', 'mastervol', 'masterlevel'],
+        // tone / treble / brightness
+        ['tone', 'treble', 'bright', 'brightness', 'highs', 'high', 'trebleboost', 'tonecontrol', 'topend'],
+        // bass / low
+        ['bass', 'low', 'lows', 'lowend', 'bottom', 'sub'],
+        // mid / mids
+        ['mid', 'mids', 'midrange', 'middle', 'midboost', 'freq', 'frequency'],
+        // presence / contour
+        ['presence', 'contour', 'scoop', 'edge', 'definition', 'clarity'],
+        // mix / blend / wet
+        ['mix', 'blend', 'drywet', 'wet', 'dry', 'effect', 'effectlevel', 'efxlevel', 'fxlevel'],
+        // rate / speed / tempo
+        ['rate', 'speed', 'tempo', 'lfo', 'lforate', 'lfospeed', 'oscillation'],
+        // depth / intensity / width (modulation depth)
+        ['depth', 'intensity', 'width', 'modulation', 'mod', 'modamt', 'modulation'],
+        // feedback / repeats / regen
+        ['feedback', 'repeats', 'regeneration', 'regen', 'recycle', 'tail'],
+        // time / delay time
+        ['time', 'delay', 'delaytime', 'echotime', 'repeat'],
+        // reverb / decay / room size
+        ['reverb', 'decay', 'size', 'reverbtime', 'room', 'hall', 'plate', 'spring', 'roomsize'],
+        // filter / cutoff / wah / envelope
+        ['filter', 'cutoff', 'wah', 'sweep', 'peak', 'resonance', 'q', 'envelope', 'sense', 'sensitivity'],
+        // phase stages
+        ['phase', 'phaseshift', 'stages'],
+        // pitch / detune / octave
+        ['pitch', 'interval', 'detune', 'pitchshift', 'harmony', 'harmonize', 'octave'],
+        // chorus
+        ['chorus', 'chorusdepth'],
+        // attack (compressor / envelope)
+        ['attack'],
+        // release / sustain (compressor)
+        ['release', 'sustain', 'sustainer', 'compression', 'compress', 'squeeze', 'ratio', 'threshold'],
+        // boost / input trim
+        ['boost', 'pregain', 'trim', 'input', 'inputlevel', 'inputgain'],
+        // cut (hi/lo cut, tone cut)
+        ['cut', 'hicut', 'locut', 'treblecut', 'basscut', 'rolloff'],
+    ];
+
+    // Build a reverse lookup: normalisedLabel → clusterIndex
+    const _labelToCluster = {};
+    LABEL_SYNONYMS.forEach((cluster, idx) => {
+        cluster.forEach(word => { _labelToCluster[word] = idx; });
+    });
+
+    /** Normalise a control label: lowercase, strip non-alphanumeric */
     function _normLabel(s) {
         return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     }
 
     /**
-     * Compute similarity score between two sets of control labels (0–1).
-     * Uses Jaccard similarity on normalised label tokens.
+     * Map a label string to its cluster index (or -1 if not in any cluster).
+     * Also tries substring matching for compound labels like "Output Level" → "outputlevel".
      */
-    function _controlSimilarity(labelsA, labelsB) {
-        if (!labelsA.length || !labelsB.length) return 0;
-        const setA = new Set(labelsA.map(_normLabel));
-        const setB = new Set(labelsB.map(_normLabel));
-        let intersection = 0;
-        setA.forEach(l => { if (setB.has(l)) intersection++; });
-        return intersection / (setA.size + setB.size - intersection);
+    function _clusterOf(label) {
+        const n = _normLabel(label);
+        if (_labelToCluster[n] !== undefined) return _labelToCluster[n];
+        // Try word-by-word: "Output Level" → try "output" and "level" separately
+        const words = n.match(/[a-z]+/g) || [];
+        for (const w of words) {
+            if (_labelToCluster[w] !== undefined) return _labelToCluster[w];
+        }
+        return -1; // unknown
     }
 
     /** Extract flat list of control labels from a gear's controls array */
@@ -688,22 +744,45 @@ async function _importSharedPlexToExistingRig(plex, token) {
         return labels;
     }
 
-    const FUZZY_SIMILARITY_THRESHOLD = 0.35; // at least 35% label overlap to consider a fuzzy match
+    /**
+     * Compute similarity score (0–1) between two label sets using cluster-aware Jaccard.
+     * Labels in the same synonym cluster count as a match even if the strings differ.
+     */
+    function _controlSimilarity(labelsA, labelsB) {
+        if (!labelsA.length || !labelsB.length) return 0;
+
+        // Map each label to its cluster (or its own norm string if not in a cluster)
+        function toKey(l) {
+            const c = _clusterOf(l);
+            return c >= 0 ? 'cluster:' + c : 'raw:' + _normLabel(l);
+        }
+
+        const setA = new Set(labelsA.map(toKey));
+        const setB = new Set(labelsB.map(toKey));
+        let intersection = 0;
+        setA.forEach(k => { if (setB.has(k)) intersection++; });
+        return intersection / (setA.size + setB.size - intersection);
+    }
+
+    const FUZZY_SIMILARITY_THRESHOLD = 0.3; // at least 30% cluster-based overlap
 
     /**
      * For a source pedal id, find the best match in the target board.
-     * Returns { type: 'exact'|'fuzzy'|'none', targetId, score, matchedLabels }
+     * Returns { type: 'exact'|'fuzzy'|'none', targetId, score, matchedLabels, labelMap, tGear }
+     * labelMap: { srcLabel → targetLabel } for fuzzy transfers
      */
     function _findBestMatch(srcId, boardPedals) {
         const srcGear = sourceGearMap[srcId];
 
-        // Exact match
+        // Exact match: same pedal ID
         const exactTarget = boardPedals.find(p => String(p.pedal_id || p._id) === String(srcId));
         if (exactTarget) {
-            return { type: 'exact', targetId: String(srcId), score: 1, matchedLabels: Object.keys(sourcePedalSettings[srcId]?.controls || {}) };
+            return { type: 'exact', targetId: String(srcId), score: 1,
+                     matchedLabels: Object.keys(sourcePedalSettings[srcId]?.controls || {}),
+                     labelMap: null, tGear: null };
         }
 
-        // Fuzzy: same category + control label similarity
+        // Fuzzy: same category + cluster-aware label similarity
         if (!srcGear) return { type: 'none' };
         const srcCategory = (srcGear.category || '').toLowerCase().trim();
         const srcLabels = _gearControlLabels(srcGear);
@@ -715,15 +794,26 @@ async function _importSharedPlexToExistingRig(plex, token) {
             if (!tGear) return;
             const tCategory = (tGear.category || '').toLowerCase().trim();
             if (!srcCategory || !tCategory || srcCategory !== tCategory) return;
+
             const tLabels = _gearControlLabels(tGear);
             const score = _controlSimilarity(srcLabels, tLabels);
             if (score >= FUZZY_SIMILARITY_THRESHOLD && (!best || score > best.score)) {
-                // Find which labels overlap
-                const normSrc = new Set(srcLabels.map(_normLabel));
-                const tLabelsByNorm = {};
-                tLabels.forEach(l => { tLabelsByNorm[_normLabel(l)] = l; });
-                const matchedLabels = srcLabels.filter(l => normSrc.has(_normLabel(l)) && tLabelsByNorm[_normLabel(l)]);
-                best = { type: 'fuzzy', targetId: tId, score, matchedLabels, tGear };
+                // Build labelMap: srcLabel → best matching tLabel (same cluster or exact norm)
+                const labelMap = {};
+                const matchedLabels = [];
+                srcLabels.forEach(sl => {
+                    const sc = _clusterOf(sl);
+                    const sn = _normLabel(sl);
+                    // 1. Exact norm match
+                    const exactTLabel = tLabels.find(tl => _normLabel(tl) === sn);
+                    if (exactTLabel) { labelMap[sl] = exactTLabel; matchedLabels.push(sl); return; }
+                    // 2. Same cluster match (pick first available in target)
+                    if (sc >= 0) {
+                        const clusterTLabel = tLabels.find(tl => _clusterOf(tl) === sc);
+                        if (clusterTLabel) { labelMap[sl] = clusterTLabel; matchedLabels.push(sl); }
+                    }
+                });
+                best = { type: 'fuzzy', targetId: tId, score, matchedLabels, labelMap, tGear };
             }
         });
         return best || { type: 'none' };
@@ -731,9 +821,9 @@ async function _importSharedPlexToExistingRig(plex, token) {
 
     /**
      * Build the filtered pedals object for saving.
-     * For exact matches: copy settings as-is (keyed by target pedal id).
-     * For fuzzy matches: copy only the controls whose normalised labels exist in the target gear,
-     *                    keyed by target pedal id.
+     * Exact match: copy settings as-is under the same pedal id.
+     * Fuzzy match: remap each source label to its target label via labelMap,
+     *              storing the value under the TARGET label so it lands on the right knob.
      */
     function _buildFilteredPedals(rigIndex) {
         const board = userRigs[rigIndex];
@@ -751,12 +841,11 @@ async function _importSharedPlexToExistingRig(plex, token) {
                 return;
             }
 
-            // Fuzzy: transfer only controls with matching (normalised) labels in target gear
-            const tLabels = _gearControlLabels(match.tGear);
-            const tNormLabels = new Set(tLabels.map(_normLabel));
+            // Fuzzy: remap source labels to target labels where a mapping exists
             const filteredControls = {};
-            Object.entries(srcControls).forEach(([label, value]) => {
-                if (tNormLabels.has(_normLabel(label))) filteredControls[label] = value;
+            Object.entries(srcControls).forEach(([srcLabel, value]) => {
+                const targetLabel = match.labelMap?.[srcLabel];
+                if (targetLabel) filteredControls[targetLabel] = value;
             });
             if (Object.keys(filteredControls).length > 0) {
                 result[match.targetId] = { controls: filteredControls };
