@@ -714,6 +714,15 @@ async function _importSharedPlexToExistingRig(plex, token) {
         cluster.forEach(word => { _labelToCluster[word] = idx; });
     });
 
+    /**
+     * Known single-letter/abbreviation prefixes used in pedal label shorthands.
+     * e.g. "E.Level" → "effectlevel", "F.Back" → "feedback", "D.Time" → "delaytime"
+     */
+    const ABBREV_PREFIX = {
+        'e': 'effect', 'f': 'feedback', 'd': 'delay', 'r': 'rate',
+        'l': 'level',  'v': 'volume',  't': 'time',  'm': 'mix',
+    };
+
     /** Normalise a control label: lowercase, strip non-alphanumeric */
     function _normLabel(s) {
         return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -721,16 +730,37 @@ async function _importSharedPlexToExistingRig(plex, token) {
 
     /**
      * Map a label string to its cluster index (or -1 if not in any cluster).
-     * Also tries substring matching for compound labels like "Output Level" → "outputlevel".
+     * Resolution order:
+     *   1. Full normalised string exact match  ("feedback" → cluster)
+     *   2. Abbreviated prefix expansion: "D.Time" → try "delaytime", then "delay", then "time"
+     *   3. Word-by-word for compound labels:  "Output Level" → try "output", "level"
      */
     function _clusterOf(label) {
         const n = _normLabel(label);
+
+        // 1. Exact full match
         if (_labelToCluster[n] !== undefined) return _labelToCluster[n];
-        // Try word-by-word: "Output Level" → try "output" and "level" separately
+
+        // 2. Abbreviated prefix: letter + separator + rest  (e.g. "D.Time", "E Level", "F-back")
+        const abbrevMatch = String(label || '').trim().match(/^([a-zA-Z])[.\-_\s]+(.+)$/);
+        if (abbrevMatch) {
+            const prefix = ABBREV_PREFIX[abbrevMatch[1].toLowerCase()];
+            const rest   = _normLabel(abbrevMatch[2]);
+            if (prefix) {
+                // Try combined ("delaytime"), then prefix alone ("delay"), then rest alone ("time")
+                const candidates = [prefix + rest, prefix, rest];
+                for (const c of candidates) {
+                    if (_labelToCluster[c] !== undefined) return _labelToCluster[c];
+                }
+            }
+        }
+
+        // 3. Word-by-word for compound labels ("Output Level" → "output", "level")
         const words = n.match(/[a-z]+/g) || [];
         for (const w of words) {
             if (_labelToCluster[w] !== undefined) return _labelToCluster[w];
         }
+
         return -1; // unknown
     }
 
@@ -820,10 +850,57 @@ async function _importSharedPlexToExistingRig(plex, token) {
     }
 
     /**
+     * Build a flat lookup { label → ctrl } for a gear's controls, for value validation.
+     * Used to check whether a value is valid for a discrete/multi control.
+     */
+    function _buildCtrlMeta(gear) {
+        const meta = {};
+        if (!gear || !Array.isArray(gear.controls)) return meta;
+        gear.controls.forEach(row => {
+            (row.row || []).forEach(ctrl => {
+                if (ctrl.label) meta[ctrl.label] = ctrl;
+            });
+        });
+        return meta;
+    }
+
+    /**
+     * Sanitise a value before storing it on a target control.
+     * - Continuous (knob with min/max): clamp to [min, max].
+     * - Discrete/multi (knob with values[] or multi): use value only if it
+     *   exists in target's values array; otherwise use the target's default value.
+     * Returns the sanitised value, or null to skip the control entirely.
+     */
+    function _sanitiseValue(value, targetCtrl) {
+        if (!targetCtrl) return value; // no metadata — pass through
+
+        const hasValues = Array.isArray(targetCtrl.values) && targetCtrl.values.length > 0;
+        if (hasValues) {
+            // Discrete / multi: value must be in the target's allowed set
+            const strVal = String(value);
+            if (targetCtrl.values.includes(strVal) || targetCtrl.values.includes(value)) {
+                return value; // valid
+            }
+            // Not valid → use target's default (first value or stored default)
+            return targetCtrl.value !== undefined ? targetCtrl.value : targetCtrl.values[0];
+        }
+
+        // Continuous: clamp
+        if (targetCtrl.min !== undefined && targetCtrl.max !== undefined) {
+            const num = parseFloat(value);
+            if (!isNaN(num)) return Math.min(targetCtrl.max, Math.max(targetCtrl.min, num));
+        }
+
+        return value;
+    }
+
+    /**
      * Build the filtered pedals object for saving.
      * Exact match: copy settings as-is under the same pedal id.
      * Fuzzy match: remap each source label to its target label via labelMap,
      *              storing the value under the TARGET label so it lands on the right knob.
+     *              Discrete controls whose source value is not in the target's value set
+     *              are reset to the target's default instead of being transferred as-is.
      */
     function _buildFilteredPedals(rigIndex) {
         const board = userRigs[rigIndex];
@@ -837,15 +914,25 @@ async function _importSharedPlexToExistingRig(plex, token) {
             const srcControls = sourcePedalSettings[srcId]?.controls || {};
 
             if (match.type === 'exact') {
-                result[match.targetId] = sourcePedalSettings[srcId];
+                // For exact matches we still sanitise discrete values against the
+                // target gear's metadata (same pedal type, but let's be safe).
+                const tGearMeta = _buildCtrlMeta(targetCatalogMap[match.targetId]);
+                const sanitised = {};
+                Object.entries(srcControls).forEach(([label, value]) => {
+                    sanitised[label] = _sanitiseValue(value, tGearMeta[label]);
+                });
+                result[match.targetId] = { ...sourcePedalSettings[srcId], controls: sanitised };
                 return;
             }
 
-            // Fuzzy: remap source labels to target labels where a mapping exists
+            // Fuzzy: remap source labels to target labels + sanitise values
+            const tGearMeta = _buildCtrlMeta(match.tGear);
             const filteredControls = {};
             Object.entries(srcControls).forEach(([srcLabel, value]) => {
                 const targetLabel = match.labelMap?.[srcLabel];
-                if (targetLabel) filteredControls[targetLabel] = value;
+                if (!targetLabel) return;
+                const sanitised = _sanitiseValue(value, tGearMeta[targetLabel]);
+                if (sanitised !== null) filteredControls[targetLabel] = sanitised;
             });
             if (Object.keys(filteredControls).length > 0) {
                 result[match.targetId] = { controls: filteredControls };
