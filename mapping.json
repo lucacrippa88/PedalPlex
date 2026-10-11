@@ -15614,6 +15614,22 @@
     "pedalplex_url": "https://www.pedalplex.com/gear/afx-acousticomp-mini-compressor",
     "brand": "AFX",
     "seo_description": "Based on the popular Aura Spectrum Compressor, AcoustiComp provides mild, effective dynamics leveling designed specifically for acoustic instruments."
+  },
+  {
+    "pedalplex_id": "SolidGoldFX If 6 Was 9 MK II",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/solidgold/if6was9",
+    "pedalplex_url": "https://www.pedalplex.com/gear/solidgoldfx-if-6-was-9-mk-ii",
+    "brand": "SolidGoldFX",
+    "seo_description": "The If 6 Was 9 is a fuzz pedal by SolidGoldFX, inspired by the classic Fuzz Face circuit of the late 1960s and early 1970s. It features two hand-selected, new-old-stock (NOS) BC183 silicon transistors, with modifications intended to give the vintage design a modern twist."
+  },
+  {
+    "pedalplex_id": "Danelectro Spring King Junior",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/danelectro/springking/junior",
+    "pedalplex_url": "https://www.pedalplex.com/gear/danelectro-spring-king-junior",
+    "brand": "Danelectro",
+    "seo_description": "The Spring King Junior is a compact spring reverb pedal featuring a real spring tank, delivering warm, authentic spring reverb tones inspired by the original 1999 Spring King in a more pedalboard-friendly design."
   }
 ]
 
