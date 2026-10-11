@@ -243,6 +243,7 @@ function initNavPreset() {
     });
 
     if (success) {
+      window.PPUnsaved?.markPresetClean(); // evita il prompt "unsaved changes" sul reload post-salvataggio
       Swal.close()
       Swal.fire({
           icon: "success",
