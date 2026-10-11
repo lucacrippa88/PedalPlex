@@ -1423,6 +1423,8 @@ $(".pedal-catalog").each(function () {
 
 
 
+  window.PPUnsaved?.capturePresetBaseline(); // snapshot per il controllo "unsaved changes"
+
   savePedalboard(); // Save full pedalboard state after applying preset
 
   // Enable save button after applying preset

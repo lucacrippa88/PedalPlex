@@ -260,6 +260,7 @@ function initPedalboard(userRole) {
 
 // Render pedalboard
 function renderPedalboard() {
+  window.PPUnsaved?.captureRigBaseline(); // snapshot per il controllo "unsaved changes" (solo al primo render del Rig)
   const container = document.getElementById('pedalboard');
   if (!container) return;
   container.innerHTML = '';
@@ -693,6 +694,7 @@ function savePedalboard() {
     return data;
   })
   .then(data => {
+    window.PPUnsaved?.markRigClean(); // evita il prompt "unsaved changes" sul reload post-salvataggio
     maybeSchedulePresetNudge();
     Swal.fire({
       icon: 'success',
@@ -1186,6 +1188,7 @@ function saveGuestPedalboard() {
   const guestBoards = [board]; // always save as array
   localStorage.setItem("guestPedalboard", JSON.stringify(guestBoards));
   window.allPedalboards = guestBoards;
+  window.PPUnsaved?.markRigClean();
   if (typeof triggerGuestStatsPing === 'function') {
     triggerGuestStatsPing(true);
   }
