@@ -674,12 +674,8 @@
   }
 
   function _runNudgeLogic(page) {
-    // In shared/preview mode: skip the full tour entirely; only show the nudge (if warranted).
-    if (window.isPreviewMode) {
-      const scenario = resolveNudgeScenario();
-      if (scenario) showNudge(scenario);
-      return;
-    }
+    // In shared/preview mode: suppress everything — no tour, no nudge.
+    if (window.isPreviewMode) return;
 
     // Case 2: first-time visitor on /rigs (no completed tour, no nudge dismissed) — start tour immediately
     if (!hasCompleted() && !isNudgeDismissed() && page === 'rigs') {

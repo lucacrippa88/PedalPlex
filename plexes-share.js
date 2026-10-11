@@ -626,64 +626,213 @@ async function _importSharedPlexToExistingRig(plex, token) {
         return;
     }
 
-    // 2. Build rig selector options
-    const rigOptions = userRigs.map((b, i) => `<option value="${i}">${b.board_name || 'Rig ' + (i + 1)}</option>`).join('');
-
-    // 3. Source pedals from the shared plex
-    const sourcePedalSettings = plex.pedals || {};   // { pedal_id: { controls: {...} }, ... }
+    // 2. Source pedals from the shared plex
+    const sourcePedalSettings = plex.pedals || {};   // { pedal_id: { controls: {label: value} } }
     const sourcePedalIds = Object.keys(sourcePedalSettings);
 
-    // Helper: compute how many pedals match between source plex and a target board
-    function countMatches(board) {
-        const boardPedalIds = (board.pedals || []).map(p => String(p.pedal_id || p._id));
-        return sourcePedalIds.filter(id => boardPedalIds.includes(String(id))).length;
+    // Source gear info from the already-loaded catalogMap (populated by loadSharedPlexPreview)
+    const sourceGearMap = {};  // { id: gear doc }
+    sourcePedalIds.forEach(id => {
+        const g = window.catalogMap?.[id] || window.catalog?.find(c => c._id === id);
+        if (g) sourceGearMap[id] = g;
+    });
+
+    // 3. Fetch catalog data for all target rig pedals (needed for fuzzy matching)
+    const allTargetPedalIds = new Set();
+    userRigs.forEach(b => (b.pedals || []).forEach(p => {
+        const id = p.pedal_id || p._id;
+        if (id) allTargetPedalIds.add(String(id));
+    }));
+    // Remove IDs already in catalogMap
+    const missingIds = Array.from(allTargetPedalIds).filter(id => !window.catalogMap?.[id]);
+    let targetCatalogMap = Object.assign({}, window.catalogMap || {});
+    if (missingIds.length > 0) {
+        try {
+            const gRes = await fetch('https://api.pedalplex.com/GET_GEARS_BY_IDS.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: missingIds })
+            });
+            const gData = await gRes.json();
+            (gData.docs || []).forEach(g => { targetCatalogMap[g._id] = g; });
+        } catch (e) { /* continue without extra catalog data */ }
+    }
+
+    // ── Matching helpers ──────────────────────────────────────────────────────
+
+    /** Normalise a control label for fuzzy comparison */
+    function _normLabel(s) {
+        return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    }
+
+    /**
+     * Compute similarity score between two sets of control labels (0–1).
+     * Uses Jaccard similarity on normalised label tokens.
+     */
+    function _controlSimilarity(labelsA, labelsB) {
+        if (!labelsA.length || !labelsB.length) return 0;
+        const setA = new Set(labelsA.map(_normLabel));
+        const setB = new Set(labelsB.map(_normLabel));
+        let intersection = 0;
+        setA.forEach(l => { if (setB.has(l)) intersection++; });
+        return intersection / (setA.size + setB.size - intersection);
+    }
+
+    /** Extract flat list of control labels from a gear's controls array */
+    function _gearControlLabels(gear) {
+        if (!gear || !Array.isArray(gear.controls)) return [];
+        const labels = [];
+        gear.controls.forEach(row => {
+            (row.row || []).forEach(ctrl => { if (ctrl.label) labels.push(ctrl.label); });
+        });
+        return labels;
+    }
+
+    const FUZZY_SIMILARITY_THRESHOLD = 0.35; // at least 35% label overlap to consider a fuzzy match
+
+    /**
+     * For a source pedal id, find the best match in the target board.
+     * Returns { type: 'exact'|'fuzzy'|'none', targetId, score, matchedLabels }
+     */
+    function _findBestMatch(srcId, boardPedals) {
+        const srcGear = sourceGearMap[srcId];
+
+        // Exact match
+        const exactTarget = boardPedals.find(p => String(p.pedal_id || p._id) === String(srcId));
+        if (exactTarget) {
+            return { type: 'exact', targetId: String(srcId), score: 1, matchedLabels: Object.keys(sourcePedalSettings[srcId]?.controls || {}) };
+        }
+
+        // Fuzzy: same category + control label similarity
+        if (!srcGear) return { type: 'none' };
+        const srcCategory = (srcGear.category || '').toLowerCase().trim();
+        const srcLabels = _gearControlLabels(srcGear);
+
+        let best = null;
+        boardPedals.forEach(p => {
+            const tId = String(p.pedal_id || p._id);
+            const tGear = targetCatalogMap[tId];
+            if (!tGear) return;
+            const tCategory = (tGear.category || '').toLowerCase().trim();
+            if (!srcCategory || !tCategory || srcCategory !== tCategory) return;
+            const tLabels = _gearControlLabels(tGear);
+            const score = _controlSimilarity(srcLabels, tLabels);
+            if (score >= FUZZY_SIMILARITY_THRESHOLD && (!best || score > best.score)) {
+                // Find which labels overlap
+                const normSrc = new Set(srcLabels.map(_normLabel));
+                const tLabelsByNorm = {};
+                tLabels.forEach(l => { tLabelsByNorm[_normLabel(l)] = l; });
+                const matchedLabels = srcLabels.filter(l => normSrc.has(_normLabel(l)) && tLabelsByNorm[_normLabel(l)]);
+                best = { type: 'fuzzy', targetId: tId, score, matchedLabels, tGear };
+            }
+        });
+        return best || { type: 'none' };
+    }
+
+    /**
+     * Build the filtered pedals object for saving.
+     * For exact matches: copy settings as-is (keyed by target pedal id).
+     * For fuzzy matches: copy only the controls whose normalised labels exist in the target gear,
+     *                    keyed by target pedal id.
+     */
+    function _buildFilteredPedals(rigIndex) {
+        const board = userRigs[rigIndex];
+        const boardPedals = board.pedals || [];
+        const result = {};
+
+        sourcePedalIds.forEach(srcId => {
+            const match = _findBestMatch(srcId, boardPedals);
+            if (match.type === 'none') return;
+
+            const srcControls = sourcePedalSettings[srcId]?.controls || {};
+
+            if (match.type === 'exact') {
+                result[match.targetId] = sourcePedalSettings[srcId];
+                return;
+            }
+
+            // Fuzzy: transfer only controls with matching (normalised) labels in target gear
+            const tLabels = _gearControlLabels(match.tGear);
+            const tNormLabels = new Set(tLabels.map(_normLabel));
+            const filteredControls = {};
+            Object.entries(srcControls).forEach(([label, value]) => {
+                if (tNormLabels.has(_normLabel(label))) filteredControls[label] = value;
+            });
+            if (Object.keys(filteredControls).length > 0) {
+                result[match.targetId] = { controls: filteredControls };
+            }
+        });
+
+        return result;
+    }
+
+    // 4. Helper to count exact + fuzzy matches for a board (used for sorting + dropdown hints)
+    function _countMatchSummary(board) {
+        const boardPedals = board.pedals || [];
+        let exact = 0, fuzzy = 0;
+        sourcePedalIds.forEach(id => {
+            const m = _findBestMatch(id, boardPedals);
+            if (m.type === 'exact') exact++;
+            else if (m.type === 'fuzzy') fuzzy++;
+        });
+        return { exact, fuzzy, total: exact + fuzzy };
     }
 
     // Sort rigs: most matches first
-    userRigs.sort((a, b) => countMatches(b) - countMatches(a));
+    userRigs.sort((a, b) => {
+        const sa = _countMatchSummary(a), sb = _countMatchSummary(b);
+        if (sb.total !== sa.total) return sb.total - sa.total;
+        return sb.exact - sa.exact;
+    });
+
     const sortedOptions = userRigs.map((b, i) => {
-        const m = countMatches(b);
+        const { exact, fuzzy, total } = _countMatchSummary(b);
         const label = b.board_name || 'Rig ' + (i + 1);
-        const hint = m > 0 ? ` (${m} matching pedal${m > 1 ? 's' : ''})` : ' (no match)';
-        return `<option value="${i}"${m === 0 ? ' style="color:#a8a8a8"' : ''}>${label}${hint}</option>`;
+        let hint = '';
+        if (exact > 0 && fuzzy > 0) hint = ` (${exact} exact, ${fuzzy} similar)`;
+        else if (exact > 0) hint = ` (${exact} exact match${exact > 1 ? 'es' : ''})`;
+        else if (fuzzy > 0) hint = ` (${fuzzy} similar)`;
+        else hint = ' (no match)';
+        return `<option value="${i}"${total === 0 ? ' style="color:#a8a8a8"' : ''}>${label}${hint}</option>`;
     }).join('');
 
-    // 4. Show rig selector + preview of matched pedals
+    // 5. Build match preview HTML for a selected rig
     function buildMatchPreview(rigIndex) {
         const board = userRigs[rigIndex];
-        const boardPedalIds = (board.pedals || []).map(p => String(p.pedal_id || p._id));
-        const matched = sourcePedalIds.filter(id => boardPedalIds.includes(String(id)));
-        const unmatched = sourcePedalIds.filter(id => !boardPedalIds.includes(String(id)));
+        const boardPedals = board.pedals || [];
+        const rows = [];
 
-        let html = '';
-        if (matched.length > 0) {
-            const names = matched.map(id => {
-                const gear = window.catalogMap?.[id];
-                return gear ? `<strong>${gear.brand || ''} ${gear.model || id}</strong>` : `<em>${id}</em>`;
-            }).join(', ');
-            html += `<p style="margin-top:10px;font-size:0.875rem;">✅ Settings will be applied to: ${names}.</p>`;
-        }
-        if (unmatched.length > 0) {
-            const names = unmatched.map(id => {
-                const gear = window.catalogMap?.[id];
-                return gear ? `${gear.brand || ''} ${gear.model || id}` : id;
-            }).join(', ');
-            html += `<p style="margin-top:6px;font-size:0.875rem;color:#6f6f6f;">⚠️ Not in this Rig (skipped): ${names}.</p>`;
-        }
-        if (matched.length === 0) {
-            html += `<p style="margin-top:10px;font-size:0.875rem;color:#da1e28;">⚠️ No matching pedals found — nothing will be imported.</p>`;
-        }
-        return html;
+        sourcePedalIds.forEach(srcId => {
+            const match = _findBestMatch(srcId, boardPedals);
+            const srcGear = sourceGearMap[srcId];
+            const srcName = srcGear ? `${srcGear.brand || ''} ${srcGear.model || srcId}`.trim() : srcId;
+
+            if (match.type === 'exact') {
+                rows.push(`<li style="margin-bottom:4px;">✅ <strong>${srcName}</strong> — exact match, all controls applied</li>`);
+            } else if (match.type === 'fuzzy') {
+                const tName = match.tGear ? `${match.tGear.brand || ''} ${match.tGear.model || match.targetId}`.trim() : match.targetId;
+                const pct = Math.round(match.score * 100);
+                const applied = match.matchedLabels.length;
+                const total = Object.keys(sourcePedalSettings[srcId]?.controls || {}).length;
+                rows.push(`<li style="margin-bottom:4px;">🔁 <strong>${srcName}</strong> → <em>${tName}</em> (same category, ${pct}% similarity — ${applied}/${total} controls mapped)</li>`);
+            } else {
+                rows.push(`<li style="margin-bottom:4px;color:#6f6f6f;">⛔ <strong>${srcName}</strong> — not in this Rig, skipped</li>`);
+            }
+        });
+
+        if (rows.length === 0) return `<p style="margin-top:8px;font-size:0.875rem;color:#da1e28;">No pedals found in source ${L.plex}.</p>`;
+        return `<ul style="margin:8px 0 0;padding-left:18px;font-size:0.8rem;text-align:left;">${rows.join('')}</ul>`;
     }
 
     const { value: formData } = await Swal.fire({
         title: 'Apply to existing Rig',
+        width: '560px',
         html: `
-            <p style="text-align:left;margin-bottom:1rem;">Choose the Rig and a name for the new ${L.Plex}. Settings will be applied only to matching pedals.</p>
+            <p style="text-align:left;margin-bottom:0.75rem;font-size:0.9rem;">Choose the Rig and a name for the new ${L.Plex}.</p>
             <label class="bx--label" style="display:block;text-align:left;margin-bottom:4px;">Target Rig</label>
-            <select id="importRigSelect" class="bx--select-input" style="width:100%;margin-bottom:8px;">${sortedOptions}</select>
-            <div id="importMatchPreview" style="min-height:40px;"></div>
-            <label class="bx--label" style="display:block;text-align:left;margin-top:12px;margin-bottom:4px;">${L.Plex} name</label>
+            <select id="importRigSelect" class="bx--select-input" style="width:100%;margin-bottom:6px;">${sortedOptions}</select>
+            <div id="importMatchPreview" style="min-height:36px;max-height:180px;overflow-y:auto;overflow-x:hidden;"></div>
+            <label class="bx--label" style="display:block;text-align:left;margin-top:10px;margin-bottom:4px;">${L.Plex} name</label>
             <input id="importPlexName2" class="bx--text-input" value="${(plex.preset_name || ('Imported ' + L.Plex)).replace(/"/g, '&quot;')}" maxlength="100" style="width:100%;">`,
         showCancelButton: true,
         confirmButtonText: 'Import',
@@ -705,7 +854,6 @@ async function _importSharedPlexToExistingRig(plex, token) {
     });
 
     if (formData === undefined) {
-        // "Back" — re-open step 1
         openImportSharedPlexModal();
         return;
     }
@@ -713,20 +861,14 @@ async function _importSharedPlexToExistingRig(plex, token) {
     const { rigIndex, plexName } = formData;
     const targetBoard = userRigs[rigIndex];
 
-    // 5. Build filtered pedals object (only matched pedals)
-    const boardPedalIds = new Set((targetBoard.pedals || []).map(p => String(p.pedal_id || p._id)));
-    const filteredPedals = {};
-    Object.entries(sourcePedalSettings).forEach(([id, settings]) => {
-        if (boardPedalIds.has(String(id))) {
-            filteredPedals[id] = settings;
-        }
-    });
+    // 6. Build filtered pedals using exact + fuzzy matching
+    const filteredPedals = _buildFilteredPedals(rigIndex);
 
     if (Object.keys(filteredPedals).length === 0) {
         const goAnyway = await Swal.fire({
             icon: 'warning',
             title: 'No matching pedals',
-            text: `None of the pedals in this ${L.Plex} match the selected Rig. The imported ${L.Plex} will have no settings. Do you want to continue anyway?`,
+            text: `None of the pedals in this ${L.Plex} match the selected Rig. The imported ${L.Plex} will have no settings. Continue anyway?`,
             showCancelButton: true,
             confirmButtonText: 'Import anyway',
             cancelButtonText: 'Cancel',
@@ -735,7 +877,7 @@ async function _importSharedPlexToExistingRig(plex, token) {
         if (!goAnyway.isConfirmed) return;
     }
 
-    // 6. Save via CREATE_PLEX.php
+    // 7. Save via CREATE_PLEX.php
     try {
         const res = await fetch('https://api.pedalplex.com/CREATE_PLEX.php', {
             method: 'POST',
