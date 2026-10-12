@@ -13,26 +13,7 @@
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-  <script>
-(function() {
-  const consent = localStorage.getItem('pedalplex_cookie_consent');
-  if (consent === 'accept') {
-    if (!window.gtagLoaded) {
-      const script = document.createElement('script');
-      script.async = true;
-      script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
-      document.head.appendChild(script);
-
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      window.gtag = gtag;
-      gtag('js', new Date());
-      gtag('config', 'G-BX9P5WN5HH');
-      window.gtagLoaded = true;
-    }
-  }
-})();
-</script>
+  <script src="/ga-loader.js"></script>
 
 </head>
 <body>
@@ -68,6 +49,44 @@
       }
     </style>
 
+    <style>
+      /* ---- Admin: Users tab ---- */
+      #admin-user-list { max-width: 860px; margin: 0 auto; padding: 0 16px 80px; }
+      .admin-user-row {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 12px; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08);
+      }
+      .admin-user-row:last-child { border-bottom: none; }
+      .admin-user-info { flex: 1; min-width: 0; }
+      .admin-user-id { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .admin-user-meta { font-size: 0.75rem; opacity: 0.55; margin-top: 2px; }
+
+      #admin-preview-modal {
+        display: none; position: fixed; inset: 0; z-index: 9000;
+        background: rgba(0,0,0,0.7); overflow-y: auto;
+      }
+      #admin-preview-modal.active { display: flex; flex-direction: column; }
+      #admin-preview-inner {
+        position: relative; background: #161616; margin: 40px auto;
+        width: 96vw; max-width: 80%; border-radius: 8px; padding: 24px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      }
+      #admin-preview-close {
+        position: absolute; top: 12px; right: 16px; cursor: pointer;
+        background: none; border: none; color: #fff; font-size: 1.5rem; line-height: 1; padding: 4px 8px;
+      }
+      #admin-preview-header { margin-bottom: 16px; }
+      #admin-preview-header h3 { font-size: 1.05rem; margin: 0 0 4px; }
+      #admin-preview-header p { font-size: 0.8rem; opacity: 0.5; margin: 0; }
+      #admin-plex-select-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+      #admin-plex-select-wrap label { font-size: 0.85rem; opacity: 0.7; }
+      #admin-plex-select { max-width: 360px; }
+      #admin-preset-container { overflow-x: auto; min-height: 120px; }
+      /* rows created by renderFullPedalboard have inline margin-top:-12px: override only here */
+      #admin-preset-container #preset > div { margin-top: 12px !important; }
+      #admin-preset-container #preset .pedal-catalog { cursor: default !important; }
+    </style>
+
     <div class="bx--content-switcher" role="tablist" aria-label="Profile sections">
       <button
         id="switch-achievements"
@@ -99,6 +118,17 @@
         aria-controls="tab-panel-stats"
         style="display: none;">
         <span class="bx--content-switcher__label">Stats</span>
+      </button>
+      <button
+        id="switch-users"
+        class="bx--content-switcher-btn"
+        data-target="tab-panel-users"
+        role="tab"
+        type="button"
+        aria-selected="false"
+        aria-controls="tab-panel-users"
+        style="display: none;">
+        <span class="bx--content-switcher__label">Users</span>
       </button>
     </div>
 
@@ -289,33 +319,48 @@
           <div class="bx--col"></div>
         </div>
 
-        <br><hr style="border-color: #333;"><br>
-
-        <!-- ═══════════════════════════════════════════════════════
-             ADMIN TOOLS
-        ════════════════════════════════════════════════════════ -->
-        <h4 style="font-weight: 700; margin-bottom: 0.25rem; color: #fff;">Admin Tools</h4>
-        <p style="color: #6f6f6f; font-size: 0.8rem; margin-bottom: 1rem;">Quick links to admin pages</p>
-        <div class="bx--row">
-          <div class="bx--col">
-            <a href="/admin-plexes" class="bx--btn bx--btn--tertiary bx--btn--sm" style="text-decoration:none;">
-              <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-                <path d="M25,4H10A2.002,2.002,0,0,0,8,8V22.5562A3.9557,3.9557,0,0,0,6,22a4,4,0,1,0,4,4V8h7ZM6,28a2,2,0,1,1,2-2A2.0023,2.0023,0,0,1,6,28Z"></path>
-                <path d="M24,15v7.5562A3.9552,3.9552,0,0,0,22,22a4,4,0,1,0,4,4V15ZM22,28a2,2,0,1,1,2-2A2.0027,2.0027,0,0,1,22,28Z"></path>
-                <path d="M29.707,7.293l-3-3a.9994.9994,0,0,0-1.414,0L16,13.5859V18h4.4141L29.707,8.707A.9994.9994,0,0,0,29.707,7.293ZM19.5859,16H18V14.4141l5-5L24.5859,11ZM26,9.5859,24.4141,8,26,6.4141,27.5859,8Z"></path>
-              </svg>
-              Browse User Plexes
-            </a>
-          </div>
-          <div class="bx--col"></div>
-          <div class="bx--col"></div>
-          <div class="bx--col"></div>
-        </div>
-
       </div>
     </div>
 
+    <!-- Admin only: users' Plexes browser (content populated by admin-plexes.js on first open) -->
+    <div id="tab-panel-users" role="tabpanel" aria-labelledby="tab-users" hidden>
+      <div id="admin-user-list">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin:2rem 0 16px;">
+          <h4 style="font-weight:700; margin:0; color:#fff;">User Plexes</h4>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:0.8rem; opacity:0.55;">Sort by:</span>
+            <button id="sort-plexes-btn" class="bx--btn bx--btn--secondary bx--btn--sm" data-sort="plexes">
+              # Plexes ↓
+            </button>
+            <button id="sort-update-btn" class="bx--btn bx--btn--ghost bx--btn--sm" data-sort="update">
+              Last update
+            </button>
+          </div>
+        </div>
+        <div id="admin-list-inner">
+          <p style="opacity:0.5;">Loading users…</p>
+        </div>
+      </div>
+    </div>
 
+  </div>
+
+  <!-- Admin Plex preview modal -->
+  <div id="admin-preview-modal">
+    <div id="admin-preview-inner">
+      <button id="admin-preview-close" title="Close">✕</button>
+      <div id="admin-preview-header">
+        <h3 id="admin-preview-title">—</h3>
+        <p id="admin-preview-subtitle">—</p>
+      </div>
+      <div id="admin-plex-select-wrap">
+        <label for="admin-plex-select">Plex:</label>
+        <select id="admin-plex-select" class="bx--select-input"></select>
+      </div>
+      <div id="admin-preset-container">
+        <div id="preset"></div>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1382,17 +1427,49 @@ function formatSharedDate(sharedAt) {
   });
 }
 
+// Loads a classic script and resolves when it has executed
+function loadScriptOnce(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('Failed to load ' + src));
+    document.body.appendChild(s);
+  });
+}
+
+// Admin "Users" tab: heavy rendering scripts are loaded only when the tab is first opened.
+// (utils.js has guest-only side effects, so it must not be loaded for regular visitors.)
+let adminUsersTabLoaded = false;
+async function initAdminUsersTab() {
+  if (adminUsersTabLoaded) return;
+  if (!window.currentUser || window.currentUser.role !== 'admin') return;
+  adminUsersTabLoaded = true;
+
+  try {
+    await loadScriptOnce('utils.js');
+    await loadScriptOnce('subplexes.js');
+    await loadScriptOnce('admin-plexes.js');
+    initAdminPlexes(localStorage.getItem('authToken'));
+  } catch (err) {
+    adminUsersTabLoaded = false;
+    $('#admin-list-inner').html('<p style="color:#ff5252;">' + err.message + '</p>');
+  }
+}
+
 function initProfileTabs() {
   const switchButtons = document.querySelectorAll('.bx--content-switcher-btn');
   const panels = [
     document.getElementById('tab-panel-achievements'),
     document.getElementById('tab-panel-shared-plexes'),
-    document.getElementById('tab-panel-stats')
+    document.getElementById('tab-panel-stats'),
+    document.getElementById('tab-panel-users')
   ];
 
   switchButtons.forEach(button => {
     button.addEventListener('click', () => {
       const targetId = button.dataset.target;
+      if (targetId === 'tab-panel-users') initAdminUsersTab();
 
       switchButtons.forEach(otherButton => {
         otherButton.classList.remove('bx--content-switcher--selected');
@@ -1551,6 +1628,7 @@ function loadAdminStats() {
   if (!window.currentUser || window.currentUser.role !== 'admin') return;
 
   $('#switch-stats').show();
+  $('#switch-users').show();
 
   $.ajax({
     url: 'https://api.pedalplex.com/ADMIN_DASHBOARD_STATS.php',

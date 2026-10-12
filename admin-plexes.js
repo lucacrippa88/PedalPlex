@@ -1,11 +1,12 @@
 /**
  * admin-plexes.js
- * Admin-only page: browse all users' Plexes with a full rendered preview.
+ * Admin-only "Users" tab of profile.html: browse all users' Plexes with a full rendered preview.
+ * Loaded lazily by profile.html (initAdminUsersTab) the first time the tab is opened.
  *
  * Requires (loaded before this file):
  *   utils.js        → renderFullPedalboard(), renderPedalControls(), etc.
  *   subplexes.js    → subplex helpers
- *   helpers.js, labels.js
+ *   helpers.js, labels.js (already loaded by profile.html)
  *
  * applyPresetToPedalboard is defined in plexes.js which is NOT loaded here
  * (it depends on the full plexes page DOM). We inline a minimal version below.
