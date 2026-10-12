@@ -1910,7 +1910,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 /* ------------------------------------------------------------------ */
 /* Tour nudge (index / rigs / plexes)                                   */
 /* ------------------------------------------------------------------ */
-#pp-tour-nudge {
+#pp-tour-nudge,
+#pp-preset-nudge {
   position: fixed;
   /* bottom: 1.5rem; */
   top: 4.5rem;
@@ -1935,12 +1936,14 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-#pp-tour-nudge.pp-tour-nudge--visible {
+#pp-tour-nudge.pp-tour-nudge--visible,
+#pp-preset-nudge.pp-tour-nudge--visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-#pp-tour-nudge.pp-tour-nudge--hidden {
+#pp-tour-nudge.pp-tour-nudge--hidden,
+#pp-preset-nudge.pp-tour-nudge--hidden {
   opacity: 0;
   transform: translateY(12px);
 }

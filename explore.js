@@ -271,7 +271,7 @@ async function _runExplore(params) {
       try {
         const res = await fetch("https://api.pedalplex.com/GET_PLEX_BY_GEAR.php", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+          headers: { "Content-Type": "application/json", ...(token ? { "Authorization": "Bearer " + token } : {}) },
           body: JSON.stringify({ pedalId: p.id })
         });
         const data = await res.json();
