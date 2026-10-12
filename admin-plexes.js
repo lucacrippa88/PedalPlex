@@ -22,6 +22,8 @@ var resultsDiv = null;
 
 // ─── State ────────────────────────────────────────────────────────────────────
 let _adminToken   = '';
+let _allUsers     = [];     // full user list as returned by the API
+let _currentSort  = 'plexes'; // 'plexes' | 'update'
 let _previewUser  = null;   // { user_id, plexes[], boards[] }
 let _previewPlex  = null;   // currently selected plex doc
 
@@ -32,28 +34,62 @@ async function initAdminPlexes(token) {
   // Set the global resultsDiv required by renderFullPedalboard (utils.js guard)
   resultsDiv = document.getElementById('admin-preset-container');
 
+  // Wire up sort buttons
+  document.getElementById('sort-plexes-btn')?.addEventListener('click', () => setSortMode('plexes'));
+  document.getElementById('sort-update-btn')?.addEventListener('click', () => setSortMode('update'));
+
   try {
     const res  = await fetch(ADMIN_API + '?mode=list', {
       headers: { Authorization: 'Bearer ' + token }
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-    renderUserList(data.users || []);
+    _allUsers = data.users || [];
+    renderUserList(_allUsers);
   } catch (err) {
     document.getElementById('admin-list-inner').innerHTML =
       `<p style="color:#ff5252;">Error: ${err.message}</p>`;
   }
 }
 
+// ─── Sort ─────────────────────────────────────────────────────────────────────
+function setSortMode(mode) {
+  _currentSort = mode;
+
+  // Update button styles: active = tertiary, inactive = ghost
+  const plexBtn   = document.getElementById('sort-plexes-btn');
+  const updateBtn = document.getElementById('sort-update-btn');
+  if (plexBtn && updateBtn) {
+    const isPlexes = mode === 'plexes';
+    plexBtn.className   = `bx--btn bx--btn--sm ${isPlexes  ? 'bx--btn--tertiary' : 'bx--btn--ghost'}`;
+    updateBtn.className = `bx--btn bx--btn--sm ${!isPlexes ? 'bx--btn--tertiary' : 'bx--btn--ghost'}`;
+    plexBtn.textContent   = '# Plexes' + (isPlexes  ? ' ↓' : '');
+    updateBtn.textContent = 'Last update' + (!isPlexes ? ' ↓' : '');
+  }
+
+  renderUserList(_allUsers);
+}
+
 // ─── Render user list ─────────────────────────────────────────────────────────
 function renderUserList(users) {
+  // Sort a copy — never mutate _allUsers
+  const sorted = users.slice().sort((a, b) => {
+    if (_currentSort === 'update') {
+      const ta = a.last_update ? new Date(a.last_update).getTime() : 0;
+      const tb = b.last_update ? new Date(b.last_update).getTime() : 0;
+      return tb - ta; // newest first
+    }
+    // default: sort by plex_count desc
+    return b.plex_count - a.plex_count;
+  });
+
   const container = document.getElementById('admin-list-inner');
-  if (!users.length) {
+  if (!sorted.length) {
     container.innerHTML = '<p style="opacity:0.5;">No users with plexes found.</p>';
     return;
   }
 
-  const rows = users.map(u => {
+  const rows = sorted.map(u => {
     const uid     = u.user_id.replace(/^user_/, '');
     const boards  = (u.board_names || []).join(', ') || '—';
     const updated = u.last_update ? new Date(u.last_update).toLocaleDateString() : '—';
