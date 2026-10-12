@@ -57,7 +57,7 @@
       background: #161616;
       margin: 40px auto;
       width: 96vw;
-      max-width: 1200px;
+      max-width: 80%;
       border-radius: 8px;
       padding: 24px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.5);
@@ -128,7 +128,18 @@
 
   <div id="page-content">
     <div id="admin-user-list">
-      <h2>Admin – User Plexes</h2>
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <h2 style="margin:0;">Admin – User Plexes</h2>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:0.8rem; opacity:0.55;">Sort by:</span>
+          <button id="sort-plexes-btn" class="bx--btn bx--btn--tertiary bx--btn--sm" data-sort="plexes">
+            # Plexes ↓
+          </button>
+          <button id="sort-update-btn" class="bx--btn bx--btn--ghost bx--btn--sm" data-sort="update">
+            Last update
+          </button>
+        </div>
+      </div>
       <div id="admin-list-inner">
         <p style="opacity:0.5;">Loading users…</p>
       </div>
