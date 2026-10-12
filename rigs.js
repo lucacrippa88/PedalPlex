@@ -1139,21 +1139,55 @@ function getCurrentPedalboard() {
 const _NUDGE_SHOWN_KEY   = 'pedalplex_preset_nudge_shown';
 const _NUDGE_PENDING_KEY = 'pedalplex_preset_nudge_pending';
 
+// Same look & feel as the tour nudge (see #pp-tour-nudge in css/style.css).
 function _firePresetNudgeToast() {
-  Swal.fire({
-    toast: true,
-    position: 'bottom-end',
-    icon: 'info',
-    title: 'Save your tone as a Preset',
-    html: 'Your Rig is set — now capture this sound in a <strong>Preset</strong>.<br><a href="/plexes" style="color:#0f62fe;text-decoration:underline;">Go to Plexes →</a>',
-    showConfirmButton: false,
-    timer: 8000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    }
+  if (document.getElementById('pp-preset-nudge')) return;
+
+  const nudge = document.createElement('div');
+  nudge.id = 'pp-preset-nudge';
+  nudge.setAttribute('role', 'complementary');
+  nudge.setAttribute('aria-label', 'Save your tone as a Preset');
+  nudge.innerHTML = `
+    <button class="pp-tour-nudge-close" id="pp-preset-nudge-close" aria-label="Dismiss">
+      <svg focusable="false" viewBox="0 0 32 32" fill="currentColor" width="14" height="14">
+        <path d="M24 9.41L22.59 8 16 14.59 9.41 8 8 9.41 14.59 16 8 22.59 9.41 24 16 17.41 22.59 24 24 22.59 17.41 16 24 9.41z"/>
+      </svg>
+    </button>
+    <div class="pp-tour-nudge-icon" aria-hidden="true">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20" height="20" viewBox="0 0 32 32">
+        <path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/>
+        <path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/>
+      </svg>
+    </div>
+    <div class="pp-tour-nudge-body">
+      <p class="pp-tour-nudge-title">Save your tone as a Preset</p>
+      <p class="pp-tour-nudge-text">Your Rig is set — now capture this sound in a Preset.</p>
+    </div>
+    <button class="bx--btn bx--btn--primary bx--btn--sm pp-tour-nudge-cta" id="pp-preset-nudge-cta">
+      Go to Plexes
+    </button>
+  `;
+  document.body.appendChild(nudge);
+
+  let hideTimer = null;
+  const dismiss = () => {
+    clearTimeout(hideTimer);
+    nudge.classList.add('pp-tour-nudge--hidden');
+    setTimeout(() => nudge.remove(), 300);
+  };
+
+  document.getElementById('pp-preset-nudge-close').addEventListener('click', dismiss);
+  document.getElementById('pp-preset-nudge-cta').addEventListener('click', () => {
+    window.location.href = '/plexes';
   });
+
+  // Auto-dismiss after 8s; pause while hovering
+  const startTimer = () => { hideTimer = setTimeout(dismiss, 8000); };
+  nudge.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+  nudge.addEventListener('mouseleave', startTimer);
+  startTimer();
+
+  setTimeout(() => nudge.classList.add('pp-tour-nudge--visible'), 50);
 }
 
 // Called immediately after a guest save (no page reload).

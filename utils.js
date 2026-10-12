@@ -2280,10 +2280,6 @@ async function buildPresetDropdown($ul, pedalId) {
     .append(`<li class='loading'>Loading ${L.SubPlexes}</li>`);
 
   const token = localStorage.getItem("authToken");
-  if (!token) {
-    $ul.html(`<li class='error'>Login to see all ${L.SubPlexes}</li>`);
-    return;
-  }
 
   try {
     const res = await fetch(
@@ -2291,7 +2287,7 @@ async function buildPresetDropdown($ul, pedalId) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
+          ...(token ? { "Authorization": "Bearer " + token } : {})
         },
         body: JSON.stringify({
           pedalId
