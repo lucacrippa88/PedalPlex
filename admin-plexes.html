@@ -109,6 +109,10 @@
       /* mirror the #preset styles from plexes */
       transform-origin: top left;
     }
+    /* rows created by renderFullPedalboard have inline margin-top:-12px: override only here */
+    #preset > div {
+      margin-top: 12px !important;
+    }
     /* reuse pedal-catalog pointer cursor reset */
     #admin-preset .pedal-catalog {
       cursor: default !important;
@@ -132,7 +136,7 @@
         <h2 style="margin:0;">Admin – User Plexes</h2>
         <div style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:0.8rem; opacity:0.55;">Sort by:</span>
-          <button id="sort-plexes-btn" class="bx--btn bx--btn--tertiary bx--btn--sm" data-sort="plexes">
+          <button id="sort-plexes-btn" class="bx--btn bx--btn--secondary bx--btn--sm" data-sort="plexes">
             # Plexes ↓
           </button>
           <button id="sort-update-btn" class="bx--btn bx--btn--ghost bx--btn--sm" data-sort="update">

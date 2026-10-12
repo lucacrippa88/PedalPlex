@@ -56,13 +56,13 @@ async function initAdminPlexes(token) {
 function setSortMode(mode) {
   _currentSort = mode;
 
-  // Update button styles: active = tertiary, inactive = ghost
+  // Update button styles: active = secondary, inactive = ghost
   const plexBtn   = document.getElementById('sort-plexes-btn');
   const updateBtn = document.getElementById('sort-update-btn');
   if (plexBtn && updateBtn) {
     const isPlexes = mode === 'plexes';
-    plexBtn.className   = `bx--btn bx--btn--sm ${isPlexes  ? 'bx--btn--tertiary' : 'bx--btn--ghost'}`;
-    updateBtn.className = `bx--btn bx--btn--sm ${!isPlexes ? 'bx--btn--tertiary' : 'bx--btn--ghost'}`;
+    plexBtn.className   = `bx--btn bx--btn--sm ${isPlexes  ? 'bx--btn--secondary' : 'bx--btn--ghost'}`;
+    updateBtn.className = `bx--btn bx--btn--sm ${!isPlexes ? 'bx--btn--secondary' : 'bx--btn--ghost'}`;
     plexBtn.textContent   = '# Plexes' + (isPlexes  ? ' ↓' : '');
     updateBtn.textContent = 'Last update' + (!isPlexes ? ' ↓' : '');
   }
