@@ -128,8 +128,59 @@
     });
   }, true);
 
-  window.addEventListener('beforeunload', (e) => {
+  // --- Conferma sull'uscita dalla pagina (link e bottoni di navigazione) ---
+  // Il popup nativo di beforeunload non è personalizzabile: intercettiamo il click
+  // prima che parta la navigazione e mostriamo uno Swal. Se l'utente conferma,
+  // rilanciamo il click (evento non "trusted", quindi non ri-intercettato) e
+  // disattiviamo temporaneamente beforeunload.
+  const NAV_BUTTONS = '#profileBtn, #settingsBtn, #logoutBtn, #loginFullscreenBtn, #loginBtn, #loginBtnMobile';
+  let leaving = false;
+
+  document.addEventListener('click', (e) => {
+    if (!e.isTrusted || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (!e.target.closest) return;
+
+    const btn = e.target.closest(NAV_BUTTONS);
+    const link = btn ? null : e.target.closest('a[href]');
+
+    if (link) {
+      const href = link.getAttribute('href') || '';
+      const opensElsewhere = link.target && link.target !== '_self';
+      const notNavigation = /^(#|javascript:|mailto:|tel:)/i.test(href) || link.hasAttribute('download');
+      if (opensElsewhere || notNavigation) return;
+    } else if (!btn) {
+      return;
+    }
+
     if (!window.PPUnsaved.isDirty()) return;
+
+    const el = btn || link;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    Swal.fire({
+      icon: 'warning',
+      title: 'Unsaved changes',
+      text: 'You have unsaved changes. If you leave this page they will be lost.',
+      showCancelButton: true,
+      confirmButtonText: 'Leave page',
+      cancelButtonText: 'Stay here',
+      customClass: {
+        container: 'swal-above-menu',
+        confirmButton: 'bx--btn bx--btn--danger',
+        cancelButton: 'bx--btn bx--btn--secondary'
+      },
+      buttonsStyling: false
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+      leaving = true;
+      setTimeout(() => { leaving = false; }, 1500); // se l'azione non porta via dalla pagina, riattiva il guard
+      el.click();
+    });
+  }, true);
+
+  window.addEventListener('beforeunload', (e) => {
+    if (leaving || !window.PPUnsaved.isDirty()) return;
     // Il browser mostra il proprio messaggio standard di conferma.
     e.preventDefault();
     e.returnValue = '';
