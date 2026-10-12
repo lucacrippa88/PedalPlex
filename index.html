@@ -1068,6 +1068,7 @@
   </script>
 
 
+<script src="/ga-loader.js"></script>
 <!-- Cookie Consent Banner (homepage only) -->
   <script>
   (function() {
@@ -1097,14 +1098,13 @@
     const consent = localStorage.getItem('pedalplex_cookie_consent');
     if (consent) {
       banner.style.display = 'none';
-      if (consent === 'accept') loadGA();
     }
 
     // Accept
     acceptBtn.addEventListener('click', function() {
       localStorage.setItem('pedalplex_cookie_consent', 'accept');
       banner.style.display = 'none';
-      loadGA();
+      window.pedalplexLoadGA();
     });
 
     // Reject
@@ -1113,22 +1113,6 @@
       banner.style.display = 'none';
     });
 
-    // GA loader
-    function loadGA() {
-      if (window.gtagLoaded) return;
-      const script = document.createElement('script');
-      script.async = true;
-      script.src = "https://www.googletagmanager.com/gtag/js?id=G-BX9P5WN5HH";
-      document.head.appendChild(script);
-
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      window.gtag = gtag;
-      gtag('js', new Date());
-      gtag('config', 'G-BX9P5WN5HH');
-
-      window.gtagLoaded = true;
-    }
   })();
   </script>
 
