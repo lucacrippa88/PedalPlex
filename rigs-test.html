@@ -101,23 +101,30 @@
       border-radius: 6px;
       transition: border-color 0.18s, background 0.18s;
       box-sizing: border-box;
+      flex-shrink: 0;
     }
     .rig-slot:focus-visible { outline: 2px solid #9C54D5; outline-offset: 2px; }
 
-    /* pedal slot — same proportions as a "standard" pedal (190×160 px) */
+    /*
+      Pedal slot: matches "standard" size from helpers.js
+        getPedalWidth('standard')  = 190px
+        getPedalHeight('standard') = 160px
+    */
     .rig-pedal-slot {
       width: 190px;
       height: 160px;
       border: 2px dashed #3a3a3a;
       background: transparent;
-      flex-shrink: 0;
     }
     .rig-pedal-slot:hover { border-color: #9C54D5; background: #1a1a1a; }
 
-    /* amp slot — proportions of a "head" amp (400×160 px) */
+    /*
+      Amp slot: matches a "head" amp from helpers.js
+        getPedalWidth('xlarge')   = 400px
+        getPedalHeight('standard') = 160px
+    */
     .rig-amp-slot {
-      width: 100%;
-      max-width: 400px;
+      width: 400px;
       height: 160px;
       border: 1px solid #3a3a3a;
       background: #1e1e1e;
@@ -162,7 +169,7 @@
       text-align: center;
     }
 
-    /* section wrapper */
+    /* section label */
     .rig-section-label {
       font-size: 0.65rem;
       font-weight: 600;
@@ -171,20 +178,20 @@
       text-transform: uppercase;
       margin: 0 0 8px 0;
     }
-    .rig-section { margin-bottom: 20px; }
 
-    /* pedal row — flex row matching real renderPedalboard rows */
+    /* Row 1: pedal slots side by side */
     .rig-pedal-row {
       display: flex;
       flex-wrap: nowrap;
       gap: 10px;
       align-items: center;
-      margin-top: -12px; /* matches real rows */
     }
 
-    /* amp section sits below the chain */
-    .rig-amp-section {
-      margin-top: 28px;
+    /* Row 2: amp slot — its own row, separated */
+    .rig-amp-row {
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
       padding-top: 20px;
       border-top: 1px solid #2a2a2a;
     }
@@ -214,7 +221,6 @@
 
   <div id="page-content">
 
-    <div id="pedalAddDropdownContainer"></div>
     <div id="pedalboard-controls" style="display:none; align-items:center; gap:8px; width:100%;">
       <select id="pedalboardSelect"></select>
       <button id="renameBoardBtn" class="bx--btn bx--btn--secondary" type="button">Edit
@@ -318,11 +324,10 @@
             const container = document.getElementById('pedalboard');
             if (!container) return;
 
-            // Add one "+ Add pedal" slot at the end of every row div
-            // Real rows are direct children with display:flex set via inline style
+            // Add one "+ Add pedal" slot at the end of every pedal row
+            // Real rows are direct flex children set via inline style
             Array.from(container.children).forEach(child => {
               if (child.style && child.style.display === 'flex') {
-                // Don't double-add on re-render
                 if (!child.querySelector('.rig-pedal-slot')) {
                   child.style.alignItems = 'center';
                   child.appendChild(makeSlot('', false));
@@ -330,51 +335,33 @@
               }
             });
 
-            // Amp section at the bottom — recreate every render so it's always fresh
-            const existing = container.querySelector('.rig-amp-section');
-            if (existing) existing.remove();
-            const ampSec = document.createElement('div');
-            ampSec.className = 'rig-amp-section';
-            ampSec.innerHTML = '<p class="rig-section-label">Amplifier</p>';
-            ampSec.appendChild(makeSlot(AMP_CATEGORIES, true));
-            container.appendChild(ampSec);
+            // Amp row — recreate every render so it's always fresh
+            container.querySelector('.rig-amp-row')?.remove();
+            const ampRow = document.createElement('div');
+            ampRow.className = 'rig-amp-row';
+            ampRow.appendChild(makeSlot(AMP_CATEGORIES, true));
+            container.appendChild(ampRow);
 
             return;
           }
 
-          /* Empty board ─────────────────────────────────────────────── */
+          /* ── Empty board: Row 1 = 2 pedal slots, Row 2 = 1 amp slot ── */
           const container = document.getElementById('pedalboard');
           if (!container) return;
           container.innerHTML = '';
 
-          // Signal chain label
-          const chainLabel = document.createElement('p');
-          chainLabel.className = 'rig-section-label';
-          chainLabel.style.marginBottom = '10px';
-          chainLabel.textContent = 'Pedalboard · Signal Chain';
-          container.appendChild(chainLabel);
-
-          // Row 1: 2 pedal slots
+          // Row 1 — 2 pedal slots
           const r1 = document.createElement('div');
           r1.className = 'rig-pedal-row';
           r1.appendChild(makeSlot('', false));
           r1.appendChild(makeSlot('', false));
           container.appendChild(r1);
 
-          // Row 2: 2 more pedal slots (margin to separate rows visually)
-          const r2 = document.createElement('div');
-          r2.className = 'rig-pedal-row';
-          r2.style.marginTop = '10px';
-          r2.appendChild(makeSlot('', false));
-          r2.appendChild(makeSlot('', false));
-          container.appendChild(r2);
-
-          // Amp section below
-          const ampSec = document.createElement('div');
-          ampSec.className = 'rig-amp-section';
-          ampSec.innerHTML = '<p class="rig-section-label">Amplifier</p>';
-          ampSec.appendChild(makeSlot(AMP_CATEGORIES, true));
-          container.appendChild(ampSec);
+          // Row 2 — 1 amp slot (wider, own row with divider)
+          const ampRow = document.createElement('div');
+          ampRow.className = 'rig-amp-row';
+          ampRow.appendChild(makeSlot(AMP_CATEGORIES, true));
+          container.appendChild(ampRow);
         };
 
       }, 50);
