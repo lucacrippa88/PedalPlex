@@ -308,20 +308,14 @@ function initNavPedalboard(userRole) {
     lazyLoading = false;
   }
 
-  // category: optional string to pre-filter (e.g. "head/amp simulator/combo")
-  async function fetchAndRenderPedals(rawQuery = '', category = '') {
+  async function fetchAndRenderPedals(rawQuery = '') {
     const query = (rawQuery || '').trim().toLowerCase();
     const dropdown = getOrCreateDropdown();
-
-    // Show and position the search input
-    const $input = $('#pedalFilterInput');
-    $input.show();
-    positionDropdown();
 
     // Reset lazy state on every new fetch
     lazyPage = 1;
     lazyQuery = query;
-    lazyHasMore = !query && !category; // lazy scroll only when no search query and no category filter
+    lazyHasMore = !query; // lazy scroll only when no search query
     lazyLoading = false;
     if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; }
 
@@ -342,20 +336,17 @@ function initNavPedalboard(userRole) {
       const authToken = localStorage.getItem('authToken');
       let pedalsList = [];
 
-      if (query || category) {
-        // Use SEARCH_GEAR_LAZY when we have a text query or category filter
-        let url = `https://api.pedalplex.com/SEARCH_GEAR_LAZY.php?q=${encodeURIComponent(query)}&limit=50`;
-        if (category) url += `&category=${encodeURIComponent(category)}`;
-        const res = await fetch(url, {
-          headers: {
-            'Content-Type': 'application/json',
-            ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+      if (query) {
+        const res = await fetch(
+          `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+            }
           }
-        });
+        );
         const data = await res.json();
-        // SEARCH_GEAR_LAZY returns { docs: [...] } or plain array
-        const docs = Array.isArray(data) ? data : (data.docs || []);
-        if (docs.length > 0) pedalsList = docs.map(item => ({ _id: item._id || item }));
+        if (Array.isArray(data)) pedalsList = data;
       } else {
         const res = await fetch(
           `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=1&limit=${LAZY_LIMIT}`, {
@@ -389,7 +380,7 @@ function initNavPedalboard(userRole) {
 
       appendPedalItems(pedalsList, dropdown);
 
-      // Attach infinite scroll only for no-query, no-category browsing
+      // Attach infinite scroll only for no-query browsing
       if (lazyHasMore) attachLazyObserver(dropdown);
 
       dropdown.style.display = 'block';
@@ -399,11 +390,6 @@ function initNavPedalboard(userRole) {
       dropdown.style.display = 'none';
     }
   }
-
-  // Expose globally so rigs.js slot buttons can call it directly
-  window.openGearSearch = function(category) {
-    fetchAndRenderPedals('', category || '');
-  };
 
   // Event listener input with debounce
   $("#pedalFilterInput").on("input", debounce(function () {

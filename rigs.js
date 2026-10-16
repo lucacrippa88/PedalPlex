@@ -265,63 +265,8 @@ function renderPedalboard() {
   if (!container) return;
   container.innerHTML = '';
 
-  // ── Amp categories filter ─────────────────────────────────────────────────
-  const AMP_CATEGORY_FILTER = 'head/amp simulator/combo/preamp/power amp/cab simulator/frfr/ir loader';
-
-  // Helper: open the gear search dropdown, optionally pre-filtered by category
-  function openSlotSearch(category) {
-    if (typeof window.openGearSearch === 'function') {
-      window.openGearSearch(category || '');
-    } else {
-      // fallback: trigger the nav search bar
-      const trigger = document.getElementById('addGearsTrigger');
-      if (trigger) trigger.click();
-    }
-  }
-
-  // Helper: build a slot element and wire its click/keydown
-  function makeAddPedalSlot(category, isAmp) {
-    const slot = document.createElement('div');
-    slot.className = 'rig-empty-slot' + (isAmp ? ' rig-amp-slot' : ' rig-pedal-slot');
-    slot.setAttribute('role', 'button');
-    slot.setAttribute('tabindex', '0');
-    slot.setAttribute('aria-label', isAmp ? 'Add an amplifier' : 'Add a pedal');
-    slot.innerHTML = isAmp
-      ? `<span class="rig-slot-plus">&#43;</span><strong class="rig-slot-title">Add an amplifier</strong><span class="rig-slot-hint">Choose your amp or cabinet</span>`
-      : `<span class="rig-slot-plus">+</span><span class="rig-slot-title">Add pedal</span>`;
-    const open = () => openSlotSearch(category);
-    slot.addEventListener('click', open);
-    slot.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
-    return slot;
-  }
-
   if (!window.pedalboard?.pedals || window.pedalboard.pedals.length === 0) {
-    const state = document.createElement('div');
-    state.className = 'rig-empty-state';
-
-    // Pedalboard section
-    const chainSection = document.createElement('div');
-    chainSection.className = 'rig-empty-section';
-    chainSection.innerHTML = '<p class="rig-empty-section-label">PEDALBOARD &middot; SIGNAL CHAIN</p>';
-    const slotsRow = document.createElement('div');
-    slotsRow.className = 'rig-pedal-slots';
-    slotsRow.appendChild(makeAddPedalSlot('', false));
-    slotsRow.appendChild(makeAddPedalSlot('', false));
-    chainSection.appendChild(slotsRow);
-    chainSection.insertAdjacentHTML('beforeend', '<p class="rig-empty-footer-hint">Add pedals to start building your sound.</p>');
-
-    // Amp section (below)
-    const hr = document.createElement('hr');
-    hr.className = 'rig-empty-divider';
-    const ampSection = document.createElement('div');
-    ampSection.className = 'rig-empty-section';
-    ampSection.innerHTML = '<p class="rig-empty-section-label">AMPLIFIER</p>';
-    ampSection.appendChild(makeAddPedalSlot(AMP_CATEGORY_FILTER, true));
-
-    state.appendChild(chainSection);
-    state.appendChild(hr);
-    state.appendChild(ampSection);
-    container.appendChild(state);
+    container.innerHTML = `<div class="empty-state-container"><p>No gears found. Add them from the search bar above!</p></div>`;
     return;
   }
 
@@ -343,7 +288,6 @@ function renderPedalboard() {
     // rowDiv.style.marginBottom = '10px';
     rowDiv.style.marginTop = '-12px';
     rowDiv.style.gap = '10px';
-    rowDiv.style.alignItems = 'center';
     container.appendChild(rowDiv);
 
     rowsMap[rowNum].forEach(pbPedal => {
@@ -426,19 +370,7 @@ function renderPedalboard() {
 
       rowDiv.appendChild($wrapper[0]);
     });
-
-    // "+ Add pedal" compact slot at the end of each row
-    const inlineSlot = makeAddPedalSlot('', false);
-    inlineSlot.classList.add('rig-pedal-slot--inline');
-    rowDiv.appendChild(inlineSlot);
   });
-
-  // Fixed amp slot at the bottom
-  const ampFooter = document.createElement('div');
-  ampFooter.className = 'rig-amp-footer';
-  ampFooter.innerHTML = '<p class="rig-empty-section-label" style="margin:0 0 0.5rem 0;">AMPLIFIER</p>';
-  ampFooter.appendChild(makeAddPedalSlot(AMP_CATEGORY_FILTER, true));
-  container.appendChild(ampFooter);
 }
 
 // Handle edit pedal modal
