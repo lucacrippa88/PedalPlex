@@ -266,7 +266,45 @@ function renderPedalboard() {
   container.innerHTML = '';
 
   if (!window.pedalboard?.pedals || window.pedalboard.pedals.length === 0) {
-    container.innerHTML = `<div class="empty-state-container"><p>No gears found. Add them from the search bar above!</p></div>`;
+    container.innerHTML = `
+      <div class="rig-empty-state">
+        <div class="rig-empty-section">
+          <p class="rig-empty-section-label">AMPLIFIER</p>
+          <div class="rig-empty-slot rig-amp-slot" role="button" tabindex="0" aria-label="Add an amplifier">
+            <span class="rig-slot-plus">&#43;</span>
+            <strong class="rig-slot-title">Add an amplifier</strong>
+            <span class="rig-slot-hint">Choose your amp or cabinet</span>
+          </div>
+        </div>
+        <hr class="rig-empty-divider">
+        <div class="rig-empty-section">
+          <p class="rig-empty-section-label">PEDALBOARD &middot; SIGNAL CHAIN</p>
+          <div class="rig-pedal-slots">
+            <div class="rig-empty-slot rig-pedal-slot" role="button" tabindex="0" aria-label="Add a pedal">
+              <span class="rig-slot-plus">+</span>
+              <span class="rig-slot-title">Add pedal</span>
+            </div>
+            <div class="rig-empty-slot rig-pedal-slot" role="button" tabindex="0" aria-label="Add a pedal">
+              <span class="rig-slot-plus">+</span>
+              <span class="rig-slot-title">Add pedal</span>
+            </div>
+            <div class="rig-empty-slot rig-pedal-slot" role="button" tabindex="0" aria-label="Add a pedal">
+              <span class="rig-slot-plus">+</span>
+              <span class="rig-slot-title">Add pedal</span>
+            </div>
+          </div>
+          <p class="rig-empty-footer-hint">Add pedals to start building your sound.</p>
+        </div>
+      </div>`;
+
+    container.querySelectorAll('.rig-empty-slot').forEach(slot => {
+      const open = () => {
+        const trigger = document.getElementById('addGearsTrigger');
+        if (trigger) trigger.click();
+      };
+      slot.addEventListener('click', open);
+      slot.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    });
     return;
   }
 
