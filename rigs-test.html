@@ -249,148 +249,36 @@
     <script src="tour.js"></script>
 
     <!-- ═══════════════════════════════════════════════════════════════════
-         TEST PATCH — overrides renderPedalboard() and patches nav-rigs.js
-         so that slot buttons open the real gear-search dropdown.
+         TEST PATCH — overrides renderPedalboard() to add visible slots.
+         Uses nav-rigs.js internals via the existing addGearsTrigger path.
          Does NOT modify any production file.
     ════════════════════════════════════════════════════════════════════ -->
     <script>
     (function () {
 
-      /* ── 1. Amp category filter ──────────────────────────────────────── */
       const AMP_CATEGORIES = 'head/amp simulator/combo/preamp/power amp/cab simulator/frfr/ir loader';
 
-      /* ── 2. Expose window.openGearSearch so slots can call it ───────── */
-      //   nav-rigs.js keeps fetchAndRenderPedals private, so we reach it
-      //   by simulating the same sequence it runs when addGearsTrigger is
-      //   clicked, then programmatically setting a pending category filter.
-      //
-      //   We monkey-patch initNavPedalboard to intercept fetchAndRenderPedals
-      //   before the original runs, and expose it globally.
+      /* ── openSlot: uses nav-rigs.js machinery directly ─────────────── */
+      // #toggleFilterBtn is the actual handler that shows the input and opens the
+      // dropdown — it's showBoth so it works on all viewports via jQuery trigger.
+      // Its handler: if dropdown has children → reshow them; else fetchAndRenderPedals.
+      // So we always clear the dropdown first to force a fresh fetch.
+      function openSlot(category) {
+        const $input    = $('#pedalFilterInput');
+        const $toggle   = $('#toggleFilterBtn');
+        const $dropdown = $('#pedalAddDropdownContainer');
 
-      const _origInit = window.initNavPedalboard;
-      window.initNavPedalboard = function (userRole) {
-        _origInit(userRole);
+        // Clear any cached results so toggleFilterBtn always fires a fresh fetch
+        $dropdown.empty().hide();
 
-        // After the original has run, wrap the private fetch function by
-        // triggering addGearsTrigger and then immediately calling the
-        // patched version below.
-        // Instead: expose a global that calls the same API endpoint directly.
-        window.openGearSearch = async function (category) {
-          // Show and focus the search input (mirrors nav-rigs behaviour)
-          const $input = $('#pedalFilterInput');
-          $input.show().focus();
+        // Pre-fill input with category (or blank for normal search)
+        $input.val(category || '');
 
-          // Reuse the dropdown container
-          let dropdown = document.getElementById('pedalAddDropdownContainer');
-          if (!dropdown) {
-            dropdown = document.createElement('div');
-            dropdown.id = 'pedalAddDropdownContainer';
-            document.body.appendChild(dropdown);
-          }
-          dropdown.style.position = 'absolute';
-          dropdown.style.zIndex   = '3000';
+        // Trigger the toggle: it will show the input and call fetchAndRenderPedals
+        $toggle.trigger('click');
+      }
 
-          // Position below the input
-          const inputEl = document.getElementById('pedalFilterInput');
-          if (inputEl) {
-            const rect = inputEl.getBoundingClientRect();
-            dropdown.style.top   = (window.scrollY + rect.bottom + 4) + 'px';
-            dropdown.style.left  = (window.scrollX + rect.left) + 'px';
-            dropdown.style.width = Math.max(rect.width, 320) + 'px';
-          }
-
-          // Spinner
-          dropdown.innerHTML = `
-            <div style="padding:10px;display:flex;justify-content:center;">
-              <div class="bx--loading bx--loading--small bx--loading--active" role="alert">
-                <svg class="bx--loading__svg" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="44" stroke-width="8"/>
-                </svg>
-              </div>
-            </div>`;
-          dropdown.style.display = 'block';
-
-          const authToken = localStorage.getItem('authToken');
-          let pedalsList  = [];
-
-          try {
-            // Always use SEARCH_GEAR_LAZY so we can pass category
-            const url = 'https://api.pedalplex.com/SEARCH_GEAR_LAZY.php?q=&limit=50'
-              + (category ? '&category=' + encodeURIComponent(category) : '');
-            const res  = await fetch(url, {
-              headers: { 'Content-Type': 'application/json',
-                         ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) }
-            });
-            const data = await res.json();
-            const docs = Array.isArray(data) ? data : (data.docs || []);
-            pedalsList = docs.map(item => ({ _id: item._id || item }));
-          } catch (err) {
-            console.error('openGearSearch fetch error:', err);
-          }
-
-          dropdown.innerHTML = '';
-          if (!pedalsList.length) {
-            dropdown.innerHTML = '<div style="padding:12px;color:#525252;font-size:0.875rem;">No results</div>';
-            return;
-          }
-
-          // Render items — reuse same markup as nav-rigs appendPedalItems
-          const authTok = localStorage.getItem('authToken');
-          pedalsList.forEach(pedal => {
-            const item = document.createElement('div');
-            item.className = 'pedal-dropdown-item';
-
-            const label = document.createElement('span');
-            label.className = 'pedal-dropdown-label';
-            label.textContent = pedal._id;
-            item.appendChild(label);
-
-            const btn = document.createElement('button');
-            btn.className = 'bx--btn bx--btn--primary bx--btn--sm pedal-dropdown-btn';
-            btn.type = 'button';
-            btn.innerHTML = `<svg focusable="false" preserveAspectRatio="xMidYMid meet"
-              xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-              width="16" height="16" viewBox="0 0 32 32" aria-hidden="true">
-              <path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/>
-            </svg>`;
-
-            const handleAdd = async (e) => {
-              e.stopPropagation();
-              if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals)) {
-                if (window.pedalboard) window.pedalboard.pedals = [];
-                else return;
-              }
-              let pedalData = (window.catalog || []).find(p => p._id === pedal._id);
-              if (!pedalData) {
-                try {
-                  const r = await fetch('https://api.pedalplex.com/GET_GEARS_BY_IDS.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json',
-                               ...(authTok ? { 'Authorization': 'Bearer ' + authTok } : {}) },
-                    body: JSON.stringify({ ids: [pedal._id] })
-                  });
-                  const result = await r.json();
-                  if (result?.docs?.length > 0) {
-                    pedalData = result.docs[0];
-                    (window.catalog = window.catalog || []).push(pedalData);
-                  }
-                } catch (err) { console.error(err); return; }
-              }
-              window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation: 0, row: 1 });
-              if (typeof renderPedalboard === 'function') renderPedalboard();
-            };
-
-            item.addEventListener('click', handleAdd);
-            btn.addEventListener('click', handleAdd);
-            item.appendChild(btn);
-            dropdown.appendChild(item);
-          });
-
-          dropdown.style.display = 'block';
-        };
-      };
-
-      /* ── 3. Override renderPedalboard ───────────────────────────────── */
+      /* ── makeSlot: builds a single placeholder card ─────────────────── */
       function makeSlot(category, isAmp) {
         const slot = document.createElement('div');
         slot.className = 'rig-slot ' + (isAmp ? 'rig-amp-slot' : 'rig-pedal-slot');
@@ -398,95 +286,90 @@
         slot.setAttribute('tabindex', '0');
         slot.setAttribute('aria-label', isAmp ? 'Add an amplifier' : 'Add a pedal');
 
-        if (isAmp) {
-          slot.innerHTML =
-            `<span class="rig-slot-plus">&#43;</span>
+        slot.innerHTML = isAmp
+          ? `<span class="rig-slot-plus">&#43;</span>
              <span class="rig-slot-label">Add an amplifier</span>
-             <span class="rig-slot-sublabel">Choose your amp or cabinet</span>`;
-        } else {
-          slot.innerHTML =
-            `<span class="rig-slot-plus">+</span>
+             <span class="rig-slot-sublabel">Choose your amp or cabinet</span>`
+          : `<span class="rig-slot-plus">+</span>
              <span class="rig-slot-label">Add pedal</span>`;
-        }
 
-        const open = () => {
-          if (typeof window.openGearSearch === 'function') window.openGearSearch(category || '');
-          else document.getElementById('addGearsTrigger')?.click();
-        };
-        slot.addEventListener('click', open);
+        slot.addEventListener('click', () => openSlot(category));
         slot.addEventListener('keydown', e => {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSlot(category); }
         });
         return slot;
       }
 
-      // Wait until rigs.js has defined renderPedalboard, then override it.
-      // We wrap rather than replace so all other internals (openEditPedalModal,
-      // DnD, etc.) still call the real function for populated boards.
-      const _overrideWhenReady = setInterval(() => {
+      /* ── renderPedalboard override ───────────────────────────────────── */
+      // Poll until rigs.js has registered the function, then replace it.
+      const _poll = setInterval(() => {
         if (typeof window.renderPedalboard !== 'function') return;
-        clearInterval(_overrideWhenReady);
+        clearInterval(_poll);
 
-        const _origRender = window.renderPedalboard;
+        const _orig = window.renderPedalboard;
 
         window.renderPedalboard = function () {
-          // If the board has pedals, let the original run first, then bolt on
-          // the inline + slot and the amp footer.
-          if (window.pedalboard?.pedals?.length > 0) {
-            _origRender();
+          const hasPedals = window.pedalboard?.pedals?.length > 0;
+
+          if (hasPedals) {
+            // Let the original draw all real pedals first
+            _orig();
 
             const container = document.getElementById('pedalboard');
             if (!container) return;
 
-            // Append inline "+ Add pedal" slot to every pedal row
-            container.querySelectorAll('div[style*="display: flex"]').forEach(rowDiv => {
-              // avoid double-adding on re-renders
-              if (rowDiv.querySelector('.rig-pedal-slot')) return;
-              const s = makeSlot('', false);
-              rowDiv.appendChild(s);
+            // Add one "+ Add pedal" slot at the end of every row div
+            // Real rows are direct children with display:flex set via inline style
+            Array.from(container.children).forEach(child => {
+              if (child.style && child.style.display === 'flex') {
+                // Don't double-add on re-render
+                if (!child.querySelector('.rig-pedal-slot')) {
+                  child.style.alignItems = 'center';
+                  child.appendChild(makeSlot('', false));
+                }
+              }
             });
 
-            // Amp footer — avoid double-adding
-            if (!container.querySelector('.rig-amp-section')) {
-              const ampSec = document.createElement('div');
-              ampSec.className = 'rig-amp-section';
-              ampSec.innerHTML = '<p class="rig-section-label">Amplifier</p>';
-              ampSec.appendChild(makeSlot(AMP_CATEGORIES, true));
-              container.appendChild(ampSec);
-            }
+            // Amp section at the bottom — recreate every render so it's always fresh
+            const existing = container.querySelector('.rig-amp-section');
+            if (existing) existing.remove();
+            const ampSec = document.createElement('div');
+            ampSec.className = 'rig-amp-section';
+            ampSec.innerHTML = '<p class="rig-section-label">Amplifier</p>';
+            ampSec.appendChild(makeSlot(AMP_CATEGORIES, true));
+            container.appendChild(ampSec);
+
             return;
           }
 
-          // Empty board: custom layout — 2 slot rows + amp below
+          /* Empty board ─────────────────────────────────────────────── */
           const container = document.getElementById('pedalboard');
           if (!container) return;
           container.innerHTML = '';
 
-          // Row 1 of pedal slots
-          const row1 = document.createElement('div');
-          row1.className = 'rig-section';
-          const row1label = document.createElement('p');
-          row1label.className = 'rig-section-label';
-          row1label.textContent = 'Pedalboard · Signal Chain';
-          row1.appendChild(row1label);
+          // Signal chain label
+          const chainLabel = document.createElement('p');
+          chainLabel.className = 'rig-section-label';
+          chainLabel.style.marginBottom = '10px';
+          chainLabel.textContent = 'Pedalboard · Signal Chain';
+          container.appendChild(chainLabel);
+
+          // Row 1: 2 pedal slots
           const r1 = document.createElement('div');
           r1.className = 'rig-pedal-row';
           r1.appendChild(makeSlot('', false));
           r1.appendChild(makeSlot('', false));
-          row1.appendChild(r1);
-          container.appendChild(row1);
+          container.appendChild(r1);
 
-          // Row 2 of pedal slots
-          const row2 = document.createElement('div');
-          row2.className = 'rig-section';
+          // Row 2: 2 more pedal slots (margin to separate rows visually)
           const r2 = document.createElement('div');
           r2.className = 'rig-pedal-row';
+          r2.style.marginTop = '10px';
           r2.appendChild(makeSlot('', false));
           r2.appendChild(makeSlot('', false));
-          row2.appendChild(r2);
-          container.appendChild(row2);
+          container.appendChild(r2);
 
-          // Amp slot below
+          // Amp section below
           const ampSec = document.createElement('div');
           ampSec.className = 'rig-amp-section';
           ampSec.innerHTML = '<p class="rig-section-label">Amplifier</p>';
