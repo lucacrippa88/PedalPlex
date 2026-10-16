@@ -150,6 +150,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      align-self: center;
       padding: 1.75rem 0.75rem;
       border-radius: 6px;
       border: 2px dashed #3a3a3a;
@@ -162,6 +163,14 @@
       border-color: #9C54D5;
       background: #1a1a1a;
       outline: none;
+    }
+
+    /* Compact variant used when slot is inside a populated pedal row */
+    .rig-pedal-slot--inline {
+      flex: 0 0 auto;
+      min-width: 72px;
+      min-height: 72px;
+      padding: 0.75rem 0.5rem;
     }
 
     .rig-slot-plus {
@@ -211,6 +220,13 @@
       color: #666;
       text-align: center;
       margin-top: 1rem;
+    }
+
+    /* ── Amp footer (below populated rig) ─────────────────── */
+    .rig-amp-footer {
+      max-width: 820px;
+      margin: 2rem auto 0;
+      padding: 0 1rem;
     }
 
     @media (max-width: 500px) {
