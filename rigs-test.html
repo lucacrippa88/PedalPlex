@@ -258,20 +258,17 @@
     function openSearch(row) {
       window._nextRow = row;
 
-      const $input = $('#pedalFilterInput');
-
-      /* pre-fill: amp categories for row 2, blank for pedals */
-      $input.val(row === 2 ? AMP_CATS : '');
-
-      /* show + focus the input, identical to what toggleFilterBtn handler does */
-      $input.show().focus();
+      /* pre-fill the input BEFORE triggering the search chain */
+      const input = document.getElementById('pedalFilterInput');
+      if (input) input.value = (row === 2) ? AMP_CATS : '';
 
       /* clear dropdown cache so a fresh fetch always fires */
       const dd = document.getElementById('pedalAddDropdownContainer');
       if (dd) { dd.innerHTML = ''; dd.style.display = 'none'; }
 
-      /* trigger the input event — nav-rigs.js debounce picks it up and opens the dropdown */
-      $input.trigger('input');
+      /* trigger the native chain: addGearsTrigger → toggleFilterBtn → fetchAndRenderPedals
+         This is identical to clicking the search icon in the header. */
+      document.getElementById('addGearsTrigger').click();
     }
 
     /* ── makeSlot(row, isAmp) ──────────────────────────────────────
