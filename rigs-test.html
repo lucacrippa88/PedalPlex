@@ -248,15 +248,13 @@
           container.appendChild(row2);
 
         } else {
-          // Rig popolato: aggiungi slot vuoto in coda a ogni riga
-          // row 1 → pedali (orizzontale, slot a destra)
-          // row 2 → amp (verticale, slot sotto)
+          // Rig popolato: le righe esistenti sono i div figli di container (generati dall'originale)
+          // Ordine: stesso di sortedRows nell'originale
+          var existingRowDivs = Array.prototype.slice.call(
+            container.querySelectorAll(':scope > div')
+          );
 
-          // Le righe sono i div figli di #pedalboard generati da renderPedalboard originale
-          // Ogni rowDiv contiene i wrapper dei pedali di quella riga
-          var rowDivs = container.querySelectorAll(':scope > div');
-
-          // Mappa rowNum → rowDiv dal DOM (stesso ordine di sortedRows nel codice originale)
+          // Calcola quali row numbers esistono già
           var rowNums = [];
           pedals.forEach(function(p) {
             var r = p.row || 1;
@@ -264,17 +262,50 @@
           });
           rowNums.sort(function(a,b){return a-b;});
 
-          rowNums.forEach(function(rowNum, i) {
-            var rowDiv = rowDivs[i];
-            if (!rowDiv) return;
-            var isAmpRow = (rowNum === 2);
-            var w = isAmpRow ? AMP_W : PEDAL_W;
-            var h = isAmpRow ? AMP_H : PEDAL_H;
-            if (isAmpRow) {
-              rowDiv.style.flexDirection = 'column';
-            }
-            rowDiv.appendChild(makeSlot(w, h, rowNum));
-          });
+          // Svuota il container: lo ricostruiamo con le sezioni etichettate
+          container.innerHTML = '';
+
+          // ── Sezione PEDALBOARD (row 1) ──────────────────────────────
+          var hasRow1 = rowNums.indexOf(1) !== -1;
+          var boardLabel = document.createElement('p');
+          boardLabel.textContent = 'PEDALBOARD · SIGNAL CHAIN';
+          boardLabel.style.cssText = 'font-size:0.7rem;letter-spacing:0.08em;color:#666;margin:0 0 10px 0;';
+          container.appendChild(boardLabel);
+
+          var row1Div;
+          if (hasRow1) {
+            // Riusa il rowDiv originale (già contiene i pedali renderizzati)
+            row1Div = existingRowDivs[rowNums.indexOf(1)];
+            row1Div.style.flexWrap = 'wrap';
+            row1Div.style.gap = '12px';
+          } else {
+            row1Div = document.createElement('div');
+            row1Div.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap;';
+          }
+          // Slot vuoto a destra
+          row1Div.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1));
+          row1Div.style.marginBottom = '32px';
+          container.appendChild(row1Div);
+
+          // ── Sezione AMPLIFIER (row 2) ───────────────────────────────
+          var hasRow2 = rowNums.indexOf(2) !== -1;
+          var ampLabel = document.createElement('p');
+          ampLabel.textContent = 'AMPLIFIER';
+          ampLabel.style.cssText = 'font-size:0.7rem;letter-spacing:0.08em;color:#666;margin:0 0 10px 0;';
+          container.appendChild(ampLabel);
+
+          var row2Div;
+          if (hasRow2) {
+            row2Div = existingRowDivs[rowNums.indexOf(2)];
+            row2Div.style.flexDirection = 'column';
+            row2Div.style.gap = '12px';
+          } else {
+            row2Div = document.createElement('div');
+            row2Div.style.cssText = 'display:flex;flex-direction:column;gap:12px;';
+          }
+          // Slot vuoto sotto
+          row2Div.appendChild(makeSlot(AMP_W, AMP_H, 2));
+          container.appendChild(row2Div);
         }
       };
 
