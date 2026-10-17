@@ -395,10 +395,7 @@ function initNavPedalboard(userRole) {
   window.openPedalSearch = function () {
     const $input = $('#pedalFilterInput');
     $input.show().focus();
-    // Wait one frame so the browser reflows the input before positionDropdown() reads its coordinates
-    requestAnimationFrame(function () {
-      fetchAndRenderPedals($input.val().trim());
-    });
+    fetchAndRenderPedals($input.val().trim());
   };
 
   // Event listener input with debounce
@@ -435,15 +432,9 @@ function initNavPedalboard(userRole) {
 
 
 
-  // Show filter if there is at least one pedalboard
+  // Always show filter so positionDropdown() can read real coordinates
   function updateFilterVisibility() {
-    const hasBoards = Array.isArray(window.allPedalboards) && window.allPedalboards.length > 0;
-    if (hasBoards) {
-      $("#toggleFilterBtn").show();
-    } else {
-      $("#toggleFilterBtn").hide();
-      $("#pedalFilterInput").hide();
-    }
+    $("#toggleFilterBtn").show();
   }
 
   // Initial visibility check
