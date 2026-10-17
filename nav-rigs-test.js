@@ -391,6 +391,13 @@ function initNavPedalboard(userRole) {
     }
   }
 
+  // Expose search for external callers (e.g. empty-state + button in rigs-test)
+  window.openPedalSearch = function () {
+    const $input = $('#pedalFilterInput');
+    $input.show().focus();
+    fetchAndRenderPedals($input.val().trim());
+  };
+
   // Event listener input with debounce
   $("#pedalFilterInput").on("input", debounce(function () {
     fetchAndRenderPedals($(this).val());
@@ -425,15 +432,9 @@ function initNavPedalboard(userRole) {
 
 
 
-  // Show filter if there is at least one pedalboard
+  // Always show filter (empty-state uses it too)
   function updateFilterVisibility() {
-    const hasBoards = Array.isArray(window.allPedalboards) && window.allPedalboards.length > 0;
-    if (hasBoards) {
-      $("#toggleFilterBtn").show();
-    } else {
-      $("#toggleFilterBtn").hide();
-      $("#pedalFilterInput").hide();
-    }
+    $("#toggleFilterBtn").show();
   }
 
   // Initial visibility check
@@ -480,60 +481,5 @@ function initNavPedalboard(userRole) {
     $("#createBtn").on("click", function () {
       if (typeof createNewPedalboard === "function") createNewPedalboard();
     });
-  }
-
-  // ── Empty-state + button ────────────────────────────────────────────────
-  // When the pedalboard is empty, show a + card in the centre.
-  // Clicking it calls fetchAndRenderPedals directly — no intermediary buttons,
-  // no visibility issues with toggleFilterBtn.
-  function openSearch() {
-    const $input = $('#pedalFilterInput');
-    $input.show().focus();
-    fetchAndRenderPedals($input.val().trim());
-  }
-
-  // Wrap renderPedalboard: if empty, inject the + card instead of the plain message.
-  const _origRender = window.renderPedalboard;
-  if (typeof _origRender === 'function') {
-    installEmptyState();
-  } else {
-    // renderPedalboard is defined in rigs.js which loads before nav-rigs.js,
-    // but just in case the order changes, poll once.
-    const _ep = setInterval(() => {
-      if (typeof window.renderPedalboard !== 'function') return;
-      clearInterval(_ep);
-      installEmptyState();
-    }, 50);
-  }
-
-  function installEmptyState() {
-    const _orig = window.renderPedalboard;
-    window.renderPedalboard = function () {
-      if (window.pedalboard?.pedals?.length > 0) return _orig();
-      const container = document.getElementById('pedalboard');
-      if (!container) return;
-      container.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:center;min-height:60vh;">
-          <button id="emptyRigPlusBtn" type="button" style="
-            width:190px;height:160px;
-            border:2px dashed #444;border-radius:8px;
-            background:transparent;cursor:pointer;
-            display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-            transition:border-color .15s,background .15s;
-          ">
-            <span style="font-size:2rem;font-weight:200;color:#555;line-height:1;">+</span>
-            <span style="font-size:.75rem;color:#666;">Add pedal</span>
-          </button>
-        </div>`;
-      document.getElementById('emptyRigPlusBtn').addEventListener('click', openSearch);
-      document.getElementById('emptyRigPlusBtn').addEventListener('mouseenter', function () {
-        this.style.borderColor = '#9C54D5'; this.style.background = '#1a1a1a';
-        this.querySelector('span').style.color = '#9C54D5';
-      });
-      document.getElementById('emptyRigPlusBtn').addEventListener('mouseleave', function () {
-        this.style.borderColor = '#444'; this.style.background = 'transparent';
-        this.querySelector('span').style.color = '#555';
-      });
-    };
   }
 }
