@@ -531,9 +531,15 @@
           '<span class="test-empty-plus__icon">+</span>' +
           '<span class="test-empty-plus__label">Add pedal</span>';
 
-        btn.addEventListener('click', () => document.getElementById('addGearsTrigger').click());
+        function openSearch() {
+          // Show input first so positionDropdown() gets real coordinates
+          const input = document.getElementById('pedalFilterInput');
+          if (input) { input.style.display = 'inline-block'; input.focus(); }
+          document.getElementById('addGearsTrigger').click();
+        }
+        btn.addEventListener('click', openSearch);
         btn.addEventListener('keydown', e => {
-          if (e.key === 'Enter' || e.key === ' ') document.getElementById('addGearsTrigger').click();
+          if (e.key === 'Enter' || e.key === ' ') openSearch();
         });
 
         wrap.appendChild(btn);
