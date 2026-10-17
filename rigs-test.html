@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PedalPlex – TEST</title>
+  <title>PedalPlex</title>
   <link rel="icon" href="logos/pedalplex_logo_gradient.png" type="image/x-icon">
   <link rel="stylesheet" href="css/carbon-components.min.css" />
   <link rel="stylesheet" href="css/style.css" />
@@ -475,16 +475,13 @@
 
 
 
-  <!-- TEST: empty-state + button that triggers the search icon -->
+  <!-- TEST: empty-state + button -->
   <style>
     .test-empty-plus {
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 60vh;
-      gap: 12px;
-      cursor: pointer;
     }
     .test-empty-plus__btn {
       width: 190px;
@@ -510,40 +507,21 @@
     const _poll = setInterval(() => {
       if (typeof window.renderPedalboard !== 'function') return;
       clearInterval(_poll);
-
       const _orig = window.renderPedalboard;
       window.renderPedalboard = function () {
-        if (window.pedalboard?.pedals?.length > 0) {
-          return _orig();
-        }
+        if (window.pedalboard?.pedals?.length > 0) return _orig();
         const container = document.getElementById('pedalboard');
         if (!container) return;
         container.innerHTML = '';
-
         const wrap = document.createElement('div');
         wrap.className = 'test-empty-plus';
-
         const btn = document.createElement('button');
         btn.className = 'test-empty-plus__btn';
         btn.type = 'button';
         btn.innerHTML =
           '<span class="test-empty-plus__icon">+</span>' +
           '<span class="test-empty-plus__label">Add pedal</span>';
-
-        btn.addEventListener('click', () => {
-          // updateFilterVisibility() in nav-rigs.js hides #toggleFilterBtn when
-          // the board is empty, so we can't click it — replicate its handler inline.
-          const $input = $('#pedalFilterInput');
-          $input.show().focus();
-          const dd = document.getElementById('pedalAddDropdownContainer');
-          if (dd && dd.children.length > 0) {
-            dd.style.display = 'block';
-            window.dispatchEvent(new Event('resize')); // re-triggers positionDropdown
-          } else {
-            $input.trigger('input'); // triggers fetchAndRenderPedals via debounce
-          }
-        });
-
+        btn.addEventListener('click', () => window.openPedalSearch());
         wrap.appendChild(btn);
         container.appendChild(wrap);
       };
