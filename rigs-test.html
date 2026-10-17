@@ -93,6 +93,8 @@
 </head>
 <body>
 
+  <div id="addGearsTrigger">+</div>
+
     <div class="bx--loading-overlay" id="pageLoader" style="display:none;">
       <div class="bx--loading" role="status">
         <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
@@ -157,106 +159,6 @@
     <script src="add-to-rig.js"></script>
     <script src="rigs-pending-add.js"></script>
     <script src="tour.js"></script>
-
-    <!-- Empty-state monkey-patch: mostra slot amp + 3 slot pedale quando il rig è vuoto -->
-    <script>
-    (function () {
-      var _origRender = window.renderPedalboard;
-
-      window.renderPedalboard = function () {
-        var pedals = window.pedalboard && Array.isArray(window.pedalboard.pedals)
-                     ? window.pedalboard.pedals : [];
-
-        if (pedals.length > 0) {
-          // Rig popolato: comportamento normale
-          if (typeof _origRender === 'function') _origRender();
-          return;
-        }
-
-        // Rig vuoto: inietta stato visuale
-        var container = document.getElementById('pedalboard');
-        if (!container) return;
-
-        // Trigger della search: usa addGearsTrigger che ora funziona sempre
-        function openSearch() {
-          document.getElementById('addGearsTrigger').click();
-        }
-
-        function makeSlot(label, width, height) {
-          var slot = document.createElement('div');
-          slot.style.cssText = [
-            'width:' + width + 'px',
-            'height:' + height + 'px',
-            'border: 2px dashed #555',
-            'border-radius: 8px',
-            'display: flex',
-            'flex-direction: column',
-            'align-items: center',
-            'justify-content: center',
-            'cursor: pointer',
-            'gap: 8px',
-            'color: #888',
-            'font-size: 0.8rem',
-            'transition: border-color 0.15s, color 0.15s',
-            'flex-shrink: 0'
-          ].join(';');
-          slot.innerHTML = '<span style="font-size:1.6rem;line-height:1;font-weight:300;">+</span>'
-                         + '<span>' + label + '</span>';
-          slot.addEventListener('mouseenter', function () {
-            slot.style.borderColor = '#aaa';
-            slot.style.color = '#ccc';
-          });
-          slot.addEventListener('mouseleave', function () {
-            slot.style.borderColor = '#555';
-            slot.style.color = '#888';
-          });
-          slot.addEventListener('click', openSearch);
-          return slot;
-        }
-
-        container.innerHTML = '';
-
-        // ── Sezione Amplificatore ─────────────────────────────────────
-        var ampSection = document.createElement('div');
-        ampSection.style.cssText = 'margin-bottom: 24px;';
-
-        var ampLabel = document.createElement('p');
-        ampLabel.textContent = 'AMPLIFIER';
-        ampLabel.style.cssText = 'font-size:0.7rem; letter-spacing:0.08em; color:#666; margin:0 0 10px 0;';
-        ampSection.appendChild(ampLabel);
-
-        ampSection.appendChild(makeSlot('Add an amplifier', 400, 160));
-        container.appendChild(ampSection);
-
-        // ── Separatore ───────────────────────────────────────────────
-        var sep = document.createElement('hr');
-        sep.style.cssText = 'border: none; border-top: 1px solid #333; margin: 0 0 24px 0;';
-        container.appendChild(sep);
-
-        // ── Sezione Pedalboard ────────────────────────────────────────
-        var boardSection = document.createElement('div');
-
-        var boardLabel = document.createElement('p');
-        boardLabel.textContent = 'PEDALBOARD · SIGNAL CHAIN';
-        boardLabel.style.cssText = 'font-size:0.7rem; letter-spacing:0.08em; color:#666; margin:0 0 10px 0;';
-        boardSection.appendChild(boardLabel);
-
-        var slotsRow = document.createElement('div');
-        slotsRow.style.cssText = 'display:flex; gap:16px; flex-wrap:wrap;';
-        slotsRow.appendChild(makeSlot('Add pedal', 190, 160));
-        slotsRow.appendChild(makeSlot('Add pedal', 190, 160));
-        slotsRow.appendChild(makeSlot('Add pedal', 190, 160));
-        boardSection.appendChild(slotsRow);
-
-        var hint = document.createElement('p');
-        hint.textContent = 'Add pedals to start building your sound.';
-        hint.style.cssText = 'font-size:0.8rem; color:#555; margin: 14px 0 0 0; text-align:center;';
-        boardSection.appendChild(hint);
-
-        container.appendChild(boardSection);
-      };
-    })();
-    </script>
   </div>
 
     <div class="zoom-controls"> 

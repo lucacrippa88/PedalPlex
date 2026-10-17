@@ -432,9 +432,15 @@ function initNavPedalboard(userRole) {
 
 
 
-  // Always show filter (empty-state uses it too)
+  // Show filter if there is at least one pedalboard
   function updateFilterVisibility() {
-    $("#toggleFilterBtn").show();
+    const hasBoards = Array.isArray(window.allPedalboards) && window.allPedalboards.length > 0;
+    if (hasBoards) {
+      $("#toggleFilterBtn").show();
+    } else {
+      $("#toggleFilterBtn").hide();
+      $("#pedalFilterInput").hide();
+    }
   }
 
   // Initial visibility check
