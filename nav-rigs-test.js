@@ -1,0 +1,539 @@
+function initNavPedalboard(userRole) {
+  const isGuest = (userRole === "guest");
+
+  const navHtml = `
+    <header style="display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+          <div class="pedalplex-logo"></div>
+        </button>
+        <a href="" style="text-decoration:none;" class="title">PedalPlex</a>
+        <a href="rigs" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">Rigs</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <span id="addGearsTrigger" class="showDesktop" style="cursor:pointer; font-size: 0.75rem; opacity: 0.7;">Add gears</span>
+
+        <!-- Hide by default -->
+        <button id="toggleFilterBtn" class="showBoth" aria-label="Toggle search" 
+                style="background:none; border:none; cursor:pointer; padding:4px; display:none;">
+          <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+
+        <input type="text"
+               id="pedalFilterInput"
+               placeholder="Search pedals..."
+               style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 280px; display:none;"
+               aria-label="Filter pedals"/>
+
+        <button id="tourTriggerBtn" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only pp-tour-trigger-btn" type="button" aria-label="Start guided tour" title="Guided Tour">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/>
+            <path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/>
+          </svg>
+        </button>
+
+        <button id="saveBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Rig"
+                style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M27 4H8L4 8v20a2 2 0 002 2h22a2 2 0 002-2V6a2 2 0 00-2-2zm0 24H6V8.8L8.8 6H10v8h14V6h2zm-6-18h2v6h-2z"/>
+          </svg>
+          Save Rig
+        </button>
+
+        <button id="saveBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Save Rig">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M27 4H8L4 8v20a2 2 0 002 2h22a2 2 0 002-2V6a2 2 0 00-2-2zm0 24H6V8.8L8.8 6H10v8h14V6h2zm-6-18h2v6h-2z"/>
+          </svg>
+        </button>
+
+        
+
+        <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Build Rig"
+                style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <g transform="rotate(90 16 16)">
+              <path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"></path>
+              <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
+            </g>
+          </svg>
+          Build Rig
+        </button>
+
+      </div>
+    </header>
+  `;
+
+  $("body").prepend(navHtml);
+
+  $("#menuToggle").on("click", function () {
+    const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
+    $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
+    $("#fullscreenMenu").addClass("active");
+  });
+  $("#closeMenu").on("click", function () {
+    $("#fullscreenMenu").removeClass("active");
+  });
+
+
+  $("#toggleFilterBtn").on("click", function (e) {
+    e.stopPropagation();
+    const $input = $("#pedalFilterInput");
+    $input.show().focus();
+    const dropdown = getOrCreateDropdown();
+    if (dropdown.children.length > 0) {
+      dropdown.style.display = "block";
+      positionDropdown();
+    } else {
+      fetchAndRenderPedals($input.val().trim());
+    }
+  });
+
+  $("#addGearsTrigger").on("click", function (e) {
+    e.stopPropagation();
+    $("#toggleFilterBtn").trigger("click");
+  });
+
+  $("#tourTriggerBtn").on("click", function () {
+    if (typeof window.startTour === 'function') {
+      window.startTour(0);
+    }
+  });
+
+  $("#pedalFilterInput").on("click", function (e) {
+    e.stopPropagation();
+  });
+
+
+  // Check for catalog existance
+  window.catalog = window.catalog || [];
+
+  // HELPER: debounce function to limit API calls while typing
+  function debounce(func, wait) {
+    let timeout;
+    return function () {
+      const context = this,
+        args = arguments;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+  }
+
+  $("#pedalFilterInput").attr("placeholder", "Search pedals...");
+
+  // Dropdown positioning function
+  function positionDropdown() {
+    const input = document.getElementById('pedalFilterInput');
+    const dropdown = document.getElementById('pedalAddDropdownContainer');
+    if (!dropdown || !input) return;
+    const rect = input.getBoundingClientRect();
+    dropdown.style.top = (window.scrollY + rect.bottom + 4) + 'px';
+    dropdown.style.left = (window.scrollX + rect.left) + 'px';
+    const desiredWidth = Math.max(rect.width, 320);
+    dropdown.style.width = desiredWidth + 'px';
+  }
+
+  // Dropdown creation/retrieval function
+  function getOrCreateDropdown() {
+    let dropdown = document.getElementById('pedalAddDropdownContainer');
+    if (!dropdown) {
+      dropdown = document.createElement('div');
+      dropdown.id = 'pedalAddDropdownContainer';
+      document.body.appendChild(dropdown);
+    }
+    dropdown.style.position = 'absolute';
+    dropdown.style.zIndex = '3000';
+    return dropdown;
+  }
+
+  // Lazy-load state
+  let lazyPage = 1;
+  let lazyQuery = '';
+  let lazyLoading = false;
+  let lazyHasMore = true;
+  let lazySentinelObserver = null;
+
+  const LAZY_LIMIT = 30;
+  const LAZY_SPINNER_ID = 'pedalDropdownLazySpinner';
+
+  function appendPedalItems(pedalsList, dropdown) {
+    const authToken = localStorage.getItem('authToken');
+    pedalsList.forEach(pedal => {
+      const item = document.createElement('div');
+      item.classList.add('pedal-dropdown-item');
+
+      const label = document.createElement('span');
+      label.className = 'pedal-dropdown-label';
+      label.textContent = pedal._id;
+      item.appendChild(label);
+
+      const btn = document.createElement('button');
+      btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm', 'pedal-dropdown-btn');
+      btn.setAttribute('type', 'button');
+      btn.setAttribute('aria-label', `Add ${pedal._id}`);
+      btn.innerHTML = `
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+             xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+             width="16" height="16" viewBox="0 0 32 32" aria-hidden="true">
+             <path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/>
+        </svg>`;
+
+      const handleAddPedal = async (e) => {
+        e.stopPropagation();
+
+        if (!window.pedalboard) {
+          console.error("No pedalboard currently loaded");
+          return;
+        }
+        if (!Array.isArray(window.pedalboard.pedals)) {
+          window.pedalboard.pedals = [];
+        }
+
+        let pedalData = window.catalog.find(p => p._id === pedal._id);
+        if (!pedalData) {
+          try {
+            const postRes = await fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...(authToken ? { "Authorization": "Bearer " + authToken } : {})
+              },
+              body: JSON.stringify({ ids: [pedal._id] })
+            });
+            const result = await postRes.json();
+            if (result?.docs?.length > 0) {
+              pedalData = result.docs[0];
+              window.catalog.push(pedalData);
+            } else {
+              console.error("Pedal not found on server:", pedal._id);
+              return;
+            }
+          } catch (err) {
+            console.error("Fetch error:", err);
+            return;
+          }
+        }
+
+        window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation: 0, row: 1 });
+
+        if (typeof renderPedalboard === 'function') renderPedalboard();
+      };
+
+      item.addEventListener('click', handleAddPedal);
+      btn.addEventListener('click', handleAddPedal);
+      item.appendChild(btn);
+      dropdown.appendChild(item);
+    });
+  }
+
+  function getOrCreateLazySentinel(dropdown) {
+    let sentinel = dropdown.querySelector('#pedalDropdownSentinel');
+    if (!sentinel) {
+      sentinel = document.createElement('div');
+      sentinel.id = 'pedalDropdownSentinel';
+      sentinel.style.height = '1px';
+      dropdown.appendChild(sentinel);
+    }
+    return sentinel;
+  }
+
+  function attachLazyObserver(dropdown) {
+    if (lazySentinelObserver) {
+      lazySentinelObserver.disconnect();
+      lazySentinelObserver = null;
+    }
+    const sentinel = getOrCreateLazySentinel(dropdown);
+    lazySentinelObserver = new IntersectionObserver(async (entries) => {
+      if (entries[0].isIntersecting && !lazyLoading && lazyHasMore) {
+        await loadNextPage(dropdown);
+      }
+    }, { root: dropdown, threshold: 0 });
+    lazySentinelObserver.observe(sentinel);
+  }
+
+  async function loadNextPage(dropdown) {
+    if (lazyLoading || !lazyHasMore || lazyQuery) return;
+
+    lazyLoading = true;
+    const authToken = localStorage.getItem('authToken');
+
+    // Show spinner above sentinel
+    let spinner = document.getElementById(LAZY_SPINNER_ID);
+    if (!spinner) {
+      spinner = document.createElement('div');
+      spinner.id = LAZY_SPINNER_ID;
+      spinner.style.cssText = 'padding:10px; display:flex; justify-content:center;';
+      spinner.innerHTML = `<div class="bx--loading bx--loading--small bx--loading--active" role="alert" aria-live="assertive">
+        <svg class="bx--loading__svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" stroke-width="8"/></svg>
+      </div>`;
+    }
+    const sentinel = getOrCreateLazySentinel(dropdown);
+    dropdown.insertBefore(spinner, sentinel);
+
+    try {
+      lazyPage++;
+      const res = await fetch(
+        `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=${lazyPage}&limit=${LAZY_LIMIT}`, {
+          headers: { ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) }
+        }
+      );
+      const data = await res.json();
+      spinner.remove();
+
+      if (!Array.isArray(data) || data.length === 0) {
+        lazyHasMore = false;
+        if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; }
+        sentinel.remove();
+      } else {
+        data.forEach(item => {
+          if (item && item._id && !window.catalog.some(p => p._id === item._id)) {
+            window.catalog.push(item);
+          }
+        });
+        if (data.length < LAZY_LIMIT) {
+          lazyHasMore = false;
+          if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; }
+          sentinel.remove();
+        }
+        appendPedalItems(data.map(item => ({ _id: item._id })), dropdown);
+        if (lazyHasMore) getOrCreateLazySentinel(dropdown); // re-append sentinel after items
+      }
+    } catch (err) {
+      console.error("Lazy load error:", err);
+      spinner.remove();
+    }
+    lazyLoading = false;
+  }
+
+  async function fetchAndRenderPedals(rawQuery = '') {
+    const query = (rawQuery || '').trim().toLowerCase();
+    const dropdown = getOrCreateDropdown();
+
+    // Reset lazy state on every new fetch
+    lazyPage = 1;
+    lazyQuery = query;
+    lazyHasMore = !query; // lazy scroll only when no search query
+    lazyLoading = false;
+    if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; }
+
+    // Spinner while loading first page
+    dropdown.innerHTML = `
+        <div style="padding: 10px; display: flex; justify-content: center;">
+            <div class="bx--loading bx--loading--small bx--loading--active" role="alert" aria-live="assertive">
+                <svg class="bx--loading__svg" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="44" stroke-width="8" />
+                </svg>
+            </div>
+        </div>
+    `;
+    dropdown.style.display = 'block';
+    positionDropdown();
+
+    try {
+      const authToken = localStorage.getItem('authToken');
+      let pedalsList = [];
+
+      if (query) {
+        const res = await fetch(
+          `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+            }
+          }
+        );
+        const data = await res.json();
+        if (Array.isArray(data)) pedalsList = data;
+      } else {
+        const res = await fetch(
+          `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=1&limit=${LAZY_LIMIT}`, {
+            headers: { ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) }
+          }
+        );
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          data.forEach(item => {
+            if (item && item._id && !window.catalog.some(p => p._id === item._id)) {
+              window.catalog.push(item);
+            }
+          });
+          if (data.length < LAZY_LIMIT) lazyHasMore = false;
+          pedalsList = data.map(item => ({ _id: item._id }));
+        }
+      }
+
+      dropdown.innerHTML = '';
+
+      if (!pedalsList || !Array.isArray(pedalsList) || pedalsList.length === 0) {
+        const noResult = document.createElement('div');
+        noResult.textContent = 'No pedals found';
+        noResult.style.padding = '12px';
+        noResult.style.color = '#525252';
+        noResult.style.fontSize = '0.875rem';
+        dropdown.appendChild(noResult);
+        positionDropdown();
+        return;
+      }
+
+      appendPedalItems(pedalsList, dropdown);
+
+      // Attach infinite scroll only for no-query browsing
+      if (lazyHasMore) attachLazyObserver(dropdown);
+
+      dropdown.style.display = 'block';
+      positionDropdown();
+    } catch (err) {
+      console.error("Search error:", err);
+      dropdown.style.display = 'none';
+    }
+  }
+
+  // Event listener input with debounce
+  $("#pedalFilterInput").on("input", debounce(function () {
+    fetchAndRenderPedals($(this).val());
+  }, 300));
+
+  // Outside click to close dropdown search
+  document.addEventListener("click", function (event) {
+    const input = document.getElementById("pedalFilterInput");
+    const dropdown = document.getElementById("pedalAddDropdownContainer");
+    const toggleBtn = document.getElementById("toggleFilterBtn");
+    const addGearsTrigger = document.getElementById("addGearsTrigger");
+
+    if (
+      (input && input.contains(event.target)) ||
+      (dropdown && dropdown.contains(event.target)) ||
+      (toggleBtn && toggleBtn.contains(event.target)) ||
+      (addGearsTrigger && addGearsTrigger.contains(event.target))
+    ) {
+      return;
+    }
+
+    if (input && $(input).is(":visible")) {
+      $(input).hide();
+    }
+    if (dropdown) {
+      dropdown.style.display = "none";
+    }
+  });
+
+  window.addEventListener('scroll', positionDropdown);
+  window.addEventListener('resize', positionDropdown);
+
+
+
+  // Show filter if there is at least one pedalboard
+  function updateFilterVisibility() {
+    const hasBoards = Array.isArray(window.allPedalboards) && window.allPedalboards.length > 0;
+    if (hasBoards) {
+      $("#toggleFilterBtn").show();
+    } else {
+      $("#toggleFilterBtn").hide();
+      $("#pedalFilterInput").hide();
+    }
+  }
+
+  // Initial visibility check
+  updateFilterVisibility();
+  // Expose function so you can call it after creating/deleting boards
+  window.updateNavFilterVisibility = updateFilterVisibility;
+
+  if (isGuest) {
+    $("#createBtn").hide();
+
+    const saveOfflineSvg = `<svg focusable='false' preserveAspectRatio='xMidYMid meet'
+         xmlns='http://www.w3.org/2000/svg' fill='currentColor'
+         width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'>
+      <path d='M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z'/>
+    </svg>`;
+
+    $("#saveBtn").html(`${saveOfflineSvg}Save Rig Offline`);
+    $("#saveBtnMobile").html(saveOfflineSvg);
+
+    $("#saveBtn, #saveBtnMobile").on("click", function () {
+      if (typeof saveGuestPedalboard === "function") saveGuestPedalboard();
+      if (window.allPedalboards.length === 1) setupPedalboardDropdownAndRender();
+      updateFilterVisibility();
+    });
+
+    const loginSvg = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/><path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/></svg>`;
+    const loginBtnHtml = `
+      <button id="loginBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Login" style="display: flex; align-items: center; gap: 0.5rem;">
+        ${loginSvg}Login
+      </button>
+      <button id="loginBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Login" title="Login">
+        ${loginSvg}
+      </button>`;
+    $("#toggleFilterBtn").after(loginBtnHtml);
+    $("#loginBtn").before($("#pedalFilterInput"));
+    $("#loginBtn, #loginBtnMobile").on("click", () => window.location.href = "login");
+  } else {
+    $("#saveBtn").on("click", function () {
+      if (typeof savePedalboard === "function") savePedalboard();
+    });
+    $("#saveBtnMobile").on("click", function () {
+      if (typeof savePedalboard === "function") savePedalboard();
+    });
+    $("#createBtn").on("click", function () {
+      if (typeof createNewPedalboard === "function") createNewPedalboard();
+    });
+  }
+
+  // ── Empty-state + button ────────────────────────────────────────────────
+  // When the pedalboard is empty, show a + card in the centre.
+  // Clicking it calls fetchAndRenderPedals directly — no intermediary buttons,
+  // no visibility issues with toggleFilterBtn.
+  function openSearch() {
+    const $input = $('#pedalFilterInput');
+    $input.show().focus();
+    fetchAndRenderPedals($input.val().trim());
+  }
+
+  // Wrap renderPedalboard: if empty, inject the + card instead of the plain message.
+  const _origRender = window.renderPedalboard;
+  if (typeof _origRender === 'function') {
+    installEmptyState();
+  } else {
+    // renderPedalboard is defined in rigs.js which loads before nav-rigs.js,
+    // but just in case the order changes, poll once.
+    const _ep = setInterval(() => {
+      if (typeof window.renderPedalboard !== 'function') return;
+      clearInterval(_ep);
+      installEmptyState();
+    }, 50);
+  }
+
+  function installEmptyState() {
+    const _orig = window.renderPedalboard;
+    window.renderPedalboard = function () {
+      if (window.pedalboard?.pedals?.length > 0) return _orig();
+      const container = document.getElementById('pedalboard');
+      if (!container) return;
+      container.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;min-height:60vh;">
+          <button id="emptyRigPlusBtn" type="button" style="
+            width:190px;height:160px;
+            border:2px dashed #444;border-radius:8px;
+            background:transparent;cursor:pointer;
+            display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+            transition:border-color .15s,background .15s;
+          ">
+            <span style="font-size:2rem;font-weight:200;color:#555;line-height:1;">+</span>
+            <span style="font-size:.75rem;color:#666;">Add pedal</span>
+          </button>
+        </div>`;
+      document.getElementById('emptyRigPlusBtn').addEventListener('click', openSearch);
+      document.getElementById('emptyRigPlusBtn').addEventListener('mouseenter', function () {
+        this.style.borderColor = '#9C54D5'; this.style.background = '#1a1a1a';
+        this.querySelector('span').style.color = '#9C54D5';
+      });
+      document.getElementById('emptyRigPlusBtn').addEventListener('mouseleave', function () {
+        this.style.borderColor = '#444'; this.style.background = 'transparent';
+        this.querySelector('span').style.color = '#555';
+      });
+    };
+  }
+}
