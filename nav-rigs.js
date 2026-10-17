@@ -391,6 +391,13 @@ function initNavPedalboard(userRole) {
     }
   }
 
+  // Expose search for external callers (e.g. empty-state + button in rigs-test)
+  window.openPedalSearch = function () {
+    const $input = $('#pedalFilterInput');
+    $input.show().focus();
+    fetchAndRenderPedals($input.val().trim());
+  };
+
   // Event listener input with debounce
   $("#pedalFilterInput").on("input", debounce(function () {
     fetchAndRenderPedals($(this).val());
