@@ -523,17 +523,26 @@
         const wrap = document.createElement('div');
         wrap.className = 'test-empty-plus';
 
-        // This button is a third trigger for the search, identical to
-        // #addGearsTrigger ("Add gears") and the search icon.
-        // It just clicks #toggleFilterBtn directly — same as those two do.
         const btn = document.createElement('button');
-        btn.id = 'addGearsTrigger3';
         btn.className = 'test-empty-plus__btn';
         btn.type = 'button';
         btn.innerHTML =
           '<span class="test-empty-plus__icon">+</span>' +
           '<span class="test-empty-plus__label">Add pedal</span>';
-        btn.addEventListener('click', () => $('#toggleFilterBtn').trigger('click'));
+
+        btn.addEventListener('click', () => {
+          // updateFilterVisibility() in nav-rigs.js hides #toggleFilterBtn when
+          // the board is empty, so we can't click it — replicate its handler inline.
+          const $input = $('#pedalFilterInput');
+          $input.show().focus();
+          const dd = document.getElementById('pedalAddDropdownContainer');
+          if (dd && dd.children.length > 0) {
+            dd.style.display = 'block';
+            window.dispatchEvent(new Event('resize')); // re-triggers positionDropdown
+          } else {
+            $input.trigger('input'); // triggers fetchAndRenderPedals via debounce
+          }
+        });
 
         wrap.appendChild(btn);
         container.appendChild(wrap);
