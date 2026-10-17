@@ -395,7 +395,10 @@ function initNavPedalboard(userRole) {
   window.openPedalSearch = function () {
     const $input = $('#pedalFilterInput');
     $input.show().focus();
-    fetchAndRenderPedals($input.val().trim());
+    // Wait one frame so the browser reflows the input before positionDropdown() reads its coordinates
+    requestAnimationFrame(function () {
+      fetchAndRenderPedals($input.val().trim());
+    });
   };
 
   // Event listener input with debounce
