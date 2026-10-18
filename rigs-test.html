@@ -243,124 +243,103 @@
         return el;
       }
 
-      // Monkey-patch renderPedalboard: dopo il render originale, appende gli slot vuoti
+      // Monkey-patch renderPedalboard: sostituisce completamente il rendering
       var _orig = window.renderPedalboard;
       window.renderPedalboard = function () {
-        // Chiama sempre il render originale
+        // Chiama l'originale per popolare window.catalog (fetch dei dati)
+        // ma poi sovrascriviamo il DOM completamente
         if (typeof _orig === 'function') _orig();
 
         var container = document.getElementById('pedalboard');
         if (!container) return;
 
-        var pedals = (window.pedalboard && Array.isArray(window.pedalboard.pedals))
-                     ? window.pedalboard.pedals : [];
+        var allPedals = (window.pedalboard && Array.isArray(window.pedalboard.pedals))
+                        ? window.pedalboard.pedals : [];
 
-        // Calcola per ogni row: primo indice globale e conteggio
-        // rowIndex[r] = primo indice in pedals[] dove compare la row r
-        var rowFirstIdx = {};
-        var rowCount = {};
-        pedals.forEach(function(p, i) {
-          var r = p.row || 1;
-          if (rowFirstIdx[r] === undefined) rowFirstIdx[r] = i;
-          rowCount[r] = (rowCount[r] || 0) + 1;
-        });
-        // insertAt per lo slot in coda alla row r = rowFirstIdx[r] + rowCount[r]
-        // (equivale all'indice del primo elemento della row successiva, o pedals.length)
-        function slotInsertAt(r) {
-          if (rowFirstIdx[r] === undefined) return pedals.length; // row vuota: in coda
-          return rowFirstIdx[r] + (rowCount[r] || 0);
-        }
+        // Pedali per riga
+        var row1Pedals = allPedals.filter(function(p){ return (p.row||1) === 1; });
+        var row2Pedals = allPedals.filter(function(p){ return (p.row||1) === 2; });
 
-        if (pedals.length === 0) {
-          // Empty state: riga pedali (row 1) + riga amp (row 2)
-          container.innerHTML = '';
+        // Indice globale del primo elemento di ogni riga
+        // (row1 viene prima di row2 nell'array globale per come facciamo splice)
+        var row1Start = 0;
+        var row2Start = row1Pedals.length; // row2 parte dopo tutti i pedali di row1
 
-          // -- Sezione pedalboard --
-          var boardLabel = document.createElement('p');
-          boardLabel.textContent = 'PEDALBOARD · SIGNAL CHAIN';
-          boardLabel.style.cssText = 'font-size:0.7rem;letter-spacing:0.08em;color:#666;margin:0 0 10px 0;';
-          container.appendChild(boardLabel);
+        container.innerHTML = '';
 
-          var row1 = document.createElement('div');
-          row1.id = 'emptyRow1';
-          row1.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;';
-          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1, 0));
-          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1, 1));
-          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1, 2));
-          container.appendChild(row1);
+        // ── Helper: renderizza una riga a slot fissi ────────────────
+        // Costruisce un array sparso di lunghezza N dove ogni posizione
+        // è occupata dal pedale che è stato inserito in quella posizione,
+        // oppure è null (slot vuoto). La posizione = insertAt usato al click.
+        function buildFixedRow(rowDiv, isAmpRow, pedalsInRow, wrapperEls, globalStart) {
+          var w = isAmpRow ? AMP_W : PEDAL_W;
+          var h = isAmpRow ? AMP_H : PEDAL_H;
+          var rowNum = isAmpRow ? 2 : 1;
+          var minSlots = isAmpRow ? 1 : 3;
 
-          // -- Sezione amp --
-          var ampLabel = document.createElement('p');
-          ampLabel.textContent = 'AMPLIFIER';
-          ampLabel.style.cssText = 'font-size:0.7rem;letter-spacing:0.08em;color:#666;margin:0 0 10px 0;';
-          container.appendChild(ampLabel);
-
-          var row2 = document.createElement('div');
-          row2.id = 'emptyRow2';
-          row2.style.cssText = 'display:flex;flex-direction:column;gap:12px;';
-          row2.appendChild(makeSlot(AMP_W, AMP_H, 2, 0));
-          container.appendChild(row2);
-
-        } else {
-          // Salva i wrapper figli di ogni rowDiv prima di svuotare il container
-          // existingRowDivs[i] = rowDiv originale per rowNums[i]
-          var existingRowDivs = Array.prototype.slice.call(
-            container.querySelectorAll(':scope > div')
-          );
-          var rowNums = Object.keys(rowFirstIdx).map(Number).sort(function(a,b){return a-b;});
-
-          // Per ogni row, estrae i wrapper figli (i pedali già renderizzati)
-          var rowWrappers = {};
-          rowNums.forEach(function(r, i) {
-            var rd = existingRowDivs[i];
-            rowWrappers[r] = rd ? Array.prototype.slice.call(rd.children) : [];
+          // Costruisce array sparso: posizione[i] = wrapper DOM se c'è un pedale lì
+          // La "posizione" di un pedale = suo indice in pedalsInRow (0-based dentro la riga)
+          // che corrisponde a (indice globale - globalStart)
+          var maxPos = -1;
+          var slotMap = {}; // posizione → wrapper DOM
+          pedalsInRow.forEach(function(p, j) {
+            slotMap[j] = wrapperEls[j] || null;
+            if (j > maxPos) maxPos = j;
           });
 
-          container.innerHTML = '';
+          // Totale slot: almeno minSlots, sempre uno in più dopo l'ultimo pedale
+          var totalSlots = Math.max(minSlots, maxPos + 2);
 
-          // Helper: costruisce una riga intercalando slot+pedale+slot+pedale...+slot
-          // pedalsInRow = array di pbPedal per questa row (nell'ordine dell'array globale)
-          // wrappers    = array di elementi DOM già renderizzati (1:1 con pedalsInRow)
-          // globalStart = rowFirstIdx[r] = indice globale del primo pedale di questa row
-          function buildRow(rowDiv, isAmpRow, pedalsInRow, wrappers, globalStart) {
-            var w = isAmpRow ? AMP_W : PEDAL_W;
-            var h = isAmpRow ? AMP_H : PEDAL_H;
-            var r = isAmpRow ? 2 : 1;
-            rowDiv.innerHTML = '';
-            pedalsInRow.forEach(function(pbPedal, j) {
-              // Slot PRIMA del pedale j → insertAt = globalStart + j
-              rowDiv.appendChild(makeSlot(w, h, r, globalStart + j));
-              // Pedale
-              if (wrappers[j]) rowDiv.appendChild(wrappers[j]);
-            });
-            // Slot FINALE dopo l'ultimo pedale → insertAt = globalStart + pedalsInRow.length
-            rowDiv.appendChild(makeSlot(w, h, r, globalStart + pedalsInRow.length));
+          for (var i = 0; i < totalSlots; i++) {
+            if (slotMap[i]) {
+              rowDiv.appendChild(slotMap[i]);
+            } else {
+              rowDiv.appendChild(makeSlot(w, h, rowNum, globalStart + i));
+            }
           }
-
-          // ── Sezione PEDALBOARD (row 1) ──────────────────────────────
-          var boardLabel = document.createElement('p');
-          boardLabel.textContent = 'PEDALBOARD · SIGNAL CHAIN';
-          boardLabel.style.cssText = 'font-size:0.7rem;letter-spacing:0.08em;color:#666;margin:0 0 10px 0;';
-          container.appendChild(boardLabel);
-
-          var row1Div = document.createElement('div');
-          row1Div.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:32px;';
-          var pedalsRow1 = pedals.filter(function(p){ return (p.row||1) === 1; });
-          buildRow(row1Div, false, pedalsRow1, rowWrappers[1] || [], rowFirstIdx[1] !== undefined ? rowFirstIdx[1] : 0);
-          container.appendChild(row1Div);
-
-          // ── Sezione AMPLIFIER (row 2) ───────────────────────────────
-          var ampLabel = document.createElement('p');
-          ampLabel.textContent = 'AMPLIFIER';
-          ampLabel.style.cssText = 'font-size:0.7rem;letter-spacing:0.08em;color:#666;margin:0 0 10px 0;';
-          container.appendChild(ampLabel);
-
-          var row2Div = document.createElement('div');
-          row2Div.style.cssText = 'display:flex;flex-direction:column;gap:12px;';
-          var pedalsRow2 = pedals.filter(function(p){ return (p.row||1) === 2; });
-          buildRow(row2Div, true, pedalsRow2, rowWrappers[2] || [], rowFirstIdx[2] !== undefined ? rowFirstIdx[2] : pedals.length);
-          container.appendChild(row2Div);
         }
+
+        // Recupera i wrapper DOM già renderizzati dall'originale per ogni riga
+        // L'originale ha messo rowDiv figli in container, uno per riga
+        // Li abbiamo già nel DOM dopo _orig() — li salviamo prima di sovrascrivere
+        var origRowDivs = Array.prototype.slice.call(container.querySelectorAll(':scope > div'));
+        // Mappa rowNum → array di wrapper figli
+        var wrappersByRow = { 1: [], 2: [] };
+        // rowNum ordinati come nell'originale
+        var rowNumsSeen = [];
+        allPedals.forEach(function(p) {
+          var r = p.row || 1;
+          if (rowNumsSeen.indexOf(r) === -1) rowNumsSeen.push(r);
+        });
+        rowNumsSeen.sort(function(a,b){return a-b;});
+        rowNumsSeen.forEach(function(r, i) {
+          var rd = origRowDivs[i];
+          wrappersByRow[r] = rd ? Array.prototype.slice.call(rd.children) : [];
+        });
+
+        container.innerHTML = '';
+
+        // ── Sezione PEDALBOARD (row 1) ──────────────────────────────
+        var boardLabel = document.createElement('p');
+        boardLabel.textContent = 'PEDALBOARD · SIGNAL CHAIN';
+        boardLabel.style.cssText = 'font-size:0.7rem;letter-spacing:0.08em;color:#666;margin:0 0 10px 0;';
+        container.appendChild(boardLabel);
+
+        var row1Div = document.createElement('div');
+        row1Div.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:32px;';
+        buildFixedRow(row1Div, false, row1Pedals, wrappersByRow[1], row1Start);
+        container.appendChild(row1Div);
+
+        // ── Sezione AMPLIFIER (row 2) ───────────────────────────────
+        var ampLabel = document.createElement('p');
+        ampLabel.textContent = 'AMPLIFIER';
+        ampLabel.style.cssText = 'font-size:0.7rem;letter-spacing:0.08em;color:#666;margin:0 0 10px 0;';
+        container.appendChild(ampLabel);
+
+        var row2Div = document.createElement('div');
+        row2Div.style.cssText = 'display:flex;flex-direction:column;gap:12px;';
+        buildFixedRow(row2Div, true, row2Pedals, wrappersByRow[2], row2Start);
+        container.appendChild(row2Div);
       };
 
     })();
