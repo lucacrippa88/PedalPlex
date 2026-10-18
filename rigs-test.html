@@ -207,6 +207,8 @@
 
       function makeSlot(w, h, row, insertAt, label) {
         var el = document.createElement('div');
+        el.className = 'pedal-wrapper';
+        el.dataset.emptySlot = '1'; // usato dal DnD per non avviare drag su slot vuoti
         el.style.cssText = [
           'width:'  + w + 'px',
           'height:' + h + 'px',
