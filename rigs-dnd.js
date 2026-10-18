@@ -176,6 +176,7 @@
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     const candidate = e.target.closest(SELECT.WRAPPER) || e.target.closest(SELECT.FALLBACK);
     if (!candidate) return;
+    if (candidate.dataset.emptySlot) return; // slot vuoto: non avviare drag
 
     candidate.setPointerCapture?.(e.pointerId);
     dragStartPos = { x: e.clientX, y: e.clientY, el: candidate };
@@ -362,7 +363,10 @@
     const phIndex = nodes.indexOf(state.placeholder);
     let positionInRow = 0;
     if (phIndex > 0) {
-        positionInRow = nodes.slice(0, phIndex).filter(n => !n.classList.contains('pedalboard-dnd-placeholder')).length;
+        // Esclude gli slot vuoti (data-empty-slot) dal conteggio posizione
+        positionInRow = nodes.slice(0, phIndex).filter(n =>
+            !n.classList.contains('pedalboard-dnd-placeholder') && !n.dataset.emptySlot
+        ).length;
     }
 
     // Inserisce l'elemento nella posizione del placeholder
