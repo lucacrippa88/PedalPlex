@@ -205,7 +205,7 @@
         $("#toggleFilterBtn").trigger("click");
       }
 
-      function makeSlot(w, h, row, insertAt) {
+      function makeSlot(w, h, row, insertAt, label) {
         var el = document.createElement('div');
         el.style.cssText = [
           'width:'  + w + 'px',
@@ -217,13 +217,14 @@
           'align-items: center',
           'justify-content: center',
           'cursor: pointer',
-          'gap: 8px',
+          'gap: 6px',
           'color: #666',
-          'font-size: 0.8rem',
+          'font-size: 0.75rem',
           'flex-shrink: 0',
           'transition: border-color 0.15s, color 0.15s, background 0.15s'
         ].join(';');
-        el.innerHTML = '<span style="font-size:1.5rem;line-height:1;font-weight:300;pointer-events:none">+</span>';
+        el.innerHTML = '<span style="font-size:1.4rem;line-height:1;font-weight:300;pointer-events:none">+</span>'
+                     + (label ? '<span style="pointer-events:none;letter-spacing:0.03em">' + label + '</span>' : '');
         el.addEventListener('mouseenter', function () {
           if (el === _activeSlot) return;
           el.style.borderColor = '#888';
@@ -254,30 +255,41 @@
         var allPedals = (window.pedalboard && Array.isArray(window.pedalboard.pedals))
                         ? window.pedalboard.pedals : [];
 
-        // Pedali per riga (in ordine dell'array globale)
-        var row1Pedals = allPedals.filter(function(p){ return (p.row||1) === 1; });
-        var row2Pedals = allPedals.filter(function(p){ return (p.row||1) === 2; });
+        // Raccoglie tutte le row presenti + row 1, 2 sempre visibili + extra rows aggiunte manualmente
+        var rowNums = [1, 2];
+        allPedals.forEach(function(p) {
+          var r = p.row || 1;
+          if (rowNums.indexOf(r) === -1) rowNums.push(r);
+        });
+        (window._extraRows || []).forEach(function(r) {
+          if (rowNums.indexOf(r) === -1) rowNums.push(r);
+        });
+        rowNums.sort(function(a, b){ return a - b; });
 
-        // globalStart: indice in allPedals del primo elemento di quella riga
-        var row1Start = allPedals.indexOf(row1Pedals[0]);
-        if (row1Start < 0) row1Start = 0;
-        var row2Start = allPedals.indexOf(row2Pedals[0]);
-        if (row2Start < 0) row2Start = allPedals.length;
+        // Pedali per riga
+        var pedalsByRow = {};
+        rowNums.forEach(function(r){ pedalsByRow[r] = []; });
+        allPedals.forEach(function(p){ pedalsByRow[p.row || 1].push(p); });
 
-        // ── Helper: renderizza un singolo pedale (stessa logica di rigs.js) ──
+        // globalStart per ogni riga: indice in allPedals del primo elemento
+        var globalStarts = {};
+        rowNums.forEach(function(r) {
+          var first = pedalsByRow[r][0];
+          var idx = first ? allPedals.indexOf(first) : allPedals.length;
+          globalStarts[r] = idx >= 0 ? idx : allPedals.length;
+        });
+
+        // ── Helper: renderizza un singolo pedale ──────────────────────
         function renderPedalWrapper(pbPedal) {
           var pedalData = window.catalog && window.catalog.find(function(p){ return p._id === pbPedal.pedal_id; });
           if (!pedalData) return null;
-
           var $pedalEl = renderPedal(pedalData, (window.currentUser && window.currentUser.role) || 'guest', true);
           $pedalEl.css('cursor', 'pointer');
           $pedalEl.on('click', function(){ if (typeof openEditPedalModal === 'function') openEditPedalModal(pbPedal); });
-
           var angle = pbPedal.rotation || 0;
           var widthPx  = parseFloat(getPedalWidth(pedalData.width));
           var heightPx = parseFloat(getPedalHeight(pedalData.height));
           var hasRotation = angle % 180 !== 0;
-
           var wrapperStyles = {
             display: 'flex', justifyContent: 'center',
             alignItems: hasRotation ? 'flex-start' : 'center',
@@ -288,10 +300,8 @@
             var sin = Math.abs(Math.sin(rad)), cos = Math.abs(Math.cos(rad));
             var rW = widthPx * cos + heightPx * sin;
             var rH = widthPx * sin + heightPx * cos;
-            Object.assign(wrapperStyles, {
-              width: rW + 'px', height: rH + 'px',
-              marginLeft: (rW * 0.2) + 'px', marginRight: (rW * 0.2) + 'px'
-            });
+            Object.assign(wrapperStyles, { width: rW + 'px', height: rH + 'px',
+              marginLeft: (rW * 0.2) + 'px', marginRight: (rW * 0.2) + 'px' });
           }
           var $wrapper = $('<div>').css(wrapperStyles);
           $pedalEl.css({ transform: 'rotate(' + angle + 'deg)', transformOrigin: 'center center', position: 'relative' });
@@ -302,25 +312,21 @@
           return $wrapper[0];
         }
 
-        // ── Helper: riga a slot fissi ────────────────────────────────
-        function buildFixedRow(rowDiv, isAmpRow, pedalsInRow, globalStart) {
+        // ── Helper: riga a slot fissi ─────────────────────────────────
+        function buildFixedRow(rowDiv, rowNum, pedalsInRow, globalStart) {
+          var isAmpRow = (rowNum === 2);
           var w = isAmpRow ? AMP_W : PEDAL_W;
           var h = isAmpRow ? AMP_H : PEDAL_H;
-          var rowNum = isAmpRow ? 2 : 1;
-          var minSlots = isAmpRow ? 1 : 3;
+          var slotLabel = isAmpRow ? 'Add amplifier' : 'Add pedal';
+          var minSlots  = isAmpRow ? 1 : 3;
 
-          // Costruisce mappa posizione → pedale usando slot_pos se disponibile
-          // slot_pos è la posizione visiva nella riga (0-based)
-          var posMap = {}; // pos → pbPedal
-          var maxPos = -1;
+          var posMap = {}, maxPos = -1;
           pedalsInRow.forEach(function(p) {
             var pos = (p.slot_pos !== undefined && p.slot_pos !== null) ? p.slot_pos : maxPos + 1;
-            // evita collisioni: se la posizione è già occupata, vai al prossimo libero
             while (posMap[pos]) pos++;
             posMap[pos] = p;
             if (pos > maxPos) maxPos = pos;
           });
-
           var totalSlots = Math.max(minSlots, maxPos + 2);
 
           for (var i = 0; i < totalSlots; i++) {
@@ -328,33 +334,57 @@
               var wrapper = renderPedalWrapper(posMap[i]);
               if (wrapper) rowDiv.appendChild(wrapper);
             } else {
-              rowDiv.appendChild(makeSlot(w, h, rowNum, globalStart + i));
+              rowDiv.appendChild(makeSlot(w, h, rowNum, globalStart + i, slotLabel));
             }
           }
         }
 
+        // ── Render tutte le righe ─────────────────────────────────────
+        rowNums.forEach(function(r, idx) {
+          var isAmpRow = (r === 2);
+          var rowDiv = document.createElement('div');
+          var marginBottom = (idx < rowNums.length - 1) ? '10px' : '0';
+          if (isAmpRow) {
+            rowDiv.style.cssText = 'display:flex;flex-direction:column;gap:10px;margin-bottom:' + marginBottom + ';';
+          } else {
+            rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:' + marginBottom + ';margin-top:-12px;';
+          }
+          buildFixedRow(rowDiv, r, pedalsByRow[r], globalStarts[r]);
+          container.appendChild(rowDiv);
+        });
 
-        // ── Sezione PEDALBOARD (row 1) ──────────────────────────────
-        var boardLabel = document.createElement('p');
-        boardLabel.textContent = 'PEDALBOARD · SIGNAL CHAIN';
-        boardLabel.style.cssText = 'font-size:0.7rem;letter-spacing:0.08em;color:#666;margin:0 0 10px 0;';
-        container.appendChild(boardLabel);
+        // ── Pulsante "+ Add row" sotto row 1 ─────────────────────────
+        // Trova il div di row 1 (primo figlio) e inserisce il pulsante dopo
+        var row1Div = container.children[0];
+        if (row1Div) {
+          var nextRowNum = Math.max.apply(null, rowNums.filter(function(r){ return r !== 2; })) + 1;
+          // Salta row 2 (amp): la nuova riga è sempre l'ultima riga non-amp + 1
+          // ma non sovrascrive row 2
+          if (nextRowNum === 2) nextRowNum = 3;
 
-        var row1Div = document.createElement('div');
-        row1Div.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:32px;';
-        buildFixedRow(row1Div, false, row1Pedals, row1Start);
-        container.appendChild(row1Div);
-
-        // ── Sezione AMPLIFIER (row 2) ───────────────────────────────
-        var ampLabel = document.createElement('p');
-        ampLabel.textContent = 'AMPLIFIER';
-        ampLabel.style.cssText = 'font-size:0.7rem;letter-spacing:0.08em;color:#666;margin:0 0 10px 0;';
-        container.appendChild(ampLabel);
-
-        var row2Div = document.createElement('div');
-        row2Div.style.cssText = 'display:flex;flex-direction:column;gap:12px;';
-        buildFixedRow(row2Div, true, row2Pedals, row2Start);
-        container.appendChild(row2Div);
+          var addRowBtn = document.createElement('button');
+          addRowBtn.textContent = '+ Add row';
+          addRowBtn.style.cssText = 'background:none;border:none;color:#666;font-size:0.75rem;cursor:pointer;padding:4px 0;margin-bottom:6px;display:block;';
+          addRowBtn.addEventListener('mouseenter', function(){ addRowBtn.style.color = '#aaa'; });
+          addRowBtn.addEventListener('mouseleave', function(){ addRowBtn.style.color = '#666'; });
+          addRowBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            // Aggiunge una riga vuota: inserisce un pedale placeholder con row=nextRowNum
+            // No — più semplice: basta che la row esista nell'elenco rowNums.
+            // La aggiungiamo tenendo traccia in window._extraRows
+            window._extraRows = window._extraRows || [];
+            if (window._extraRows.indexOf(nextRowNum) === -1) {
+              window._extraRows.push(nextRowNum);
+            }
+            renderPedalboard();
+          });
+          // Inserisce il pulsante dopo row1Div
+          if (row1Div.nextSibling) {
+            container.insertBefore(addRowBtn, row1Div.nextSibling);
+          } else {
+            container.appendChild(addRowBtn);
+          }
+        }
       };
 
     })();
