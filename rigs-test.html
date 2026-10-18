@@ -304,7 +304,7 @@
               marginLeft: (rW * 0.2) + 'px', marginRight: (rW * 0.2) + 'px',
               ...(widthPx > heightPx ? { marginTop: '30px' } : {}) });
           }
-          var $wrapper = $('<div>').css(wrapperStyles);
+          var $wrapper = $('<div>').addClass('pedal-wrapper').css(wrapperStyles);
           $pedalEl.css({ transform: 'rotate(' + angle + 'deg)', transformOrigin: 'center center', position: 'relative' });
           var topVal  = typeof isMobileLayout === 'function' && isMobileLayout() ? 0 : parseInt(pbPedal.vert  || 0, 10);
           var leftVal = typeof isMobileLayout === 'function' && isMobileLayout() ? 0 : parseInt(pbPedal.horiz || 0, 10);
@@ -350,6 +350,8 @@
           rowWrap.style.cssText = 'display:flex;gap:12px;margin-bottom:10px;margin-top:-12px;';
 
           var rowDiv = document.createElement('div');
+          rowDiv.className = 'pedal-row';
+          rowDiv.dataset.row = r;
           rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;';
           buildFixedRow(rowDiv, r, pedalsByRow[r], globalStarts[r]);
           rowWrap.appendChild(rowDiv);
@@ -463,6 +465,36 @@
 
         _origEdit(pbPedal);
       };
+    })();
+
+    // Post-drop DnD: ricalcola slot_pos dall'ordine array (fonte di verità dopo il drag)
+    (function() {
+      function hookDndDrop() {
+        var board = document.getElementById('pedalboard');
+        if (!board) return;
+        // Intercetta pointerup sul document per rilevare fine drag
+        document.addEventListener('pointerup', function() {
+          // Se c'era un drag attivo, dopo il drop il DnD chiama renderPedalboard via setTimeout(30ms)
+          // Noi aspettiamo 50ms e ricalcoliamo slot_pos dall'ordine array
+          if (window.__blockAutoSave) {
+            setTimeout(function() {
+              if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals)) return;
+              // Ricalcola slot_pos: ogni pedale prende come slot_pos il suo indice dentro la riga
+              var rowIdx = {};
+              window.pedalboard.pedals.forEach(function(p) {
+                var r = p.row || 1;
+                if (rowIdx[r] === undefined) rowIdx[r] = 0;
+                p.slot_pos = rowIdx[r]++;
+              });
+            }, 50);
+          }
+        }, true); // capture phase, prima del DnD
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', hookDndDrop);
+      } else {
+        hookDndDrop();
+      }
     })();
     </script>
   </div>
