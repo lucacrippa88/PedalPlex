@@ -467,34 +467,46 @@
       };
     })();
 
-    // Post-drop DnD: ricalcola slot_pos dall'ordine array (fonte di verità dopo il drag)
+    // Post-drop DnD: ricalcola slot_pos dall'ordine array + re-render
+    // Il DnD fa setTimeout(30ms) → noi facciamo setTimeout(60ms) dopo il pointerup
     (function() {
-      function hookDndDrop() {
-        var board = document.getElementById('pedalboard');
-        if (!board) return;
-        // Intercetta pointerup sul document per rilevare fine drag
-        document.addEventListener('pointerup', function() {
-          // Se c'era un drag attivo, dopo il drop il DnD chiama renderPedalboard via setTimeout(30ms)
-          // Noi aspettiamo 50ms e ricalcoliamo slot_pos dall'ordine array
-          if (window.__blockAutoSave) {
-            setTimeout(function() {
-              if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals)) return;
-              // Ricalcola slot_pos: ogni pedale prende come slot_pos il suo indice dentro la riga
-              var rowIdx = {};
-              window.pedalboard.pedals.forEach(function(p) {
-                var r = p.row || 1;
-                if (rowIdx[r] === undefined) rowIdx[r] = 0;
-                p.slot_pos = rowIdx[r]++;
-              });
-            }, 50);
+      var _wasDragging = false;
+
+      // Rileva inizio drag (il DnD setta __blockAutoSave in onPointerDown)
+      document.addEventListener('pointerdown', function() {
+        _wasDragging = false;
+      }, true);
+
+      // onPointerMoveStart nel DnD: se supera la soglia parte il drag vero
+      // Usiamo MutationObserver sul #pedalboard per rilevare che il placeholder è stato inserito
+      var _observer = null;
+      var board = document.getElementById('pedalboard');
+      if (board) {
+        _observer = new MutationObserver(function() {
+          if (document.querySelector('.pedalboard-dnd-placeholder')) {
+            _wasDragging = true;
           }
-        }, true); // capture phase, prima del DnD
+        });
+        _observer.observe(board, { childList: true, subtree: true });
       }
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', hookDndDrop);
-      } else {
-        hookDndDrop();
-      }
+
+      document.addEventListener('pointerup', function() {
+        if (!_wasDragging) return;
+        _wasDragging = false;
+        // Aspetta che il DnD abbia aggiornato pedalboard.pedals (setTimeout 30ms)
+        setTimeout(function() {
+          if (!window.pedalboard || !Array.isArray(window.pedalboard.pedals)) return;
+          // Ricalcola slot_pos: indice 0-based dentro la propria riga, nell'ordine dell'array
+          var rowIdx = {};
+          window.pedalboard.pedals.forEach(function(p) {
+            var r = p.row || 1;
+            if (rowIdx[r] === undefined) rowIdx[r] = 0;
+            p.slot_pos = rowIdx[r]++;
+          });
+          // Re-render con slot_pos aggiornati
+          if (typeof renderPedalboard === 'function') renderPedalboard();
+        }, 60);
+      }, true);
     })();
     </script>
   </div>
