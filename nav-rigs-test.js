@@ -217,7 +217,8 @@ function initNavPedalboard(userRole) {
           }
         }
 
-        window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation: 0, row: 1 });
+        window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation: 0, row: window._emptySlotRow || 1 });
+        window._emptySlotRow = null;
 
         if (typeof renderPedalboard === 'function') renderPedalboard();
       };
