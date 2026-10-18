@@ -185,16 +185,23 @@
         el.style.background = 'rgba(105,41,196,0.08)';
       }
 
-      // Deattiva lo slot quando il dropdown viene chiuso
+      // Deattiva lo slot quando il dropdown viene chiuso dall'esterno
+      // (skippa il click corrente che ha appena aperto lo slot)
+      var _skipNextDeactivate = false;
       document.addEventListener('click', function () {
+        if (_skipNextDeactivate) { _skipNextDeactivate = false; return; }
         deactivateSlot();
       });
 
       function openSearch(row, insertAt, slotEl) {
+        _skipNextDeactivate = true;
         activateSlot(slotEl);
         window._emptySlotRow = row;
         window._emptySlotInsertAt = (insertAt !== undefined) ? insertAt : null;
         window._emptySlotCategory = (row === 2) ? AMP_CATEGORIES : null;
+        // Svuota il dropdown così toggleFilterBtn chiama sempre fetchAndRenderPedals
+        var dd = document.getElementById('pedalAddDropdownContainer');
+        if (dd) { dd.innerHTML = ''; dd.style.display = 'none'; }
         $("#toggleFilterBtn").trigger("click");
       }
 
@@ -278,8 +285,8 @@
           row1.id = 'emptyRow1';
           row1.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;';
           row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1, 0));
-          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1, 0));
-          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1, 0));
+          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1, 1));
+          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1, 2));
           container.appendChild(row1);
 
           // -- Sezione amp --
