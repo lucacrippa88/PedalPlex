@@ -301,7 +301,8 @@
             var rW = widthPx * cos + heightPx * sin;
             var rH = widthPx * sin + heightPx * cos;
             Object.assign(wrapperStyles, { width: rW + 'px', height: rH + 'px',
-              marginLeft: (rW * 0.2) + 'px', marginRight: (rW * 0.2) + 'px' });
+              marginLeft: (rW * 0.2) + 'px', marginRight: (rW * 0.2) + 'px',
+              ...(widthPx > heightPx ? { marginTop: '30px' } : {}) });
           }
           var $wrapper = $('<div>').css(wrapperStyles);
           $pedalEl.css({ transform: 'rotate(' + angle + 'deg)', transformOrigin: 'center center', position: 'relative' });
@@ -343,31 +344,30 @@
         var nonAmpRows = rowNums.filter(function(r){ return r !== 2; });
         var ampRow = 2;
 
-        // Righe pedalboard
+        // Righe pedalboard: ogni riga è [slot slot …] [× Remove row] affiancati
         nonAmpRows.forEach(function(r) {
-          // Wrapper riga + intestazione con "Remove row"
           var rowWrap = document.createElement('div');
-          rowWrap.style.cssText = 'margin-bottom:10px;';
+          rowWrap.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:10px;margin-top:-12px;';
 
-          // Intestazione: visibile solo se la riga è > 1 (row 1 non si rimuove)
+          var rowDiv = document.createElement('div');
+          rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;align-items:center;';
+          buildFixedRow(rowDiv, r, pedalsByRow[r], globalStarts[r]);
+          rowWrap.appendChild(rowDiv);
+
+          // "× Remove row" a destra, solo per righe > 1
           if (r > 1) {
-            var rowHeader = document.createElement('div');
-            rowHeader.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:4px;margin-top:-8px;';
-
             var removeBtn = document.createElement('button');
             removeBtn.textContent = '× Remove row';
-            removeBtn.style.cssText = 'background:none;border:none;color:#666;font-size:0.7rem;cursor:pointer;padding:2px 0;';
+            removeBtn.style.cssText = 'background:none;border:none;color:#555;font-size:0.7rem;cursor:pointer;padding:2px 4px;white-space:nowrap;flex-shrink:0;';
             removeBtn.addEventListener('mouseenter', function(){ removeBtn.style.color = '#ff6b6b'; });
-            removeBtn.addEventListener('mouseleave', function(){ removeBtn.style.color = '#666'; });
+            removeBtn.addEventListener('mouseleave', function(){ removeBtn.style.color = '#555'; });
             removeBtn.addEventListener('click', function(e) {
               e.stopPropagation();
               var pedalsInRow = pedalsByRow[r] || [];
               if (pedalsInRow.length === 0) {
-                // Riga vuota: rimuovi senza chiedere
                 window._extraRows = (window._extraRows || []).filter(function(x){ return x !== r; });
                 renderPedalboard();
               } else {
-                // Chiedi se eliminare anche i pedali
                 Swal.fire({
                   title: 'Remove row?',
                   html: 'This row has <strong>' + pedalsInRow.length + ' pedal' + (pedalsInRow.length > 1 ? 's' : '') + '</strong>. What do you want to do with them?',
@@ -384,12 +384,10 @@
                   }
                 }).then(function(result) {
                   if (result.isConfirmed) {
-                    // Rimuovi riga + pedali
                     window.pedalboard.pedals = window.pedalboard.pedals.filter(function(p){ return (p.row || 1) !== r; });
                     window._extraRows = (window._extraRows || []).filter(function(x){ return x !== r; });
                     renderPedalboard();
                   } else if (result.isDenied) {
-                    // Rimuovi solo la riga: sposta i pedali in row 1
                     window.pedalboard.pedals.forEach(function(p){ if ((p.row || 1) === r) p.row = 1; });
                     window._extraRows = (window._extraRows || []).filter(function(x){ return x !== r; });
                     renderPedalboard();
@@ -397,25 +395,20 @@
                 });
               }
             });
-            rowHeader.appendChild(removeBtn);
-            rowWrap.appendChild(rowHeader);
+            rowWrap.appendChild(removeBtn);
           }
 
-          var rowDiv = document.createElement('div');
-          rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:-12px;';
-          buildFixedRow(rowDiv, r, pedalsByRow[r], globalStarts[r]);
-          rowWrap.appendChild(rowDiv);
           container.appendChild(rowWrap);
         });
 
-        // Pulsante + Add row (tra pedalboard e amp)
+        // "+ Add row" a sinistra, sotto le righe pedalboard, affiancato al flusso
         var nextRowNum = Math.max.apply(null, nonAmpRows) + 1;
         if (nextRowNum === 2) nextRowNum = 3;
         var addRowBtn = document.createElement('button');
         addRowBtn.textContent = '+ Add row';
-        addRowBtn.style.cssText = 'background:none;border:none;color:#666;font-size:0.75rem;cursor:pointer;padding:4px 0;margin-bottom:10px;display:block;';
+        addRowBtn.style.cssText = 'background:none;border:none;color:#555;font-size:0.75rem;cursor:pointer;padding:2px 4px;margin-bottom:10px;display:block;';
         addRowBtn.addEventListener('mouseenter', function(){ addRowBtn.style.color = '#aaa'; });
-        addRowBtn.addEventListener('mouseleave', function(){ addRowBtn.style.color = '#666'; });
+        addRowBtn.addEventListener('mouseleave', function(){ addRowBtn.style.color = '#555'; });
         addRowBtn.addEventListener('click', function(e) {
           e.stopPropagation();
           window._extraRows = window._extraRows || [];
