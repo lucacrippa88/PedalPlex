@@ -345,10 +345,67 @@
 
         // Righe pedalboard
         nonAmpRows.forEach(function(r) {
+          // Wrapper riga + intestazione con "Remove row"
+          var rowWrap = document.createElement('div');
+          rowWrap.style.cssText = 'margin-bottom:10px;';
+
+          // Intestazione: visibile solo se la riga è > 1 (row 1 non si rimuove)
+          if (r > 1) {
+            var rowHeader = document.createElement('div');
+            rowHeader.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:4px;margin-top:-8px;';
+
+            var removeBtn = document.createElement('button');
+            removeBtn.textContent = '× Remove row';
+            removeBtn.style.cssText = 'background:none;border:none;color:#666;font-size:0.7rem;cursor:pointer;padding:2px 0;';
+            removeBtn.addEventListener('mouseenter', function(){ removeBtn.style.color = '#ff6b6b'; });
+            removeBtn.addEventListener('mouseleave', function(){ removeBtn.style.color = '#666'; });
+            removeBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              var pedalsInRow = pedalsByRow[r] || [];
+              if (pedalsInRow.length === 0) {
+                // Riga vuota: rimuovi senza chiedere
+                window._extraRows = (window._extraRows || []).filter(function(x){ return x !== r; });
+                renderPedalboard();
+              } else {
+                // Chiedi se eliminare anche i pedali
+                Swal.fire({
+                  title: 'Remove row?',
+                  html: 'This row has <strong>' + pedalsInRow.length + ' pedal' + (pedalsInRow.length > 1 ? 's' : '') + '</strong>. What do you want to do with them?',
+                  icon: 'question',
+                  showDenyButton: true,
+                  showCancelButton: true,
+                  confirmButtonText: 'Remove row & pedals',
+                  denyButtonText: 'Remove row only',
+                  cancelButtonText: 'Cancel',
+                  customClass: {
+                    confirmButton: 'bx--btn bx--btn--danger bx--btn--sm',
+                    denyButton: 'bx--btn bx--btn--secondary bx--btn--sm',
+                    cancelButton: 'bx--btn bx--btn--ghost bx--btn--sm'
+                  }
+                }).then(function(result) {
+                  if (result.isConfirmed) {
+                    // Rimuovi riga + pedali
+                    window.pedalboard.pedals = window.pedalboard.pedals.filter(function(p){ return (p.row || 1) !== r; });
+                    window._extraRows = (window._extraRows || []).filter(function(x){ return x !== r; });
+                    renderPedalboard();
+                  } else if (result.isDenied) {
+                    // Rimuovi solo la riga: sposta i pedali in row 1
+                    window.pedalboard.pedals.forEach(function(p){ if ((p.row || 1) === r) p.row = 1; });
+                    window._extraRows = (window._extraRows || []).filter(function(x){ return x !== r; });
+                    renderPedalboard();
+                  }
+                });
+              }
+            });
+            rowHeader.appendChild(removeBtn);
+            rowWrap.appendChild(rowHeader);
+          }
+
           var rowDiv = document.createElement('div');
-          rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px;margin-top:-12px;';
+          rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:-12px;';
           buildFixedRow(rowDiv, r, pedalsByRow[r], globalStarts[r]);
-          container.appendChild(rowDiv);
+          rowWrap.appendChild(rowDiv);
+          container.appendChild(rowWrap);
         });
 
         // Pulsante + Add row (tra pedalboard e amp)
@@ -374,6 +431,45 @@
         container.appendChild(ampDiv);
       };
 
+    })();
+
+    // Wrappa openEditPedalModal: dopo il save aggiorna slot_pos nella nuova riga
+    (function () {
+      var _origEdit = window.openEditPedalModal;
+      if (typeof _origEdit !== 'function') return;
+
+      window.openEditPedalModal = function (pbPedal) {
+        var oldRow = pbPedal.row || 1;
+        var oldSlotPos = pbPedal.slot_pos;
+
+        // Chiama l'originale — al termine del .then() in rigs.js,
+        // pbPedal.row sarà già aggiornato e renderPedalboard() chiamato.
+        // Intercettiamo sovrascrivendo renderPedalboard temporaneamente.
+        var _origRender = window.renderPedalboard;
+        window.renderPedalboard = function () {
+          var newRow = pbPedal.row || 1;
+          if (newRow !== oldRow) {
+            // Calcola slot_pos libero nella riga di destinazione,
+            // cercando di mantenere la stessa posizione visiva (oldSlotPos)
+            var pedalsInNewRow = (window.pedalboard && window.pedalboard.pedals || [])
+              .filter(function(p) { return p !== pbPedal && (p.row || 1) === newRow; });
+            var takenPos = {};
+            pedalsInNewRow.forEach(function(p) {
+              if (p.slot_pos !== undefined && p.slot_pos !== null) takenPos[p.slot_pos] = true;
+            });
+            var targetPos = (oldSlotPos !== undefined && oldSlotPos !== null) ? oldSlotPos : 0;
+            while (takenPos[targetPos]) targetPos++;
+            pbPedal.slot_pos = targetPos;
+            oldRow = newRow;
+            oldSlotPos = targetPos;
+          }
+          // Ripristina e chiama il render reale
+          window.renderPedalboard = _origRender;
+          _origRender();
+        };
+
+        _origEdit(pbPedal);
+      };
     })();
     </script>
   </div>
