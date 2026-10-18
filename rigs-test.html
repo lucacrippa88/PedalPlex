@@ -339,52 +339,39 @@
           }
         }
 
-        // ── Render tutte le righe ─────────────────────────────────────
-        rowNums.forEach(function(r, idx) {
-          var isAmpRow = (r === 2);
+        // ── Render: prima le righe non-amp (1, 3, 4, …), poi il pulsante + Add row, poi amp ──
+        var nonAmpRows = rowNums.filter(function(r){ return r !== 2; });
+        var ampRow = 2;
+
+        // Righe pedalboard
+        nonAmpRows.forEach(function(r) {
           var rowDiv = document.createElement('div');
-          var marginBottom = (idx < rowNums.length - 1) ? '10px' : '0';
-          if (isAmpRow) {
-            rowDiv.style.cssText = 'display:flex;flex-direction:column;gap:10px;margin-bottom:' + marginBottom + ';';
-          } else {
-            rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:' + marginBottom + ';margin-top:-12px;';
-          }
+          rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px;margin-top:-12px;';
           buildFixedRow(rowDiv, r, pedalsByRow[r], globalStarts[r]);
           container.appendChild(rowDiv);
         });
 
-        // ── Pulsante "+ Add row" sotto row 1 ─────────────────────────
-        // Trova il div di row 1 (primo figlio) e inserisce il pulsante dopo
-        var row1Div = container.children[0];
-        if (row1Div) {
-          var nextRowNum = Math.max.apply(null, rowNums.filter(function(r){ return r !== 2; })) + 1;
-          // Salta row 2 (amp): la nuova riga è sempre l'ultima riga non-amp + 1
-          // ma non sovrascrive row 2
-          if (nextRowNum === 2) nextRowNum = 3;
+        // Pulsante + Add row (tra pedalboard e amp)
+        var nextRowNum = Math.max.apply(null, nonAmpRows) + 1;
+        if (nextRowNum === 2) nextRowNum = 3;
+        var addRowBtn = document.createElement('button');
+        addRowBtn.textContent = '+ Add row';
+        addRowBtn.style.cssText = 'background:none;border:none;color:#666;font-size:0.75rem;cursor:pointer;padding:4px 0;margin-bottom:10px;display:block;';
+        addRowBtn.addEventListener('mouseenter', function(){ addRowBtn.style.color = '#aaa'; });
+        addRowBtn.addEventListener('mouseleave', function(){ addRowBtn.style.color = '#666'; });
+        addRowBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          window._extraRows = window._extraRows || [];
+          if (window._extraRows.indexOf(nextRowNum) === -1) window._extraRows.push(nextRowNum);
+          renderPedalboard();
+        });
+        container.appendChild(addRowBtn);
 
-          var addRowBtn = document.createElement('button');
-          addRowBtn.textContent = '+ Add row';
-          addRowBtn.style.cssText = 'background:none;border:none;color:#666;font-size:0.75rem;cursor:pointer;padding:4px 0;margin-bottom:6px;display:block;';
-          addRowBtn.addEventListener('mouseenter', function(){ addRowBtn.style.color = '#aaa'; });
-          addRowBtn.addEventListener('mouseleave', function(){ addRowBtn.style.color = '#666'; });
-          addRowBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            // Aggiunge una riga vuota: inserisce un pedale placeholder con row=nextRowNum
-            // No — più semplice: basta che la row esista nell'elenco rowNums.
-            // La aggiungiamo tenendo traccia in window._extraRows
-            window._extraRows = window._extraRows || [];
-            if (window._extraRows.indexOf(nextRowNum) === -1) {
-              window._extraRows.push(nextRowNum);
-            }
-            renderPedalboard();
-          });
-          // Inserisce il pulsante dopo row1Div
-          if (row1Div.nextSibling) {
-            container.insertBefore(addRowBtn, row1Div.nextSibling);
-          } else {
-            container.appendChild(addRowBtn);
-          }
-        }
+        // Riga amplificatore (sempre ultima)
+        var ampDiv = document.createElement('div');
+        ampDiv.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+        buildFixedRow(ampDiv, ampRow, pedalsByRow[ampRow], globalStarts[ampRow]);
+        container.appendChild(ampDiv);
       };
 
     })();
