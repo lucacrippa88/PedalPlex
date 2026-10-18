@@ -116,12 +116,7 @@
   }
 
   function insertionCandidate(row, clientX) {
-    // Include pedal-wrapper, pedal-catalog AND empty slots (data-empty-slot) as visual anchors
-    const items = Array.from(row.children).filter(n =>
-      !n.classList.contains('pedalboard-dnd-placeholder') &&
-      !n.classList.contains('dnd-dragging') &&
-      !n.closest('.dnd-dragging')
-    );
+    const items = Array.from(row.querySelectorAll(`${SELECT.WRAPPER}:not(.dnd-dragging), ${SELECT.FALLBACK}:not(.dnd-dragging)`));
     for (const it of items) {
       const r = it.getBoundingClientRect();
       const mid = r.left + r.width / 2;
@@ -151,8 +146,10 @@
   }
 
   function cleanupEmptyRows() {
-    // renderPedalboard() rebuilds the DOM entirely, so no manual cleanup is needed.
-    // Removing rows here would conflict with empty-slot rows that are intentionally kept.
+    $(SELECT.ROW).forEach(r => {
+      const has = r.querySelector(SELECT.WRAPPER) || r.querySelector(SELECT.FALLBACK);
+      if (!has) r.remove();
+    });
   }
 
   function computeAbsoluteInsertIndex(targetRowNum, positionInRow) {
@@ -179,7 +176,6 @@
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     const candidate = e.target.closest(SELECT.WRAPPER) || e.target.closest(SELECT.FALLBACK);
     if (!candidate) return;
-    if (candidate.dataset.emptySlot) return; // slot vuoto: non avviare drag
 
     candidate.setPointerCapture?.(e.pointerId);
     dragStartPos = { x: e.clientX, y: e.clientY, el: candidate };
@@ -354,35 +350,22 @@
     document.removeEventListener('pointerup', onPointerUp);
 
     if (!state.placeholder || !state.placeholder.parentElement) {
-      restoreDraggedElement();
-      resetState();
-      return;
+        restoreDraggedElement();
+        resetState();
+        return;
     }
 
     const targetRow = state.placeholder.parentElement;
     const targetRowNum = parseInt(targetRow.dataset.row || 1, 10) || 1;
 
-    // Count real pedals (pedal-wrapper / pedal-catalog) before the placeholder,
-    // ignoring empty slots — this gives us positionInRow in the logical array.
-    const nodes = Array.from(targetRow.children);
+    const nodes = Array.from(targetRow.querySelectorAll(`${SELECT.WRAPPER}, ${SELECT.FALLBACK}, .pedalboard-dnd-placeholder`));
     const phIndex = nodes.indexOf(state.placeholder);
     let positionInRow = 0;
     if (phIndex > 0) {
-      positionInRow = nodes.slice(0, phIndex).filter(n =>
-        (n.classList.contains('pedal-wrapper') || n.classList.contains('pedal-catalog')) &&
-        !n.classList.contains('pedalboard-dnd-placeholder') &&
-        !n.classList.contains('dnd-dragging')
-      ).length;
+        positionInRow = nodes.slice(0, phIndex).filter(n => !n.classList.contains('pedalboard-dnd-placeholder')).length;
     }
 
-    // Compute destination index BEFORE removing the element from the array,
-    // then adjust for the upcoming splice removal.
-    let insertAt = 0;
-    if (window.pedalboard && Array.isArray(window.pedalboard.pedals)) {
-      insertAt = computeAbsoluteInsertIndex(targetRowNum, positionInRow);
-    }
-
-    // Restore dragging element to DOM (position doesn't matter — renderPedalboard rebuilds)
+    // Inserisce l'elemento nella posizione del placeholder
     state.placeholder.parentElement.insertBefore(state.draggingEl, state.placeholder);
     state.draggingEl.classList.remove('dnd-dragging');
     state.draggingEl.style.position = '';
@@ -393,40 +376,43 @@
     state.draggingEl.style.zIndex = '';
     state.draggingEl.style.pointerEvents = '';
 
+    // Rimuove il placeholder
     state.placeholder.remove();
 
-    // Update the pedalboard array
+    // Aggiorna array di pedals in memoria
     if (window.pedalboard && Array.isArray(window.pedalboard.pedals)) {
-      const pid = state.draggingId;
-      let srcIdx = state.originAbsIndex;
-      if (srcIdx == null || srcIdx === -1) srcIdx = findAbsIndex(pid);
+        const pid = state.draggingId;
+        let srcIdx = state.originAbsIndex;
+        if (srcIdx == null || srcIdx === -1) srcIdx = findAbsIndex(pid);
 
-      let removed = null;
-      if (srcIdx !== -1 && srcIdx != null) {
-        removed = window.pedalboard.pedals.splice(srcIdx, 1)[0];
-        // After removing srcIdx, indices above it shift down by 1
-        if (insertAt > srcIdx) insertAt--;
-      } else {
-        removed = { pedal_id: pid, rotation: 0, row: targetRowNum };
-      }
-      removed.row = targetRowNum;
+        let removed = null;
+        if (srcIdx !== -1 && srcIdx != null) {
+            removed = window.pedalboard.pedals.splice(srcIdx, 1)[0];
+        } else {
+            removed = { pedal_id: pid, rotation: 0, row: targetRowNum };
+        }
+        removed.row = targetRowNum;
 
-      const len = window.pedalboard.pedals.length;
-      if (insertAt >= 0 && insertAt <= len) {
-        window.pedalboard.pedals.splice(insertAt, 0, removed);
-      } else {
-        window.pedalboard.pedals.push(removed);
-      }
+        const insertAt = computeAbsoluteInsertIndex(targetRowNum, positionInRow);
+        if (insertAt >= 0 && insertAt <= window.pedalboard.pedals.length) {
+            window.pedalboard.pedals.splice(insertAt, 0, removed);
+        } else {
+            window.pedalboard.pedals.push(removed);
+        }
     }
 
+    // Pulizia righe vuote
     cleanupEmptyRows();
 
+    // Rende la pedalboard aggiornata senza salvare
     if (typeof renderPedalboard === 'function') {
-      setTimeout(() => { renderPedalboard(); }, 30);
+        setTimeout(() => {
+            renderPedalboard();
+        }, 30);
     }
 
     resetState();
-  }
+}
 
 
   function restoreDraggedElement() {
