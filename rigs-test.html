@@ -163,13 +163,42 @@
       var PEDAL_W = 190, PEDAL_H = 160;
       var AMP_W   = 400, AMP_H   = 160;
 
-      function openSearch(row) {
-        // Imposta la row target che handleAddPedal userà
+      var AMP_CATEGORIES = ['amp simulator','cab simulator','combo','frfr','head','ir loader','power amp','preamp'];
+      var _activeSlot = null;
+
+      window.deactivateSlot = function deactivateSlot() {
+        if (_activeSlot) {
+          _activeSlot.style.borderColor = '#555';
+          _activeSlot.style.borderStyle = 'dashed';
+          _activeSlot.style.color = '#666';
+          _activeSlot.style.background = '';
+          _activeSlot = null;
+        }
+      }
+
+      function activateSlot(el) {
+        deactivateSlot();
+        _activeSlot = el;
+        el.style.borderColor = '#6929c4';
+        el.style.borderStyle = 'solid';
+        el.style.color = '#a78bdc';
+        el.style.background = 'rgba(105,41,196,0.08)';
+      }
+
+      // Deattiva lo slot quando il dropdown viene chiuso
+      document.addEventListener('click', function () {
+        deactivateSlot();
+      });
+
+      function openSearch(row, insertAt, slotEl) {
+        activateSlot(slotEl);
         window._emptySlotRow = row;
+        window._emptySlotInsertAt = (insertAt !== undefined) ? insertAt : null;
+        window._emptySlotCategory = (row === 2) ? AMP_CATEGORIES : null;
         $("#toggleFilterBtn").trigger("click");
       }
 
-      function makeSlot(w, h, row) {
+      function makeSlot(w, h, row, insertAt) {
         var el = document.createElement('div');
         el.style.cssText = [
           'width:'  + w + 'px',
@@ -189,18 +218,20 @@
         ].join(';');
         el.innerHTML = '<span style="font-size:1.5rem;line-height:1;font-weight:300;pointer-events:none">+</span>';
         el.addEventListener('mouseenter', function () {
+          if (el === _activeSlot) return;
           el.style.borderColor = '#888';
           el.style.color = '#bbb';
           el.style.background = 'rgba(255,255,255,0.04)';
         });
         el.addEventListener('mouseleave', function () {
+          if (el === _activeSlot) return;
           el.style.borderColor = '#555';
           el.style.color = '#666';
           el.style.background = '';
         });
         el.addEventListener('click', function (e) {
           e.stopPropagation();
-          openSearch(row);
+          openSearch(row, insertAt, el);
         });
         return el;
       }
@@ -217,6 +248,22 @@
         var pedals = (window.pedalboard && Array.isArray(window.pedalboard.pedals))
                      ? window.pedalboard.pedals : [];
 
+        // Calcola per ogni row: primo indice globale e conteggio
+        // rowIndex[r] = primo indice in pedals[] dove compare la row r
+        var rowFirstIdx = {};
+        var rowCount = {};
+        pedals.forEach(function(p, i) {
+          var r = p.row || 1;
+          if (rowFirstIdx[r] === undefined) rowFirstIdx[r] = i;
+          rowCount[r] = (rowCount[r] || 0) + 1;
+        });
+        // insertAt per lo slot in coda alla row r = rowFirstIdx[r] + rowCount[r]
+        // (equivale all'indice del primo elemento della row successiva, o pedals.length)
+        function slotInsertAt(r) {
+          if (rowFirstIdx[r] === undefined) return pedals.length; // row vuota: in coda
+          return rowFirstIdx[r] + (rowCount[r] || 0);
+        }
+
         if (pedals.length === 0) {
           // Empty state: riga pedali (row 1) + riga amp (row 2)
           container.innerHTML = '';
@@ -230,9 +277,9 @@
           var row1 = document.createElement('div');
           row1.id = 'emptyRow1';
           row1.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;';
-          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1));
-          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1));
-          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1));
+          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1, 0));
+          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1, 0));
+          row1.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1, 0));
           container.appendChild(row1);
 
           // -- Sezione amp --
@@ -244,29 +291,22 @@
           var row2 = document.createElement('div');
           row2.id = 'emptyRow2';
           row2.style.cssText = 'display:flex;flex-direction:column;gap:12px;';
-          row2.appendChild(makeSlot(AMP_W, AMP_H, 2));
+          row2.appendChild(makeSlot(AMP_W, AMP_H, 2, 0));
           container.appendChild(row2);
 
         } else {
           // Rig popolato: le righe esistenti sono i div figli di container (generati dall'originale)
-          // Ordine: stesso di sortedRows nell'originale
           var existingRowDivs = Array.prototype.slice.call(
             container.querySelectorAll(':scope > div')
           );
 
-          // Calcola quali row numbers esistono già
-          var rowNums = [];
-          pedals.forEach(function(p) {
-            var r = p.row || 1;
-            if (rowNums.indexOf(r) === -1) rowNums.push(r);
-          });
-          rowNums.sort(function(a,b){return a-b;});
+          var rowNums = Object.keys(rowFirstIdx).map(Number).sort(function(a,b){return a-b;});
 
-          // Svuota il container: lo ricostruiamo con le sezioni etichettate
+          // Svuota e ricostruisce con sezioni etichettate
           container.innerHTML = '';
 
           // ── Sezione PEDALBOARD (row 1) ──────────────────────────────
-          var hasRow1 = rowNums.indexOf(1) !== -1;
+          var hasRow1 = rowFirstIdx[1] !== undefined;
           var boardLabel = document.createElement('p');
           boardLabel.textContent = 'PEDALBOARD · SIGNAL CHAIN';
           boardLabel.style.cssText = 'font-size:0.7rem;letter-spacing:0.08em;color:#666;margin:0 0 10px 0;';
@@ -274,7 +314,6 @@
 
           var row1Div;
           if (hasRow1) {
-            // Riusa il rowDiv originale (già contiene i pedali renderizzati)
             row1Div = existingRowDivs[rowNums.indexOf(1)];
             row1Div.style.flexWrap = 'wrap';
             row1Div.style.gap = '12px';
@@ -282,13 +321,12 @@
             row1Div = document.createElement('div');
             row1Div.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap;';
           }
-          // Slot vuoto a destra
-          row1Div.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1));
+          row1Div.appendChild(makeSlot(PEDAL_W, PEDAL_H, 1, slotInsertAt(1)));
           row1Div.style.marginBottom = '32px';
           container.appendChild(row1Div);
 
           // ── Sezione AMPLIFIER (row 2) ───────────────────────────────
-          var hasRow2 = rowNums.indexOf(2) !== -1;
+          var hasRow2 = rowFirstIdx[2] !== undefined;
           var ampLabel = document.createElement('p');
           ampLabel.textContent = 'AMPLIFIER';
           ampLabel.style.cssText = 'font-size:0.7rem;letter-spacing:0.08em;color:#666;margin:0 0 10px 0;';
@@ -303,8 +341,7 @@
             row2Div = document.createElement('div');
             row2Div.style.cssText = 'display:flex;flex-direction:column;gap:12px;';
           }
-          // Slot vuoto sotto
-          row2Div.appendChild(makeSlot(AMP_W, AMP_H, 2));
+          row2Div.appendChild(makeSlot(AMP_W, AMP_H, 2, slotInsertAt(2)));
           container.appendChild(row2Div);
         }
       };
