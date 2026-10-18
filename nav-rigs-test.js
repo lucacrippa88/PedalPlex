@@ -220,16 +220,12 @@ function initNavPedalboard(userRole) {
         var targetRow = window._emptySlotRow || 1;
         var insertAt  = window._emptySlotInsertAt;
 
-        // slot_pos = posizione visiva nella riga (indice dello slot cliccato dentro la riga)
-        // insertAt è l'indice globale; row1Start = indice del primo pedale di row1 = 0 per row1
-        // Per row1: slot_pos = insertAt (tutti i pedali row1 vengono prima di row2)
-        // Per row2: slot_pos = insertAt - numero pedali row1
-        var row1Count = window.pedalboard.pedals.filter(function(p){ return (p.row||1) === 1; }).length;
-        var rowStart  = (targetRow === 2) ? row1Count : 0;
-        var slotPos   = (insertAt !== null && insertAt !== undefined) ? (insertAt - rowStart) : null;
-
-        var newPedal = { pedal_id: pedal._id, rotation: 0, row: targetRow, slot_pos: slotPos };
-        window.pedalboard.pedals.push(newPedal);
+        var newPedal = { pedal_id: pedal._id, rotation: 0, row: targetRow };
+        if (insertAt !== null && insertAt !== undefined) {
+          window.pedalboard.pedals.splice(insertAt, 0, newPedal);
+        } else {
+          window.pedalboard.pedals.push(newPedal);
+        }
         window._emptySlotRow = null;
         window._emptySlotInsertAt = null;
         // Deattiva lo slot evidenziato (il DOM viene ricostruito da renderPedalboard)
