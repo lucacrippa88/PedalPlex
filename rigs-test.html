@@ -308,14 +308,24 @@
           var h = isAmpRow ? AMP_H : PEDAL_H;
           var rowNum = isAmpRow ? 2 : 1;
           var minSlots = isAmpRow ? 1 : 3;
-          // totalSlots: almeno minSlots, sempre uno vuoto dopo l'ultimo pedale
-          var maxPos = pedalsInRow.length - 1; // -1 se vuota
+
+          // Costruisce mappa posizione → pedale usando slot_pos se disponibile
+          // slot_pos è la posizione visiva nella riga (0-based)
+          var posMap = {}; // pos → pbPedal
+          var maxPos = -1;
+          pedalsInRow.forEach(function(p) {
+            var pos = (p.slot_pos !== undefined && p.slot_pos !== null) ? p.slot_pos : maxPos + 1;
+            // evita collisioni: se la posizione è già occupata, vai al prossimo libero
+            while (posMap[pos]) pos++;
+            posMap[pos] = p;
+            if (pos > maxPos) maxPos = pos;
+          });
+
           var totalSlots = Math.max(minSlots, maxPos + 2);
 
           for (var i = 0; i < totalSlots; i++) {
-            var pbPedal = pedalsInRow[i]; // undefined se posizione vuota
-            if (pbPedal) {
-              var wrapper = renderPedalWrapper(pbPedal);
+            if (posMap[i]) {
+              var wrapper = renderPedalWrapper(posMap[i]);
               if (wrapper) rowDiv.appendChild(wrapper);
             } else {
               rowDiv.appendChild(makeSlot(w, h, rowNum, globalStart + i));
