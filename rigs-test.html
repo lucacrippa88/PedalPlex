@@ -309,42 +309,6 @@
         }
       };
 
-      // Patch handleAddPedal in nav-rigs-test: usa window._emptySlotRow se impostata
-      var _origAppend = null; // non patchabile direttamente (closure privata)
-      // Invece, sovrascriviamo la row al momento del push intercettando pedalboard.pedals
-      // tramite un Proxy sul push — più semplice: impostiamo window._emptySlotRow
-      // e nav-rigs-test.js usa già row:1 hardcoded; lo aggiorniamo qui sotto
-      // patchando window.pedalboard prima di ogni push:
-      var _origPush = Array.prototype.push;
-      // Non patchare Array.prototype — troppo invasivo.
-      // La soluzione giusta: in nav-rigs-test.js handleAddPedal usa già `row: 1` hardcoded.
-      // Sostituiamo dopo il push con la row corretta leggendo window._emptySlotRow.
-      var _watchInterval = null;
-      function watchForNewPedal(prevLen, targetRow) {
-        var attempts = 0;
-        clearInterval(_watchInterval);
-        _watchInterval = setInterval(function () {
-          attempts++;
-          var pedals = window.pedalboard && window.pedalboard.pedals;
-          if (!pedals) { clearInterval(_watchInterval); return; }
-          if (pedals.length > prevLen) {
-            // Nuovo pedale aggiunto — forza la row corretta sull'ultimo elemento
-            pedals[pedals.length - 1].row = targetRow;
-            clearInterval(_watchInterval);
-            window._emptySlotRow = null;
-          }
-          if (attempts > 50) clearInterval(_watchInterval); // max 500ms
-        }, 10);
-      }
-
-      // Intercetta il trigger del toggleFilterBtn per sapere la row target
-      $(document).on('click', '#toggleFilterBtn', function () {
-        var row = window._emptySlotRow || 1;
-        var prevLen = (window.pedalboard && window.pedalboard.pedals)
-                      ? window.pedalboard.pedals.length : 0;
-        watchForNewPedal(prevLen, row);
-      });
-
     })();
     </script>
   </div>
