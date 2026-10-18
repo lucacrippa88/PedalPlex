@@ -347,10 +347,10 @@
         // Righe pedalboard: ogni riga è [slot slot …] [× Remove row] affiancati
         nonAmpRows.forEach(function(r) {
           var rowWrap = document.createElement('div');
-          rowWrap.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:10px;margin-top:-12px;';
+          rowWrap.style.cssText = 'display:flex;gap:12px;margin-bottom:10px;margin-top:-12px;';
 
           var rowDiv = document.createElement('div');
-          rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;align-items:center;';
+          rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;';
           buildFixedRow(rowDiv, r, pedalsByRow[r], globalStarts[r]);
           rowWrap.appendChild(rowDiv);
 
@@ -358,7 +358,7 @@
           if (r > 1) {
             var removeBtn = document.createElement('button');
             removeBtn.textContent = '× Remove row';
-            removeBtn.style.cssText = 'background:none;border:none;color:#555;font-size:0.7rem;cursor:pointer;padding:2px 4px;white-space:nowrap;flex-shrink:0;';
+            removeBtn.style.cssText = 'background:none;border:none;color:#555;font-size:0.7rem;cursor:pointer;padding:2px 4px;white-space:nowrap;flex-shrink:0;align-self:center;';
             removeBtn.addEventListener('mouseenter', function(){ removeBtn.style.color = '#ff6b6b'; });
             removeBtn.addEventListener('mouseleave', function(){ removeBtn.style.color = '#555'; });
             removeBtn.addEventListener('click', function(e) {
