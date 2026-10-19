@@ -304,7 +304,7 @@
               marginLeft: (rW * 0.2) + 'px', marginRight: (rW * 0.2) + 'px',
               ...(widthPx > heightPx ? { marginTop: '30px' } : {}) });
           }
-          var $wrapper = $('<div>').css(wrapperStyles);
+          var $wrapper = $('<div>').css(wrapperStyles).attr('data-pedal-id', pbPedal.pedal_id);
           $pedalEl.css({ transform: 'rotate(' + angle + 'deg)', transformOrigin: 'center center', position: 'relative' });
           var topVal  = typeof isMobileLayout === 'function' && isMobileLayout() ? 0 : parseInt(pbPedal.vert  || 0, 10);
           var leftVal = typeof isMobileLayout === 'function' && isMobileLayout() ? 0 : parseInt(pbPedal.horiz || 0, 10);
@@ -314,28 +314,27 @@
         }
 
         // ── Helper: riga a slot fissi ─────────────────────────────────
+        // Usa l'ordine array come fonte di verità (non slot_pos).
+        // Struttura: [pedale0][pedale1]...[slotVuoto] con minimo minSlots totali.
         function buildFixedRow(rowDiv, rowNum, pedalsInRow, globalStart) {
           var isAmpRow = (rowNum === 2);
           var w = isAmpRow ? AMP_W : PEDAL_W;
           var h = isAmpRow ? AMP_H : PEDAL_H;
           var slotLabel = isAmpRow ? 'Add amplifier' : 'Add pedal';
           var minSlots  = isAmpRow ? 1 : 3;
+          // Sempre almeno un slot vuoto dopo l'ultimo pedale
+          var total = Math.max(minSlots, pedalsInRow.length + 1);
 
-          var posMap = {}, maxPos = -1;
-          pedalsInRow.forEach(function(p) {
-            var pos = (p.slot_pos !== undefined && p.slot_pos !== null) ? p.slot_pos : maxPos + 1;
-            while (posMap[pos]) pos++;
-            posMap[pos] = p;
-            if (pos > maxPos) maxPos = pos;
-          });
-          var totalSlots = Math.max(minSlots, maxPos + 2);
-
-          for (var i = 0; i < totalSlots; i++) {
-            if (posMap[i]) {
-              var wrapper = renderPedalWrapper(posMap[i]);
-              if (wrapper) rowDiv.appendChild(wrapper);
+          for (var i = 0; i < total; i++) {
+            if (i < pedalsInRow.length) {
+              var wrapper = renderPedalWrapper(pedalsInRow[i]);
+              if (wrapper) {
+                wrapper.classList.add('pedal-wrapper');
+                rowDiv.appendChild(wrapper);
+              }
             } else {
-              rowDiv.appendChild(makeSlot(w, h, rowNum, globalStart + i, slotLabel));
+              // insertAt = indice assoluto in allPedals dove fare splice
+              rowDiv.appendChild(makeSlot(w, h, rowNum, globalStart + pedalsInRow.length, slotLabel));
             }
           }
         }
@@ -350,6 +349,8 @@
           rowWrap.style.cssText = 'display:flex;gap:12px;margin-bottom:10px;margin-top:-12px;';
 
           var rowDiv = document.createElement('div');
+          rowDiv.className = 'pedal-row';
+          rowDiv.dataset.row = r;
           rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;';
           buildFixedRow(rowDiv, r, pedalsByRow[r], globalStarts[r]);
           rowWrap.appendChild(rowDiv);
@@ -419,6 +420,8 @@
 
         // Riga amplificatore (sempre ultima)
         var ampDiv = document.createElement('div');
+        ampDiv.className = 'pedal-row';
+        ampDiv.dataset.row = 2;
         ampDiv.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
         buildFixedRow(ampDiv, ampRow, pedalsByRow[ampRow], globalStarts[ampRow]);
         container.appendChild(ampDiv);
