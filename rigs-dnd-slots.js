@@ -149,23 +149,28 @@
     return null;
   }
 
-  function createNewRow(afterRow = null) {
+  function createNewRow() {
     const board = one(SELECT.BOARD);
     if (!board) return null;
     const newRow = document.createElement('div');
     newRow.className = 'pedal-row';
-    const rows = $(SELECT.ROW);
+    // Calcola il prossimo numero di riga escludendo la riga amp (row 2)
+    const rows = $(SELECT.ROW).filter(r => parseInt(r.dataset.row, 10) !== 2);
     let max = 0;
     rows.forEach(r => {
-      const n = parseInt(r.dataset.row || r.dataset.rownum || 0, 10) || 0;
+      const n = parseInt(r.dataset.row || 0, 10) || 0;
       if (n > max) max = n;
     });
-    newRow.dataset.row = (max + 1) || 1;
+    // Salta il 2 che è riservato all'amp
+    newRow.dataset.row = (max >= 1 ? max + 1 : 1) === 2 ? 3 : (max >= 1 ? max + 1 : 1);
     newRow.style.display = 'flex';
     newRow.style.flexWrap = 'nowrap';
     newRow.style.gap = '10px';
     newRow.style.minHeight = '60px';
-    board.appendChild(newRow);
+    // Inserisce PRIMA della riga amp nel DOM, così è visivamente sopra l'amp
+    const ampRow = one('[data-row="2"]', board);
+    if (ampRow) board.insertBefore(newRow, ampRow);
+    else board.appendChild(newRow);
     return newRow;
   }
 
@@ -315,6 +320,7 @@
     const targetRow = state.placeholder.parentElement;
     const targetRowNum = parseInt(targetRow.dataset.row || 1, 10) || 1;
     const arr = window.pedalboard && window.pedalboard.pedals;
+    console.log('[DND] drop targetRowNum=', targetRowNum, 'dataset.row=', targetRow.dataset.row, 'classList=', targetRow.className, 'isTempRow=', !!one('[data-dnd-temp-row]'));
 
     // Strategia: trova il primo pedale reale DOPO il placeholder nel DOM
     // (escludendo il pedale in drag che è position:fixed ma ancora nel DOM).
