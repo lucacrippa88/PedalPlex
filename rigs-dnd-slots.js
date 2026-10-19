@@ -321,17 +321,6 @@
       insertAt = computeAbsoluteInsertIndex(targetRowNum, positionInRow);
     }
 
-    console.log('[DND-SLOTS] drop', {
-      targetRowEl: targetRow,
-      targetRowNum,
-      phIndex,
-      positionInRow,
-      insertAt,
-      draggingId: state.draggingId,
-      originAbsIndex: state.originAbsIndex,
-      pedalsBefore: JSON.stringify(window.pedalboard?.pedals?.map(p => ({id: p.pedal_id, row: p.row})))
-    });
-
     // Ripristina l'elemento nel DOM (la posizione non importa: renderPedalboard
     // ricostruisce tutto da zero subito dopo)
     state.placeholder.parentElement.insertBefore(state.draggingEl, state.placeholder);
@@ -354,9 +343,10 @@
       let removed = null;
       if (srcIdx !== -1 && srcIdx != null) {
         removed = window.pedalboard.pedals.splice(srcIdx, 1)[0];
-        // L'array è ora di 1 elemento più corto: se insertAt era > srcIdx,
-        // tutti gli indici si sono shiftati di -1.
-        if (insertAt > srcIdx) insertAt--;
+        // Dopo lo splice, tutti gli indici > srcIdx si shiftano di -1.
+        // Ma se insertAt == srcIdx + 1 il pedale tornerebbe nella stessa
+        // posizione logica — non va decrementato (è un vero spostamento a destra).
+        if (insertAt > srcIdx + 1) insertAt--;
       } else {
         removed = { pedal_id: pid, rotation: 0, row: targetRowNum };
       }
@@ -369,12 +359,6 @@
         window.pedalboard.pedals.push(removed);
       }
     }
-
-    console.log('[DND-SLOTS] after splice', {
-      insertAt,
-      pedalsAfter: JSON.stringify(window.pedalboard?.pedals?.map(p => ({id: p.pedal_id, row: p.row}))),
-      renderPedalboardExists: typeof renderPedalboard === 'function'
-    });
 
     cleanupEmptyRows();
 
