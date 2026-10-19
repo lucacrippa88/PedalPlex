@@ -119,7 +119,8 @@
   }
 
   function rowUnderPoint(x, y) {
-    const rows = $(SELECT.ROW);
+    // Esclude sempre la riga amp (data-row=2) — non accetta drop di pedali normali
+    const rows = $(SELECT.ROW).filter(r => parseInt(r.dataset.row, 10) !== 2);
     for (const r of rows) {
       const rect = r.getBoundingClientRect();
       if (y >= rect.top && y <= rect.bottom) return r;
@@ -275,8 +276,8 @@
     state.draggingEl.style.left = (x - w / 2) + 'px';
     state.draggingEl.style.top  = (y - h / 2) + 'px';
 
-    let targetRow = rowUnderPoint(x, y);
-    const rows = $(SELECT.ROW);
+    let targetRow = rowUnderPoint(x, y); // già esclude row 2 (amp)
+    const rows = $(SELECT.ROW).filter(r => parseInt(r.dataset.row, 10) !== 2);
     if (!targetRow && rows.length) {
       const lastRect = rows[rows.length - 1].getBoundingClientRect();
       if (y > lastRect.bottom + 20) {
