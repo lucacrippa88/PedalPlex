@@ -217,7 +217,23 @@ function initNavPedalboard(userRole) {
           }
         }
 
-        window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation: 0, row: 1 });
+        var targetRow = window._emptySlotRow || 1;
+        var insertAt  = window._emptySlotInsertAt;
+
+        // slot_pos = posizione visiva nella riga (indice dello slot cliccato dentro la riga)
+        // insertAt è l'indice globale; row1Start = indice del primo pedale di row1 = 0 per row1
+        // Per row1: slot_pos = insertAt (tutti i pedali row1 vengono prima di row2)
+        // Per row2: slot_pos = insertAt - numero pedali row1
+        var row1Count = window.pedalboard.pedals.filter(function(p){ return (p.row||1) === 1; }).length;
+        var rowStart  = (targetRow === 2) ? row1Count : 0;
+        var slotPos   = (insertAt !== null && insertAt !== undefined) ? (insertAt - rowStart) : null;
+
+        var newPedal = { pedal_id: pedal._id, rotation: 0, row: targetRow, slot_pos: slotPos };
+        window.pedalboard.pedals.push(newPedal);
+        window._emptySlotRow = null;
+        window._emptySlotInsertAt = null;
+        // Deattiva lo slot evidenziato (il DOM viene ricostruito da renderPedalboard)
+        if (typeof window.deactivateSlot === 'function') window.deactivateSlot();
 
         if (typeof renderPedalboard === 'function') renderPedalboard();
       };
@@ -312,10 +328,14 @@ function initNavPedalboard(userRole) {
     const query = (rawQuery || '').trim().toLowerCase();
     const dropdown = getOrCreateDropdown();
 
+    // Legge e consuma subito il filtro categoria (impostato da slot amp)
+    const categoryFilter = window._emptySlotCategory || null;
+    window._emptySlotCategory = null;
+
     // Reset lazy state on every new fetch
     lazyPage = 1;
     lazyQuery = query;
-    lazyHasMore = !query; // lazy scroll only when no search query
+    lazyHasMore = !query && !categoryFilter; // lazy scroll solo senza filtri
     lazyLoading = false;
     if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; }
 
@@ -334,24 +354,42 @@ function initNavPedalboard(userRole) {
 
     try {
       const authToken = localStorage.getItem('authToken');
+      const headers = { 'Content-Type': 'application/json', ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) };
       let pedalsList = [];
 
-      if (query) {
-        const res = await fetch(
-          `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`, {
-            headers: {
-              'Content-Type': 'application/json',
-              ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+      if (categoryFilter) {
+        // Fetch parallele per ogni categoria, poi unione deduplicata
+        const results = await Promise.all(
+          categoryFilter.map(cat => {
+            const url = query
+              ? `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}&category=${encodeURIComponent(cat)}`
+              : `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=1&limit=${LAZY_LIMIT}&category=${encodeURIComponent(cat)}`;
+            return fetch(url, { headers }).then(r => r.json()).catch(() => []);
+          })
+        );
+        const seen = new Set();
+        results.forEach(data => {
+          if (!Array.isArray(data)) return;
+          data.forEach(item => {
+            if (item && item._id && !seen.has(item._id)) {
+              seen.add(item._id);
+              pedalsList.push(item);
+              if (!window.catalog.some(p => p._id === item._id)) window.catalog.push(item);
             }
-          }
+          });
+        });
+        // Ordine alfabetico per coerenza
+        pedalsList.sort((a, b) => a._id.localeCompare(b._id));
+      } else if (query) {
+        const res = await fetch(
+          `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`, { headers }
         );
         const data = await res.json();
         if (Array.isArray(data)) pedalsList = data;
       } else {
         const res = await fetch(
-          `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=1&limit=${LAZY_LIMIT}`, {
-            headers: { ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) }
-          }
+          `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=1&limit=${LAZY_LIMIT}`,
+          { headers: { ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) } }
         );
         const data = await res.json();
         if (Array.isArray(data)) {
@@ -432,15 +470,9 @@ function initNavPedalboard(userRole) {
 
 
 
-  // Show filter if there is at least one pedalboard
+  // Always show filter so positionDropdown() can read real coordinates
   function updateFilterVisibility() {
-    const hasBoards = Array.isArray(window.allPedalboards) && window.allPedalboards.length > 0;
-    if (hasBoards) {
-      $("#toggleFilterBtn").show();
-    } else {
-      $("#toggleFilterBtn").hide();
-      $("#pedalFilterInput").hide();
-    }
+    $("#toggleFilterBtn").show();
   }
 
   // Initial visibility check

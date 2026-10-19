@@ -93,6 +93,7 @@
 </head>
 <body>
 
+
     <div class="bx--loading-overlay" id="pageLoader" style="display:none;">
       <div class="bx--loading" role="status">
         <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
@@ -137,7 +138,6 @@
       </div>
 
       <br><br>
-      <!-- <br><br> -->
 
       <div id="pedalboard"></div>
       <br><br><br><br>
@@ -153,10 +153,286 @@
     <script src="rigs.js"></script>
     <script src="fullscreen-menu.js"></script>
     <script src="nav-rigs.js"></script>
-    <script src="rigs-dnd.js"></script>
+    <script src="rigs-dnd-slots.js"></script>
     <script src="add-to-rig.js"></script>
     <script src="rigs-pending-add.js"></script>
     <script src="tour.js"></script>
+    <script>
+    (function () {
+      // Dimensioni da helpers.js: standard=190x160, xlarge=400x160
+      var PEDAL_W = 190, PEDAL_H = 160;
+      var AMP_W   = 400, AMP_H   = 160;
+
+      var AMP_CATEGORIES = ['amp simulator','cab simulator','combo','frfr','head','ir loader','power amp','preamp'];
+      var _activeSlot = null;
+
+      window.deactivateSlot = function deactivateSlot() {
+        if (_activeSlot) {
+          _activeSlot.style.borderColor = '#555';
+          _activeSlot.style.borderStyle = 'dashed';
+          _activeSlot.style.color = '#666';
+          _activeSlot.style.background = '';
+          _activeSlot = null;
+        }
+      }
+
+      function activateSlot(el) {
+        deactivateSlot();
+        _activeSlot = el;
+        el.style.borderColor = '#6929c4';
+        el.style.borderStyle = 'solid';
+        el.style.color = '#a78bdc';
+        el.style.background = 'rgba(105,41,196,0.08)';
+      }
+
+      // Deattiva lo slot quando il dropdown viene chiuso dall'esterno
+      // (skippa il click corrente che ha appena aperto lo slot)
+      var _skipNextDeactivate = false;
+      document.addEventListener('click', function () {
+        if (_skipNextDeactivate) { _skipNextDeactivate = false; return; }
+        deactivateSlot();
+      });
+
+      function openSearch(row, insertAt, slotEl) {
+        _skipNextDeactivate = true;
+        activateSlot(slotEl);
+        window._emptySlotRow = row;
+        window._emptySlotInsertAt = (insertAt !== undefined) ? insertAt : null;
+        window._emptySlotCategory = (row === 2) ? AMP_CATEGORIES : null;
+        // Svuota il dropdown così toggleFilterBtn chiama sempre fetchAndRenderPedals
+        var dd = document.getElementById('pedalAddDropdownContainer');
+        if (dd) { dd.innerHTML = ''; dd.style.display = 'none'; }
+        $("#toggleFilterBtn").trigger("click");
+      }
+
+      function makeSlot(w, h, row, insertAt, label) {
+        var el = document.createElement('div');
+        el.style.cssText = [
+          'width:'  + w + 'px',
+          'height:' + h + 'px',
+          'border: 2px dashed #555',
+          'border-radius: 8px',
+          'display: flex',
+          'flex-direction: column',
+          'align-items: center',
+          'justify-content: center',
+          'cursor: pointer',
+          'gap: 6px',
+          'color: #666',
+          'font-size: 0.75rem',
+          'flex-shrink: 0',
+          'transition: border-color 0.15s, color 0.15s, background 0.15s'
+        ].join(';');
+        el.innerHTML = '<span style="font-size:1.4rem;line-height:1;font-weight:300;pointer-events:none">+</span>'
+                     + (label ? '<span style="pointer-events:none;letter-spacing:0.03em">' + label + '</span>' : '');
+        el.addEventListener('mouseenter', function () {
+          if (el === _activeSlot) return;
+          el.style.borderColor = '#888';
+          el.style.color = '#bbb';
+          el.style.background = 'rgba(255,255,255,0.04)';
+        });
+        el.addEventListener('mouseleave', function () {
+          if (el === _activeSlot) return;
+          el.style.borderColor = '#555';
+          el.style.color = '#666';
+          el.style.background = '';
+        });
+        el.addEventListener('click', function (e) {
+          e.stopPropagation();
+          openSearch(row, insertAt, el);
+        });
+        return el;
+      }
+
+      // Sostituisce completamente renderPedalboard con versione a slot fissi
+      window.renderPedalboard = function () {
+        window.PPUnsaved && window.PPUnsaved.captureRigBaseline && window.PPUnsaved.captureRigBaseline();
+
+        var container = document.getElementById('pedalboard');
+        if (!container) return;
+        container.innerHTML = '';
+
+        var allPedals = (window.pedalboard && Array.isArray(window.pedalboard.pedals))
+                        ? window.pedalboard.pedals : [];
+
+        // Raccoglie tutte le row presenti + row 1, 2 sempre visibili + extra rows aggiunte manualmente
+        var rowNums = [1, 2];
+        allPedals.forEach(function(p) {
+          var r = p.row || 1;
+          if (rowNums.indexOf(r) === -1) rowNums.push(r);
+        });
+        (window._extraRows || []).forEach(function(r) {
+          if (rowNums.indexOf(r) === -1) rowNums.push(r);
+        });
+        rowNums.sort(function(a, b){ return a - b; });
+
+        // Pedali per riga
+        var pedalsByRow = {};
+        rowNums.forEach(function(r){ pedalsByRow[r] = []; });
+        allPedals.forEach(function(p){ pedalsByRow[p.row || 1].push(p); });
+
+        // globalStart per ogni riga: indice in allPedals del primo elemento
+        var globalStarts = {};
+        rowNums.forEach(function(r) {
+          var first = pedalsByRow[r][0];
+          var idx = first ? allPedals.indexOf(first) : allPedals.length;
+          globalStarts[r] = idx >= 0 ? idx : allPedals.length;
+        });
+
+        // ── Helper: renderizza un singolo pedale ──────────────────────
+        function renderPedalWrapper(pbPedal) {
+          var pedalData = window.catalog && window.catalog.find(function(p){ return p._id === pbPedal.pedal_id; });
+          if (!pedalData) return null;
+          var $pedalEl = renderPedal(pedalData, (window.currentUser && window.currentUser.role) || 'guest', true);
+          $pedalEl.css('cursor', 'pointer');
+          $pedalEl.on('click', function(){ if (typeof openEditPedalModal === 'function') openEditPedalModal(pbPedal); });
+          var angle = pbPedal.rotation || 0;
+          var widthPx  = parseFloat(getPedalWidth(pedalData.width));
+          var heightPx = parseFloat(getPedalHeight(pedalData.height));
+          var hasRotation = angle % 180 !== 0;
+          var wrapperStyles = {
+            display: 'flex', justifyContent: 'center',
+            alignItems: hasRotation ? 'flex-start' : 'center',
+            position: 'relative', boxSizing: 'content-box', marginBottom: '20px'
+          };
+          if (hasRotation) {
+            var rad = angle * Math.PI / 180;
+            var sin = Math.abs(Math.sin(rad)), cos = Math.abs(Math.cos(rad));
+            var rW = widthPx * cos + heightPx * sin;
+            var rH = widthPx * sin + heightPx * cos;
+            Object.assign(wrapperStyles, { width: rW + 'px', height: rH + 'px',
+              marginLeft: (rW * 0.2) + 'px', marginRight: (rW * 0.2) + 'px',
+              ...(widthPx > heightPx ? { marginTop: '30px' } : {}) });
+          }
+          var $wrapper = $('<div>').css(wrapperStyles).attr('data-pedal-id', pbPedal.pedal_id);
+          $pedalEl.css({ transform: 'rotate(' + angle + 'deg)', transformOrigin: 'center center', position: 'relative' });
+          var topVal  = typeof isMobileLayout === 'function' && isMobileLayout() ? 0 : parseInt(pbPedal.vert  || 0, 10);
+          var leftVal = typeof isMobileLayout === 'function' && isMobileLayout() ? 0 : parseInt(pbPedal.horiz || 0, 10);
+          $wrapper.css({ top: topVal + 'px', left: leftVal + 'px' });
+          $wrapper.append($pedalEl);
+          return $wrapper[0];
+        }
+
+        // ── Helper: riga a slot fissi ─────────────────────────────────
+        // Usa l'ordine array come fonte di verità (non slot_pos).
+        // Struttura: [pedale0][pedale1]...[slotVuoto] con minimo minSlots totali.
+        function buildFixedRow(rowDiv, rowNum, pedalsInRow, globalStart) {
+          var isAmpRow = (rowNum === 2);
+          var w = isAmpRow ? AMP_W : PEDAL_W;
+          var h = isAmpRow ? AMP_H : PEDAL_H;
+          var slotLabel = isAmpRow ? 'Add amplifier' : 'Add pedal';
+          var minSlots  = isAmpRow ? 1 : 3;
+          // Sempre almeno un slot vuoto dopo l'ultimo pedale
+          var total = Math.max(minSlots, pedalsInRow.length + 1);
+
+          for (var i = 0; i < total; i++) {
+            if (i < pedalsInRow.length) {
+              var wrapper = renderPedalWrapper(pedalsInRow[i]);
+              if (wrapper) {
+                wrapper.classList.add('pedal-wrapper');
+                rowDiv.appendChild(wrapper);
+              }
+            } else {
+              // insertAt = indice assoluto in allPedals dove fare splice
+              rowDiv.appendChild(makeSlot(w, h, rowNum, globalStart + pedalsInRow.length, slotLabel));
+            }
+          }
+        }
+
+        // ── Render: prima le righe non-amp (1, 3, 4, …), poi il pulsante + Add row, poi amp ──
+        var nonAmpRows = rowNums.filter(function(r){ return r !== 2; });
+        var ampRow = 2;
+
+        // Righe pedalboard: ogni riga è [slot slot …] [× Remove row] affiancati
+        nonAmpRows.forEach(function(r) {
+          var rowWrap = document.createElement('div');
+          rowWrap.style.cssText = 'display:flex;gap:12px;margin-bottom:10px;margin-top:-12px;';
+
+          var rowDiv = document.createElement('div');
+          rowDiv.className = 'pedal-row';
+          rowDiv.dataset.row = r;
+          rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;';
+          buildFixedRow(rowDiv, r, pedalsByRow[r], globalStarts[r]);
+          rowWrap.appendChild(rowDiv);
+
+          // "× Remove row" a destra, solo per righe > 1
+          if (r > 1) {
+            var removeBtn = document.createElement('button');
+            removeBtn.textContent = '× Remove row';
+            removeBtn.style.cssText = 'background:none;border:none;color:#555;font-size:0.7rem;cursor:pointer;padding:2px 4px;white-space:nowrap;flex-shrink:0;align-self:center;';
+            removeBtn.addEventListener('mouseenter', function(){ removeBtn.style.color = '#ff6b6b'; });
+            removeBtn.addEventListener('mouseleave', function(){ removeBtn.style.color = '#555'; });
+            removeBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              var pedalsInRow = pedalsByRow[r] || [];
+              if (pedalsInRow.length === 0) {
+                window._extraRows = (window._extraRows || []).filter(function(x){ return x !== r; });
+                renderPedalboard();
+              } else {
+                var _svgTrash = "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>";
+                var _svgRowCollapse = "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M16,4c6.6,0,12,5.4,12,12s-5.4,12-12,12S4,22.6,4,16S9.4,4,16,4 M16,2C8.3,2,2,8.3,2,16s6.3,14,14,14s14-6.3,14-14 S23.7,2,16,2z'></path><path d='M8 15H24V17H8z'></path></svg>";
+                var _svgUndo = "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>";
+                Swal.fire({
+                  title: 'Remove row?',
+                  html: 'This row has <strong>' + pedalsInRow.length + ' gear' + (pedalsInRow.length > 1 ? 's' : '') + '</strong>. What do you want to do with them?',
+                  icon: 'question',
+                  showDenyButton: true,
+                  showCancelButton: true,
+                  confirmButtonText: _svgTrash + 'Remove All',
+                  denyButtonText: _svgRowCollapse + 'Remove Row only',
+                  cancelButtonText: _svgUndo + 'Cancel',
+                  customClass: {
+                    confirmButton: 'bx--btn bx--btn--danger',
+                    denyButton: 'bx--btn bx--btn--tertiary',
+                    cancelButton: 'bx--btn bx--btn--secondary'
+                  }
+                }).then(function(result) {
+                  if (result.isConfirmed) {
+                    window.pedalboard.pedals = window.pedalboard.pedals.filter(function(p){ return (p.row || 1) !== r; });
+                    window._extraRows = (window._extraRows || []).filter(function(x){ return x !== r; });
+                    renderPedalboard();
+                  } else if (result.isDenied) {
+                    window.pedalboard.pedals.forEach(function(p){ if ((p.row || 1) === r) p.row = 1; });
+                    window._extraRows = (window._extraRows || []).filter(function(x){ return x !== r; });
+                    renderPedalboard();
+                  }
+                });
+              }
+            });
+            rowWrap.appendChild(removeBtn);
+          }
+
+          container.appendChild(rowWrap);
+        });
+
+        // "+ Add row" a sinistra, sotto le righe pedalboard, affiancato al flusso
+        var nextRowNum = Math.max.apply(null, nonAmpRows) + 1;
+        if (nextRowNum === 2) nextRowNum = 3;
+        var addRowBtn = document.createElement('button');
+        addRowBtn.textContent = '+ Add row';
+        addRowBtn.style.cssText = 'background:none;border:none;color:#555;font-size:0.75rem;cursor:pointer;padding:2px 4px;margin-bottom:10px;display:block;';
+        addRowBtn.addEventListener('mouseenter', function(){ addRowBtn.style.color = '#aaa'; });
+        addRowBtn.addEventListener('mouseleave', function(){ addRowBtn.style.color = '#555'; });
+        addRowBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          window._extraRows = window._extraRows || [];
+          if (window._extraRows.indexOf(nextRowNum) === -1) window._extraRows.push(nextRowNum);
+          renderPedalboard();
+        });
+        container.appendChild(addRowBtn);
+
+        // Riga amplificatore (sempre ultima)
+        var ampDiv = document.createElement('div');
+        ampDiv.className = 'pedal-row';
+        ampDiv.dataset.row = 2;
+        ampDiv.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+        buildFixedRow(ampDiv, ampRow, pedalsByRow[ampRow], globalStarts[ampRow]);
+        container.appendChild(ampDiv);
+      };
+
+    })();
+
+    </script>
   </div>
 
     <div class="zoom-controls"> 
