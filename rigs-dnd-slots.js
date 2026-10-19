@@ -200,6 +200,7 @@
 
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     const candidate = e.target.closest(SELECT.WRAPPER) || e.target.closest(SELECT.FALLBACK);
+    console.log('[DND] pointerdown candidate=', candidate, 'emptySlot=', candidate?.dataset?.emptySlot);
     if (!candidate) return;
     // FIX 1: gli slot vuoti non avviano il drag
     if (candidate.dataset.emptySlot) return;
@@ -216,6 +217,7 @@
     const dx = e.clientX - dragStartPos.x;
     const dy = e.clientY - dragStartPos.y;
     if (Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD) {
+      console.log('[DND] drag threshold exceeded — starting drag');
       document.removeEventListener('pointermove', onPointerMoveStart);
       document.removeEventListener('pointerup', onPointerUpClick);
       onPointerDownStartDrag(e, dragStartPos.el);
@@ -224,6 +226,7 @@
   }
 
   function onPointerUpClick(e) {
+    console.log('[DND] onPointerUpClick fired (short click, no drag)');
     document.removeEventListener('pointermove', onPointerMoveStart);
     document.removeEventListener('pointerup', onPointerUpClick);
     // setPointerCapture ha intercettato il pointer — il click nativo non arriva
