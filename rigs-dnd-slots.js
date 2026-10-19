@@ -304,25 +304,35 @@
 
     const targetRow = state.placeholder.parentElement;
     const targetRowNum = parseInt(targetRow.dataset.row || 1, 10) || 1;
+    const arr = window.pedalboard && window.pedalboard.pedals;
 
-    const nodes = Array.from(targetRow.children);
-    const phIndex = nodes.indexOf(state.placeholder);
-    let positionInRow = 0;
-    if (phIndex > 0) {
-      positionInRow = nodes.slice(0, phIndex).filter(n =>
+    // Strategia: trova il primo pedale reale DOPO il placeholder nel DOM
+    // (escludendo il pedale in drag che è position:fixed ma ancora nel DOM).
+    // Il suo indice nell'array è esattamente dove inserire — nessuna compensazione.
+    // Se non c'è nessun pedale dopo il placeholder → inserisci in fondo alla riga.
+    let insertAt = arr ? arr.length : 0;
+
+    if (arr) {
+      const nodes = Array.from(targetRow.children);
+      const phIndex = nodes.indexOf(state.placeholder);
+      // Cerca il primo .pedal-wrapper non-dragging dopo il placeholder
+      const nextRealNode = nodes.slice(phIndex + 1).find(n =>
         (n.classList.contains('pedal-wrapper') || n.classList.contains('pedal-catalog')) &&
-        !n.classList.contains('pedalboard-dnd-placeholder') &&
         !n.classList.contains('dnd-dragging')
-      ).length;
+      );
+      if (nextRealNode) {
+        // insertAt = indice di quel pedale nell'array (il draggato verrà inserito prima di lui)
+        const nextPid = nextRealNode.dataset.pedalId || nextRealNode.getAttribute('data-pedal-id');
+        const nextIdx = arr.findIndex(p => String(p.pedal_id) === String(nextPid));
+        if (nextIdx !== -1) insertAt = nextIdx;
+      } else {
+        // Nessun pedale dopo: inserisci dopo l'ultimo pedale della riga target
+        const lastInRow = [...arr].reduce((last, p, i) => (p.row || 1) === targetRowNum ? i : last, -1);
+        insertAt = lastInRow === -1 ? arr.length : lastInRow + 1;
+      }
     }
 
-    let insertAt = 0;
-    if (window.pedalboard && Array.isArray(window.pedalboard.pedals)) {
-      insertAt = computeAbsoluteInsertIndex(targetRowNum, positionInRow);
-    }
-
-    // Ripristina l'elemento nel DOM (la posizione non importa: renderPedalboard
-    // ricostruisce tutto da zero subito dopo)
+    // Ripristina elemento nel DOM (renderPedalboard ricostruisce tutto)
     state.placeholder.parentElement.insertBefore(state.draggingEl, state.placeholder);
     state.draggingEl.classList.remove('dnd-dragging');
     state.draggingEl.style.position = '';
@@ -335,28 +345,25 @@
 
     state.placeholder.remove();
 
-    if (window.pedalboard && Array.isArray(window.pedalboard.pedals)) {
+    if (arr) {
       const pid = state.draggingId;
       let srcIdx = state.originAbsIndex;
       if (srcIdx == null || srcIdx === -1) srcIdx = findAbsIndex(pid);
 
       let removed = null;
       if (srcIdx !== -1 && srcIdx != null) {
-        removed = window.pedalboard.pedals.splice(srcIdx, 1)[0];
-        // Dopo lo splice, tutti gli indici > srcIdx si shiftano di -1.
-        // Ma se insertAt == srcIdx + 1 il pedale tornerebbe nella stessa
-        // posizione logica — non va decrementato (è un vero spostamento a destra).
-        if (insertAt > srcIdx + 1) insertAt--;
+        removed = arr.splice(srcIdx, 1)[0];
+        // Dopo lo splice gli indici > srcIdx shiftano di -1: aggiusta insertAt
+        if (insertAt > srcIdx) insertAt--;
       } else {
         removed = { pedal_id: pid, rotation: 0, row: targetRowNum };
       }
       removed.row = targetRowNum;
 
-      const len = window.pedalboard.pedals.length;
-      if (insertAt >= 0 && insertAt <= len) {
-        window.pedalboard.pedals.splice(insertAt, 0, removed);
+      if (insertAt >= 0 && insertAt <= arr.length) {
+        arr.splice(insertAt, 0, removed);
       } else {
-        window.pedalboard.pedals.push(removed);
+        arr.push(removed);
       }
     }
 
