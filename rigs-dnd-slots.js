@@ -280,8 +280,11 @@
     const rows = $(SELECT.ROW).filter(r => parseInt(r.dataset.row, 10) !== 2);
     if (!targetRow && rows.length) {
       const lastRect = rows[rows.length - 1].getBoundingClientRect();
-      if (y > lastRect.bottom + 20) {
-        targetRow = createNewRow(rows[rows.length - 1]);
+      // Appena sotto l'ultima riga non-amp → riga temporanea per il drop
+      if (y > lastRect.bottom) {
+        // Riusa la riga temporanea se già esiste (evita di crearne una per frame)
+        targetRow = one('[data-dnd-temp-row]') || createNewRow();
+        targetRow.setAttribute('data-dnd-temp-row', '1');
       } else {
         targetRow = rows[rows.length - 1];
       }
@@ -374,6 +377,18 @@
       }
     }
 
+    // Se il drop è avvenuto su una riga temporanea, registrala negli _extraRows
+    // così renderPedalboard la include nel re-render
+    const tempRow = one('[data-dnd-temp-row]');
+    if (tempRow) {
+      const newRowNum = parseInt(tempRow.dataset.row, 10);
+      if (newRowNum && newRowNum !== 2) {
+        window._extraRows = window._extraRows || [];
+        if (window._extraRows.indexOf(newRowNum) === -1) window._extraRows.push(newRowNum);
+      }
+      tempRow.removeAttribute('data-dnd-temp-row');
+    }
+
     cleanupEmptyRows();
 
     if (typeof renderPedalboard === 'function') {
@@ -402,6 +417,9 @@
       state.draggingEl.style.pointerEvents = '';
     }
     if (state.placeholder && state.placeholder.parentElement) state.placeholder.remove();
+    // Rimuovi riga temporanea se il drag è stato annullato
+    const tempRow = one('[data-dnd-temp-row]');
+    if (tempRow) tempRow.remove();
   }
 
   function resetState() {
