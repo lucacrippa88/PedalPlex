@@ -403,24 +403,6 @@ function openEditPedalModal(pbPedal) {
             </select>
           </div>
 
-          <!-- Row -->
-          <div style="flex:1;">
-            <label for="rowInput" class="bx--label">Row number</label>
-            <input
-              id="rowInput"
-              type="number"
-              min="1"
-              value="${pbPedal.row}"
-              style="
-                width:100%;
-                padding:0.5em;
-                border:1px solid #8d8d8d;
-                border-radius:0.25em;
-                font-size:initial;
-                height:24px;
-              ">
-          </div>
-
         </div>
 
         <!-- Vertical slider -->
@@ -551,9 +533,6 @@ function openEditPedalModal(pbPedal) {
       const rotation =
         parseInt(document.getElementById('rotationSelect').value, 10);
 
-      const row =
-        parseInt(document.getElementById('rowInput').value, 10);
-
       const vert =
         parseInt(document.getElementById('vertSlider').value, 10);
 
@@ -567,16 +546,8 @@ function openEditPedalModal(pbPedal) {
         return false;
       }
 
-      if (isNaN(row) || row < 1) {
-        Swal.showValidationMessage(
-          'Row must be a number 1 or higher.'
-        );
-        return false;
-      }
-
       return {
         rotation,
-        row,
         vert,
         horiz
       };
@@ -587,7 +558,6 @@ function openEditPedalModal(pbPedal) {
     if (result.isConfirmed && result.value) {
 
       pbPedal.rotation = result.value.rotation;
-      pbPedal.row = result.value.row;
       pbPedal.vert = result.value.vert;
       pbPedal.horiz = result.value.horiz;
 
