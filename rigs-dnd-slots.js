@@ -199,7 +199,7 @@
     if (candidate.dataset.emptySlot) return;
 
     candidate.setPointerCapture?.(e.pointerId);
-    dragStartPos = { x: e.clientX, y: e.clientY, el: candidate };
+    dragStartPos = { x: e.clientX, y: e.clientY, el: candidate, target: e.target };
 
     document.addEventListener('pointermove', onPointerMoveStart, { passive: false });
     document.addEventListener('pointerup', onPointerUpClick, { passive: false });
@@ -220,7 +220,13 @@
   function onPointerUpClick(e) {
     document.removeEventListener('pointermove', onPointerMoveStart);
     document.removeEventListener('pointerup', onPointerUpClick);
+    // setPointerCapture ha intercettato il pointer — il click nativo non arriva
+    // all'elemento target. Lo spariamo manualmente dopo il rilascio del capture.
+    const originalTarget = dragStartPos && dragStartPos.target;
     dragStartPos = null;
+    if (originalTarget) {
+      setTimeout(() => originalTarget.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })), 0);
+    }
   }
 
   function onPointerDownStartDrag(e, candidate) {
