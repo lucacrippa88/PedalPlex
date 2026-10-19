@@ -200,13 +200,13 @@
 
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     const candidate = e.target.closest(SELECT.WRAPPER) || e.target.closest(SELECT.FALLBACK);
-    console.log('[DND] pointerdown candidate=', candidate, 'emptySlot=', candidate?.dataset?.emptySlot);
     if (!candidate) return;
     // FIX 1: gli slot vuoti non avviano il drag
     if (candidate.dataset.emptySlot) return;
 
-    candidate.setPointerCapture?.(e.pointerId);
-    dragStartPos = { x: e.clientX, y: e.clientY, el: candidate, target: e.target };
+  // NON usiamo setPointerCapture qui: catturerebbe tutti i pointermove
+  // impedendo al threshold check di riceverli su document.
+    dragStartPos = { x: e.clientX, y: e.clientY, el: candidate, target: e.target, pointerId: e.pointerId };
 
     document.addEventListener('pointermove', onPointerMoveStart, { passive: false });
     document.addEventListener('pointerup', onPointerUpClick, { passive: false });
@@ -217,20 +217,16 @@
     const dx = e.clientX - dragStartPos.x;
     const dy = e.clientY - dragStartPos.y;
     if (Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD) {
-      console.log('[DND] drag threshold exceeded — starting drag');
       document.removeEventListener('pointermove', onPointerMoveStart);
       document.removeEventListener('pointerup', onPointerUpClick);
-      onPointerDownStartDrag(e, dragStartPos.el);
+      onPointerDownStartDrag(e, dragStartPos.el, dragStartPos.pointerId);
       dragStartPos = null;
     }
   }
 
   function onPointerUpClick(e) {
-    console.log('[DND] onPointerUpClick fired (short click, no drag)');
     document.removeEventListener('pointermove', onPointerMoveStart);
     document.removeEventListener('pointerup', onPointerUpClick);
-    // setPointerCapture ha intercettato il pointer — il click nativo non arriva
-    // all'elemento target. Lo spariamo manualmente dopo il rilascio del capture.
     const originalTarget = dragStartPos && dragStartPos.target;
     dragStartPos = null;
     if (originalTarget) {
@@ -238,7 +234,7 @@
     }
   }
 
-  function onPointerDownStartDrag(e, candidate) {
+  function onPointerDownStartDrag(e, candidate, pointerId) {
     injectCSS();
     ensureNormalization();
 
@@ -259,6 +255,8 @@
     const parentRow = wrapper.parentElement;
     if (parentRow) parentRow.insertBefore(state.placeholder, wrapper.nextSibling);
 
+    // Ora che il drag è iniziato davvero, cattura il pointer sull'elemento
+    try { wrapper.setPointerCapture(pointerId); } catch(_) {}
     wrapper.classList.add('dnd-dragging');
     wrapper.style.position = 'fixed';
     wrapper.style.left = rect.left + 'px';
@@ -323,7 +321,6 @@
     const targetRow = state.placeholder.parentElement;
     const targetRowNum = parseInt(targetRow.dataset.row || 1, 10) || 1;
     const arr = window.pedalboard && window.pedalboard.pedals;
-    console.log('[DND] drop targetRowNum=', targetRowNum, 'dataset.row=', targetRow.dataset.row, 'classList=', targetRow.className, 'isTempRow=', !!one('[data-dnd-temp-row]'));
 
     // Strategia: trova il primo pedale reale DOPO il placeholder nel DOM
     // (escludendo il pedale in drag che è position:fixed ma ancora nel DOM).
