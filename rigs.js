@@ -998,16 +998,49 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
       .then(res => res.json())
       .then(check => {
         if (check.has_presets) {
-          Swal.fire({
-            title: 'Cannot delete',
-            text: 'This Rig has linked Plexes and cannot be deleted.',
-            icon: 'warning',
-            confirmButtonText: 'OK',
-            customClass: {
-              confirmButton: 'bx--btn bx--btn--primary'
+          // Check if all presets are empty defaults (name = 'My Tone', no active pedals)
+          const token = localStorage.getItem('authToken');
+          fetch('https://api.pedalplex.com/GET_PLEX.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ user_id: userId, board_id: boardId })
+          })
+          .then(res => res.json())
+          .then(plexData => {
+            const presets = plexData.presets || [];
+            const allDefault = presets.length > 0 && presets.every(p =>
+              p.preset_name === 'My Tone' && Object.keys(p.pedals || {}).length === 0
+            );
+
+            if (!allDefault) {
+              Swal.fire({
+                title: 'Cannot delete',
+                text: 'This Rig has linked Plexes and cannot be deleted.',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                customClass: {
+                  confirmButton: 'bx--btn bx--btn--primary'
+                }
+              });
+              return;
             }
+
+            // All presets are empty defaults — allow deletion
+            proceedWithRigDeletion();
+          })
+          .catch(() => {
+            Swal.fire('Error', 'Could not verify linked Plexes.', 'error');
           });
-        } else {
+          return;
+        }
+
+        // No presets at all — allow deletion
+        proceedWithRigDeletion();
+
+        function proceedWithRigDeletion() {
           // If no presets, confirm deletion
           Swal.fire({
             title: `Delete "${currentName}"?`,

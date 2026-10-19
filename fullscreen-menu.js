@@ -270,6 +270,7 @@ $(document).ready(function () {
 
   // Logout button
   $(document).on('click', '#logoutBtn', function () {
+    $('#fullscreenMenu').removeClass('active');
     if (window.currentUser && window.currentUser.role !== "guest") {
       Swal.fire({
         title: 'Are you sure you want to logout?',
