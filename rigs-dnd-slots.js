@@ -305,8 +305,6 @@
     const targetRow = state.placeholder.parentElement;
     const targetRowNum = parseInt(targetRow.dataset.row || 1, 10) || 1;
 
-    // FIX 3: conta solo i pedali reali (pedal-wrapper / pedal-catalog) prima del
-    // placeholder, escludendo gli slot vuoti dal conteggio logico della posizione.
     const nodes = Array.from(targetRow.children);
     const phIndex = nodes.indexOf(state.placeholder);
     let positionInRow = 0;
@@ -318,12 +316,21 @@
       ).length;
     }
 
-    // FIX 4: calcola insertAt sull'array ORIGINALE (pre-splice), poi aggiusta
-    // l'indice dopo la rimozione per compensare lo shift.
     let insertAt = 0;
     if (window.pedalboard && Array.isArray(window.pedalboard.pedals)) {
       insertAt = computeAbsoluteInsertIndex(targetRowNum, positionInRow);
     }
+
+    console.log('[DND-SLOTS] drop', {
+      targetRowEl: targetRow,
+      targetRowNum,
+      phIndex,
+      positionInRow,
+      insertAt,
+      draggingId: state.draggingId,
+      originAbsIndex: state.originAbsIndex,
+      pedalsBefore: JSON.stringify(window.pedalboard?.pedals?.map(p => ({id: p.pedal_id, row: p.row})))
+    });
 
     // Ripristina l'elemento nel DOM (la posizione non importa: renderPedalboard
     // ricostruisce tutto da zero subito dopo)
@@ -362,6 +369,12 @@
         window.pedalboard.pedals.push(removed);
       }
     }
+
+    console.log('[DND-SLOTS] after splice', {
+      insertAt,
+      pedalsAfter: JSON.stringify(window.pedalboard?.pedals?.map(p => ({id: p.pedal_id, row: p.row}))),
+      renderPedalboardExists: typeof renderPedalboard === 'function'
+    });
 
     cleanupEmptyRows();
 
