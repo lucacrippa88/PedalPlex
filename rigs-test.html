@@ -444,21 +444,31 @@
         var _origRender = window.renderPedalboard;
         window.renderPedalboard = function () {
           var newRow = pbPedal.row || 1;
-          if (newRow !== oldRow) {
-            // Calcola slot_pos libero nella riga di destinazione,
-            // cercando di mantenere la stessa posizione visiva (oldSlotPos)
-            var pedalsInNewRow = (window.pedalboard && window.pedalboard.pedals || [])
-              .filter(function(p) { return p !== pbPedal && (p.row || 1) === newRow; });
-            var takenPos = {};
-            pedalsInNewRow.forEach(function(p) {
-              if (p.slot_pos !== undefined && p.slot_pos !== null) takenPos[p.slot_pos] = true;
-            });
-            var targetPos = (oldSlotPos !== undefined && oldSlotPos !== null) ? oldSlotPos : 0;
-            while (takenPos[targetPos]) targetPos++;
-            pbPedal.slot_pos = targetPos;
-            oldRow = newRow;
-            oldSlotPos = targetPos;
+
+          // Row 2 è riservata all'amplificatore: se l'utente la inserisce
+          // nel campo "Row number", salta al prossimo numero libero >= 3.
+          if (newRow === 2) {
+            var allRows = (window.pedalboard && window.pedalboard.pedals || [])
+              .map(function(p) { return p.row || 1; });
+            var candidate = 3;
+            while (allRows.indexOf(candidate) !== -1) candidate++;
+            pbPedal.row = candidate;
+            newRow = candidate;
           }
+
+          if (newRow !== oldRow) {
+            // Riposiziona il pedale in coda alla nuova riga nell'array
+            var arr = window.pedalboard && window.pedalboard.pedals;
+            if (arr) {
+              var idx = arr.indexOf(pbPedal);
+              if (idx !== -1) arr.splice(idx, 1);
+              var lastIdx = -1;
+              arr.forEach(function(p, i) { if ((p.row || 1) === newRow) lastIdx = i; });
+              arr.splice(lastIdx + 1, 0, pbPedal);
+            }
+            oldRow = newRow;
+          }
+
           // Ripristina e chiama il render reale
           window.renderPedalboard = _origRender;
           _origRender();
