@@ -294,8 +294,9 @@ function _maybeAutoExplore() {
 
 
 async function initPreset() {
-  // Track preset page view for guest funnel analytics
+  // Track preset page view for guest funnel analytics — force ping immediately
   if (typeof recordGuestEvent === 'function') recordGuestEvent('preset_page_view');
+  if (typeof triggerGuestStatsPing === 'function') triggerGuestStatsPing(true);
 
   const isGuest = !window.currentUser;
   const userId = window.currentUser?.userid;
