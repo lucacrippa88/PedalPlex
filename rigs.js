@@ -1166,11 +1166,11 @@ function _firePresetNudgeToast() {
       </svg>
     </div>
     <div class="pp-tour-nudge-body">
-      <p class="pp-tour-nudge-title">Save your tone as a Preset</p>
-      <p class="pp-tour-nudge-text">Your Rig is set — now capture this sound in a Preset.</p>
+      <p class="pp-tour-nudge-title">Save your tones</p>
+      <p class="pp-tour-nudge-text">Your Rig is set: now start saving Presets on it!</p>
     </div>
     <button class="bx--btn bx--btn--primary bx--btn--sm pp-tour-nudge-cta" id="pp-preset-nudge-cta">
-      Go to Plexes
+      Go to Presets
     </button>
   `;
   document.body.appendChild(nudge);
