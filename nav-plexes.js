@@ -200,6 +200,7 @@ function initNavPreset() {
 
   // Save preset
   $('#savePstBtn, #savePstBtnMobile').on('click', async () => {
+    if (typeof recordGuestEvent === 'function') recordGuestEvent('save_preset_click');
     const presetName = $('#presetSelect option:selected').text().trim() || `Untitled ${L.Plex}`;
     const result = collectPedalControlValues(presetName);
     const pedalArray = result[presetName];
@@ -261,6 +262,7 @@ function initNavPreset() {
 
   // Create preset
   $('#createPstBtn, #createPstBtnMobile').on('click', async () => {
+    if (typeof recordGuestEvent === 'function') recordGuestEvent('create_preset_click');
     await createPreset();
   });
 

@@ -294,6 +294,9 @@ function _maybeAutoExplore() {
 
 
 async function initPreset() {
+  // Track preset page view for guest funnel analytics
+  if (typeof recordGuestEvent === 'function') recordGuestEvent('preset_page_view');
+
   const isGuest = !window.currentUser;
   const userId = window.currentUser?.userid;
   resultsDiv = document.getElementById("page-content");
@@ -1160,6 +1163,7 @@ async function savePreset(presetId, updateData) {
       }
     }
     const ok = updateGuestPlex(presetId, updateData);
+    if (ok && typeof recordGuestEvent === 'function') recordGuestEvent('preset_saved');
     if (ok && window.presetMap && window.presetMap[presetId]) {
       Object.assign(window.presetMap[presetId], updateData);
     }
@@ -1476,6 +1480,7 @@ async function createPreset() {
       Swal.fire('Error', `Could not save ${L.plex} locally.`, 'error');
       return;
     }
+    if (typeof recordGuestEvent === 'function') recordGuestEvent('preset_created');
 
     Swal.fire({
       icon: 'success',

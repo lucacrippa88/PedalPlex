@@ -2331,6 +2331,19 @@ function resolveImageUrl(path) {
   return `/${trimmed}`;
 }
 
+// Record a named guest funnel event (increments a counter in localStorage).
+// Events are flushed and reset on the next ping.
+// Only runs for non-logged-in users; safe to call from any page.
+function recordGuestEvent(eventName) {
+  if (localStorage.getItem('authToken')) return;
+  try {
+    const raw = localStorage.getItem('guest_events');
+    const events = (raw ? JSON.parse(raw) : null) || {};
+    events[eventName] = (events[eventName] || 0) + 1;
+    localStorage.setItem('guest_events', JSON.stringify(events));
+  } catch (e) {}
+}
+
 // Anonymous Guest Statistics Tracker
 async function triggerGuestStatsPing(force = false) {
   try {
@@ -2397,6 +2410,13 @@ async function triggerGuestStatsPing(force = false) {
       } catch (e) {}
     }
 
+    // Read accumulated funnel events and reset them
+    let guestEvents = {};
+    try {
+      const raw = localStorage.getItem('guest_events');
+      guestEvents = (raw ? JSON.parse(raw) : null) || {};
+    } catch (e) {}
+
     // Send payload to backend
     await fetch('https://api.pedalplex.com/RECORD_GUEST_STATS.php', {
       method: 'POST',
@@ -2410,11 +2430,13 @@ async function triggerGuestStatsPing(force = false) {
         local_plex_count: localPlexCount,
         local_plex_with_gear_count: localPlexWithGearCount,
         page: window.location.pathname,
-        referrer: document.referrer || null
+        referrer: document.referrer || null,
+        events: guestEvents
       })
     });
 
-    // Update last ping time and version
+    // Reset flushed events and update ping timestamp/version
+    localStorage.removeItem('guest_events');
     localStorage.setItem('guest_stats_last_ping',    now.toString());
     localStorage.setItem('guest_stats_ping_version', PING_VERSION.toString());
   } catch (err) {
