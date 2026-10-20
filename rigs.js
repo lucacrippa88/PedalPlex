@@ -5,8 +5,9 @@ window.allPedalboards = []; // store all pedalboards here
 // ------------------------------------------------------------------------------
 // Main
 function initPedalboard(userRole) {
-  // Track rig page view for guest funnel analytics
+  // Track rig page view for guest funnel analytics — force ping immediately
   if (typeof recordGuestEvent === 'function') recordGuestEvent('rig_page_view');
+  if (typeof triggerGuestStatsPing === 'function') triggerGuestStatsPing(true);
 
   const userId = window.currentUser?.userid;
   const resultsDiv = document.getElementById("pedalboard");
