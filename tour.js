@@ -98,6 +98,8 @@
     localStorage.setItem('pp_tour_active', 'true');
     localStorage.setItem('pp_tour_step', String(step));
     localStorage.removeItem('pp_tour_paused');
+    // Marks the tour as running in THIS browser session (see autoResume)
+    sessionStorage.setItem('pp_tour_session', '1');
   }
 
   function clearState() {
@@ -129,6 +131,20 @@
 
   function markNudgeDismissed() {
     localStorage.setItem('pp_tour_nudge_dismissed', 'true');
+  }
+
+  // Toast frequency cap: once per browser session, max NUDGE_MAX_SHOWS times overall
+  const NUDGE_MAX_SHOWS = 2;
+
+  function canShowNudge() {
+    if (sessionStorage.getItem('pp_tour_nudge_shown')) return false;
+    return parseInt(localStorage.getItem('pp_tour_nudge_count') || '0', 10) < NUDGE_MAX_SHOWS;
+  }
+
+  function recordNudgeShown() {
+    sessionStorage.setItem('pp_tour_nudge_shown', '1');
+    const n = parseInt(localStorage.getItem('pp_tour_nudge_count') || '0', 10);
+    localStorage.setItem('pp_tour_nudge_count', String(n + 1));
   }
 
   function isNudgeDismissed() {
@@ -213,15 +229,14 @@
     // If a tour is actively in progress, no nudge
     if (localStorage.getItem('pp_tour_active') === 'true') return null;
 
-    // If nudge was explicitly dismissed this session or permanently, no nudge
-    if (isNudgeDismissed()) return null;
+    // Tour finished → never bother the user again
+    if (hasCompleted()) return null;
 
-    const completed = hasCompleted();
-    const hasRig    = hasRigWithPedals();
-    const hasPlex   = hasPlexes();
+    // Nudge dismissed permanently, or already shown this session / too many times
+    if (isNudgeDismissed() || !canShowNudge()) return null;
 
-    if (!completed) {
-      // Tour never finished (never started OR dismissed early) → always show full-tour nudge
+    // Tour never finished (never started OR stopped midway) → gentle toast
+    if (!hasRigWithPedals()) {
       return {
         fromStep: 0,
         title: 'New to PedalPlex?',
@@ -231,31 +246,14 @@
       };
     }
 
-    // Tour was completed:
-    if (!hasRig) {
-      // Completed but still hasn't built a rig → nudge from start
-      return {
-        fromStep: 0,
-        title: 'Ready to build your first Rig?',
-        text: 'Create a Rig and add your pedals to get started.',
-        ctaLabel: 'Start',
-        ctaPage: '/rigs',
-      };
-    }
-
-    if (!hasPlex) {
-      // Has a rig but no plex saved → nudge from plexes step
-      return {
-        fromStep: FIRST_PLEXES_STEP,
-        title: 'You have a Rig. Now save a Preset!',
-        text: 'Dial in your tone and lock it in as a Preset to recall it any time.',
-        ctaLabel: 'Show me how',
-        ctaPage: '/plexes',
-      };
-    }
-
-    // Completed tour, has rig and plexes → nothing to nudge
-    return null;
+    // Has a rig but never finished the tour → resume from the Presets part
+    return {
+      fromStep: FIRST_PLEXES_STEP,
+      title: 'You have a Rig. Now save a Preset!',
+      text: 'Dial in your tone and lock it in as a Preset to recall it any time.',
+      ctaLabel: 'Show me how',
+      ctaPage: '/plexes',
+    };
   }
 
   // ----------------------------------------------------------
@@ -481,13 +479,22 @@
     // - On /plexes (or any page at/past the first plexes step): mark as completed.
     //   The user has seen the relevant part of the tour and closing it here means
     //   "I've got it" — we should not re-show it on the next visit.
-    // - On earlier pages (/rigs): pause so they can resume later.
+    // - On earlier pages (/rigs): stop quietly. Tour is NOT marked completed, so the
+    //   (rate-limited) toast may offer it again in a later session.
     const page = currentPage();
     const pastPlexesEntry = _currentStep >= FIRST_PLEXES_STEP;
     if (page === 'plexes' || pastPlexesEntry) {
       finishTour();
     } else {
-      pauseTour();
+      clearHighlight();
+      clearState();
+      // Don't offer the toast again within this session
+      sessionStorage.setItem('pp_tour_nudge_shown', '1');
+      const popup    = document.getElementById('pp-tour-popup');
+      const backdrop = document.getElementById('pp-tour-backdrop');
+      if (popup)    popup.style.display    = 'none';
+      if (backdrop) backdrop.style.display = 'none';
+      removeResumePill();
     }
   };
 
@@ -571,6 +578,9 @@
   // ----------------------------------------------------------
   function showNudge(scenario) {
     if (document.getElementById('pp-tour-nudge')) return;
+    // Don't stack two toasts
+    if (document.getElementById('pp-preset-nudge')) return;
+    recordNudgeShown();
 
     const nudge = document.createElement('div');
     nudge.id = 'pp-tour-nudge';
@@ -636,6 +646,12 @@
     // In shared/preview mode: never auto-resume or auto-start the tour.
     // Fall through directly to nudge logic (handled inside _runNudgeLogic).
     if (!window.isPreviewMode) {
+      // Case 0: leftover tour state from a previous browser session (user left midway).
+      // Don't force the tour on them again: drop the state and let the gentle toast handle it.
+      if (localStorage.getItem('pp_tour_active') === 'true' && !sessionStorage.getItem('pp_tour_session')) {
+        clearState();
+      }
+
       // Case 1a: tour is paused — show the resume pill (on any page)
       if (localStorage.getItem('pp_tour_active') === 'true' && isPaused()) {
         showResumePill();
@@ -677,27 +693,9 @@
     // In shared/preview mode: suppress everything — no tour, no nudge.
     if (window.isPreviewMode) return;
 
-    // Case 2: first-time visitor on /rigs (no completed tour, no nudge dismissed) — start tour immediately
-    if (!hasCompleted() && !isNudgeDismissed() && page === 'rigs') {
-      injectDOM();
-      showStep(0);
-      return;
-    }
-
-    // Case 3: first-time visitor on /plexes — start from the right step based on rig state
-    if (!hasCompleted() && !isNudgeDismissed() && page === 'plexes') {
-      if (hasRigWithPedals()) {
-        injectDOM();
-        showStep(FIRST_PLEXES_STEP);
-      } else {
-        // No rig yet — send them to the beginning on /rigs
-        saveState(0);
-        window.location.href = '/rigs';
-      }
-      return;
-    }
-
-    // Case 4: index / rigs / plexes — show contextual nudge if warranted
+    // The tour never starts by itself: users opt in via the toast (or the navbar trigger).
+    // Toast is shown only if the tour was never completed, at most once per session
+    // (max NUDGE_MAX_SHOWS times overall), and never again once dismissed.
     if (page === 'index' || page === 'rigs' || page === 'plexes') {
       const scenario = resolveNudgeScenario();
       if (scenario) showNudge(scenario);
