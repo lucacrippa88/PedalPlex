@@ -89,26 +89,6 @@
 
     <div class="bx--content-switcher" role="tablist" aria-label="Profile sections">
       <button
-        id="switch-achievements"
-        class="bx--content-switcher-btn bx--content-switcher--selected"
-        data-target="tab-panel-achievements"
-        role="tab"
-        type="button"
-        aria-selected="true"
-        aria-controls="tab-panel-achievements">
-        <span class="bx--content-switcher__label">Achievements</span>
-      </button>
-      <button
-        id="switch-shared-plexes"
-        class="bx--content-switcher-btn"
-        data-target="tab-panel-shared-plexes"
-        role="tab"
-        type="button"
-        aria-selected="false"
-        aria-controls="tab-panel-shared-plexes">
-        <span class="bx--content-switcher__label">Shared Plexes</span>
-      </button>
-      <button
         id="switch-stats"
         class="bx--content-switcher-btn"
         data-target="tab-panel-stats"
@@ -129,6 +109,26 @@
         aria-controls="tab-panel-users"
         style="display: none;">
         <span class="bx--content-switcher__label">Users</span>
+      </button>
+      <button
+        id="switch-achievements"
+        class="bx--content-switcher-btn bx--content-switcher--selected"
+        data-target="tab-panel-achievements"
+        role="tab"
+        type="button"
+        aria-selected="true"
+        aria-controls="tab-panel-achievements">
+        <span class="bx--content-switcher__label">Achievements</span>
+      </button>
+      <button
+        id="switch-shared-plexes"
+        class="bx--content-switcher-btn"
+        data-target="tab-panel-shared-plexes"
+        role="tab"
+        type="button"
+        aria-selected="false"
+        aria-controls="tab-panel-shared-plexes">
+        <span class="bx--content-switcher__label">Shared Plexes</span>
       </button>
     </div>
 
@@ -1655,6 +1655,12 @@ function loadAdminStats() {
 
   $('#switch-stats').show();
   $('#switch-users').show();
+
+  // Make Stats the active tab for admin
+  $('.bx--content-switcher-btn').removeClass('bx--content-switcher--selected').attr('aria-selected', 'false');
+  $('#switch-stats').addClass('bx--content-switcher--selected').attr('aria-selected', 'true');
+  $('#tab-panel-achievements, #tab-panel-shared-plexes, #tab-panel-users').attr('hidden', true);
+  $('#tab-panel-stats').removeAttr('hidden');
 
   $.ajax({
     url: 'https://api.pedalplex.com/ADMIN_DASHBOARD_STATS.php',
