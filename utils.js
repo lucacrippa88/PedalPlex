@@ -2343,7 +2343,7 @@ async function triggerGuestStatsPing(force = false) {
     const lastPing     = parseInt(localStorage.getItem('guest_stats_last_ping')     || '0', 10);
     const lastVersion  = parseInt(localStorage.getItem('guest_stats_ping_version')  || '0', 10);
     const PING_VERSION = 2; // bump when the payload schema changes (forces re-ping)
-    const cooldown     = 24 * 60 * 60 * 1000; // 24 hours
+    const cooldown     = 60 * 60 * 1000; // 1 hour
 
     // Re-ping immediately if the stored version is older than PING_VERSION,
     // otherwise respect the 24-hour cooldown.
