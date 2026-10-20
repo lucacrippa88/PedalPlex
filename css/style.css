@@ -157,6 +157,7 @@ header {
 .menu-morph {
   position: relative;
   display: inline-block;
+  vertical-align: bottom;
   width: 25px;
   height: 25px;
 }
