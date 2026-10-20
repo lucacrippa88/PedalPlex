@@ -10,7 +10,7 @@ function renderNavBar(userRole = "guest") {
     <header style="display: flex; align-items: center; justify-content: space-between; padding: 1rem;">
       <div style="display: flex; align-items: center; gap: 1rem;">
         <button class="menu-toggle" id="menuToggle" aria-label="Open menu" style="background:none; border:none; cursor:pointer;">
-          <svg class="menu-icon" focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 6H28V8H4zM4 24H28V26H4zM4 12H28V14H4zM4 18H28V20H4z"></path></svg>
+          <span class="menu-morph" aria-hidden="true"><i class="menu-morph__ham"></i><i class="menu-morph__logo"></i></span>
         </button>
 
         <div class="title">PedalPlex</div>

@@ -257,7 +257,7 @@ window.allPedalboards = [];
  *  - the current rig has at least one pedal, AND
  *  - the rig has no plexes at all, OR at least one plex has no saved controls
  * Works for both guest and logged-in users.
- * Only fires once per session (flag stored in sessionStorage).
+ * Fires at most once per board, ever (flag stored in localStorage).
  */
 function _maybeAutoExplore() {
   const pedals = window.pedalboard?.pedals || [];
@@ -265,9 +265,11 @@ function _maybeAutoExplore() {
 
   const boardId = window.pedalboard?._id || 'guest_board';
 
-  // Guard: fire at most once per board per page load (not per session,
-  // so switching rigs or reloading re-evaluates correctly).
+  // Guard: fire at most once per board, persisted across reloads.
   const flagKey = '_autoExploreDone_' + boardId;
+  try {
+    if (localStorage.getItem(flagKey)) return;
+  } catch (e) { /* localStorage unavailable: fall back to in-memory flag */ }
   if (window[flagKey]) return;
 
   // Use presetMap (always up-to-date after fetchPresetsByBoardId) with fallback to presets array
@@ -286,6 +288,7 @@ function _maybeAutoExplore() {
   if (!shouldTrigger) return;
 
   window[flagKey] = true;
+  try { localStorage.setItem(flagKey, '1'); } catch (e) {}
 
   if (typeof openExploreModal === 'function') {
     openExploreModal();
