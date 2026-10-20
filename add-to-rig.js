@@ -179,6 +179,7 @@ async function addPedalToRig(pedalId) {
       const boards = JSON.parse(localStorage.getItem('guestPedalboard'));
       boards[0].pedals.push({ pedal_id: pedalId, rotation: 0, row: 1 });
       localStorage.setItem('guestPedalboard', JSON.stringify(boards));
+      if (typeof recordGuestEvent === 'function') recordGuestEvent('gear_added');
     }
 
     if (mode === 'logged') {
@@ -203,5 +204,6 @@ async function addPedalToRig(pedalId) {
 $('#addToRig').on('click', function (e) {
   e.preventDefault();
   if (!selectedPedalId) return;
+  if (typeof recordGuestEvent === 'function') recordGuestEvent('add_gear_click');
   addPedalToRig(selectedPedalId);
 });
