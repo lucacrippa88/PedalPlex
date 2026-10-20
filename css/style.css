@@ -153,6 +153,48 @@ header {
   border: none;
   cursor: pointer;
 }
+/* Hamburger -> PedalPlex logo morph on hover */
+.menu-morph {
+  position: relative;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+}
+.menu-morph__ham,
+.menu-morph__logo {
+  position: absolute;
+  inset: 0;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-position: center;
+  -webkit-mask-position: center;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.menu-morph__ham {
+  mask-image: url('../logos/hamburger.png');
+  -webkit-mask-image: url('../logos/hamburger.png');
+  background: white;
+  opacity: 1;
+}
+.menu-morph__logo {
+  mask-image: url('../logos/pedalplex_logo_white.png');
+  -webkit-mask-image: url('../logos/pedalplex_logo_white.png');
+  background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
+  opacity: 0;
+  transform: scale(0.7) rotate(-20deg);
+}
+.menu-toggle:hover .menu-morph__ham,
+.menu-toggle:focus-visible .menu-morph__ham {
+  opacity: 0;
+  transform: scale(0.7) rotate(20deg);
+}
+.menu-toggle:hover .menu-morph__logo,
+.menu-toggle:focus-visible .menu-morph__logo {
+  opacity: 1;
+  transform: none;
+}
 .menu-icon, .close-icon {
   width: 24px;
   height: 24px;
