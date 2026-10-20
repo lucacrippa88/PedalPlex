@@ -1013,17 +1013,6 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     display: none;
   }
 
-  /* Tour / preset toasts: anchored to the bottom, full width on mobile */
-  #pp-tour-nudge,
-  #pp-preset-nudge {
-    top: auto;
-    bottom: 1rem;
-    left: 0.75rem;
-    right: 0.75rem;
-    min-width: 0;
-    max-width: none;
-  }
-
   #togglePassword {
     position: absolute; right: 25px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;
   }
@@ -2059,4 +2048,18 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 .pp-tour-nudge-close:hover {
   color: #f4f4f4;
+}
+
+/* Tour / preset toasts: anchored to the bottom, full width on mobile.
+   Must stay AFTER the base #pp-tour-nudge rule to override top/right/min/max. */
+@media (max-width: 768px) {
+  #pp-tour-nudge,
+  #pp-preset-nudge {
+    top: auto;
+    bottom: 1rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    min-width: 0;
+    max-width: none;
+  }
 }
