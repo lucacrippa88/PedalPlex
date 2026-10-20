@@ -49,6 +49,9 @@
 
   let dragStartPos = null;
   const DRAG_THRESHOLD = 6;
+  // Touch: il drag parte solo dopo una pressione prolungata (evita drag accidentali durante lo scroll)
+  const LONG_PRESS_MS = 350;
+  const LONG_PRESS_MOVE_TOLERANCE = 10;
 
   function injectCSS() {
     if (document.getElementById('pedalboard-dnd-slots-css')) return;
@@ -73,6 +76,22 @@
 .pedal-wrapper, .pedal-catalog {
   transition: transform 160ms ease, box-shadow 120ms ease;
   will-change: transform;
+}
+@media (pointer: coarse) {
+  #pedalboard .pedal-wrapper, #pedalboard .pedal-catalog {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+#dnd-touch-hint {
+  display: none;
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: #8d8d8d;
+}
+@media (pointer: coarse) {
+  #dnd-touch-hint { display: block; }
 }
 `;
     document.head.appendChild(s);
@@ -204,12 +223,60 @@
     // FIX 1: gli slot vuoti non avviano il drag
     if (candidate.dataset.emptySlot) return;
 
+    // Touch: serve una pressione prolungata per iniziare il drag
+    if (e.pointerType === 'touch') {
+      startTouchHold(e, candidate);
+      return;
+    }
+
   // NON usiamo setPointerCapture qui: catturerebbe tutti i pointermove
   // impedendo al threshold check di riceverli su document.
     dragStartPos = { x: e.clientX, y: e.clientY, el: candidate, target: e.target, pointerId: e.pointerId };
 
     document.addEventListener('pointermove', onPointerMoveStart, { passive: false });
     document.addEventListener('pointerup', onPointerUpClick, { passive: false });
+  }
+
+  function startTouchHold(e, candidate) {
+    const pointerId = e.pointerId;
+    const startX = e.clientX;
+    const startY = e.clientY;
+    dragStartPos = { x: startX, y: startY, el: candidate, target: e.target, pointerId };
+
+    const cleanup = () => {
+      clearTimeout(timer);
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onEnd);
+      document.removeEventListener('pointercancel', onCancel);
+    };
+    // Dito che si sposta prima del timeout = scroll: nessun drag
+    const onMove = (ev) => {
+      if (ev.pointerId !== pointerId) return;
+      if (Math.hypot(ev.clientX - startX, ev.clientY - startY) > LONG_PRESS_MOVE_TOLERANCE) {
+        cleanup();
+        dragStartPos = null;
+      }
+    };
+    // Tap breve: comportamento di click invariato
+    const onEnd = (ev) => {
+      if (ev.pointerId !== pointerId) return;
+      cleanup();
+      onPointerUpClick(ev);
+    };
+    const onCancel = () => { cleanup(); dragStartPos = null; };
+
+    const timer = setTimeout(() => {
+      cleanup();
+      const s = dragStartPos;
+      dragStartPos = null;
+      if (!s) return;
+      if (navigator.vibrate) { try { navigator.vibrate(20); } catch (_) {} }
+      onPointerDownStartDrag({ pointerId: s.pointerId, clientX: s.x, clientY: s.y }, s.el, s.pointerId);
+    }, LONG_PRESS_MS);
+
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onEnd);
+    document.addEventListener('pointercancel', onCancel);
   }
 
   function onPointerMoveStart(e) {
@@ -268,6 +335,7 @@
 
     document.addEventListener('pointermove', onPointerMove, { passive: false });
     document.addEventListener('pointerup', onPointerUp);
+    document.addEventListener('pointercancel', onPointerUp);
   }
 
   function onPointerMove(e) {
@@ -311,6 +379,8 @@
 
     document.removeEventListener('pointermove', onPointerMove);
     document.removeEventListener('pointerup', onPointerUp);
+    document.removeEventListener('pointercancel', onPointerUp);
+
 
     if (!state.placeholder || !state.placeholder.parentElement) {
       restoreDraggedElement();
@@ -447,6 +517,23 @@
     if (!board) return;
     board.removeEventListener('pointerdown', onPointerDown);
     board.addEventListener('pointerdown', onPointerDown, { passive: false });
+
+    // Touch: durante il drag attivo blocca lo scroll della pagina
+    document.addEventListener('touchmove', (ev) => {
+      if (state.isDragging && ev.cancelable) ev.preventDefault();
+    }, { passive: false });
+    // Touch: niente menu contestuale sulla pressione prolungata dei gear
+    board.addEventListener('contextmenu', (ev) => {
+      if (window.matchMedia('(pointer: coarse)').matches) ev.preventDefault();
+    });
+
+    // Avviso (solo dispositivi touch, via CSS)
+    if (!document.getElementById('dnd-touch-hint') && board.parentNode) {
+      const hint = document.createElement('p');
+      hint.id = 'dnd-touch-hint';
+      hint.textContent = 'Tip: press and hold a gear to move it.';
+      board.parentNode.insertBefore(hint, board);
+    }
     const mo = new MutationObserver(() => ensureRows());
     mo.observe(board, { childList: true, subtree: true });
   }
