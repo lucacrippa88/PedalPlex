@@ -959,14 +959,16 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     margin-left: 0;
   }
 
-  /* Rigs page: "Go to Presets" must stay reachable on mobile → wrap on its own row */
+  /* Rigs page: "Presets" button must stay reachable on mobile (short label, wraps if needed) */
   #pedalboard-controls {
     flex-wrap: wrap;
   }
   #viewPreset {
-    flex: 1 1 100%;
-    max-width: none;
-    margin-left: 0 !important;
+    flex: 0 0 auto;
+    margin-left: auto !important;
+  }
+  #viewPreset .viewPreset-prefix {
+    display: none;
   }
 
   /* Tour / preset toasts: anchored to the bottom, full width on mobile */
