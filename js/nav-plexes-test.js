@@ -141,8 +141,8 @@ function initNavPreset() {
           <button class="pp-action-item" data-action="renamePreset">${SVG.editPreset} <span>Edit Plex</span></button>
           <button class="pp-action-item" data-action="addFolder">${SVG.addFolder} <span>Add Folder</span></button>
           <div class="pp-action-separator"></div>
-          <button class="pp-action-item" data-action="share">${SVG.share} <span>Share</span></button>
-          <button class="pp-action-item" data-action="lock">${SVG.lock} <span>Lock Plex</span></button>
+          <button class="pp-action-item" id="pp-action-share" data-action="share">${SVG.share} <span>Share</span></button>
+          <button class="pp-action-item" id="pp-action-lock"  data-action="lock">${SVG.lock}  <span>Lock Plex</span></button>
           <button class="pp-action-item" data-action="download">${SVG.download} <span>Download</span></button>
           <div class="pp-action-separator"></div>
           <a class="pp-action-item" href="rigs">${SVG.manageRigs} <span>Manage Rigs</span></a>
@@ -212,11 +212,40 @@ function initNavPreset() {
     }
   });
 
+  // ── Aggiorna icone Share / Lock nel dropdown ───────────────────────────────
+  function updateActionsState() {
+    const presetId = document.getElementById('presetSelect')?.value;
+    if (!presetId) return;
+
+    // ── Lock state ─────────────────────────────────────────────────────────
+    const isLocked = typeof getPlexLockStatus === 'function' && getPlexLockStatus(presetId);
+    const lockBtn  = document.getElementById('pp-action-lock');
+    if (lockBtn) {
+      const lockSvgLocked = `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M24,14H22V10a6,6,0,0,0-12,0v4H8a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V16A2,2,0,0,0,24,14ZM12,10a4,4,0,0,1,8,0v4H12ZM24,28H8V16H24Z"></path><circle cx="16" cy="22" r="2"></circle></svg>`;
+      const lockSvgOpen   = `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M24,14H10V10a6,6,0,0,1,12,0v1h2V10A8,8,0,0,0,8,10v4H8a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V16A2,2,0,0,0,24,14ZM8,28V16H24V28Z"></path><circle cx="16" cy="22" r="2"></circle></svg>`;
+      lockBtn.innerHTML   = `${isLocked ? lockSvgLocked : lockSvgOpen} <span>${isLocked ? 'Locked — click to unlock' : 'Lock Plex'}</span>`;
+      lockBtn.style.color = isLocked ? '#9C54D5' : '';
+    }
+
+    // ── Share state ────────────────────────────────────────────────────────
+    const preset   = window.presetMap?.[presetId];
+    const isShared = Boolean(preset?.shared);
+    const shareBtn = document.getElementById('pp-action-share');
+    if (shareBtn) {
+      const shareSvgActive = `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M23,20a5,5,0,0,0-3.89,1.89L11.8,17.32a4.46,4.46,0,0,0,0-2.64l7.31-4.57A5,5,0,1,0,18,7a4.79,4.79,0,0,0,.2,1.32l-7.31,4.57a5,5,0,1,0,0,6.22l7.31,4.57A4.79,4.79,0,0,0,18,25a5,5,0,1,0,5-5Z"/></svg>`;
+      shareBtn.innerHTML   = `${shareSvgActive} <span>${isShared ? 'Shared — manage' : 'Share'}</span>`;
+      shareBtn.style.color = isShared ? '#5EE2F0' : '';
+    }
+  }
+
   // ── Toggle dropdown ────────────────────────────────────────────────────────
   $(document).on('click', '#pp-actions-btn, #pp-actions-btn-mobile', function (e) {
     e.stopPropagation();
     const menu = document.getElementById('pp-actions-menu');
-    if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+    if (!menu) return;
+    const opening = menu.style.display === 'none';
+    menu.style.display = opening ? 'block' : 'none';
+    if (opening) updateActionsState();
   });
 
   // Close on outside click
@@ -226,6 +255,26 @@ function initNavPreset() {
       if (menu) menu.style.display = 'none';
     }
   });
+
+  // Esposta globalmente così plexes-share.js o altri moduli possono aggiornarla
+  window.updateActionsMenuState = updateActionsState;
+
+  // Aggiorna quando cambia il preset selezionato
+  $(document).on('change', '#presetSelect', function () {
+    // piccolo delay per lasciare che presetMap venga aggiornato dalla logica di plexes.js
+    setTimeout(updateActionsState, 100);
+  });
+
+  // Osserva sparizione del container Swal e aggiorna lo stato del dropdown
+  function _refreshOnSwalClose() {
+    const observer = new MutationObserver(() => {
+      if (!document.querySelector('.swal2-container')) {
+        observer.disconnect();
+        updateActionsState();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
 
   // ── Actions dispatch ───────────────────────────────────────────────────────
   $(document).on('click', '.pp-action-item[data-action]', function () {
@@ -238,8 +287,14 @@ function initNavPreset() {
       case 'newTone':       document.getElementById('createPstBtn')?.click();    break;
       case 'renamePreset':  document.getElementById('renamePresetBtn')?.click(); break;
       case 'addFolder':     document.getElementById('addFolderBtn')?.click();    break;
-      case 'share':         document.getElementById('sharePresetBtn')?.click();  break;
-      case 'lock':          document.getElementById('lockPresetBtn')?.click();   break;
+      case 'share':
+        document.getElementById('sharePresetBtn')?.click();
+        _refreshOnSwalClose();
+        break;
+      case 'lock':
+        document.getElementById('lockPresetBtn')?.click();
+        _refreshOnSwalClose();
+        break;
       case 'download':      document.getElementById('downloadPlexBtn')?.click(); break;
       case 'tour':
         if (typeof window.startTour === 'function') window.startTour(0);
