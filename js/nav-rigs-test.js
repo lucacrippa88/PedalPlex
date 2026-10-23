@@ -112,6 +112,8 @@ function initNavPedalboard(userRole) {
             top:calc(100% + 6px);
             right:0;
             min-width:200px;
+            width:200px;
+            overflow:hidden;
             background:rgb(30,30,30);
             border:1px solid #9C54D5;
             border-radius:8px;
