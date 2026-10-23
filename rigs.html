@@ -260,10 +260,12 @@
         window._emptySlotRow = row;
         window._emptySlotInsertAt = (insertAt !== undefined) ? insertAt : null;
         window._emptySlotCategory = (row === 2) ? AMP_CATEGORIES : null;
-        // Svuota il dropdown così toggleFilterBtn chiama sempre fetchAndRenderPedals
+        // Svuota il dropdown così da ricaricare/filtrare correttamente
         var dd = document.getElementById('pedalAddDropdownContainer');
         if (dd) { dd.innerHTML = ''; dd.style.display = 'none'; }
-        $("#toggleFilterBtn").trigger("click");
+        if (typeof window.openPedalSearch === 'function') {
+          window.openPedalSearch();
+        }
       }
 
       function makeSlot(w, h, row, insertAt, label, isFirstFocus) {
@@ -314,30 +316,11 @@
           var banner = document.createElement('div');
           banner.className = 'rig-empty-banner';
           banner.innerHTML = [
-            '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">',
-              '<div>',
-                '<h3 style="margin:0 0 0.25rem 0; font-size:1.15rem; font-weight:600; color:#ffffff;">Build your first pedalboard</h3>',
-                '<p style="margin:0; font-size:0.875rem; color:#c6c6c6; line-height:1.4; max-width:540px;">',
-                  'Click an empty slot below to choose your first pedal and arrange your signal chain. No account needed to get started.',
-                '</p>',
-              '</div>',
-              '<button id="emptyStateAddPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" style="display:inline-flex; align-items:center; gap:0.4rem; flex-shrink:0;">',
-                '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">',
-                  '<path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/>',
-                '</svg>',
-                'Add your first pedal',
-              '</button>',
-            '</div>'
+            '<h3 style="margin:0 0 0.25rem 0; font-size:1.15rem; font-weight:600; color:#ffffff;">Build your first pedalboard</h3>',
+            '<p style="margin:0; font-size:0.875rem; color:#c6c6c6; line-height:1.45; max-width:620px;">',
+              'Click an empty slot below to choose your first pedal and arrange your signal chain. No account needed to get started.',
+            '</p>'
           ].join('');
-
-          var addBtn = banner.querySelector('#emptyStateAddPedalBtn');
-          if (addBtn) {
-            addBtn.addEventListener('click', function (e) {
-              e.stopPropagation();
-              var firstSlot = container.querySelector('.first-empty-slot');
-              openSearch(1, 0, firstSlot);
-            });
-          }
           container.appendChild(banner);
         }
 
@@ -420,7 +403,7 @@
             } else {
               var isFirstFocus = (isRigEmpty && rowNum === 1 && i === 0);
               var slotLabel = isAmpRow
-                ? 'Add amplifier or cab'
+                ? 'Add amplifier (cabs coming soon!)'
                 : (isFirstFocus ? 'Add your first pedal' : 'Add pedal');
 
               // insertAt = indice assoluto in allPedals dove fare splice

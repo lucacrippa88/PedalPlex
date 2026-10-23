@@ -19,16 +19,6 @@ function initNavPedalboard(userRole) {
           Add Gear
         </button>
 
-        <!-- Hide by default -->
-        <button id="toggleFilterBtn" class="showBoth" aria-label="Toggle search" 
-                style="background:none; border:none; cursor:pointer; padding:4px; display:none;">
-          <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-              viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-              <circle cx="11" cy="11" r="7"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-        </button>
-
         <input type="text"
                id="pedalFilterInput"
                placeholder="Search pedals..."
@@ -85,22 +75,9 @@ function initNavPedalboard(userRole) {
   });
 
 
-  $("#toggleFilterBtn").on("click", function (e) {
-    e.stopPropagation();
-    const $input = $("#pedalFilterInput");
-    $input.show().focus();
-    const dropdown = getOrCreateDropdown();
-    if (dropdown.children.length > 0) {
-      dropdown.style.display = "block";
-      positionDropdown();
-    } else {
-      fetchAndRenderPedals($input.val().trim());
-    }
-  });
-
   $("#addGearsTrigger").on("click", function (e) {
     e.stopPropagation();
-    $("#toggleFilterBtn").trigger("click");
+    window.openPedalSearch();
   });
 
   $("#tourTriggerBtn").on("click", function () {
@@ -435,11 +412,17 @@ function initNavPedalboard(userRole) {
     }
   }
 
-  // Expose search for external callers (e.g. empty-state + button in rigs-test)
+  // Expose search for external callers
   window.openPedalSearch = function () {
     const $input = $('#pedalFilterInput');
     $input.show().focus();
-    fetchAndRenderPedals($input.val().trim());
+    const dropdown = getOrCreateDropdown();
+    if (dropdown.children.length > 0) {
+      dropdown.style.display = 'block';
+      positionDropdown();
+    } else {
+      fetchAndRenderPedals($input.val().trim());
+    }
   };
 
   // Event listener input with debounce
@@ -451,13 +434,11 @@ function initNavPedalboard(userRole) {
   document.addEventListener("click", function (event) {
     const input = document.getElementById("pedalFilterInput");
     const dropdown = document.getElementById("pedalAddDropdownContainer");
-    const toggleBtn = document.getElementById("toggleFilterBtn");
     const addGearsTrigger = document.getElementById("addGearsTrigger");
 
     if (
       (input && input.contains(event.target)) ||
       (dropdown && dropdown.contains(event.target)) ||
-      (toggleBtn && toggleBtn.contains(event.target)) ||
       (addGearsTrigger && addGearsTrigger.contains(event.target))
     ) {
       return;
@@ -476,9 +457,8 @@ function initNavPedalboard(userRole) {
 
 
 
-  // Always show filter so positionDropdown() can read real coordinates
   function updateFilterVisibility() {
-    $("#toggleFilterBtn").show();
+    // Kept for backward compatibility
   }
 
   // Dinamically update CTA hierarchy based on pedal count
@@ -542,7 +522,7 @@ function initNavPedalboard(userRole) {
       <button id="loginBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Login" title="Login">
         ${loginSvg}
       </button>`;
-    $("#toggleFilterBtn").after(loginBtnHtml);
+    $("#addGearsTrigger").after(loginBtnHtml);
     $("#loginBtn").before($("#pedalFilterInput"));
     $("#loginBtn, #loginBtnMobile").on("click", () => window.location.href = "login");
   } else {
