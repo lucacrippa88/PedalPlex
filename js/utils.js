@@ -1599,7 +1599,14 @@ async function renderFullPedalboard(pedalboardOverride = null) {
         rowsMap[rowNum].push(pbPedal);
       });
 
-      const sortedRows = Object.keys(rowsMap).map(r => parseInt(r, 10)).sort((a, b) => a - b);
+      // row 2 è sempre l'amp — va resa per ultima, indipendentemente dal numero
+      const sortedRows = Object.keys(rowsMap)
+        .map(r => parseInt(r, 10))
+        .sort((a, b) => {
+          if (a === 2) return 1;
+          if (b === 2) return -1;
+          return a - b;
+        });
 
       for (const rowNum of sortedRows) {
         const rowDiv = document.createElement('div');
