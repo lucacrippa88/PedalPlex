@@ -154,7 +154,7 @@ async function checkAndAwardAllBadges() {
         method: 'GET',
         headers: { 'Authorization': 'Bearer ' + token }
       }),
-      fetch('badges.json'),
+      fetch('json/badges.json'),
       fetch('https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php', {
         method: 'POST',
         headers: {

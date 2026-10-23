@@ -536,7 +536,7 @@
   }
 
   function loadPublicBadges(userBadges, userStats) {
-    $.getJSON('badges.json', function(badgeConfig) {
+    $.getJSON('json/badges.json', function(badgeConfig) {
       displayPublicBadges(userBadges, badgeConfig.badges, userStats);
     }).fail(function() {
       displayNoBadges('Unable to load badge information');
@@ -913,7 +913,7 @@ function loadUserBadges() {
           console.log('User badges:', userBadges);
           
           // Load badge definitions from badges.json
-          $.getJSON('badges.json', function(badgeConfig) {
+          $.getJSON('json/badges.json', function(badgeConfig) {
             console.log('Badge config loaded:', badgeConfig);
             displayBadges(userBadges, badgeConfig.badges, userStats);
           }).fail(function(jqxhr, textStatus, error) {
@@ -938,7 +938,7 @@ function loadUserBadges() {
         headers: { 'Authorization': 'Bearer ' + token },
         success: function(userData) {
           const userBadges = userData.badges || [];
-          $.getJSON('badges.json', function(badgeConfig) {
+          $.getJSON('json/badges.json', function(badgeConfig) {
             displayBadges(userBadges, badgeConfig.badges, {});
           }).fail(function(jqxhr, textStatus, error) {
             displayNoBadges('Unable to load badge information');
