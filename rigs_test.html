@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PedalPlex</title>
+  <link rel="icon" href="logos/pedalplex_logo_gradient.png" type="image/x-icon">
+  <link rel="stylesheet" href="css/carbon-components.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script src="/js/ga-loader.js"></script>
+
+  <style>
+    .pedal-catalog {
+      outline: 2px dashed #666;   /* dashed border around the pedal */
+      outline-offset: 2px;        /* space between pedal and dashed line */
+      position: relative;
+    }
+    /* dashed overlay */
+    .pedal-catalog::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image: 
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 4px,
+          rgba(0,0,0,0.2) 4px,
+          rgba(0,0,0,0.2) 8px
+        );
+      z-index: 10;
+      pointer-events: auto; /* overlay receives events */
+    }
+
+    /* Make overlay ignore clicks for the pedal div itself, but block children */
+    .pedal-catalog > * {
+      pointer-events: none; /* children cannot receive pointer events */
+    }
+
+    #pedalboard-controls {
+      display: flex !important;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* Drag and drop style */
+    .dnd-placeholder {
+      box-sizing: border-box;
+      border: 2px dashed rgba(0,0,0,0.2);
+      border-radius: 6px;
+      margin: 0 6px;
+      background: rgba(0,0,0,0.02);
+      flex: 0 0 auto;
+    }
+    .dnd-ghost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      opacity: 0.95;
+    }
+    .pedal-wrapper,
+    .pedal-catalog {
+      transition: transform 180ms ease, box-shadow 120ms ease;
+      will-change: transform;
+    }
+    .pedal-wrapper.dnd-dragging,
+    .pedal-catalog.dnd-dragging {
+      opacity: 0.85;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+      transform-origin: center center;
+    }
+
+    .pedalboard-dnd-placeholder {
+      box-sizing: border-box;
+      border: 3px dashed rgba(50,50,200,0.7);
+      border-radius: 8px;
+      background: rgba(50,50,200,0.1);
+      margin: 0 8px;
+      flex: 0 0 auto;
+      transition: height 100ms ease, width 100ms ease;
+    }
+
+    /* Empty state onboarding banner */
+    .rig-empty-banner {
+      background: linear-gradient(135deg, rgba(105, 41, 196, 0.18) 0%, rgba(15, 98, 254, 0.1) 100%);
+      border: 1px solid rgba(142, 68, 240, 0.4);
+      border-radius: 8px;
+      padding: 1.15rem 1.4rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Pedal empty slot styles */
+    .pedal-empty-slot {
+      border: 2px dashed #666;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      gap: 6px;
+      color: #999;
+      font-size: 0.78rem;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.02);
+      transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+      user-select: none;
+    }
+
+    .pedal-empty-slot:hover {
+      border-color: #a8a8a8;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-2px);
+    }
+
+    /* Highlighted first slot when rig is empty */
+    .pedal-empty-slot.first-empty-slot {
+      border: 2px dashed #8a3ffc;
+      background: rgba(142, 68, 240, 0.08);
+      color: #e0d0fc;
+      box-shadow: 0 0 16px rgba(142, 68, 240, 0.16);
+    }
+
+    .pedal-empty-slot.first-empty-slot:hover {
+      border-color: #a78bdc;
+      background: rgba(142, 68, 240, 0.16);
+      color: #ffffff;
+      box-shadow: 0 0 22px rgba(142, 68, 240, 0.32);
+      transform: translateY(-2px);
+    }
+
+    /* Active slot state during search */
+    .pedal-empty-slot.active-slot {
+      border: 2px solid #6929c4 !important;
+      color: #a78bdc !important;
+      background: rgba(105, 41, 196, 0.15) !important;
+      box-shadow: 0 0 18px rgba(105, 41, 196, 0.35) !important;
+    }
+
+    /* Subtle state for CTA when rig is empty */
+    .rig-cta-subtle {
+      opacity: 0.55;
+      transition: opacity 0.2s ease;
+    }
+    .rig-cta-subtle:hover {
+      opacity: 0.85;
+    }
+
+  </style>
+</head>
+<body>
+
+
+    <div class="bx--loading-overlay" id="pageLoader" style="display:none;">
+      <div class="bx--loading" role="status">
+        <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+          <circle class="bx--loading__background" cx="0" cy="0" r="37.5"/>
+          <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/>
+        </svg>
+      </div>
+    </div>
+
+
+
+  <!-- Zoom spinner -->
+  <div id="zoomSpinner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; background: rgba(255,255,255,0.7); padding: 1rem; border-radius: 8px;">
+    <div class="bx--loading bx--loading--small" role="alert" aria-live="assertive" aria-label="Loading">
+      <svg class="bx--loading__svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+        <circle class="bx--loading__background" cx="50" cy="50" r="44" stroke-width="8"></circle>
+        <circle class="bx--loading__stroke" cx="50" cy="50" r="44" stroke-width="8"></circle>
+      </svg>
+    </div>
+  </div>
+  
+  <div id="page-content">
+
+    <div id="pedalAddDropdownContainer"></div>
+      <div id="pedalboard-controls" style="display: none; align-items: center; gap: 8px; width: 100%;">
+        <select id="pedalboardSelect"></select>
+        <button id="renameBoardBtn" class="bx--btn bx--btn--secondary" type="button">Edit
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M3,10V22a2.002,2.002,0,0,0,2,2H27a2.0023,2.0023,0,0,0,2-2V10a2.0027,2.0027,0,0,0-2-2H5A2.0023,2.0023,0,0,0,3,10Zm2,0,2,0V22H5ZM27,22H9V10H27Z"/>
+          </svg>   
+        </button>   
+        <!-- <a id="viewPreset" href="plexes" class="showDesktop bx--btn bx--btn--tertiary" type="button" style="margin-left: auto!important;">Go to Plexes
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/>
+          </svg>   
+        </a>   -->
+        <a id="viewPreset" href="plexes" class="bx--btn bx--btn--tertiary" type="button" style="display:none!important; margin-left: auto!important;"><span class="viewPreset-prefix">Save your&nbsp;</span>Plexes
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/>
+          </svg>   
+        </a> 
+      </div>
+
+      <br><br>
+
+      <div id="pedalboard"></div>
+      <br><br><br><br>
+
+
+    <!-- Load scripts after content is visible -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/labels.js"></script>
+    <script src="js/helpers.js"></script>
+    <script src="js/unsaved-guard.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/subplexes.js"></script>
+    <script src="js/rigs.js"></script>
+    <script src="js/fullscreen-menu.js"></script>
+    <script src="js/nav-rigs-test.js"></script>
+    <script src="js/rigs-dnd-slots.js"></script>
+    <script src="js/add-to-rig.js"></script>
+    <script src="js/rigs-pending-add.js"></script>
+    <script src="js/tour.js"></script>
+    <script>
+    (function () {
+      // Dimensioni da helpers.js: standard=190x160, xlarge=400x160
+      var PEDAL_W = 190, PEDAL_H = 160;
+      var AMP_W   = 400, AMP_H   = 160;
+
+      var AMP_CATEGORIES = ['amp simulator','cab simulator','combo','frfr','head','ir loader','power amp','preamp'];
+      var _activeSlot = null;
+
+      window.deactivateSlot = function deactivateSlot() {
+        if (_activeSlot) {
+          _activeSlot.classList.remove('active-slot');
+          _activeSlot = null;
+        }
+      }
+
+      function activateSlot(el) {
+        deactivateSlot();
+        if (!el) return;
+        _activeSlot = el;
+        el.classList.add('active-slot');
+      }
+
+      // Deattiva lo slot quando il dropdown viene chiuso dall'esterno
+      // (skippa il click corrente che ha appena aperto lo slot)
+      var _skipNextDeactivate = false;
+      document.addEventListener('click', function () {
+        if (_skipNextDeactivate) { _skipNextDeactivate = false; return; }
+        deactivateSlot();
+      });
+
+      function openSearch(row, insertAt, slotEl) {
+        _skipNextDeactivate = true;
+        if (slotEl) activateSlot(slotEl);
+        window._emptySlotRow = row;
+        window._emptySlotInsertAt = (insertAt !== undefined) ? insertAt : null;
+        window._emptySlotCategory = (row === 2) ? AMP_CATEGORIES : null;
+        // Svuota il dropdown così da ricaricare/filtrare correttamente
+        var dd = document.getElementById('pedalAddDropdownContainer');
+        if (dd) { dd.innerHTML = ''; dd.style.display = 'none'; }
+        if (typeof window.openPedalSearch === 'function') {
+          window.openPedalSearch();
+        }
+      }
+
+      function makeSlot(w, h, row, insertAt, label, isFirstFocus) {
+        var el = document.createElement('div');
+        el.className = 'pedal-empty-slot' + (isFirstFocus ? ' first-empty-slot' : '');
+        el.style.width = w + 'px';
+        el.style.height = h + 'px';
+
+        var plusSize = isFirstFocus ? '1.8rem' : '1.4rem';
+        var labelHtml = label ? '<span style="pointer-events:none;letter-spacing:0.02em;' + (isFirstFocus ? 'font-weight:600;font-size:0.82rem;' : '') + '">' + label + '</span>' : '';
+
+        el.innerHTML = '<span style="font-size:' + plusSize + ';line-height:1;font-weight:300;pointer-events:none;margin-bottom:2px;">+</span>' + labelHtml;
+
+        el.addEventListener('click', function (e) {
+          e.stopPropagation();
+          openSearch(row, insertAt, el);
+        });
+        return el;
+      }
+
+      // Sostituisce completamente renderPedalboard con versione a slot fissi
+      window.renderPedalboard = function () {
+        window.PPUnsaved && window.PPUnsaved.captureRigBaseline && window.PPUnsaved.captureRigBaseline();
+
+        var container = document.getElementById('pedalboard');
+        if (!container) return;
+        container.innerHTML = '';
+
+        var allPedals = (window.pedalboard && Array.isArray(window.pedalboard.pedals))
+                        ? window.pedalboard.pedals : [];
+
+        var isRigEmpty = (allPedals.length === 0);
+
+        // Aggiorna stato visivo CTA
+        if (typeof window.updateRigsCTAState === 'function') {
+          window.updateRigsCTAState(allPedals.length);
+        } else {
+          var $viewPreset = $('#viewPreset');
+          if (isRigEmpty) {
+            $viewPreset.addClass('rig-cta-subtle');
+          } else {
+            $viewPreset.removeClass('rig-cta-subtle');
+          }
+        }
+
+        // Empty state onboarding banner se la pedaliera non ha pedali
+        if (isRigEmpty) {
+          var banner = document.createElement('div');
+          banner.className = 'rig-empty-banner';
+          banner.innerHTML = [
+            '<h3 style="margin:0 0 0.25rem 0; font-size:1.15rem; font-weight:600; color:#ffffff;">Build your first pedalboard</h3>',
+            '<p style="margin:0; font-size:0.875rem; color:#c6c6c6; line-height:1.45; max-width:620px;">',
+              'Click an empty slot below to choose your first pedal and arrange your signal chain. No account needed to get started.',
+            '</p>'
+          ].join('');
+          container.appendChild(banner);
+        }
+
+        // Raccoglie tutte le row presenti + row 1, 2 sempre visibili + extra rows aggiunte manualmente
+        var rowNums = [1, 2];
+        allPedals.forEach(function(p) {
+          var r = p.row || 1;
+          if (rowNums.indexOf(r) === -1) rowNums.push(r);
+        });
+        (window._extraRows || []).forEach(function(r) {
+          if (rowNums.indexOf(r) === -1) rowNums.push(r);
+        });
+        rowNums.sort(function(a, b){ return a - b; });
+
+        // Pedali per riga
+        var pedalsByRow = {};
+        rowNums.forEach(function(r){ pedalsByRow[r] = []; });
+        allPedals.forEach(function(p){ pedalsByRow[p.row || 1].push(p); });
+
+        // globalStart per ogni riga: indice in allPedals del primo elemento
+        var globalStarts = {};
+        rowNums.forEach(function(r) {
+          var first = pedalsByRow[r][0];
+          var idx = first ? allPedals.indexOf(first) : allPedals.length;
+          globalStarts[r] = idx >= 0 ? idx : allPedals.length;
+        });
+
+        // ── Helper: renderizza un singolo pedale ──────────────────────
+        function renderPedalWrapper(pbPedal) {
+          var pedalData = window.catalog && window.catalog.find(function(p){ return p._id === pbPedal.pedal_id; });
+          if (!pedalData) return null;
+          var $pedalEl = renderPedal(pedalData, (window.currentUser && window.currentUser.role) || 'guest', true);
+          $pedalEl.css('cursor', 'pointer');
+          $pedalEl.on('click', function(){ if (typeof openEditPedalModal === 'function') openEditPedalModal(pbPedal); });
+          var angle = pbPedal.rotation || 0;
+          var widthPx  = parseFloat(getPedalWidth(pedalData.width));
+          var heightPx = parseFloat(getPedalHeight(pedalData.height));
+          var hasRotation = angle % 180 !== 0;
+          var wrapperStyles = {
+            display: 'flex', justifyContent: 'center',
+            alignItems: hasRotation ? 'flex-start' : 'center',
+            position: 'relative', boxSizing: 'content-box', marginBottom: '20px'
+          };
+          if (hasRotation) {
+            var rad = angle * Math.PI / 180;
+            var sin = Math.abs(Math.sin(rad)), cos = Math.abs(Math.cos(rad));
+            var rW = widthPx * cos + heightPx * sin;
+            var rH = widthPx * sin + heightPx * cos;
+            Object.assign(wrapperStyles, { width: rW + 'px', height: rH + 'px',
+              marginLeft: (rW * 0.2) + 'px', marginRight: (rW * 0.2) + 'px',
+              ...(widthPx > heightPx ? { marginTop: '30px' } : {}) });
+          }
+          var $wrapper = $('<div>').css(wrapperStyles).attr('data-pedal-id', pbPedal.pedal_id);
+          $pedalEl.css({ transform: 'rotate(' + angle + 'deg)', transformOrigin: 'center center', position: 'relative' });
+          var topVal  = typeof isMobileLayout === 'function' && isMobileLayout() ? 0 : parseInt(pbPedal.vert  || 0, 10);
+          var leftVal = typeof isMobileLayout === 'function' && isMobileLayout() ? 0 : parseInt(pbPedal.horiz || 0, 10);
+          $wrapper.css({ top: topVal + 'px', left: leftVal + 'px' });
+          $wrapper.append($pedalEl);
+          return $wrapper[0];
+        }
+
+        // ── Helper: riga a slot fissi ─────────────────────────────────
+        // Usa l'ordine array come fonte di verità (non slot_pos).
+        // Struttura: [pedale0][pedale1]...[slotVuoto] con minimo minSlots totali.
+        function buildFixedRow(rowDiv, rowNum, pedalsInRow, globalStart) {
+          var isAmpRow = (rowNum === 2);
+          var w = isAmpRow ? AMP_W : PEDAL_W;
+          var h = isAmpRow ? AMP_H : PEDAL_H;
+          var minSlots  = isAmpRow ? 1 : 3;
+          // Sempre almeno un slot vuoto dopo l'ultimo pedale
+          var total = Math.max(minSlots, pedalsInRow.length + 1);
+
+          for (var i = 0; i < total; i++) {
+            if (i < pedalsInRow.length) {
+              var wrapper = renderPedalWrapper(pedalsInRow[i]);
+              if (wrapper) {
+                wrapper.classList.add('pedal-wrapper');
+                rowDiv.appendChild(wrapper);
+              }
+            } else {
+              var isFirstFocus = (isRigEmpty && rowNum === 1 && i === 0);
+              var slotLabel = isAmpRow
+                ? 'Add amplifier (cabs coming soon!)'
+                : (isFirstFocus ? 'Add your first pedal' : 'Add pedal');
+
+              // insertAt = indice assoluto in allPedals dove fare splice
+              rowDiv.appendChild(makeSlot(w, h, rowNum, globalStart + pedalsInRow.length, slotLabel, isFirstFocus));
+            }
+          }
+        }
+
+        // ── Render: prima le righe non-amp (1, 3, 4, …), poi il pulsante + Add row, poi amp ──
+        var nonAmpRows = rowNums.filter(function(r){ return r !== 2; });
+        var ampRow = 2;
+
+        // Righe pedalboard: ogni riga è [slot slot …] [× Remove row] affiancati
+        nonAmpRows.forEach(function(r) {
+          var rowWrap = document.createElement('div');
+          rowWrap.style.cssText = 'display:flex;gap:12px;margin-bottom:10px;margin-top:-12px;';
+
+          var rowDiv = document.createElement('div');
+          rowDiv.className = 'pedal-row';
+          rowDiv.dataset.row = r;
+          rowDiv.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;';
+          buildFixedRow(rowDiv, r, pedalsByRow[r], globalStarts[r]);
+          rowWrap.appendChild(rowDiv);
+
+          // "× Remove row" a destra, solo per righe > 1
+          if (r > 1) {
+            var removeBtn = document.createElement('button');
+            removeBtn.textContent = '× Remove row';
+            removeBtn.style.cssText = 'background:none;border:none;color:#555;font-size:0.7rem;cursor:pointer;padding:2px 4px;white-space:nowrap;flex-shrink:0;align-self:center;';
+            removeBtn.addEventListener('mouseenter', function(){ removeBtn.style.color = '#ff6b6b'; });
+            removeBtn.addEventListener('mouseleave', function(){ removeBtn.style.color = '#555'; });
+            removeBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              var pedalsInRow = pedalsByRow[r] || [];
+              if (pedalsInRow.length === 0) {
+                window._extraRows = (window._extraRows || []).filter(function(x){ return x !== r; });
+                renderPedalboard();
+              } else {
+                var _svgTrash = "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>";
+                var _svgRowCollapse = "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M16,4c6.6,0,12,5.4,12,12s-5.4,12-12,12S4,22.6,4,16S9.4,4,16,4 M16,2C8.3,2,2,8.3,2,16s6.3,14,14,14s14-6.3,14-14 S23.7,2,16,2z'></path><path d='M8 15H24V17H8z'></path></svg>";
+                var _svgUndo = "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>";
+                Swal.fire({
+                  title: 'Remove row?',
+                  html: 'This row has <strong>' + pedalsInRow.length + ' gear' + (pedalsInRow.length > 1 ? 's' : '') + '</strong>. What do you want to do with them?',
+                  icon: 'question',
+                  showDenyButton: true,
+                  showCancelButton: true,
+                  confirmButtonText: _svgTrash + 'Remove All',
+                  denyButtonText: _svgRowCollapse + 'Remove Row only',
+                  cancelButtonText: _svgUndo + 'Cancel',
+                  customClass: {
+                    confirmButton: 'bx--btn bx--btn--danger',
+                    denyButton: 'bx--btn bx--btn--tertiary',
+                    cancelButton: 'bx--btn bx--btn--secondary'
+                  }
+                }).then(function(result) {
+                  if (result.isConfirmed) {
+                    window.pedalboard.pedals = window.pedalboard.pedals.filter(function(p){ return (p.row || 1) !== r; });
+                    window._extraRows = (window._extraRows || []).filter(function(x){ return x !== r; });
+                    renderPedalboard();
+                  } else if (result.isDenied) {
+                    window.pedalboard.pedals.forEach(function(p){ if ((p.row || 1) === r) p.row = 1; });
+                    window._extraRows = (window._extraRows || []).filter(function(x){ return x !== r; });
+                    renderPedalboard();
+                  }
+                });
+              }
+            });
+            rowWrap.appendChild(removeBtn);
+          }
+
+          container.appendChild(rowWrap);
+        });
+
+        // "+ Add row" a sinistra, sotto le righe pedalboard, affiancato al flusso
+        var nextRowNum = Math.max.apply(null, nonAmpRows) + 1;
+        if (nextRowNum === 2) nextRowNum = 3;
+        var addRowBtn = document.createElement('button');
+        addRowBtn.textContent = '+ Add row';
+        addRowBtn.style.cssText = 'background:none;border:none;color:#555;font-size:0.75rem;cursor:pointer;padding:2px 4px;margin-bottom:10px;display:block;';
+        addRowBtn.addEventListener('mouseenter', function(){ addRowBtn.style.color = '#aaa'; });
+        addRowBtn.addEventListener('mouseleave', function(){ addRowBtn.style.color = '#555'; });
+        addRowBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          window._extraRows = window._extraRows || [];
+          if (window._extraRows.indexOf(nextRowNum) === -1) window._extraRows.push(nextRowNum);
+          renderPedalboard();
+        });
+        container.appendChild(addRowBtn);
+
+        // Riga amplificatore (sempre ultima)
+        var ampDiv = document.createElement('div');
+        ampDiv.className = 'pedal-row';
+        ampDiv.dataset.row = 2;
+        ampDiv.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+        buildFixedRow(ampDiv, ampRow, pedalsByRow[ampRow], globalStarts[ampRow]);
+        container.appendChild(ampDiv);
+      };
+
+    })();
+
+    </script>
+  </div>
+
+    <div class="zoom-controls"> 
+      <!-- Link support PayPal a sinistra -->
+      <a href="https://paypal.me/lucacrippa88" target="_blank" id="support" 
+        class="bx--btn bx--btn--ghost bx--btn--sm preset-tooltip" type="button" aria-label="Support"
+        style="display: flex; align-items: center; gap: 0.5rem; position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #a3a3a3; z-index: 1000; font-weight:normal;">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M13 11H20V13H13z"></path><path d="M29,13H26.98A5.7791,5.7791,0,0,0,25,8.8525V5a1,1,0,0,0-1.6-.8L19.6665,7H15c-5.5095,0-9.4634,3.2412-9.9485,8H5a1.0009,1.0009,0,0,1-1-1V12H2v2a3.0033,3.0033,0,0,0,3,3h.07A9.1733,9.1733,0,0,0,9,23.5566V27a1,1,0,0,0,1,1h4a1,1,0,0,0,1-1V25h3v2a1,1,0,0,0,1,1h4a1,1,0,0,0,1-1V23.6372A5.0928,5.0928,0,0,0,26.8188,20H29a1,1,0,0,0,1-1V14A1,1,0,0,0,29,13Zm-1,5H25.124c-.3052,2.7529-.8235,3.4854-3.124,4.3154V26H20V23H13v3H11V22.3779A7.0129,7.0129,0,0,1,7,16c0-4.8354,4.0181-7,8-7h5.3335L23,7V9.7764c2.4182,1.8593,1.9126,3.186,2.0183,5.2236H28Z"></path><title>Piggy bank slot</title>
+        </svg>
+        Support
+          <!-- Tooltip testo -->
+          <span style="left:90%!important;" class="preset-tooltip-text">
+            PedalPlex is free and always will be. If you find it useful, you can support hosting and domain costs here.
+          </span>
+        </a>
+
+      <button id="zoomIn" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="zoomIn()">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M18 12L14 12 14 8 12 8 12 12 8 12 8 14 12 14 12 18 14 18 14 14 18 14 18 12z"></path><path d="M21.4479,20A10.856,10.856,0,0,0,24,13,11,11,0,1,0,13,24a10.856,10.856,0,0,0,7-2.5521L27.5859,29,29,27.5859ZM13,22a9,9,0,1,1,9-9A9.01,9.01,0,0,1,13,22Z"></path>
+        </svg>
+      </button>
+      <button id="zoomOut" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="zoomOut()">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M8 12H18V14H8z"></path><path d="M21.4479,20A10.856,10.856,0,0,0,24,13,11,11,0,1,0,13,24a10.856,10.856,0,0,0,7-2.5521L27.5859,29,29,27.5859ZM13,22a9,9,0,1,1,9-9A9.01,9.01,0,0,1,13,22Z"></path>
+        </svg>
+      </button>
+      <button id="zoomReset" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="resetZoom()">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+          <path d="M22.4478,21A10.855,10.855,0,0,0,25,14,10.99,10.99,0,0,0,6,6.4658V2H4v8h8V8H7.332a8.9768,8.9768,0,1,1-2.1,8H3.1912A11.0118,11.0118,0,0,0,14,25a10.855,10.855,0,0,0,7-2.5522L28.5859,30,30,28.5859Z"/>
+        </svg>
+      </button>
+    </div>
+
+  <script src="js/zoom.js"></script>
+
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const pending = JSON.parse(localStorage.getItem('pendingPedalAdd'));
+    if (!pending) return;
+
+    localStorage.removeItem('pendingPedalAdd');
+
+    if (window.pedalboard && window.pedalboard.pedals) {
+      window.pedalboard.pedals.push(pending);
+      renderPedalboard();
+    }
+  });
+  </script>
+
+  <script>
+  // ── Handle shared plex import (redirected from plexes-share.js) ──────────────
+  (function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('import_shared_plex') !== '1') return;
+
+    const raw = sessionStorage.getItem('pp_import_shared_plex');
+    if (!raw) return;
+
+    let importPayload;
+    try { importPayload = JSON.parse(raw); } catch (e) { return; }
+    if (importPayload.source !== 'shared_plex_import') return;
+
+    // Clean up immediately so a refresh doesn't re-trigger
+    sessionStorage.removeItem('pp_import_shared_plex');
+    // Also clean the query param without reloading
+    history.replaceState(null, '', window.location.pathname);
+
+    const { plex, plex_name: plexName, board: sourceBoard } = importPayload;
+
+    // rigs.js calls onPedalboardLoaded() once the board is rendered.
+    // Hook into it to trigger the import dialog after the page is ready.
+    var _prevOnPedalboardLoaded = window.onPedalboardLoaded;
+    window.onPedalboardLoaded = function () {
+      if (typeof _prevOnPedalboardLoaded === 'function') _prevOnPedalboardLoaded();
+      var token = localStorage.getItem('authToken');
+      if (!token) return; // guest users can't use this flow
+      window.onPedalboardLoaded = _prevOnPedalboardLoaded || undefined; // restore
+      _createRigAndPlex(plex, plexName, sourceBoard, token);
+    };
+  })();
+
+  async function _createRigAndPlex(plex, plexName, sourceBoard, token) {
+    window._importSharedPlexDone = true;
+
+    const defaultRigName = (sourceBoard && sourceBoard.board_name ? sourceBoard.board_name : 'Imported Rig').substring(0, 100);
+
+    const { value: rigName } = await Swal.fire({
+      title: 'Name your new Rig',
+      html: `
+        <p style="text-align:left;margin-bottom:1rem;">A new Rig will be created with the pedals from the shared ${L.Plex}.</p>
+        <label class="bx--label" style="display:block;text-align:left;margin-bottom:4px;">Rig name</label>
+        <input id="importRigName" class="bx--text-input" value="${defaultRigName.replace(/"/g, '&quot;')}" maxlength="100" style="width:100%;">`,
+      showCancelButton: true,
+      confirmButtonText: 'Create Rig & Import',
+      cancelButtonText: 'Cancel',
+      customClass: { confirmButton: 'bx--btn bx--btn--primary', cancelButton: 'bx--btn bx--btn--secondary' },
+      preConfirm: () => {
+        const name = document.getElementById('importRigName') ? document.getElementById('importRigName').value.trim() : '';
+        if (!name) { Swal.showValidationMessage('Please enter a Rig name.'); return false; }
+        return name;
+      },
+      didOpen: () => {
+        const el = document.getElementById('importRigName');
+        if (el) el.select();
+      }
+    });
+
+    if (!rigName) return; // cancelled
+
+    // 1. Create the Rig
+    let newRigId;
+    try {
+      const authPayload = JSON.parse(atob(token.split('.')[1]));
+      const userId = 'user_' + (authPayload.username || authPayload.sub || '');
+      const boardPedals = Array.isArray(sourceBoard && sourceBoard.pedals) ? sourceBoard.pedals : [];
+      const rigRes = await fetch('https://api.pedalplex.com/CREATE_RIG.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': 'Bearer ' + token },
+        body: new URLSearchParams({ board_name: rigName, user_id: userId, pedals: JSON.stringify(boardPedals) })
+      });
+      const rigData = await rigRes.json();
+      if (!rigData.ok) throw new Error(rigData.error || 'Failed to create Rig');
+      newRigId = rigData.id;
+    } catch (e) {
+      Swal.fire({ icon: 'error', title: 'Could not create Rig', text: e.message, showConfirmButton: false, timer: 2500 });
+      return;
+    }
+
+    // 2. Create the Plex on the new Rig
+    try {
+      const plexRes = await fetch('https://api.pedalplex.com/CREATE_PLEX.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({
+          board_id:    newRigId,
+          board_name:  rigName,
+          preset_name: plexName,
+          pedals:      plex.pedals || {}
+        })
+      });
+      const plexData = await plexRes.json();
+      if (!plexData.ok) throw new Error(plexData.error || ('Failed to create ' + L.Plex));
+    } catch (e) {
+      Swal.fire({ icon: 'error', title: 'Rig created, but ' + L.Plex + ' import failed', text: e.message, showConfirmButton: false, timer: 2500 });
+      return;
+    }
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Rig & ' + L.Plex + ' imported!',
+      html: '<strong>' + rigName + '</strong> has been created with the ' + L.Plex + ' <strong>' + plexName + '</strong>.',
+      confirmButtonText: 'Go to ' + L.Plexes,
+      showCancelButton: true,
+      cancelButtonText: 'Stay here',
+      customClass: { confirmButton: 'bx--btn bx--btn--primary', cancelButton: 'bx--btn bx--btn--secondary' }
+    }).then(function (r) {
+      if (r.isConfirmed) {
+        window.location.href = '/plexes';
+      } else {
+        window.location.reload();
+      }
+    });
+  }
+  </script>
+
+
+
+
+  <script>
+  $(document).ready(function() {
+    if (window.location.protocol === 'file:') {
+      alert('Please run this app via a local HTTP server for full functionality.');
+      $('#loadingMessage, #page-content').hide();
+      return;
+    }
+
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+      // Guest mode
+      $('#loadingMessage').hide();
+      $('#page-content').show();
+      $('#pedalboard-controls').prepend('<p>Login to consistently save your Rigs!</p>');
+      $('#pedalboardSelect, #renameBoardBtn').hide();
+      $('#zoomIn, #zoomOut, #zoomReset').prop('disabled', true).addClass('btn-disabled');
+      window.currentUser = { role: 'guest', username: 'guest' };
+
+      if (typeof initNavPedalboard === 'function') initNavPedalboard('guest');
+      if (typeof initPedalboard === 'function') initPedalboard('guest');
+      return;
+    }
+
+    // Attempt server auth
+    $.ajax({
+      url: 'https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php',
+      method: 'GET',
+      dataType: 'json',
+      headers: { 'Authorization': 'Bearer ' + token },
+      success: function(userFromServer) {
+        $('#loadingMessage').hide();
+        $('#page-content').show();
+        window.currentUser = userFromServer;
+
+        // Recupera eventuali pedalboard guest
+        const guestBoardsRaw = localStorage.getItem("guestPedalboard");
+        let guestBoards = [];
+        if (guestBoardsRaw) {
+          try {
+            guestBoards = JSON.parse(guestBoardsRaw);
+          } catch(e) {
+            console.error("Errore parsing guestPedalboard:", e);
+            localStorage.removeItem("guestPedalboard");
+          }
+        }
+
+        if (guestBoards.length > 0) {
+          // Prompt per import
+          Swal.fire({
+            title: "Import last saved Guest Rig?",
+            text: "We found a Rig you created as a guest. Do you want to import it into your account?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes, import",
+            cancelButtonText: "No, discard",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            customClass: {
+              confirmButton: "bx--btn bx--btn--primary",
+              cancelButton: "bx--btn bx--btn--secondary"
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+              const promises = guestBoards.map(b => importGuestPedalboard(b, userFromServer.id));
+              Promise.all(promises)
+                .then(() => {
+                  localStorage.removeItem("guestPedalboard");
+                  Swal.fire({
+                    title: "Imported!",
+                    text: "Your guest Rig is now in your account.",
+                    icon: "success",
+                    confirmButtonText: "Ok",
+                    showCancelButton: false,
+                    customClass: { confirmButton: "bx--btn bx--btn--primary" }
+                  }).finally(() => {
+                    if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
+                    if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
+                  });
+                })
+                .catch(err => {
+                  console.error(err);
+                  Swal.fire("Error", "Guest pedalboard could not be imported.", "error")
+                    .finally(() => {
+                      if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
+                      if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
+                    });
+                });
+            } else {
+              localStorage.removeItem("guestPedalboard");
+              if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
+              if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
+            }
+          });
+        } else {
+          if (typeof initNavPedalboard === 'function') initNavPedalboard(userFromServer.role);
+          if (typeof initPedalboard === 'function') initPedalboard(userFromServer.role);
+        }
+      },
+
+      // ---------- TOKEN EXPIRED (401) ----------
+      error: function(xhr) {
+        console.error('Auth check failed:', xhr.status, xhr.responseText);
+
+        if (xhr.status === 401) {
+          localStorage.removeItem('authToken');
+
+          Swal.fire({
+            title: 'Session expired',
+            text: 'Your session is expired. Do you want to Login again or continue as a Guest?',
+            icon: 'warning',
+            showDenyButton: true,
+            confirmButtonText: 'Login',
+            denyButtonText: 'Be our Guest',
+            customClass: {
+              confirmButton: 'bx--btn bx--btn--primary',
+              denyButton: 'bx--btn bx--btn--tertiary'
+            },
+            allowOutsideClick: false,
+            allowEscapeKey: false
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = 'login';
+            } else if (result.isDenied) {
+
+              // Guest mode fallback
+              window.currentUser = { role: 'guest', username: 'guest' };
+              $('#loadingMessage').hide();
+              $('#page-content').show();
+              $('#pedalboard-controls').append("<p>Login to consistently save your Rigs!</p>");
+              $('#pedalboardSelect, #renameBoardBtn').hide();
+              $('#zoomIn, #zoomOut, #zoomReset').prop('disabled', true).addClass('btn-disabled');
+
+              if (typeof initNavPedalboard === 'function') initNavPedalboard('guest');
+              if (typeof initPedalboard === 'function') initPedalboard('guest');
+            }
+          });
+
+        } else {
+          alert('Failed to verify authentication. Please try again.');
+        }
+      }
+    });
+  });
+  </script>
+
+
+
+</body>
+</html>
