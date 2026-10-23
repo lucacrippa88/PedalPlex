@@ -10,8 +10,14 @@ function initNavPedalboard(userRole) {
         <a href="" style="text-decoration:none;" class="title">PedalPlex</a>
         <a href="rigs" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">Rigs</a>
       </div>
-      <div style="display: flex; align-items: center; gap: 1rem;">
-        <span id="addGearsTrigger" class="showDesktop" style="cursor:pointer; font-size: 0.75rem; opacity: 0.7;">Add gears</span>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <button id="addGearsTrigger" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Add gears"
+                style="display: flex; align-items: center; gap: 0.4rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/>
+          </svg>
+          Add Gear
+        </button>
 
         <!-- Hide by default -->
         <button id="toggleFilterBtn" class="showBoth" aria-label="Toggle search" 
@@ -474,6 +480,36 @@ function initNavPedalboard(userRole) {
   function updateFilterVisibility() {
     $("#toggleFilterBtn").show();
   }
+
+  // Dinamically update CTA hierarchy based on pedal count
+  window.updateRigsCTAState = function(pedalCount) {
+    const isRigEmpty = (!pedalCount || pedalCount === 0);
+    const $addGears = $("#addGearsTrigger");
+    const $saveBtn = $("#saveBtn, #saveBtnMobile");
+    const $viewPreset = $("#viewPreset");
+
+    if (isRigEmpty) {
+      if ($addGears.length) {
+        $addGears.removeClass('bx--btn--tertiary').addClass('bx--btn--primary');
+      }
+      if ($saveBtn.length) {
+        $saveBtn.addClass('rig-cta-subtle');
+      }
+      if ($viewPreset.length) {
+        $viewPreset.addClass('rig-cta-subtle');
+      }
+    } else {
+      if ($addGears.length) {
+        $addGears.removeClass('bx--btn--primary').addClass('bx--btn--tertiary');
+      }
+      if ($saveBtn.length) {
+        $saveBtn.removeClass('rig-cta-subtle');
+      }
+      if ($viewPreset.length) {
+        $viewPreset.removeClass('rig-cta-subtle');
+      }
+    }
+  };
 
   // Initial visibility check
   updateFilterVisibility();

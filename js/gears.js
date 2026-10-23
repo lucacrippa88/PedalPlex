@@ -18,7 +18,7 @@ async function checkAndAwardGearBadges() {
     const verifiedGearCount = stats.verified_gears || 0;
     
     // Load badges.json to get criteria
-    const badgesRes = await fetch('badges.json');
+    const badgesRes = await fetch('json/badges.json');
     const badgesData = await badgesRes.json();
     
     // Find all gear-related badges that user qualifies for
@@ -142,7 +142,7 @@ function resetCatalogState() {
 // ==================== Category Filter ====================
 // Populate filter options from categories.json
 $(function () {
-  $.getJSON("categories.json").done(function (list) {
+  $.getJSON("json/categories.json").done(function (list) {
     const $filter = $("#categoryFilter");
     list.forEach(cat => {
       $filter.append($("<option>").val(cat).text(cat.charAt(0).toUpperCase() + cat.slice(1)));

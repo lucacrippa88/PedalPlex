@@ -29,7 +29,7 @@ function setSelectedCategories(categoryString) {
 }
 
 $(function () {
-    $.getJSON("categories.json").done(function (list) {
+    $.getJSON("json/categories.json").done(function (list) {
         GEAR_CATEGORIES = list;
         // Rebuild options (syncUIFromJSON may have already run) and restore selection
         $("#pedal-category-options").empty();

@@ -515,7 +515,7 @@ window.checkAndShowPendingBadges = function() {
         }
         
         // Load badge definitions and show popup
-        $.getJSON('badges.json', function(badgeConfig) {
+        $.getJSON('json/badges.json', function(badgeConfig) {
             showBadgeAwardPopup(pendingBadges, badgeConfig.badges);
             // Clear pending badges after showing
             localStorage.removeItem('pendingBadges');
