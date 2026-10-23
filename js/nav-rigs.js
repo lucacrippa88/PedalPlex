@@ -1,125 +1,242 @@
+/**
+ * nav-rigs.js — NAVBAR SEMPLIFICATA
+ *
+ * Navbar:  [☰] PedalPlex  Rigs  |  [+ Add Gear]  [Save Rig]  [Login?]
+ * Barra:   [Rig ▾] [Edit]  [⋯ Actions ▾]
+ *
+ * Actions dropdown:
+ *   • Build Rig (solo logged-in)
+ *   • Save your Plexes
+ *   • ── separator ──
+ *   • Guided Tour
+ *
+ * Tutta la logica openPedalSearch / lazy-load è copiata da nav-rigs.js
+ * per evitare il doppio caricamento del file originale.
+ */
 function initNavPedalboard(userRole) {
   const isGuest = (userRole === "guest");
 
+  // ── SVG helpers ───────────────────────────────────────────────────────────
+  const SVG = {
+    addGear:  `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/></svg>`,
+    save:     `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M27 4H8L4 8v20a2 2 0 002 2h22a2 2 0 002-2V6a2 2 0 00-2-2zm0 24H6V8.8L8.8 6H10v8h14V6h2zm-6-18h2v6h-2z"/></svg>`,
+    check:    `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/></svg>`,
+    dots:     `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><circle cx="8" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><circle cx="24" cy="16" r="2"/></svg>`,
+    buildRig: `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><g transform="rotate(90 16 16)"><path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"/><path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"/></g></svg>`,
+    plexes:   `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/></svg>`,
+    tour:     `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/><path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/></svg>`,
+    login:    `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/><path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/></svg>`,
+  };
+
+  const saveLabelDesktop = isGuest ? `${SVG.check} Save Rig Offline` : `${SVG.save} Save Rig`;
+  const loginBtnDesktop  = isGuest ? `
+    <button id="loginBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm"
+        type="button" aria-label="Login" style="display:flex;align-items:center;gap:0.5rem;">
+      ${SVG.login} Login
+    </button>` : '';
+  const loginBtnMobile = isGuest ? `
+    <button id="loginBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
+        type="button" aria-label="Login">${SVG.login}
+    </button>` : '';
+
+  // ── Navbar HTML ───────────────────────────────────────────────────────────
   const navHtml = `
-    <header style="display: flex; align-items: center; justify-content: space-between;">
-      <div style="display: flex; align-items: center; gap: 1rem;">
+    <header style="display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:1rem;">
         <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
           <span class="menu-morph" aria-hidden="true"><i class="menu-morph__ham"></i><i class="menu-morph__logo"></i></span>
         </button>
         <a href="" style="text-decoration:none;" class="title">PedalPlex</a>
-        <a href="rigs" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">Rigs</a>
+        <a href="rigs" class="subtitle" style="font-size:1.25rem;color:#aaa;font-weight:600;text-decoration:none">Rigs</a>
       </div>
-      <div style="display: flex; align-items: center; gap: 0.75rem;">
-        <button id="addGearsTrigger" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Add gears"
-                style="display: flex; align-items: center; gap: 0.4rem;">
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/>
-          </svg>
-          Add Gear
-        </button>
-
-        <input type="text"
-               id="pedalFilterInput"
-               placeholder="Search pedals..."
-               style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 280px; display:none;"
+      <div class="rightButtons showDesktop" style="display:flex;align-items:center;gap:0.75rem;">
+        <input type="text" id="pedalFilterInput" placeholder="Search pedals…"
+               style="font-size:0.875rem;padding:6px 12px;border:1px solid #8c8c8c;border-radius:4px;outline-offset:2px;width:280px;display:none;"
                aria-label="Filter pedals"/>
-
-        <button id="tourTriggerBtn" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only pp-tour-trigger-btn" type="button" aria-label="Start guided tour" title="Guided Tour">
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/>
-            <path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/>
-          </svg>
+        ${loginBtnDesktop}
+        <button id="addGearsTrigger" class="bx--btn bx--btn--primary bx--btn--sm"
+                type="button" style="display:flex;align-items:center;gap:0.4rem;">
+          ${SVG.addGear} Add Gear
         </button>
-
-        <button id="saveBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save Rig"
-                style="display: flex; align-items: center; gap: 0.5rem;">
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <path d="M27 4H8L4 8v20a2 2 0 002 2h22a2 2 0 002-2V6a2 2 0 00-2-2zm0 24H6V8.8L8.8 6H10v8h14V6h2zm-6-18h2v6h-2z"/>
-          </svg>
-          Save Rig
+        <button id="saveBtn" class="bx--btn bx--btn--primary bx--btn--sm"
+                type="button" style="display:flex;align-items:center;gap:0.5rem;">
+          ${saveLabelDesktop}
         </button>
-
-        <button id="saveBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Save Rig">
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <path d="M27 4H8L4 8v20a2 2 0 002 2h22a2 2 0 002-2V6a2 2 0 00-2-2zm0 24H6V8.8L8.8 6H10v8h14V6h2zm-6-18h2v6h-2z"/>
-          </svg>
-        </button>
-
-        
-
-        <button id="createBtn" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Build Rig"
-                style="display: flex; align-items: center; gap: 0.5rem;">
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <g transform="rotate(90 16 16)">
-              <path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"></path>
-              <path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"></path>
-            </g>
-          </svg>
-          Build Rig
-        </button>
-
       </div>
-    </header>
-  `;
+      <div class="rightButtons showMobile" style="display:flex;align-items:center;gap:0.5rem;">
+        ${loginBtnMobile}
+        <button id="addGearsTriggerMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
+                type="button" aria-label="Add Gear">
+          ${SVG.addGear}
+        </button>
+        <button id="saveBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
+                type="button" aria-label="${isGuest ? 'Save Rig Offline' : 'Save Rig'}">
+          ${isGuest ? SVG.check : SVG.save}
+        </button>
+      </div>
+    </header>`;
 
   $("body").prepend(navHtml);
 
+  // ── Actions dropdown ───────────────────────────────────────────────────────
+  function injectActionsDropdown() {
+    if (document.getElementById('pp-actions-btn')) return;
+
+    const buildRigItem = !isGuest
+      ? `<button class="pp-action-item" data-action="buildRig">${SVG.buildRig} <span>Build Rig</span></button>`
+      : '';
+
+    const actionsHtml = `
+      <div id="pp-actions-wrapper" style="position:relative;margin-left:auto;">
+        <button id="pp-actions-btn"
+            class="bx--btn bx--btn--tertiary bx--btn--sm showDesktop"
+            type="button"
+            style="display:flex;align-items:center;gap:0.5rem;max-width:none!important;">
+          ${SVG.dots} Actions
+        </button>
+        <button id="pp-actions-btn-mobile"
+            class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only showMobile"
+            type="button" aria-label="Actions">
+          ${SVG.dots}
+        </button>
+        <div id="pp-actions-menu" style="
+            display:none;
+            position:absolute;
+            top:calc(100% + 6px);
+            right:0;
+            width:200px;
+            overflow:hidden;
+            background:rgb(30,30,30);
+            border:1px solid #9C54D5;
+            border-radius:8px;
+            box-shadow:0 8px 24px rgba(0,0,0,0.5);
+            z-index:4000;
+            padding:4px 0;">
+          ${buildRigItem}
+          <a class="pp-action-item" href="plexes">${SVG.plexes} <span>Save your Plexes</span></a>
+          <div class="pp-action-separator"></div>
+          <button class="pp-action-item" data-action="tour">${SVG.tour} <span>Guided Tour</span></button>
+        </div>
+      </div>`;
+
+    const controls = document.getElementById('pedalboard-controls');
+    if (controls) controls.insertAdjacentHTML('beforeend', actionsHtml);
+  }
+
+  if (!document.getElementById('pp-actions-style')) {
+    const style = document.createElement('style');
+    style.id = 'pp-actions-style';
+    style.textContent = `
+      .pp-action-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 9px 16px;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 0.875rem;
+        cursor: pointer;
+        text-decoration: none;
+        box-sizing: border-box;
+        margin-left: 0 !important;
+        border-radius: 0;
+        box-shadow: none;
+        max-width: none !important;
+        min-height: 0;
+      }
+      .pp-action-item:hover {
+        background: rgba(156, 84, 213, 0.18);
+        color: #9C54D5;
+      }
+      .pp-action-item svg { flex-shrink: 0; }
+      .pp-action-separator {
+        height: 1px;
+        background: rgba(255,255,255,0.1);
+        margin: 4px 0;
+      }
+      #pp-actions-menu { animation: ppFadeIn 0.1s ease; }
+      @keyframes ppFadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+    `;
+    document.head.appendChild(style);
+  }
+
+  $(document).ready(() => {
+    const controls = document.getElementById('pedalboard-controls');
+    if (!controls) return;
+    const observer = new MutationObserver(() => {
+      if (controls.style.display !== 'none') {
+        injectActionsDropdown();
+        observer.disconnect();
+      }
+    });
+    observer.observe(controls, { attributes: true, attributeFilter: ['style'] });
+    if (controls.style.display !== 'none') injectActionsDropdown();
+  });
+
+  $(document).on('click', '#pp-actions-btn, #pp-actions-btn-mobile', function (e) {
+    e.stopPropagation();
+    const menu = document.getElementById('pp-actions-menu');
+    if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  });
+  $(document).on('click', function (e) {
+    if (!$(e.target).closest('#pp-actions-wrapper').length) {
+      const menu = document.getElementById('pp-actions-menu');
+      if (menu) menu.style.display = 'none';
+    }
+  });
+  $(document).on('click', '.pp-action-item[data-action]', function () {
+    const action = $(this).data('action');
+    document.getElementById('pp-actions-menu').style.display = 'none';
+    switch (action) {
+      case 'buildRig':
+        if (typeof createNewPedalboard === 'function') createNewPedalboard();
+        break;
+      case 'tour':
+        if (typeof window.startTour === 'function') window.startTour(0);
+        break;
+    }
+  });
+
+  // ── Menu toggle ────────────────────────────────────────────────────────────
   $("#menuToggle").on("click", function () {
     const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
     $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
     $("#fullscreenMenu").addClass("active");
   });
-  $("#closeMenu").on("click", function () {
-    $("#fullscreenMenu").removeClass("active");
-  });
+  $("#closeMenu").on("click", function () { $("#fullscreenMenu").removeClass("active"); });
 
-
-  $("#addGearsTrigger").on("click", function (e) {
+  // ── Add Gear wiring ────────────────────────────────────────────────────────
+  $("#addGearsTrigger, #addGearsTriggerMobile").on("click", function (e) {
     e.stopPropagation();
     window.openPedalSearch();
   });
 
-  $("#tourTriggerBtn").on("click", function () {
-    if (typeof window.startTour === 'function') {
-      window.startTour(0);
-    }
-  });
+  $("#pedalFilterInput").on("click", function (e) { e.stopPropagation(); });
 
-  $("#pedalFilterInput").on("click", function (e) {
-    e.stopPropagation();
-  });
-
-
-  // Check for catalog existance
   window.catalog = window.catalog || [];
 
-  // HELPER: debounce function to limit API calls while typing
+  // ── openPedalSearch + lazy-load (da nav-rigs.js) ──────────────────────────
   function debounce(func, wait) {
     let timeout;
     return function () {
-      const context = this,
-        args = arguments;
+      const context = this, args = arguments;
       clearTimeout(timeout);
       timeout = setTimeout(() => func.apply(context, args), wait);
     };
   }
 
-  $("#pedalFilterInput").attr("placeholder", "Search pedals...");
-
-  // Dropdown positioning function
   function positionDropdown() {
     const input = document.getElementById('pedalFilterInput');
     const dropdown = document.getElementById('pedalAddDropdownContainer');
     if (!dropdown || !input) return;
     const rect = input.getBoundingClientRect();
-    dropdown.style.top = (window.scrollY + rect.bottom + 4) + 'px';
+    dropdown.style.top  = (window.scrollY + rect.bottom + 4) + 'px';
     dropdown.style.left = (window.scrollX + rect.left) + 'px';
-    const desiredWidth = Math.max(rect.width, 320);
-    dropdown.style.width = desiredWidth + 'px';
+    dropdown.style.width = Math.max(rect.width, 320) + 'px';
   }
 
-  // Dropdown creation/retrieval function
   function getOrCreateDropdown() {
     let dropdown = document.getElementById('pedalAddDropdownContainer');
     if (!dropdown) {
@@ -128,96 +245,56 @@ function initNavPedalboard(userRole) {
       document.body.appendChild(dropdown);
     }
     dropdown.style.position = 'absolute';
-    dropdown.style.zIndex = '3000';
+    dropdown.style.zIndex   = '3000';
     return dropdown;
   }
 
-  // Lazy-load state
-  let lazyPage = 1;
-  let lazyQuery = '';
-  let lazyLoading = false;
-  let lazyHasMore = true;
-  let lazySentinelObserver = null;
-
-  const LAZY_LIMIT = 30;
-  const LAZY_SPINNER_ID = 'pedalDropdownLazySpinner';
+  let lazyPage = 1, lazyQuery = '', lazyLoading = false, lazyHasMore = true, lazySentinelObserver = null;
+  const LAZY_LIMIT = 30, LAZY_SPINNER_ID = 'pedalDropdownLazySpinner';
 
   function appendPedalItems(pedalsList, dropdown) {
     const authToken = localStorage.getItem('authToken');
     pedalsList.forEach(pedal => {
       const item = document.createElement('div');
       item.classList.add('pedal-dropdown-item');
-
       const label = document.createElement('span');
       label.className = 'pedal-dropdown-label';
       label.textContent = pedal._id;
       item.appendChild(label);
-
       const btn = document.createElement('button');
       btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm', 'pedal-dropdown-btn');
       btn.setAttribute('type', 'button');
       btn.setAttribute('aria-label', `Add ${pedal._id}`);
-      btn.innerHTML = `
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet"
-             xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-             width="16" height="16" viewBox="0 0 32 32" aria-hidden="true">
-             <path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/>
-        </svg>`;
+      btn.innerHTML = `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/></svg>`;
 
       const handleAddPedal = async (e) => {
         e.stopPropagation();
-
-        if (!window.pedalboard) {
-          console.error("No pedalboard currently loaded");
-          return;
-        }
-        if (!Array.isArray(window.pedalboard.pedals)) {
-          window.pedalboard.pedals = [];
-        }
+        if (!window.pedalboard) return;
+        if (!Array.isArray(window.pedalboard.pedals)) window.pedalboard.pedals = [];
 
         let pedalData = window.catalog.find(p => p._id === pedal._id);
         if (!pedalData) {
           try {
-            const postRes = await fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
+            const res = await fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                ...(authToken ? { "Authorization": "Bearer " + authToken } : {})
-              },
+              headers: { "Content-Type": "application/json", ...(authToken ? { "Authorization": "Bearer " + authToken } : {}) },
               body: JSON.stringify({ ids: [pedal._id] })
             });
-            const result = await postRes.json();
-            if (result?.docs?.length > 0) {
-              pedalData = result.docs[0];
-              window.catalog.push(pedalData);
-            } else {
-              console.error("Pedal not found on server:", pedal._id);
-              return;
-            }
-          } catch (err) {
-            console.error("Fetch error:", err);
-            return;
-          }
+            const result = await res.json();
+            if (result?.docs?.length > 0) { pedalData = result.docs[0]; window.catalog.push(pedalData); }
+            else return;
+          } catch (err) { console.error("Fetch error:", err); return; }
         }
 
-        var targetRow = window._emptySlotRow || 1;
-        var insertAt  = window._emptySlotInsertAt;
-
-        // slot_pos = posizione visiva nella riga (indice dello slot cliccato dentro la riga)
-        // insertAt è l'indice globale; row1Start = indice del primo pedale di row1 = 0 per row1
-        // Per row1: slot_pos = insertAt (tutti i pedali row1 vengono prima di row2)
-        // Per row2: slot_pos = insertAt - numero pedali row1
-        var row1Count = window.pedalboard.pedals.filter(function(p){ return (p.row||1) === 1; }).length;
-        var rowStart  = (targetRow === 2) ? row1Count : 0;
-        var slotPos   = (insertAt !== null && insertAt !== undefined) ? (insertAt - rowStart) : null;
-
-        var newPedal = { pedal_id: pedal._id, rotation: 0, row: targetRow, slot_pos: slotPos };
-        window.pedalboard.pedals.push(newPedal);
+        const targetRow = window._emptySlotRow || 1;
+        const insertAt  = window._emptySlotInsertAt;
+        const row1Count = window.pedalboard.pedals.filter(p => (p.row||1) === 1).length;
+        const rowStart  = (targetRow === 2) ? row1Count : 0;
+        const slotPos   = (insertAt !== null && insertAt !== undefined) ? (insertAt - rowStart) : null;
+        window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation: 0, row: targetRow, slot_pos: slotPos });
         window._emptySlotRow = null;
         window._emptySlotInsertAt = null;
-        // Deattiva lo slot evidenziato (il DOM viene ricostruito da renderPedalboard)
         if (typeof window.deactivateSlot === 'function') window.deactivateSlot();
-
         if (typeof renderPedalboard === 'function') renderPedalboard();
       };
 
@@ -229,109 +306,63 @@ function initNavPedalboard(userRole) {
   }
 
   function getOrCreateLazySentinel(dropdown) {
-    let sentinel = dropdown.querySelector('#pedalDropdownSentinel');
-    if (!sentinel) {
-      sentinel = document.createElement('div');
-      sentinel.id = 'pedalDropdownSentinel';
-      sentinel.style.height = '1px';
-      dropdown.appendChild(sentinel);
-    }
-    return sentinel;
+    let s = dropdown.querySelector('#pedalDropdownSentinel');
+    if (!s) { s = document.createElement('div'); s.id = 'pedalDropdownSentinel'; s.style.height = '1px'; dropdown.appendChild(s); }
+    return s;
   }
 
   function attachLazyObserver(dropdown) {
-    if (lazySentinelObserver) {
-      lazySentinelObserver.disconnect();
-      lazySentinelObserver = null;
-    }
+    if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; }
     const sentinel = getOrCreateLazySentinel(dropdown);
     lazySentinelObserver = new IntersectionObserver(async (entries) => {
-      if (entries[0].isIntersecting && !lazyLoading && lazyHasMore) {
-        await loadNextPage(dropdown);
-      }
+      if (entries[0].isIntersecting && !lazyLoading && lazyHasMore) await loadNextPage(dropdown);
     }, { root: dropdown, threshold: 0 });
     lazySentinelObserver.observe(sentinel);
   }
 
   async function loadNextPage(dropdown) {
     if (lazyLoading || !lazyHasMore || lazyQuery) return;
-
     lazyLoading = true;
     const authToken = localStorage.getItem('authToken');
-
-    // Show spinner above sentinel
     let spinner = document.getElementById(LAZY_SPINNER_ID);
     if (!spinner) {
       spinner = document.createElement('div');
       spinner.id = LAZY_SPINNER_ID;
-      spinner.style.cssText = 'padding:10px; display:flex; justify-content:center;';
-      spinner.innerHTML = `<div class="bx--loading bx--loading--small bx--loading--active" role="alert" aria-live="assertive">
-        <svg class="bx--loading__svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" stroke-width="8"/></svg>
-      </div>`;
+      spinner.style.cssText = 'padding:10px;display:flex;justify-content:center;';
+      spinner.innerHTML = `<div class="bx--loading bx--loading--small bx--loading--active" role="alert"><svg class="bx--loading__svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" stroke-width="8"/></svg></div>`;
     }
     const sentinel = getOrCreateLazySentinel(dropdown);
     dropdown.insertBefore(spinner, sentinel);
-
     try {
       lazyPage++;
-      const res = await fetch(
-        `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=${lazyPage}&limit=${LAZY_LIMIT}`, {
-          headers: { ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) }
-        }
-      );
+      const res = await fetch(`https://api.pedalplex.com/GET_CATALOG_LAZY.PHP?page=${lazyPage}&limit=${LAZY_LIMIT}`, {
+        headers: { ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) }
+      });
       const data = await res.json();
       spinner.remove();
-
       if (!Array.isArray(data) || data.length === 0) {
         lazyHasMore = false;
         if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; }
         sentinel.remove();
       } else {
-        data.forEach(item => {
-          if (item && item._id && !window.catalog.some(p => p._id === item._id)) {
-            window.catalog.push(item);
-          }
-        });
-        if (data.length < LAZY_LIMIT) {
-          lazyHasMore = false;
-          if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; }
-          sentinel.remove();
-        }
-        appendPedalItems(data.map(item => ({ _id: item._id })), dropdown);
-        if (lazyHasMore) getOrCreateLazySentinel(dropdown); // re-append sentinel after items
+        data.forEach(item => { if (item?._id && !window.catalog.some(p => p._id === item._id)) window.catalog.push(item); });
+        if (data.length < LAZY_LIMIT) { lazyHasMore = false; if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; } sentinel.remove(); }
+        appendPedalItems(data.map(i => ({ _id: i._id })), dropdown);
+        if (lazyHasMore) getOrCreateLazySentinel(dropdown);
       }
-    } catch (err) {
-      console.error("Lazy load error:", err);
-      spinner.remove();
-    }
+    } catch (err) { console.error("Lazy load error:", err); spinner.remove(); }
     lazyLoading = false;
   }
 
   async function fetchAndRenderPedals(rawQuery = '') {
     const query = (rawQuery || '').trim().toLowerCase();
     const dropdown = getOrCreateDropdown();
-
-    // Legge e consuma subito il filtro categoria (impostato da slot amp)
     const categoryFilter = window._emptySlotCategory || null;
     window._emptySlotCategory = null;
-
-    // Reset lazy state on every new fetch
-    lazyPage = 1;
-    lazyQuery = query;
-    lazyHasMore = !query && !categoryFilter; // lazy scroll solo senza filtri
-    lazyLoading = false;
+    lazyPage = 1; lazyQuery = query; lazyHasMore = !query && !categoryFilter; lazyLoading = false;
     if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; }
 
-    // Spinner while loading first page
-    dropdown.innerHTML = `
-        <div style="padding: 10px; display: flex; justify-content: center;">
-            <div class="bx--loading bx--loading--small bx--loading--active" role="alert" aria-live="assertive">
-                <svg class="bx--loading__svg" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="44" stroke-width="8" />
-                </svg>
-            </div>
-        </div>
-    `;
+    dropdown.innerHTML = `<div style="padding:10px;display:flex;justify-content:center;"><div class="bx--loading bx--loading--small bx--loading--active" role="alert"><svg class="bx--loading__svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" stroke-width="8"/></svg></div></div>`;
     dropdown.style.display = 'block';
     positionDropdown();
 
@@ -341,199 +372,91 @@ function initNavPedalboard(userRole) {
       let pedalsList = [];
 
       if (categoryFilter) {
-        // Fetch parallele per ogni categoria, poi unione deduplicata
-        const results = await Promise.all(
-          categoryFilter.map(cat => {
-            const url = query
-              ? `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}&category=${encodeURIComponent(cat)}`
-              : `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=1&limit=${LAZY_LIMIT}&category=${encodeURIComponent(cat)}`;
-            return fetch(url, { headers }).then(r => r.json()).catch(() => []);
-          })
-        );
+        const results = await Promise.all(categoryFilter.map(cat => {
+          const url = query
+            ? `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}&category=${encodeURIComponent(cat)}`
+            : `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=1&limit=${LAZY_LIMIT}&category=${encodeURIComponent(cat)}`;
+          return fetch(url, { headers }).then(r => r.json()).catch(() => []);
+        }));
         const seen = new Set();
         results.forEach(data => {
           if (!Array.isArray(data)) return;
-          data.forEach(item => {
-            if (item && item._id && !seen.has(item._id)) {
-              seen.add(item._id);
-              pedalsList.push(item);
-              if (!window.catalog.some(p => p._id === item._id)) window.catalog.push(item);
-            }
-          });
+          data.forEach(item => { if (item?._id && !seen.has(item._id)) { seen.add(item._id); pedalsList.push(item); if (!window.catalog.some(p => p._id === item._id)) window.catalog.push(item); } });
         });
-        // Ordine alfabetico per coerenza
         pedalsList.sort((a, b) => a._id.localeCompare(b._id));
       } else if (query) {
-        const res = await fetch(
-          `https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`, { headers }
-        );
+        const res = await fetch(`https://api.pedalplex.com/GET_CATALOG_IDS.php?search=${encodeURIComponent(query)}`, { headers });
         const data = await res.json();
         if (Array.isArray(data)) pedalsList = data;
       } else {
-        const res = await fetch(
-          `https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=1&limit=${LAZY_LIMIT}`,
-          { headers: { ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) } }
-        );
+        const res = await fetch(`https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=1&limit=${LAZY_LIMIT}`, { headers: { ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) } });
         const data = await res.json();
         if (Array.isArray(data)) {
-          data.forEach(item => {
-            if (item && item._id && !window.catalog.some(p => p._id === item._id)) {
-              window.catalog.push(item);
-            }
-          });
+          data.forEach(item => { if (item?._id && !window.catalog.some(p => p._id === item._id)) window.catalog.push(item); });
           if (data.length < LAZY_LIMIT) lazyHasMore = false;
           pedalsList = data.map(item => ({ _id: item._id }));
         }
       }
 
       dropdown.innerHTML = '';
-
-      if (!pedalsList || !Array.isArray(pedalsList) || pedalsList.length === 0) {
+      if (!pedalsList?.length) {
         const noResult = document.createElement('div');
         noResult.textContent = 'No pedals found';
-        noResult.style.padding = '12px';
-        noResult.style.color = '#525252';
-        noResult.style.fontSize = '0.875rem';
+        noResult.style.cssText = 'padding:12px;color:#525252;font-size:0.875rem;';
         dropdown.appendChild(noResult);
         positionDropdown();
         return;
       }
-
       appendPedalItems(pedalsList, dropdown);
-
-      // Attach infinite scroll only for no-query browsing
       if (lazyHasMore) attachLazyObserver(dropdown);
-
       dropdown.style.display = 'block';
       positionDropdown();
-    } catch (err) {
-      console.error("Search error:", err);
-      dropdown.style.display = 'none';
-    }
+    } catch (err) { console.error("Search error:", err); dropdown.style.display = 'none'; }
   }
 
-  // Expose search for external callers
   window.openPedalSearch = function () {
     const $input = $('#pedalFilterInput');
     $input.show().focus();
     const dropdown = getOrCreateDropdown();
-    if (dropdown.children.length > 0) {
-      dropdown.style.display = 'block';
-      positionDropdown();
-    } else {
-      fetchAndRenderPedals($input.val().trim());
-    }
+    if (dropdown.children.length > 0) { dropdown.style.display = 'block'; positionDropdown(); }
+    else { fetchAndRenderPedals($input.val().trim()); }
   };
 
-  // Event listener input with debounce
-  $("#pedalFilterInput").on("input", debounce(function () {
-    fetchAndRenderPedals($(this).val());
-  }, 300));
+  $("#pedalFilterInput").on("input", debounce(function () { fetchAndRenderPedals($(this).val()); }, 300));
 
-  // Outside click to close dropdown search
   document.addEventListener("click", function (event) {
-    const input = document.getElementById("pedalFilterInput");
+    const input    = document.getElementById("pedalFilterInput");
     const dropdown = document.getElementById("pedalAddDropdownContainer");
-    const addGearsTrigger = document.getElementById("addGearsTrigger");
-
-    if (
-      (input && input.contains(event.target)) ||
-      (dropdown && dropdown.contains(event.target)) ||
-      (addGearsTrigger && addGearsTrigger.contains(event.target))
-    ) {
-      return;
-    }
-
-    if (input && $(input).is(":visible")) {
-      $(input).hide();
-    }
-    if (dropdown) {
-      dropdown.style.display = "none";
-    }
+    const trigger  = document.getElementById("addGearsTrigger");
+    if ((input && input.contains(event.target)) || (dropdown && dropdown.contains(event.target)) || (trigger && trigger.contains(event.target))) return;
+    if (input && $(input).is(":visible")) $(input).hide();
+    if (dropdown) dropdown.style.display = "none";
   });
 
   window.addEventListener('scroll', positionDropdown);
   window.addEventListener('resize', positionDropdown);
 
-
-
-  function updateFilterVisibility() {
-    // Kept for backward compatibility
-  }
-
-  // Dinamically update CTA hierarchy based on pedal count
-  window.updateRigsCTAState = function(pedalCount) {
-    const isRigEmpty = (!pedalCount || pedalCount === 0);
-    const $addGears = $("#addGearsTrigger");
-    const $saveBtn = $("#saveBtn, #saveBtnMobile");
-    const $viewPreset = $("#viewPreset");
-
-    if (isRigEmpty) {
-      if ($addGears.length) {
-        $addGears.removeClass('bx--btn--tertiary').addClass('bx--btn--primary');
-      }
-      if ($saveBtn.length) {
-        $saveBtn.addClass('rig-cta-subtle');
-      }
-      if ($viewPreset.length) {
-        $viewPreset.addClass('rig-cta-subtle');
-      }
-    } else {
-      if ($addGears.length) {
-        $addGears.removeClass('bx--btn--primary').addClass('bx--btn--tertiary');
-      }
-      if ($saveBtn.length) {
-        $saveBtn.removeClass('rig-cta-subtle');
-      }
-      if ($viewPreset.length) {
-        $viewPreset.removeClass('rig-cta-subtle');
-      }
-    }
+  // ── updateRigsCTAState ────────────────────────────────────────────────────
+  window.updateRigsCTAState = function (pedalCount) {
+    const isEmpty = (!pedalCount || pedalCount === 0);
+    const $add  = $("#addGearsTrigger, #addGearsTriggerMobile");
+    const $save = $("#saveBtn, #saveBtnMobile");
+    const $view = $("#viewPreset");
+    if (isEmpty) { $add.removeClass('bx--btn--tertiary').addClass('bx--btn--primary'); $save.addClass('rig-cta-subtle'); $view.addClass('rig-cta-subtle'); }
+    else         { $add.removeClass('bx--btn--primary').addClass('bx--btn--tertiary'); $save.removeClass('rig-cta-subtle'); $view.removeClass('rig-cta-subtle'); }
   };
 
-  // Initial visibility check
-  updateFilterVisibility();
-  // Expose function so you can call it after creating/deleting boards
-  window.updateNavFilterVisibility = updateFilterVisibility;
+  window.updateNavFilterVisibility = function () {};
 
+  // ── Guest / logged-in wiring ───────────────────────────────────────────────
   if (isGuest) {
-    $("#createBtn").hide();
-
-    const saveOfflineSvg = `<svg focusable='false' preserveAspectRatio='xMidYMid meet'
-         xmlns='http://www.w3.org/2000/svg' fill='currentColor'
-         width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'>
-      <path d='M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z'/>
-    </svg>`;
-
-    $("#saveBtn").html(`${saveOfflineSvg}Save Rig Offline`);
-    $("#saveBtnMobile").html(saveOfflineSvg);
-
     $("#saveBtn, #saveBtnMobile").on("click", function () {
       if (typeof saveGuestPedalboard === "function") saveGuestPedalboard();
-      if (window.allPedalboards.length === 1) setupPedalboardDropdownAndRender();
-      updateFilterVisibility();
+      if (window.allPedalboards?.length === 1) setupPedalboardDropdownAndRender();
     });
-
-    const loginSvg = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/><path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/></svg>`;
-    const loginBtnHtml = `
-      <button id="loginBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Login" style="display: flex; align-items: center; gap: 0.5rem;">
-        ${loginSvg}Login
-      </button>
-      <button id="loginBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Login" title="Login">
-        ${loginSvg}
-      </button>`;
-    $("#addGearsTrigger").after(loginBtnHtml);
-    $("#loginBtn").before($("#pedalFilterInput"));
-    $("#loginBtn, #loginBtnMobile").on("click", () => window.location.href = "login");
+    $("#loginBtn, #loginBtnMobile").on("click", () => { window.location.href = "login"; });
   } else {
-    $("#saveBtn").on("click", function () {
-      if (typeof savePedalboard === "function") savePedalboard();
-    });
-    $("#saveBtnMobile").on("click", function () {
-      if (typeof savePedalboard === "function") savePedalboard();
-    });
-    $("#createBtn").on("click", function () {
-      if (typeof createNewPedalboard === "function") createNewPedalboard();
-    });
+    $("#saveBtn").on("click",       function () { if (typeof savePedalboard === "function") savePedalboard(); });
+    $("#saveBtnMobile").on("click", function () { if (typeof savePedalboard === "function") savePedalboard(); });
   }
 }

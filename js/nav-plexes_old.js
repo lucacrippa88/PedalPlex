@@ -1,0 +1,303 @@
+function initNavPreset() {
+
+  const isGuest = !window.currentUser;
+
+  // Save original gear control values to detect changes later (for SubPlex preservation)
+  window.originalPedalControls = {};
+  const currentPreset = window.presetMap?.[currentPresetId];
+  if (currentPreset?.pedals) {
+    for (const pedalId of Object.keys(currentPreset.pedals)) {
+      window.originalPedalControls[pedalId] = JSON.parse(JSON.stringify(currentPreset.pedals[pedalId].controls));
+    }
+  }
+
+
+  const navHtml = `
+    <header style="display: flex; align-items: center; justify-content: space-between;">
+      <!-- Left: menu toggle + title -->
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+          <span class="menu-morph" aria-hidden="true"><i class="menu-morph__ham"></i><i class="menu-morph__logo"></i></span>
+        </button>
+        <a href="" style="text-decoration:none;" class="title">PedalPlex</a>
+        <a href="plexes" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">${L.Plexes}</a>
+      </div>
+
+      <!-- Right: buttons -->
+      <div class="rightButtons showDesktop" style="display: flex; align-items: center; gap: 1rem;">
+
+        <button id="tourTriggerBtn" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only pp-tour-trigger-btn" type="button" aria-label="Start guided tour" title="Guided Tour">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/>
+            <path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/>
+          </svg>
+        </button>
+
+        <button id="exploreBtn" class="bx--btn bx--btn--danger bx--btn--sm" type="button" aria-label="Explore"
+          style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M16,2A14,14,0,1,0,30,16,14,14,0,0,0,16,2Zm0,26A12,12,0,1,1,28,16,12,12,0,0,1,16,28ZM22.31,10.35,13.72,14.09l-4.07,8.57,8.6-3.74ZM16,17a1,1,0,1,1,1-1A1,1,0,0,1,16,17Z"/>
+          </svg>
+          Explore
+        </button>
+
+        <button id="savePstBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Save ${L.Plex}" disabled
+          style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
+          </svg>
+          Lock Tone
+        </button>
+        <button id="createPstBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New ${L.Plex}"
+          style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M30 6L26 6 26 2 24 2 24 6 20 6 20 8 24 8 24 12 26 12 26 8 30 8 30 6zM24 15v7.5562A3.9552 3.9552 0 0022 22a4 4 0 104 4V15zM22 28a2 2 0 112-2A2.0027 2.0027 0 0122 28zM17 6H10A2.002 2.002 0 008 8V22.5562A3.9557 3.9557 0 006 22a4 4 0 104 4V8h7zM6 28a2 2 0 112-2A2.0023 2.0023 0 016 28z" stroke="currentColor"/>
+          </svg>
+          New Tone
+        </button>
+            <button id="addFolderBtn" class="bx--btn bx--btn--secondary bx--btn--sm" type="button" aria-label="Create New Folder"
+          style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M26 20L24 20 24 24 20 24 20 26 24 26 24 30 26 30 26 26 30 26 30 24 26 24z" stroke="currentColor"/>
+            <path d="M28,8H16l-3.4-3.4C12.2,4.2,11.7,4,11.2,4H4C2.9,4,2,4.9,2,6v20c0,1.1,0.9,2,2,2h14v-2H4V6h7.2l3.4,3.4l0.6,0.6H28v8h2v-8 C30,8.9,29.1,8,28,8z" stroke="currentColor"/>
+          </svg>
+          Add Folder
+        </button>
+
+      </div>
+
+      <div class="rightButtons showMobile" style="display: flex; align-items: center; gap: 1rem;">
+
+        <button id="exploreBtnMobile" class="bx--btn bx--btn--danger bx--btn--sm bx--btn--icon-only" type="button" aria-label="Explore"
+          style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M16,2A14,14,0,1,0,30,16,14,14,0,0,0,16,2Zm0,26A12,12,0,1,1,28,16,12,12,0,0,1,16,28ZM22.31,10.35,13.72,14.09l-4.07,8.57,8.6-3.74ZM16,17a1,1,0,1,1,1-1A1,1,0,0,1,16,17Z"/>
+          </svg>
+        </button>
+
+        <button id="savePstBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Save ${L.Plex}" disabled
+          style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/>
+          </svg>
+        </button>
+        
+        <button id="createPstBtnMobile" class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Create New ${L.Plex}"
+          style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M30 6L26 6 26 2 24 2 24 6 20 6 20 8 24 8 24 12 26 12 26 8 30 8 30 6zM24 15v7.5562A3.9552 3.9552 0 0022 22a4 4 0 104 4V15zM22 28a2 2 0 112-2A2.0027 2.0027 0 0122 28zM17 6H10A2.002 2.002 0 008 8V22.5562A3.9557 3.9557 0 006 22a4 4 0 104 4V8h7zM6 28a2 2 0 112-2A2.0023 2.0023 0 016 28z" stroke="currentColor"/>
+          </svg>
+        </button>
+
+      </div>
+
+    </header>
+    `;
+
+  $("body").prepend(navHtml);
+
+  // In preview mode, rimuove subito i bottoni non necessari
+  if (window.isPreviewMode) {
+    ["exploreBtn", "exploreBtnMobile", "savePstBtn", "savePstBtnMobile", "createPstBtn", "createPstBtnMobile"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    });
+  }
+
+  // Tour trigger button
+  $("#tourTriggerBtn").on("click", function () {
+    if (typeof window.startTour === 'function') {
+      window.startTour(0);
+    } else {
+      localStorage.setItem('pp_tour_active', 'true');
+      localStorage.setItem('pp_tour_step', '0');
+      window.location.href = '/rigs';
+    }
+  });
+
+  // Explore button — always visible, but auth check is inside openExploreModal()
+  $("#exploreBtn, #exploreBtnMobile").on("click", () => {
+    if (typeof openExploreModal === "function") openExploreModal();
+  });
+
+  // For guests: keep Save/Create buttons active (they save locally), but
+  // disable Add Folder (not supported locally). Show a Login button.
+  if (isGuest) {
+    // Rename "Lock Tone" → "Lock Tone Offline" with checkmark icon
+    const checkSvg = `<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z'/></svg>`;
+    $('#savePstBtn').html(`${checkSvg}Lock Tone Offline`);
+    $('#savePstBtnMobile').html(checkSvg);
+
+    // Add login button (primary, same style as rigs.html)
+    const loginBtnHtml = `
+    <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Login"
+        style="display: flex; align-items: center; gap: 0.5rem;">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
+            <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
+        </svg>
+        Login
+    </button>`;
+    const loginBtnHtmlMobile = `
+    <button id="loginBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Login"
+        style="display: flex; align-items: center; gap: 0.5rem;">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/>
+            <path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/>
+        </svg>
+    </button>`;
+
+    $(".rightButtons.showDesktop").prepend(loginBtnHtml);
+    $(".rightButtons.showMobile").prepend(loginBtnHtmlMobile);
+
+    $("#loginBtn, #loginBtnMobile").on("click", () => {
+      window.location.href = "login";
+    });
+
+    // Disable Add Folder only (folders not supported for guests)
+    ['addFolderBtn'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.disabled = true;
+        el.classList.add('btn-disabled');
+        el.title = 'Login to use folders';
+      }
+    });
+  }
+
+
+  // Fullscreen menu toggle
+  $("#menuToggle").on("click", function () {
+    const randomQuote = songQuotes[Math.floor(Math.random() * songQuotes.length)];
+    $("#song-quote").html(`<span style='font-style:italic'>${randomQuote}</span>`);
+    $("#fullscreenMenu").addClass("active");
+  });
+
+  $("#closeMenu").on("click", () => {
+    $("#fullscreenMenu").removeClass("active");
+  });
+
+  // Preset filter toggle
+  $("#toggleFilterBtn").on("click", function () {
+    const input = $("#pedalFilterInput");
+    input.is(":visible") ? input.hide().val("") : input.show().focus();
+  });
+
+  $("#pedalFilterInput").on("input", function () {
+    const filterValue = $(this).val().toLowerCase();
+  });
+
+  function updateSavePresetButtonState() {
+    const selected = $('#presetSelect').val();
+    $('#savePstBtn').prop('disabled', !selected || selected.trim() === '');
+    $('#savePstBtnMobile').prop('disabled', !selected || selected.trim() === '');
+  }
+
+  $(document).ready(() => {
+    updateSavePresetButtonState();
+    $('#presetSelect').on('change input', updateSavePresetButtonState);
+  });
+
+  // Save preset
+  $('#savePstBtn, #savePstBtnMobile').on('click', async () => {
+    if (typeof recordGuestEvent === 'function') recordGuestEvent('save_preset_click');
+    const presetName = $('#presetSelect option:selected').text().trim() || `Untitled ${L.Plex}`;
+    const result = collectPedalControlValues(presetName);
+    const pedalArray = result[presetName];
+
+    if (!pedalArray || pedalArray.length === 0) return;
+
+    const pedalsObject = {};
+    for (const pedal of pedalArray) {
+      if (!pedal.id) continue;
+      const flatControls = {};
+      for (const ctrl of pedal.controls) {
+        const key = Object.keys(ctrl)[0];
+        flatControls[key] = ctrl[key];
+      }
+      pedalsObject[pedal.id] = {
+        controls: flatControls
+      };
+
+      // SubPlex preservation
+      const originalControls = window.originalPedalControls?.[pedal.id];
+      if (originalControls) {
+        // Compare flatControls con originalControls
+        const controlsChanged = Object.keys(flatControls).some(key => flatControls[key] !== originalControls[key]);
+        if (!controlsChanged) { // SubPlex preservation only if controls didn't change
+          const existingSubplex = window.presetMap?.[currentPresetId]?.pedals?.[pedal.id]?.subplex;
+          if (existingSubplex) pedalsObject[pedal.id].subplex = existingSubplex;
+        }
+      }
+
+    }
+
+    Swal.fire({
+      title: `Locking Tone as ${L.Plex}...`,
+      didOpen: () => Swal.showLoading(),
+      allowOutsideClick: false
+    });
+
+    const success = await savePreset(currentPresetId, {
+      preset_name: presetName,
+      pedals: pedalsObject
+    });
+
+    if (success) {
+      window.PPUnsaved?.markPresetClean(); // evita il prompt "unsaved changes" sul reload post-salvataggio
+      Swal.close()
+      Swal.fire({
+          icon: "success",
+          title: `${L.Plex} Saved`,
+          text: `Your Tone "${presetName}" has been locked successfully.`,
+          timer: 1000,
+          showConfirmButton: false
+        })
+        .then(() => location.reload());
+    } else {
+      Swal.fire("Error", `Failed to save ${L.plex}. Please retry.`, "error");
+    }
+  });
+
+
+  // Create preset
+  $('#createPstBtn, #createPstBtnMobile').on('click', async () => {
+    if (typeof recordGuestEvent === 'function') recordGuestEvent('create_preset_click');
+    await createPreset();
+  });
+
+
+  // Attach folder add/rename listeners
+  if (window.attachAddFolderListener) window.attachAddFolderListener();
+  if (window.attachRenameFolderListener) window.attachRenameFolderListener();
+
+  // Pedalboard change event
+  $('#pedalboardSelect').on('change', (e) => {
+    const selectedId = e.target.value;
+    const board = window.allPedalboards?.find(pb => pb._id === selectedId);
+    if (!board) return; // guard against NaN / empty placeholder
+    window.pedalboard = board;
+
+    // Fetch folders for this pedalboard
+    if (window.loadFoldersForCurrentPedalboard) {
+      window.loadFoldersForCurrentPedalboard();
+    }
+
+    // Fetch presets for this board
+    if (typeof fetchPresetsByBoardId === 'function') {
+      fetchPresetsByBoardId(window.currentUser.userid, window.pedalboard._id);
+    }
+  });
+
+  // Page load: wait for currentUser and pedalboard ---
+  const waitForReady = setInterval(() => {
+    if (window.currentUser && window.allPedalboards && window.allPedalboards.length > 0) {
+      clearInterval(waitForReady);
+      window.pedalboard = window.allPedalboards[0]; // pick first pedalboard initially
+      if (window.loadFoldersForCurrentPedalboard) {
+        window.loadFoldersForCurrentPedalboard();
+      }
+    }
+  }, 50);
+
+}
