@@ -138,12 +138,12 @@ function initNavPreset() {
             ">
           <button class="pp-action-item" data-action="renameFolder">${SVG.editFolder} <span>Edit Folder</span></button>
           <button class="pp-action-item" data-action="newTone">${SVG.newTone} <span>New Tone</span></button>
-          <button class="pp-action-item" data-action="renamePreset">${SVG.editPreset} <span>Edit Plex</span></button>
+          <button class="pp-action-item" data-action="renamePreset">${SVG.editPreset} <span>Edit Preset</span></button>
           <button class="pp-action-item" data-action="addFolder">${SVG.addFolder} <span>Add Folder</span></button>
           <div class="pp-action-separator"></div>
-          <button class="pp-action-item" id="pp-action-share" data-action="share">${SVG.share} <span>Share</span></button>
-          <button class="pp-action-item" id="pp-action-lock"  data-action="lock">${SVG.lock}  <span>Lock Plex</span></button>
-          <button class="pp-action-item" data-action="download">${SVG.download} <span>Download</span></button>
+          <button class="pp-action-item" id="pp-action-share" data-action="share">${SVG.share} <span>Share Preset</span></button>
+          <button class="pp-action-item" id="pp-action-lock"  data-action="lock">${SVG.lock}  <span>Lock Preset</span></button>
+          <button class="pp-action-item" data-action="download">${SVG.download} <span>Download Preset</span></button>
           <div class="pp-action-separator"></div>
           <a class="pp-action-item" href="rigs">${SVG.manageRigs} <span>Manage Rigs</span></a>
           <button class="pp-action-item" data-action="tour">${SVG.tour} <span>Guided Tour</span></button>
@@ -223,7 +223,7 @@ function initNavPreset() {
     if (lockBtn) {
       const lockSvgLocked = `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M24,14H22V10a6,6,0,0,0-12,0v4H8a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V16A2,2,0,0,0,24,14ZM12,10a4,4,0,0,1,8,0v4H12ZM24,28H8V16H24Z"></path><circle cx="16" cy="22" r="2"></circle></svg>`;
       const lockSvgOpen   = `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M24,14H10V10a6,6,0,0,1,12,0v1h2V10A8,8,0,0,0,8,10v4H8a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V16A2,2,0,0,0,24,14ZM8,28V16H24V28Z"></path><circle cx="16" cy="22" r="2"></circle></svg>`;
-      lockBtn.innerHTML   = `${isLocked ? lockSvgLocked : lockSvgOpen} <span>${isLocked ? 'Locked — click to unlock' : 'Lock Plex'}</span>`;
+      lockBtn.innerHTML   = `${isLocked ? lockSvgLocked : lockSvgOpen} <span>${isLocked ? 'Locked - Manage' : 'Lock Preset'}</span>`;
       lockBtn.style.color = isLocked ? '#9C54D5' : '';
     }
 
@@ -233,7 +233,7 @@ function initNavPreset() {
     const shareBtn = document.getElementById('pp-action-share');
     if (shareBtn) {
       const shareSvgActive = `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M23,20a5,5,0,0,0-3.89,1.89L11.8,17.32a4.46,4.46,0,0,0,0-2.64l7.31-4.57A5,5,0,1,0,18,7a4.79,4.79,0,0,0,.2,1.32l-7.31,4.57a5,5,0,1,0,0,6.22l7.31,4.57A4.79,4.79,0,0,0,18,25a5,5,0,1,0,5-5Z"/></svg>`;
-      shareBtn.innerHTML   = `${shareSvgActive} <span>${isShared ? 'Shared — manage' : 'Share'}</span>`;
+      shareBtn.innerHTML   = `${shareSvgActive} <span>${isShared ? 'Shared - Manage' : 'Share Preset'}</span>`;
       shareBtn.style.color = isShared ? '#5EE2F0' : '';
     }
   }
