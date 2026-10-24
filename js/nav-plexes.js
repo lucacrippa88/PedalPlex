@@ -46,14 +46,14 @@ function initNavPreset() {
   };
 
   // ── Build navbar HTML ─────────────────────────────────────────────────────
-  const lockLabel      = isGuest ? 'Lock Tone Offline' : 'Lock Tone';
+  const lockLabel      = isGuest ? 'Save Preset Offline' : 'Save Preset';
   const loginBtnDesktop = isGuest ? `
-    <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button"
+    <button id="loginBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button"
         style="display:flex;align-items:center;gap:0.5rem;">
       ${SVG.login} Login
     </button>` : '';
   const loginBtnMobile = isGuest ? `
-    <button id="loginBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only showMobile" type="button" aria-label="Login">
+    <button id="loginBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Login">
       ${SVG.login}
     </button>` : '';
 
@@ -77,7 +77,7 @@ function initNavPreset() {
           ${SVG.explore} Explore
         </button>
         <button id="savePstBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" disabled
-            style="display:flex;align-items:center;gap:0.5rem;">
+            style="display:flex;align-items:center;gap:0.5rem;white-space:nowrap;max-width:none!important;">
           ${SVG.check} ${lockLabel}
         </button>
       </div>
@@ -374,7 +374,7 @@ function initNavPreset() {
     if (success) {
       window.PPUnsaved?.markPresetClean();
       Swal.close();
-      Swal.fire({ icon:"success", title:`${L.Plex} Saved`, text:`Your Tone "${presetName}" has been locked successfully.`, timer:1000, showConfirmButton:false })
+      Swal.fire({ icon:"success", title:`${L.Plex} Saved`, text:`Your Tone "${presetName}" has been saved successfully.`, timer:1000, showConfirmButton:false })
         .then(() => location.reload());
     } else {
       Swal.fire("Error", `Failed to save ${L.plex}. Please retry.`, "error");

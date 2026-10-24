@@ -249,7 +249,7 @@ function initNavPreset() {
       Swal.fire({
           icon: "success",
           title: `${L.Plex} Saved`,
-          text: `Your Tone "${presetName}" has been locked successfully.`,
+          text: `Your Tone "${presetName}" has been saved successfully.`,
           timer: 1000,
           showConfirmButton: false
         })

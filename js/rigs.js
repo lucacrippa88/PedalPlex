@@ -217,7 +217,6 @@ function initPedalboard(userRole) {
 
           $("#pedalboard-controls").css("display", "inline-flex");
           $("#pedalboardSelect").css("display", "inline-flex");
-          $("#renameBoardBtn").css("display", "inline-flex");
           $("#viewPreset").css("display", "inline-flex");
 
           renderPedalboard();
