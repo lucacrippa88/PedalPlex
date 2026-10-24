@@ -965,7 +965,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   padding: 15px 20px;
   background-color: #2e2e2e;
   width: 100%;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 }
 

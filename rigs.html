@@ -131,6 +131,8 @@
       .amp-row .pedal-wrapper {
         width: 100% !important;
         max-width: 100% !important;
+        height: auto !important;
+        min-height: 60px !important;
         box-sizing: border-box;
         flex-shrink: 1 !important;
       }
@@ -140,6 +142,12 @@
         flex-direction: column !important;
         align-items: flex-start !important;
         gap: 4px !important;
+      }
+
+      /* Banner "Build your first Rig": larghezza viewport, non eredita max-content dal parent */
+      #pedalboard .rig-empty-banner {
+        width: calc(100vw - 2rem) !important;
+        max-width: calc(100vw - 2rem) !important;
       }
     }
 
@@ -559,26 +567,28 @@
   </div>
 
     <div class="zoom-controls">
-      <!-- Zoom buttons group (left) -->
-      <div style="display:flex; gap:8px; align-items:center;">
+      <!-- Save Plexes link (left, mobile only) — margin-left:auto sul gruppo zoom lo spinge a destra -->
+      <a id="viewPresetFooter" href="plexes" class="showMobile bx--btn bx--btn--tertiary bx--btn--sm" type="button" style="white-space:nowrap;">Save Plexes
+        <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/></svg>
+      </a>
+      <!-- Zoom buttons group — margin-left:auto li spinge sempre a destra -->
+      <div style="display:flex; gap:8px; align-items:center; margin-left:auto;">
         <button id="zoomIn" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="zoomIn()">
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-          <path d="M18 12L14 12 14 8 12 8 12 12 8 12 8 14 12 14 12 18 14 18 14 14 18 14 18 12z"></path><path d="M21.4479,20A10.856,10.856,0,0,0,24,13,11,11,0,1,0,13,24a10.856,10.856,0,0,0,7-2.5521L27.5859,29,29,27.5859ZM13,22a9,9,0,1,1,9-9A9.01,9.01,0,0,1,13,22Z"></path>
-        </svg>
-      </button>
-      <button id="zoomOut" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="zoomOut()">
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-          <path d="M8 12H18V14H8z"></path><path d="M21.4479,20A10.856,10.856,0,0,0,24,13,11,11,0,1,0,13,24a10.856,10.856,0,0,0,7-2.5521L27.5859,29,29,27.5859ZM13,22a9,9,0,1,1,9-9A9.01,9.01,0,0,1,13,22Z"></path>
-        </svg>
-      </button>
-      <button id="zoomReset" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="resetZoom()">
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-          <path d="M22.4478,21A10.855,10.855,0,0,0,25,14,10.99,10.99,0,0,0,6,6.4658V2H4v8h8V8H7.332a8.9768,8.9768,0,1,1-2.1,8H3.1912A11.0118,11.0118,0,0,0,14,25a10.855,10.855,0,0,0,7-2.5522L28.5859,30,30,28.5859Z"/>
-        </svg>
-      </button>
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M18 12L14 12 14 8 12 8 12 12 8 12 8 14 12 14 12 18 14 18 14 14 18 14 18 12z"></path><path d="M21.4479,20A10.856,10.856,0,0,0,24,13,11,11,0,1,0,13,24a10.856,10.856,0,0,0,7-2.5521L27.5859,29,29,27.5859ZM13,22a9,9,0,1,1,9-9A9.01,9.01,0,0,1,13,22Z"></path>
+          </svg>
+        </button>
+        <button id="zoomOut" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="zoomOut()">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M8 12H18V14H8z"></path><path d="M21.4479,20A10.856,10.856,0,0,0,24,13,11,11,0,1,0,13,24a10.856,10.856,0,0,0,7-2.5521L27.5859,29,29,27.5859ZM13,22a9,9,0,1,1,9-9A9.01,9.01,0,0,1,13,22Z"></path>
+          </svg>
+        </button>
+        <button id="zoomReset" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="resetZoom()">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M22.4478,21A10.855,10.855,0,0,0,25,14,10.99,10.99,0,0,0,6,6.4658V2H4v8h8V8H7.332a8.9768,8.9768,0,1,1-2.1,8H3.1912A11.0118,11.0118,0,0,0,14,25a10.855,10.855,0,0,0,7-2.5522L28.5859,30,30,28.5859Z"/>
+          </svg>
+        </button>
       </div>
-      <!-- Save Plexes link (right, mobile only) -->
-      <a id="viewPresetFooter" href="plexes" class="showMobile bx--btn bx--btn--tertiary bx--btn--sm" type="button" style="white-space:nowrap;">Save Plexes</a>
     </div>
 
   <script src="js/zoom.js"></script>

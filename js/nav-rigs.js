@@ -104,7 +104,6 @@ function initNavPedalboard(userRole) {
             ${buildRigItem}
             ${editRigItem}
             <div class="pp-action-separator"></div>
-            <a class="pp-action-item" href="plexes">${SVG.plexes} <span>Save your Plexes</span></a>
             <button class="pp-action-item" data-action="tour">${SVG.tour} <span>Guided Tour</span></button>
           </div>
         </div>
