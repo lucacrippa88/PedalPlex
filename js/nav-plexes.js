@@ -136,10 +136,10 @@ function initNavPreset() {
             z-index:4000;
             padding:4px 0;
             ">
-          <button class="pp-action-item" data-action="renameFolder">${SVG.editFolder} <span>Edit Folder</span></button>
-          <button class="pp-action-item" data-action="newTone">${SVG.newTone} <span>New Tone</span></button>
+          <button class="pp-action-item" data-action="newTone">${SVG.newTone} <span>New Preset</span></button>
           <button class="pp-action-item" data-action="renamePreset">${SVG.editPreset} <span>Edit Preset</span></button>
           <button class="pp-action-item" data-action="addFolder">${SVG.addFolder} <span>Add Folder</span></button>
+          <button class="pp-action-item" data-action="renameFolder">${SVG.editFolder} <span>Edit Folder</span></button>
           <div class="pp-action-separator"></div>
           <button class="pp-action-item" id="pp-action-share" data-action="share">${SVG.share} <span>Share Preset</span></button>
           <button class="pp-action-item" id="pp-action-lock"  data-action="lock">${SVG.lock}  <span>Lock Preset</span></button>

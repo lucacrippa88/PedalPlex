@@ -82,8 +82,11 @@ function initNavPedalboard(userRole) {
   function injectActionsDropdown() {
     if (document.getElementById('pp-actions-btn')) return;
 
+    const editRigItem = !isGuest
+      ? `<button class="pp-action-item" data-action="editRig">${SVG.buildRig} <span>Edit Rig</span></button>`
+      : '';
     const buildRigItem = !isGuest
-      ? `<button class="pp-action-item" data-action="buildRig">${SVG.buildRig} <span>Build Rig</span></button>`
+      ? `<button class="pp-action-item" data-action="buildRig">${SVG.buildRig} <span>Build new Rig</span></button>`
       : '';
 
     const actionsHtml = `
@@ -113,8 +116,9 @@ function initNavPedalboard(userRole) {
             z-index:4000;
             padding:4px 0;">
           ${buildRigItem}
-          <a class="pp-action-item" href="plexes">${SVG.plexes} <span>Save your Plexes</span></a>
+          ${editRigItem}
           <div class="pp-action-separator"></div>
+          <a class="pp-action-item" href="plexes">${SVG.plexes} <span>Save your Presets</span></a>
           <button class="pp-action-item" data-action="tour">${SVG.tour} <span>Guided Tour</span></button>
         </div>
       </div>`;
@@ -192,6 +196,9 @@ function initNavPedalboard(userRole) {
     switch (action) {
       case 'buildRig':
         if (typeof createNewPedalboard === 'function') createNewPedalboard();
+        break;
+      case 'editRig':
+        document.getElementById('renameBoardBtn')?.click();
         break;
       case 'tour':
         if (typeof window.startTour === 'function') window.startTour(0);

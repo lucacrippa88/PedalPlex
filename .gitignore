@@ -4,6 +4,7 @@ Thumbs.db
 
 # Other
 other/
+.bob
 
 # Plex
 backend/
