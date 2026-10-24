@@ -192,8 +192,10 @@ window.fullscreenMenuHtml = `
 
 
   <div class='menu-footer' style="margin-top:4rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
-    © <span id="year-range"></span> PedalPlex · 
+    © <span id="year-range"></span> PedalPlex ·
     <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="mailto:support@pedalplex.com">Support</a> · Developed in Italy <span style="display: inline-block; width: 20px; height: 4px; background: linear-gradient(to right, #008C45 33.33%, #F4F5F0 33.33% 66.66%, #CD212A 66.66%); vertical-align: middle"></span>
+    <br><br>
+    <a href="https://paypal.me/lucacrippa88" target="_blank" style="color:#a3a3a3; text-decoration:none; font-size:0.8rem;">☕ Buy me a coffee — support PedalPlex hosting</a>
   </div>
 </div>
 `;

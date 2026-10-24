@@ -962,10 +962,11 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   gap: 8px;
   z-index: 200;
   margin-bottom: 25px;
-  padding: 15px 20px 15px 0px;
+  padding: 15px 20px;
   background-color: #2e2e2e;
   width: 100%;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Desktop: keep everything in one line */
@@ -2062,5 +2063,25 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     right: 0.75rem;
     min-width: 0;
     max-width: none;
+  }
+}
+
+/* ── Mobile rig: amp row full-width, remove-row sotto la riga ── */
+@media (max-width: 768px) {
+  /* Override del width:max-content che viene da @1024px per il pedalboard */
+  #pedalboard .amp-row,
+  #pedalboard .amp-row .pedal-empty-slot,
+  #pedalboard .amp-row .pedal-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    flex-shrink: 1 !important;
+  }
+
+  /* Remove-row: metti il bottone sotto la riga invece che a destra */
+  #pedalboard .row-wrap {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
   }
 }

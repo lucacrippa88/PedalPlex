@@ -855,12 +855,14 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
   const currentBoard = window.allPedalboards[selectedBoardIndex];
   const currentName = currentBoard.board_name || `Rig ${selectedBoardIndex + 1}`;
 
+  const isGuestUser = window.currentUser?.role === 'guest' || !window.currentUser?.userid;
+
   Swal.fire({
     title: 'Edit this Rig',
     input: 'text',
     inputValue: currentName,
     showCancelButton: false,
-    showDenyButton: true,
+    showDenyButton: !isGuestUser,
     showCloseButton: true,
     confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M2 26H30V28H2z'></path><path d='M25.4,9c0.8-0.8,0.8-2,0-2.8c0,0,0,0,0,0l-3.6-3.6c-0.8-0.8-2-0.8-2.8,0c0,0,0,0,0,0l-15,15V24h6.4L25.4,9z M20.4,4L24,7.6 l-3,3L17.4,7L20.4,4z M6,22v-3.6l10-10l3.6,3.6l-10,10H6z'></path></svg>Rename Rig",
     denyButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>Delete Rig",

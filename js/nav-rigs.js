@@ -6,7 +6,7 @@
  *
  * Actions dropdown:
  *   • Build Rig (solo logged-in)
- *   • Save your Plexes
+ *   • Save your Presets
  *   • ── separator ──
  *   • Guided Tour
  *
@@ -43,9 +43,7 @@ function initNavPedalboard(userRole) {
   const buildRigItem = !isGuest
     ? `<button class="pp-action-item" data-action="buildRig">${SVG.buildRig} <span>Build new Rig</span></button>`
     : '';
-  const editRigItem = !isGuest
-    ? `<button class="pp-action-item" data-action="editRig">${SVG.buildRig} <span>Edit Rig</span></button>`
-    : '';
+  const editRigItem = `<button class="pp-action-item" data-action="editRig">${SVG.buildRig} <span>Edit Rig</span></button>`;
 
   const navHtml = `
     <header style="display:flex;align-items:center;justify-content:space-between;">
