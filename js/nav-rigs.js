@@ -39,7 +39,14 @@ function initNavPedalboard(userRole) {
         type="button" aria-label="Login">${SVG.login}
     </button>` : '';
 
-  // ── Navbar HTML ───────────────────────────────────────────────────────────
+  // ── Navbar HTML (Actions sempre nell'header) ──────────────────────────────
+  const buildRigItem = !isGuest
+    ? `<button class="pp-action-item" data-action="buildRig">${SVG.buildRig} <span>Build new Rig</span></button>`
+    : '';
+  const editRigItem = !isGuest
+    ? `<button class="pp-action-item" data-action="editRig">${SVG.buildRig} <span>Edit Rig</span></button>`
+    : '';
+
   const navHtml = `
     <header style="display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:1rem;">
@@ -49,83 +56,64 @@ function initNavPedalboard(userRole) {
         <a href="" style="text-decoration:none;" class="title">PedalPlex</a>
         <a href="rigs" class="subtitle" style="font-size:1.25rem;color:#aaa;font-weight:600;text-decoration:none">Rigs</a>
       </div>
-      <div class="rightButtons showDesktop" style="display:flex;align-items:center;gap:0.75rem;">
+      <div style="display:flex;align-items:center;gap:0.5rem;">
         <input type="text" id="pedalFilterInput" placeholder="Search pedals…"
                style="font-size:0.875rem;padding:6px 12px;border:1px solid #8c8c8c;border-radius:4px;outline-offset:2px;width:280px;display:none;"
                aria-label="Filter pedals"/>
         ${loginBtnDesktop}
-        <button id="addGearsTrigger" class="bx--btn bx--btn--primary bx--btn--sm"
+        <button id="addGearsTrigger" class="showDesktop bx--btn bx--btn--primary bx--btn--sm"
                 type="button" style="display:flex;align-items:center;gap:0.4rem;">
           ${SVG.addGear} Add Gear
         </button>
-        <button id="saveBtn" class="bx--btn bx--btn--primary bx--btn--sm"
-                type="button" style="display:flex;align-items:center;gap:0.5rem;">
+        <button id="saveBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm"
+                type="button" style="display:flex;align-items:center;gap:0.5rem;white-space:nowrap;max-width:none!important;">
           ${saveLabelDesktop}
         </button>
-      </div>
-      <div class="rightButtons showMobile" style="display:flex;align-items:center;gap:0.5rem;">
         ${loginBtnMobile}
-        <button id="addGearsTriggerMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
+        <button id="addGearsTriggerMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
                 type="button" aria-label="Add Gear">
           ${SVG.addGear}
         </button>
-        <button id="saveBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
+        <button id="saveBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
                 type="button" aria-label="${isGuest ? 'Save Rig Offline' : 'Save Rig'}">
           ${isGuest ? SVG.check : SVG.save}
         </button>
+        <div id="pp-actions-wrapper" style="position:relative;">
+          <button id="pp-actions-btn"
+              class="showDesktop bx--btn bx--btn--tertiary bx--btn--sm"
+              type="button"
+              style="display:flex;align-items:center;gap:0.5rem;max-width:none!important;">
+            ${SVG.dots} Actions
+          </button>
+          <button id="pp-actions-btn-mobile"
+              class="showMobile bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only"
+              type="button" aria-label="Actions">
+            ${SVG.dots}
+          </button>
+          <div id="pp-actions-menu" style="
+              display:none;
+              position:absolute;
+              top:calc(100% + 6px);
+              right:0;
+              width:200px;
+              overflow:hidden;
+              background:rgb(30,30,30);
+              border:1px solid #9C54D5;
+              border-radius:8px;
+              box-shadow:0 8px 24px rgba(0,0,0,0.5);
+              z-index:4000;
+              padding:4px 0;">
+            ${buildRigItem}
+            ${editRigItem}
+            <div class="pp-action-separator"></div>
+            <a class="pp-action-item" href="plexes">${SVG.plexes} <span>Save your Plexes</span></a>
+            <button class="pp-action-item" data-action="tour">${SVG.tour} <span>Guided Tour</span></button>
+          </div>
+        </div>
       </div>
     </header>`;
 
   $("body").prepend(navHtml);
-
-  // ── Actions dropdown ───────────────────────────────────────────────────────
-  function injectActionsDropdown() {
-    if (document.getElementById('pp-actions-btn')) return;
-
-    const editRigItem = !isGuest
-      ? `<button class="pp-action-item" data-action="editRig">${SVG.buildRig} <span>Edit Rig</span></button>`
-      : '';
-    const buildRigItem = !isGuest
-      ? `<button class="pp-action-item" data-action="buildRig">${SVG.buildRig} <span>Build new Rig</span></button>`
-      : '';
-
-    const actionsHtml = `
-      <div id="pp-actions-wrapper" style="position:relative;margin-left:auto;">
-        <button id="pp-actions-btn"
-            class="bx--btn bx--btn--tertiary bx--btn--sm showDesktop"
-            type="button"
-            style="display:flex;align-items:center;gap:0.5rem;max-width:none!important;">
-          ${SVG.dots} Actions
-        </button>
-        <button id="pp-actions-btn-mobile"
-            class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only showMobile"
-            type="button" aria-label="Actions">
-          ${SVG.dots}
-        </button>
-        <div id="pp-actions-menu" style="
-            display:none;
-            position:absolute;
-            top:calc(100% + 6px);
-            right:0;
-            width:200px;
-            overflow:hidden;
-            background:rgb(30,30,30);
-            border:1px solid #9C54D5;
-            border-radius:8px;
-            box-shadow:0 8px 24px rgba(0,0,0,0.5);
-            z-index:4000;
-            padding:4px 0;">
-          ${buildRigItem}
-          ${editRigItem}
-          <div class="pp-action-separator"></div>
-          <a class="pp-action-item" href="plexes">${SVG.plexes} <span>Save your Presets</span></a>
-          <button class="pp-action-item" data-action="tour">${SVG.tour} <span>Guided Tour</span></button>
-        </div>
-      </div>`;
-
-    const controls = document.getElementById('pedalboard-controls');
-    if (controls) controls.insertAdjacentHTML('beforeend', actionsHtml);
-  }
 
   if (!document.getElementById('pp-actions-style')) {
     const style = document.createElement('style');
@@ -165,19 +153,6 @@ function initNavPedalboard(userRole) {
     `;
     document.head.appendChild(style);
   }
-
-  $(document).ready(() => {
-    const controls = document.getElementById('pedalboard-controls');
-    if (!controls) return;
-    const observer = new MutationObserver(() => {
-      if (controls.style.display !== 'none') {
-        injectActionsDropdown();
-        observer.disconnect();
-      }
-    });
-    observer.observe(controls, { attributes: true, attributeFilter: ['style'] });
-    if (controls.style.display !== 'none') injectActionsDropdown();
-  });
 
   $(document).on('click', '#pp-actions-btn, #pp-actions-btn-mobile', function (e) {
     e.stopPropagation();

@@ -69,96 +69,83 @@ function initNavPreset() {
         <a href="plexes" class="subtitle" style="font-size:1.25rem;color:#aaa;font-weight:600;text-decoration:none">${L.Plexes}</a>
       </div>
 
-      <!-- Right desktop -->
-      <div class="rightButtons showDesktop" style="display:flex;align-items:center;gap:1rem;">
+      <!-- Right: all buttons + Actions always visible -->
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+
+        <!-- desktop-only buttons -->
         ${loginBtnDesktop}
-        <button id="exploreBtn" class="bx--btn bx--btn--danger bx--btn--sm" type="button"
+        <button id="exploreBtn" class="showDesktop bx--btn bx--btn--danger bx--btn--sm" type="button"
             style="display:flex;align-items:center;gap:0.5rem;">
           ${SVG.explore} Explore
         </button>
-        <button id="savePstBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" disabled
+        <button id="savePstBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" disabled
             style="display:flex;align-items:center;gap:0.5rem;white-space:nowrap;max-width:none!important;">
           ${SVG.check} ${lockLabel}
         </button>
-      </div>
 
-      <!-- Right mobile -->
-      <div class="rightButtons showMobile" style="display:flex;align-items:center;gap:0.5rem;">
+        <!-- mobile-only buttons -->
         ${loginBtnMobile}
-        <button id="exploreBtnMobile" class="bx--btn bx--btn--danger bx--btn--sm bx--btn--icon-only" type="button" aria-label="Explore">
+        <button id="exploreBtnMobile" class="showMobile bx--btn bx--btn--danger bx--btn--sm bx--btn--icon-only" type="button" aria-label="Explore">
           ${SVG.explore}
         </button>
-        <button id="savePstBtnMobile" class="bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" disabled aria-label="${lockLabel}">
+        <button id="savePstBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" disabled aria-label="${lockLabel}">
           ${SVG.check}
         </button>
+
+        <!-- Actions: always visible, desktop label / mobile icon -->
+        <div id="pp-actions-wrapper" style="position:relative;">
+          <button id="pp-actions-btn"
+              class="showDesktop bx--btn bx--btn--tertiary bx--btn--sm"
+              type="button"
+              style="display:flex;align-items:center;gap:0.5rem;max-width:none!important;">
+            ${SVG.dots} Actions
+          </button>
+          <button id="pp-actions-btn-mobile"
+              class="showMobile bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only"
+              type="button" aria-label="Actions">
+            ${SVG.dots}
+          </button>
+          <div id="pp-actions-menu" style="
+              display:none;
+              position:absolute;
+              top:calc(100% + 6px);
+              right:0;
+              width:200px;
+              overflow:hidden;
+              background:rgb(30,30,30);
+              border:1px solid #9C54D5;
+              border-radius:8px;
+              box-shadow:0 8px 24px rgba(0,0,0,0.5);
+              z-index:4000;
+              padding:4px 0;">
+          </div>
+        </div>
+
       </div>
 
     </header>`;
 
   $("body").prepend(navHtml);
 
-  // ── Actions dropdown (injected into #preset-controls) ────────────────────
-  // We wait for the controls bar to be visible before injecting
+  // ── Populate Actions menu items (wrapper is already in the header) ─────────
   function injectActionsDropdown() {
-    if (document.getElementById('pp-actions-btn')) return; // already done
-
-    const actionsHtml = `
-      <div id="pp-actions-wrapper" style="position:relative;margin-left:auto;">
-
-        <!-- Desktop: "Actions" label -->
-        <button id="pp-actions-btn"
-            class="bx--btn bx--btn--tertiary bx--btn--sm showDesktop"
-            type="button"
-            style="display:flex;align-items:center;gap:0.5rem;max-width:none!important;">
-          ${SVG.dots} Actions
-        </button>
-
-        <!-- Mobile: dots only -->
-        <button id="pp-actions-btn-mobile"
-            class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only showMobile"
-            type="button" aria-label="Actions">
-          ${SVG.dots}
-        </button>
-
-        <!-- Dropdown panel -->
-        <div id="pp-actions-menu" style="
-            display:none;
-            position:absolute;
-            top:calc(100% + 6px);
-            right:0;
-            min-width:200px;
-            width:200px;
-            overflow:hidden;
-            background:rgb(30,30,30);
-            border:1px solid #9C54D5;
-            border-radius:8px;
-            box-shadow:0 8px 24px rgba(0,0,0,0.5);
-            z-index:4000;
-            padding:4px 0;
-            ">
-          <button class="pp-action-item" data-action="newTone">${SVG.newTone} <span>New Preset</span></button>
-          <button class="pp-action-item" data-action="renamePreset">${SVG.editPreset} <span>Edit Preset</span></button>
-          <button class="pp-action-item" data-action="addFolder">${SVG.addFolder} <span>Add Folder</span></button>
-          <button class="pp-action-item" data-action="renameFolder">${SVG.editFolder} <span>Edit Folder</span></button>
-          <div class="pp-action-separator"></div>
-          <button class="pp-action-item" id="pp-action-share" data-action="share">${SVG.share} <span>Share Preset</span></button>
-          <button class="pp-action-item" id="pp-action-lock"  data-action="lock">${SVG.lock}  <span>Lock Preset</span></button>
-          <button class="pp-action-item" data-action="download">${SVG.download} <span>Download Preset</span></button>
-          <div class="pp-action-separator"></div>
-          <a class="pp-action-item" href="rigs">${SVG.manageRigs} <span>Manage Rigs</span></a>
-          <button class="pp-action-item" data-action="tour">${SVG.tour} <span>Guided Tour</span></button>
-        </div>
-
-      </div>`;
-
-    // Inject into the controls bar (if present) or after header
-    const controls = document.getElementById('preset-controls');
-    if (controls) {
-      controls.insertAdjacentHTML('beforeend', actionsHtml);
-    }
+    const menu = document.getElementById('pp-actions-menu');
+    if (!menu || menu.children.length > 0) return; // already populated
+    menu.innerHTML = `
+      <button class="pp-action-item" data-action="newTone">${SVG.newTone} <span>New Preset</span></button>
+      <button class="pp-action-item" data-action="renamePreset">${SVG.editPreset} <span>Edit Preset</span></button>
+      <button class="pp-action-item" data-action="addFolder">${SVG.addFolder} <span>Add Folder</span></button>
+      <button class="pp-action-item" data-action="renameFolder">${SVG.editFolder} <span>Edit Folder</span></button>
+      <div class="pp-action-separator"></div>
+      <button class="pp-action-item" id="pp-action-share" data-action="share">${SVG.share} <span>Share Preset</span></button>
+      <button class="pp-action-item" id="pp-action-lock"  data-action="lock">${SVG.lock}  <span>Lock Preset</span></button>
+      <button class="pp-action-item" data-action="download">${SVG.download} <span>Download Preset</span></button>
+      <div class="pp-action-separator"></div>
+      <a class="pp-action-item" href="rigs">${SVG.manageRigs} <span>Manage Rigs</span></a>
+      <button class="pp-action-item" data-action="tour">${SVG.tour} <span>Guided Tour</span></button>`;
   }
 
-  // Inject styles for the dropdown items
+  // Inject styles
   const style = document.createElement('style');
   style.textContent = `
     .pp-action-item {
@@ -195,22 +182,8 @@ function initNavPreset() {
   `;
   document.head.appendChild(style);
 
-  // Inject after controls bar is visible
-  $(document).ready(() => {
-    const controls = document.getElementById('preset-controls');
-    if (controls) {
-      // observe visibility
-      const observer = new MutationObserver(() => {
-        if (controls.style.display !== 'none') {
-          injectActionsDropdown();
-          observer.disconnect();
-        }
-      });
-      observer.observe(controls, { attributes: true, attributeFilter: ['style'] });
-      // Also try immediately in case it's already visible
-      if (controls.style.display !== 'none') injectActionsDropdown();
-    }
-  });
+  // Populate on first open (lazy — items reference L.* which may not be ready at parse time)
+  $(document).ready(() => injectActionsDropdown());
 
   // ── Aggiorna icone Share / Lock nel dropdown ───────────────────────────────
   function updateActionsState() {
