@@ -117,7 +117,8 @@ window.fullscreenMenuHtml = `
     <a href="/plexes">Edit your ${L.Plexes}</a>
     <a href="/rigs">Manage Rigs</a>
     <a href="/gears">View Gears Catalog</a>
-    <a href="/about-us">About PedalPlex</a>
+    <hr style="border:none; border-top:1px solid rgba(255,255,255,0.12); margin:0.5rem 0;">
+    <a href="/about-us">About Us</a>
     <br><br>
     <span id="guestLoginMessage" style="color:#161616; font-size:0.875rem; display:none;">
       Login to enable cross-device sync
