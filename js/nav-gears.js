@@ -15,7 +15,7 @@ function renderNavBar(userRole) {
       <div id="gears-search-overlay" class="pp-search-overlay">
         <input type="text" id="pedalFilterInputMobile" placeholder="Filter gears..." aria-label="Filter gears"/>
         <button id="gearsSearchClose"
-                class="pp-search-close bx--btn bx--btn--secondary bx--btn--icon-only"
+                class="bx--btn bx--btn--secondary bx--btn--icon-only"
                 type="button" aria-label="Close search">
           ${SVG_X_GEARS}
         </button>

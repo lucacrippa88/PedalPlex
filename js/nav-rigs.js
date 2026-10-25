@@ -44,7 +44,7 @@ function initNavPedalboard(userRole) {
       <div id="pp-search-overlay" class="pp-search-overlay">
         <input type="text" id="pedalFilterInput" placeholder="Search pedals…" aria-label="Filter pedals"/>
         <button id="pedalSearchClose"
-                class="pp-search-close bx--btn bx--btn--secondary bx--btn--icon-only"
+                class="bx--btn bx--btn--secondary bx--btn--icon-only"
                 type="button" aria-label="Close search">
           ${SVG_X}
         </button>
@@ -228,13 +228,13 @@ function initNavPedalboard(userRole) {
       // Se l'overlay non è attivo, non ricalcolare
       const overlay = document.getElementById('pp-search-overlay');
       if (overlay && !overlay.classList.contains('active')) return;
-      // Mobile: fisso, tutta la larghezza, sotto la navbar
-      const rect = input.getBoundingClientRect();
+      // Mobile: fisso, tutta la larghezza, sotto l'overlay (altezza intera della searchbar)
+      const overlayH = overlay ? overlay.getBoundingClientRect().bottom : 0;
       dropdown.style.position = 'fixed';
-      dropdown.style.top  = (rect.bottom + 4) + 'px';
+      dropdown.style.top  = overlayH + 'px';
       dropdown.style.left = '0';
       dropdown.style.width = '100vw';
-      dropdown.style.maxHeight = 'calc(100vh - ' + (rect.bottom + 8) + 'px)';
+      dropdown.style.maxHeight = 'calc(100vh - ' + overlayH + 'px)';
       dropdown.style.overflowY = 'auto';
       dropdown.style.boxSizing = 'border-box';
     } else {

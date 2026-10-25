@@ -57,7 +57,7 @@ header {
   min-width: 0;
 }
 .pp-search-overlay input::placeholder { color: #888; }
-.pp-search-overlay .pp-search-close {
+.pp-search-overlay .bx--btn--icon-only {
   align-self: stretch !important;
   min-height: 0 !important;
   min-width: 48px !important;
