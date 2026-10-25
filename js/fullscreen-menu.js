@@ -103,7 +103,7 @@ const songQuotes = [
 window.fullscreenMenuHtml = `
 <div class="fullscreen-menu" id="fullscreenMenu"><br>
   <div class="fullscreen-header" style="display: flex; justify-content: space-between; align-items: center;">
-    <button class="close-btn" id="closeMenu" aria-label="Close menu" style="background: none; border: none; cursor: pointer;">
+    <button class="close-btn" id="closeMenu" aria-label="Close menu" style="background: none; border: none; cursor: pointer; top:20px">
       <svg class="close-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
         <path d="M24 9.41L22.59 8 16 14.59 9.41 8 8 9.41 14.59 16 
                  8 22.59 9.41 24 16 17.41 22.59 24 24 22.59 
