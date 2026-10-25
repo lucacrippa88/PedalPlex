@@ -2082,7 +2082,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
-    min-height: 60px !important;
+    min-height: 100px !important;
     box-sizing: border-box !important;
   }
 

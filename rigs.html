@@ -127,7 +127,7 @@
       #pedalboard .pedal-row:not(.amp-row) { flex-wrap:nowrap!important; width:auto!important; max-width:none!important; }
       #pedalboard .amp-row { width:100%!important; max-width:100%!important; box-sizing:border-box!important; }
       #pedalboard .amp-row .pedal-empty-slot,
-      #pedalboard .amp-row .pedal-wrapper { width:100%!important; max-width:100%!important; height:auto!important; min-height:60px!important; box-sizing:border-box!important; }
+      #pedalboard .amp-row .pedal-wrapper { width:100%!important; max-width:100%!important; height:auto!important; min-height:100px!important; box-sizing:border-box!important; }
       #pedalboard .row-wrap { flex-direction:column!important; align-items:flex-start!important; gap:4px!important; }
     }
 
@@ -547,11 +547,7 @@
   </div>
 
     <div class="zoom-controls">
-      <!-- Save Plexes link (left, mobile only) — margin-left:auto sul gruppo zoom lo spinge a destra -->
-      <a id="viewPresetFooter" href="plexes" class="showMobile bx--btn bx--btn--tertiary bx--btn--sm" type="button" style="white-space:nowrap;">Save Plexes
-        <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/></svg>
-      </a>
-      <!-- Zoom buttons group — margin-left:auto li spinge sempre a destra -->
+      <!-- Tutto a destra: zoom-in, zoom-out, reset, Save Plexes -->
       <div style="display:flex; gap:8px; align-items:center; margin-left:auto;">
         <button id="zoomIn" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only" onclick="zoomIn()">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
@@ -568,6 +564,9 @@
             <path d="M22.4478,21A10.855,10.855,0,0,0,25,14,10.99,10.99,0,0,0,6,6.4658V2H4v8h8V8H7.332a8.9768,8.9768,0,1,1-2.1,8H3.1912A11.0118,11.0118,0,0,0,14,25a10.855,10.855,0,0,0,7-2.5522L28.5859,30,30,28.5859Z"/>
           </svg>
         </button>
+        <a id="viewPresetFooter" href="plexes" class="bx--btn bx--btn--primary bx--btn--sm" type="button" style="white-space:nowrap; display:flex; align-items:center; gap:0.4rem;">Save Presets
+          <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/></svg>
+        </a>
       </div>
     </div>
 

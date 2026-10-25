@@ -47,7 +47,6 @@ function initPedalboard(userRole) {
       $("#pedalboard-controls").css("display", "inline-flex");
       $("#pedalboardSelect").css("display", "none");
       $("#renameBoardBtn").css("display", "none");
-      $("#viewPreset").css("display", "inline-flex");
 
       const dropdown = document.getElementById("pedalboardSelect");
       dropdown.innerHTML = '';
@@ -217,8 +216,7 @@ function initPedalboard(userRole) {
 
           $("#pedalboard-controls").css("display", "inline-flex");
           $("#pedalboardSelect").css("display", "inline-flex");
-          $("#viewPreset").css("display", "inline-flex");
-
+    
           renderPedalboard();
           if (typeof onPedalboardLoaded === "function") setTimeout(onPedalboardLoaded, 100);
           handlePendingPedalAdd();
@@ -755,7 +753,6 @@ $(document).ready(function () {
     });
 
     $("#pedalboard-controls").css("display", "inline-flex");
-    $("#viewPreset").css("display", "inline-flex");
     return;
   }
 
