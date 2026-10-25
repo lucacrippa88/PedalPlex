@@ -441,11 +441,12 @@ function initNavPedalboard(userRole) {
         zIndex:      '3100',
         background:  '#ffffff',
         color:       '#161616',
-        padding:     '0 52px 0 16px',  // spazio a destra per il ✕
-        height:      headerH + 'px',
+        padding:     '0 52px 0 16px',
+        height:      '36px',
+        top:         Math.round((headerH - 36) / 2) + 'px',
         boxSizing:   'border-box',
-        borderRadius:'0',
-        border:      'none',
+        borderRadius:'4px',
+        border:      '1px solid #8c8c8c',
         borderBottom:'2px solid #9C54D5',
       });
       $close.css({
