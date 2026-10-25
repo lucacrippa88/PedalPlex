@@ -2112,3 +2112,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     margin-top: 0;
   }
 }
+
+/* ── Tablet portrait: search input più stretto ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  #pedalFilterInput { width: 180px !important; }
+}

@@ -49,8 +49,11 @@ function initNavPedalboard(userRole) {
         <input type="text" id="pedalFilterInput" placeholder="Search pedals…"
                style="font-size:1rem;padding:6px 12px;border:1px solid #8c8c8c;border-radius:4px;outline-offset:2px;width:280px;display:none;"
                aria-label="Filter pedals"/>
-        <button id="pedalSearchClose" aria-label="Close search"
-                style="display:none; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer; padding:4px 8px; flex-shrink:0;">✕</button>
+        <button id="pedalSearchClose"
+                class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only"
+                type="button" aria-label="Close search" style="display:none; flex-shrink:0;">
+          <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16z"/></svg>
+        </button>
         <button id="addGearsTrigger" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm"
                 type="button" style="display:flex;align-items:center;gap:0.4rem;">
           ${SVG.addGear} Add Gear
@@ -413,16 +416,12 @@ function initNavPedalboard(userRole) {
     const $input = $('#pedalFilterInput');
     const $close = $('#pedalSearchClose');
     const dropdown = document.getElementById('pedalAddDropdownContainer');
-    $input.hide().val('');
+    $input.hide().val('').css({ flex: '', width: '' });
     $close.hide();
     if (dropdown) dropdown.style.display = 'none';
     if (isMobileSearch()) {
-      // Ripristina: togli l'overlay
-      $input.css({ position: '', top: '', left: '', right: '', width: '280px',
-                   zIndex: '', background: '', color: '', padding: '', height: '',
-                   boxSizing: '', borderRadius: '', border: '' });
-      $close.css({ position: '', top: '', right: '', zIndex: '', height: '',
-                   width: '', background: '', color: '', border: '' });
+      // Ripristina bottoni navbar
+      $('#addGearsTriggerMobile, #saveBtnMobile, #pp-actions-btn-mobile').css('display', 'inline-flex');
     }
   }
 
@@ -430,48 +429,14 @@ function initNavPedalboard(userRole) {
     const $input = $('#pedalFilterInput');
     const $close = $('#pedalSearchClose');
     if (isMobileSearch()) {
-      // Mobile: l'input si sovrappone all'intera header come overlay fixed
-      const headerH = document.querySelector('header')?.offsetHeight || 56;
-      $input.css({
-        position:    'fixed',
-        top:         '0',
-        left:        '0',
-        right:       '0',
-        width:       '100%',
-        zIndex:      '3100',
-        background:  '#ffffff',
-        color:       '#161616',
-        padding:     '0 52px 0 16px',
-        height:      '36px',
-        top:         Math.round((headerH - 36) / 2) + 'px',
-        boxSizing:   'border-box',
-        borderRadius:'4px',
-        border:      '1px solid #8c8c8c',
-        borderBottom:'2px solid #9C54D5',
-      });
-      $close.css({
-        position:       'fixed',
-        top:            '0',
-        right:          '0',
-        height:         headerH + 'px',
-        width:          '48px',
-        zIndex:         '3200',
-        background:     'transparent',
-        color:          '#161616',
-        display:        'flex',
-        alignItems:     'center',
-        justifyContent: 'center',
-        border:         'none',
-      });
+      // Mobile: nasconde bottoni, input occupa tutto lo spazio nel flusso flex
+      $('#addGearsTriggerMobile, #saveBtnMobile, #pp-actions-btn-mobile').hide();
+      $input.css({ flex: '1', width: '1px' });
+      $close.show();
     }
     $input.show();
-    // Su iOS il focus() deve essere chiamato dopo che il browser ha completato
-    // il layout (specialmente con position:fixed appena impostato).
-    // requestAnimationFrame + setTimeout garantisce il tick successivo al paint.
     const inputEl = $input[0];
-    requestAnimationFrame(() => {
-      setTimeout(() => { inputEl.focus(); }, 50);
-    });
+    requestAnimationFrame(() => { setTimeout(() => { inputEl.focus(); }, 50); });
     const dropdown = getOrCreateDropdown();
     if (dropdown.children.length > 0) { dropdown.style.display = 'block'; positionDropdown(); }
     else { fetchAndRenderPedals($input.val().trim()); }

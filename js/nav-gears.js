@@ -20,6 +20,18 @@ function renderNavBar(userRole) {
       <div style="display: flex; align-items: center; gap: 1rem;">
         <span id="pedalCount" style="font-size: 0.75rem; color:#aaa"></span>
 
+        <input
+          type="text"
+          id="pedalFilterInput"
+          placeholder="Filter gears..."
+          style="font-size: 1rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;"
+          aria-label="Filter pedals"/>
+        <button id="gearsSearchClose"
+                class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only"
+                type="button" aria-label="Close search" style="display:none; flex-shrink:0;">
+          <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16z"/></svg>
+        </button>
+
         <button id="toggleFilterBtn" aria-label="Toggle search" style="background:none; border:none; cursor:pointer; padding:4px;">
           <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
               viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
@@ -27,15 +39,6 @@ function renderNavBar(userRole) {
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
         </button>
-
-        <input 
-          type="text" 
-          id="pedalFilterInput" 
-          placeholder="Filter gears..." 
-          style="font-size: 1rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;" 
-          aria-label="Filter pedals"/>
-        <button id="gearsSearchClose" aria-label="Close search"
-                style="display:none; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer; padding:4px 8px; flex-shrink:0;">✕</button>
 
         <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
@@ -70,14 +73,12 @@ function renderNavBar(userRole) {
   function closeGearsSearch() {
     const $input = $('#pedalFilterInput');
     const $close = $('#gearsSearchClose');
-    $input.hide().val('');
+    $input.hide().val('').css({ flex: '', width: '120px' });
     $close.hide();
     if (isMobileGears()) {
-      $input.css({ position: '', top: '', left: '', right: '', width: '120px',
-                   zIndex: '', background: '', color: '', padding: '', height: '',
-                   boxSizing: '', borderRadius: '', border: '' });
-      $close.css({ position: '', top: '', right: '', zIndex: '', height: '',
-                   width: '', background: '', color: '', border: '', display: '' });
+      // Ripristina bottoni navbar
+      $('#toggleFilterBtn, #createPedalBtn, #loginBtn, #loginBtnMobile').css('display', '');
+      $('#loginBtnMobile').css('display', 'inline-flex');
     }
   }
 
@@ -87,43 +88,13 @@ function renderNavBar(userRole) {
       closeGearsSearch();
     } else {
       if (isMobileGears()) {
-        // Mobile: overlay fixed sopra la navbar, non distorce il layout
-        const headerH = document.querySelector('header')?.offsetHeight || 56;
-        $input.css({
-          position:    'fixed',
-          top:         '0',
-          left:        '0',
-          right:       '0',
-          width:       '100%',
-          zIndex:      '3100',
-          background:  '#ffffff',
-          color:       '#161616',
-          padding:     '0 52px 0 16px',
-          height:      '36px',
-          top:         Math.round((headerH - 36) / 2) + 'px',
-          boxSizing:   'border-box',
-          borderRadius:'4px',
-          border:      '1px solid #8c8c8c',
-          borderBottom:'2px solid #9C54D5',
-          display:     'block',
-        });
-        $('#gearsSearchClose').css({
-          position:       'fixed',
-          top:            '0',
-          right:          '0',
-          height:         headerH + 'px',
-          width:          '48px',
-          zIndex:         '3200',
-          background:     'transparent',
-          color:          '#161616',
-          display:        'flex',
-          alignItems:     'center',
-          justifyContent: 'center',
-          border:         'none',
-        });
-        // Su iOS: delay post-layout per far apparire la tastiera
+        // Mobile: nasconde bottoni, input occupa tutto lo spazio nel flusso flex
+        $('#toggleFilterBtn, #createPedalBtn, #loginBtn, #loginBtnMobile').hide();
+        $input.css({ flex: '1', width: '1px' });
+        $input.show();
         const inputEl = $input[0];
         requestAnimationFrame(() => { setTimeout(() => { inputEl.focus(); }, 50); });
+        $('#gearsSearchClose').show();
       } else {
         $input.css("display", "flex").focus();
       }
