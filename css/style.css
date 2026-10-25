@@ -1011,9 +1011,21 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   align-items: center;
 }
 
+#footer-tip {
+  padding-left: 0.5rem;
+  flex-shrink: 0;
+}
+
 @media (max-width: 768px) {
   #zoomIn, #zoomOut, #zoomReset {
     display: none !important;
+  }
+  #footer-tip {
+    font-size: 0.7rem;
+    max-width: calc(100% - 2rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
