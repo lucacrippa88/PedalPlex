@@ -173,8 +173,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const tip = document.getElementById("footer-tip");
   if (tip) {
     tip.textContent = window.matchMedia("(pointer: coarse)").matches
-      ? "Tip: press and hold a gear to move it."
-      : "Tip: click and hold a gear to move it.";
+      ? "Tap & Hold a gear to move it."
+      : "Click & Hold a gear to move it.";
   }
 });
 
