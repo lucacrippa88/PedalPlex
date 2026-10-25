@@ -158,7 +158,7 @@ window.fullscreenMenuHtml = `
     </button>
   </div>
 
-  <div id="song-quote" class="menu-bottom" style="text-align: center; margin-top: auto; padding: 1rem; font-size: 1rem; color: #000;">
+  <div id="song-quote" class="menu-bottom" style="text-align: center; margin-top: auto; padding: 1.5rem; font-size: 1rem; color: #000;">
     <span style='font-style:italic'>Rock 'n' roll will never die!</span>
   </div>
 
