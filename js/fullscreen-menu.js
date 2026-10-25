@@ -163,7 +163,7 @@ window.fullscreenMenuHtml = `
     <span style='font-style:italic'>Rock 'n' roll will never die!</span>
   </div>
 
-  <div class="fullscreen-social" style="display:flex; justify-content:center; align-items:center; gap:1.25rem; margin-top:1.5rem; flex-wrap:wrap;">
+  <div class="fullscreen-social" style="display:flex; justify-content:center; align-items:center; gap:1.25rem; margin-top:1.5rem;">
     <a href="https://instagram.com/pedalplex" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.4rem; color:#9C54D5; text-decoration:none; font-size:0.9375rem; font-weight:600;">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.334 3.608 1.308.975.975 1.246 2.242 1.308 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.334 2.633-1.308 3.608-.975.975-2.242 1.246-3.608 1.308-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.334-3.608-1.308-.975-.975-1.246-2.242-1.308-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.334-2.633 1.308-3.608.975-.975 2.242-1.246 3.608-1.308C8.416 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.332.014 7.052.072 5.197.157 3.355.673 2.014 2.014.673 3.355.157 5.197.072 7.052.014 8.332 0 8.741 0 12c0 3.259.014 3.668.072 4.948.085 1.855.601 3.697 1.942 5.038 1.341 1.341 3.183 1.857 5.038 1.942C8.332 23.986 8.741 24 12 24s3.668-.014 4.948-.072c1.855-.085 3.697-.601 5.038-1.942 1.341-1.341 1.857-3.183 1.942-5.038.058-1.28.072-1.689.072-4.948s-.014-3.668-.072-4.948c-.085-1.855-.601-3.697-1.942-5.038C20.645.673 18.803.157 16.948.072 15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
@@ -176,6 +176,9 @@ window.fullscreenMenuHtml = `
       </svg>
       @pedalplex
     </a>
+  </div>
+
+  <div style="display:flex; justify-content:center; margin-top:0.75rem;">
     <a href="https://discord.gg/guitar-music" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.4rem; color:#5865F2; text-decoration:none; font-size:0.9375rem; font-weight:600;">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 127.14 96.36" fill="currentColor" aria-hidden="true">
         <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
@@ -184,12 +187,17 @@ window.fullscreenMenuHtml = `
     </a>
   </div>
 
-
-  <div class='menu-footer' style="margin-top:4rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
+  <div class='menu-footer' style="margin-top:2rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
     © <span id="year-range"></span> PedalPlex ·
     <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="mailto:support@pedalplex.com">Support</a> · Developed in Italy <span style="display: inline-block; width: 20px; height: 4px; background: linear-gradient(to right, #008C45 33.33%, #F4F5F0 33.33% 66.66%, #CD212A 66.66%); vertical-align: middle"></span>
     <br><br>
-    <a href="https://paypal.me/lucacrippa88" target="_blank" style="color:#a3a3a3; text-decoration:none; font-size:0.8rem;">☕ Buy me a coffee — support PedalPlex hosting</a>
+    <a href="https://paypal.me/lucacrippa88" target="_blank" class="bx--btn bx--btn--ghost bx--btn--sm" style="display:inline-flex; align-items:center; gap:0.5rem; color:#a3a3a3; font-weight:normal;">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+        <path d="M13 11H20V13H13z"></path>
+        <path d="M29,13H26.98A5.7791,5.7791,0,0,0,25,8.8525V5a1,1,0,0,0-1.6-.8L19.6665,7H15c-5.5095,0-9.4634,3.2412-9.9485,8H5a1.0009,1.0009,0,0,1-1-1V12H2v2a3.0033,3.0033,0,0,0,3,3h.07A9.1733,9.1733,0,0,0,9,23.5566V27a1,1,0,0,0,1,1h4a1,1,0,0,0,1-1V25h3v2a1,1,0,0,0,1,1h4a1,1,0,0,0,1-1V23.6372A5.0928,5.0928,0,0,0,26.8188,20H29a1,1,0,0,0,1-1V14A1,1,0,0,0,29,13Zm-1,5H25.124c-.3052,2.7529-.8235,3.4854-3.124,4.3154V26H20V23H13v3H11V22.3779A7.0129,7.0129,0,0,1,7,16c0-4.8354,4.0181-7,8-7h5.3335L23,7V9.7764c2.4182,1.8593,1.9126,3.186,2.0183,5.2236H28Z"></path>
+      </svg>
+      Support PedalPlex hosting
+    </a>
   </div>
 </div>
 `;
