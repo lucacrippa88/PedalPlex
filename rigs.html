@@ -125,7 +125,7 @@
       #pedalboard { width:100%!important; max-width:100%!important; overflow-x:visible!important; }
       #pedalboard .rig-empty-banner { width:100%!important; max-width:100%!important; box-sizing:border-box!important; }
       #pedalboard .pedal-row:not(.amp-row) { flex-wrap:nowrap!important; width:auto!important; max-width:none!important; }
-      #pedalboard .amp-row { width:100%!important; max-width:100%!important; box-sizing:border-box!important; }
+      #pedalboard .amp-row { width:100%!important; max-width:100%!important; box-sizing:border-box!important; flex-direction:column!important; align-items:flex-start!important; }
       #pedalboard .amp-row .pedal-empty-slot,
       #pedalboard .amp-row .pedal-wrapper { width:100%!important; max-width:100%!important; height:auto!important; min-height:100px!important; box-sizing:border-box!important; }
       #pedalboard .row-wrap { flex-direction:column!important; align-items:flex-start!important; gap:4px!important; }
@@ -536,7 +536,7 @@
         var ampDiv = document.createElement('div');
         ampDiv.className = 'pedal-row amp-row';
         ampDiv.dataset.row = 2;
-        ampDiv.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+        ampDiv.style.cssText = 'display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;';
         buildFixedRow(ampDiv, ampRow, pedalsByRow[ampRow], globalStarts[ampRow]);
         container.appendChild(ampDiv);
       };
