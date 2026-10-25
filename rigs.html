@@ -96,7 +96,8 @@
       margin-bottom: 1.75rem;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
       box-sizing: border-box;
-      width: 100%;
+      /* 3 slot × 190px + 2 gap × 10px = 590px — allineato con la riga pedali */
+      width: 590px;
       max-width: 100%;
     }
     @media (max-width: 768px) {
@@ -121,33 +122,46 @@
 
     /* ── Mobile rig layout ─────────────────────────────────────── */
     @media (max-width: 768px) {
-      /* Amp row: slot largo quanto il contenitore, non fisso 400px */
-      .amp-row {
+      /* #pedalboard bounded dalla viewport */
+      #pedalboard {
+        width: 100% !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+      }
+      #pedalboard > * {
         width: 100% !important;
         max-width: 100% !important;
-        box-sizing: border-box;
       }
-      .amp-row .pedal-empty-slot,
-      .amp-row .pedal-wrapper {
+
+      /* Amp row: slot largo quanto il contenitore, non fisso 400px */
+      #pedalboard .amp-row,
+      #pedalboard .amp-row .pedal-empty-slot,
+      #pedalboard .amp-row .pedal-wrapper {
         width: 100% !important;
         max-width: 100% !important;
         height: auto !important;
         min-height: 60px !important;
-        box-sizing: border-box;
-        flex-shrink: 1 !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Righe pedali normali: larghezza auto (slot fissi 190px) */
+      #pedalboard .pedal-row {
+        width: auto !important;
+        max-width: none !important;
+      }
+
+      /* Banner: dentro la viewport */
+      #pedalboard .rig-empty-banner {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
       }
 
       /* Remove row: va sotto la riga invece che a destra */
-      .row-wrap {
+      #pedalboard .row-wrap {
         flex-direction: column !important;
         align-items: flex-start !important;
         gap: 4px !important;
-      }
-
-      /* Banner "Build your first Rig": larghezza viewport, non eredita max-content dal parent */
-      #pedalboard .rig-empty-banner {
-        width: calc(100vw - 2rem) !important;
-        max-width: calc(100vw - 2rem) !important;
       }
     }
 

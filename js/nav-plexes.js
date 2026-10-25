@@ -47,14 +47,9 @@ function initNavPreset() {
 
   // ── Build navbar HTML ─────────────────────────────────────────────────────
   const lockLabel      = isGuest ? 'Save Preset Offline' : 'Save Preset';
-  const loginBtnDesktop = isGuest ? `
-    <button id="loginBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button"
-        style="display:flex;align-items:center;gap:0.5rem;">
-      ${SVG.login} Login
-    </button>` : '';
-  const loginBtnMobile = isGuest ? `
-    <button id="loginBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Login">
-      ${SVG.login}
+  const loginBtnHtml = isGuest ? `
+    <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--icon-only pp-login-btn"
+        type="button" aria-label="Login">${SVG.login}
     </button>` : '';
 
   const navHtml = `
@@ -73,7 +68,7 @@ function initNavPreset() {
       <div style="display:flex;align-items:center;gap:0.5rem;">
 
         <!-- desktop-only buttons -->
-        ${loginBtnDesktop}
+        ${loginBtnHtml}
         <button id="exploreBtn" class="showDesktop bx--btn bx--btn--danger bx--btn--sm" type="button"
             style="display:flex;align-items:center;gap:0.5rem;">
           ${SVG.explore} Explore
@@ -84,7 +79,6 @@ function initNavPreset() {
         </button>
 
         <!-- mobile-only buttons -->
-        ${loginBtnMobile}
         <button id="exploreBtnMobile" class="showMobile bx--btn bx--btn--danger bx--btn--sm bx--btn--icon-only" type="button" aria-label="Explore">
           ${SVG.explore}
         </button>
@@ -286,7 +280,7 @@ function initNavPreset() {
   }
 
   if (isGuest) {
-    $("#loginBtn, #loginBtnMobile").on("click", () => { window.location.href = "login"; });
+    $("#loginBtn").on("click", () => { window.location.href = "login"; });
     // disable addFolder inside actions
     $(document).on('click', '.pp-action-item[data-action="addFolder"]', () => {
       Swal?.fire({ icon:'info', title:'Login required', text:'Login to use folders.', timer:2000, showConfirmButton:false });

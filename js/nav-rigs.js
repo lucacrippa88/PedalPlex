@@ -29,13 +29,8 @@ function initNavPedalboard(userRole) {
   };
 
   const saveLabelDesktop = isGuest ? `${SVG.check} Save Rig Offline` : `${SVG.save} Save Rig`;
-  const loginBtnDesktop  = isGuest ? `
-    <button id="loginBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm"
-        type="button" aria-label="Login" style="display:flex;align-items:center;gap:0.5rem;">
-      ${SVG.login} Login
-    </button>` : '';
-  const loginBtnMobile = isGuest ? `
-    <button id="loginBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
+  const loginBtnHtml = isGuest ? `
+    <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--icon-only pp-login-btn"
         type="button" aria-label="Login">${SVG.login}
     </button>` : '';
 
@@ -58,8 +53,8 @@ function initNavPedalboard(userRole) {
         <input type="text" id="pedalFilterInput" placeholder="Search pedals…"
                style="font-size:0.875rem;padding:6px 12px;border:1px solid #8c8c8c;border-radius:4px;outline-offset:2px;width:280px;display:none;"
                aria-label="Filter pedals"/>
-        ${loginBtnDesktop}
-        <button id="addGearsTrigger" class="showDesktop bx--btn bx--btn--primary bx--btn--sm"
+        ${loginBtnHtml}
+        <button id="addGearsTrigger" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm"
                 type="button" style="display:flex;align-items:center;gap:0.4rem;">
           ${SVG.addGear} Add Gear
         </button>
@@ -67,8 +62,7 @@ function initNavPedalboard(userRole) {
                 type="button" style="display:flex;align-items:center;gap:0.5rem;white-space:nowrap;max-width:none!important;">
           ${saveLabelDesktop}
         </button>
-        ${loginBtnMobile}
-        <button id="addGearsTriggerMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
+        <button id="addGearsTriggerMobile" class="showMobile bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only"
                 type="button" aria-label="Add Gear">
           ${SVG.addGear}
         </button>
@@ -433,7 +427,7 @@ function initNavPedalboard(userRole) {
       if (typeof saveGuestPedalboard === "function") saveGuestPedalboard();
       if (window.allPedalboards?.length === 1) setupPedalboardDropdownAndRender();
     });
-    $("#loginBtn, #loginBtnMobile").on("click", () => { window.location.href = "login"; });
+    $("#loginBtn").on("click", () => { window.location.href = "login"; });
   } else {
     $("#saveBtn").on("click",       function () { if (typeof savePedalboard === "function") savePedalboard(); });
     $("#saveBtnMobile").on("click", function () { if (typeof savePedalboard === "function") savePedalboard(); });
