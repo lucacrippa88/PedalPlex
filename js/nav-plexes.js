@@ -46,11 +46,7 @@ function initNavPreset() {
   };
 
   // ── Build navbar HTML ─────────────────────────────────────────────────────
-  const lockLabel      = isGuest ? 'Save Preset Offline' : 'Save Preset';
-  const loginBtnHtml = isGuest ? `
-    <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--icon-only pp-login-btn"
-        type="button" aria-label="Login">${SVG.login}
-    </button>` : '';
+  const lockLabel = isGuest ? 'Save Preset Offline' : 'Save Preset';
 
   const navHtml = `
     <header style="display:flex;align-items:center;justify-content:space-between;">
@@ -68,7 +64,6 @@ function initNavPreset() {
       <div style="display:flex;align-items:center;gap:0.5rem;">
 
         <!-- desktop-only buttons -->
-        ${loginBtnHtml}
         <button id="exploreBtn" class="showDesktop bx--btn bx--btn--danger bx--btn--sm" type="button"
             style="display:flex;align-items:center;gap:0.5rem;">
           ${SVG.explore} Explore
@@ -126,6 +121,7 @@ function initNavPreset() {
     const menu = document.getElementById('pp-actions-menu');
     if (!menu || menu.children.length > 0) return; // already populated
     menu.innerHTML = `
+      ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login to save your Presets</span></a><div class="pp-action-separator"></div>` : ''}
       <button class="pp-action-item" data-action="newTone">${SVG.newTone} <span>New Preset</span></button>
       <button class="pp-action-item" data-action="renamePreset">${SVG.editPreset} <span>Edit Preset</span></button>
       <button class="pp-action-item" data-action="addFolder">${SVG.addFolder} <span>Add Folder</span></button>
@@ -166,6 +162,14 @@ function initNavPreset() {
       color: #9C54D5;
     }
     .pp-action-item svg { flex-shrink: 0; }
+    .pp-action-login {
+      color: #a78bfa !important;
+      font-weight: 600;
+    }
+    .pp-action-login:hover {
+      background: rgba(139, 92, 246, 0.22) !important;
+      color: #c4b5fd !important;
+    }
     .pp-action-separator {
       height: 1px;
       background: rgba(255,255,255,0.1);
@@ -280,7 +284,6 @@ function initNavPreset() {
   }
 
   if (isGuest) {
-    $("#loginBtn").on("click", () => { window.location.href = "login"; });
     // disable addFolder inside actions
     $(document).on('click', '.pp-action-item[data-action="addFolder"]', () => {
       Swal?.fire({ icon:'info', title:'Login required', text:'Login to use folders.', timer:2000, showConfirmButton:false });

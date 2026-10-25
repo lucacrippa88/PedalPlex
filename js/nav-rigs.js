@@ -29,10 +29,6 @@ function initNavPedalboard(userRole) {
   };
 
   const saveLabelDesktop = isGuest ? `${SVG.check} Save Rig Offline` : `${SVG.save} Save Rig`;
-  const loginBtnHtml = isGuest ? `
-    <button id="loginBtn" class="bx--btn bx--btn--primary bx--btn--icon-only pp-login-btn"
-        type="button" aria-label="Login">${SVG.login}
-    </button>` : '';
 
   // ── Navbar HTML (Actions sempre nell'header) ──────────────────────────────
   const buildRigItem = !isGuest
@@ -53,7 +49,6 @@ function initNavPedalboard(userRole) {
         <input type="text" id="pedalFilterInput" placeholder="Search pedals…"
                style="font-size:0.875rem;padding:6px 12px;border:1px solid #8c8c8c;border-radius:4px;outline-offset:2px;width:280px;display:none;"
                aria-label="Filter pedals"/>
-        ${loginBtnHtml}
         <button id="addGearsTrigger" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm"
                 type="button" style="display:flex;align-items:center;gap:0.4rem;">
           ${SVG.addGear} Add Gear
@@ -95,6 +90,7 @@ function initNavPedalboard(userRole) {
               box-shadow:0 8px 24px rgba(0,0,0,0.5);
               z-index:4000;
               padding:4px 0;">
+            ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login to save your Rigs</span></a><div class="pp-action-separator"></div>` : ''}
             ${buildRigItem}
             ${editRigItem}
             <div class="pp-action-separator"></div>
@@ -134,6 +130,14 @@ function initNavPedalboard(userRole) {
         color: #9C54D5;
       }
       .pp-action-item svg { flex-shrink: 0; }
+      .pp-action-login {
+        color: #a78bfa !important;
+        font-weight: 600;
+      }
+      .pp-action-login:hover {
+        background: rgba(139, 92, 246, 0.22) !important;
+        color: #c4b5fd !important;
+      }
       .pp-action-separator {
         height: 1px;
         background: rgba(255,255,255,0.1);
@@ -427,7 +431,6 @@ function initNavPedalboard(userRole) {
       if (typeof saveGuestPedalboard === "function") saveGuestPedalboard();
       if (window.allPedalboards?.length === 1) setupPedalboardDropdownAndRender();
     });
-    $("#loginBtn").on("click", () => { window.location.href = "login"; });
   } else {
     $("#saveBtn").on("click",       function () { if (typeof savePedalboard === "function") savePedalboard(); });
     $("#saveBtnMobile").on("click", function () { if (typeof savePedalboard === "function") savePedalboard(); });

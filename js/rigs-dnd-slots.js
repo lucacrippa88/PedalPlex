@@ -527,8 +527,8 @@
       if (window.matchMedia('(pointer: coarse)').matches) ev.preventDefault();
     });
 
-    // Avviso (solo dispositivi touch, via CSS)
-    if (!document.getElementById('dnd-touch-hint') && board.parentNode) {
+    // Avviso drag&drop (solo dispositivi touch)
+    if (!document.getElementById('dnd-touch-hint') && board.parentNode && window.matchMedia('(pointer: coarse)').matches) {
       const hint = document.createElement('p');
       hint.id = 'dnd-touch-hint';
       hint.textContent = 'Tip: press and hold a gear to move it.';

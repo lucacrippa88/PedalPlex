@@ -2074,22 +2074,35 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   }
 }
 
-/* ── Mobile rig: amp row full-width, remove-row sotto la riga ── */
+/* ── Mobile rig layout ── */
 @media (max-width: 768px) {
-  /* #pedalboard e i suoi figli problematici devono stare dentro la viewport */
+  /* Contenitore principale: bounded, scrollabile lateralmente per le righe pedali */
   #pedalboard {
     width: 100% !important;
-    max-width: 100vw !important;
-    overflow-x: hidden !important;
+    max-width: 100% !important;
+    overflow-x: visible !important;
   }
 
-  #pedalboard > * {
+  /* Banner: dentro la viewport */
+  #pedalboard .rig-empty-banner {
     width: 100% !important;
     max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
-  /* Amp row: slot largo quanto il contenitore */
-  #pedalboard .amp-row,
+  /* Righe pedali: una riga sola, slot affiancati, sbordano leggermente per dare hint di scroll */
+  #pedalboard .pedal-row:not(.amp-row) {
+    flex-wrap: nowrap !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  /* Amp row: riempie tutta la larghezza visibile, non sborda */
+  #pedalboard .amp-row {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
   #pedalboard .amp-row .pedal-empty-slot,
   #pedalboard .amp-row .pedal-wrapper {
     width: 100% !important;
@@ -2099,20 +2112,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     box-sizing: border-box !important;
   }
 
-  /* Le righe pedali normali non devono essere a tutta larghezza (hanno slot fissi 190px) */
-  #pedalboard .pedal-row {
-    width: auto !important;
-    max-width: none !important;
-  }
-
-  /* Banner: forza dentro la viewport */
-  #pedalboard .rig-empty-banner {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Remove-row: metti il bottone sotto la riga invece che a destra */
+  /* Remove-row: bottone sotto la riga */
   #pedalboard .row-wrap {
     flex-direction: column !important;
     align-items: flex-start !important;
@@ -2120,22 +2120,3 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   }
 }
 
-/* ── Login button: icon-only, small on desktop/tablet, normal size on mobile ── */
-.pp-login-btn {
-  width: 2rem !important;
-  height: 2rem !important;
-  min-width: 2rem !important;
-  min-height: 2rem !important;
-  padding: 0 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-@media (max-width: 768px) {
-  .pp-login-btn {
-    width: 2.5rem !important;
-    height: 2.5rem !important;
-    min-width: 2.5rem !important;
-    min-height: 2.5rem !important;
-  }
-}
