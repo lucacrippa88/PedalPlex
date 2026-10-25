@@ -90,7 +90,7 @@ function initNavPedalboard(userRole) {
               box-shadow:0 8px 24px rgba(0,0,0,0.5);
               z-index:4000;
               padding:4px 0;">
-            ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login sync your Rigs</span></a><div class="pp-action-separator"></div>` : ''}
+            ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login to sync your Rigs</span></a><div class="pp-action-separator"></div>` : ''}
             ${buildRigItem}
             ${editRigItem}
             <div class="pp-action-separator"></div>

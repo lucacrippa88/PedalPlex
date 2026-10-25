@@ -2094,3 +2094,21 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   }
 }
 
+
+/* ── Empty rig state (plexes page) ── */
+.rig-empty-state {
+  text-align: center;
+  margin-top: 40px;
+}
+@media (max-width: 768px) {
+  .rig-empty-state {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    padding: 0 2rem;
+    box-sizing: border-box;
+    margin-top: 0;
+  }
+}
