@@ -168,6 +168,14 @@ function restoreZoomForCurrentBoard() {
 document.addEventListener("DOMContentLoaded", () => {
   // If pedalboard content is loaded asynchronously, call this from initPedalboard()
   setTimeout(onPedalboardLoaded, 500);
+
+  // Footer tip: touch vs mouse
+  const tip = document.getElementById("footer-tip");
+  if (tip) {
+    tip.textContent = window.matchMedia("(pointer: coarse)").matches
+      ? "Tip: press and hold a gear to move it."
+      : "Tip: click and hold a gear to move it.";
+  }
 });
 
 /**
