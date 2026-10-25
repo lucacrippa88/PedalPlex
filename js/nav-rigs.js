@@ -57,8 +57,8 @@ function initNavPedalboard(userRole) {
         <a href="rigs" class="subtitle" style="font-size:1.25rem;color:#aaa;font-weight:600;text-decoration:none">Rigs</a>
       </div>
       <div style="display:flex;align-items:center;gap:0.5rem;">
-        <input type="text" id="pedalFilterInputDesktop" placeholder="Search pedals…"
-               style="font-size:1rem;padding:6px 12px;border:1px solid #8c8c8c;border-radius:4px;outline-offset:2px;width:280px;display:none;"
+        <input type="text" id="pedalFilterInputDesktop" placeholder="Search Gears..."
+               style="font-size:1rem;padding:6px 12px;border:1px solid #8c8c8c;border-radius:8px;outline-offset:2px;width:280px;display:none;"
                aria-label="Filter pedals"/>
         <button id="addGearsTrigger" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm"
                 type="button" style="display:flex;align-items:center;gap:0.4rem;">
