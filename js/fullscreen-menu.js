@@ -195,7 +195,9 @@ window.fullscreenMenuHtml = `
       </svg>
       Support hosting
     </a>
-    
+
+    <br><br>
+
     © <span id="year-range"></span> PedalPlex ·
     <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="mailto:support@pedalplex.com">Support</a> · Developed in Italy <span style="display: inline-block; width: 20px; height: 4px; background: linear-gradient(to right, #008C45 33.33%, #F4F5F0 33.33% 66.66%, #CD212A 66.66%); vertical-align: middle"></span>
     <br><br>
