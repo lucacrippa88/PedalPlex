@@ -499,8 +499,8 @@ function initNavPedalboard(userRole) {
     const $add  = $("#addGearsTrigger, #addGearsTriggerMobile");
     const $save = $("#saveBtn, #saveBtnMobile");
     const $view = $("#viewPreset");
-    if (isEmpty) { $add.removeClass('bx--btn--secondary bx--btn--tertiary').addClass('bx--btn--primary'); $save.addClass('rig-cta-subtle'); $view.addClass('rig-cta-subtle'); }
-    else         { $add.removeClass('bx--btn--primary bx--btn--tertiary').addClass('bx--btn--secondary'); $save.removeClass('rig-cta-subtle'); $view.removeClass('rig-cta-subtle'); }
+    if (isEmpty) { $add.removeClass('bx--btn--secondary bx--btn--tertiary').addClass('bx--btn--primary'); $save.addClass('rig-cta-subtle'); $view.hide(); }
+    else         { $add.removeClass('bx--btn--primary bx--btn--tertiary').addClass('bx--btn--secondary'); $save.removeClass('rig-cta-subtle'); $view.show(); }
   };
 
   window.updateNavFilterVisibility = function () {};

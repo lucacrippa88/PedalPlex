@@ -149,6 +149,9 @@ header {
 .pedalplex-logo:hover {
   background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
 }
+.pedalplex-logo-about {
+  width: 25px;
+}
 
 
 .pedalplex-logo-fullscreen-menu-large {
