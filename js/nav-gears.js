@@ -32,8 +32,10 @@ function renderNavBar(userRole) {
           type="text" 
           id="pedalFilterInput" 
           placeholder="Filter gears..." 
-          style="font-size: 0.875rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;" 
+          style="font-size: 1rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;" 
           aria-label="Filter pedals"/>
+        <button id="gearsSearchClose" aria-label="Close search"
+                style="display:none; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer; padding:4px 8px; flex-shrink:0;">✕</button>
 
         <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
@@ -63,10 +65,38 @@ function renderNavBar(userRole) {
     $(document).on('click', '#createOwnPedalBtn', createNewPedal);
   }
 
+  const isMobileGears = () => window.innerWidth <= 768;
+
+  function closeGearsSearch() {
+    const $input = $('#pedalFilterInput');
+    $input.hide().val('');
+    $('#gearsSearchClose').hide();
+    if (isMobileGears()) {
+      $input.css({ flex: '', width: '120px' });
+      $('#toggleFilterBtn, #createPedalBtn, #loginBtn, #loginBtnMobile').css('display', '');
+      $('#loginBtnMobile').css('display', 'inline-flex');
+    }
+  }
+
   $("#toggleFilterBtn").on("click", function () {
-    const input = $("#pedalFilterInput");
-    if (input.is(":visible")) input.hide().val("");
-    else input.css("display", "flex").focus();
+    const $input = $("#pedalFilterInput");
+    if ($input.is(":visible")) {
+      closeGearsSearch();
+    } else {
+      if (isMobileGears()) {
+        // Nascondi gli altri bottoni, espandi l'input
+        $('#toggleFilterBtn, #createPedalBtn, #loginBtn, #loginBtnMobile').hide();
+        $input.css({ flex: '1', width: '1px', display: 'block' }).focus();
+        $('#gearsSearchClose').show();
+      } else {
+        $input.css("display", "flex").focus();
+      }
+    }
+  });
+
+  $('#gearsSearchClose').on('click', function (e) {
+    e.stopPropagation();
+    closeGearsSearch();
   });
 
   // Search gear with server calls

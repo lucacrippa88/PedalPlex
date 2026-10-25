@@ -47,8 +47,10 @@ function initNavPedalboard(userRole) {
       </div>
       <div style="display:flex;align-items:center;gap:0.5rem;">
         <input type="text" id="pedalFilterInput" placeholder="Search pedals…"
-               style="font-size:0.875rem;padding:6px 12px;border:1px solid #8c8c8c;border-radius:4px;outline-offset:2px;width:280px;display:none;"
+               style="font-size:1rem;padding:6px 12px;border:1px solid #8c8c8c;border-radius:4px;outline-offset:2px;width:280px;display:none;"
                aria-label="Filter pedals"/>
+        <button id="pedalSearchClose" aria-label="Close search"
+                style="display:none; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer; padding:4px 8px; flex-shrink:0;">✕</button>
         <button id="addGearsTrigger" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm"
                 type="button" style="display:flex;align-items:center;gap:0.4rem;">
           ${SVG.addGear} Add Gear
@@ -204,14 +206,31 @@ function initNavPedalboard(userRole) {
     };
   }
 
+  const isMobileSearch = () => window.innerWidth <= 768;
+
   function positionDropdown() {
     const input = document.getElementById('pedalFilterInput');
     const dropdown = document.getElementById('pedalAddDropdownContainer');
     if (!dropdown || !input) return;
-    const rect = input.getBoundingClientRect();
-    dropdown.style.top  = (window.scrollY + rect.bottom + 4) + 'px';
-    dropdown.style.left = (window.scrollX + rect.left) + 'px';
-    dropdown.style.width = Math.max(rect.width, 320) + 'px';
+    if (isMobileSearch()) {
+      // Mobile: fisso, tutta la larghezza, sotto la navbar
+      const rect = input.getBoundingClientRect();
+      dropdown.style.position = 'fixed';
+      dropdown.style.top  = (rect.bottom + 4) + 'px';
+      dropdown.style.left = '0';
+      dropdown.style.width = '100vw';
+      dropdown.style.maxHeight = 'calc(100vh - ' + (rect.bottom + 8) + 'px)';
+      dropdown.style.overflowY = 'auto';
+      dropdown.style.boxSizing = 'border-box';
+    } else {
+      const rect = input.getBoundingClientRect();
+      dropdown.style.position = 'absolute';
+      dropdown.style.top  = (window.scrollY + rect.bottom + 4) + 'px';
+      dropdown.style.left = (window.scrollX + rect.left) + 'px';
+      dropdown.style.width = Math.max(rect.width, 320) + 'px';
+      dropdown.style.maxHeight = '';
+      dropdown.style.overflowY = '';
+    }
   }
 
   function getOrCreateDropdown() {
@@ -221,8 +240,7 @@ function initNavPedalboard(userRole) {
       dropdown.id = 'pedalAddDropdownContainer';
       document.body.appendChild(dropdown);
     }
-    dropdown.style.position = 'absolute';
-    dropdown.style.zIndex   = '3000';
+    dropdown.style.zIndex = '3000';
     return dropdown;
   }
 
@@ -391,13 +409,39 @@ function initNavPedalboard(userRole) {
     } catch (err) { console.error("Search error:", err); dropdown.style.display = 'none'; }
   }
 
+  function closePedalSearch() {
+    const $input = $('#pedalFilterInput');
+    const $close = $('#pedalSearchClose');
+    const dropdown = document.getElementById('pedalAddDropdownContainer');
+    $input.hide().val('');
+    $close.hide();
+    if (dropdown) dropdown.style.display = 'none';
+    // Mobile: ripristina i bottoni della navbar (showMobile usa display:flex)
+    if (isMobileSearch()) {
+      $input.css({ position: '', width: '280px', flex: '' });
+      $('#addGearsTriggerMobile, #saveBtnMobile, #pp-actions-btn-mobile').css('display', 'inline-flex');
+    }
+  }
+
   window.openPedalSearch = function () {
     const $input = $('#pedalFilterInput');
+    const $close = $('#pedalSearchClose');
+    if (isMobileSearch()) {
+      // Mobile: espandi input a tutta la navbar, nascondi gli altri bottoni
+      $('#addGearsTriggerMobile, #saveBtnMobile, #pp-actions-btn-mobile, #pp-actions-btn').hide();
+      $input.css({ position: 'relative', width: '1px', flex: '1' });
+      $close.show();
+    }
     $input.show().focus();
     const dropdown = getOrCreateDropdown();
     if (dropdown.children.length > 0) { dropdown.style.display = 'block'; positionDropdown(); }
     else { fetchAndRenderPedals($input.val().trim()); }
   };
+
+  $('#pedalSearchClose').on('click', function (e) {
+    e.stopPropagation();
+    closePedalSearch();
+  });
 
   $("#pedalFilterInput").on("input", debounce(function () { fetchAndRenderPedals($(this).val()); }, 300));
 
@@ -405,9 +449,12 @@ function initNavPedalboard(userRole) {
     const input    = document.getElementById("pedalFilterInput");
     const dropdown = document.getElementById("pedalAddDropdownContainer");
     const trigger  = document.getElementById("addGearsTrigger");
-    if ((input && input.contains(event.target)) || (dropdown && dropdown.contains(event.target)) || (trigger && trigger.contains(event.target))) return;
-    if (input && $(input).is(":visible")) $(input).hide();
-    if (dropdown) dropdown.style.display = "none";
+    const triggerM = document.getElementById("addGearsTriggerMobile");
+    const closeBtn = document.getElementById("pedalSearchClose");
+    if ((input && input.contains(event.target)) || (dropdown && dropdown.contains(event.target)) ||
+        (trigger && trigger.contains(event.target)) || (triggerM && triggerM.contains(event.target)) ||
+        (closeBtn && closeBtn.contains(event.target))) return;
+    closePedalSearch();
   });
 
   window.addEventListener('scroll', positionDropdown);
