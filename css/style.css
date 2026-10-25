@@ -333,7 +333,9 @@ header {
     min-width: 2.5rem;
     min-height: 2.5rem;
     padding: 0;
+    gap: 0;
     justify-content: center;
+    align-items: center;
     flex: none;
   }
 }
@@ -1007,6 +1009,12 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   width: 100%;
   justify-content: flex-start;
   align-items: center;
+}
+
+@media (max-width: 768px) {
+  #zoomIn, #zoomOut, #zoomReset {
+    display: none !important;
+  }
 }
 
 /* Desktop: keep everything in one line */

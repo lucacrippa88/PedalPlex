@@ -194,7 +194,7 @@ function _showExploreStep1(prefillState = null) {
         </div>
 
 
-        <div class="explore-section">
+        <!-- <div class="explore-section">
           <div class="explore-section-header">Or describe what you&rsquo;re looking for <span class="explore-hint">coming soon &mdash; keyword search</span></div>
           <input type="text"
                  id="exploreKeyword"
@@ -203,10 +203,11 @@ function _showExploreStep1(prefillState = null) {
                  value="${prevKeyword}"
                  disabled
                  style="width:85%; margin:0.4rem auto 0; opacity:0.45; cursor:not-allowed;">
-        </div>
+        </div> -->
 
       </div>
     `,
+    showCloseButton: true,
     showCancelButton: true,
     confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12zM21.65 10.35l-8.59 3.74-3.71 8.56 8.59-3.74zm-8.07 8.08 2.35-5.42 5.42 5.42-5.42 2.35z'/></svg>Explore",
     cancelButtonText: "Cancel",
