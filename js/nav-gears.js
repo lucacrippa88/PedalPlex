@@ -38,12 +38,18 @@ function renderNavBar(userRole) {
           style="font-size: 1rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;"
           aria-label="Filter pedals"/>
 
-        <button id="toggleFilterBtn" aria-label="Toggle search" style="background:none; border:none; cursor:pointer; padding:4px;">
-          <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-              viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-              <circle cx="11" cy="11" r="7"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        <button id="toggleFilterBtn" class="showMobile bx--btn bx--btn--secondary bx--btn--icon-only"
+                type="button" aria-label="Toggle search">
+          <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M29 27.586l-7.552-7.552a11.018 11.018 0 1 0-1.414 1.414L27.586 29zM4 13a9 9 0 1 1 9 9 9.01 9.01 0 0 1-9-9z"/>
           </svg>
+        </button>
+        <button id="toggleFilterBtnDesktop" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm"
+                type="button" style="display:flex;align-items:center;gap:0.4rem;">
+          <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M29 27.586l-7.552-7.552a11.018 11.018 0 1 0-1.414 1.414L27.586 29zM4 13a9 9 0 1 1 9 9 9.01 9.01 0 0 1-9-9z"/>
+          </svg>
+          Search
         </button>
 
         <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
@@ -86,21 +92,22 @@ function renderNavBar(userRole) {
   }
 
   $("#toggleFilterBtn").on("click", function () {
-    if (isMobileGears()) {
-      // Mobile: mostra overlay a tutta larghezza sopra la navbar
-      const overlay = document.getElementById('gears-search-overlay');
-      if (overlay) overlay.classList.add('active');
-      const inputEl = document.getElementById('pedalFilterInputMobile');
-      if (inputEl) {
-        requestAnimationFrame(() => { setTimeout(() => { inputEl.focus(); }, 50); });
-      }
+    // Mobile only — apre l'overlay
+    const overlay = document.getElementById('gears-search-overlay');
+    if (overlay) overlay.classList.add('active');
+    const inputEl = document.getElementById('pedalFilterInputMobile');
+    if (inputEl) {
+      requestAnimationFrame(() => { setTimeout(() => { inputEl.focus(); }, 50); });
+    }
+  });
+
+  $("#toggleFilterBtnDesktop").on("click", function () {
+    // Desktop/tablet — toggling input nel flusso
+    const $input = $("#pedalFilterInput");
+    if ($input.is(":visible")) {
+      closeGearsSearch();
     } else {
-      const $input = $("#pedalFilterInput");
-      if ($input.is(":visible")) {
-        closeGearsSearch();
-      } else {
-        $input.css("display", "flex").focus();
-      }
+      $input.css("display", "flex").focus();
     }
   });
 

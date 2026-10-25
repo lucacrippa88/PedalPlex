@@ -15,59 +15,57 @@
 
 
 /* Header */
+:root {
+  --nav-h: 72px; /* header height — keep in sync with padding+content */
+}
+
 header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  height: var(--nav-h);
   z-index: 3000;
   display: flex;
   align-items: center;
   background-color: rgb(25,25,25);
-  padding: 1rem;
+  padding: 0 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
 
-/* Mobile search overlay — same fixed position as header, sits on top */
+/* Mobile search overlay — exact same size/position as header */
 .pp-search-overlay {
   display: none;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  height: var(--nav-h);
   z-index: 3001;
   background: rgb(25,25,25);
-  align-items: stretch;
-  gap: 0;
-  padding: 1rem 0 1rem 1rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-sizing: border-box;
 }
 .pp-search-overlay.active { display: flex; }
 .pp-search-overlay input {
   flex: 1;
-  align-self: stretch;
+  height: 100%;
   background: transparent;
   border: none;
-  border-right: 1px solid #444;
   border-radius: 0;
   color: #fff;
   font-size: 1rem;
-  padding: 0 12px;
+  padding: 0 1rem;
   outline: none;
   min-width: 0;
+  box-sizing: border-box;
 }
 .pp-search-overlay input::placeholder { color: #888; }
 .pp-search-overlay .bx--btn--icon-only {
-  align-self: stretch !important;
-  min-height: 0 !important;
-  min-width: 48px !important;
-  width: 48px !important;
   flex-shrink: 0;
-  border-radius: 0;
-  padding: 0;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
+  align-self: center;
+  margin-right: 0.5rem;
 }
 
 /* Button Styles */
@@ -343,7 +341,7 @@ header {
 
 
 /* Page content */
-#page-content { padding-top: 64px; }
+#page-content { padding-top: var(--nav-h); }
 .swal2-container { z-index: 99980 !important; } /* below .fullscreen-menu (99990) */
 .swal2-container.swal-above-menu { z-index: 99999 !important; } /* swals launched from the fullscreen menu */
 body { background: #2e2e2e; color: #fff; padding: 20px; font-family: 'IBM Plex Sans', sans-serif; }

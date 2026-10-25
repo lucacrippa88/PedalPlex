@@ -228,13 +228,13 @@ function initNavPedalboard(userRole) {
       // Se l'overlay non è attivo, non ricalcolare
       const overlay = document.getElementById('pp-search-overlay');
       if (overlay && !overlay.classList.contains('active')) return;
-      // Mobile: fisso, tutta la larghezza, sotto l'overlay (altezza intera della searchbar)
-      const overlayH = overlay ? overlay.getBoundingClientRect().bottom : 0;
+      // Mobile: fisso, tutta la larghezza, sotto la searchbar (stessa altezza dell'header)
+      const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 72;
       dropdown.style.position = 'fixed';
-      dropdown.style.top  = overlayH + 'px';
+      dropdown.style.top  = navH + 'px';
       dropdown.style.left = '0';
       dropdown.style.width = '100vw';
-      dropdown.style.maxHeight = 'calc(100vh - ' + overlayH + 'px)';
+      dropdown.style.maxHeight = 'calc(100vh - ' + navH + 'px)';
       dropdown.style.overflowY = 'auto';
       dropdown.style.boxSizing = 'border-box';
     } else {
