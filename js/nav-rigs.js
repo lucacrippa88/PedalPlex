@@ -36,8 +36,19 @@ function initNavPedalboard(userRole) {
     : '';
   const editRigItem = `<button class="pp-action-item" data-action="editRig">${SVG.buildRig} <span>Edit Rig</span></button>`;
 
+  const SVG_X = `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16z"/></svg>`;
+
   const navHtml = `
     <header style="display:flex;align-items:center;justify-content:space-between;">
+      <!-- Mobile search overlay -->
+      <div id="pp-search-overlay" class="pp-search-overlay">
+        <input type="text" id="pedalFilterInput" placeholder="Search pedals…" aria-label="Filter pedals"/>
+        <button id="pedalSearchClose"
+                class="pp-search-close bx--btn bx--btn--secondary bx--btn--icon-only"
+                type="button" aria-label="Close search">
+          ${SVG_X}
+        </button>
+      </div>
       <div style="display:flex;align-items:center;gap:1rem;">
         <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
           <span class="menu-morph" aria-hidden="true"><i class="menu-morph__ham"></i><i class="menu-morph__logo"></i></span>
@@ -46,14 +57,9 @@ function initNavPedalboard(userRole) {
         <a href="rigs" class="subtitle" style="font-size:1.25rem;color:#aaa;font-weight:600;text-decoration:none">Rigs</a>
       </div>
       <div style="display:flex;align-items:center;gap:0.5rem;">
-        <input type="text" id="pedalFilterInput" placeholder="Search pedals…"
+        <input type="text" id="pedalFilterInputDesktop" placeholder="Search pedals…"
                style="font-size:1rem;padding:6px 12px;border:1px solid #8c8c8c;border-radius:4px;outline-offset:2px;width:280px;display:none;"
                aria-label="Filter pedals"/>
-        <button id="pedalSearchClose"
-                class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only"
-                type="button" aria-label="Close search" style="display:none; flex-shrink:0;">
-          <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16z"/></svg>
-        </button>
         <button id="addGearsTrigger" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm"
                 type="button" style="display:flex;align-items:center;gap:0.4rem;">
           ${SVG.addGear} Add Gear
@@ -195,7 +201,7 @@ function initNavPedalboard(userRole) {
     window.openPedalSearch();
   });
 
-  $("#pedalFilterInput").on("click", function (e) { e.stopPropagation(); });
+  $("#pedalFilterInput, #pedalFilterInputDesktop").on("click", function (e) { e.stopPropagation(); });
 
   window.catalog = window.catalog || [];
 
@@ -212,10 +218,16 @@ function initNavPedalboard(userRole) {
   const isMobileSearch = () => window.innerWidth <= 768;
 
   function positionDropdown() {
-    const input = document.getElementById('pedalFilterInput');
+    const mobile = isMobileSearch();
+    const input = mobile
+      ? document.getElementById('pedalFilterInput')
+      : document.getElementById('pedalFilterInputDesktop');
     const dropdown = document.getElementById('pedalAddDropdownContainer');
     if (!dropdown || !input) return;
-    if (isMobileSearch()) {
+    if (mobile) {
+      // Se l'overlay non è attivo, non ricalcolare
+      const overlay = document.getElementById('pp-search-overlay');
+      if (overlay && !overlay.classList.contains('active')) return;
       // Mobile: fisso, tutta la larghezza, sotto la navbar
       const rect = input.getBoundingClientRect();
       dropdown.style.position = 'fixed';
@@ -412,34 +424,46 @@ function initNavPedalboard(userRole) {
     } catch (err) { console.error("Search error:", err); dropdown.style.display = 'none'; }
   }
 
+  // Quale input è attivo in base al breakpoint
+  function getActiveInput() {
+    return isMobileSearch()
+      ? document.getElementById('pedalFilterInput')
+      : document.getElementById('pedalFilterInputDesktop');
+  }
+
   function closePedalSearch() {
-    const $input = $('#pedalFilterInput');
-    const $close = $('#pedalSearchClose');
+    const overlay  = document.getElementById('pp-search-overlay');
+    const $inputM  = $('#pedalFilterInput');
+    const $inputD  = $('#pedalFilterInputDesktop');
     const dropdown = document.getElementById('pedalAddDropdownContainer');
-    $input.hide().val('').css({ flex: '', width: '' });
-    $close.hide();
+    // Chiudi overlay mobile
+    if (overlay) overlay.classList.remove('active');
+    $inputM.val('');
+    // Chiudi input desktop
+    $inputD.hide().val('');
     if (dropdown) dropdown.style.display = 'none';
-    if (isMobileSearch()) {
-      // Ripristina bottoni navbar
-      $('#addGearsTriggerMobile, #saveBtnMobile, #pp-actions-btn-mobile').css('display', 'inline-flex');
-    }
   }
 
   window.openPedalSearch = function () {
-    const $input = $('#pedalFilterInput');
-    const $close = $('#pedalSearchClose');
     if (isMobileSearch()) {
-      // Mobile: nasconde bottoni, input occupa tutto lo spazio nel flusso flex
-      $('#addGearsTriggerMobile, #saveBtnMobile, #pp-actions-btn-mobile').hide();
-      $input.css({ flex: '1', width: '1px' });
-      $close.show();
+      // Mobile: mostra overlay a tutta larghezza sopra la navbar
+      const overlay = document.getElementById('pp-search-overlay');
+      if (overlay) overlay.classList.add('active');
+      const inputEl = document.getElementById('pedalFilterInput');
+      if (inputEl) {
+        requestAnimationFrame(() => { setTimeout(() => { inputEl.focus(); }, 50); });
+      }
+      const dropdown = getOrCreateDropdown();
+      if (dropdown.children.length > 0) { dropdown.style.display = 'block'; positionDropdown(); }
+      else { fetchAndRenderPedals(''); }
+    } else {
+      // Desktop: comportamento originale con input nel flusso
+      const $input = $('#pedalFilterInputDesktop');
+      $input.show().focus();
+      const dropdown = getOrCreateDropdown();
+      if (dropdown.children.length > 0) { dropdown.style.display = 'block'; positionDropdown(); }
+      else { fetchAndRenderPedals($input.val().trim()); }
     }
-    $input.show();
-    const inputEl = $input[0];
-    requestAnimationFrame(() => { setTimeout(() => { inputEl.focus(); }, 50); });
-    const dropdown = getOrCreateDropdown();
-    if (dropdown.children.length > 0) { dropdown.style.display = 'block'; positionDropdown(); }
-    else { fetchAndRenderPedals($input.val().trim()); }
   };
 
   $('#pedalSearchClose').on('click', function (e) {
@@ -448,16 +472,21 @@ function initNavPedalboard(userRole) {
   });
 
   $("#pedalFilterInput").on("input", debounce(function () { fetchAndRenderPedals($(this).val()); }, 300));
+  $("#pedalFilterInputDesktop").on("input", debounce(function () { fetchAndRenderPedals($(this).val()); }, 300));
 
   document.addEventListener("click", function (event) {
-    const input    = document.getElementById("pedalFilterInput");
+    const inputM   = document.getElementById("pedalFilterInput");
+    const inputD   = document.getElementById("pedalFilterInputDesktop");
     const dropdown = document.getElementById("pedalAddDropdownContainer");
     const trigger  = document.getElementById("addGearsTrigger");
     const triggerM = document.getElementById("addGearsTriggerMobile");
-    const closeBtn = document.getElementById("pedalSearchClose");
-    if ((input && input.contains(event.target)) || (dropdown && dropdown.contains(event.target)) ||
-        (trigger && trigger.contains(event.target)) || (triggerM && triggerM.contains(event.target)) ||
-        (closeBtn && closeBtn.contains(event.target))) return;
+    const overlay  = document.getElementById("pp-search-overlay");
+    if ((inputM  && inputM.contains(event.target))  ||
+        (inputD  && inputD.contains(event.target))  ||
+        (dropdown && dropdown.contains(event.target)) ||
+        (trigger  && trigger.contains(event.target)) ||
+        (triggerM && triggerM.contains(event.target)) ||
+        (overlay  && overlay.contains(event.target))) return;
     closePedalSearch();
   });
 

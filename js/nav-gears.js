@@ -6,9 +6,20 @@ function getPedalIdFromURL() {
   return params.get("id");
 }
 
+const SVG_X_GEARS = `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16z"/></svg>`;
+
 function renderNavBar(userRole) {
   const navHtml = `
     <header style="display: flex; align-items: center; justify-content: space-between;">
+      <!-- Mobile search overlay -->
+      <div id="gears-search-overlay" class="pp-search-overlay">
+        <input type="text" id="pedalFilterInputMobile" placeholder="Filter gears..." aria-label="Filter gears"/>
+        <button id="gearsSearchClose"
+                class="pp-search-close bx--btn bx--btn--secondary bx--btn--icon-only"
+                type="button" aria-label="Close search">
+          ${SVG_X_GEARS}
+        </button>
+      </div>
       <div style="display: flex; align-items: center; gap: 1rem;">
         <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
           <span class="menu-morph" aria-hidden="true"><i class="menu-morph__ham"></i><i class="menu-morph__logo"></i></span>
@@ -26,11 +37,6 @@ function renderNavBar(userRole) {
           placeholder="Filter gears..."
           style="font-size: 1rem; padding: 6px 12px; border: 1px solid #8c8c8c; border-radius: 4px; outline-offset: 2px; width: 120px; display: none;"
           aria-label="Filter pedals"/>
-        <button id="gearsSearchClose"
-                class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only"
-                type="button" aria-label="Close search" style="display:none; flex-shrink:0;">
-          <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16z"/></svg>
-        </button>
 
         <button id="toggleFilterBtn" aria-label="Toggle search" style="background:none; border:none; cursor:pointer; padding:4px;">
           <svg fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -71,30 +77,27 @@ function renderNavBar(userRole) {
   const isMobileGears = () => window.innerWidth <= 768;
 
   function closeGearsSearch() {
-    const $input = $('#pedalFilterInput');
-    const $close = $('#gearsSearchClose');
-    $input.hide().val('').css({ flex: '', width: '120px' });
-    $close.hide();
-    if (isMobileGears()) {
-      // Ripristina bottoni navbar
-      $('#toggleFilterBtn, #createPedalBtn, #loginBtn, #loginBtnMobile').css('display', '');
-      $('#loginBtnMobile').css('display', 'inline-flex');
-    }
+    const overlay  = document.getElementById('gears-search-overlay');
+    const $inputM  = $('#pedalFilterInputMobile');
+    const $inputD  = $('#pedalFilterInput');
+    if (overlay) overlay.classList.remove('active');
+    $inputM.val('');
+    $inputD.hide().val('').css({ width: '120px' });
   }
 
   $("#toggleFilterBtn").on("click", function () {
-    const $input = $("#pedalFilterInput");
-    if ($input.is(":visible")) {
-      closeGearsSearch();
-    } else {
-      if (isMobileGears()) {
-        // Mobile: nasconde bottoni, input occupa tutto lo spazio nel flusso flex
-        $('#toggleFilterBtn, #createPedalBtn, #loginBtn, #loginBtnMobile').hide();
-        $input.css({ flex: '1', width: '1px' });
-        $input.show();
-        const inputEl = $input[0];
+    if (isMobileGears()) {
+      // Mobile: mostra overlay a tutta larghezza sopra la navbar
+      const overlay = document.getElementById('gears-search-overlay');
+      if (overlay) overlay.classList.add('active');
+      const inputEl = document.getElementById('pedalFilterInputMobile');
+      if (inputEl) {
         requestAnimationFrame(() => { setTimeout(() => { inputEl.focus(); }, 50); });
-        $('#gearsSearchClose').show();
+      }
+    } else {
+      const $input = $("#pedalFilterInput");
+      if ($input.is(":visible")) {
+        closeGearsSearch();
       } else {
         $input.css("display", "flex").focus();
       }
@@ -109,21 +112,21 @@ function renderNavBar(userRole) {
   // Search gear with server calls
   let searchTimeout = null;
 
-  $("#pedalFilterInput").on("input", function () {
-    const query = $(this).val().trim();
-
+  function triggerSearch(query) {
     if (searchTimeout) clearTimeout(searchTimeout);
     searchTimeout = setTimeout(function () {
       resetCatalogState();
-
-      if (query === "") {
-        currentSearchQuery = null;
-      } else {
-        currentSearchQuery = query;
-      }
-
+      currentSearchQuery = query === "" ? null : query;
       loadNextCatalogPage();
     }, 500);
+  }
+
+  $("#pedalFilterInputMobile").on("input", function () {
+    triggerSearch($(this).val().trim());
+  });
+
+  $("#pedalFilterInput").on("input", function () {
+    triggerSearch($(this).val().trim());
   });
 
 }

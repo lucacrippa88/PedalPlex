@@ -28,6 +28,48 @@ header {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Mobile search overlay — same fixed position as header, sits on top */
+.pp-search-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3001;
+  background: rgb(25,25,25);
+  align-items: stretch;
+  gap: 0;
+  padding: 1rem 0 1rem 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.pp-search-overlay.active { display: flex; }
+.pp-search-overlay input {
+  flex: 1;
+  align-self: stretch;
+  background: transparent;
+  border: none;
+  border-right: 1px solid #444;
+  border-radius: 0;
+  color: #fff;
+  font-size: 1rem;
+  padding: 0 12px;
+  outline: none;
+  min-width: 0;
+}
+.pp-search-overlay input::placeholder { color: #888; }
+.pp-search-overlay .pp-search-close {
+  align-self: stretch !important;
+  min-height: 0 !important;
+  min-width: 48px !important;
+  width: 48px !important;
+  flex-shrink: 0;
+  border-radius: 0;
+  padding: 0;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Button Styles */
 .bx--btn--primary {
   cursor: pointer;
@@ -110,6 +152,25 @@ header {
   background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
 }
 
+
+.pedalplex-logo-fullscreen-menu-large {
+  width: 100px;
+  height: 100px;
+  mask-image: url('../logos/pedalplex_logo_white.png');
+  -webkit-mask-image: url('../logos/pedalplex_logo_white.png');
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
+  display: inline-block;
+}
+
+.pedalplex-logo-fullscreen-menu-large:hover {
+  background-position: 100% 50%;
+}
 
 .pedalplex-logo-fullscreen-menu {
   width: 70px;
@@ -925,27 +986,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   /* Hide pedal counts */
   #pedalCount, #createPedalBtn { display: none !important; }
 
-  /* Search input takes remaining width and flows on the left */
-  #pedalFilterInput {
-    width: 100% !important;
-    max-width: 200px;
-    order: -1; /* move it before buttons in flex layout */
-    margin-right: 8px;
-    display: none;
-    transition: all 0.3s ease;
-  }
-
   #toggleFilterBtn {
     flex-shrink: 0;
-  }
-
-  /* Optionally adjust input width for filter */
-  #pedalFilterInput {
-    width: 80px !important;
-  }
-
-  header > div:last-child {
-    flex-wrap: wrap; /* allow input + button to wrap nicely */
   }
 }
 
