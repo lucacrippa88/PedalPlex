@@ -416,10 +416,12 @@ function initNavPedalboard(userRole) {
     $input.hide().val('');
     $close.hide();
     if (dropdown) dropdown.style.display = 'none';
-    // Mobile: ripristina i bottoni della navbar (showMobile usa display:flex)
     if (isMobileSearch()) {
-      $input.css({ position: '', width: '280px', flex: '' });
-      $('#addGearsTriggerMobile, #saveBtnMobile, #pp-actions-btn-mobile').css('display', 'inline-flex');
+      // Ripristina: togli l'overlay
+      $input.css({ position: '', top: '', left: '', right: '', width: '280px',
+                   zIndex: '', background: '', padding: '', boxSizing: '',
+                   borderRadius: '', border: '' });
+      $close.css({ position: '', top: '', right: '', zIndex: '' });
     }
   }
 
@@ -427,12 +429,45 @@ function initNavPedalboard(userRole) {
     const $input = $('#pedalFilterInput');
     const $close = $('#pedalSearchClose');
     if (isMobileSearch()) {
-      // Mobile: espandi input a tutta la navbar, nascondi gli altri bottoni
-      $('#addGearsTriggerMobile, #saveBtnMobile, #pp-actions-btn-mobile, #pp-actions-btn').hide();
-      $input.css({ position: 'relative', width: '1px', flex: '1' });
-      $close.show();
+      // Mobile: l'input si sovrappone all'intera header come overlay fixed
+      const headerH = document.querySelector('header')?.offsetHeight || 56;
+      $input.css({
+        position:    'fixed',
+        top:         '0',
+        left:        '0',
+        right:       '60px',   // spazio per il bottone ✕
+        width:       'auto',
+        zIndex:      '3100',
+        background:  'rgb(25,25,25)',
+        padding:     '0 12px',
+        height:      headerH + 'px',
+        boxSizing:   'border-box',
+        borderRadius:'0',
+        border:      'none',
+        borderBottom:'2px solid #9C54D5',
+      });
+      $close.css({
+        position: 'fixed',
+        top:      '0',
+        right:    '0',
+        height:   headerH + 'px',
+        width:    '60px',
+        zIndex:   '3100',
+        background: 'rgb(25,25,25)',
+        display:  'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottom: '2px solid #9C54D5',
+      });
     }
-    $input.show().focus();
+    $input.show();
+    // Su iOS il focus() deve essere chiamato dopo che il browser ha completato
+    // il layout (specialmente con position:fixed appena impostato).
+    // requestAnimationFrame + setTimeout garantisce il tick successivo al paint.
+    const inputEl = $input[0];
+    requestAnimationFrame(() => {
+      setTimeout(() => { inputEl.focus(); }, 50);
+    });
     const dropdown = getOrCreateDropdown();
     if (dropdown.children.length > 0) { dropdown.style.display = 'block'; positionDropdown(); }
     else { fetchAndRenderPedals($input.val().trim()); }
