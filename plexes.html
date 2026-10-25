@@ -309,7 +309,7 @@ $(document).ready(function() {
             $('#loadingMessage').hide();
             $('#page-content, #preset-controls').show();
             if (!window.isPreviewMode) { 
-                  $('#preset-controls').html(`<p>Login to organise your ${L.Plexes} in folders and save them!</p>`);
+                  $('#preset-controls').html(`<p>Login to sync ${L.Plexes}</p>`);
                   if (typeof initPreset === 'function') initPreset();
             }            
             if (typeof initNavPreset === 'function') initNavPreset();

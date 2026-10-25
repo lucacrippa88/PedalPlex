@@ -121,7 +121,7 @@ function initNavPreset() {
     const menu = document.getElementById('pp-actions-menu');
     if (!menu || menu.children.length > 0) return; // already populated
     menu.innerHTML = `
-      ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login to save your Presets</span></a><div class="pp-action-separator"></div>` : ''}
+      ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login to sync Presets</span></a><div class="pp-action-separator"></div>` : ''}
       <button class="pp-action-item" data-action="newTone">${SVG.newTone} <span>New Preset</span></button>
       <button class="pp-action-item" data-action="renamePreset">${SVG.editPreset} <span>Edit Preset</span></button>
       <button class="pp-action-item" data-action="addFolder">${SVG.addFolder} <span>Add Folder</span></button>

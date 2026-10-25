@@ -1298,90 +1298,64 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   top: 12px;
 }
 
-/* CONTENITORE GLOW */
+/* CONTENITORE DROPDOWN SUBPLEX */
 .preset-dropdown-wrapper {
   position: absolute;
   top: 25px;
   right: 4px;
-  width: 180px;
+  width: 200px;
   border-radius: 8px;
+  padding: 1.5px; /* spessore del bordo gradiente */
+  background: linear-gradient(var(--gradient-angle, 65deg),
+    rgb(70, 41, 100),
+    rgb(156, 84, 213),
+    rgb(94, 226, 240));
 
-  /* 🔒 STATO CHIUSO DI DEFAULT */
+  /* stato chiuso */
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-
   transition: opacity 0.15s ease;
-  transform: translateZ(0); /* FIX Safari */
+  transform: translateZ(0);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
 }
 
-/* STATO APERTO */
+/* stato aperto */
 .preset-dropdown-wrapper.is-open {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
 }
 
-/* 🌈 BLUR / GLOW */
-/* .preset-dropdown-wrapper::before {
-  content: "";
-  position: absolute;
-  inset: -8px;
-  border-radius: 8px;
-  background: linear-gradient(
-    65deg,
-    rgb(70, 41, 100),
-    rgb(156, 84, 213),
-    rgb(94, 226, 240)
-  );
-  filter: blur(2px);
-  opacity: 0.8;
-  z-index: -1;
-  pointer-events: none;
-} */
+/* rimuove il vecchio pseudo-element glow */
 .preset-dropdown-wrapper::before {
-  content: "";
-  position: absolute;
-  inset: -8px;
-  border-radius: 8px;
-
-  /* gradient con angolo variabile tramite CSS variable */
-  /* background: conic-gradient(from var(--gradient-angle, 0deg), */
-  background: linear-gradient(var(--gradient-angle, 65deg),
-    rgb(70, 41, 100),
-    rgb(156, 84, 213),
-    rgb(94, 226, 240));
-
-  /* filter: blur(2px); */
-  opacity: 0.8;
-  z-index: -1;
-  pointer-events: none;
+  display: none;
 }
-
-
 
 /* AREA SCROLLABILE */
 .preset-dropdown {
   height: 140px;
   overflow-y: auto;
   overflow-x: hidden;
-  opacity: 0.8;
-  background: #444;
-  border-radius: 8px;
+  background: rgb(30, 30, 30);
+  border-radius: 7px; /* 8px - 1.5px padding */
   list-style: none;
   margin: 0;
-  padding: 6px 0;
+  padding: 4px 0;
+  opacity: 1;
 }
 
 /* ITEMS */
 .preset-dropdown li {
-  padding: 8px 14px;
-  font-size: 14px;
+  padding: 9px 16px;
+  font-size: 0.875rem;
   cursor: pointer;
+  color: #fff;
 }
 
 .preset-dropdown li:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(156, 84, 213, 0.18);
+  color: #9C54D5;
 }
 
 /* Private SubPlex items — subtle left border indicator */

@@ -120,7 +120,7 @@ window.fullscreenMenuHtml = `
     <a href="/about-us">About PedalPlex</a>
     <br><br>
     <span id="guestLoginMessage" style="color:#161616; font-size:0.875rem; display:none;">
-      Login to access all features
+      Login to enable cross-device sync
     </span>
     <br><br>
 
