@@ -419,9 +419,10 @@ function initNavPedalboard(userRole) {
     if (isMobileSearch()) {
       // Ripristina: togli l'overlay
       $input.css({ position: '', top: '', left: '', right: '', width: '280px',
-                   zIndex: '', background: '', padding: '', boxSizing: '',
-                   borderRadius: '', border: '' });
-      $close.css({ position: '', top: '', right: '', zIndex: '' });
+                   zIndex: '', background: '', color: '', padding: '', height: '',
+                   boxSizing: '', borderRadius: '', border: '' });
+      $close.css({ position: '', top: '', right: '', zIndex: '', height: '',
+                   width: '', background: '', color: '', border: '' });
     }
   }
 
@@ -435,11 +436,12 @@ function initNavPedalboard(userRole) {
         position:    'fixed',
         top:         '0',
         left:        '0',
-        right:       '60px',   // spazio per il bottone ✕
-        width:       'auto',
+        right:       '0',
+        width:       '100%',
         zIndex:      '3100',
-        background:  'rgb(25,25,25)',
-        padding:     '0 12px',
+        background:  '#ffffff',
+        color:       '#161616',
+        padding:     '0 52px 0 16px',  // spazio a destra per il ✕
         height:      headerH + 'px',
         boxSizing:   'border-box',
         borderRadius:'0',
@@ -447,17 +449,18 @@ function initNavPedalboard(userRole) {
         borderBottom:'2px solid #9C54D5',
       });
       $close.css({
-        position: 'fixed',
-        top:      '0',
-        right:    '0',
-        height:   headerH + 'px',
-        width:    '60px',
-        zIndex:   '3100',
-        background: 'rgb(25,25,25)',
-        display:  'flex',
-        alignItems: 'center',
+        position:       'fixed',
+        top:            '0',
+        right:          '0',
+        height:         headerH + 'px',
+        width:          '48px',
+        zIndex:         '3200',
+        background:     'transparent',
+        color:          '#161616',
+        display:        'flex',
+        alignItems:     'center',
         justifyContent: 'center',
-        borderBottom: '2px solid #9C54D5',
+        border:         'none',
       });
     }
     $input.show();

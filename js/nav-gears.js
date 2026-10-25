@@ -74,10 +74,10 @@ function renderNavBar(userRole) {
     $close.hide();
     if (isMobileGears()) {
       $input.css({ position: '', top: '', left: '', right: '', width: '120px',
-                   zIndex: '', background: '', padding: '', height: '',
+                   zIndex: '', background: '', color: '', padding: '', height: '',
                    boxSizing: '', borderRadius: '', border: '' });
       $close.css({ position: '', top: '', right: '', zIndex: '', height: '',
-                   width: '', background: '', display: '' });
+                   width: '', background: '', color: '', border: '', display: '' });
     }
   }
 
@@ -93,11 +93,12 @@ function renderNavBar(userRole) {
           position:    'fixed',
           top:         '0',
           left:        '0',
-          right:       '60px',
-          width:       'auto',
+          right:       '0',
+          width:       '100%',
           zIndex:      '3100',
-          background:  'rgb(25,25,25)',
-          padding:     '0 12px',
+          background:  '#ffffff',
+          color:       '#161616',
+          padding:     '0 52px 0 16px',
           height:      headerH + 'px',
           boxSizing:   'border-box',
           borderRadius:'0',
@@ -110,13 +111,14 @@ function renderNavBar(userRole) {
           top:            '0',
           right:          '0',
           height:         headerH + 'px',
-          width:          '60px',
-          zIndex:         '3100',
-          background:     'rgb(25,25,25)',
+          width:          '48px',
+          zIndex:         '3200',
+          background:     'transparent',
+          color:          '#161616',
           display:        'flex',
           alignItems:     'center',
           justifyContent: 'center',
-          borderBottom:   '2px solid #9C54D5',
+          border:         'none',
         });
         // Su iOS: delay post-layout per far apparire la tastiera
         const inputEl = $input[0];
