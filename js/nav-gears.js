@@ -89,6 +89,16 @@ function renderNavBar(userRole) {
   } else {
     $(document).on('click', '#createPedalBtn', createNewPedal);
     $(document).on('click', '#createOwnPedalBtn', createNewPedal);
+
+    // Admin-only: experimental responsive builder (create-v2.html)
+    if (userRole === "admin") {
+      $("#createPedalBtn").after(`
+        <button id="createPedalBtnV2" class="bx--btn bx--btn--tertiary bx--btn--sm" type="button" aria-label="Create gear - New" style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M17 2v8h-2V2zM17 22v8h-2v-8zM2 15h8v2H2zM22 15h8v2h-8z"/></svg>
+          Create gear - New
+        </button>`);
+      $(document).on('click', '#createPedalBtnV2', () => createNewPedal('create-v2.html'));
+    }
   }
 
   const isMobileGears = () => window.innerWidth <= 768;

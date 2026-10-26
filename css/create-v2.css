@@ -1,0 +1,685 @@
+/* =====================================================================
+   Gear Builder v2 — responsive / mobile-first layer
+   Loaded AFTER style.css. Everything is scoped under body.v2 so the
+   preview (pedal rendering) is never affected by these rules.
+   ===================================================================== */
+
+body.v2 {
+  padding: 12px;
+  background: #2e2e2e;
+  color: #f4f4f4;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* box-sizing only for the editor chrome — NEVER for the rendered pedal.
+   style.css forces `*{box-sizing:inherit!important}` + `html{content-box!important}`,
+   so !important is required here (higher specificity wins between two !important). */
+body.v2 #editor,
+body.v2 #editor *,
+body.v2 #editor *::before,
+body.v2 #editor *::after,
+body.v2 #preview .preview-bar,
+body.v2 #preview .preview-bar *,
+body.v2 #json-error {
+  box-sizing: border-box !important;
+}
+
+/* ---------- Layout ---------- */
+body.v2 #builder {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 42%);
+  gap: 16px;
+  align-items: start;
+  flex-wrap: nowrap;
+}
+
+body.v2 #editor {
+  flex: none;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  color-scheme: dark;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+body.v2 #preview {
+  flex: none;
+  min-width: 0;
+  position: sticky;
+  top: 0;
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+  padding: 10px;
+  background: #1c1c1c;
+  border: 1px solid #444;
+  border-radius: 8px;
+  z-index: 30;
+}
+
+body.v2 .preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+body.v2 .preview-title {
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #c6c6c6;
+}
+
+/* validation banner (hidden when empty) */
+body.v2 #json-error {
+  color: #ffd7d9;
+  background: #520408;
+  border: 1px solid #da1e28;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin: 0 0 8px;
+  font-size: .8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+body.v2 #json-error:empty { display: none; }
+
+body.v2 #pedal-box {
+  display: flex;
+  align-items: flex-start;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+body.v2 #pedal-box > .pedal-catalog { flex: 0 0 auto; }
+
+/* ---------- Sections (accordion) ---------- */
+body.v2 .sec {
+  background: #262626;
+  border: 1px solid #393939;
+  border-radius: 8px;
+}
+body.v2 .sec > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+body.v2 .sec > summary::-webkit-details-marker { display: none; }
+body.v2 .sec > summary::after,
+body.v2 .adv > summary::after {
+  content: "";
+  width: 8px; height: 8px;
+  border-right: 2px solid #c6c6c6;
+  border-bottom: 2px solid #c6c6c6;
+  transform: rotate(45deg);
+  transition: transform .15s;
+  flex: none;
+  margin: -3px 4px 0 0;
+}
+body.v2 .sec[open] > summary::after,
+body.v2 .adv[open] > summary::after { transform: rotate(-135deg); margin-top: 3px; }
+body.v2 .sec[open] > summary { border-bottom: 1px solid #393939; }
+body.v2 .sec-body { padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+
+/* ---------- Fields ---------- */
+body.v2 #editor .fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+body.v2 #editor .fields > .wide,
+body.v2 #editor .fields > .numeric-fields,
+body.v2 #editor .fields > .discrete-fields { grid-column: 1 / -1; }
+
+body.v2 #editor .field {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  margin: 0;
+  font-size: .75rem;
+  color: #c6c6c6;
+  min-width: 0;
+}
+body.v2 #editor .cap { font-size: .75rem; color: #c6c6c6; }
+
+body.v2 #editor input[type="text"],
+body.v2 #editor input[type="number"],
+body.v2 #editor select {
+  width: 100%;
+  min-height: 40px;
+  padding: 6px 10px;
+  margin: 0;
+  background: #393939;
+  color: #f4f4f4;
+  border: 1px solid #6f6f6f;
+  border-radius: 4px;
+  font-size: .875rem;
+  font-family: inherit;
+}
+body.v2 #editor input:focus,
+body.v2 #editor select:focus,
+body.v2 #editor button:focus-visible,
+body.v2 #editor summary:focus-visible {
+  outline: 2px solid #78a9ff;
+  outline-offset: 1px;
+}
+body.v2 #editor input:disabled,
+body.v2 #editor select:disabled { opacity: .5; cursor: not-allowed; }
+
+body.v2 #editor input[type="color"] {
+  width: 44px;
+  height: 36px;
+  min-height: 0;
+  padding: 2px;
+  border: 1px solid #6f6f6f;
+  border-radius: 4px;
+  background: #393939;
+  cursor: pointer;
+  flex: none;
+}
+body.v2 #editor input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+body.v2 #editor input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 2px; }
+body.v2 #editor input[type="color"]:disabled { opacity: .3; }
+
+body.v2 #editor input[type="checkbox"] {
+  width: 20px; height: 20px; margin: 0; flex: none;
+  accent-color: #0f62fe;
+}
+
+/* checkbox (+ optional colour) row */
+body.v2 #editor .opt,
+body.v2 #editor .chk {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  margin: 0;
+  font-size: .875rem;
+  color: #f4f4f4;
+  cursor: pointer;
+}
+body.v2 #editor .opt {
+  padding: 4px 10px;
+  background: #2b2b2b;
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+body.v2 #editor .opt input[type="color"] { margin-left: auto; }
+
+/* colour field: caption left, swatch right */
+body.v2 #editor .field.color {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40px;
+  padding: 4px 10px;
+  background: #2b2b2b;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: .875rem;
+  color: #f4f4f4;
+}
+
+body.v2 #editor .inline { display: flex; align-items: center; gap: 10px; }
+body.v2 #editor .inline > input[type="text"] { flex: 1; min-width: 0; }
+
+/* required-field highlight set by JS keeps priority via inline style */
+
+/* ---------- Category picker ---------- */
+body.v2 #pedal-category-wrapper { position: relative; display: block; width: 100%; }
+body.v2 #pedal-category-button {
+  display: flex;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  min-height: 44px;
+  align-items: center;
+  white-space: normal;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff;
+}
+body.v2 #pedal-category-options {
+  position: static;
+  margin-top: 6px;
+  width: 100%;
+  min-width: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 6px;
+  background: #1e1e1e;
+  border: 1px solid #6f6f6f;
+  border-radius: 4px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 2px;
+}
+/* jQuery .toggle() writes inline display:block/none; keep grid when shown */
+body.v2 #pedal-category-options[style*="display: block"] { display: grid !important; }
+/* labels are built by create.js with inline styles → !important needed */
+body.v2 #pedal-category-options label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 8px !important;
+  min-height: 40px;
+  border-radius: 4px;
+  white-space: normal !important;
+  font-size: .875rem;
+}
+body.v2 #pedal-category-options label:hover { background: #333; }
+
+/* ---------- Buttons ---------- */
+body.v2 .bx--btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  height: auto;
+  padding: 6px 14px;
+  max-width: none;
+  white-space: nowrap;
+  font-size: .875rem;
+}
+body.v2 .bx--btn--secondary { color: #fff; }
+body.v2 .bx--btn--icon-only {
+  width: 36px; min-width: 36px; height: 36px; min-height: 36px; padding: 0;
+}
+
+/* ---------- Status pills ---------- */
+body.v2 #pedal-published-wrapper { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+body.v2 #pedal-published-button {
+  pointer-events: none;
+  min-height: 32px;
+  padding: 2px 12px;
+  background: #0e6027;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+body.v2 #status-buttons { margin: 0; }
+body.v2 #pedal-published-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: .875rem;
+  width: 100%;
+}
+body.v2 #pedal-published-options li {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid #6f6f6f;
+  border-radius: 999px;
+  background: #393939;
+  cursor: pointer;
+  user-select: none;
+}
+body.v2 #pedal-published-options li.active {
+  background: #0f62fe;
+  border-color: #0f62fe;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ---------- Controls: rows ---------- */
+body.v2 #controls {
+  counter-reset: rowno;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+}
+body.v2 #controls:empty::before {
+  content: "No rows yet. Add a row, then place knobs, LEDs, sliders, LCDs\A or multi-selects in it. At least one LED is required.";
+  white-space: pre-line;
+  display: block;
+  padding: 16px;
+  border: 1px dashed #6f6f6f;
+  border-radius: 8px;
+  color: #c6c6c6;
+  font-size: .875rem;
+  text-align: center;
+}
+
+body.v2 #controls .row {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 10px;
+  margin: 0;
+  padding: 10px;
+  background: #1f1f1f;
+  border: 1px solid #393939;
+  border-radius: 8px;
+  counter-increment: rowno;
+}
+body.v2 #controls .row > div {
+  display: block;
+  min-width: 0;
+  align-items: initial;
+  justify-content: initial;
+  gap: 0;
+}
+body.v2 #controls .row > .row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+body.v2 .row-title::before {
+  content: "Row " counter(rowno);
+  font-weight: 600;
+  font-size: .9375rem;
+}
+body.v2 #controls .row > .row-actions {
+  display: flex;
+  flex-direction: row !important;
+  gap: 6px;
+  margin: 0;
+}
+body.v2 #controls .row > .row-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row !important;
+  gap: 8px;
+}
+body.v2 #controls .row > .row-buttons .bx--btn { flex: 1 1 auto; }
+
+body.v2 #controls .row > .controls-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+  counter-reset: ctlno;
+  overflow: visible;
+  white-space: normal;
+  padding: 0;
+}
+
+/* ---------- Controls: cards ---------- */
+body.v2 #controls .control {
+  display: block;
+  margin: 0;
+  padding: 0;
+  background: #262626;
+  border: 1px solid #444;
+  border-radius: 8px;
+  counter-increment: ctlno;
+  min-width: 0;
+  z-index: auto;
+}
+body.v2 #controls .control.has-error { border-color: #fa4d56; }
+
+body.v2 .ctrl-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 6px 8px 6px 10px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+body.v2 .ctrl-head::before {
+  content: counter(ctlno);
+  flex: none;
+  width: 22px; height: 22px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: #393939;
+  font-size: .75rem;
+  color: #c6c6c6;
+}
+body.v2 .ctrl-badge {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #0f62fe;
+  color: #fff;
+  font-size: .6875rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+body.v2 .control[data-type="led"] .ctrl-badge { background: #da1e28; }
+body.v2 .control[data-type="slider"] .ctrl-badge { background: #8a3ffc; }
+body.v2 .control[data-type="lcd"] .ctrl-badge { background: #007d79; }
+body.v2 .control[data-type="multi"] .ctrl-badge { background: #b28600; }
+body.v2 .ctrl-text-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+body.v2 .ctrl-title {
+  font-size: .875rem; font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+body.v2 .ctrl-title.is-empty { color: #ff8389; font-style: italic; }
+body.v2 .ctrl-sub {
+  font-size: .75rem; color: #a8a8a8;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+body.v2 #controls .ctrl-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  flex: none;
+}
+body.v2 .ctrl-chevron {
+  flex: none;
+  width: 8px; height: 8px;
+  border-right: 2px solid #c6c6c6;
+  border-bottom: 2px solid #c6c6c6;
+  transform: rotate(-135deg);
+  margin: 4px 6px 0 2px;
+  transition: transform .15s;
+}
+body.v2 .control.collapsed .ctrl-chevron { transform: rotate(45deg); margin-top: -3px; }
+body.v2 .control.collapsed .ctrl-body { display: none; }
+
+body.v2 .ctrl-body {
+  padding: 4px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid #393939;
+  padding-top: 12px;
+}
+
+/* nested "Style & colors" */
+body.v2 .adv {
+  border: 1px solid #393939;
+  border-radius: 6px;
+  background: #212121;
+}
+body.v2 .adv > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 44px;
+  padding: 6px 12px;
+  font-size: .875rem;
+  font-weight: 600;
+}
+body.v2 .adv > summary::-webkit-details-marker { display: none; }
+body.v2 .adv > .fields { padding: 4px 12px 12px; }
+
+/* numeric / discrete groups */
+body.v2 #editor .numeric-fields,
+body.v2 #editor .discrete-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+body.v2 #editor .discrete-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* LED colours */
+body.v2 .led-colors-container {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+body.v2 .led-colors-container label {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin: 0; padding: 4px 8px;
+  background: #2b2b2b; border: 1px solid #444; border-radius: 4px;
+  font-size: .8125rem; color: #f4f4f4;
+}
+body.v2 .add-led-color { align-self: flex-start; }
+
+/* px input revealed for margin positions */
+body.v2 .ctrl-position-value,
+body.v2 .ctrl-position-margin-value { margin-top: 4px; }
+
+/* ---------- Primary add-row ---------- */
+body.v2 #add-row { width: 100%; }
+
+/* =====================================================================
+   Tablet / mobile
+   ===================================================================== */
+@media (max-width: 860px) {
+  body.v2 { padding: 8px; }
+
+  body.v2 #builder {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  body.v2 #preview {
+    order: -1;
+    max-height: 42vh;
+    padding: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, .45);
+  }
+  body.v2 #editor { padding-bottom: 24px; }
+
+  /* single column cards, vertical order → rotate ← → into ↑ ↓ */
+  body.v2 #controls .row > .controls-row { grid-template-columns: 1fr; }
+  body.v2 .move-up .gl, body.v2 .move-down .gl {
+    display: inline-block; transform: rotate(90deg);
+  }
+  body.v2 .row-actions .lbl { display: none; }
+
+  /* iOS: ≥16px prevents zoom on focus; bigger touch targets */
+  body.v2 #editor input[type="text"],
+  body.v2 #editor input[type="number"],
+  body.v2 #editor select {
+    font-size: 16px;
+    min-height: 44px;
+  }
+  body.v2 #editor input[type="color"] { width: 52px; height: 40px; }
+  body.v2 #editor input[type="checkbox"] { width: 24px; height: 24px; }
+  body.v2 .bx--btn { min-height: 44px; }
+  body.v2 .bx--btn--icon-only { width: 44px; min-width: 44px; height: 44px; min-height: 44px; }
+  body.v2 #editor .opt, body.v2 #editor .chk { min-height: 44px; }
+  body.v2 #pedal-published-options li { min-height: 44px; }
+}
+
+@media (max-width: 420px) {
+  body.v2 #editor .fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body.v2 .sec-body { padding: 10px; }
+  body.v2 #controls .row { padding: 8px; }
+  body.v2 #pedal-category-options { grid-template-columns: 1fr 1fr; }
+}
+
+/* =====================================================================
+   Additions: toolbar, section hints, tertiary buttons on dark, test bar
+   ===================================================================== */
+body.v2 .sec-hint {
+  margin-left: auto;
+  font-size: .75rem;
+  font-weight: 400;
+  color: #a8a8a8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+body.v2 .sec > summary > span:first-child { flex: none; }
+body.v2 .sec:not([open]) > summary .sec-hint { max-width: 60%; }
+
+body.v2 .controls-toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+body.v2 .controls-toolbar .bx--btn { flex: 1 1 auto; }
+
+body.v2 .bx--btn--tertiary {
+  color: #78a9ff;
+  border-color: #78a9ff;
+  background: transparent;
+}
+body.v2 .bx--btn--tertiary:hover { background: #0f62fe; color: #fff; border-color: #0f62fe; }
+
+body.v2 .preview-tools { display: inline-flex; gap: 6px; }
+body.v2 .preview-tools .bx--btn { min-height: 36px; padding: 4px 10px; }
+
+/* standalone-only test bar (hidden when embedded in the Swal iframe) */
+body.v2 .v2-testbar {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  margin-bottom: 10px; padding: 8px 10px;
+  background: #1c1c1c; border: 1px dashed #6f6f6f; border-radius: 8px;
+  font-size: .75rem; color: #c6c6c6;
+}
+body.v2 .v2-testbar .bx--btn { min-height: 36px; }
+body.v2 .v2-testbar textarea {
+  width: 100%; min-height: 40vh; background: #161616; color: #f4f4f4;
+  border: 1px solid #6f6f6f; font: 12px/1.4 ui-monospace, Menlo, monospace;
+}
+
+/* =====================================================================
+   Fixes after visual review
+   ===================================================================== */
+
+/* style.css:645 forces `.bx--btn{max-width:8rem!important;margin-left:8px!important}` → undo inside the builder */
+body.v2 .bx--btn {
+  max-width: none !important;
+  margin-left: 0 !important;
+  box-shadow: none;
+}
+body.v2 #pedal-category-button { width: 100%; justify-content: flex-start; }
+
+/* row header: style.css `.row > div{flex-direction:column;align-items:center}` was winning (centred title) */
+body.v2 #controls .row > .row-head {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+body.v2 #controls .row > .row-head > .row-actions { flex-direction: row !important; margin: 0; }
+body.v2 .row-title { text-align: left; }
+
+/* card header: give the title the room, keep the action buttons compact */
+body.v2 #controls .ctrl-actions .bx--btn--icon-only { width: 36px; min-width: 36px; height: 36px; min-height: 36px; }
+body.v2 .ctrl-title { white-space: normal; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+@media (max-width: 860px) {
+  /* header wraps: [n BADGE title … chevron] / [actions] — nothing is truncated to "M…" */
+  body.v2 .ctrl-head { flex-wrap: wrap; row-gap: 4px; }
+  body.v2 .ctrl-text-wrap { flex: 1 1 0; }
+  body.v2 .ctrl-chevron { order: 3; }
+  body.v2 #controls .ctrl-actions { order: 4; width: 100%; justify-content: flex-end; padding-bottom: 4px; }
+  body.v2 #controls .ctrl-actions .bx--btn--icon-only { width: 44px; min-width: 44px; height: 44px; min-height: 44px; }
+
+  /* preview: compact so it never hides the card being edited */
+  body.v2 #preview { max-height: 30vh; padding: 6px; }
+  body.v2 .preview-bar { margin-bottom: 4px; }
+  body.v2 .preview-tools .bx--btn { min-height: 36px; }
+}
+
+/* ---- round 3 ---- */
+body.v2 #controls .row > .row-head > .row-actions { gap: 6px; }
+
+@media (max-width: 860px) {
+  /* base grid rule sets align-items:start → preview/editor shrank to content width on phones */
+  body.v2 #builder { align-items: stretch; }
+  body.v2 #preview { max-height: 30vh; overflow: auto; }
+}

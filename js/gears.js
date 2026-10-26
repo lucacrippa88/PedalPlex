@@ -381,7 +381,10 @@ function initNavCatalog(userRole){
 }
 
 // ==================== CREATE NEW PEDAL ====================
-function createNewPedal() {
+function createNewPedal(builderUrl) {
+  // Click handlers pass an Event: only a string selects an alternative builder page
+  const builderSrc = (typeof builderUrl === 'string') ? builderUrl : 'create.html';
+
   if (!window.currentUser || window.currentUser.role === "guest") {
     Swal.fire('Access Denied', 'Guests cannot create pedals. Please log in.', 'warning');
     return;
@@ -389,7 +392,7 @@ function createNewPedal() {
 
   Swal.fire({
     title: 'Gear Builder',
-    html: `<iframe src="create.html" style="width:100%; height:80vh; border:none;" id="swal-builder-iframe"></iframe>`,
+    html: `<iframe src="${builderSrc}" style="width:100%; height:80vh; border:none;" id="swal-builder-iframe"></iframe>`,
     width: '100%',
     allowOutsideClick: false,
     allowEscapeKey: false,
