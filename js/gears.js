@@ -391,10 +391,16 @@ function initNavCatalog(userRole){
 
   // ?create=1 — apre direttamente il builder (es. link da rigs "Can't find it?")
   if (new URLSearchParams(window.location.search).get('create') === '1') {
-    // Aspetta che il DOM e gli script siano pronti
-    setTimeout(function () {
-      if (typeof createNewPedal === 'function') createNewPedal();
-    }, 800);
+    let attempts = 0;
+    const poll = setInterval(function () {
+      attempts++;
+      if (typeof createNewPedal === 'function' && typeof Swal !== 'undefined') {
+        clearInterval(poll);
+        createNewPedal();
+      } else if (attempts > 40) {
+        clearInterval(poll); // stop after 4s
+      }
+    }, 100);
   }
 }
 
