@@ -2271,7 +2271,7 @@ body.gears-page #catalog {
 
 /* Thumb: occupa tutta la larghezza della card, altezza naturale del pedal */
 .gear-thumb {
-  background: #161616;
+  /* background: #161616; */
   border-radius: 6px;
   display: flex;
   align-items: center;
