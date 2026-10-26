@@ -1287,7 +1287,7 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
 
   const $card = $('<div>').addClass('gear-card' + (isWide ? ' wide' : ''));
 
-  // ---- thumb (natural size, card grows to fit) ----
+  // ---- thumb: pedal shown at its natural size, card grows to fit ----
   const $thumb       = $('<div>').addClass('gear-thumb');
   const $thumbHolder = $('<div>').addClass('gear-thumb-holder');
   $thumbHolder.append($pedalDiv);

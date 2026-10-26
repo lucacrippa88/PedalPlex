@@ -2248,13 +2248,12 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 body.gears-page #catalog {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-  justify-content: start;
+  gap: 14px;
   max-width: 100%;
   padding: 0 4px;
 }
 
-/* Sentinel stays invisible and spans full row */
+/* Sentinel spans the full row so it doesn't create a visible empty cell */
 body.gears-page #catalog-sentinel {
   grid-column: 1 / -1;
   height: 1px;
@@ -2262,26 +2261,29 @@ body.gears-page #catalog-sentinel {
 }
 
 .gear-card {
-  background: #1e1e1e;
-  border: 1px solid #393939;
-  border-radius: 10px;
+  background: #1f1f1f;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  transition: border-color 0.15s ease;
-  position: relative;
+  gap: 8px;
+  min-width: 0;
   box-sizing: border-box;
+  transition: border-color 0.15s ease;
 }
+.gear-card.wide { grid-column: span 2; }
 .gear-card:hover { border-color: #78a9ff; }
 
-/* Thumb: preview scalata del pedal */
+/* Thumb: si espande al contenuto, nessun crop */
 .gear-thumb {
   background: #161616;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px;
-  position: relative;
+  padding: 12px;
+  pointer-events: none;
 }
 
 .gear-thumb-holder {
@@ -2420,14 +2422,15 @@ body.gears-page #catalog-sentinel {
 
 @media (max-width: 860px) {
   body.gears-page #catalog {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 10px;
   }
+  .gear-card.wide { grid-column: 1 / -1; }
 }
 
 @media (max-width: 480px) {
   body.gears-page #catalog {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 8px;
   }
 }
