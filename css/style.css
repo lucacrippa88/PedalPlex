@@ -2271,13 +2271,12 @@ body.gears-page #catalog {
 
 /* Thumb: occupa tutta la larghezza della card, altezza naturale del pedal */
 .gear-thumb {
-  /* background: #161616; */
+  background: #161616;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 12px;
-  pointer-events: none;
 }
 
 .gear-thumb-holder {
@@ -2323,22 +2322,18 @@ body.gears-page #catalog {
   line-height: 1.4;
 }
 
-/* Badge status (replica .tpl-badge) */
-.gear-status-badge {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 1px 7px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  vertical-align: middle;
+/* Tag bar: category + status tags, fixed bottom-left */
+.gear-tag-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 10px;
 }
-.gear-status-badge.st-draft     { background: #5a4a00; color: #fddc69; }
-.gear-status-badge.st-private   { background: #393939; color: #c6c6c6; }
-.gear-status-badge.st-reviewing { background: #3a2a5c; color: #d4bbff; }
-.gear-status-badge.st-public    { background: #0e4d2a; color: #8ee0ad; }
-.gear-status-badge.st-template  { background: #00396b; color: #a6c8ff; }
+/* I tag Carbon dentro la barra non devono avere margin extra */
+.gear-tag-bar .bx--tag { margin: 0 !important; }
 
 /* Verified badge inline */
 .gear-verified-badge {

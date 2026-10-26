@@ -1295,29 +1295,30 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
   $thumbHolder.append($pedalDiv);
   $thumb.append($thumbHolder);
 
+  const published    = (pedal.published || 'draft').toLowerCase();
+  const isAdminUser  = userRole === 'admin';
+  const isGuest      = !window.currentUser || userRole === 'guest';
+  const isAuthorUser = window.currentUser && window.currentUser.username === pedal.author;
+
   // ---- meta ----
   const $meta = $('<div>').addClass('gear-meta');
 
   // ID
   $meta.append($('<div>').addClass('gear-meta-id').text(pedalId));
 
-  // Category + type row
-  const category = pedal.category || '';
-  const type     = pedal.type     || '';
-  const rowParts = [type, category].filter(Boolean).join(' · ');
-  if (rowParts) {
-    $meta.append($('<div>').addClass('gear-meta-row').text(rowParts));
+  // Type row
+  const type = pedal.type || '';
+  if (type) {
+    $meta.append($('<div>').addClass('gear-meta-row').text(type));
   }
 
   // Verified badge + author row
   const ADMIN_AUTHOR_ID = 'user_admin';
-  const isAdminUser   = userRole === 'admin';
-  const authorIsAdmin = pedal.authorId === ADMIN_AUTHOR_ID;
-  const showAuthor    = isAdminUser || !authorIsAdmin;
+  const authorIsAdmin   = pedal.authorId === ADMIN_AUTHOR_ID;
+  const showAuthor      = isAdminUser || !authorIsAdmin;
 
   if (pedal.verified == 'true' || (showAuthor && pedal.author)) {
     const $row = $('<div>').addClass('gear-meta-row');
-
     if (pedal.verified == 'true') {
       const $vb = $('<span>').addClass('gear-verified-badge').html(
         '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
@@ -1327,24 +1328,44 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
       );
       $row.append($vb);
     }
-
     if (showAuthor && pedal.author) {
       $row.append(document.createTextNode('by ' + pedal.author));
     }
-
     $meta.append($row);
   }
 
-  // Status badge
-  const published = (pedal.published || 'draft').toLowerCase();
-  const safeSt    = published.replace(/[^a-z]/g, '');
-  const $statusRow = $('<div>').addClass('gear-meta-row');
-  $statusRow.append(
-    $('<span>').addClass('gear-status-badge st-' + safeSt).text(published)
-  );
-  $meta.append($statusRow);
+  // ---- bottom-left tag bar (category tags + status tag) ----
+  const $tagBar = $('<div>').addClass('gear-tag-bar');
 
-  // ---- actions row ----
+  // Category tags — bx--tag bx--tag--teal bx--tag--sm (same as gear/ pages)
+  const categories = (pedal.category || '').split('/').map(c => c.trim()).filter(Boolean);
+  categories.forEach(function (c) {
+    $tagBar.append($('<span>').addClass('bx--tag bx--tag--teal bx--tag--sm').text(c));
+  });
+
+  // Status tag — shown only to admin (all), or non-admin logged-in for own draft/reviewing
+  const showStatus = (function () {
+    if (isGuest) return false;
+    if (isAdminUser) return true;
+    // non-admin: only own draft or own reviewing
+    if (isAuthorUser && (published === 'draft' || published === 'reviewing')) return true;
+    return false;
+  })();
+
+  if (showStatus) {
+    const statusMap = {
+      'public':    { color: 'bx--tag--green',  letter: 'P' },
+      'draft':     { color: 'bx--tag--yellow', letter: 'D' },
+      'reviewing': { color: 'bx--tag--red',    letter: 'R' },
+      'template':  { color: 'bx--tag--blue',   letter: 'T' },
+    };
+    const s = statusMap[published] || { color: 'bx--tag--gray', letter: published[0].toUpperCase() };
+    $tagBar.append($('<span>').addClass('bx--tag bx--tag--sm ' + s.color).text(s.letter));
+  }
+
+  $meta.append($tagBar);
+
+  // ---- actions row (bottom-right) ----
   const $actions = $('<div>').addClass('gear-actions');
 
   // Details link (always)
@@ -1353,15 +1374,14 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
       .html('<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" fill="currentColor"><path d="M26,28H6a2,2,0,0,1-2-2V6A2,2,0,0,1,6,4H16V6H6V26H26V16h2V26A2,2,0,0,1,26,28Z"/><path d="M20 2 20 4 26.586 4 18 12.586 19.414 14 28 5.414 28 12 30 2 20 2z"/></svg>Details')
   );
 
-  // Edit / Clone button -- same permission logic as before
+  // Edit / Clone button — same permission logic as before
   if (window.currentUser) {
-    const isAdmin    = userRole === 'admin';
-    const isAuthor   = window.currentUser.username === pedal.author;
+    const isAdmin    = isAdminUser;
+    const isAuthor   = isAuthorUser;
     const isTemplate = published === 'template';
     const isPublic   = published === 'public';
 
     if (isAdmin || isAuthor || isTemplate) {
-      // Admin full edit; author on public gear clone only; otherwise full edit
       const canFullEdit = isAdmin || (isAuthor && !isPublic);
 
       if (canFullEdit) {
@@ -1373,7 +1393,6 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
           .html('<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/></svg>');
         $actions.append($editBtn);
       } else {
-        // Author on public gear: clone only
         const $cloneBtn = $('<button>')
           .addClass('bx--btn bx--btn--tertiary bx--btn--icon-only edit-btn showBoth')
           .attr('title', 'Clone this gear')
