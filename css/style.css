@@ -2244,20 +2244,14 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
    Gear Catalog Card Grid
    ========================= */
 
-/* Override: nella pagina catalogo il container diventa una griglia di card */
+/* Il container è flex-wrap: le card si dispongono per dimensione naturale */
 body.gears-page #catalog {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 14px;
+  justify-content: center;
   max-width: 100%;
   padding: 0 4px;
-}
-
-/* Sentinel spans the full row so it doesn't create a visible empty cell */
-body.gears-page #catalog-sentinel {
-  grid-column: 1 / -1;
-  height: 1px;
-  pointer-events: none;
 }
 
 .gear-card {
@@ -2265,36 +2259,33 @@ body.gears-page #catalog-sentinel {
   border: 1px solid #444;
   border-radius: 8px;
   padding: 10px;
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   gap: 8px;
-  min-width: 0;
   box-sizing: border-box;
   transition: border-color 0.15s ease;
+  /* larghezza dettata dal contenuto — set via JS con data-pedal-width */
+  width: var(--gear-card-w);
 }
-.gear-card.wide { grid-column: span 2; }
 .gear-card:hover { border-color: #78a9ff; }
 
-/* Thumb: si espande al contenuto, nessun crop */
+/* Thumb: occupa tutta la larghezza della card, altezza naturale del pedal */
 .gear-thumb {
   background: #161616;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
   pointer-events: none;
 }
 
 .gear-thumb-holder {
-  flex: 0 0 auto;
-  position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: center;
 }
-/* Il .pedal-catalog dentro il thumb non deve avere margin */
-.gear-thumb-holder > .pedal-catalog { margin: 0 !important; }
+/* Azzera margin inline impostato da renderPedal */
+.gear-thumb-holder > .pedal-catalog { margin: 0 !important; margin-bottom: 0 !important; }
 /* Override: dentro il thumb, l'icona share non appare */
 .gear-thumb .pedal-share-icon { display: none !important; }
 /* Override: dentro il thumb, l'edit-btn non appare */

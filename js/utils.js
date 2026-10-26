@@ -1282,12 +1282,14 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
   const slug      = (typeof slugify === 'function') ? slugify(pedalId) : encodeURIComponent(pedalId);
   const detailUrl = '/gear/' + slug;
 
-  // ---- determine card width class ----
-  const isWide = (typeof getPedalWidth === 'function') && parseInt(getPedalWidth(pedal.width), 10) > 400;
+  // Card width = pedal width + 20px card padding (10px each side)
+  const pedalPx  = (typeof getPedalWidth === 'function') ? parseInt(getPedalWidth(pedal.width), 10) : 190;
+  const cardWidth = (pedalPx + 20) + 'px';
 
-  const $card = $('<div>').addClass('gear-card' + (isWide ? ' wide' : ''));
+  const $card = $('<div>').addClass('gear-card');
+  $card[0].style.setProperty('--gear-card-w', cardWidth);
 
-  // ---- thumb: pedal shown at its natural size, card grows to fit ----
+  // ---- thumb: natural size, no zoom, no crop ----
   const $thumb       = $('<div>').addClass('gear-thumb');
   const $thumbHolder = $('<div>').addClass('gear-thumb-holder');
   $thumbHolder.append($pedalDiv);
