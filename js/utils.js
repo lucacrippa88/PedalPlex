@@ -1306,10 +1306,14 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
   // ID
   $meta.append($('<div>').addClass('gear-meta-id').text(pedalId));
 
-  // Type row
-  const type = pedal.type || '';
-  if (type) {
-    $meta.append($('<div>').addClass('gear-meta-row').text(type));
+  // Category tags inline (below ID, instead of type text)
+  const categories = (pedal.category || '').split('/').map(c => c.trim()).filter(Boolean);
+  if (categories.length) {
+    const $catRow = $('<div>').addClass('gear-meta-row gear-meta-cats');
+    categories.forEach(function (c) {
+      $catRow.append($('<span>').addClass('bx--tag bx--tag--teal bx--tag--sm').text(c));
+    });
+    $meta.append($catRow);
   }
 
   // Verified badge + author row
@@ -1334,16 +1338,12 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
     $meta.append($row);
   }
 
-  // ---- footer: tag bar (left) + actions (right) in one row ----
+  // ---- footer: status tag (left) + actions (right) ----
   const $footer  = $('<div>').addClass('gear-footer');
   const $tagBar  = $('<div>').addClass('gear-tag-bar');
   const $actions = $('<div>').addClass('gear-actions');
 
-  // Category tags — bx--tag bx--tag--teal bx--tag--sm (same as gear/ pages)
-  const categories = (pedal.category || '').split('/').map(c => c.trim()).filter(Boolean);
-  categories.forEach(function (c) {
-    $tagBar.append($('<span>').addClass('bx--tag bx--tag--teal bx--tag--sm').text(c));
-  });
+  // No category tags here anymore — they moved above
 
   // Status tag — shown only to admin (all), or non-admin logged-in for own draft/reviewing
   const showStatus = (function () {

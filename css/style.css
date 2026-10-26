@@ -2332,7 +2332,11 @@ body.gears-page #catalog {
   flex-wrap: wrap;
 }
 
-/* Tag bar: category + status tags */
+/* Category tags nella riga meta (sotto l'ID) */
+.gear-meta-cats { flex-wrap: wrap; gap: 4px; }
+.gear-meta-cats .bx--tag { margin: 0 !important; }
+
+/* Tag bar: solo status tag nel footer */
 .gear-tag-bar {
   display: flex;
   flex-wrap: wrap;
