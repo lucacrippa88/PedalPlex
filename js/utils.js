@@ -1366,7 +1366,7 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
 
       if (canFullEdit) {
         const $editBtn = $('<button>')
-          .addClass('bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only edit-btn showBoth')
+          .addClass('bx--btn bx--btn--tertiary bx--btn--icon-only edit-btn showBoth')
           .attr('title', 'Edit gear')
           .attr('aria-label', 'Edit gear')
           .data('pedal', pedal)
@@ -1375,7 +1375,7 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
       } else {
         // Author on public gear: clone only
         const $cloneBtn = $('<button>')
-          .addClass('bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only edit-btn showBoth')
+          .addClass('bx--btn bx--btn--tertiary bx--btn--icon-only edit-btn showBoth')
           .attr('title', 'Clone this gear')
           .attr('aria-label', 'Clone this gear')
           .data('pedal', pedal)
