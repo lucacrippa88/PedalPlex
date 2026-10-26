@@ -1273,6 +1273,142 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
 }
 // ------------------------------------------------
 
+// ==================== Gear Catalog Card Wrapper ====================
+// Wraps a renderPedal() result into the new .gear-card layout (thumb + meta).
+// Used by gears.js / renderCatalogIncremental when on the gears page.
+function wrapGearCard(pedal, $pedalDiv, userRole) {
+
+  const pedalId   = pedal._id || pedal.id;
+  const slug      = (typeof slugify === 'function') ? slugify(pedalId) : encodeURIComponent(pedalId);
+  const detailUrl = '/gear/' + slug;
+
+  // ---- determine card width class ----
+  const isWide = (typeof getPedalWidth === 'function') && parseInt(getPedalWidth(pedal.width), 10) > 400;
+
+  const $card = $('<div>').addClass('gear-card' + (isWide ? ' wide' : ''));
+
+  // ---- thumb ----
+  const $thumb       = $('<div>').addClass('gear-thumb');
+  const $thumbHolder = $('<div>').addClass('gear-thumb-holder');
+  $thumbHolder.append($pedalDiv);
+  $thumb.append($thumbHolder);
+
+  // Scale the holder to fit the thumb area after insertion
+  requestAnimationFrame(function () {
+    const ped = $thumbHolder.find('.pedal-catalog')[0];
+    if (!ped || !$thumb[0].clientWidth) return;
+    const w  = Math.max(ped.offsetWidth,  ped.scrollWidth  + 10) + 4;
+    const ht = Math.max(ped.offsetHeight, ped.scrollHeight + 10) + 10;
+    const avW = $thumb[0].clientWidth  - 16;
+    const avH = $thumb[0].clientHeight - 16;
+    const s   = Math.min(1, avW / w, avH / ht);
+    $thumbHolder[0].style.width  = w  + 'px';
+    $thumbHolder[0].style.height = ht + 'px';
+    if (s < 1) $thumbHolder[0].style.zoom = s.toFixed(4);
+  });
+
+  // ---- meta ----
+  const $meta = $('<div>').addClass('gear-meta');
+
+  // ID
+  $meta.append($('<div>').addClass('gear-meta-id').text(pedalId));
+
+  // Category + type row
+  const category = pedal.category || '';
+  const type     = pedal.type     || '';
+  const rowParts = [type, category].filter(Boolean).join(' · ');
+  if (rowParts) {
+    $meta.append($('<div>').addClass('gear-meta-row').text(rowParts));
+  }
+
+  // Verified badge + author row
+  const ADMIN_AUTHOR_ID = 'user_admin';
+  const isAdminUser   = userRole === 'admin';
+  const authorIsAdmin = pedal.authorId === ADMIN_AUTHOR_ID;
+  const showAuthor    = isAdminUser || !authorIsAdmin;
+
+  if (pedal.verified == 'true' || (showAuthor && pedal.author)) {
+    const $row = $('<div>').addClass('gear-meta-row');
+
+    if (pedal.verified == 'true') {
+      const $vb = $('<span>').addClass('gear-verified-badge').html(
+        '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+        '<path d="M12 1.5L3 6V12C3 17 7 21 12 22.5C17 21 21 17 21 12V6L12 1.5Z" fill="#24a148"/>' +
+        '<path d="M8 12l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>'
+      );
+      $row.append($vb);
+    }
+
+    if (showAuthor && pedal.author) {
+      $row.append(document.createTextNode('by ' + pedal.author));
+    }
+
+    $meta.append($row);
+  }
+
+  // Status badge
+  const published = (pedal.published || 'draft').toLowerCase();
+  const safeSt    = published.replace(/[^a-z]/g, '');
+  const $statusRow = $('<div>').addClass('gear-meta-row');
+  $statusRow.append(
+    $('<span>').addClass('gear-status-badge st-' + safeSt).text(published)
+  );
+  $meta.append($statusRow);
+
+  // ---- actions row ----
+  const $actions = $('<div>').addClass('gear-actions');
+
+  // Details link (always)
+  $actions.append(
+    $('<a>').addClass('gear-details-link').attr({ href: detailUrl })
+      .html('<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" fill="currentColor"><path d="M26,28H6a2,2,0,0,1-2-2V6A2,2,0,0,1,6,4H16V6H6V26H26V16h2V26A2,2,0,0,1,26,28Z"/><path d="M20 2 20 4 26.586 4 18 12.586 19.414 14 28 5.414 28 12 30 2 20 2z"/></svg>Details')
+  );
+
+  // Edit / Clone button -- same permission logic as before
+  if (window.currentUser) {
+    const isAdmin    = userRole === 'admin';
+    const isAuthor   = window.currentUser.username === pedal.author;
+    const isTemplate = published === 'template';
+    const isPublic   = published === 'public';
+
+    if (isAdmin || isAuthor || isTemplate) {
+      // Admin full edit; author on public gear clone only; otherwise full edit
+      const canFullEdit = isAdmin || (isAuthor && !isPublic);
+
+      if (canFullEdit) {
+        const $editBtn = $('<button>')
+          .addClass('gear-edit-btn edit-btn showBoth')
+          .attr('title', 'Edit gear')
+          .data('pedal', pedal)
+          .html('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/></svg>Edit');
+        $actions.append($editBtn);
+      } else {
+        // Author on public gear: clone only
+        const $cloneBtn = $('<button>')
+          .addClass('gear-clone-link edit-btn showBoth')
+          .attr('title', 'Clone this gear')
+          .data('pedal', pedal)
+          .html('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="12" height="12" fill="currentColor"><path d="M28,8h2V4a2,2,0,0,0-2-2H24V4h4Z"/><path d="M17 2H21V4H17z"/><path d="M28 11H30V15H28z"/><path d="M28,18v4H24V10a2,2,0,0,0-2-2H10V4h4V2H10A2,2,0,0,0,8,4V8H4a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H22a2,2,0,0,0,2-2V24h4a2,2,0,0,0,2-2V18ZM22,28H4V10H22Z"/></svg>Clone this gear');
+        $actions.append($cloneBtn);
+      }
+    }
+  }
+
+  $meta.append($actions);
+
+  $card.append($thumb).append($meta);
+
+  // Propagate the key data-attrs the rest of the JS relies on
+  $card.attr('data-pedal-id',  pedalId);
+  $card.attr('data-author',    pedal.author  || '');
+  $card.attr('data-published', published);
+
+  return $card;
+}
+
+window.wrapGearCard = wrapGearCard;
+
 
 // Get all active gears controls to save the preset
 function collectPedalControlValues(presetName = "Untitled Preset") {

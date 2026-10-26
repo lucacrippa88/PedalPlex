@@ -184,9 +184,19 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
       console.warn("Pedal non renderizzato:", pedal);
       return;
     }
-    $pedalDiv.attr("data-author", pedal.author || "");
-    $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-    frag.appendChild($pedalDiv[0]);
+
+    // On the gears catalog page use the new card layout
+    const useCardLayout = (typeof wrapGearCard === 'function') &&
+      (window.location.pathname.endsWith('/gears') || window.location.pathname.endsWith('/gears_lazy'));
+
+    if (useCardLayout) {
+      const $card = wrapGearCard(pedal, $pedalDiv, userRole);
+      frag.appendChild($card[0]);
+    } else {
+      $pedalDiv.attr("data-author",    pedal.author || "");
+      $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+      frag.appendChild($pedalDiv[0]);
+    }
   });
 
   container.appendChild(frag);

@@ -2239,3 +2239,199 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   .pedal-catalog .edit-btn { width: 32px; height: 32px; top: -10px; left: -8px; }
   .pedal-catalog .edit-btn svg { width: 18px; height: 18px; }
 }
+
+/* =========================
+   Gear Catalog Card Grid
+   ========================= */
+
+/* Override: nella pagina catalogo il container diventa una griglia di card */
+body.gears-page #catalog {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  justify-content: start;
+  max-width: 100%;
+  padding: 0 4px;
+}
+
+/* Sentinel stays invisible and spans full row */
+body.gears-page #catalog-sentinel {
+  grid-column: 1 / -1;
+  height: 1px;
+  pointer-events: none;
+}
+
+.gear-card {
+  background: #1e1e1e;
+  border: 1px solid #393939;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+  position: relative;
+  box-sizing: border-box;
+}
+.gear-card:hover { border-color: #78a9ff; }
+
+/* Thumb: preview scalata del pedal */
+.gear-thumb {
+  background: #161616;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  height: 200px;
+  position: relative;
+}
+.gear-card.wide .gear-thumb { height: 260px; }
+
+.gear-thumb-holder {
+  flex: 0 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Il .pedal-catalog dentro il thumb non deve avere margin */
+.gear-thumb-holder > .pedal-catalog { margin: 0 !important; }
+/* Override: dentro il thumb, l'icona share non appare */
+.gear-thumb .pedal-share-icon { display: none !important; }
+/* Override: dentro il thumb, l'edit-btn non appare */
+.gear-thumb .edit-btn { display: none !important; }
+/* Override: dentro il thumb, il pedal-author non appare */
+.gear-thumb .pedal-author { display: none !important; }
+
+/* Meta sotto il thumb */
+.gear-meta {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8125rem;
+  border-top: 1px solid #2d2d2d;
+  flex: 1;
+}
+
+.gear-meta-id {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #e0e0e0;
+  overflow-wrap: anywhere;
+  line-height: 1.3;
+}
+
+.gear-meta-row {
+  color: #a8a8a8;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  line-height: 1.4;
+}
+
+/* Badge status (replica .tpl-badge) */
+.gear-status-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+.gear-status-badge.st-draft     { background: #5a4a00; color: #fddc69; }
+.gear-status-badge.st-private   { background: #393939; color: #c6c6c6; }
+.gear-status-badge.st-reviewing { background: #3a2a5c; color: #d4bbff; }
+.gear-status-badge.st-public    { background: #0e4d2a; color: #8ee0ad; }
+.gear-status-badge.st-template  { background: #00396b; color: #a6c8ff; }
+
+/* Verified badge inline */
+.gear-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.gear-verified-badge svg { width: 16px; height: 16px; }
+
+/* Azioni in fondo alla card */
+.gear-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+/* Link "Details" */
+.gear-details-link {
+  color: #78a9ff;
+  font-size: 0.8rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
+}
+.gear-details-link:hover { text-decoration: underline; }
+.gear-details-link svg { flex-shrink: 0; }
+
+/* Bottone Edit dentro la card */
+.gear-edit-btn {
+  background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
+  background-size: 150% 150%;
+  background-position: 0% 50%;
+  transition: background-position 0.4s ease;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1;
+  min-height: 28px;
+}
+.gear-edit-btn:hover { background-position: 100% 50%; }
+.gear-edit-btn svg { width: 13px; height: 13px; fill: white; flex-shrink: 0; }
+
+/* "Clone this gear" link */
+.gear-clone-link {
+  color: #78a9ff;
+  font-size: 0.8rem;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: none;
+  border: none;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
+}
+.gear-clone-link:hover { text-decoration: underline; color: #a6c8ff; }
+
+@media (max-width: 860px) {
+  body.gears-page #catalog {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  .gear-thumb { height: 160px; }
+  .gear-card.wide .gear-thumb { height: 200px; }
+}
+
+@media (max-width: 480px) {
+  body.gears-page #catalog {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+}

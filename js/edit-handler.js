@@ -1,10 +1,23 @@
 
+// Returns wrapGearCard() result when on the gears catalog page, else the raw $pedalDiv.
+function _gearCardIfCatalog(pedal, $pedalDiv, userRole) {
+  const onGears = window.location.pathname.endsWith('/gears') ||
+                  window.location.pathname.endsWith('/gears_lazy');
+  if (onGears && typeof wrapGearCard === 'function') {
+    return wrapGearCard(pedal, $pedalDiv, userRole);
+  }
+  $pedalDiv.attr("data-author",    pedal.author  || "");
+  $pedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
+  return $pedalDiv;
+}
+
 // Edit gears in catalog page
 function setupEditPedalHandler(pedals) {
   $(document).on("click", ".edit-btn", function () {
 
     let pedal = $(this).data("pedal");
-    const pedalDiv = $(this).closest(".pedal");
+    // Support both legacy .pedal wrapper and new .gear-card wrapper
+    const pedalDiv = $(this).closest(".gear-card, .pedal");
 
     if (!pedal) {
       console.error("Pedal data not found!");
@@ -173,10 +186,8 @@ function setupEditPedalHandler(pedals) {
                       };
                       pedals.push(createdPedal);
                       const $pedalDiv = renderPedal(createdPedal, window.currentUser.role || "user");
-                      $pedalDiv.attr("data-author", createdPedal.author || "");
-                      $pedalDiv.attr("data-published", (createdPedal.published || "draft").toLowerCase());
-                      $pedalDiv.find(".edit-btn").attr("data-pedal-id", createdPedal._id);
-                      $("#catalog").append($pedalDiv);
+                      const $appendEl = _gearCardIfCatalog(createdPedal, $pedalDiv, window.currentUser.role || "user");
+                      $("#catalog").append($appendEl);
                       updatePedalCountsFromServer();
                       setupEditPedalHandler(pedals);
 
@@ -264,8 +275,11 @@ function setupEditPedalHandler(pedals) {
 
               const $old = $(`[data-pedal-id="${savedPedal._id}"], [data-pedal-id="${updated._id}"], [data-pedal-id="${oldPedalId}"]`).first();
               if ($old.length) {
-                const $new = renderPedal(savedPedal, window.currentUser.role || "user");
-                $old.replaceWith($new);
+                const $rawNew = renderPedal(savedPedal, window.currentUser.role || "user");
+                const $new    = _gearCardIfCatalog(savedPedal, $rawNew, window.currentUser.role || "user");
+                // If inside a .gear-card, replace the whole card; otherwise replace the element directly
+                const $parent = $old.closest('.gear-card');
+                ($parent.length ? $parent : $old).replaceWith($new);
               }
               updatePedalCountsFromServer();
               Swal.fire({
@@ -368,10 +382,10 @@ function setupEditPedalHandler(pedals) {
 
         // Div update with full data
         const $newPedalDiv = renderPedal(pedal, window.currentUser.role || "user");
-        $newPedalDiv.attr("data-author", pedal.author || "");
-        $newPedalDiv.attr("data-published", (pedal.published || "draft").toLowerCase());
-        $newPedalDiv.find(".edit-btn").data("pedal", pedal);
-        pedalDiv.replaceWith($newPedalDiv);
+        const $newEl = _gearCardIfCatalog(pedal, $newPedalDiv, window.currentUser.role || "user");
+        // If the click target was inside a .gear-card, replace the whole card
+        const $parentCard = pedalDiv.closest ? $(pedalDiv).closest('.gear-card') : $();
+        ($parentCard.length ? $parentCard : pedalDiv).replaceWith($newEl);
 
         // Open modal after data is loaded and div is updated
         openSwal();
