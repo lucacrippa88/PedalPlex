@@ -2267,7 +2267,7 @@ body.gears-page #catalog {
   /* larghezza dettata dal contenuto — set via JS con data-pedal-width */
   width: var(--gear-card-w);
 }
-.gear-card:hover { border-color: #78a9ff; }
+.gear-card:hover { border-color: #9C54D5; }
 
 /* Thumb: occupa tutta la larghezza della card, altezza naturale del pedal */
 .gear-thumb {
@@ -2368,7 +2368,7 @@ body.gears-page #catalog {
 
 /* Link "Details" */
 .gear-details-link {
-  color: #78a9ff;
+  color: #9C54D5;
   font-size: 0.8rem;
   text-decoration: none;
   display: inline-flex;
