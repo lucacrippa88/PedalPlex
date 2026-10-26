@@ -114,7 +114,7 @@ function initNavPedalboard(userRole) {
               box-shadow:0 8px 24px rgba(0,0,0,0.5);
               z-index:4000;
               padding:4px 0;">
-            ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login to sync your Rigs</span></a><div class="pp-action-separator"></div>` : ''}
+            ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login to sync your Rigs</span></a><a class="pp-action-item" href="/#why-becoming-a-pedalplexer"><svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/><path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/></svg> <span>Why registering?</span></a><div class="pp-action-separator"></div>` : ''}
             ${buildRigItem}
             ${editRigItem}
             <div class="pp-action-separator"></div>

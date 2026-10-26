@@ -121,7 +121,7 @@ function initNavPreset() {
     const menu = document.getElementById('pp-actions-menu');
     if (!menu || menu.children.length > 0) return; // already populated
     menu.innerHTML = `
-      ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login to sync Presets</span></a><div class="pp-action-separator"></div>` : ''}
+      ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login to sync Presets</span></a><a class="pp-action-item" href="/#why-becoming-a-pedalplexer"><svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/><path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/></svg> <span>Why registering?</span></a><div class="pp-action-separator"></div>` : ''}
       <button class="pp-action-item" data-action="newTone">${SVG.newTone} <span>New Preset</span></button>
       <button class="pp-action-item" data-action="renamePreset">${SVG.editPreset} <span>Edit Preset</span></button>
       <button class="pp-action-item" data-action="addFolder">${SVG.addFolder} <span>Add Folder</span></button>
