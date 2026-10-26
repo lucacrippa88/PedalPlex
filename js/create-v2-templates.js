@@ -12,7 +12,7 @@
 (function () {
     "use strict";
 
-    var TPL_API = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
+    var TPL_API = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";   // also used for the search in "My gears"
     var CAT_API = "https://api.pedalplex.com/GET_CATALOG_LAZY.php";
     var PAGE = 100;        // server page size
     var TPL_MAX_PAGES = 5;
@@ -22,7 +22,7 @@
     var dlg = null, mode = "tpl";
     var usedName = null, usedKind = null, editedAfter = false;
     var T = { list: null, loading: null };
-    var M = { list: [], seen: {}, page: 0, done: false, loading: false, started: false, search: "", gen: 0, rendered: 0 };
+    var M = { list: [], seen: {}, page: 0, bookmark: null, done: false, loading: false, started: false, search: "", gen: 0, rendered: 0 };
     var io = null, searchTimer = 0, resizeTimer = 0;
 
     // ---------- who is logged in ----------
@@ -72,31 +72,51 @@
     }
 
     function resetMine(term) {
-        M.gen++; M.list = []; M.seen = {}; M.page = 0; M.done = false; M.loading = false;
+        M.gen++; M.list = []; M.seen = {}; M.page = 0; M.bookmark = null; M.done = false; M.loading = false;
         M.started = false; M.rendered = 0; M.search = term || "";
         if (dlg) dlg.querySelector("#mine-grid").textContent = "";
     }
 
-    // Reads catalog pages until WANT new gears are found (or SCAN pages were read, or the end).
+    // Reads pages until WANT new gears are found (or SCAN pages were read, or the end).
+    //  - no search term : GET_CATALOG_LAZY.php, paged with ?page=
+    //  - with a term    : SEARCH_GEAR_LAZY.php?q=, paged with a bookmark (same call the catalog search uses;
+    //                     the "search" parameter of GET_CATALOG_LAZY.php returns nothing on the live server)
     function fetchMine() {
         if (M.loading || M.done) return Promise.resolve();
         M.loading = true;
-        var gen = M.gen, who = me(), added = 0, pages = 0;
+        var gen = M.gen, who = me(), added = 0, pages = 0, emptyRun = 0, searching = !!M.search;
         function step() {
-            M.page++; pages++;
-            var url = CAT_API + "?page=" + M.page + "&limit=" + PAGE + (M.search ? "&search=" + encodeURIComponent(M.search) : "");
+            pages++;
+            var url;
+            if (searching) {
+                url = TPL_API + "?q=" + encodeURIComponent(M.search) + "&limit=" + PAGE + (who.admin ? "" : "&onlyMine=1") +
+                      (M.bookmark ? "&bookmark=" + encodeURIComponent(M.bookmark) : "");
+            } else {
+                M.page++;
+                url = CAT_API + "?page=" + M.page + "&limit=" + PAGE;
+            }
             return fetch(url, { headers: authHeaders() }).then(function (r) { return r.json(); }).then(function (d) {
                 if (gen !== M.gen) return;
-                if (!Array.isArray(d)) throw new Error("bad response");
-                if (!d.length) { M.done = true; return; }
-                d.forEach(function (x) {
+                var docs = searching ? (d && d.docs) : d;
+                if (!Array.isArray(docs)) throw new Error("bad response");
+                docs.forEach(function (x) {
                     if (!x || !x._id || M.seen[x._id]) return;
                     var mine = x.author === who.username || (who.userid && x.authorId === who.userid);
                     if (!who.admin && !mine) return;      // the logged user only ever sees his own gears
                     M.seen[x._id] = 1; M.list.push(x); added++;
                 });
-                // admin sees every document, so a short page is really the last one
-                if (who.admin && d.length < PAGE) { M.done = true; return; }
+                if (searching) {
+                    // the server filters AFTER reading a page, so an empty page does not always mean "the end"
+                    var next = d.bookmark || null;
+                    if (!next || next === M.bookmark) { M.done = true; return; }
+                    M.bookmark = next;
+                    emptyRun = docs.length ? 0 : emptyRun + 1;
+                    if (emptyRun >= 2) { M.done = true; return; }
+                } else {
+                    if (!docs.length) { M.done = true; return; }
+                    // admin sees every document, so a short page is really the last one
+                    if (who.admin && docs.length < PAGE) { M.done = true; return; }
+                }
                 if (added < WANT && pages < SCAN) return step();
             });
         }
