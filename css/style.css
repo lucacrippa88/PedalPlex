@@ -2280,17 +2280,15 @@ body.gears-page #catalog-sentinel {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  height: 200px;
+  padding: 14px;
   position: relative;
 }
-.gear-card.wide .gear-thumb { height: 260px; }
 
 .gear-thumb-holder {
   flex: 0 0 auto;
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 /* Il .pedal-catalog dentro il thumb non deve avere margin */
@@ -2425,8 +2423,6 @@ body.gears-page #catalog-sentinel {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 10px;
   }
-  .gear-thumb { height: 160px; }
-  .gear-card.wide .gear-thumb { height: 200px; }
 }
 
 @media (max-width: 480px) {

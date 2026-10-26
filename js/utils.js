@@ -1287,25 +1287,11 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
 
   const $card = $('<div>').addClass('gear-card' + (isWide ? ' wide' : ''));
 
-  // ---- thumb ----
+  // ---- thumb (natural size, card grows to fit) ----
   const $thumb       = $('<div>').addClass('gear-thumb');
   const $thumbHolder = $('<div>').addClass('gear-thumb-holder');
   $thumbHolder.append($pedalDiv);
   $thumb.append($thumbHolder);
-
-  // Scale the holder to fit the thumb area after insertion
-  requestAnimationFrame(function () {
-    const ped = $thumbHolder.find('.pedal-catalog')[0];
-    if (!ped || !$thumb[0].clientWidth) return;
-    const w  = Math.max(ped.offsetWidth,  ped.scrollWidth  + 10) + 4;
-    const ht = Math.max(ped.offsetHeight, ped.scrollHeight + 10) + 10;
-    const avW = $thumb[0].clientWidth  - 16;
-    const avH = $thumb[0].clientHeight - 16;
-    const s   = Math.min(1, avW / w, avH / ht);
-    $thumbHolder[0].style.width  = w  + 'px';
-    $thumbHolder[0].style.height = ht + 'px';
-    if (s < 1) $thumbHolder[0].style.zoom = s.toFixed(4);
-  });
 
   // ---- meta ----
   const $meta = $('<div>').addClass('gear-meta');
