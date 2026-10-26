@@ -423,12 +423,12 @@ function initNavPedalboard(userRole) {
 
       dropdown.innerHTML = '';
       if (!pedalsList?.length) {
-        const searchUrl = 'gears?create=1';
+        const escapedQuery = (query || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         dropdown.innerHTML = `
           <div style="padding:14px 16px;font-size:0.875rem;line-height:1.6;">
-            <p style="margin:0 0 4px;font-weight:600;color:#161616;">No pedals found for &ldquo;${query || ''}&rdquo;</p>
-            <p style="margin:0 0 10px;color:#525252;">Try different keywords — check how gears are named in the catalog (e.g. brand + model).</p>
-            <a href="${searchUrl}" target="_blank"
+            <p style="margin:0 0 4px;font-weight:600;color:#161616;">No pedals found for &ldquo;${escapedQuery}&rdquo;</p>
+            <p style="margin:0 0 10px;color:#525252;">Try different keywords or check how gears are named in the catalog (e.g. brand + model).</p>
+            <a href="gears?create=1" target="_blank"
                style="display:inline-flex;align-items:center;gap:6px;color:#9C54D5;font-weight:600;text-decoration:none;font-size:0.875rem;">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 32 32" fill="currentColor">
                 <path d="M17 15L17 8 15 8 15 15 8 15 8 17 15 17 15 24 17 24 17 17 24 17 24 15 17 15z"/>

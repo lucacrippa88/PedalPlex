@@ -1334,8 +1334,10 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
     $meta.append($row);
   }
 
-  // ---- bottom-left tag bar (category tags + status tag) ----
-  const $tagBar = $('<div>').addClass('gear-tag-bar');
+  // ---- footer: tag bar (left) + actions (right) in one row ----
+  const $footer  = $('<div>').addClass('gear-footer');
+  const $tagBar  = $('<div>').addClass('gear-tag-bar');
+  const $actions = $('<div>').addClass('gear-actions');
 
   // Category tags — bx--tag bx--tag--teal bx--tag--sm (same as gear/ pages)
   const categories = (pedal.category || '').split('/').map(c => c.trim()).filter(Boolean);
@@ -1347,7 +1349,6 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
   const showStatus = (function () {
     if (isGuest) return false;
     if (isAdminUser) return true;
-    // non-admin: only own draft or own reviewing
     if (isAuthorUser && (published === 'draft' || published === 'reviewing')) return true;
     return false;
   })();
@@ -1363,10 +1364,7 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
     $tagBar.append($('<span>').addClass('bx--tag bx--tag--sm ' + s.color).text(s.letter));
   }
 
-  $meta.append($tagBar);
-
-  // ---- actions row (bottom-right) ----
-  const $actions = $('<div>').addClass('gear-actions');
+  $footer.append($tagBar);
 
   // Details link (always)
   $actions.append(
@@ -1404,7 +1402,8 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
     }
   }
 
-  $meta.append($actions);
+  $footer.append($actions);
+  $meta.append($footer);
 
   $card.append($thumb).append($meta);
 

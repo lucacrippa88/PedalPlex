@@ -2295,14 +2295,13 @@ body.gears-page #catalog {
 
 /* Meta sotto il thumb */
 .gear-meta {
-  padding: 10px 12px 44px; /* bottom lascia spazio alla barra azioni */
+  padding: 10px 12px 8px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   font-size: 0.8125rem;
   border-top: 1px solid #2d2d2d;
   flex: 1;
-  position: relative;
 }
 
 .gear-meta-id {
@@ -2322,15 +2321,24 @@ body.gears-page #catalog {
   line-height: 1.4;
 }
 
-/* Tag bar: category + status tags, fixed bottom-left */
+/* Footer della card: riga unica con tag a sinistra e actions a destra */
+.gear-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid #2d2d2d;
+  flex-wrap: wrap;
+}
+
+/* Tag bar: category + status tags */
 .gear-tag-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 4px;
-  padding: 6px 10px;
 }
 /* I tag Carbon dentro la barra non devono avere margin extra */
 .gear-tag-bar .bx--tag { margin: 0 !important; }
@@ -2347,18 +2355,13 @@ body.gears-page #catalog {
 }
 .gear-verified-badge svg { width: 16px; height: 16px; }
 
-/* Barra azioni: fixed in fondo alla meta, allineata a destra */
+/* Barra azioni: allineata a destra */
 .gear-actions {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  padding: 6px 10px;
-  border-top: 1px solid #2d2d2d;
+  flex-shrink: 0;
 }
 
 /* Link "Details" */
