@@ -7,7 +7,7 @@ function getPedalIdFromURL() {
 // Navbar
 function renderNavBar(userRole = "guest") {
   const navHtml = `
-    <header style="display: flex; align-items: center; justify-content: space-between; padding: 1rem;">
+    <header style="display: flex; align-items: center; justify-content: space-between;">
       <div style="display: flex; align-items: center; gap: 1rem;">
         <button class="menu-toggle" id="menuToggle" aria-label="Open menu" style="background:none; border:none; cursor:pointer;">
           <span class="menu-morph" aria-hidden="true"><i class="menu-morph__ham"></i><i class="menu-morph__logo"></i></span>
