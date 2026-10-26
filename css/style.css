@@ -2296,13 +2296,14 @@ body.gears-page #catalog {
 
 /* Meta sotto il thumb */
 .gear-meta {
-  padding: 10px 12px 12px;
+  padding: 10px 12px 44px; /* bottom lascia spazio alla barra azioni */
   display: flex;
   flex-direction: column;
   gap: 4px;
   font-size: 0.8125rem;
   border-top: 1px solid #2d2d2d;
   flex: 1;
+  position: relative;
 }
 
 .gear-meta-id {
@@ -2351,13 +2352,18 @@ body.gears-page #catalog {
 }
 .gear-verified-badge svg { width: 16px; height: 16px; }
 
-/* Azioni in fondo alla card */
+/* Barra azioni: fixed in fondo alla meta, allineata a destra */
 .gear-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
-  margin-top: 6px;
-  flex-wrap: wrap;
+  padding: 6px 10px;
+  border-top: 1px solid #2d2d2d;
 }
 
 /* Link "Details" */
@@ -2373,29 +2379,27 @@ body.gears-page #catalog {
 .gear-details-link:hover { text-decoration: underline; }
 .gear-details-link svg { flex-shrink: 0; }
 
-/* Bottone Edit dentro la card */
+/* Bottone Edit: stile Carbon tertiary */
 .gear-edit-btn {
-  background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
-  background-size: 150% 150%;
-  background-position: 0% 50%;
-  transition: background-position 0.4s ease;
-  border: none;
-  border-radius: 6px;
+  background: transparent;
+  border: 1px solid #78a9ff;
+  border-radius: 4px;
   cursor: pointer;
-  padding: 4px 10px;
+  padding: 4px 12px;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #fff;
+  color: #78a9ff;
   line-height: 1;
   min-height: 28px;
+  transition: background 0.1s ease, color 0.1s ease;
 }
-.gear-edit-btn:hover { background-position: 100% 50%; }
-.gear-edit-btn svg { width: 13px; height: 13px; fill: white; flex-shrink: 0; }
+.gear-edit-btn:hover { background: #78a9ff; color: #161616; }
+.gear-edit-btn svg { width: 13px; height: 13px; fill: currentColor; flex-shrink: 0; }
 
-/* "Clone this gear" link */
+/* "Clone this gear": stesso stile del Details link */
 .gear-clone-link {
   color: #78a9ff;
   font-size: 0.8rem;
