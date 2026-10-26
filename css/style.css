@@ -344,6 +344,15 @@ header {
   }
 }
 
+@media (min-width: 769px) {
+  .pedalplex-logo-fullscreen-menu {
+    width: 100px;
+    height: 100px;
+  }
+  .fullscreen-nav a {
+    margin: 1rem;
+  }
+}
 
 
 /* Page content */
