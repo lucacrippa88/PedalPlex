@@ -60,10 +60,9 @@ function renderNavBar(userRole) {
 
         <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <polygon points="31,24 27,24 27,20 25,20 25,24 21,24 21,26 25,26 25,30 27,30 27,26 31,26 31,24"/>
-            <path d="M25.336 2.268H22.051L10.051 2.268H7.051A2.006 2.006 0 0 0 5.051 4.268L5 28a2.006 2.006 0 0 0 2 2H17V28H7L7.051 4.268h3l12 0h3l-.051 11.732h2L27.051 4.268A2.006 2.006 0 0 0 25.051 2.268z"/>
-            <circle cx="11.843" cy="10.561" r="1.81" transform="translate(0.295 -2.599)"/>
-            <circle cx="11.843" cy="10.561" r="1.81" transform="translate(8.469 -2.599)"/>
+            <path d="M25.336 2.268H22.051L10.051 2.268H7.051A2.006 2.006 0 0 0 5.051 4.268L5 28a2.006 2.006 0 0 0 2 2H17V28H7L7.051 4.268h3l12 0h3l-.051 11.732h2L27.051 4.268A2.006 2.006 0 0 0 25.051 2.268zM31 24h-4v-4h-2v4h-4v2h4v4h2v-4h4z" fill-rule="evenodd"/>
+            <circle cx="26" cy="26" r="2.7073" transform="translate(-6.008 -15.347)"/>
+            <circle cx="26" cy="26" r="2.7073" transform="translate(-13.804 -15.347)"/>
           </svg>
           Create New Gear
         </button>
@@ -79,11 +78,14 @@ function renderNavBar(userRole) {
       <button id="loginBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Login" style="display: flex; align-items: center; gap: 0.5rem;">
         ${loginSvg}Login
       </button>
+      <button id="loginBtnTablet" class="showTablet bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Login" title="Login">
+        ${loginSvg}
+      </button>
       <button id="loginBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Login" title="Login">
         ${loginSvg}
       </button>`;
-    $("#toggleFilterBtn").after(loginBtnHtml);
-    $(document).on("click", "#loginBtn, #loginBtnMobile", () => window.location.href = "login");
+    $("#createPedalBtn").after(loginBtnHtml);
+    $(document).on("click", "#loginBtn, #loginBtnTablet, #loginBtnMobile", () => window.location.href = "login");
   } else {
     $(document).on('click', '#createPedalBtn', createNewPedal);
     $(document).on('click', '#createOwnPedalBtn', createNewPedal);
