@@ -2375,46 +2375,16 @@ body.gears-page #catalog {
   align-items: center;
   gap: 4px;
   line-height: 1;
+  flex-shrink: 0;
 }
 .gear-details-link:hover { text-decoration: underline; }
 .gear-details-link svg { flex-shrink: 0; }
 
-/* Bottone Edit: stile Carbon tertiary */
-.gear-edit-btn {
-  background: transparent;
-  border: 1px solid #78a9ff;
-  border-radius: 4px;
-  cursor: pointer;
-  padding: 4px 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #78a9ff;
-  line-height: 1;
-  min-height: 28px;
-  transition: background 0.1s ease, color 0.1s ease;
+/* Override Carbon defaults per il bottone icon-only nella barra azioni */
+.gear-actions .bx--btn--icon-only {
+  margin-left: 0 !important;
+  max-width: none !important;
 }
-.gear-edit-btn:hover { background: #78a9ff; color: #161616; }
-.gear-edit-btn svg { width: 13px; height: 13px; fill: currentColor; flex-shrink: 0; }
-
-/* "Clone this gear": stesso stile del Details link */
-.gear-clone-link {
-  color: #78a9ff;
-  font-size: 0.8rem;
-  text-decoration: none;
-  cursor: pointer;
-  font-weight: 600;
-  background: none;
-  border: none;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  line-height: 1;
-}
-.gear-clone-link:hover { text-decoration: underline; color: #a6c8ff; }
 
 @media (max-width: 860px) {
   body.gears-page #catalog {

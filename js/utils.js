@@ -1366,18 +1366,20 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
 
       if (canFullEdit) {
         const $editBtn = $('<button>')
-          .addClass('gear-edit-btn edit-btn showBoth')
+          .addClass('bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only edit-btn showBoth')
           .attr('title', 'Edit gear')
+          .attr('aria-label', 'Edit gear')
           .data('pedal', pedal)
-          .html('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/></svg>Edit');
+          .html('<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M28.7 19.4l-2.1-.5a11.3 11.3 0 000-5.8l2.1-.5a1 1 0 00.7-1.2 13.4 13.4 0 00-1.7-4.2 1 1 0 00-1.4-.4l-2 1.2a11.3 11.3 0 00-5-2.9V2.3A1 1 0 0018 2h-4a1 1 0 00-1 1v2.2a11.3 11.3 0 00-5 2.9l-2-1.2a1 1 0 00-1.4.4 13.4 13.4 0 00-1.7 4.2 1 1 0 00.7 1.2l2.1.5a11.3 11.3 0 000 5.8l-2.1.5a1 1 0 00-.7 1.2 13.4 13.4 0 001.7 4.2 1 1 0 001.4.4l2-1.2a11.3 11.3 0 005 2.9v2.2a1 1 0 001 1h4a1 1 0 001-1v-2.2a11.3 11.3 0 005-2.9l2 1.2a1 1 0 001.4-.4 13.4 13.4 0 001.7-4.2 1 1 0 00-.7-1.2zM16 21a5 5 0 110-10 5 5 0 010 10z"/></svg>');
         $actions.append($editBtn);
       } else {
         // Author on public gear: clone only
         const $cloneBtn = $('<button>')
-          .addClass('gear-clone-link edit-btn showBoth')
+          .addClass('bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only edit-btn showBoth')
           .attr('title', 'Clone this gear')
+          .attr('aria-label', 'Clone this gear')
           .data('pedal', pedal)
-          .html('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="12" height="12" fill="currentColor"><path d="M28,8h2V4a2,2,0,0,0-2-2H24V4h4Z"/><path d="M17 2H21V4H17z"/><path d="M28 11H30V15H28z"/><path d="M28,18v4H24V10a2,2,0,0,0-2-2H10V4h4V2H10A2,2,0,0,0,8,4V8H4a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H22a2,2,0,0,0,2-2V24h4a2,2,0,0,0,2-2V18ZM22,28H4V10H22Z"/></svg>Clone this gear');
+          .html('<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M28,8h2V4a2,2,0,0,0-2-2H24V4h4Z"/><path d="M17 2H21V4H17z"/><path d="M28 11H30V15H28z"/><path d="M28,18v4H24V10a2,2,0,0,0-2-2H10V4h4V2H10A2,2,0,0,0,8,4V8H4a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H22a2,2,0,0,0,2-2V24h4a2,2,0,0,0,2-2V18ZM22,28H4V10H22Z"/></svg>');
         $actions.append($cloneBtn);
       }
     }
