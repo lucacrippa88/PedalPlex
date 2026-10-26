@@ -62,6 +62,8 @@ function renderNavBar(userRole) {
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
             <polygon points="31,24 27,24 27,20 25,20 25,24 21,24 21,26 25,26 25,30 27,30 27,26 31,26 31,24"/>
             <path d="M25.336 2.268H22.051L10.051 2.268H7.051A2.006 2.006 0 0 0 5.051 4.268L5 28a2.006 2.006 0 0 0 2 2H17V28H7L7.051 4.268h3l12 0h3l-.051 11.732h2L27.051 4.268A2.006 2.006 0 0 0 25.051 2.268z"/>
+            <circle cx="11.843" cy="10.561" r="1.81" transform="translate(0.295 -2.599)"/>
+            <circle cx="11.843" cy="10.561" r="1.81" transform="translate(8.469 -2.599)"/>
           </svg>
           Create New Gear
         </button>
