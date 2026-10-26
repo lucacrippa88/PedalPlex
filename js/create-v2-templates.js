@@ -137,7 +137,9 @@
                 '<button type="button" role="tab" class="tpl-tab" data-mode="mine" id="tab-mine">My gears</button>' +
               '</div>' +
               '<input type="text" id="tpl-filter" placeholder="Search..." autocomplete="off" autocapitalize="off" spellcheck="false">' +
-              '<button type="button" class="bx--btn bx--btn--sm bx--btn--secondary" id="tpl-close" style="color:#fff">Close</button>' +
+              '<button type="button" id="tpl-close" aria-label="Close" title="Close">' +
+                '<svg focusable="false" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 9.4 22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>' +
+              '</button>' +
             '</div>' +
             '<div class="tpl-body" id="tpl-body">' +
               '<div class="tpl-status" id="tpl-status"></div>' +
