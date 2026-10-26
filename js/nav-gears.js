@@ -60,7 +60,7 @@ function renderNavBar(userRole) {
 
         <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <path d="M19.9 8.1l-14 14L2 30l7.9-3.9 14-14zm-1.4-1.4l3.5-3.5c.8-.8 2-.8 2.8 0l1.1 1.1c.8.8.8 2 0 2.8l-3.5 3.5z"/>
+            <path d="M24 3h-4.184A3 3 0 0 0 14 3H9.997A2.003 2.003 0 0 0 8 5v2h16V5a2.003 2.003 0 0 0-2-2zM16 4.5a1 1 0 1 1 1-1 1 1 0 0 1-1 1zM28 26h-4v-4h-2v4h-4v2h4v4h2v-4h4zM22 28H6V5h2v2h16V5h2v15h2V5a2 2 0 0 0-2-2h-.184A3 3 0 0 0 20 2H12a3 3 0 0 0-5.816 1H6a2 2 0 0 0-2 2v23a2 2 0 0 0 2 2h16z"/>
           </svg>
           Create New Gear
         </button>
