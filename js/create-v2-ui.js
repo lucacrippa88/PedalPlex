@@ -45,15 +45,22 @@
             sub = esc($c.find(".ctrl-values").val());
         }
 
+        var isKnob = type && String(type).indexOf("knob") !== -1;
         var missingValues =
             (type === "multi" && !($c.find(".ctrl-values").val() || "").trim()) ||
-            (type && String(type).indexOf("knob") !== -1 &&
-                $c.find(".ctrl-knob-type").val() === "discrete" &&
+            (isKnob && $c.find(".ctrl-knob-type").val() === "discrete" &&
                 !($c.find(".ctrl-values-list").val() || "").trim());
 
-        $c.find("> .ctrl-head .ctrl-title").text(label || "Label required").toggleClass("is-empty", !label);
-        $c.find("> .ctrl-head .ctrl-sub").text(missingValues ? "Values required" : sub);
-        $c.toggleClass("has-error", !label || !!missingValues);
+        // Problems go in a full-width band under the header: always readable, even when collapsed
+        var issues = [];
+        if (!label) issues.push("Label is required.");
+        if (missingValues) issues.push("Values are required.");
+        if (label && duplicateLabels[label] > 1) issues.push("Another control already uses the label “" + label + "”. Labels must be unique.");
+
+        $c.find("> .ctrl-head .ctrl-title").text(label || "(no label yet)").toggleClass("is-empty", !label);
+        $c.find("> .ctrl-head .ctrl-sub").text(sub);
+        $c.find("> .ctrl-issue").text(issues.join(" "));
+        $c.toggleClass("has-error", issues.length > 0);
     }
 
     function refreshSections() {
@@ -108,10 +115,23 @@
             Math.round(preview.getBoundingClientRect().height + 8) + "px";
     }
 
+    var duplicateLabels = {};
     function refreshAll() {
+        duplicateLabels = {};
+        $("#controls .ctrl-label").each(function () {
+            var l = ($(this).val() || "").trim();
+            if (l) duplicateLabels[l] = (duplicateLabels[l] || 0) + 1;
+        });
         $("#controls .control").each(function () { refreshCard($(this)); });
         refreshSections();
+        refreshIssuesButton();
         fitPreview();
+    }
+
+    // "Show issues": jumps to the first card with a problem and opens it
+    function refreshIssuesButton() {
+        var n = $("#controls .control.has-error").length;
+        $("#show-issues").prop("hidden", n === 0).text(n === 1 ? "Show issue" : "Show " + n + " issues");
     }
 
     function schedule() {
@@ -176,6 +196,14 @@
         });
         $("#expand-all").on("click", function () { setCollapsed($("#controls .control"), false); });
         $("#collapse-all").on("click", function () { setCollapsed($("#controls .control"), true); });
+
+        $("#show-issues").on("click", function () {
+            var $c = $("#controls .control.has-error").first();
+            if (!$c.length) return;
+            setCollapsed($c, false);
+            $("#sec-controls").prop("open", true);
+            $c[0].scrollIntoView({ block: "center", behavior: "smooth" });
+        });
 
         // live summaries
         $("#editor").on("input change", "input, select", schedule);

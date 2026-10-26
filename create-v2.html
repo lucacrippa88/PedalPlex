@@ -38,6 +38,15 @@
             <input type="hidden" id="pedal-author" />
             <input type="hidden" id="pedal-author-id" />
 
+            <!-- ============ 0. Start from a template (hidden automatically when editing an existing gear) ============ -->
+            <div class="start-card" id="tpl-start">
+                <div class="start-text">
+                    <strong>Start from a template</strong>
+                    <span id="tpl-note">Pick an existing template and adapt it, or build from scratch below.</span>
+                </div>
+                <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" id="tpl-open" style="color:#ffffff">Browse templates</button>
+            </div>
+
             <!-- ============ 1. Identity ============ -->
             <details class="sec" id="sec-identity" open>
                 <summary><span>Identity</span><span class="sec-hint"></span></summary>
@@ -45,8 +54,24 @@
                     <div class="fields">
                         <label class="field wide">ID <input type="text" class="create-gear-input" id="pedal-id" autocomplete="off" placeholder="Insert unique gear ID (e.g. Boss Distortion DS-1)..."></label>
                         <label class="field wide">Name <input type="text" class="create-gear-input" id="pedal-name" autocomplete="off" placeholder="Insert gear name to be displayed as logo..."></label>
+                        <div class="lint wide" id="lint-name" aria-live="polite"></div>
                         <label class="field wide">Logo style <input type="text" class="create-gear-input" id="pedal-logo" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Set valid CSS to style the logo..."></label>
+                        <div class="lint wide" id="lint-logo" aria-live="polite"></div>
                     </div>
+
+                    <!-- filled by js/create-v2-help.js from the same rule lists used by the live checker -->
+                    <details class="help" id="help-rules">
+                        <summary>What can I use in Name &amp; Logo style?</summary>
+                        <div class="help-body" id="help-rules-body"></div>
+                    </details>
+                    <details class="help" id="help-fonts">
+                        <summary>Fonts you can use <span class="help-count"></span></summary>
+                        <div class="help-body">
+                            <p class="help-p">Put the font name in the <b>Logo style</b> as <code>font-family: name;</code> — or tap <b>Use</b>. Fonts load the first time you open this list.</p>
+                            <input type="text" id="font-filter" placeholder="Filter fonts..." autocomplete="off" autocapitalize="off" spellcheck="false">
+                            <div id="font-grid" class="font-grid"></div>
+                        </div>
+                    </details>
                 </div>
             </details>
 
@@ -151,6 +176,7 @@
                     <div class="controls-toolbar">
                         <button type="button" class="bx--btn bx--btn--sm bx--btn--tertiary" id="expand-all">Expand all</button>
                         <button type="button" class="bx--btn bx--btn--sm bx--btn--tertiary" id="collapse-all">Collapse all</button>
+                        <button type="button" class="bx--btn bx--btn--sm bx--btn--danger" id="show-issues" hidden>Show issues</button>
                     </div>
                     <div id="controls"></div>
                     <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" id="add-row" style="color:#ffffff">+ Add Control Row</button>
@@ -244,6 +270,7 @@
             </span>
             <span class="ctrl-chevron" aria-hidden="true"></span>
           </div>
+          <div class="ctrl-issue" role="alert"></div>
           <div class="ctrl-body">
             <div class="fields">
               <label class="field wide">Label <input type="text" class="ctrl-label"></label>
@@ -389,6 +416,7 @@
             </span>
             <span class="ctrl-chevron" aria-hidden="true"></span>
           </div>
+          <div class="ctrl-issue" role="alert"></div>
           <div class="ctrl-body">
             <div class="fields">
               <label class="field wide">Label <input type="text" class="ctrl-label"></label>
@@ -488,6 +516,7 @@
             </span>
             <span class="ctrl-chevron" aria-hidden="true"></span>
           </div>
+          <div class="ctrl-issue" role="alert"></div>
           <div class="ctrl-body">
             <div class="fields">
               <label class="field wide">Label <input type="text" class="ctrl-label"></label>
@@ -514,6 +543,7 @@
             </span>
             <span class="ctrl-chevron" aria-hidden="true"></span>
           </div>
+          <div class="ctrl-issue" role="alert"></div>
           <div class="ctrl-body">
             <div class="fields">
               <label class="field wide">Label <input type="text" class="ctrl-label"></label>
@@ -548,6 +578,7 @@
             </span>
             <span class="ctrl-chevron" aria-hidden="true"></span>
           </div>
+          <div class="ctrl-issue" role="alert"></div>
           <div class="ctrl-body">
             <div class="fields">
               <label class="field wide">Label <input type="text" class="ctrl-label"></label>
@@ -846,6 +877,10 @@ $(function() {
 
 <!-- v2-only UI layer: accordion cards, summaries, preview fit, standalone test bar. No data logic. -->
 <script src="js/create-v2-ui.js"></script>
+<!-- Live HTML/CSS checker + allowed-rules + fonts list (mirrors backend/CREATE_GEAR.php, never replaces it) -->
+<script src="js/create-v2-help.js"></script>
+<!-- Template picker -->
+<script src="js/create-v2-templates.js"></script>
 
 </body>
 </html>
