@@ -98,6 +98,7 @@ function renderNavBar(userRole) {
     if (overlay) overlay.classList.remove('active');
     $inputM.val('');
     $inputD.hide().val('').css({ width: '120px' });
+    if (typeof updateGearsCatalogHeader === 'function') updateGearsCatalogHeader();
   }
 
   $("#toggleFilterBtn").on("click", function () {
@@ -134,6 +135,7 @@ function renderNavBar(userRole) {
       resetCatalogState();
       currentSearchQuery = query === "" ? null : query;
       loadNextCatalogPage();
+      if (typeof updateGearsCatalogHeader === 'function') updateGearsCatalogHeader();
     }, 500);
   }
 

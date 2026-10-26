@@ -152,12 +152,23 @@ $(function () {
   });
 });
 
+function updateGearsCatalogHeader() {
+  const isFiltered = (currentCategory !== 'all') || (currentSearchQuery !== null && currentSearchQuery !== '');
+  const isMobile = window.innerWidth <= 1024;
+  if (isFiltered && isMobile) {
+    $('#pedalplex-gears-catalog, #about-pedalplex-gears-catalog').hide();
+  } else {
+    $('#pedalplex-gears-catalog, #about-pedalplex-gears-catalog').show();
+  }
+}
+
 $(document).on("change", "#categoryFilter", function () {
   currentCategory = $(this).val();
   searchBookmark = null;        // reset bookmark
   currentSearchQuery = null;      // forziamo anche solo category
   resetCatalogState();
   loadNextCatalogPage();
+  updateGearsCatalogHeader();
 });
 
 // ==================== Lazy Catalog Render ====================
