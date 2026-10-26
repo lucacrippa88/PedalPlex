@@ -12,9 +12,8 @@
     "use strict";
 
     var RULES = {
-        // sanitizeHTML() in CREATE_GEAR.php
+        // sanitizeHTML() in CREATE_GEAR.php (ALLOWED options only: this is what we show to users)
         tags: ["span", "div", "br", "hr"],
-        blockedTags: ["script", "iframe", "object", "embed", "svg", "math", "video", "audio", "source"],
         attrs: ["class", "style"],
         css: ["color", "font-size", "font-weight", "font-style", "font-family", "vertical-align",
             "background-color", "padding", "position", "margin", "margin-left", "margin-right", "margin-bottom",
@@ -23,18 +22,10 @@
             "background-image", "text-align", "background", "rotate", "overflow", "white-space", "text-shadow",
             "text-decoration", "text-decoration-style", "text-decoration-line", "text-decoration-color",
             "outline", "outline-offset"],
-        // $dangerousPatterns in CREATE_GEAR.php: ANY of these anywhere in ANY text rejects the whole save
-        dangerous: [
-            { re: /\$/, label: "the “$” character" },
-            { re: /javascript/i, label: "the word “javascript”" },
-            { re: /on\w+=/i, label: "anything that looks like an event handler (on…=)" },
-            { re: /<script>/i, label: "a <script> tag" },
-            { re: /<iframe>/i, label: "an <iframe> tag" },
-            { re: /expression\s*\(/i, label: "“expression(”" },
-            { re: /url\s*\(\s*javascript:/i, label: "“url(javascript:”" }
-        ],
         generic: ["serif", "sans-serif", "monospace", "cursive", "fantasy", "system-ui", "inherit", "initial", "unset"]
     };
+    // Only used to say "something is not accepted" (never shown, never described). Server stays authoritative.
+    var REJECT = [/\$/, /javascript/i, /on\w+=/i, /<script>/i, /<iframe>/i, /expression\s*\(/i, /url\s*\(\s*javascript:/i];
     window.GEAR_RULES = RULES;
 
     // ---------- tiny DOM helpers (user text is never injected as HTML) ----------
@@ -92,13 +83,11 @@
         return t.value;
     }
 
+    // Deliberately generic: we say THAT something is not accepted, never WHAT the filter looks for.
     function checkDangerous(v, out) {
-        var hits = RULES.dangerous.filter(function (d) { return d.re.test(v); });
-        if (hits.length) {
-            out.push(item("err", ["This will be REJECTED when saving: it contains " +
-                hits.map(function (h) { return h.label; }).join(", ") + ". Remove it."]));
-        }
-        return hits.length > 0;
+        var bad = REJECT.some(function (re) { return re.test(v); });
+        if (bad) out.push(item("err", ["This field contains something that is not accepted, so saving would be refused. Please simplify it and use only the allowed options."]));
+        return bad;
     }
 
     function checkFontFamilies(v, out, seen) {
@@ -122,11 +111,9 @@
             if (i < 0) { warnOnce(out, seen, "nocolon:" + part.trim(), ["“" + part.trim() + "” is not a valid declaration (use property: value). It will be ignored."]); return; }
             var prop = part.slice(0, i).trim().toLowerCase(), val = part.slice(i + 1).trim();
             if (RULES.css.indexOf(prop) === -1) { warnOnce(out, seen, "prop:" + prop, ["CSS property ", { code: prop }, " is not allowed in " + where + " and will be dropped."]); return; }
-            if (/expression\s*\(|javascript\s*:/i.test(val)) warnOnce(out, seen, "val:" + prop, ["The value of ", { code: prop }, " contains something forbidden and will be dropped."]);
-            else if (/url\s*\(\s*data\s*:/i.test(val)) warnOnce(out, seen, "data:" + prop, [{ code: "url(data:…)" }, " is not allowed (use a normal image address)."]);
-            else if (/[<>{}]/.test(val)) warnOnce(out, seen, "chars:" + prop, ["The value of ", { code: prop }, " contains < > { or }, so it will be dropped."]);
+            if (/expression\s*\(|javascript\s*:|url\s*\(\s*data\s*:|[<>{}]/i.test(val)) warnOnce(out, seen, "val:" + prop, ["The value of ", { code: prop }, " is not accepted and will be dropped."]);
             if (prop === "position" && /^relative$/i.test(val)) {
-                warnOnce(out, seen, "posrel", [{ code: "position: relative" }, " is not allowed here (the builder blocks saving)."], "err");
+                warnOnce(out, seen, "posrel", [{ code: "position: relative" }, " is not supported here (the builder blocks saving)."], "err");
             }
         });
     }
@@ -142,20 +129,16 @@
         if (!raw.trim()) return out;
         checkDangerous(raw, out);
         var s = decodeEntities(raw), seen = {};
-        var blocked = new RegExp("<(" + RULES.blockedTags.join("|") + ")(?:[\\s>/])", "ig"), b;
-        while ((b = blocked.exec(s))) warnOnce(out, seen, "blk:" + b[1].toLowerCase(), [{ code: "<" + b[1].toLowerCase() + ">" }, " is blocked: the tag and everything inside it will be removed."]);
-
         var tagRe = /<([a-z0-9]+)(\s[^>]*)?>/gi, m;
         while ((m = tagRe.exec(s))) {
             var tag = m[1].toLowerCase();
-            if (RULES.blockedTags.indexOf(tag) !== -1) continue;
-            if (RULES.tags.indexOf(tag) === -1) { warnOnce(out, seen, "tag:" + tag, [{ code: "<" + tag + ">" }, " is not allowed: the tag is removed (its text stays). Allowed tags: " + RULES.tags.join(", ") + "."]); continue; }
+            if (RULES.tags.indexOf(tag) === -1) { warnOnce(out, seen, "tag", ["This tag is not allowed and will be removed. Allowed tags: " + RULES.tags.join(", ") + "."]); continue; }
             var attrRe = /([a-z\-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/gi, a;
             var attrString = m[2] || "";
             while ((a = attrRe.exec(attrString))) {
                 var an = a[1].toLowerCase();
                 var av = a[2] != null && a[2] !== "" ? a[2] : (a[3] != null && a[3] !== "" ? a[3] : (a[4] || ""));
-                if (RULES.attrs.indexOf(an) === -1) { warnOnce(out, seen, "attr:" + an, ["Attribute ", { code: an }, " is removed. Only class and style are kept."]); continue; }
+                if (RULES.attrs.indexOf(an) === -1) { warnOnce(out, seen, "attr", ["This attribute is removed. Only class and style are kept."]); continue; }
                 if (an === "class" && /[^A-Za-z0-9 _\-]/.test(av)) warnOnce(out, seen, "class", ["In ", { code: "class" }, " only letters, digits, space, _ and - are kept."]);
                 if (an === "style") { checkStyleDecls(av, out, seen, "Name"); checkFontFamilies(av, out, seen); }
             }
@@ -170,7 +153,6 @@
         if (!raw.trim()) return out;
         var dangerous = checkDangerous(raw, out), seen = {};
         if (/<|>/.test(raw)) warnOnce(out, seen, "html", ["This field is plain CSS (", { code: "color: red; font-size: 20px;" }, "), not HTML."]);
-        if (/expression\s*\(|javascript:/i.test(raw)) warnOnce(out, seen, "whole", ["The whole logo style is discarded when it contains expression( or javascript:."], "err");
         checkStyleDecls(raw, out, seen, "Logo style");
         checkFontFamilies(raw, out, seen);
         if (!out.length && !dangerous) out.push(item("ok", ["All good: every declaration is allowed."]));
@@ -205,22 +187,11 @@
         h("Name — limited HTML");
         p("The name is shown as the gear's logo. You can style it with these tags only:");
         b.appendChild(chips(RULES.tags, "yes"));
-        p("Anything else (b, i, p, a, img, style…) is removed but its text stays. These are blocked together with their content:");
-        b.appendChild(chips(RULES.blockedTags, "no"));
-        p("Only the attributes class and style are kept; every other attribute is removed.");
+        p("Any other tag is removed. Only the attributes class and style are kept.");
 
         h("Logo style — plain CSS");
         p("Write declarations like property: value; separated by semicolons. Allowed properties (also usable inside style=\"…\" in the Name):");
         b.appendChild(chips(RULES.css, "yes"));
-
-        h("Never allowed");
-        var ul = el("ul", "rule-list");
-        [
-            "position: relative (use the other values, or margins/top/left)",
-            "url(data:…), expression(…), javascript: and the characters < > { } inside a CSS value",
-            "These in ANY field reject the whole save: the “$” character, the word “javascript”, anything like onclick=, <script> and <iframe>"
-        ].forEach(function (t) { ul.appendChild(el("li", null, t)); });
-        b.appendChild(ul);
 
         h("Examples");
         [

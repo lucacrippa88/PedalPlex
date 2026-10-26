@@ -38,13 +38,16 @@
             <input type="hidden" id="pedal-author" />
             <input type="hidden" id="pedal-author-id" />
 
-            <!-- ============ 0. Start from a template (hidden automatically when editing an existing gear) ============ -->
+            <!-- ============ 0. Start from a template or clone a gear (hidden automatically when editing an existing gear) ============ -->
             <div class="start-card" id="tpl-start">
                 <div class="start-text">
-                    <strong>Start from a template</strong>
-                    <span id="tpl-note">Pick an existing template and adapt it, or build from scratch below.</span>
+                    <strong>Start from something that exists</strong>
+                    <span id="tpl-note">Start from a template or clone one of your gears, or build from scratch below.</span>
                 </div>
-                <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" id="tpl-open" style="color:#ffffff">Browse templates</button>
+                <div class="start-actions">
+                    <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" id="tpl-open" style="color:#ffffff">Browse templates</button>
+                    <button type="button" class="bx--btn bx--btn--sm bx--btn--tertiary" id="clone-open" style="color:#ffffff">Clone my gear</button>
+                </div>
             </div>
 
             <!-- ============ 1. Identity ============ -->
