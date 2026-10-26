@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pedal Builder</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Google tag -->
+    <script src="/js/ga-loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="css/carbon-components.min.css" /> <!-- Added to style tooltips -->
+    <link rel="stylesheet" href="css/style.css">
+    <script>window.isEditMode = true;</script>
+    <script src="js/labels.js"></script>
+    <script src="js/helpers.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/subplexes.js"></script>
+    <script src="js/create.js"></script>
+    
+    <style>
+        /* Layout: left editor + fixed right preview */
+        #builder {
+        display: flex;
+        align-items: flex-start;
+        }
+
+        /* Editor (left side) */
+        #editor {
+        flex: 1;
+        padding: 20px;
+        margin-right: 40%; /* reserve space so it never overlaps preview */
+        }
+
+        /* Preview (fixed right side) */
+        #preview {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        bottom: 20px;
+        width: 35%;          /* fixed width */
+        overflow: auto;
+        padding: 15px;
+        border: solid 1px #fff;
+        border-radius: 8px;
+        z-index: 10;
+        }
+
+        /* Controls container stacks rows */
+        #controls {
+        display: flex;
+        flex-direction: column;
+        gap: 15px; /* space between rows */
+        }
+
+        /* Each row scrolls horizontally */
+        .controls-row {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;      /* horizontal scroll per row */
+        white-space: nowrap;   /* keep row on one line */
+        padding-bottom: 5px;   /* space for scrollbar */
+        }
+
+        /* Controls inside row don’t shrink */
+        .controls-row .control {
+        flex-shrink: 0;
+        }
+
+        .askpub-swal-style{
+            font-weight: 200;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="builder">
+
+        <div id="editor">
+            <div class="pedal-info">
+
+                <input type="hidden" id="pedal-author" />
+                <input type="hidden" id="pedal-author-id" />
+
+                <label>ID <input type="text" class="create-gear-input" id="pedal-id" placeholder="Insert unique gear ID (e.g. Boss Distortion DS-1)..."></label>
+                <label>Name <input type="text" class="create-gear-input" id="pedal-name" placeholder="Insert gear name to be displayed as logo..."></label>
+                <label>Logo style <input type="text" class="create-gear-input" id="pedal-logo" placeholder="Set valid CSS to style the logo..."></label>
+                </div>
+                <br><br>
+                <label>Type <select id="pedal-type">
+                        <option value="pedal">Pedal</option>
+                        <option value="pedal-inverted">Pedal Inverted</option>
+                        <option value="expression">Expression</option>
+                        <option value="combo">Combo</option>
+                        <option value="head">Head</option>
+                        <option value="round">Round</option>
+                    </select>
+                </label>
+                <label>Width <select id="pedal-width"></select></label>
+                <label>Height <select id="pedal-height"></select></label>
+                <br><br>
+                <label>Category</label>
+                <div id="pedal-category-wrapper" style="position:relative; display:inline-block; vertical-align:middle;">
+                    <button type="button" class="bx--btn bx--btn--sm bx--btn--secondary" id="pedal-category-button"
+                        style="color:#ffffff; min-width:250px; max-width:500px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block;">Select categories</button>
+                    <div id="pedal-category-options"
+                        style="display:none; position:absolute; top:100%; left:0; z-index:100; min-width:250px; max-height:300px; overflow-y:auto; background:#1e1e1e; color:#ffffff; border:1px solid #6f6f6f; padding:4px 0; font-size:14px;"></div>
+                </div>
+                <br><br>
+                <label>Color <input type="color" id="pedal-color" value="#264985"></label>&ensp;&ensp;
+                <label>Font Color <input type="color" id="font-color" value="#ffffff"></label>&ensp;&ensp;
+                <br><br>
+                <label>Inside color type 
+                    <select id="inside-type-select">
+                        <option value="color">Color</option>
+                        <option value="image">Image</option>
+                    </select>
+                    </label>&ensp;&ensp;
+
+                    <label id="inside-color-label">
+                    Inside Color <input type="color" id="pedal-inside-color" value="#0d0d0d">
+                    </label>&ensp;&ensp;
+
+                    <label id="inside-image-label" style="display:none">
+                    Image URL <input type="text" id="pedal-inside-image" placeholder="https://example.com/image.png">
+                    &ensp;&ensp;</label>
+
+                    <label id="pedal-inside-full-check-label">
+                    <input type="checkbox" id="pedal-inside-full-check"> Full
+                    </label>&ensp;&ensp;
+
+                    <label id="pedal-inside-border-label">
+                    Inside Border 
+                    <input type="checkbox" id="pedal-inside-border-check">
+                    <input type="color" id="pedal-inside-border" value="#000000">
+                    </label>
+
+                    <br><br>
+                    <label>Knobs Color <input type="color" id="knobs-color" value="#191919"></label>&ensp;&ensp;
+                    <label>Knobs Border <input type="color" id="knobs-border" value="#424242"></label>&ensp;&ensp;
+                    <label>Knobs Indicator <input type="color" id="knobs-indicator" value="#ffffff"></label>&ensp;&ensp;
+                    <label><input type="checkbox" id="knobs-inner-enable"> Knobs Inner <input type="color" id="knobs-inner-color" value="#191919" disabled></label>&ensp;&ensp;
+                    <label>Knobs Style
+                      <select id="knobs-style">
+                        <option value="">— default (plain) —</option>
+                        <option value="plain">Plain</option>
+                        <option value="classic">Classic</option>
+                        <option value="amp-style">Amp-style</option>
+                        <option value="ecb-071">ECB-071</option>
+                        <option value="dm-1250">DM-1250</option>
+                        <option value="dm-1510">DM-1510</option>
+                        <option value="dm-1400">DM-1400</option>
+                        <option value="dm-2300">DM-2300</option>
+                        <option value="dm-1100">DM-1100</option>
+                        <option value="dm-1360">DM-1360</option>
+                        <option value="skirt-chrome">Skirt Chrome</option>
+                        <option value="dm-1140">DM-1140</option>
+                      </select>
+                    </label>&ensp;&ensp;
+
+                    <script>
+                    $(document).ready(function () {
+                        function updateInsideType() {
+                            const type = $("#inside-type-select").val();
+
+                            if (type === "color") {
+                                $("#inside-color-label").show();
+                                $("#inside-image-label").hide();
+                            } else {
+                                $("#inside-color-label").hide();
+                                $("#inside-image-label").show();
+                            }
+                        }
+
+                        // Run once at page load
+                        updateInsideType();
+
+                        // Run whenever the select changes
+                        $("#inside-type-select").on("change", updateInsideType);
+                    });
+                    </script>
+
+
+                <br><br>
+                
+                <div id="json-error" style="color:red; font-weight:bold; margin-top:5px;"></div>
+
+                <br><br><br><hr></br><br>
+                
+                <button class="bx--btn bx--btn--sm bx--btn--primary" id="add-row" style="color:#ffffff">+ Add Control Row</button><br><br>
+                <div id="controls"></div>
+        </div>
+
+
+        <!-- Pedal preview -->
+        <div id="preview">
+
+            <label>Status</label>
+            <div id="pedal-published-wrapper" class="custom-dropdown">
+            <button class="bx--btn bx--btn--sm bx--btn--secondary" style="color:#ffffff" id="pedal-published-button">Draft</button><span id="status-buttons" style="margin-left:10px;"></span>
+            <ul id="pedal-published-options" style="font-size:14px" class="dropdown-options"><br>
+                <li style="cursor:pointer;" data-value="draft">
+                    <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="black" width="12" height="12" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                        <path d="M28 6H30V26H28zM17 6L15.57 7.393 23.15 15 2 15 2 17 23.15 17 15.57 24.573 17 26 27 16 17 6z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Draft
+                </li>
+                <!-- <li style="cursor:pointer;" data-value="private">
+                    <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="black" width="12" height="12" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                        <path d="M28 6H30V26H28zM17 6L15.57 7.393 23.15 15 2 15 2 17 23.15 17 15.57 24.573 17 26 27 16 17 6z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Private
+                </li> -->
+                <li style="cursor:pointer;" data-value="reviewing">
+                    <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="black" width="12" height="12" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                        <path d="M28 6H30V26H28zM17 6L15.57 7.393 23.15 15 2 15 2 17 23.15 17 15.57 24.573 17 26 27 16 17 6z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Reviewing
+                </li>
+                <li style="cursor:pointer;" data-value="template">
+                    <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="black" width="12" height="12" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                        <path d="M28 6H30V26H28zM17 6L15.57 7.393 23.15 15 2 15 2 17 23.15 17 15.57 24.573 17 26 27 16 17 6z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Template
+                </li>
+                <li style="cursor:pointer;" data-value="public">
+                    <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="black" width="12" height="12" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+                        <path d="M28 6H30V26H28zM17 6L15.57 7.393 23.15 15 2 15 2 17 23.15 17 15.57 24.573 17 26 27 16 17 6z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Public
+                </li>
+            </ul>
+            </div>
+            <br>
+
+            <!-- Verified checkbox (admin only) -->
+            <div id="verified-container" style="display:none;">
+                <label>
+                    <input type="checkbox" id="pedal-verified">
+                    <span style="font-weight:bold; color:#24a148;">Verified Gear</span>
+                </label>
+                <br><br>
+            </div>
+
+            <button class="bx--btn bx--btn--sm bx--btn--secondary" id="toggle-preview" style="color:white;">
+                <svg fill="white" class="icon-eye" xmlns="http://www.w3.org/2000/svg" 
+                    viewBox="0 0 32 32" width="16" height="16" aria-hidden="true" focusable="false" 
+                    style="margin-right:4px; vertical-align:middle;">
+                    <path d="M28.28,27.71l-22-22L4.86,7.14,7.6,9.88A16.44,16.44,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27a15.89,15.89,0,0,0,7.12-1.69l3,3Zm-8.45-8.45,1.6,1.6A7,7,0,0,1,16,23c-5.3,0-10.9-3.93-12.93-9A14.63,14.63,0,0,1,9.6,11.41l1.69,1.69A7,7,0,0,0,16,21,6.93,6.93,0,0,0,19.83,19.26Z"/>
+                </svg>
+                Hide Preview
+            </button><br><br>
+
+            <script>
+                const eyeIcon = `<path d="M30.94,15.66A16.69,16.69,0,0,0,16,5,16.69,16.69,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27,16.69,16.69,0,0,0,30.94,16.34,1,1,0,0,0,30.94,15.66ZM16,25c-5.3,0-10.9-3.93-12.93-9C5.1,10.93,10.7,7,16,7s10.9,3.93,12.93,9C26.9,21.07,21.3,25,16,25Z"/><path d="M16,10a6,6,0,1,0,6,6A6,6,0,0,0,16,10Zm0,10a4,4,0,1,1,4-4A4,4,0,0,1,16,20Z"/>`;
+                const eyeOffIcon = `<path d="M28.28,27.71l-22-22L4.86,7.14,7.6,9.88A16.44,16.44,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27a15.89,15.89,0,0,0,7.12-1.69l3,3Zm-8.45-8.45,1.6,1.6A7,7,0,0,1,16,23c-5.3,0-10.9-3.93-12.93-9A14.63,14.63,0,0,1,9.6,11.41l1.69,1.69A7,7,0,0,0,16,21,6.93,6.93,0,0,0,19.83,19.26Z"/>`;
+
+                $("#toggle-preview").on("click", function() {
+                    $("#pedal-box").toggle();
+                    const isVisible = $("#pedal-box").is(":visible");
+
+                    const svg = $(this).find("svg");
+                    svg.html(isVisible ? eyeOffIcon : eyeIcon); // eye-off when visible, eye when hidden
+
+                    $(this).contents().filter(function() {
+                    return this.nodeType === 3; // text node
+                    }).remove();
+                    $(this).append(isVisible ? " Hide Preview" : " Show Preview");
+                });
+            </script>
+
+        <div id="pedal-box"></div>
+
+        </div>
+    </div>
+
+    <!-- JSON check -->
+    <!-- <h2>Generated JSON</h2><br><br> -->
+    <!-- <textarea id="json-output" style="width:100%;height:300px;font-family:monospace;"></textarea>
+    <script>
+        $(function(){
+            const isAdmin = (parent?.window?.currentUser?.role || '').toLowerCase() === 'admin';
+            $('#json-output').toggle(isAdmin);
+        });
+    </script> -->
+   
+
+
+    <!-- Templates -->
+    <script type="text/template" id="knob-template">
+        <div class="control" data-type="knob">
+        <h4>Knob</h4>
+        <label>Label <input type="text" class="ctrl-label"></label>
+        <label>Knob Type</label>
+            <select class="ctrl-knob-type">
+                <option value="numeric">Numeric</option>
+                <option value="discrete">Discrete</option>
+            </select>
+        <label>Size <select class="ctrl-size">
+            <option value="knob" selected>Regular</option>
+            <option value="smallknob">Small</option>
+            <option value="largeknob">Large</option>
+            <option value="largerknob">Larger</option>
+            <option value="xlargeknob">XLarge</option>
+            </select>
+        </label>
+
+        <label>Position
+        <select class="ctrl-position-keyword">
+            <option></option>
+            <option>highest</option>
+            <option>higher</option>
+            <option>high</option>
+            <option>low</option>
+            <option>lower</option>
+            <option>lowest</option>
+            <option>under-top</option>
+            <option>align-top</option>
+            <option>align-top-clear</option>
+            <option>align-top-clearer</option>
+            <option>align-top-clearest</option>
+        </select>
+        </label>
+
+        <label>Margin
+        <select class="ctrl-position-margin">
+            <option value="">None</option>
+            <option value="margin-left">Margin Left</option>
+            <option value="margin-right">Margin Right</option>
+        </select>
+        </label>
+        <input type="number" class="ctrl-position-margin-value" placeholder="px" min="0" style="display:none; width:50px;">
+
+
+
+        <label>Style
+          <select class="ctrl-knob-style">
+            <option value="">— pedal default —</option>
+            <option value="plain">Plain</option>
+            <option value="classic">Classic</option>
+            <option value="amp-style">Amp-style</option>
+            <option value="ecb-071">ECB-071</option>
+            <option value="dm-1250">DM-1250</option>
+            <option value="dm-1510">DM-1510</option>
+            <option value="dm-1400">DM-1400</option>
+            <option value="dm-2300">DM-2300</option>
+            <option value="dm-1100">DM-1100</option>
+            <option value="dm-1360">DM-1360</option>
+            <option value="skirt-chrome">Skirt Chrome</option>
+            <option value="dm-1140">DM-1140</option>
+          </select>
+        </label>
+        <label>
+            <input type="checkbox" class="ctrl-knob-color-enable"> Knob
+            <input type="color" class="ctrl-knob-color" disabled>
+        </label>
+        <label>
+            <input type="checkbox" class="ctrl-knob-border-enable"> Border
+            <input type="color" class="ctrl-knob-border" disabled>
+        </label>
+        <label>
+            <input type="checkbox" class="ctrl-knob-indicator-enable"> Indicator
+            <input type="color" class="ctrl-knob-indicator" disabled>
+        </label>
+        <label>
+            <input type="checkbox" class="ctrl-knob-inner-enable"> Inner color
+            <input type="color" class="ctrl-knob-inner" disabled>
+        </label>
+        <label>
+            <input type="checkbox" class="ctrl-knob-thick"> Thick Border
+        </label>
+        <label>
+            <input type="checkbox" class="ctrl-knob-label-color-enable"> Label color
+            <input type="color" class="ctrl-knob-label-color" disabled>
+        </label>
+        <label>
+            <input type="checkbox" class="ctrl-knob-label-background-enable"> Label background
+            <input type="color" class="ctrl-knob-label-background" disabled>
+        </label>
+         <label>
+            <input type="checkbox" class="ctrl-knob-label-inverted"> Label inverted
+        </label>
+        <span class="numeric-fields">
+            <label>Min <input type="number" class="ctrl-num ctrl-min" value="7"></label>
+            <label>Max <input type="number" class="ctrl-num ctrl-max" value="17"></label>
+            <label>Val <input type="number" class="ctrl-num ctrl-value" value="12"></label>
+        </span>
+        <span class="discrete-fields" style="display:none;">
+            <label>Values <input type="text" class="ctrl-values-list" placeholder="A,B,C"></label>
+            <label>Current Value <select class="ctrl-value-select"></select></label>
+        </span>
+        <label>Span
+            <select class="ctrl-span">
+                <option value="all">12am->12pm</option>
+                <option value="three-quarters" selected>7am->5pm</option>
+                <option value="half">6am->12pm</option>
+                <option value="half-shift">2am<-8pm</option>
+                <option value="half-shift-inverted">5pm->11pm</option>
+                <option value="quarter">1am->10am</option>
+                <option value="tenToTwo">10am->2pm</option>
+                <option value="twelveToSix">12am->6pm</option>
+                <option value="elevenToSeven">11am<-7am</option>
+                <option value="elevenToNineteen">11am->7pm</option>
+                <option value="oneToFive">1pm->5pm</option>
+                <option value="oneToElevenClock">1pm->11pm</option>
+                <option value="sixPmToThreePm">6pm->3pm</option>
+                <option value="sixPmToOnePmCCW">6pm->1pm (CCW)</option>
+            </select>
+        </label>
+
+
+
+        <br>
+        <div class="ctrl-actions">
+            <button class="bx--btn bx--btn--sm bx--btn--secondary bx--btn--icon-only move-up" style="color:#ffffff">←</button>
+            <button class="bx--btn bx--btn--sm bx--btn--secondary bx--btn--icon-only move-down" style="color:#ffffff">→</button>
+            <button class="bx--btn bx--btn--sm bx--btn--danger bx--btn--icon-only remove">✕</button>
+        </div>
+        </div>
+        </script>
+
+    <script type="text/template" id="led-template">
+        <div class="control" data-type="led">
+  <h4>LED</h4>
+  <label>Label <input type="text" class="ctrl-label"><input type="checkbox" class="ctrl-showlabel"></label>
+        <label>Position 
+            <select class="ctrl-position">
+            <option></option>
+            <option>highest</option>
+            <option>higher</option>
+            <option>high</option>
+            <option>low</option>
+            <option>lower</option>
+            <option>lowest</option>
+            <option>xlow</option>
+            <option>right</option>
+            <option>under-top</option>
+            <option>align-top</option>
+            <option value="margin-left">Margin Left</option>
+            <option value="margin-right">Margin Right</option>
+            </select>
+        </label>
+        <input type="number" class="ctrl-position-value" placeholder="px" min="0" style="display:none; width:50px;">
+
+    <div class="led-colors-container">
+      <label>Color 0 <input type="color" class="ctrl-color" value="#000000"></label>
+      <label>Color 1 <input type="color" class="ctrl-color" value="#ff0000"></label>
+    </div>
+    <button class="bx--btn bx--btn--sm bx--btn--tertiary add-led-color">+ Color</button>
+    <select class="ctrl-value"></select>
+
+  <br>
+  <div class="ctrl-actions">
+    <button class="bx--btn bx--btn--sm bx--btn--secondary bx--btn--icon-only move-up" style="color:#ffffff">←</button>
+    <button class="bx--btn bx--btn--sm bx--btn--secondary bx--btn--icon-only move-down" style="color:#ffffff">→</button>
+    <button class="bx--btn bx--btn--sm bx--btn--danger bx--btn--icon-only remove">✕</button>
+  </div>
+</div>
+</script>
+
+
+
+<script>
+// Function to add a new LED control
+function addLedControl() {
+    const tpl = $("#led-template").html();
+    const $ctrl = $(tpl);
+
+    // Append to #controls
+    $("#controls").append($ctrl);
+
+    // Immediately populate the dropdown
+    updateLedValueSelect($ctrl);
+}
+
+// Populate the value dropdown based on current colors
+function updateLedValueSelect($ctrl) {
+    const $select = $ctrl.find(".ctrl-value");
+    $select.empty();
+
+    $ctrl.find(".led-colors-container .ctrl-color").each((i) => {
+        $select.append(`<option value="${i}">${i}</option>`);
+    });
+
+    // Default selection to 0 if nothing selected
+    const prev = parseInt($select.data("prev"));
+    const maxVal = $ctrl.find(".ctrl-color").length - 1;
+    const newVal = (!isNaN(prev) && prev <= maxVal) ? prev : 0;
+    $select.val(newVal);
+    $select.data("prev", newVal);
+}
+
+// Sync value select on change
+$("#controls").on("change", ".ctrl-value", function() {
+    $(this).data("prev", $(this).val());
+});
+
+// Refresh dropdown when a color input changes
+$("#controls").on("input", ".ctrl-color", function() {
+    const $ctrl = $(this).closest(".control");
+    updateLedValueSelect($ctrl);
+});
+
+// Example: attach LED creation to button
+$("#add-led").on("click", addLedControl);
+</script>
+
+
+    <script type="text/template" id="slider-template">
+        <div class="control" data-type="slider">
+  <h4>Slider</h4>
+  <label>Label <input type="text" class="ctrl-label"></label>
+  <label>Orientation <select class="ctrl-orientation"><option selected>vertical</option><option>vertical small</option><option>horizontal</option></select></label>
+  <label>Min <input type="number" class="ctrl-num ctrl-min" value="-15"></label>
+  <label>Max <input type="number" class="ctrl-num ctrl-max" value="15"></label>
+  <label>Value <input type="number" class="ctrl-num ctrl-value" value="0"></label>
+  <br>
+  <div class="ctrl-actions">
+    <button class="bx--btn bx--btn--sm bx--btn--secondary bx--btn--icon-only move-up" style="color:#ffffff">←</button>
+    <button class="bx--btn bx--btn--sm bx--btn--secondary bx--btn--icon-only move-down" style="color:#ffffff">→</button>
+    <button class="bx--btn bx--btn--sm bx--btn--danger bx--btn--icon-only remove">✕</button>
+  </div>
+</div>
+</script>
+
+    <script type="text/template" id="lcd-template">
+        <div class="control" data-type="lcd">
+  <h4>LCD</h4>
+  <label>Label <input type="text" class="ctrl-label"></label>
+<label>Position 
+            <select class="ctrl-position">
+            <option></option>
+            <option>higher</option>
+            <option>high</option>
+            <option>lower</option>
+            </select>
+        </label>
+    <label>Width <input type="text" class="ctrl-width" value=30></label>
+  <label>Height <input type="text" class="ctrl-height" value=10></label>
+  <label>Round? <input type="checkbox" class="ctrl-round"></label>
+  <label>Screen <input type="color" class="ctrl-screen1" value="#111111"></label>
+  <label>Color <input type="color" class="ctrl-screen2" value="#ff0000"></label>
+  <label>Text <input type="text" class="ctrl-text" value="LCD"></label>
+  <br>
+  <div class="ctrl-actions">
+    <button class="bx--btn bx--btn--sm bx--btn--secondary bx--btn--icon-only move-up" style="color:#ffffff">←</button>
+    <button class="bx--btn bx--btn--sm bx--btn--secondary bx--btn--icon-only move-down" style="color:#ffffff">→</button>
+    <button class="bx--btn bx--btn--sm bx--btn--danger bx--btn--icon-only remove">✕</button>
+  </div>
+</div>
+</script>
+
+    <script type="text/template" id="multi-template">
+        <div class="control" data-type="multi">
+  <h4>Multi Select</h4>
+  <label>Label <input type="text" class="ctrl-label"><input type="checkbox" class="ctrl-showlabel"></label>
+  <label>Position 
+            <select class="ctrl-position">
+            <option></option>
+            <option>highest</option>
+            <option>higher</option>
+            <option>lower</option>
+            <option>right</option>
+            <option>left</option>
+            <option>align-top</option>
+            <option value="margin-left">Margin Left</option>
+            <option value="margin-right">Margin Right</option>
+            </select>
+        </label>
+        <input type="number" class="ctrl-position-value" placeholder="px" min="0" style="display:none; width:50px;">
+    <label>Values <input type="text" class="ctrl-values" value="A,B,C"></label>
+  <label>Selected <input type="text" class="ctrl-num ctrl-value" value="A"></label>
+  <br>
+  <div class="ctrl-actions">
+    <button class="bx--btn bx--btn--sm bx--btn--secondary bx--btn--icon-only move-up" style="color:#ffffff">←</button>
+    <button class="bx--btn bx--btn--sm bx--btn--secondary bx--btn--icon-only move-down" style="color:#ffffff">→</button>
+    <button class="bx--btn bx--btn--sm bx--btn--danger bx--btn--icon-only remove">✕</button>
+  </div>
+</div>
+</script>
+
+    <script>
+        const widths = ["xsmall", "smaller", "small", "medium", "standard", "large", "+large", "larger", "+larger", "++larger", "xlarge",
+            "xlarger", "largest", "wide", "wider", "widest", "xwidest"];
+        const heights = ["xsmall", "smaller", "small", "medium", "standard", "large", "+large", "larger", "xlarge",
+            "xlarger", "largest", "xlargest", "tall"];
+
+
+
+        // Disable/enable LCD Height when Round is checked
+        $("#controls").on("change", ".ctrl-round", function() {
+            const $ctrl = $(this).closest(".control");
+            const isRound = $(this).is(":checked");
+            $ctrl.find(".ctrl-height").prop("disabled", isRound);
+        });
+
+        // Show/hide margin input
+        // Only for knobs
+        $("#controls").on("change", ".ctrl-position-margin", function() {
+            const $ctrl = $(this).closest(".control");
+            const val = $(this).val();
+            $ctrl.find(".ctrl-position-margin-value").toggle(val !== "");
+        });
+
+
+        // Show numeric input only for margin-left / margin-right
+        $("#controls").on("change", ".ctrl-position", function () {
+            const val = $(this).val();
+            const $numInput = $(this).closest("label").next(".ctrl-position-value");
+            if (val === "margin-left" || val === "margin-right") {
+                $numInput.show();
+            } else {
+                $numInput.hide().val("");
+            }
+            buildJSON();
+        });
+
+
+        // Switch between inner color or image
+        $("#inside-type-select").on("change", function() {
+        const type = $(this).val();
+        if (type === "color") {
+            $("#inside-color-label").show();
+            $("#inside-image-label").hide();
+            $("#pedal-inside-full-check").show();
+        } else {
+            $("#inside-color-label").hide();
+            $("#inside-image-label").show();
+            // $("#pedal-inside-full-check").hide();
+            // $("#pedal-inside-full-check-label").hide();
+        }
+        });
+
+
+
+        // Enable/disable knob color inputs
+        $("#controls").on("change", ".ctrl-knob-color-enable", function () {
+            $(this).siblings(".ctrl-knob-color").prop("disabled", !this.checked);
+            buildJSON();
+        });
+        $("#controls").on("change", ".ctrl-knob-border-enable", function () {
+            $(this).siblings(".ctrl-knob-border").prop("disabled", !this.checked);
+            buildJSON();
+        });
+        $("#controls").on("change", ".ctrl-knob-indicator-enable", function () {
+            $(this).siblings(".ctrl-knob-indicator").prop("disabled", !this.checked);
+            buildJSON();
+        });
+        $("#controls").on("change", ".ctrl-knob-inner-enable", function () {
+            $(this).siblings(".ctrl-knob-inner").prop("disabled", !this.checked);
+            buildJSON();
+        });
+        $("#knobs-inner-enable").on("change", function () {
+            $("#knobs-inner-color").prop("disabled", !this.checked);
+            buildJSON();
+        });
+        $("#controls").on("change", ".ctrl-knob-label-color-enable", function () {
+            $(this).siblings(".ctrl-knob-label-color").prop("disabled", !this.checked);
+            buildJSON();
+        });
+        $("#controls").on("change", ".ctrl-knob-label-background-enable", function () {
+            $(this).siblings(".ctrl-knob-label-background").prop("disabled", !this.checked);
+            buildJSON();
+        });
+
+        // Select knob type
+        $(document).on("change", ".ctrl-knob-type", function () {
+            const $ctrl = $(this).closest(".control");
+
+            if ($(this).val() === "numeric") {
+                $ctrl.find(".numeric-fields").show();
+                $ctrl.find(".discrete-fields").hide();
+            } else {
+                $ctrl.find(".numeric-fields").hide();
+                $ctrl.find(".discrete-fields").show();
+            }
+        });
+
+
+
+        let isSyncing = false;
+
+
+
+        $(function () {
+            widths.forEach(w => $("#pedal-width").append(`<option>${w}</option>`));
+            heights.forEach(h => $("#pedal-height").append(`<option>${h}</option>`));
+            $("#pedal-width").val("standard");
+            $("#pedal-height").val("standard");
+
+            // Add control row
+            $("#add-row").on("click", function () {
+                const row = $(`
+                    <div class="row" style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+                        <div class="row-buttons" style="display:flex;">
+                        <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-knob">+ Knob</button>
+                        <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-led">+ LED</button>
+                        <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-slider">+ Slider</button>
+                        <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-lcd">+ LCD</button>
+                        <button class="bx--btn bx--btn--sm bx--btn--tertiary add-control add-multi">+ Multi</button>
+                        </div>
+                        <div class="controls-row" style="display:flex; gap:10px; flex-wrap:nowrap;"></div>
+                        <div class="row-actions" style="display:flex; flex-wrap:nowrap;">
+                        <button class="bx--btn bx--btn--sm bx--btn--secondary row-up" style="color:#ffffff">↑ Row</button><br>
+                        <button class="bx--btn bx--btn--sm bx--btn--secondary row-down" style="color:#ffffff">↓ Row</button><br>
+                        <button class="bx--btn bx--btn--sm bx--btn--danger row-remove">✕ Remove Row</button>
+                        </div>
+                        <hr style="width:50%; position:relative; left:-33px;"><br>
+                    </div>
+                    `);
+                $("#controls").append(row);
+                buildJSON();
+            });
+
+            function addControl(buttonClass, templateId) {
+                $("#controls").on("click", buttonClass, function () {
+                    const controlsRow = $(this).closest(".row").find(".controls-row");
+                    const $ctrl = $(templateId).html();
+                    controlsRow.append($ctrl);
+
+                    // If this is an LED, immediately populate its dropdown
+                    if ($(templateId).attr("id") === "led-template") {
+                        updateLedValueSelect(controlsRow.find(".control[data-type=led]").last());
+                    }
+
+                    buildJSON();
+                });
+            }
+
+            addControl(".add-knob", "#knob-template");
+            addControl(".add-led", "#led-template");
+            addControl(".add-slider", "#slider-template");
+            addControl(".add-lcd", "#lcd-template");
+            addControl(".add-multi", "#multi-template");
+
+            // Move/remove controls
+            $("#controls").on("click", ".remove", function () {
+                $(this).closest(".control").remove();
+                buildJSON();
+            });
+            $("#controls").on("click", ".move-up", function () {
+                const c = $(this).closest(".control");
+                c.prev(".control").before(c);
+                buildJSON();
+            });
+            $("#controls").on("click", ".move-down", function () {
+                const c = $(this).closest(".control");
+                c.next(".control").after(c);
+                buildJSON();
+            });
+
+            // Row actions
+            $("#controls").on("click", ".row-remove", function () {
+                $(this).closest(".row").remove();
+                buildJSON();
+            });
+            $("#controls").on("click", ".row-up", function () {
+                const r = $(this).closest(".row");
+                r.prev(".row").before(r);
+                buildJSON();
+            });
+            $("#controls").on("click", ".row-down", function () {
+                const r = $(this).closest(".row");
+                r.next(".row").after(r);
+                buildJSON();
+            });
+
+            $("#editor, #controls").on("input change keyup", "input, select, textarea", buildJSON);
+            buildJSON();
+        });
+
+
+    // Sync values list to select options for knobs
+    $("#controls").on("input", ".ctrl-values-list", function() {
+        const $row = $(this).closest(".control");
+        const values = $(this).val().split(",").map(v => v.trim()).filter(v => v);
+        const $select = $row.find(".ctrl-value-select");
+        $select.empty();
+        values.forEach(v => $select.append(`<option>${v}</option>`));
+        buildJSON();
+    });
+
+    $("#json-output").on("input", function () {
+        const $err = $("#json-error");
+        try {
+            const parsed = JSON.parse($(this).val());
+            $err.text(""); // clear error if valid
+            syncUIFromJSON(parsed);
+        } catch (e) {
+            $err.text("Invalid JSON: " + e.message);
+        }
+    });
+    </script>
+
+
+
+<script>
+$("#editor, #controls").on("input change keyup", "input, select, textarea", function() {
+    buildJSON(); // triggers safe stringify and sends to parent
+});
+</script>
+
+
+
+<script>
+// Handle moderation flow
+$(function() {
+  let userRole = parent?.window?.currentUser?.role || "user";
+  // const allowedForUser = userRole === "admin" ? ["draft", "private", "reviewing", "template", "public"] : ["draft", "private"];
+  const allowedForUser = userRole === "admin" ? ["draft", "reviewing", "template", "public"] : ["draft"];
+
+
+  $("#pedal-published-options li").each(function() {
+    if (!allowedForUser.includes($(this).data("value"))) $(this).hide();
+  });
+
+  $("#pedal-published-options li").on("click", function() {
+    $("#pedal-published-button").text($(this).text());
+    buildJSON(); // always use .text().toLowerCase() for JSON
+  });
+
+  // Ask publication button
+  if (userRole !== "admin" && !$("#request-publication").length) {
+    $("#status-buttons").append(`<button id="request-publication" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L7,16,4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Zm-20.9,10L8.76,17H18V15H8.76L6.55,6.89,24.76,16Z"/>
+          </svg>
+          Ask publication
+        </button>`);
+
+    // SweetAlert2 confirmation
+    $("#request-publication").on("click", function() {
+      Swal.fire({
+        title: 'Ask for publication?',
+        text: "Do you want to submit this gear for review to be publicly available in the catalog?",
+        showCancelButton: true,
+        confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Yes, submit",
+        cancelButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>No, Cancel",
+        showCancelButton: true,
+        customClass: {
+            confirmButton: 'bx--btn bx--btn--primary askpub-swal-style',
+            cancelButton: 'bx--btn bx--btn--secondary askpub-swal-style'
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Update published status
+          $("#pedal-published-button").text("Reviewing");
+          buildJSON(); // update JSON with new status
+
+          Swal.fire({
+            title: 'Done!',
+            text: 'Click Save to finalize your submission.',
+            timer: 1000,
+            showConfirmButton: false
+          });
+        }
+      });
+    });
+  }
+});
+
+// Show verified checkbox only for admins
+$(function() {
+  const isAdmin = (parent?.window?.currentUser?.role || '').toLowerCase() === 'admin';
+  if (isAdmin) {
+    $('#verified-container').show();
+  }
+});
+</script>
+
+</body>
+
+</html>
