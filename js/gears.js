@@ -388,6 +388,14 @@ function initNavCatalog(userRole){
     setupCatalogObserver();
     loadNextCatalogPage();
   }
+
+  // ?create=1 — apre direttamente il builder (es. link da rigs "Can't find it?")
+  if (new URLSearchParams(window.location.search).get('create') === '1') {
+    // Aspetta che il DOM e gli script siano pronti
+    setTimeout(function () {
+      if (typeof createNewPedal === 'function') createNewPedal();
+    }, 800);
+  }
 }
 
 // ==================== CREATE NEW PEDAL ====================
