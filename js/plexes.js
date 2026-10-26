@@ -83,8 +83,41 @@ let currentPresetName = null;
 let isRestoringPreset = false;
 
 // ─── Guest Plex localStorage helpers ─────────────────────────────────────────
-const GUEST_PLEXES_KEY = 'guestPlexes';
-const GUEST_PLEX_MAX   = 5;
+const GUEST_PLEXES_KEY      = 'guestPlexes';
+const GUEST_PLEX_BASE         = 5;
+const GUEST_PLEX_MAX_CAP      = 10;
+const GUEST_PLEX_MAX_CAP_FULL = 20;   // unlocked after GUEST_PLEX_FULL_UNLOCK_AT plexes with gear
+const GUEST_PLEX_FULL_UNLOCK_AT = 8;  // number of plexes with gear needed to reach cap 20
+const GUEST_PLEX_MERIT_KEY    = 'guestPlexMerit';
+const GUEST_PLEX_MERIT_STEP   = 2;    // merit points needed per extra slot (up to cap 10)
+
+/**
+ * Returns the current guest slot limit.
+ * - Starts at GUEST_PLEX_BASE (5).
+ * - Grows by 1 for every GUEST_PLEX_MERIT_STEP merit points, up to GUEST_PLEX_MAX_CAP (10).
+ * - If the user has saved ≥ GUEST_PLEX_FULL_UNLOCK_AT plexes with gear, the cap jumps to
+ *   GUEST_PLEX_MAX_CAP_FULL (20).
+ */
+function getGuestPlexMax() {
+  // Check full-unlock condition: count plexes that have at least one gear
+  let plexesWithGear = 0;
+  try {
+    const raw = localStorage.getItem(GUEST_PLEXES_KEY);
+    const all = (raw ? JSON.parse(raw) : null) || [];
+    plexesWithGear = all.filter(p => {
+      if (!p.pedals) return false;
+      if (Array.isArray(p.pedals)) return p.pedals.length > 0;
+      return Object.keys(p.pedals).length > 0;
+    }).length;
+  } catch (e) {}
+
+  if (plexesWithGear >= GUEST_PLEX_FULL_UNLOCK_AT) return GUEST_PLEX_MAX_CAP_FULL;
+
+  let merit = 0;
+  try { merit = parseInt(localStorage.getItem(GUEST_PLEX_MERIT_KEY) || '0', 10) || 0; } catch (e) {}
+  const bonus = Math.floor(merit / GUEST_PLEX_MERIT_STEP);
+  return Math.min(GUEST_PLEX_BASE + bonus, GUEST_PLEX_MAX_CAP);
+}
 
 function getGuestPlexes() {
   try { return JSON.parse(localStorage.getItem(GUEST_PLEXES_KEY)) || []; }
@@ -101,7 +134,7 @@ function saveGuestPlexes(plexes) {
 /** Returns false if at limit, otherwise creates and returns the new plex object */
 function createGuestPlex(name, boardId, pedalsObject) {
   const plexes = getGuestPlexes();
-  if (plexes.length >= GUEST_PLEX_MAX) return false;
+  if (plexes.length >= getGuestPlexMax()) return false;
   const newPlex = {
     _id:         'guest_plex_' + Date.now(),
     preset_name: name,
@@ -1450,11 +1483,12 @@ async function createPreset() {
   // ── GUEST PATH ───────────────────────────────────────────────────────────
   if (!window.currentUser || window.currentUser.role === 'guest') {
     const existingCount = getGuestPlexes().filter(p => p.board_id === 'guest_board').length;
-    if (existingCount >= GUEST_PLEX_MAX) {
+    const guestPlexMax = getGuestPlexMax();
+    if (existingCount >= guestPlexMax) {
       Swal.fire({
         icon: 'warning',
         title: `${L.Plex} limit reached`,
-        text: `You can save up to ${GUEST_PLEX_MAX} ${L.Plexes} in local mode. Delete one to create a new one, or login to unlock unlimited ${L.Plexes}.`,
+        text: `You can save up to ${guestPlexMax} ${L.Plexes} in local mode. Delete one to create a new one, or login to unlock unlimited ${L.Plexes}.`,
         confirmButtonText: 'Ok',
         customClass: { confirmButton: 'bx--btn bx--btn--primary' },
         buttonsStyling: false
@@ -1489,7 +1523,7 @@ async function createPreset() {
     Swal.fire({
       icon: 'success',
       title: `${L.Plex} Created`,
-      text: `"${guestPresetName}" saved locally. (${existingCount + 1}/${GUEST_PLEX_MAX})`,
+      text: `"${guestPresetName}" saved locally. (${existingCount + 1}/${guestPlexMax})`,
       timer: 1200,
       showConfirmButton: false
     }).then(() => location.reload());

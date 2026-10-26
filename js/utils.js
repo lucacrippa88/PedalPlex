@@ -2472,6 +2472,11 @@ function resolveImageUrl(path) {
 // Record a named guest funnel event (increments a counter in localStorage).
 // Events are flushed and reset on the next ping.
 // Only runs for non-logged-in users; safe to call from any page.
+//
+// Merit-point events: 'preset_saved' and 'gear_added' each award 1 merit point,
+// which unlocks extra local Plex slots (see getGuestPlexMax in plexes.js).
+const GUEST_MERIT_EVENTS = new Set(['preset_saved', 'gear_added']);
+
 function recordGuestEvent(eventName) {
   if (localStorage.getItem('authToken')) return;
   try {
@@ -2480,6 +2485,15 @@ function recordGuestEvent(eventName) {
     events[eventName] = (events[eventName] || 0) + 1;
     localStorage.setItem('guest_events', JSON.stringify(events));
   } catch (e) {}
+
+  // Award a merit point for high-value actions
+  if (GUEST_MERIT_EVENTS.has(eventName)) {
+    try {
+      const MERIT_KEY = 'guestPlexMerit';
+      const current = parseInt(localStorage.getItem(MERIT_KEY) || '0', 10) || 0;
+      localStorage.setItem(MERIT_KEY, (current + 1).toString());
+    } catch (e) {}
+  }
 }
 
 // Anonymous Guest Statistics Tracker
