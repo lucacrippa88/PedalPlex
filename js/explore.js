@@ -228,8 +228,10 @@ function _showExploreStep1(prefillState = null) {
     preConfirm: () => {
       const selStyles = [...document.querySelectorAll(".explore-chip--style.explore-chip--active")].map(c => c.dataset.value);
       const selVibes  = [...document.querySelectorAll(".explore-chip--vibe.explore-chip--active")].map(c => c.dataset.value);
-      const expVal    = parseInt(document.getElementById("explorationSlider").value, 10);
-      const keyword   = document.getElementById("exploreKeyword").value.trim();
+      const sliderEl  = document.getElementById("explorationSlider");
+      const expVal    = sliderEl ? parseInt(sliderEl.value, 10) : 50;
+      const kwEl      = document.getElementById("exploreKeyword");
+      const keyword   = kwEl ? kwEl.value.trim() : "";
 
       if (!selStyles.length) {
         Swal.showValidationMessage("Pick at least one Style to continue.");
