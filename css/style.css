@@ -956,16 +956,25 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   /* Generic hide/show desktop*/
   .showDesktop { display: flex !important; }
   .showMobile { display: none !important; }
+  .showTablet { display: none !important; }
   .showBoth { display: flex !important; }
 
 /* =========================
    Mobile / Small screen adjustments
    ========================= */
+/* Tablet: 769px – 1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .showTablet  { display: inline-flex !important; }
+  .showDesktop { display: none !important; }
+  .showMobile  { display: none !important; }
+}
+
 @media (max-width: 768px) {
 
   /* Generic hide/show mobile */
   .showDesktop { display: none !important; }
   .showMobile { display: flex !important; }
+  .showTablet { display: none !important; }
   .showBoth { display: flex !important; }
   .showMobile.bx--btn--icon-only {
     width: 2.5rem;   /* 40px */

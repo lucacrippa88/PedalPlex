@@ -68,6 +68,14 @@ function initNavPedalboard(userRole) {
                 type="button" style="display:flex;align-items:center;gap:0.5rem;white-space:nowrap;max-width:none!important;">
           ${saveLabelDesktop}
         </button>
+        <button id="addGearsTriggerTablet" class="showTablet bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only"
+                type="button" aria-label="Add Gear">
+          ${SVG.addGear}
+        </button>
+        <button id="saveBtnTablet" class="showTablet bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
+                type="button" aria-label="${isGuest ? 'Save Rig Offline' : 'Save Rig'}">
+          ${isGuest ? SVG.check : SVG.save}
+        </button>
         <button id="addGearsTriggerMobile" class="showMobile bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only"
                 type="button" aria-label="Add Gear">
           ${SVG.addGear}
@@ -82,6 +90,11 @@ function initNavPedalboard(userRole) {
               type="button"
               style="display:flex;align-items:center;gap:0.5rem;max-width:none!important;">
             ${SVG.dots} Actions
+          </button>
+          <button id="pp-actions-btn-tablet"
+              class="showTablet bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only"
+              type="button" aria-label="Actions">
+            ${SVG.dots}
           </button>
           <button id="pp-actions-btn-mobile"
               class="showMobile bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only"
@@ -160,7 +173,7 @@ function initNavPedalboard(userRole) {
     document.head.appendChild(style);
   }
 
-  $(document).on('click', '#pp-actions-btn, #pp-actions-btn-mobile', function (e) {
+  $(document).on('click', '#pp-actions-btn, #pp-actions-btn-tablet, #pp-actions-btn-mobile', function (e) {
     e.stopPropagation();
     const menu = document.getElementById('pp-actions-menu');
     if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
@@ -196,7 +209,7 @@ function initNavPedalboard(userRole) {
   $("#closeMenu").on("click", function () { $("#fullscreenMenu").removeClass("active"); });
 
   // ── Add Gear wiring ────────────────────────────────────────────────────────
-  $("#addGearsTrigger, #addGearsTriggerMobile").on("click", function (e) {
+  $("#addGearsTrigger, #addGearsTriggerTablet, #addGearsTriggerMobile").on("click", function (e) {
     e.stopPropagation();
     window.openPedalSearch();
   });
@@ -496,8 +509,8 @@ function initNavPedalboard(userRole) {
   // ── updateRigsCTAState ────────────────────────────────────────────────────
   window.updateRigsCTAState = function (pedalCount) {
     const isEmpty = (!pedalCount || pedalCount === 0);
-    const $add  = $("#addGearsTrigger, #addGearsTriggerMobile");
-    const $save = $("#saveBtn, #saveBtnMobile");
+    const $add  = $("#addGearsTrigger, #addGearsTriggerTablet, #addGearsTriggerMobile");
+    const $save = $("#saveBtn, #saveBtnTablet, #saveBtnMobile");
     const $view = $("#viewPreset");
     if (isEmpty) { $add.removeClass('bx--btn--secondary bx--btn--tertiary').addClass('bx--btn--primary'); $save.addClass('rig-cta-subtle'); $view.hide(); }
     else         { $add.removeClass('bx--btn--primary bx--btn--tertiary').addClass('bx--btn--secondary'); $save.removeClass('rig-cta-subtle'); $view.show(); }
@@ -512,7 +525,8 @@ function initNavPedalboard(userRole) {
       if (window.allPedalboards?.length === 1) setupPedalboardDropdownAndRender();
     });
   } else {
-    $("#saveBtn").on("click",       function () { if (typeof savePedalboard === "function") savePedalboard(); });
-    $("#saveBtnMobile").on("click", function () { if (typeof savePedalboard === "function") savePedalboard(); });
+    $("#saveBtn").on("click",        function () { if (typeof savePedalboard === "function") savePedalboard(); });
+    $("#saveBtnTablet").on("click",  function () { if (typeof savePedalboard === "function") savePedalboard(); });
+    $("#saveBtnMobile").on("click",  function () { if (typeof savePedalboard === "function") savePedalboard(); });
   }
 }

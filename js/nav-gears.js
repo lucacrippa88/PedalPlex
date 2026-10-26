@@ -24,6 +24,12 @@ function renderNavBar(userRole) {
         <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
           <span class="menu-morph" aria-hidden="true"><i class="menu-morph__ham"></i><i class="menu-morph__logo"></i></span>
         </button>
+        <button id="toggleFilterBtnTablet" class="showTablet bx--btn bx--btn--secondary bx--btn--icon-only"
+                type="button" aria-label="Toggle search">
+          <svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+            <path d="M29 27.586l-7.552-7.552a11.018 11.018 0 1 0-1.414 1.414L27.586 29zM4 13a9 9 0 1 1 9 9 9.01 9.01 0 0 1-9-9z"/>
+          </svg>
+        </button>
         <div class="title">PedalPlex</div>
         <a href="/gears" class="subtitle" style="font-size: 1.25rem; color: #aaa; font-weight: 600; text-decoration:none">Gears</a>
       </div>
@@ -54,9 +60,9 @@ function renderNavBar(userRole) {
 
         <button id="createPedalBtn" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear" style="display: flex; align-items: center; gap: 0.5rem;">
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <path d="M16 4v24M4 16h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M27 22H5v2h22zM5 18h2v2H5zm4 0h14v2H9zm4-8h10v2H13zm-8 4h22v2H5zm0-4h2v2H5z"/>
           </svg>
-          Add gear
+          Create New Gear
         </button>
       </div>
     </header>
@@ -101,8 +107,8 @@ function renderNavBar(userRole) {
     }
   });
 
-  $("#toggleFilterBtnDesktop").on("click", function () {
-    // Desktop/tablet — toggling input nel flusso
+  // Tablet search button (left side) — same behaviour as desktop
+  $("#toggleFilterBtnTablet, #toggleFilterBtnDesktop").on("click", function () {
     const $input = $("#pedalFilterInput");
     if ($input.is(":visible")) {
       closeGearsSearch();
