@@ -381,15 +381,35 @@ function initNavCatalog(userRole){
 }
 
 // ==================== CREATE NEW PEDAL ====================
+// Guests must pass a reCAPTCHA (verified again by the server) before their gear is sent
+function askGuestCaptcha() {
+  return Swal.fire({
+    title: 'One last step',
+    html: '<p style="margin:0 0 12px;">Please confirm you are not a robot to submit your gear.</p><div id="gear-captcha" style="display:flex;justify-content:center;min-height:78px;"></div>',
+    showCancelButton: true,
+    confirmButtonText: 'Submit gear',
+    cancelButtonText: 'Cancel',
+    background: '#2e2e2e',
+    color: '#ffffff',
+    customClass: { confirmButton: 'bx--btn bx--btn--primary', cancelButton: 'bx--btn bx--btn--secondary' },
+    didOpen: () => {
+      if (typeof grecaptcha === 'undefined') { Swal.showValidationMessage('Verification unavailable, please try again later'); return; }
+      grecaptcha.ready(() => grecaptcha.render('gear-captcha', { sitekey: '6LerYkksAAAAAMbhqqezJ-JOvmUVyZkQMT9Q6fm1', theme: 'dark' }));
+    },
+    preConfirm: () => {
+      const t = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : '';
+      if (!t) { Swal.showValidationMessage('Please complete the verification'); return false; }
+      return t;
+    }
+  });
+}
+
 function createNewPedal() {
-  if (!window.currentUser || window.currentUser.role === "guest") {
-    Swal.fire('Access Denied', 'Guests cannot create pedals. Please log in.', 'warning');
-    return;
-  }
+  const isGuest = !window.currentUser || window.currentUser.role === "guest";
 
   Swal.fire({
     title: 'Gear Builder',
-    html: `<iframe src="create.html" style="width:100%; height:80vh; border:none;" id="swal-builder-iframe"></iframe>`,
+    html: `<iframe src="create.html" class="builder-iframe" style="width:100%; height:80vh; border:none;" id="swal-builder-iframe"></iframe>`,
     width: '100%',
     allowOutsideClick: false,
     allowEscapeKey: false,
@@ -401,6 +421,7 @@ function createNewPedal() {
     // denyButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>Delete Gear",
     cancelButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>Cancel",
     customClass: {
+      popup: 'builder-swal',
       confirmButton: 'bx--btn bx--btn--primary',
       denyButton: 'bx--btn bx--btn--danger',
       cancelButton: 'bx--btn bx--btn--secondary'
@@ -428,30 +449,39 @@ function createNewPedal() {
       }
       return validation.pedal;
     }
-  }).then(result => {
+  }).then(async result => {
     if (result.isConfirmed) {
       const newPedal = result.value;
-      newPedal.author = window.currentUser.username || "unknown";
-      newPedal.authorId = window.currentUser.userid || null;
+      newPedal.author = window.currentUser?.username || "unknown";
+      newPedal.authorId = window.currentUser?.userid || null;
       const token = localStorage.getItem('authToken');
+      const headers = { 'Content-Type': 'application/json' };
+
+      if (isGuest) {
+        // No account: credited to the site by the server, which also flags it and queues it for review
+        const cap = await askGuestCaptcha();
+        if (!cap.isConfirmed) return;
+        newPedal._captcha = cap.value;
+      } else {
+        headers['Authorization'] = 'Bearer ' + token;
+      }
 
       fetch('https://api.pedalplex.com/CREATE_GEAR.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
+        headers,
         body: JSON.stringify(newPedal)
       })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
           Swal.fire({
-            title: 'Created!',
+            title: isGuest ? 'Submitted!' : 'Created!',
+            text: isGuest ? 'Thanks! Your gear will appear in the catalog once it has been reviewed.' : undefined,
             icon: 'success',
             confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Ok",
             customClass: { confirmButton: 'bx--btn bx--btn--primary' }
           }).then(() => {
+            if (isGuest) return; // not visible until reviewed
             pedals.push({...newPedal, _id:data.id, _rev:data.rev, canEdit:true});
             catalogData.push({...newPedal, _id:data.id, _rev:data.rev, canEdit:true});
             renderCatalogIncremental([], 'catalog', window.currentUser.role || "user", 12);

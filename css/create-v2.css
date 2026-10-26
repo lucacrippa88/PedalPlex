@@ -874,7 +874,14 @@ body.v2 .start-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* ---- round 4 polish ---- */
 .tpl-status:empty { display: none; }
-body.v2 #status-buttons .bx--btn__icon { position: static; flex: none; }
+body.v2 #status-buttons .bx--btn__icon,
+body.v2 .swal2-actions .bx--btn__icon { position: static; flex: none; }
+/* popups opened inside the builder (e.g. "Ask for publication?"): icon next to the text, buttons apart */
+body.v2 .swal2-actions { gap: 10px; }
+body.v2 .swal2-actions .bx--btn {
+  display: inline-flex !important; align-items: center; justify-content: center;   /* swal2-styled sets display:block */
+  gap: 8px; min-height: 44px; padding: 8px 18px; font-size: 1rem; line-height: 1.25;
+}
 body.v2 #status-buttons .bx--btn { gap: 8px; }
 /* the pills below already show the status; the button stays in the DOM because buildJSON() reads its text */
 body.v2 #pedal-published-button { display: none; }

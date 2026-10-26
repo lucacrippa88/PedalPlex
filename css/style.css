@@ -965,6 +965,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
    ========================= */
 /* Tablet: 769px – 1024px */
 @media (min-width: 769px) and (max-width: 1024px) {
+  #createPedalBtn { display: none !important; } /* icon-only #createPedalBtnTablet takes its place */
   .showTablet  { display: inline-flex !important; }
   .showDesktop { display: none !important; }
   .showMobile  { display: none !important; }
@@ -2192,4 +2193,49 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 /* ── Tablet portrait: search input più stretto ── */
 @media (min-width: 769px) and (max-width: 1024px) {
   #pedalFilterInput { width: 180px !important; }
+}
+
+/* ── Gear builder popup (Create / Edit / Clone) on phones, tablets and short (landscape) screens: full screen, builder gets all the height ── */
+@media (max-width: 1024px), (max-height: 700px) {
+  .swal2-container:has(> .builder-swal) { padding: 0 !important; }
+  /* style.css makes everything content-box and SweetAlert2 sets display:grid inline → both need !important here */
+  .swal2-popup.builder-swal {
+    box-sizing: border-box !important;
+    display: flex !important; flex-direction: column; justify-content: flex-start; align-content: stretch;
+    width: 100vw !important; max-width: 100vw !important;
+    height: 100dvh !important; max-height: 100dvh !important; margin: 0 !important; padding: 8px 8px 10px;
+    border-radius: 0; overflow: hidden;
+  }
+  .builder-swal .swal2-title { font-size: 1.05rem; padding: 4px 8px 6px; margin: 0; }
+  .builder-swal .swal2-html-container { flex: 1 1 0; min-height: 0; margin: 0 !important; padding: 0 !important; overflow: hidden; display: block !important; }
+  /* the inline 80vh heights are replaced by "whatever is left" */
+  .builder-swal .builder-wrap { height: 100% !important; }
+  .builder-swal .builder-iframe,
+  .builder-swal #swal-builder-iframe { height: 100% !important; }
+  .builder-swal .swal2-actions {
+    flex: 0 0 auto; width: 100%; margin: 8px 0 0; padding: 0; gap: 8px; flex-wrap: wrap; justify-content: stretch;
+  }
+  .builder-swal .swal2-actions .bx--btn {
+    flex: 1 1 0; min-width: 0; max-width: none !important; margin: 0 !important; height: auto; min-height: 44px;
+    padding: 8px 10px !important; display: inline-flex !important; align-items: center; justify-content: center;
+    gap: 8px; font-size: .9375rem; line-height: 1.25; white-space: nowrap;
+  }
+  /* SweetAlert2 hides unused buttons with an inline display:none: keep them hidden despite the !important above */
+  .builder-swal .swal2-actions .bx--btn[style*="display: none"],
+  .builder-swal .swal2-footer .bx--btn[style*="display: none"] { display: none !important; }
+  .builder-swal .swal2-actions .bx--btn__icon { position: static; flex: none; }
+  .builder-swal .swal2-footer { flex: 0 0 auto; margin: 8px 0 0; padding: 8px 0 0; }
+  .builder-swal .swal2-footer .modal-footer, .builder-swal .swal2-footer .bx--btn { width: 100%; max-width: none !important; margin: 0 !important; }
+  .builder-swal .swal2-footer .bx--btn {
+    height: auto; min-height: 44px; padding: 8px 10px !important; display: inline-flex !important;
+    align-items: center; justify-content: center; gap: 8px; line-height: 1.25;
+  }
+  .builder-swal .swal2-footer .bx--btn__icon { position: static; flex: none; }
+  .builder-swal .swal2-validation-message { margin: 6px 0 0; padding: 8px; font-size: .875rem; }
+}
+
+/* Edit button on gear cards: bigger touch target on phones/tablets */
+@media (max-width: 1024px) {
+  .pedal-catalog .edit-btn { width: 32px; height: 32px; top: -10px; left: -8px; }
+  .pedal-catalog .edit-btn svg { width: 18px; height: 18px; }
 }

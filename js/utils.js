@@ -1219,7 +1219,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     if (pedalboardPage == false) {
       if (isAdmin || isAuthor || isTemplate) {
         const $editBtn = $("<button>")
-          .addClass("edit-btn showDesktop")
+          .addClass("edit-btn showBoth")
           .attr("title", "Edit pedal JSON")
           .data("pedal", pedal)
           .html(`

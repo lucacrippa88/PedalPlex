@@ -45,7 +45,7 @@ function setupEditPedalHandler(pedals) {
       Swal.fire({
         title: `Edit ${pedal._id}`,
         html: `
-          <div style="position:relative; width:100%; height:80vh;">
+          <div class="builder-wrap" style="position:relative; width:100%; height:80vh;">
             <div id="builder-spinner" style="position:absolute;top:0;left:0;width:100%;height:100%;
                 display:flex;align-items:center;justify-content:center;background:rgba(46,46,46,0.9);z-index:10;">
               <div class="bx--loading" style="width:40px;height:40px;">
@@ -73,6 +73,7 @@ function setupEditPedalHandler(pedals) {
           </svg>
           Clone Gear</button></span>`,
         customClass: {
+          popup: 'builder-swal',
           confirmButton: 'bx--btn bx--btn--primary',
           denyButton: 'bx--btn bx--btn--danger',
           cancelButton: 'bx--btn bx--btn--secondary'
@@ -110,13 +111,14 @@ function setupEditPedalHandler(pedals) {
             setTimeout(() => {
               Swal.fire({
                 title: `Clone of ${pedal._id}`,
-                html: `<iframe src="create.html" style="width:100%; height:80vh; border:none;" id="swal-duplicate-iframe"></iframe>`,
+                html: `<iframe src="create.html" class="builder-iframe" style="width:100%; height:80vh; border:none;" id="swal-duplicate-iframe"></iframe>`,
                 width: '100%',
                 showConfirmButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Save duplicate',
                 cancelButtonText: 'Cancel',
                 customClass: {
+                    popup: 'builder-swal',
                     confirmButton: 'bx--btn bx--btn--primary',
                     cancelButton: 'bx--btn bx--btn--secondary'
                 },

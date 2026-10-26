@@ -71,8 +71,17 @@ function renderNavBar(userRole) {
   `;
   $("body").prepend(navHtml);
 
+  // Guests can submit gears too (reviewed before publication): they get the same Create buttons as users
+  const createIconBtn = (id, cls) =>
+    $(`<button id="${id}" class="${cls} bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Create New Gear" title="Create New Gear"></button>`)
+      .append($("#createPedalBtn svg").first().clone());
+  $("#createPedalBtn").after(
+    createIconBtn('createPedalBtnTablet', 'showTablet'),
+    createIconBtn('createPedalBtnMobile', 'showMobile')
+  );
+  $(document).on('click', '#createPedalBtn, #createPedalBtnTablet, #createPedalBtnMobile', createNewPedal);
+
   if (userRole === "guest") {
-    $("#createPedalBtn").hide();
     const loginSvg = `<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/><path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/></svg>`;
     const loginBtnHtml = `
       <button id="loginBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Login" style="display: flex; align-items: center; gap: 0.5rem;">
@@ -84,10 +93,9 @@ function renderNavBar(userRole) {
       <button id="loginBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" aria-label="Login" title="Login">
         ${loginSvg}
       </button>`;
-    $("#createPedalBtn").after(loginBtnHtml);
+    $("#createPedalBtnMobile").after(loginBtnHtml);
     $(document).on("click", "#loginBtn, #loginBtnTablet, #loginBtnMobile", () => window.location.href = "login");
   } else {
-    $(document).on('click', '#createPedalBtn', createNewPedal);
     $(document).on('click', '#createOwnPedalBtn', createNewPedal);
   }
 
