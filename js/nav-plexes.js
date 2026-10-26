@@ -255,7 +255,10 @@ function initNavPreset() {
 
     switch (action) {
       case 'renameFolder':  document.getElementById('renameFolderBtn')?.click(); break;
-      case 'newTone':       document.getElementById('createPstBtn')?.click();    break;
+      case 'newTone':
+        if (typeof createPreset === 'function') createPreset();
+        else document.getElementById('createPstBtn')?.click();
+        break;
       case 'renamePreset':  document.getElementById('renamePresetBtn')?.click(); break;
       case 'addFolder':     document.getElementById('addFolderBtn')?.click();    break;
       case 'share':
