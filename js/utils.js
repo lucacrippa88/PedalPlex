@@ -1282,9 +1282,9 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
   const slug      = (typeof slugify === 'function') ? slugify(pedalId) : encodeURIComponent(pedalId);
   const detailUrl = '/gear/' + slug;
 
-  // Card width = pedal width + 20px card padding (10px each side)
-  const pedalPx  = (typeof getPedalWidth === 'function') ? parseInt(getPedalWidth(pedal.width), 10) : 190;
-  const cardWidth = (pedalPx + 20) + 'px';
+  // Card width = pedal width + card padding (10px each side) + thumb padding (12px each side)
+  const pedalPx   = (typeof getPedalWidth === 'function') ? parseInt(getPedalWidth(pedal.width), 10) : 190;
+  const cardWidth = (pedalPx + 20 + 24) + 'px';
 
   const $card = $('<div>').addClass('gear-card');
   $card[0].style.setProperty('--gear-card-w', cardWidth);

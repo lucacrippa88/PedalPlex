@@ -2276,6 +2276,7 @@ body.gears-page #catalog {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 12px;
   pointer-events: none;
 }
 
