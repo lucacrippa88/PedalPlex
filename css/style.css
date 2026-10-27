@@ -2404,17 +2404,38 @@ body.gears-page #catalog {
   max-width: none !important;
 }
 
-@media (max-width: 860px) {
-  body.gears-page #catalog {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 10px;
-  }
-  .gear-card.wide { grid-column: 1 / -1; }
+.gear-thumb::-webkit-scrollbar {
+  height: 4px;
+}
+.gear-thumb::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+}
+.gear-thumb::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 2px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   body.gears-page #catalog {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 8px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0 8px;
+    box-sizing: border-box;
+  }
+  body.gears-page .gear-card {
+    max-width: 100%;
+  }
+  body.gears-page .gear-thumb {
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 8px;
+  }
+  body.gears-page .gear-thumb-holder {
+    justify-content: flex-start;
+    min-width: min-content;
   }
 }

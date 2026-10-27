@@ -106,8 +106,22 @@ function renderNavBar(userRole) {
     const $inputM  = $('#pedalFilterInputMobile');
     const $inputD  = $('#pedalFilterInput');
     if (overlay) overlay.classList.remove('active');
+
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+      searchTimeout = null;
+    }
+
+    const hadQuery = (currentSearchQuery !== null) || ($inputM.val().trim() !== '') || ($inputD.val().trim() !== '');
+
     $inputM.val('');
     $inputD.hide().val('').css({ width: '120px' });
+
+    if (hadQuery) {
+      currentSearchQuery = null;
+      resetCatalogState();
+      loadNextCatalogPage();
+    }
     if (typeof updateGearsCatalogHeader === 'function') updateGearsCatalogHeader();
   }
 
@@ -140,21 +154,44 @@ function renderNavBar(userRole) {
   let searchTimeout = null;
 
   function triggerSearch(query) {
-    if (searchTimeout) clearTimeout(searchTimeout);
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+      searchTimeout = null;
+    }
+
+    const cleanQuery = (query || '').trim();
+
+    if (cleanQuery === '') {
+      // Se la barra è stata svuotata, ripristina subito il catalogo completo
+      if (currentSearchQuery !== null) {
+        currentSearchQuery = null;
+        resetCatalogState();
+        loadNextCatalogPage();
+        if (typeof updateGearsCatalogHeader === 'function') updateGearsCatalogHeader();
+      }
+      return;
+    }
+
     searchTimeout = setTimeout(function () {
+      currentSearchQuery = cleanQuery;
       resetCatalogState();
-      currentSearchQuery = query === "" ? null : query;
       loadNextCatalogPage();
       if (typeof updateGearsCatalogHeader === 'function') updateGearsCatalogHeader();
-    }, 500);
+    }, 400);
   }
 
-  $("#pedalFilterInputMobile").on("input", function () {
-    triggerSearch($(this).val().trim());
+  $("#pedalFilterInputMobile, #pedalFilterInput").on("input search keyup change", function () {
+    triggerSearch($(this).val());
   });
 
-  $("#pedalFilterInput").on("input", function () {
-    triggerSearch($(this).val().trim());
+  $(document).on("keydown", function (e) {
+    if (e.key === "Escape" || e.keyCode === 27) {
+      const isMobileSearchOpen = $('#gears-search-overlay').hasClass('active');
+      const isDesktopSearchOpen = $('#pedalFilterInput').is(':visible');
+      if (isMobileSearchOpen || isDesktopSearchOpen) {
+        closeGearsSearch();
+      }
+    }
   });
 
 }
