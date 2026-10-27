@@ -21,6 +21,10 @@
     cursor: not-allowed;
   }
   #preset {
+    /* spazio sopra la prima riga: la toolbar dei gear preset (sopra ogni gear)
+       e il tooltip con la descrizione non devono finire sopra ai dropdown dei Plex */
+    padding-top: 56px;
+    box-sizing: border-box;
     transition: transform 0.3s ease-in-out; /* smooth zoom */
     /* transform-origin: top left; */
     transform-origin: center center;

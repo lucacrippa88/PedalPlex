@@ -47,8 +47,20 @@
   // Snapshot dei controlli dei gear, preso dopo l'applicazione del Preset.
   let presetBaseline = null;
 
+  // Firma di TUTTI i gear in pagina. Non si usa collectPedalControlValues perché
+  // include solo i pedali con un LED acceso: le modifiche agli altri non risultavano "dirty".
   function presetSignature() {
     try {
+      if (typeof collectSinglePedalControlsMap === 'function') {
+        const sig = {};
+        const $pedals = $('.pedal-catalog[data-pedal-id]');
+        if (!$pedals.length) return null; // gear non ancora renderizzati: nessuna firma valida
+        $pedals.each(function () {
+          const id = $(this).data('pedal-id');
+          sig[id] = collectSinglePedalControlsMap($(this), id);
+        });
+        return JSON.stringify(sig);
+      }
       return JSON.stringify(collectPedalControlValues('preset'));
     } catch (e) {
       return null;
@@ -178,6 +190,15 @@
       el.click();
     });
   }, true);
+
+  // Mobile: iOS Safari ignora del tutto beforeunload, e Chrome Android non lo mostra
+  // con il pull-to-refresh. Finché ci sono modifiche non salvate si disattiva quindi il
+  // gesto "tira per ricaricare" (il controllo è fatto all'inizio di ogni tocco).
+  document.addEventListener('touchstart', () => {
+    const dirty = window.PPUnsaved.isDirty();
+    document.documentElement.style.overscrollBehaviorY = dirty ? 'contain' : '';
+    document.body.style.overscrollBehaviorY = dirty ? 'contain' : '';
+  }, { passive: true, capture: true });
 
   window.addEventListener('beforeunload', (e) => {
     if (leaving || !window.PPUnsaved.isDirty()) return;

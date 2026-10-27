@@ -2199,12 +2199,16 @@ function renderPresetList($ul, pedalId, presets) {
       $("body").append($tooltip);
 
       const offset = $info.offset();
+      // Se sopra non c'è spazio (prima riga), si apre sotto l'icona
+      const aboveTop = offset.top - $tooltip.outerHeight() - 5;
+      const tipTop = aboveTop < $(window).scrollTop() + 8 ? offset.top + $info.outerHeight() + 5 : aboveTop;
+      const tipLeft = Math.max(8, Math.min(offset.left, $(window).width() - 330 - 8));
       $tooltip.css({
         position: "absolute",
-        top: offset.top - $tooltip.outerHeight() - 5,
-        left: offset.left,
-        zIndex: 2000,
-        maxWidth: "330px",
+        top: tipTop,
+        left: tipLeft,
+        zIndex: 5000,
+        maxWidth: "min(330px, calc(100vw - 16px))",
         width: "330px",
         backgroundColor: "rgba(0,0,0,0.85)",
         color: "#fff",

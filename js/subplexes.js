@@ -51,13 +51,15 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
       $iconWrapper.append($tooltip);
       
       // Position tooltip relative to icon wrapper
+      // Il tooltip si apre SOTTO l'icona: sopra la prima riga finirebbe fuori vista
+      // (sotto l'header / sopra i dropdown dei Plex)
       $tooltip.css({
         position: "absolute",
-        bottom: "calc(100% + 6px)", // Position above the icon
+        top: "calc(100% + 6px)",
         left: "50%",
         transform: "translateX(-50%)", // Center horizontally
         zIndex: 2000,
-        maxWidth: "330px",
+        maxWidth: "min(330px, calc(100vw - 16px))",
         width: "330px",
         backgroundColor: "rgba(0,0,0,0.85)",
         color: "#fff",
@@ -68,6 +70,16 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
         whiteSpace: "normal",
         wordWrap: "break-word"
       });
+
+      // Mantiene il tooltip dentro la viewport (orizzontalmente)
+      const tipEl = $tooltip[0];
+      const rect = tipEl.getBoundingClientRect();
+      const margin = 8;
+      let shiftX = 0;
+      if (rect.left < margin) shiftX = margin - rect.left;
+      else if (rect.right > window.innerWidth - margin) shiftX = (window.innerWidth - margin) - rect.right;
+      if (shiftX) $tooltip.css("transform", `translateX(calc(-50% + ${shiftX}px))`);
+
       $iconWrapper.data("tooltipEl", $tooltip);
     })
     .on("mouseleave", function () {
@@ -187,7 +199,7 @@ function createCustomSubplex($pedalDiv) {
   updateSubplexStatus($pedalDiv);
 
   // 3️⃣ Apri modal per modificare nome, tag e descrizione
-  editCustomSubplexUI($pedalDiv);
+  editCustomSubplexUI($pedalDiv, { removeOnCancel: true });
 
   updateSubplexButtonsUI($pedalDiv);
 
@@ -368,7 +380,7 @@ function collectSinglePedalControls($pedalDiv) {
 
 
 
-function editCustomSubplexUI($pedalDiv) {
+function editCustomSubplexUI($pedalDiv, opts = {}) {
   const subplex = $pedalDiv.data('applied-subplex');
   if (!subplex) return;
 
@@ -473,7 +485,14 @@ function editCustomSubplexUI($pedalDiv) {
       };
     }
   }).then(async (result) => {
-    if (!result.isConfirmed || !result.value) return;
+    if (!result.isConfirmed || !result.value) {
+      // Modale chiuso/annullato su un gear preset appena creato: lo si scarta,
+      // altrimenti resterebbe un gear preset "vuoto" bloccato (con il + nascosto)
+      if (opts.removeOnCancel && $pedalDiv.data('applied-subplex') === subplex) {
+        clearAppliedSubplexState($pedalDiv);
+      }
+      return;
+    }
 
     const { name, styles, desc, savePrivate } = result.value;
 

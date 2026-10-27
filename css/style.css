@@ -1408,15 +1408,27 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 /* AREA SCROLLABILE */
 .preset-dropdown {
-  height: 140px;
+  height: auto;
+  max-height: 280px;
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   background: rgb(30, 30, 30);
   border-radius: 7px; /* 8px - 1.5px padding */
   list-style: none;
   margin: 0;
   padding: 4px 0;
   opacity: 1;
+}
+
+/* Mobile: lista più alta per scrollare comodamente */
+@media (max-width: 768px) {
+  .preset-dropdown {
+    max-height: 50vh;
+    max-height: 50dvh;
+  }
 }
 
 /* ITEMS */
