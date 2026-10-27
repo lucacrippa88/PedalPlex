@@ -105,7 +105,8 @@ $(document).ready(function () {
     const startYear = 2025;
     const currentYear = new Date().getFullYear();
     const yearText = currentYear > startYear ? `${startYear}–${currentYear}` : `${startYear}`;
-    const $yr = $("#year-range");
+    // [id=...] matches every element: the page footer and the menu footer share the same id
+    const $yr = $("[id='year-range']");
     if ($yr.length) {
       $yr.text(yearText);
       return true;
