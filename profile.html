@@ -961,6 +961,8 @@ function displayBadges(earnedBadges, badgeDefinitions, userStats) {
   
   // Ensure userStats exists
   userStats = userStats || {};
+
+  const isAdminUser = !!(window.currentUser && window.currentUser.role === 'admin');
   
   // Show ALL badges (earned and unearned)
   if (!badgeDefinitions || badgeDefinitions.length === 0) {
@@ -1162,6 +1164,7 @@ function displayBadges(earnedBadges, badgeDefinitions, userStats) {
           <p style="font-size: 12px; color: #525252; margin: 4px 0; line-height: 1.4;">${badgeDef.description}</p>
           ${dateInfo}
         </div>
+        ${isAdminUser ? `<small class="badge-admin-count" data-badge-id="${badgeDef.id}" style="display: block; text-align: center; margin-top: 8px; font-size: 12px; color: #525252;"></small>` : ''}
       </div>
     `;
     
@@ -1169,6 +1172,18 @@ function displayBadges(earnedBadges, badgeDefinitions, userStats) {
     });
     
     container.append(rowDiv);
+  });
+
+  updateAdminBadgeCounts();
+}
+
+// Admin only: fills "Achieved by N users" under each badge card
+function updateAdminBadgeCounts() {
+  const counts = window.adminBadgeCounts;
+  if (!counts) return;
+  $('.badge-admin-count').each(function() {
+    const n = counts[$(this).data('badge-id')] || 0;
+    $(this).text('Achieved by ' + n + (n === 1 ? ' user' : ' users'));
   });
 }
 
@@ -1669,6 +1684,9 @@ function loadAdminStats() {
       'Authorization': 'Bearer ' + localStorage.getItem('authToken')
     },
     success: function (d) {
+      window.adminBadgeCounts = d.badge_counts || null;
+      updateAdminBadgeCounts();
+
       var fmt = function(v) { return v !== null && v !== undefined ? v : '–'; };
       var pct = function(count, p) {
         return (count !== null && count !== undefined && p !== null && p !== undefined)
