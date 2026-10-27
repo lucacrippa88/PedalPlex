@@ -1286,32 +1286,20 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 
 
+/* Bordo gradiente sottile (stesso stile del dropdown preset, senza rotazione) */
 .pedalplex-glow {
-  position: relative;
-  border-radius: 14px;
-  padding: 8px; /* distanza tra glow e tabella */
-  z-index: 0;
-}
-
-/* Glow layer */
-.pedalplex-glow::before {
-  content: "";
-  position: absolute;
-  inset: -5px; /* estensione glow */
-  border-radius: 18px;
-
-  background: linear-gradient(
-    90deg,
+  border-radius: 11.5px;
+  padding: 1.5px; /* spessore del bordo gradiente */
+  background: linear-gradient(65deg,
     rgb(70, 41, 100),
     rgb(156, 84, 213),
-    rgb(94, 226, 240)
-  );
+    rgb(94, 226, 240));
+}
 
-  /* filter: blur(8px); */
-  opacity: 0.8;
-
-  z-index: -1;
-  pointer-events: none;
+.pedalplex-glow > table {
+  display: table;
+  margin: 0;
+  border-radius: 10px;
 }
 
 
