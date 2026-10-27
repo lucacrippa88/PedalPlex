@@ -878,6 +878,38 @@ document.getElementById("renamePresetBtn").addEventListener("click", async () =>
         confirmButton: 'bx--btn bx--btn--primary',
         denyButton: 'bx--btn bx--btn--danger'
       },
+      footer: `
+        <button id="duplicatePresetBtn" type="button" class="bx--btn bx--btn--tertiary">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
+              <path d="M28,8h2V4a2.0021,2.0021,0,0,0-2-2H24V4h4Z"></path><path d="M17 2H21V4H17z"></path><path d="M28 11H30V15H28z"></path><path d="M28,18v4H24V10a2.0023,2.0023,0,0,0-2-2H10V4h4V2H10A2.0023,2.0023,0,0,0,8,4V8H4a2.0023,2.0023,0,0,0-2,2V28a2.0023,2.0023,0,0,0,2,2H22a2.0023,2.0023,0,0,0,2-2V24h4a2.0023,2.0023,0,0,0,2-2V18ZM22,28H4V10H22Z"></path>
+          </svg>
+          Remix ${L.Plex}
+        </button>
+      `,
+      didOpen: () => {
+        const duplicateBtn = document.getElementById("duplicatePresetBtn");
+        if (duplicateBtn) {
+          duplicateBtn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+
+            const newName = document.getElementById("presetNameInput").value.trim();
+            if (!newName) {
+              Swal.showValidationMessage(`${L.Plex} name cannot be empty!`);
+              return;
+            }
+
+            const presetObj = window.presetMap[currentPresetId];
+            if (!presetObj) {
+              Swal.fire("Error", `${L.Plex} not found`, "error");
+              return;
+            }
+
+            await duplicatePreset(presetObj._id, newName);
+            Swal.close();
+          });
+        }
+      },
       preConfirm: () => {
         const newName = document.getElementById('presetNameInput').value.trim();
         if (!newName) { Swal.showValidationMessage(`${L.Plex} name cannot be empty!`); return false; }
@@ -1267,6 +1299,54 @@ async function duplicatePreset(presetId, newName, folderId) {
       return;
     }
 
+    // ── GUEST USER CLONE / REMIX ──────────────────────────────────────────
+    if (!window.currentUser || window.currentUser.role === 'guest') {
+      const existingCount = getGuestPlexes().filter(p => p.board_id === 'guest_board').length;
+      const guestPlexMax = getGuestPlexMax();
+
+      if (existingCount >= guestPlexMax) {
+        Swal.fire({
+          icon: 'info',
+          title: `${L.Plex} Limit Reached`,
+          text: `Guest users can save up to ${guestPlexMax} ${L.plexes}. Log in or create a free account to save unlimited ${L.plexes}!`,
+          showCancelButton: true,
+          confirmButtonText: 'Log in',
+          cancelButtonText: 'Cancel',
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--primary',
+            cancelButton: 'bx--btn bx--btn--secondary'
+          }
+        }).then(res => {
+          if (res.isConfirmed) window.location.href = '/login';
+        });
+        return;
+      }
+
+      const remixedName = `${newName} - Copy`;
+      const pedalsCopy = JSON.parse(JSON.stringify(original.pedals || {}));
+      const newGuestPlex = createGuestPlex(remixedName, 'guest_board', pedalsCopy);
+
+      if (!newGuestPlex) {
+        Swal.fire('Error', `Could not remix ${L.plex}`, 'error');
+        return;
+      }
+
+      localStorage.setItem('lastPresetId', newGuestPlex._id);
+
+      await Swal.fire({
+        icon: 'success',
+        title: `${L.Plex} Remixed!`,
+        text: `${L.Plex} remixed as "${remixedName}"`,
+        timer: 1000,
+        showConfirmButton: false,
+        allowOutsideClick: false
+      });
+
+      location.reload();
+      return;
+    }
+
+    // ── LOGGED-IN USER CLONE / REMIX ──────────────────────────────────────
     // Show loading UI
     Swal.fire({
       title: `Cloning ${L.Plex}...`,
@@ -1342,8 +1422,8 @@ async function duplicatePreset(presetId, newName, folderId) {
     // Show success briefly (auto-closes), await it, then reload
     await Swal.fire({
       icon: 'success',
-      title: `${L.Plex} Cloned!`,
-      text: `${L.Plex} cloned as "${duplicated.preset_name}"`,
+      title: `${L.Plex} Remixed!`,
+      text: `${L.Plex} remixed as "${duplicated.preset_name}"`,
       timer: 1000,
       showConfirmButton: false,
       allowOutsideClick: false
