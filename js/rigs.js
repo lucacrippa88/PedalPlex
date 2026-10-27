@@ -252,9 +252,6 @@ function initPedalboard(userRole) {
 
 
 
-  // alla fine tento di gestire eventuale gear in sospeso
-  handlePendingPedalAdd();
-
 }
 
 
@@ -1402,6 +1399,32 @@ function extractColorFromLogo(logoCss) {
 // -----------------------------------------------------------------------------
 // Handle pending pedal add (from gears page)
 function handlePendingPedalAdd() {
+  // Check guest notification flags
+  if (localStorage.getItem('pendingPedalAddSuccess')) {
+    localStorage.removeItem('pendingPedalAddSuccess');
+    window.PPUnsaved?.markRigClean();
+    Swal.fire({
+      icon: 'success',
+      title: 'Rig saved!',
+      text: 'Gear added to your Rig.',
+      timer: 1500,
+      showConfirmButton: false
+    });
+    return;
+  }
+
+  if (localStorage.getItem('pendingPedalAddDuplicate')) {
+    localStorage.removeItem('pendingPedalAddDuplicate');
+    Swal.fire({
+      icon: 'info',
+      title: 'Gear already in Rig',
+      text: 'This gear is already in your Rig.',
+      timer: 1800,
+      showConfirmButton: false
+    });
+    return;
+  }
+
   const pendingRaw = localStorage.getItem('pendingPedalAdd');
   if (!pendingRaw) return;
 
@@ -1424,10 +1447,12 @@ function handlePendingPedalAdd() {
 
   const lastBoardId = localStorage.getItem('lastPedalboardId');
   if (lastBoardId && window.allPedalboards?.length) {
-    const idx = window.allPedalboards.findIndex(b => b._id === lastBoardId);
+    const idx = window.allPedalboards.findIndex(b => String(b._id) === String(lastBoardId));
     if (idx !== -1) {
       targetIndex = idx;
       selectedBoardIndex = idx;
+      const dropdown = document.getElementById("pedalboardSelect");
+      if (dropdown) dropdown.value = idx.toString();
     }
   }
 
@@ -1437,22 +1462,32 @@ function handlePendingPedalAdd() {
   ) {
     console.error('No valid pedalboard found for pending add');
     localStorage.removeItem('pendingPedalAdd');
+    localStorage.removeItem('lastPedalboardId');
     return;
   }
 
   const board = window.allPedalboards[targetIndex];
 
   // Prevent duplicates
-  const alreadyExists = board.pedals.some(
+  const alreadyExists = (board.pedals || []).some(
     p => p.pedal_id === pending.pedal_id
   );
 
   if (alreadyExists) {
     localStorage.removeItem('pendingPedalAdd');
+    localStorage.removeItem('lastPedalboardId');
+    Swal.fire({
+      icon: 'info',
+      title: 'Gear already in Rig',
+      text: 'This gear is already in your Rig.',
+      timer: 1800,
+      showConfirmButton: false
+    });
     return;
   }
 
   // Add pedal
+  if (!board.pedals) board.pedals = [];
   board.pedals.push({
     pedal_id: pending.pedal_id,
     rotation: pending.rotation ?? 0,
@@ -1461,10 +1496,70 @@ function handlePendingPedalAdd() {
 
   // Sync runtime state
   window.pedalboard = structuredClone(board);
+  window.allPedalboards[targetIndex] = structuredClone(board);
 
-  // Cleanup
-  localStorage.removeItem('pendingPedalAdd');
+  // Fetch pedals including newly added pedal and render
+  const pedalIds = window.pedalboard.pedals.map(p => p.pedal_id);
+  fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ids: pedalIds })
+  })
+    .then(res => res.json())
+    .then(result => {
+      window.catalog = result.docs || [];
+      renderPedalboard();
+    })
+    .catch(err => console.error("Error fetching pedals for newly added gear:", err));
 
-  // Render
-  renderPedalboard();
+  // Save to database
+  const token = localStorage.getItem('authToken');
+  const userId = window.currentUser?.userid;
+
+  fetch('https://api.pedalplex.com/UPDATE_RIG.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({
+      user_id: userId,
+      pedalboard: board
+    })
+  })
+    .then(async response => {
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(`Invalid JSON response: ${text}`);
+      }
+      if (!response.ok) {
+        throw new Error(data.error || `Save failed: ${response.status}`);
+      }
+      return data;
+    })
+    .then(data => {
+      window.PPUnsaved?.markRigClean();
+      localStorage.removeItem('pendingPedalAdd');
+      localStorage.removeItem('lastPedalboardId');
+      Swal.fire({
+        icon: 'success',
+        title: 'Rig saved!',
+        text: 'Gear added to your Rig.',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    })
+    .catch(err => {
+      console.error('Error auto-saving Rig after adding gear:', err);
+      localStorage.removeItem('pendingPedalAdd');
+      localStorage.removeItem('lastPedalboardId');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error saving Rig',
+        text: err.message || 'Could not save Rig.',
+      });
+    });
 }

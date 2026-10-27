@@ -176,9 +176,19 @@ async function addPedalToRig(pedalId) {
     // console.log('MODE:', mode, 'BOARD:', boardIndex);
 
     if (mode === 'guest') {
-      const boards = JSON.parse(localStorage.getItem('guestPedalboard'));
-      boards[0].pedals.push({ pedal_id: pedalId, rotation: 0, row: 1 });
-      localStorage.setItem('guestPedalboard', JSON.stringify(boards));
+      const boards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
+      if (boards.length === 0) {
+        boards.push({ board_name: 'My Rig', pedals: [] });
+      }
+      const alreadyExists = (boards[0].pedals || []).some(p => p.pedal_id === pedalId);
+      if (!alreadyExists) {
+        if (!boards[0].pedals) boards[0].pedals = [];
+        boards[0].pedals.push({ pedal_id: pedalId, rotation: 0, row: 1 });
+        localStorage.setItem('guestPedalboard', JSON.stringify(boards));
+        localStorage.setItem('pendingPedalAddSuccess', 'true');
+      } else {
+        localStorage.setItem('pendingPedalAddDuplicate', 'true');
+      }
       if (typeof recordGuestEvent === 'function') recordGuestEvent('gear_added');
     }
 

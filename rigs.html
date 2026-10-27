@@ -255,7 +255,6 @@
     <script src="js/nav-rigs.js"></script>
     <script src="js/rigs-dnd-slots.js"></script>
     <script src="js/add-to-rig.js"></script>
-    <script src="js/rigs-pending-add.js"></script>
     <script src="js/tour.js"></script>
     <script>
     (function () {
@@ -589,19 +588,6 @@
   <script src="js/zoom.js"></script>
 
 
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const pending = JSON.parse(localStorage.getItem('pendingPedalAdd'));
-    if (!pending) return;
-
-    localStorage.removeItem('pendingPedalAdd');
-
-    if (window.pedalboard && window.pedalboard.pedals) {
-      window.pedalboard.pedals.push(pending);
-      renderPedalboard();
-    }
-  });
-  </script>
 
   <script>
   // ── Handle shared plex import (redirected from plexes-share.js) ──────────────
