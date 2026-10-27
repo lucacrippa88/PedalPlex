@@ -39,7 +39,7 @@
     {
       "id": "anniversary-creator",
       "name": "Anniversary Creator",
-      "description": "Create & Share a Plex in Summer 2026",
+      "description": "Create a Preset in Summer 2026",
       "image": "badges/anniversary_creator.png",
       "criteria": {
         "create_before": "2026-09-21T00:00:00Z"
@@ -194,8 +194,8 @@
     },
     {
       "id": "first-plex",
-      "name": "First Plex",
-      "description": "You created your first Plex!",
+      "name": "First Preset",
+      "description": "You created your first Preset!",
       "image": "badges/first_plex.png",
       "criteria": {
         "created_plexes": 1
@@ -205,8 +205,8 @@
     },
     {
       "id": "first-share",
-      "name": "First Shared Plex",
-      "description": "You shared your first Plex!",
+      "name": "First Shared Preset",
+      "description": "You shared your first Preset!",
       "image": "badges/first_share.png",
       "criteria": {
         "shared_plexes": 1
@@ -238,7 +238,7 @@
     },
     {
       "id": "plex-explorer",
-      "name": "Plex Explorer",
+      "name": "Preset Explorer",
       "description": "10+ Plexes created",
       "image": "badges/plex_explorer.png",
       "criteria": {
@@ -250,7 +250,7 @@
     },
     {
       "id": "plex-builder",
-      "name": "Plex Builder",
+      "name": "Preset Builder",
       "description": "25+ Plexes created",
       "image": "badges/plex_builder.png",
       "criteria": {
@@ -262,7 +262,7 @@
     },
     {
       "id": "plex-creator",
-      "name": "Plex Creator",
+      "name": "Preset Creator",
       "description": "50+ Plexes created",
       "image": "badges/plex_creator.png",
       "criteria": {
@@ -274,7 +274,7 @@
     },
     {
       "id": "plex-architect",
-      "name": "Plex Architect",
+      "name": "Preset Architect",
       "description": "100+ Plexes created",
       "image": "badges/plex_architect.png",
       "criteria": {
@@ -286,7 +286,7 @@
     },
     {
       "id": "plex-legend",
-      "name": "Plex Legend",
+      "name": "Preset Legend",
       "description": "200+ Plexes created",
       "image": "badges/plex_legend.png",
       "criteria": {
