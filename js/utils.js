@@ -392,6 +392,16 @@ function buildKnobSVG(style, color, borderColor, indicatorColor, sizeClass, rotD
 // ============================================================================
 
 
+// Rotates a knob and keeps its drop shadow fixed (shadow offset is counter-rotated via CSS vars)
+function setKnobRotation($knob, deg) {
+  const rad = deg * Math.PI / 180;
+  $knob.css({
+    transform: `rotate(${deg}deg)`,
+    "--knob-rs": Math.sin(rad).toFixed(4),
+    "--knob-rc": Math.cos(rad).toFixed(4)
+  });
+}
+
 // Utility function to slugify pedal names for URL generation
 function slugify(text) {
 
@@ -491,7 +501,7 @@ function renderPedalControls(pedal, $pedalDiv) {
         const rotation = initialRotation;
         knob.data("rotation", rotation);
         knob.data("control-value", control.value);
-        knob.css("transform", `rotate(${rotation}deg)`);
+        setKnobRotation(knob, rotation);
 
         let $valueLabel = null;
 
@@ -572,7 +582,7 @@ function renderPedalControls(pedal, $pedalDiv) {
             const newRotation = getRotationFromValue(control, control.value);
             knob.data("rotation", newRotation);
             knob.data("control-value", control.value);
-            knob.css("transform", `rotate(${newRotation}deg)`);
+            setKnobRotation(knob, newRotation);
             if ($valueLabel) $valueLabel.text(control.value);
 
             // if (!editMode && $tooltipText) {
