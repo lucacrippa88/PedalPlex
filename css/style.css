@@ -2194,6 +2194,14 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     margin-top: 0;
   }
 }
+/* ── Pagine gear singolo: etichette bottoni lunghe/corte ── */
+.btn-label-short { display: none; }
+@media (max-width: 768px) {
+  .btn-label-long  { display: none; }
+  .btn-label-short { display: inline; }
+}
+
+
 
 /* ── Tablet portrait: search input più stretto ── */
 @media (min-width: 769px) and (max-width: 1024px) {
