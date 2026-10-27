@@ -684,159 +684,154 @@ function savePedalboard() {
 }
 
 // Handle new pedalboard creation
-$(document).ready(function () {
-  $(document).on('click', '#createBtn', function () {
-    Swal.fire({
-      title: 'Build new Rig',
-      input: 'text',
-      inputPlaceholder: 'Enter Rig name...',
-      confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M23.1,16l6.3-6.3c0.8-0.8,0.8-2,0-2.8l-4.2-4.2c-0.8-0.8-2-0.8-2.8,0L16,8.9L9.7,2.6c-0.8-0.8-2-0.8-2.8,0L2.6,6.8 c-0.8,0.8-0.8,2,0,2.8L8.9,16L2,22.9V30h7.1l6.9-6.9l6.3,6.3c0.8,0.8,2,0.8,2.8,0l4.2-4.2c0.8-0.8,0.8-2,0-2.8L23.1,16z M23.8,4 L28,8.2l-6.3,6.3l-4.2-4.2L23.8,4z M8.2,28H4v-4.2l6.3-6.3l4.2,4.2L8.2,28z M23.8,28L4,8.2L8.2,4l3.5,3.5L9.6,9.6l1.4,1.4l2.1-2.1 l4.2,4.2l-2.1,2.1l1.4,1.4l2.1-2.1l4.2,4.2L21,20.9l1.4,1.4l2.1-2.1l3.5,3.5L23.8,28z'></path></svg>Build Rig",
-      // cancelButtonText: 'Cancel',
-      showCloseButton: true,
-      customClass: {
-        confirmButton: "bx--btn bx--btn--primary",
-        cancelButton: "bx--btn bx--btn--secondary",
-      },
-      inputValidator: (value) => {
-        if (!value) {
-          return 'You need to enter a Rig name!';
-        }
+function createNewPedalboard() {
+  Swal.fire({
+    title: 'Build new Rig',
+    input: 'text',
+    inputPlaceholder: 'Enter Rig name...',
+    confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M23.1,16l6.3-6.3c0.8-0.8,0.8-2,0-2.8l-4.2-4.2c-0.8-0.8-2-0.8-2.8,0L16,8.9L9.7,2.6c-0.8-0.8-2-0.8-2.8,0L2.6,6.8 c-0.8,0.8-0.8,2,0,2.8L8.9,16L2,22.9V30h7.1l6.9-6.9l6.3,6.3c0.8,0.8,2,0.8,2.8,0l4.2-4.2c0.8-0.8,0.8-2,0-2.8L23.1,16z M23.8,4 L28,8.2l-6.3,6.3l-4.2-4.2L23.8,4z M8.2,28H4v-4.2l6.3-6.3l4.2,4.2L8.2,28z M23.8,28L4,8.2L8.2,4l3.5,3.5L9.6,9.6l1.4,1.4l2.1-2.1 l4.2,4.2l-2.1,2.1l1.4,1.4l2.1-2.1l4.2,4.2L21,20.9l1.4,1.4l2.1-2.1l3.5,3.5L23.8,28z'></path></svg>Build Rig",
+    // cancelButtonText: 'Cancel',
+    showCloseButton: true,
+    customClass: {
+      confirmButton: "bx--btn bx--btn--primary",
+      cancelButton: "bx--btn bx--btn--secondary",
+    },
+    inputValidator: (value) => {
+      if (!value) {
+        return 'You need to enter a Rig name!';
       }
-    }).then((result) => {
-      if (result.isConfirmed) {
-  const boardName = result.value;
-  const userId = currentUser?.userid;
-
-  // --- GUEST USER CREATE ---
-  if (currentUser?.role === 'guest') {
-    const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/;
-
-    function removeEmojis(str) {
-      return str.replace(/[\p{So}\p{Cn}]/gu, '');
     }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const boardName = result.value;
+      const user = window.currentUser;
+      const userId = user?.userid;
 
-    // Sanitize input
-    let sanitizedBoardName = boardName.replace(forbiddenRegex, '');
-    sanitizedBoardName = removeEmojis(sanitizedBoardName);
-    sanitizedBoardName = sanitizedBoardName.replace(/\s+/g, ' ').trim();
-
-    if (sanitizedBoardName !== boardName) {
-      Swal.fire({
-        title: 'Invalid Rig name',
-        text: 'Rig name contains forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
-        icon: 'error',
-        customClass: {
-          confirmButton: 'bx--btn bx--btn--primary',
-        },
-        buttonsStyling: false,
-      });
-      return; // stop execution
-    }
-
-    const guestBoards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
-    const newBoard = { board_name: sanitizedBoardName, pedals: [] };
-    guestBoards.push(newBoard);
-    localStorage.setItem('guestPedalboard', JSON.stringify(guestBoards));
-    window.allPedalboards = guestBoards;
-    selectedBoardIndex = guestBoards.length - 1;
-    window.pedalboard = structuredClone(newBoard);
-    setupPedalboardDropdownAndRender();
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Rig created locally!',
-      timer: 1200,
-      showConfirmButton: false
-    });
-
-    $("#pedalboard-controls").css("display", "inline-flex");
-    return;
-  }
-
-
-  // --- LOGGED-IN USER CREATE (existing fetch) ---
-
-        const token = localStorage.getItem('authToken');
-
-        // --- Validation for board name ---
+      // --- GUEST USER CREATE ---
+      if (user?.role === 'guest') {
         const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/;
 
-        // Remove emojis as well
         function removeEmojis(str) {
           return str.replace(/[\p{So}\p{Cn}]/gu, '');
         }
-        // Sanitize board name
-        let sanitizedBoardName = boardName;
-        // Remove forbidden chars
-        sanitizedBoardName = sanitizedBoardName.replace(forbiddenRegex, '');
-        // Remove emojis
+
+        // Sanitize input
+        let sanitizedBoardName = boardName.replace(forbiddenRegex, '');
         sanitizedBoardName = removeEmojis(sanitizedBoardName);
-        // Optionally collapse multiple spaces
         sanitizedBoardName = sanitizedBoardName.replace(/\s+/g, ' ').trim();
+
         if (sanitizedBoardName !== boardName) {
-          // Update input field so user sees the cleaned value
-          const boardNameInput = document.getElementById('boardNameInput'); // replace with your actual input ID
-          if (boardNameInput) {
-            boardNameInput.value = sanitizedBoardName;
-          }
           Swal.fire({
             title: 'Invalid Rig name',
-            text: 'Rig name contains forbidden characters.  Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+            text: 'Rig name contains forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
             icon: 'error',
             customClass: {
               confirmButton: 'bx--btn bx--btn--primary',
             },
             buttonsStyling: false,
           });
-          return; // Stop further execution
+          return; // stop execution
         }
 
+        const guestBoards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
+        const newBoard = { board_name: sanitizedBoardName, pedals: [] };
+        guestBoards.push(newBoard);
+        localStorage.setItem('guestPedalboard', JSON.stringify(guestBoards));
+        window.allPedalboards = guestBoards;
+        selectedBoardIndex = guestBoards.length - 1;
+        window.pedalboard = structuredClone(newBoard);
+        setupPedalboardDropdownAndRender();
 
+        Swal.fire({
+          icon: 'success',
+          title: 'Rig created locally!',
+          timer: 1200,
+          showConfirmButton: false
+        });
 
-        fetch('https://api.pedalplex.com/CREATE_RIG.php', {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": "Bearer " + token
+        $("#pedalboard-controls").css("display", "inline-flex");
+        return;
+      }
+
+      // --- LOGGED-IN USER CREATE (existing fetch) ---
+      const token = localStorage.getItem('authToken');
+
+      // --- Validation for board name ---
+      const forbiddenRegex = /[$%*\\|()\[\]{}^£;<>]/;
+
+      // Remove emojis as well
+      function removeEmojis(str) {
+        return str.replace(/[\p{So}\p{Cn}]/gu, '');
+      }
+      // Sanitize board name
+      let sanitizedBoardName = boardName;
+      // Remove forbidden chars
+      sanitizedBoardName = sanitizedBoardName.replace(forbiddenRegex, '');
+      // Remove emojis
+      sanitizedBoardName = removeEmojis(sanitizedBoardName);
+      // Optionally collapse multiple spaces
+      sanitizedBoardName = sanitizedBoardName.replace(/\s+/g, ' ').trim();
+      if (sanitizedBoardName !== boardName) {
+        Swal.fire({
+          title: 'Invalid Rig name',
+          text: 'Rig name contains forbidden characters. Allowed: letters, numbers, spaces, and safe punctuation (/ , . - _ & \' " ! ? :).',
+          icon: 'error',
+          customClass: {
+            confirmButton: 'bx--btn bx--btn--primary',
           },
-          body: new URLSearchParams({
-            board_name: boardName,
-            user_id: userId
-          })
+          buttonsStyling: false,
+        });
+        return; // Stop further execution
+      }
+
+      fetch('https://api.pedalplex.com/CREATE_RIG.php', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer " + token
+        },
+        body: new URLSearchParams({
+          board_name: boardName,
+          user_id: userId
         })
-          .then(res => res.json())
-          .then(data => {
-            if (data.ok) {
-              Swal.fire({
-                icon: 'success',
-                title: 'Rig Created',
-                text: `Rig "${boardName}" has been created successfully.`,
-                timer: 1000,
-                showConfirmButton: false,
-                willClose: () => {
-                  location.reload();
-                }
-              });
-            } else {
-              Swal.fire({
-                icon: 'error',
-                title: 'Creation Failed',
-                text: data.error || 'Unknown error'
-              });
-            }
-          })
-          .catch(err => {
-            console.error("Fetch error:", err);
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.ok) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Rig Created',
+              text: `Rig "${boardName}" has been created successfully.`,
+              timer: 1000,
+              showConfirmButton: false,
+              willClose: () => {
+                location.reload();
+              }
+            });
+          } else {
             Swal.fire({
               icon: 'error',
-              title: 'Request Error',
-              text: err.message || 'Network or server error'
+              title: 'Creation Failed',
+              text: data.error || 'Unknown error'
             });
+          }
+        })
+        .catch(err => {
+          console.error("Fetch error:", err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Request Error',
+            text: err.message || 'Network or server error'
           });
+        });
 
-      }
-    });
+    }
   });
+}
+window.createNewPedalboard = createNewPedalboard;
+
+$(document).ready(function () {
+  $(document).on('click', '#createBtn', createNewPedalboard);
 });
 
 // Handle pedalboard rename

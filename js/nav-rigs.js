@@ -189,7 +189,11 @@ function initNavPedalboard(userRole) {
     document.getElementById('pp-actions-menu').style.display = 'none';
     switch (action) {
       case 'buildRig':
-        if (typeof createNewPedalboard === 'function') createNewPedalboard();
+        if (typeof window.createNewPedalboard === 'function') {
+          window.createNewPedalboard();
+        } else if (typeof createNewPedalboard === 'function') {
+          createNewPedalboard();
+        }
         break;
       case 'editRig':
         document.getElementById('renameBoardBtn')?.click();
