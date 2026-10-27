@@ -2452,13 +2452,13 @@ body.gears-page #catalog {
 }
 @media (max-width: 768px) {
   .hero-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
     line-height: 1.25;
     padding: 0 0.5rem;
   }
 }
 @media (max-width: 480px) {
   .hero-title {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
   }
 }
