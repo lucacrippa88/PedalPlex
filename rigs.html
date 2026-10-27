@@ -127,7 +127,7 @@
       #pedalboard .pedal-row:not(.amp-row) { flex-wrap:nowrap!important; width:auto!important; max-width:none!important; }
       #pedalboard .amp-row { width:100%!important; max-width:100%!important; box-sizing:border-box!important; flex-direction:column!important; align-items:flex-start!important; }
       #pedalboard .amp-row .pedal-empty-slot { width:100%!important; max-width:100%!important; height:auto!important; min-height:100px!important; box-sizing:border-box!important; }
-      #pedalboard .amp-row .pedal-wrapper { height:auto!important; box-sizing:border-box!important; }
+      #pedalboard .amp-row .pedal-wrapper { height:auto!important; box-sizing:border-box!important; justify-content:flex-start!important; }
       #pedalboard .row-wrap { flex-direction:column!important; align-items:flex-start!important; gap:4px!important; }
     }
 
@@ -539,6 +539,21 @@
         ampDiv.style.cssText = 'display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;';
         buildFixedRow(ampDiv, ampRow, pedalsByRow[ampRow], globalStarts[ampRow]);
         container.appendChild(ampDiv);
+
+        // Mobile: gli amplificatori (es. 400px) sono più larghi dello schermo.
+        // Allineati a sinistra e ridimensionati per stare nella larghezza disponibile.
+        if (window.innerWidth <= 768) {
+          var availW = ampDiv.clientWidth;
+          if (availW > 0) {
+            ampDiv.querySelectorAll('.pedal-wrapper').forEach(function (wrap) {
+              var pedalEl = wrap.firstElementChild;
+              if (!pedalEl) return;
+              pedalEl.style.flexShrink = '0';
+              var natW = parseFloat(pedalEl.style.width) || pedalEl.offsetWidth;
+              if (natW > availW) pedalEl.style.zoom = (availW / natW).toString();
+            });
+          }
+        }
       };
 
     })();

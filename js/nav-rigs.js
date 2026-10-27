@@ -247,9 +247,13 @@ function initNavPedalboard(userRole) {
       dropdown.style.top  = navH + 'px';
       dropdown.style.left = '0';
       dropdown.style.width = '100vw';
-      dropdown.style.maxHeight = 'calc(100vh - ' + navH + 'px)';
+      // 100vh sui browser mobile include la barra del browser: si usa dvh (altezza visibile reale)
+      // con fallback a vh, più un margine di sicurezza in fondo
+      const unit = (window.CSS && CSS.supports && CSS.supports('height', '100dvh')) ? '100dvh' : '100vh';
+      dropdown.style.maxHeight = 'calc(' + unit + ' - ' + navH + 'px - 16px)';
       dropdown.style.overflowY = 'auto';
       dropdown.style.boxSizing = 'border-box';
+      dropdown.style.paddingBottom = '16px';
     } else {
       const rect = input.getBoundingClientRect();
       dropdown.style.position = 'absolute';
@@ -258,6 +262,7 @@ function initNavPedalboard(userRole) {
       dropdown.style.width = Math.max(rect.width, 320) + 'px';
       dropdown.style.maxHeight = '';
       dropdown.style.overflowY = '';
+      dropdown.style.paddingBottom = '';
     }
   }
 
@@ -275,6 +280,29 @@ function initNavPedalboard(userRole) {
   let lazyPage = 1, lazyQuery = '', lazyLoading = false, lazyHasMore = true, lazySentinelObserver = null;
   const LAZY_LIMIT = 30, LAZY_SPINNER_ID = 'pedalDropdownLazySpinner';
 
+  // Conferma visiva (toast) dopo l'aggiunta di un gear
+  let addToastTimer = null;
+  function showAddedToast(name) {
+    let toast = document.getElementById('pp-added-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'pp-added-toast';
+      toast.style.cssText = 'position:fixed;left:50%;bottom:calc(1.5rem + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);' +
+        'max-width:calc(100vw - 2rem);padding:10px 16px;border-radius:6px;background:#262626;color:#fff;font-size:0.875rem;' +
+        'box-shadow:0 4px 16px rgba(0,0,0,0.4);border-left:4px solid #42be65;z-index:4000;pointer-events:none;' +
+        'text-align:center;word-break:break-word;';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = name + ' added to your rig';
+    toast.style.display = 'block';
+    clearTimeout(addToastTimer);
+    addToastTimer = setTimeout(() => { toast.style.display = 'none'; }, 1800);
+  }
+
+  const ICON_PLUS  = `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/></svg>`;
+  const ICON_CHECK = `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/></svg>`;
+  let addCooldownUntil = 0;
+
   function appendPedalItems(pedalsList, dropdown) {
     const authToken = localStorage.getItem('authToken');
     pedalsList.forEach(pedal => {
@@ -288,11 +316,18 @@ function initNavPedalboard(userRole) {
       btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm', 'pedal-dropdown-btn');
       btn.setAttribute('type', 'button');
       btn.setAttribute('aria-label', `Add ${pedal._id}`);
-      btn.innerHTML = `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/></svg>`;
+      btn.innerHTML = ICON_PLUS;
+      let busy = false;
 
       const handleAddPedal = async (e) => {
         e.stopPropagation();
         if (!window.pedalboard) return;
+        // Anti doppio-click: blocco per item (mentre in corso / cooldown) e globale breve
+        if (busy || Date.now() < addCooldownUntil) return;
+        busy = true;
+        addCooldownUntil = Date.now() + 600;
+        btn.disabled = true;
+        const releaseItem = () => { busy = false; btn.disabled = false; btn.innerHTML = ICON_PLUS; };
         if (!Array.isArray(window.pedalboard.pedals)) window.pedalboard.pedals = [];
 
         let pedalData = window.catalog.find(p => p._id === pedal._id);
@@ -305,8 +340,8 @@ function initNavPedalboard(userRole) {
             });
             const result = await res.json();
             if (result?.docs?.length > 0) { pedalData = result.docs[0]; window.catalog.push(pedalData); }
-            else return;
-          } catch (err) { console.error("Fetch error:", err); return; }
+            else { releaseItem(); return; }
+          } catch (err) { console.error("Fetch error:", err); releaseItem(); return; }
         }
 
         const targetRow = window._emptySlotRow || 1;
@@ -319,6 +354,11 @@ function initNavPedalboard(userRole) {
         window._emptySlotInsertAt = null;
         if (typeof window.deactivateSlot === 'function') window.deactivateSlot();
         if (typeof renderPedalboard === 'function') renderPedalboard();
+
+        // Conferma: icona check sul bottone + toast, poi riabilita dopo un breve cooldown
+        btn.innerHTML = ICON_CHECK;
+        showAddedToast(pedal._id);
+        setTimeout(releaseItem, 1200);
       };
 
       item.addEventListener('click', handleAddPedal);
@@ -345,6 +385,7 @@ function initNavPedalboard(userRole) {
 
   async function loadNextPage(dropdown) {
     if (lazyLoading || !lazyHasMore || lazyQuery) return;
+    const pageBefore = lazyPage;
     lazyLoading = true;
     const authToken = localStorage.getItem('authToken');
     let spinner = document.getElementById(LAZY_SPINNER_ID);
@@ -358,7 +399,7 @@ function initNavPedalboard(userRole) {
     dropdown.insertBefore(spinner, sentinel);
     try {
       lazyPage++;
-      const res = await fetch(`https://api.pedalplex.com/GET_CATALOG_LAZY.PHP?page=${lazyPage}&limit=${LAZY_LIMIT}`, {
+      const res = await fetch(`https://api.pedalplex.com/GET_CATALOG_LAZY.php?page=${lazyPage}&limit=${LAZY_LIMIT}`, {
         headers: { ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) }
       });
       const data = await res.json();
@@ -370,10 +411,21 @@ function initNavPedalboard(userRole) {
       } else {
         data.forEach(item => { if (item?._id && !window.catalog.some(p => p._id === item._id)) window.catalog.push(item); });
         if (data.length < LAZY_LIMIT) { lazyHasMore = false; if (lazySentinelObserver) { lazySentinelObserver.disconnect(); lazySentinelObserver = null; } sentinel.remove(); }
+        // Il sentinel deve restare SEMPRE in fondo: lo si sposta dopo i nuovi item
+        // e si ri-osserva per forzare un nuovo controllo di intersezione
+        // (altrimenti restava a metà lista e non scattava più il caricamento)
+        if (lazyHasMore) sentinel.remove();
         appendPedalItems(data.map(i => ({ _id: i._id })), dropdown);
-        if (lazyHasMore) getOrCreateLazySentinel(dropdown);
+        if (lazyHasMore) {
+          dropdown.appendChild(sentinel);
+          if (lazySentinelObserver) { lazySentinelObserver.unobserve(sentinel); lazySentinelObserver.observe(sentinel); }
+        }
       }
-    } catch (err) { console.error("Lazy load error:", err); spinner.remove(); }
+    } catch (err) {
+      console.error("Lazy load error:", err);
+      spinner.remove();
+      lazyPage = pageBefore; // permette di ritentare la stessa pagina
+    }
     lazyLoading = false;
   }
 
@@ -521,8 +573,11 @@ function initNavPedalboard(userRole) {
     const $add  = $("#addGearsTrigger, #addGearsTriggerTablet, #addGearsTriggerMobile");
     const $save = $("#saveBtn, #saveBtnTablet, #saveBtnMobile");
     const $view = $("#viewPreset");
-    if (isEmpty) { $add.removeClass('bx--btn--secondary bx--btn--tertiary').addClass('bx--btn--primary'); $save.addClass('rig-cta-subtle'); $view.hide(); }
-    else         { $add.removeClass('bx--btn--primary bx--btn--tertiary').addClass('bx--btn--secondary'); $save.removeClass('rig-cta-subtle'); $view.show(); }
+    // Il bottone + mobile resta sempre secondary (Carbon)
+    const $addCta = $add.not("#addGearsTriggerMobile");
+    $("#addGearsTriggerMobile").removeClass('bx--btn--primary bx--btn--tertiary').addClass('bx--btn--secondary');
+    if (isEmpty) { $addCta.removeClass('bx--btn--secondary bx--btn--tertiary').addClass('bx--btn--primary'); $save.addClass('rig-cta-subtle'); $view.hide(); }
+    else         { $addCta.removeClass('bx--btn--primary bx--btn--tertiary').addClass('bx--btn--secondary'); $save.removeClass('rig-cta-subtle'); $view.show(); }
   };
 
   window.updateNavFilterVisibility = function () {};

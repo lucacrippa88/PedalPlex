@@ -2159,6 +2159,10 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     min-height: 100px !important;
     box-sizing: border-box !important;
   }
+  /* Amp: allineato a sinistra (non centrato, altrimenti sborda da entrambi i lati) */
+  #pedalboard .amp-row .pedal-wrapper {
+    justify-content: flex-start !important;
+  }
 
   /* Remove-row: bottone sotto la riga */
   #pedalboard .row-wrap {
