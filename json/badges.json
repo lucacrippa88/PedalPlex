@@ -169,6 +169,18 @@
       "level": 0
     },
     {
+      "id": "pedalplex-flute",
+      "name": "PedalPlex Artist",
+      "description": "Flautist",
+      "image": "badges/pedalplex_flute.png",
+      "criteria": {
+        "instrument": "flute"
+      },
+      "visibility": "if_achieved",
+      "section": "membership",
+      "level": 0
+    },
+    {
       "id": "pedalplex-other",
       "name": "PedalPlex Artist",
       "description": "Other Instrumentalist",
