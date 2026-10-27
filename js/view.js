@@ -229,7 +229,11 @@ if (!window.catalogMap || !window.catalogMap[pedalId]) {
   /* ================= RENDER ================= */
   try {
     $('#gearName').text(pedalId);
-    await renderFullPedalboard(fakeBoard);
+    const role = window.currentUser?.role || (token ? 'user' : 'guest');
+    const $pedalDiv = renderPedal(pedal, role, false);
+    const $card = wrapGearCard(pedal, $pedalDiv, role, { hideDetails: true, hideEdit: true });
+    $('#preset').empty().append($card);
+    $('#presetSpinner').hide();
   } catch (err) {
     // console.error('[TEST-PLEX] Render error:', err);
     resultsDiv.textContent = 'Errore nel render: ' + err.message;

@@ -1286,15 +1286,19 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
 // ==================== Gear Catalog Card Wrapper ====================
 // Wraps a renderPedal() result into the new .gear-card layout (thumb + meta).
 // Used by gears.js / renderCatalogIncremental when on the gears page.
-function wrapGearCard(pedal, $pedalDiv, userRole) {
+function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
 
   const pedalId   = pedal._id || pedal.id;
   const slug      = (typeof slugify === 'function') ? slugify(pedalId) : encodeURIComponent(pedalId);
   const detailUrl = '/gear/' + slug;
 
-  // Card width = pedal width + card padding (10px each side) + thumb padding (12px each side)
-  const pedalPx   = (typeof getPedalWidth === 'function') ? parseInt(getPedalWidth(pedal.width), 10) : 190;
-  const cardWidth = (pedalPx + 20 + 24) + 'px';
+  const hideDetails = !!options.hideDetails;
+  const hideEdit    = !!options.hideEdit;
+
+  // Card width = pedal outer width (pedal width + 2*5px border + 2*12px padding) + card padding (2*10px) + thumb padding (2*12px)
+  const pedalPx         = (typeof getPedalWidth === 'function') ? parseInt(getPedalWidth(pedal.width), 10) : 190;
+  const pedalOuterWidth = pedalPx + 10 + 24; // 5px border each side + 12px padding each side
+  const cardWidth = (pedalOuterWidth + 20 + 24) + 'px';
 
   const $card = $('<div>').addClass('gear-card');
   $card[0].style.setProperty('--gear-card-w', cardWidth);
@@ -1353,8 +1357,6 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
   const $tagBar  = $('<div>').addClass('gear-tag-bar');
   const $actions = $('<div>').addClass('gear-actions');
 
-  // No category tags here anymore — they moved above
-
   // Status tag — shown only to admin (all), or non-admin logged-in for own draft/reviewing
   const showStatus = (function () {
     if (isGuest) return false;
@@ -1372,18 +1374,19 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
     };
     const s = statusMap[published] || { color: 'bx--tag--gray', letter: published[0].toUpperCase() };
     $tagBar.append($('<span>').addClass('bx--tag bx--tag--sm ' + s.color).text(s.letter));
+    $footer.append($tagBar);
   }
 
-  $footer.append($tagBar);
+  // Details link
+  if (!hideDetails) {
+    $actions.append(
+      $('<a>').addClass('gear-details-link').attr({ href: detailUrl })
+        .html('<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" fill="currentColor"><path d="M26,28H6a2,2,0,0,1-2-2V6A2,2,0,0,1,6,4H16V6H6V26H26V16h2V26A2,2,0,0,1,26,28Z"/><path d="M20 2 20 4 26.586 4 18 12.586 19.414 14 28 5.414 28 12 30 2 20 2z"/></svg>Details')
+    );
+  }
 
-  // Details link (always)
-  $actions.append(
-    $('<a>').addClass('gear-details-link').attr({ href: detailUrl })
-      .html('<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" fill="currentColor"><path d="M26,28H6a2,2,0,0,1-2-2V6A2,2,0,0,1,6,4H16V6H6V26H26V16h2V26A2,2,0,0,1,26,28Z"/><path d="M20 2 20 4 26.586 4 18 12.586 19.414 14 28 5.414 28 12 30 2 20 2z"/></svg>Details')
-  );
-
-  // Edit / Clone button — same permission logic as before
-  if (window.currentUser) {
+  // Edit / Clone button
+  if (!hideEdit && window.currentUser) {
     const isAdmin    = isAdminUser;
     const isAuthor   = isAuthorUser;
     const isTemplate = published === 'template';
@@ -1412,8 +1415,10 @@ function wrapGearCard(pedal, $pedalDiv, userRole) {
     }
   }
 
-  $footer.append($actions);
-  $meta.append($footer);
+  if ($actions.children().length > 0 || showStatus) {
+    if ($actions.children().length > 0) $footer.append($actions);
+    $meta.append($footer);
+  }
 
   $card.append($thumb).append($meta);
 

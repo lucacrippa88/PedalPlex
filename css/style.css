@@ -2283,6 +2283,7 @@ body.gears-page #catalog {
   transition: border-color 0.15s ease;
   /* larghezza dettata dal contenuto — set via JS con data-pedal-width */
   width: var(--gear-card-w);
+  max-width: 100%;
 }
 .gear-card:hover { border-color: #9C54D5; }
 
@@ -2293,12 +2294,15 @@ body.gears-page #catalog {
   align-items: center;
   justify-content: center;
   padding: 12px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .gear-thumb-holder {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
+  box-sizing: border-box;
 }
 /* Azzera margin inline impostato da renderPedal */
 .gear-thumb-holder > .pedal-catalog { margin: 0 !important; margin-bottom: 0 !important; }
@@ -2424,17 +2428,17 @@ body.gears-page #catalog {
     padding: 0 8px;
     box-sizing: border-box;
   }
-  body.gears-page .gear-card {
+  .gear-card {
     max-width: 100%;
   }
-  body.gears-page .gear-thumb {
+  .gear-thumb {
     justify-content: flex-start;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
-    padding: 10px 8px;
+    padding: 12px;
   }
-  body.gears-page .gear-thumb-holder {
+  .gear-thumb-holder {
     justify-content: flex-start;
     min-width: min-content;
   }
