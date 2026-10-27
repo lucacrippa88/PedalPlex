@@ -1288,8 +1288,8 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 /* Bordo gradiente sottile (stesso stile del dropdown preset, senza rotazione) */
 .pedalplex-glow {
-  border-radius: 11.5px;
-  padding: 1.5px; /* spessore del bordo gradiente */
+  border-radius: 12px;
+  padding: 2.5px; /* spessore del bordo gradiente */
   background: linear-gradient(65deg,
     rgb(70, 41, 100),
     rgb(156, 84, 213),
