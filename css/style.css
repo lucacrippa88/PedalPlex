@@ -2432,7 +2432,7 @@ body.gears-page #catalog {
     max-width: 100%;
   }
   .gear-thumb {
-    justify-content: flex-start;
+    justify-content: center;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;

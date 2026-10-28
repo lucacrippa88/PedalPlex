@@ -1295,10 +1295,10 @@ function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
   const hideDetails = !!options.hideDetails;
   const hideEdit    = !!options.hideEdit;
 
-  // Card width = pedal outer width (pedal width + 2*5px border + 2*12px padding) + card padding (2*10px) + thumb padding (2*12px)
-  const pedalPx         = (typeof getPedalWidth === 'function') ? parseInt(getPedalWidth(pedal.width), 10) : 190;
-  const pedalOuterWidth = pedalPx + 10 + 24; // 5px border each side + 12px padding each side
-  const cardWidth = (pedalOuterWidth + 20 + 24) + 'px';
+  // Card width = pedal outer width + card padding (2*10px) + thumb padding (2*12px)
+  // NOTE: Carbon sets box-sizing: border-box globally, so pedalPx already includes border and padding.
+  const pedalPx   = (typeof getPedalWidth === 'function') ? parseInt(getPedalWidth(pedal.width), 10) : 190;
+  const cardWidth = (pedalPx + 20 + 24) + 'px';
 
   const $card = $('<div>').addClass('gear-card');
   $card[0].style.setProperty('--gear-card-w', cardWidth);
