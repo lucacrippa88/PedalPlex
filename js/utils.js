@@ -2629,10 +2629,12 @@ setTimeout(() => {
   triggerGuestStatsPing();
 }, 3000);
 
-// Ensure every guest user has a default Rig and Plex in localStorage.
-// Runs silently on every page load; does nothing if they already exist.
+// Ensure guest users have default Rig and Plex in localStorage only when entering Rigs or Presets page.
 (function ensureGuestDefaults() {
   if (localStorage.getItem('authToken')) return; // logged-in user — skip
+  const path = window.location.pathname;
+  const isRigOrPlex = path.includes('/rigs') || path.includes('/plexes');
+  if (!isRigOrPlex) return;
 
   // --- Rig ---
   let boards = [];

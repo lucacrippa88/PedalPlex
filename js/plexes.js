@@ -132,7 +132,7 @@ function saveGuestPlexes(plexes) {
 }
 
 /** Returns false if at limit, otherwise creates and returns the new plex object */
-function createGuestPlex(name, boardId, pedalsObject) {
+function createGuestPlex(name, boardId, pedalsObject, isDefault = false) {
   const plexes = getGuestPlexes();
   if (plexes.length >= getGuestPlexMax()) return false;
   const newPlex = {
@@ -143,6 +143,9 @@ function createGuestPlex(name, boardId, pedalsObject) {
   };
   plexes.push(newPlex);
   saveGuestPlexes(plexes);
+  if (!isDefault && typeof recordGuestEvent === 'function') {
+    recordGuestEvent('preset_created');
+  }
   return newPlex;
 }
 
@@ -1322,6 +1325,7 @@ async function duplicatePreset(presetId, newName, folderId) {
         return;
       }
 
+      if (typeof recordGuestEvent === 'function') recordGuestEvent('create_preset_click');
       const remixedName = `${newName} - Copy`;
       const pedalsCopy = JSON.parse(JSON.stringify(original.pedals || {}));
       const newGuestPlex = createGuestPlex(remixedName, 'guest_board', pedalsCopy);
@@ -1559,6 +1563,7 @@ $(".pedal-catalog").each(function () {
 
 // Create preset function
 async function createPreset() {
+  if (typeof recordGuestEvent === 'function') recordGuestEvent('create_preset_click');
 
   // ── GUEST PATH ───────────────────────────────────────────────────────────
   if (!window.currentUser || window.currentUser.role === 'guest') {
@@ -1822,6 +1827,7 @@ async function createPreset() {
   // -------------------------------
   savePedalboard();
 }
+window.createPreset = createPreset;
 
 
 
