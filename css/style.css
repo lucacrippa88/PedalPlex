@@ -2281,13 +2281,12 @@ body.gears-page #catalog {
   gap: 8px;
   box-sizing: border-box;
   transition: border-color 0.15s ease;
-  /* larghezza dettata dal contenuto — set via JS con data-pedal-width */
-  width: var(--gear-card-w);
+  /* larghezza auto: si adatta al contenuto (thumb + pedal) */
   max-width: 100%;
 }
 .gear-card:hover { border-color: #9C54D5; }
 
-/* Thumb: occupa tutta la larghezza della card, altezza naturale del pedal */
+/* Thumb: si adatta al contenuto (pedal), aggiunge padding uniforme */
 .gear-thumb {
   border-radius: 6px;
   display: flex;
@@ -2295,7 +2294,6 @@ body.gears-page #catalog {
   justify-content: center;
   padding: 12px;
   box-sizing: border-box;
-  width: 100%;
 }
 
 .gear-thumb-holder {
@@ -2433,6 +2431,7 @@ body.gears-page #catalog {
   }
   .gear-thumb {
     justify-content: center;
+    max-width: calc(100vw - 36px); /* evita overflow della viewport su mobile */
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
