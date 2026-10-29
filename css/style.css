@@ -1472,6 +1472,11 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   transition: opacity 0.15s ease;
 }
 
+/* Drop shadow sul wrapper (non sul pedal): rimane fisso anche se il pedal è ruotato */
+.pedal-wrapper {
+  filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.4));
+}
+
 /* DESKTOP: mostra icona al hover del pedale */
 .pedal-wrapper:hover .preset-container {
   opacity: 1;

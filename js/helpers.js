@@ -332,19 +332,18 @@ function colorDistanceSq(a, b) {
 
 // HELPER
 function getBoxShadow(pedal, inside, insetIfNotFull) {
-  // const outerShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-  // const outerShadow = "0 7px 7px rgba(0, 0, 0, 0.6)";
-  const outerShadow = "0 6px 6px rgba(0, 0, 0, 0.4)";
+  // Outer drop shadow is handled by filter:drop-shadow on the .pedal-wrapper,
+  // so it stays fixed (never rotates) when the pedal is tilted.
 
   // Handle full inside
   if (inside === "full") {
     return pedal["inside-border"]
-      ? `${outerShadow}, inset 0 0 0 3px ${pedal["inside-border"]}`
-      : outerShadow;
+      ? `inset 0 0 0 3px ${pedal["inside-border"]}`
+      : "none";
   }
 
   // Handle partial inside
-  return `${outerShadow}, ${insetIfNotFull}`;
+  return insetIfNotFull;
 }
 
 
