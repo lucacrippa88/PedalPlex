@@ -2446,18 +2446,18 @@ body.gears-page #catalog {
 /* Hero section */
 .hero-title {
   font-weight: 700;
-  font-size: 2.25rem;
-  line-height: 1.25;
+  font-size: 3rem;
+  line-height: 1.2;
 }
 @media (max-width: 768px) {
   .hero-title {
-    font-size: 2rem;
+    font-size: 2.25rem;
     line-height: 1.25;
     padding: 0 0.5rem;
   }
 }
 @media (max-width: 480px) {
   .hero-title {
-    font-size: 1.8rem;
+    font-size: 1.9rem;
   }
 }

@@ -1157,11 +1157,11 @@ function _firePresetNudgeToast() {
       </svg>
     </div>
     <div class="pp-tour-nudge-body">
-      <p class="pp-tour-nudge-title">Save your Presets</p>
-      <p class="pp-tour-nudge-text">Your Rig is set: now start saving Presets on it!</p>
+      <p class="pp-tour-nudge-title">Save your Tones</p>
+      <p class="pp-tour-nudge-text">Store and recall your gear settings</p>
     </div>
     <button class="bx--btn bx--btn--primary bx--btn--sm pp-tour-nudge-cta" id="pp-preset-nudge-cta">
-      Go to Presets
+      Save your Tones
     </button>
   `;
   document.body.appendChild(nudge);
