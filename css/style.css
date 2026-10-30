@@ -1240,6 +1240,10 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   100% { left: 100%; }
 }
 
+@keyframes pp-spin {
+  to { transform: rotate(360deg); }
+}
+
 
 
 

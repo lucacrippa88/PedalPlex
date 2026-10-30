@@ -688,7 +688,7 @@ function savePedalboard() {
 // ------------------------------------------------------------------------------
 // AUTOSAVE — silenzioso, con debounce 800ms per non spammare l'API su drag veloci.
 // Per guest: salva in localStorage. Per loggati: chiama UPDATE_RIG senza reload.
-// Mostra un indicatore leggero nell'angolo (non un modale intrusivo).
+// Mostra uno spinner inline accanto al dropdown delle Rig.
 // ------------------------------------------------------------------------------
 let _autoSaveTimer = null;
 
@@ -712,7 +712,7 @@ function _doAutoSave() {
     const board = window.allPedalboards[selectedBoardIndex];
     localStorage.setItem('guestPedalboard', JSON.stringify([board]));
     window.PPUnsaved?.markRigClean();
-    _showAutosaveIndicator();
+    _setAutosaveState('saved');
     return;
   }
 
@@ -720,6 +720,8 @@ function _doAutoSave() {
   const token = localStorage.getItem('authToken');
   const userId = window.currentUser?.userid;
   const pedalboardToSave = window.allPedalboards[selectedBoardIndex];
+
+  _setAutosaveState('saving');
 
   fetch('https://api.pedalplex.com/UPDATE_RIG.php', {
     method: 'POST',
@@ -739,33 +741,50 @@ function _doAutoSave() {
   .then(() => {
     window.PPUnsaved?.markRigClean();
     maybeSchedulePresetNudge();
-    _showAutosaveIndicator();
+    _setAutosaveState('saved');
   })
   .catch(err => {
     console.warn('Autosave failed:', err);
-    _showAutosaveIndicator(true);
+    _setAutosaveState('error');
   });
 }
 
-function _showAutosaveIndicator(isError = false) {
-  let el = document.getElementById('pp-autosave-indicator');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'pp-autosave-indicator';
-    el.style.cssText = [
-      'position:fixed', 'bottom:72px', 'right:16px', 'z-index:9998',
-      'font-size:0.72rem', 'color:#aaa', 'background:rgba(30,30,30,0.85)',
-      'border:1px solid #444', 'border-radius:6px', 'padding:4px 10px',
-      'pointer-events:none', 'opacity:0',
-      'transition:opacity 0.25s ease'
-    ].join(';');
-    document.body.appendChild(el);
+// Gestisce i tre stati dell'indicator inline: 'saving' | 'saved' | 'error'
+function _setAutosaveState(state) {
+  const wrap    = document.getElementById('rig-autosave-indicator');
+  const spinner = document.getElementById('rig-autosave-spinner');
+  const check   = document.getElementById('rig-autosave-check');
+  const error   = document.getElementById('rig-autosave-error');
+  const label   = document.getElementById('rig-autosave-label');
+  if (!wrap) return;
+
+  clearTimeout(wrap._hideTimer);
+
+  // Mostra il wrapper
+  wrap.style.display = 'inline-flex';
+
+  if (state === 'saving') {
+    spinner.style.display = 'block';
+    check.style.display   = 'none';
+    error.style.display   = 'none';
+    label.textContent     = 'Saving…';
+    label.style.color     = '#aaa';
+  } else if (state === 'saved') {
+    spinner.style.display = 'none';
+    check.style.display   = 'block';
+    error.style.display   = 'none';
+    label.textContent     = 'Saved';
+    label.style.color     = '#42be65';
+    // Scompare dopo 2s
+    wrap._hideTimer = setTimeout(() => { wrap.style.display = 'none'; }, 2000);
+  } else if (state === 'error') {
+    spinner.style.display = 'none';
+    check.style.display   = 'none';
+    error.style.display   = 'block';
+    label.textContent     = 'Save failed';
+    label.style.color     = '#da1e28';
+    // Rimane visibile finché non c'è un altro autosave
   }
-  el.textContent = isError ? '⚠ Autosave failed' : '✓ Saved';
-  el.style.color  = isError ? '#da1e28' : '#aaa';
-  el.style.opacity = '1';
-  clearTimeout(el._hideTimer);
-  el._hideTimer = setTimeout(() => { el.style.opacity = '0'; }, 2000);
 }
 
 // Handle new pedalboard creation
