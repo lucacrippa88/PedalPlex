@@ -749,41 +749,50 @@ function _doAutoSave() {
   });
 }
 
-// Gestisce i tre stati dell'indicator inline: 'saving' | 'saved' | 'error'
+// Gestisce i tre stati dell'autosave direttamente nei bottoni save.
+// Desktop (#saveBtn): icona + testo.  Tablet/Mobile (icon-only): solo icona.
+const _SAVE_SVG = {
+  save:    `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M27 4H8L4 8v20a2 2 0 002 2h22a2 2 0 002-2V6a2 2 0 00-2-2zm0 24H6V8.8L8.8 6H10v8h14V6h2zm-6-18h2v6h-2z"/></svg>`,
+  check:   `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/></svg>`,
+  spinner: `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" style="animation:pp-spin 0.8s linear infinite;"><path d="M16 4V8A8 8 0 1 1 8 16H4A12 12 0 1 0 16 4Z"/></svg>`,
+  warn:    `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm-1 6h2v10h-2zm1 16a1.5 1.5 0 1 1 1.5-1.5A1.5 1.5 0 0 1 16 24z"/></svg>`,
+};
+
+let _saveBtnResetTimer = null;
+
 function _setAutosaveState(state) {
-  const wrap    = document.getElementById('rig-autosave-indicator');
-  const spinner = document.getElementById('rig-autosave-spinner');
-  const check   = document.getElementById('rig-autosave-check');
-  const error   = document.getElementById('rig-autosave-error');
-  const label   = document.getElementById('rig-autosave-label');
-  if (!wrap) return;
+  const btnDesktop = document.getElementById('saveBtn');
+  const btnTablet  = document.getElementById('saveBtnTablet');
+  const btnMobile  = document.getElementById('saveBtnMobile');
 
-  clearTimeout(wrap._hideTimer);
+  clearTimeout(_saveBtnResetTimer);
 
-  // Mostra il wrapper
-  wrap.style.display = 'inline-flex';
+  // Contenuto per ogni stato
+  const configs = {
+    saving: { icon: _SAVE_SVG.spinner, label: 'Saving…',   reset: false },
+    saved:  { icon: _SAVE_SVG.check,   label: 'Saved',      reset: true  },
+    error:  { icon: _SAVE_SVG.warn,    label: 'Save failed', reset: false },
+  };
+  const cfg = configs[state];
+  if (!cfg) return;
 
-  if (state === 'saving') {
-    spinner.style.display = 'block';
-    check.style.display   = 'none';
-    error.style.display   = 'none';
-    label.textContent     = 'Saving…';
-    label.style.color     = '#aaa';
-  } else if (state === 'saved') {
-    spinner.style.display = 'none';
-    check.style.display   = 'block';
-    error.style.display   = 'none';
-    label.textContent     = 'Saved';
-    label.style.color     = '#42be65';
-    // Scompare dopo 2s
-    wrap._hideTimer = setTimeout(() => { wrap.style.display = 'none'; }, 2000);
-  } else if (state === 'error') {
-    spinner.style.display = 'none';
-    check.style.display   = 'none';
-    error.style.display   = 'block';
-    label.textContent     = 'Save failed';
-    label.style.color     = '#da1e28';
-    // Rimane visibile finché non c'è un altro autosave
+  // Desktop: icona + testo
+  if (btnDesktop) btnDesktop.innerHTML = `${cfg.icon} ${cfg.label}`;
+
+  // Tablet / Mobile: solo icona (icon-only button)
+  if (btnTablet) btnTablet.innerHTML = cfg.icon;
+  if (btnMobile) btnMobile.innerHTML = cfg.icon;
+
+  // Dopo 2s torna all'etichetta originale
+  if (cfg.reset) {
+    _saveBtnResetTimer = setTimeout(() => {
+      const isGuest = !window.currentUser || window.currentUser.role === 'guest';
+      const origIcon = isGuest ? _SAVE_SVG.check : _SAVE_SVG.save;
+      const origLabel = isGuest ? 'Save Rig Offline' : 'Save Rig';
+      if (btnDesktop) btnDesktop.innerHTML = `${origIcon} ${origLabel}`;
+      if (btnTablet)  btnTablet.innerHTML  = origIcon;
+      if (btnMobile)  btnMobile.innerHTML  = origIcon;
+    }, 2000);
   }
 }
 
