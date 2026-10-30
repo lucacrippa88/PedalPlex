@@ -1125,7 +1125,7 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
             if (!allDefault) {
               Swal.fire({
                 title: 'Cannot delete',
-                text: 'This Rig has linked Plexes and cannot be deleted.',
+                text: 'This Rig has linked Presets and cannot be deleted.',
                 icon: 'warning',
                 confirmButtonText: 'OK',
                 customClass: {
