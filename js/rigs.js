@@ -489,6 +489,7 @@ function openEditPedalModal(pbPedal) {
               window.pedalboard.pedals.filter(p => p !== pbPedal);
 
             renderPedalboard();
+            autoSavePedalboard();
           }
         });
       });
@@ -560,6 +561,7 @@ function openEditPedalModal(pbPedal) {
       pbPedal.horiz = result.value.horiz;
 
       renderPedalboard();
+      autoSavePedalboard();
     }
 
   });
@@ -681,6 +683,89 @@ function savePedalboard() {
       text: err.message || err,
     });
   });
+}
+
+// ------------------------------------------------------------------------------
+// AUTOSAVE — silenzioso, con debounce 800ms per non spammare l'API su drag veloci.
+// Per guest: salva in localStorage. Per loggati: chiama UPDATE_RIG senza reload.
+// Mostra un indicatore leggero nell'angolo (non un modale intrusivo).
+// ------------------------------------------------------------------------------
+let _autoSaveTimer = null;
+
+function autoSavePedalboard() {
+  clearTimeout(_autoSaveTimer);
+  _autoSaveTimer = setTimeout(_doAutoSave, 800);
+}
+
+function _doAutoSave() {
+  if (
+    !window.allPedalboards ||
+    !Array.isArray(window.allPedalboards) ||
+    selectedBoardIndex === undefined ||
+    selectedBoardIndex < 0
+  ) return;
+
+  window.allPedalboards[selectedBoardIndex] = structuredClone(window.pedalboard);
+
+  // --- GUEST ---
+  if (!window.currentUser || window.currentUser.role === 'guest') {
+    const board = window.allPedalboards[selectedBoardIndex];
+    localStorage.setItem('guestPedalboard', JSON.stringify([board]));
+    window.PPUnsaved?.markRigClean();
+    _showAutosaveIndicator();
+    return;
+  }
+
+  // --- LOGGED-IN ---
+  const token = localStorage.getItem('authToken');
+  const userId = window.currentUser?.userid;
+  const pedalboardToSave = window.allPedalboards[selectedBoardIndex];
+
+  fetch('https://api.pedalplex.com/UPDATE_RIG.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({ user_id: userId, pedalboard: pedalboardToSave })
+  })
+  .then(async response => {
+    const text = await response.text();
+    let data;
+    try { data = JSON.parse(text); } catch { throw new Error('Invalid JSON: ' + text); }
+    if (!response.ok) throw new Error(data.error || 'Save failed: ' + response.status);
+    return data;
+  })
+  .then(() => {
+    window.PPUnsaved?.markRigClean();
+    maybeSchedulePresetNudge();
+    _showAutosaveIndicator();
+  })
+  .catch(err => {
+    console.warn('Autosave failed:', err);
+    _showAutosaveIndicator(true);
+  });
+}
+
+function _showAutosaveIndicator(isError = false) {
+  let el = document.getElementById('pp-autosave-indicator');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'pp-autosave-indicator';
+    el.style.cssText = [
+      'position:fixed', 'bottom:72px', 'right:16px', 'z-index:9998',
+      'font-size:0.72rem', 'color:#aaa', 'background:rgba(30,30,30,0.85)',
+      'border:1px solid #444', 'border-radius:6px', 'padding:4px 10px',
+      'pointer-events:none', 'opacity:0',
+      'transition:opacity 0.25s ease'
+    ].join(';');
+    document.body.appendChild(el);
+  }
+  el.textContent = isError ? '⚠ Autosave failed' : '✓ Saved';
+  el.style.color  = isError ? '#da1e28' : '#aaa';
+  el.style.opacity = '1';
+  clearTimeout(el._hideTimer);
+  el._hideTimer = setTimeout(() => { el.style.opacity = '0'; }, 2000);
 }
 
 // Handle new pedalboard creation

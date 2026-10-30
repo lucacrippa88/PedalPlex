@@ -468,7 +468,10 @@
     cleanupEmptyRows();
 
     if (typeof renderPedalboard === 'function') {
-      setTimeout(() => { renderPedalboard(); }, 30);
+      setTimeout(() => {
+        renderPedalboard();
+        if (typeof autoSavePedalboard === 'function') autoSavePedalboard();
+      }, 30);
     }
 
     resetState();
