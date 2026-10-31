@@ -19,3 +19,6 @@ generate_pages.py
 subplexes_to_import.json
 update_categories_db.py
 json/categories_backup_20261010_144249.json
+
+# Local config (contains real secrets)
+js/config.js
