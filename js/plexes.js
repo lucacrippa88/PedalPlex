@@ -142,10 +142,10 @@ function createGuestPlex(name, boardId, pedalsObject, isDefault = false) {
     pedals:      pedalsObject || {}
   };
   plexes.push(newPlex);
-  saveGuestPlexes(plexes);
   if (!isDefault && typeof recordGuestEvent === 'function') {
     recordGuestEvent('preset_created');
   }
+  saveGuestPlexes(plexes);
   return newPlex;
 }
 
@@ -434,7 +434,7 @@ async function initPreset() {
   // Carica i plex locali del guest — auto-crea un Plex di default se non ce ne sono
   let guestPlexes = getGuestPlexes().filter(p => p.board_id === "guest_board");
   if (guestPlexes.length === 0) {
-    const defaultPlex = createGuestPlex("My Tone", "guest_board", {});
+    const defaultPlex = createGuestPlex("My Tone", "guest_board", {}, true);
     if (defaultPlex) guestPlexes = [defaultPlex];
   }
   window.presets = guestPlexes;
@@ -1234,8 +1234,8 @@ async function savePreset(presetId, updateData) {
         }
       }
     }
+    if (typeof recordGuestEvent === 'function') recordGuestEvent('preset_saved');
     const ok = updateGuestPlex(presetId, updateData);
-    if (ok && typeof recordGuestEvent === 'function') recordGuestEvent('preset_saved');
     if (ok && window.presetMap && window.presetMap[presetId]) {
       Object.assign(window.presetMap[presetId], updateData);
     }
@@ -1603,7 +1603,6 @@ async function createPreset() {
       Swal.fire('Error', `Could not save ${L.plex} locally.`, 'error');
       return;
     }
-    if (typeof recordGuestEvent === 'function') recordGuestEvent('preset_created');
 
     Swal.fire({
       icon: 'success',
