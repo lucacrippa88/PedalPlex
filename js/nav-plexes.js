@@ -254,7 +254,10 @@ function initNavPreset() {
     if (menu) menu.style.display = 'none';
 
     switch (action) {
-      case 'renameFolder':  document.getElementById('renameFolderBtn')?.click(); break;
+      case 'renameFolder':
+        if (typeof window.openRenameFolderModal === 'function') window.openRenameFolderModal();
+        else document.getElementById('renameFolderBtn')?.click();
+        break;
       case 'newTone':
         if (typeof recordGuestEvent === 'function') recordGuestEvent('create_preset_click');
         if (typeof window.createPreset === 'function') window.createPreset();
@@ -262,7 +265,10 @@ function initNavPreset() {
         else document.getElementById('createPstBtn')?.click();
         break;
       case 'renamePreset':  document.getElementById('renamePresetBtn')?.click(); break;
-      case 'addFolder':     document.getElementById('addFolderBtn')?.click();    break;
+      case 'addFolder':
+        if (typeof window.openAddFolderModal === 'function') window.openAddFolderModal();
+        else document.getElementById('addFolderBtn')?.click();
+        break;
       case 'share':
         document.getElementById('sharePresetBtn')?.click();
         _refreshOnSwalClose();

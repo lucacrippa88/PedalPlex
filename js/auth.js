@@ -21,7 +21,6 @@ $(document).on('click', '#toggleForm', function (e) {
   );
 
   // Render reCAPTCHA solo se non è già stato renderizzato
-// 👉 SOLO qui gestisci reCAPTCHA
   if (!isLogin) {
     if (recaptchaWidgetId === null) {
       if (typeof grecaptcha !== 'undefined') {
@@ -49,36 +48,32 @@ $('#authForm').on('submit', function (e) {
   const username = $('#username').val().trim();
   const password = $('#password').val();
   const email = $('#email').val().trim();
-  const subscribe_newsletter = !isLogin ? $('#subscribeNewsletter').is(':checked') : undefined;
-
 
   const endpoint = isLogin
     ? 'https://api.pedalplex.com/USER_LOGIN_JWT.php'
     : 'https://api.pedalplex.com/USER_REGISTER_JWT.php';
 
-  // const data = isLogin
-  //   ? { username, password }
-  //   : { username, password, email };
   const data = isLogin
-  ? { username, password }
-  : { 
-      username, 
-      password, 
-      email, 
-      recaptcha: grecaptcha.getResponse(recaptchaWidgetId),
-      subscribe_newsletter: $('#subscribeNewsletter').is(':checked') // ✅ checkbox
-    };
-
-
+    ? { username, password }
+    : { 
+        username, 
+        password, 
+        email, 
+        recaptcha: (typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== null) ? grecaptcha.getResponse(recaptchaWidgetId) : '',
+        subscribe_newsletter: $('#subscribeNewsletter').is(':checked')
+      };
 
   // --- reCAPTCHA check only for registration ---
   if (!isLogin) {
-    const recaptchaResponse = grecaptcha.getResponse(recaptchaWidgetId);
+    const recaptchaResponse = (typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== null) ? grecaptcha.getResponse(recaptchaWidgetId) : '';
     if (!recaptchaResponse) {
       Swal.fire({
         icon: 'error',
         title: 'Verification required',
-        text: 'Please complete the reCAPTCHA to register.'
+        text: 'Please complete the reCAPTCHA to register.',
+        confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Ok",
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+        buttonsStyling: false
       });
       return;
     }
@@ -92,8 +87,6 @@ $('#authForm').on('submit', function (e) {
     dataType: 'json',
     data: JSON.stringify(data),
     success: function (res) {
-      // console.log('Response:', res);
-
       if (isLogin && res.token) {
         // Login success
         localStorage.setItem('authToken', res.token);
@@ -104,17 +97,10 @@ $('#authForm').on('submit', function (e) {
           method: 'POST',
           headers: { 'Authorization': 'Bearer ' + res.token },
           success: function(badgeRes) {
-            console.log('Badge API Response:', badgeRes);
-            
-            // Check if new badges were awarded
             if (badgeRes.badges_awarded && badgeRes.badges_awarded.length > 0) {
-              console.log('New badges awarded:', badgeRes.badges_awarded);
-              
-              // Store badges in localStorage to show on next page
               localStorage.setItem('pendingBadges', JSON.stringify(badgeRes.badges_awarded));
             }
             
-            // Show login success and redirect
             Swal.fire({
               icon: 'success',
               title: 'Login Successful',
@@ -122,14 +108,11 @@ $('#authForm').on('submit', function (e) {
               timer: 1000,
               showConfirmButton: false,
               allowOutsideClick: false,
-              allowEscapeKey: false,
-              customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-              buttonsStyling: false
+              allowEscapeKey: false
             });
             setTimeout(() => { window.location.href = 'plexes'; }, 1000);
           },
           error: function() {
-            // If badge check fails, still show login success
             Swal.fire({
               icon: 'success',
               title: 'Login Successful',
@@ -137,9 +120,7 @@ $('#authForm').on('submit', function (e) {
               timer: 1000,
               showConfirmButton: false,
               allowOutsideClick: false,
-              allowEscapeKey: false,
-              customClass: { confirmButton: 'bx--btn bx--btn--primary' },
-              buttonsStyling: false
+              allowEscapeKey: false
             });
             setTimeout(() => { window.location.href = 'plexes'; }, 1000);
           }
@@ -151,7 +132,7 @@ $('#authForm').on('submit', function (e) {
           icon: 'success',
           title: 'Registration successful',
           text: 'You can now log in.',
-          confirmButtonText: 'Continue',
+          confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Continue",
           customClass: { confirmButton: 'bx--btn bx--btn--primary' },
           allowOutsideClick: false,
           allowEscapeKey: false,
@@ -179,7 +160,7 @@ $('#authForm').on('submit', function (e) {
         icon: 'error',
         title: 'Error',
         text: msg,
-        confirmButtonText: 'OK',
+        confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Ok",
         customClass: { confirmButton: 'bx--btn bx--btn--danger' },
         buttonsStyling: false
       });
@@ -197,43 +178,47 @@ $(document).ready(function () {
       inputLabel: 'Enter your username or email',
       inputPlaceholder: 'Username or Email',
       showCancelButton: true,
-      confirmButtonText: 'Send reset link',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L6.69,15H18v2H6.69L4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Z'></path></svg>Send reset link",
+      cancelButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>Cancel",
+      buttonsStyling: false,
       customClass: {
         confirmButton: 'bx--btn bx--btn--primary',
         cancelButton: 'bx--btn bx--btn--secondary'
       },
       inputValidator: (value) => {
-        if (!value || !value.trim()) return 'You need to enter your username or email!';
+        if (!value || !value.trim()) return 'Please enter your username or email!';
         return null;
       }
     }).then((result) => {
       if (result.isConfirmed) {
+        const identifier = result.value.trim();
         $.ajax({
           url: 'https://api.pedalplex.com/USER_FORGOT_PASSWORD.php',
           method: 'POST',
           contentType: 'application/json',
-          data: JSON.stringify({ identifier: result.value.trim() }),
+          dataType: 'json',
+          data: JSON.stringify({ identifier: identifier, email: identifier }),
           success: function () {
             Swal.fire({
               title: 'Success',
               icon: 'success',
-              text: 'Password reset link sent to your email.',
-              timer: 1000,
+              text: 'If the account exists, a password reset link has been sent to your email.',
+              timer: 2500,
               showConfirmButton: false,
               allowOutsideClick: false,
               allowEscapeKey: false
             });
           },
           error: function (xhr) {
-            let errMsg = 'Unknown error';
+            let errMsg = 'Server error, please try again.';
             try { const errJson = JSON.parse(xhr.responseText); errMsg = errJson.error || errMsg; } catch {}
             Swal.fire({
               title: 'Error',
               text: errMsg,
               icon: 'error',
-              confirmButtonText: 'OK',
-              customClass: { confirmButton: 'bx--btn bx--btn--primary' }
+              confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Ok",
+              customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+              buttonsStyling: false
             });
           }
         });
@@ -263,17 +248,10 @@ function onGoogleLogin(response) {
           method: 'POST',
           headers: { 'Authorization': 'Bearer ' + res.token },
           success: function(badgeRes) {
-            console.log('Badge API Response:', badgeRes);
-            
-            // Check if new badges were awarded
             if (badgeRes.badges_awarded && badgeRes.badges_awarded.length > 0) {
-              console.log('New badges awarded:', badgeRes.badges_awarded);
-              
-              // Store badges in localStorage to show on next page
               localStorage.setItem('pendingBadges', JSON.stringify(badgeRes.badges_awarded));
             }
             
-            // Show login success and redirect
             Swal.fire({
               icon: "success",
               title: "You are logged in!",
@@ -285,7 +263,6 @@ function onGoogleLogin(response) {
             setTimeout(() => { window.location.href = "plexes"; }, 1000);
           },
           error: function() {
-            // If badge check fails, still show login success
             Swal.fire({
               icon: "success",
               title: "You are logged in!",
@@ -299,13 +276,27 @@ function onGoogleLogin(response) {
         });
         
       } else {
-        Swal.fire("Login error", res.error || "", "error");
+        Swal.fire({
+          title: "Login error",
+          text: res.error || "Unable to sign in with Google.",
+          icon: "error",
+          confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Ok",
+          customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+          buttonsStyling: false
+        });
       }
     },
     error: function(xhr) {
       let msg = "Server error";
       try { const json = JSON.parse(xhr.responseText); if (json.error) msg = json.error; } catch {}
-      Swal.fire("Error", msg, "error");
+      Swal.fire({
+        title: "Error",
+        text: msg,
+        icon: "error",
+        confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Ok",
+        customClass: { confirmButton: 'bx--btn bx--btn--primary' },
+        buttonsStyling: false
+      });
     }
   });
 }
