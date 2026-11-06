@@ -44,47 +44,35 @@ function renderAppliedPresetInfo($pedalDiv, subplex) {
   $iconWrapper.off("mouseenter mouseleave")
     .on("mouseenter", function () {
       // Safe description (no HTML injection)
-      const safeDescription = decodeHTMLEntities(description);
+      const safeDescription = typeof decodeHTMLEntities === 'function' ? decodeHTMLEntities(description) : description;
       const $tooltip = $(`<div class="preset-tooltip-popup"></div>`).text(safeDescription);
 
-      // Append tooltip directly to the icon wrapper (inside zoomed container)
-      $iconWrapper.append($tooltip);
-      
-      // Position tooltip relative to icon wrapper
-      // Il tooltip si apre SOTTO l'icona: sopra la prima riga finirebbe fuori vista
-      // (sotto l'header / sopra i dropdown dei Plex)
-      $tooltip.css({
-        position: "absolute",
-        top: "calc(100% + 6px)",
-        left: "50%",
-        transform: "translateX(-50%)", // Center horizontally
-        zIndex: 2000,
-        maxWidth: "min(330px, calc(100vw - 16px))",
-        width: "330px",
-        backgroundColor: "rgba(0,0,0,0.85)",
-        color: "#fff",
-        padding: "6px 8px",
-        borderRadius: "4px",
-        fontSize: "0.85rem",
-        pointerEvents: "none",
-        whiteSpace: "normal",
-        wordWrap: "break-word"
-      });
+      // Append directly to body so it is not confined to the pedal's stacking context
+      $("body").append($tooltip);
 
-      // Mantiene il tooltip dentro la viewport (orizzontalmente)
-      const tipEl = $tooltip[0];
-      const rect = tipEl.getBoundingClientRect();
-      const margin = 8;
-      let shiftX = 0;
-      if (rect.left < margin) shiftX = margin - rect.left;
-      else if (rect.right > window.innerWidth - margin) shiftX = (window.innerWidth - margin) - rect.right;
-      if (shiftX) $tooltip.css("transform", `translateX(calc(-50% + ${shiftX}px))`);
+      const offset = $iconWrapper.offset();
+      const iconWidth = $iconWrapper.outerWidth() || 12;
+      const iconHeight = $iconWrapper.outerHeight() || 12;
+      const tipWidth = $tooltip.outerWidth() || 330;
+
+      let left = offset.left + (iconWidth / 2) - (tipWidth / 2);
+      left = Math.max(8, Math.min(left, $(window).width() - tipWidth - 8));
+      let top = offset.top + iconHeight + 6;
+
+      $tooltip.css({
+        top: `${top}px`,
+        left: `${left}px`
+      });
 
       $iconWrapper.data("tooltipEl", $tooltip);
     })
     .on("mouseleave", function () {
       const $tooltip = $iconWrapper.data("tooltipEl");
-      if ($tooltip) $tooltip.remove();
+      if ($tooltip) {
+        $tooltip.remove();
+        $iconWrapper.removeData("tooltipEl");
+      }
+      $(".preset-tooltip-popup").remove();
     });
 
   // Tags

@@ -1479,12 +1479,36 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 /* Drop shadow sul wrapper (non sul pedal): rimane fisso anche se il pedal è ruotato */
 .pedal-wrapper {
   filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.4));
+  position: relative;
 }
 
-/* DESKTOP: mostra icona al hover del pedale */
+/* DESKTOP: mostra icona al hover del pedale e alza z-index */
+.pedal-wrapper:hover {
+  z-index: 50;
+}
+
 .pedal-wrapper:hover .preset-container {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Tooltip popup per descrizioni SubPlex / Gear Presets */
+.preset-tooltip-popup {
+  position: absolute;
+  z-index: 10000;
+  max-width: min(330px, calc(100vw - 16px));
+  width: 330px;
+  background-color: rgba(22, 22, 22, 0.95);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  pointer-events: none;
+  white-space: normal;
+  word-wrap: break-word;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 
