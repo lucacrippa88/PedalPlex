@@ -262,6 +262,11 @@ function loadNextCatalogPage(extraParams = {}) {
     params.push("page=" + currentPage);
     params.push("limit=100");
 
+    // ?sort=latest (e.g. from the "Latest gear added" notification): newest publications first
+    if (new URLSearchParams(window.location.search).get("sort") === "latest") {
+      params.push("sort=latest");
+    }
+
     if (currentCategory && currentCategory !== "all") {
       params.push("category=" + encodeURIComponent(currentCategory));
     }
