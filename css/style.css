@@ -1038,7 +1038,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   padding: 15px 20px;
   background-color: #2e2e2e;
   box-sizing: border-box;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: center;
 }
 
@@ -1272,6 +1272,12 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     max-width: none !important;
     flex-wrap: nowrap !important;
   }
+}
+
+/* Rigs: rows stay centered at every width, like Plexes (#preset gets the same below).
+   The container is at least as wide as its widest row, so centering never clips. */
+@media (max-width: 1024px) {
+  #pedalboard { align-items: center !important; }
 }
 
 /* Banner non deve espandersi a max-content su tablet */
@@ -2201,16 +2207,21 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     min-height: 100px !important;
     box-sizing: border-box !important;
   }
-  /* Amp: allineato a sinistra (non centrato, altrimenti sborda da entrambi i lati) */
+  /* Amp: centrato come in Plexes (il pedale viene scalato per stare nella larghezza) */
   #pedalboard .amp-row .pedal-wrapper {
-    justify-content: flex-start !important;
+    justify-content: center !important;
   }
 
   /* Remove-row: bottone sotto la riga */
   #pedalboard .row-wrap {
     flex-direction: column !important;
-    align-items: flex-start !important;
+    align-items: center !important;
     gap: 4px !important;
+  }
+  #pedalboard .row-wrap > .remove-row-btn {
+    position: static !important;
+    transform: none !important;
+    margin: 0 !important;
   }
 }
 
@@ -2616,9 +2627,9 @@ html[data-theme="light"] .pedal-empty-slot:hover { color: #161616; }
 }
 
 /* Light theme: inline white text used on profile / gears */
-html[data-theme="light"] [style*="color: #fff"]:not([style*="background"]),
-html[data-theme="light"] [style*="color:#fff"]:not([style*="background"]),
-html[data-theme="light"] [style*="color: #ffffff"]:not([style*="background"]) { color: #161616 !important; }
+html[data-theme="light"] [style*="color: #fff"]:not([style*="background"]):not(.pedal-catalog *, .pedal *),
+html[data-theme="light"] [style*="color:#fff"]:not([style*="background"]):not(.pedal-catalog *, .pedal *),
+html[data-theme="light"] [style*="color: #ffffff"]:not([style*="background"]):not(.pedal-catalog *, .pedal *) { color: #161616 !important; }
 html[data-theme="light"] #admin-preview-inner { background: #ffffff; }
 html[data-theme="light"] #admin-preview-close { color: #161616; }
 html[data-theme="light"] .admin-user-row { border-bottom-color: rgba(0,0,0,0.1); }
@@ -2653,3 +2664,12 @@ html[data-theme="light"] .pedal-share-icon { color: #161616; }
 html[data-theme="light"] .discord-card { background: #ffffff !important; border-color: #d0d0d0 !important; }
 html[data-theme="light"] .discord-card .discord-card-title { color: #161616 !important; }
 html[data-theme="light"] .discord-card .discord-card-text { color: #525252 !important; }
+
+/* ============================================================
+   GEAR GRAPHICS ARE THEME-INDEPENDENT
+   Pedals/amps must look identical in dark and light. Their text inherits `color` from <body>,
+   which changes with the theme, so it is pinned to the dark-theme value here.
+   (Page-level overlays like .pedal-author / .pedal-share-icon keep their own light rules.)
+   ============================================================ */
+html[data-theme="light"] .pedal-catalog,
+html[data-theme="light"] .pedal { color: #fff; }

@@ -83,17 +83,12 @@
     wrapper.innerHTML = buildHtml();
 
     if (bar) {
+      // The bar is right-aligned (see .zoom-controls). Settings is always the last (rightmost)
+      // item, after the zoom buttons.
       // rigs: the right-aligned group already exists; append to it
-      // plexes: zoom buttons sit directly in the bar -> Settings goes first, pushed to the
-      // right, so the zoom icons follow it on the right side
+      // plexes: zoom buttons sit directly in the bar; append after them
       const group = bar.querySelector(':scope > div');
-      if (group) {
-        group.appendChild(wrapper);
-      } else {
-        wrapper.style.marginLeft = 'auto';
-        const firstZoom = bar.querySelector('#zoomIn');
-        bar.insertBefore(wrapper, firstZoom || null);
-      }
+      (group || bar).appendChild(wrapper);
     } else {
       // pages without a bottom bar (terms, privacy, profile, gears): floating button
       wrapper.classList.add('pp-settings-floating');

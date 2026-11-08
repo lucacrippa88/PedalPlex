@@ -126,10 +126,11 @@
       #pedalboard { width:100%!important; max-width:100%!important; overflow-x:visible!important; }
       #pedalboard .rig-empty-banner { width:100%!important; max-width:100%!important; box-sizing:border-box!important; }
       #pedalboard .pedal-row:not(.amp-row) { flex-wrap:nowrap!important; width:auto!important; max-width:none!important; }
-      #pedalboard .amp-row { width:100%!important; max-width:100%!important; box-sizing:border-box!important; flex-direction:column!important; align-items:flex-start!important; }
+      #pedalboard .amp-row { width:100%!important; max-width:100%!important; box-sizing:border-box!important; flex-direction:column!important; align-items:center!important; }
       #pedalboard .amp-row .pedal-empty-slot { width:100%!important; max-width:100%!important; height:auto!important; min-height:100px!important; box-sizing:border-box!important; }
-      #pedalboard .amp-row .pedal-wrapper { height:auto!important; box-sizing:border-box!important; justify-content:flex-start!important; }
-      #pedalboard .row-wrap { flex-direction:column!important; align-items:flex-start!important; gap:4px!important; }
+      #pedalboard .amp-row .pedal-wrapper { height:auto!important; box-sizing:border-box!important; justify-content:center!important; }
+      #pedalboard .row-wrap { flex-direction:column!important; align-items:center!important; gap:4px!important; }
+      #pedalboard .row-wrap > .remove-row-btn { position:static!important; transform:none!important; margin:0!important; }
     }
 
     /* Pedal empty slot styles */
@@ -354,9 +355,9 @@
           var banner = document.createElement('div');
           banner.className = 'rig-empty-banner';
           banner.innerHTML = [
-            '<h3 style="margin:0 0 0.25rem 0; font-size:1.15rem; font-weight:600; color:#ffffff;">Build your first Rig</h3>',
+            '<h3 style="margin:0 0 0.25rem 0; font-size:1.15rem; font-weight:600; color:#ffffff;">Build your Rig</h3>',
             '<p style="margin:0; font-size:0.875rem; color:#c6c6c6; line-height:1.45;">',
-              'Tap an empty slot below to choose your first pedal and arrange your signal chain. No account needed to get started.',
+              'Tap an empty slot below to choose your first pedal and arrange your Rig, then start saving your Presets.',
             '</p>'
           ].join('');
           container.appendChild(banner);
@@ -442,7 +443,7 @@
             } else {
               var isFirstFocus = (isRigEmpty && rowNum === 1 && i === 0);
               var slotLabel = isAmpRow
-                ? 'Add amplifier (cabs coming soon!)'
+                ? 'Add amplifier'
                 : (isFirstFocus ? 'Add your first pedal' : 'Add pedal');
 
               // insertAt = indice assoluto in allPedals dove fare splice
@@ -461,7 +462,7 @@
         nonAmpRows.forEach(function(r) {
           var rowWrap = document.createElement('div');
           rowWrap.className = 'row-wrap';
-          rowWrap.style.cssText = 'display:flex;gap:12px;margin-bottom:10px;margin-top:-12px;';
+          rowWrap.style.cssText = 'display:flex;gap:12px;margin-bottom:10px;margin-top:-12px;position:relative;';
 
           var rowDiv = document.createElement('div');
           rowDiv.className = 'pedal-row';
@@ -474,7 +475,9 @@
           if (r > 1) {
             var removeBtn = document.createElement('button');
             removeBtn.textContent = '× Remove row';
-            removeBtn.style.cssText = 'background:none;border:none;color:#555;font-size:0.7rem;cursor:pointer;padding:2px 4px;white-space:nowrap;flex-shrink:0;align-self:center;';
+            removeBtn.className = 'remove-row-btn';
+            // Out of the flow (absolute, right of the row): the pedals stay centered like row 1
+            removeBtn.style.cssText = 'background:none;border:none;color:#555;font-size:0.7rem;cursor:pointer;padding:2px 4px;white-space:nowrap;position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:12px;';
             removeBtn.addEventListener('mouseenter', function(){ removeBtn.style.color = '#ff6b6b'; });
             removeBtn.addEventListener('mouseleave', function(){ removeBtn.style.color = '#555'; });
             removeBtn.addEventListener('click', function(e) {
