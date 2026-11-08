@@ -2354,6 +2354,13 @@ body.gears-page #catalog {
 }
 .gear-card:hover { border-color: #9C54D5; }
 
+/* Catalog page (gears): visible grey border by default (purple on hover, as everywhere).
+   The static /gear/ pages have no .gears-page on <body>, so they keep the transparent border. */
+body.gears-page .gear-card { border-color: #393939; }
+body.gears-page .gear-card:hover { border-color: #9C54D5; }
+html[data-theme="light"] body.gears-page .gear-card { border-color: #d0d0d0; }
+html[data-theme="light"] body.gears-page .gear-card:hover { border-color: #9C54D5; }
+
 /* Thumb: si adatta al contenuto (pedal), aggiunge padding uniforme */
 .gear-thumb {
   border-radius: 6px;
