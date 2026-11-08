@@ -1,18 +1,28 @@
 /**
- * notifications.js — "PedalPlex updates" bell (header, left of Actions).
+ * notifications.js — "PedalPlex updates".
  *
- * Data: GET_NOTIFICATIONS.php -> latest public gears + curated features (max 10).
- * Unread state: ids already seen are kept in localStorage; the purple dot shows
- * while the list contains at least one id that has not been seen yet.
- * Opening the panel marks everything as seen.
+ * Entry point is a "Notifications" item inside the Actions dropdown (#pp-actions-menu).
+ * A red dot on the Actions button (and next to the item) signals unread updates.
+ * Clicking the item closes the Actions menu and opens the updates panel in its place.
  *
- * Usage: call window.initNotifications() after the header has been injected.
+ * Data: GET_NOTIFICATIONS.php -> latest gear + curated features (max 10).
+ * Unread state: ids already seen are kept in localStorage; the dot shows while the list
+ * contains at least one id that has not been seen yet. Opening the panel marks all as seen.
+ *
+ * Usage:
+ *   - load this script BEFORE nav-rigs.js / nav-plexes.js
+ *   - put window.ppNotificationsMenuItem() in the Actions menu markup
+ *   - call window.initNotifications() once #pp-actions-wrapper is in the DOM
  */
 (function () {
-  const API_URL     = 'https://api.pedalplex.com/GET_NOTIFICATIONS.php';
-  const STORAGE_KEY = 'pp_notif_seen';
+  const API_URL      = 'https://api.pedalplex.com/GET_NOTIFICATIONS.php'; // latest gear added
+  const FEATURES_URL = '/notifications.json';                             // hand-curated features (frontend root)
+  const MAX_ITEMS    = 10;
+  const STORAGE_KEY  = 'pp_notif_seen';
 
   const ICON_BELL = '<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M28.707,19.293,26,16.586V13a10.014,10.014,0,0,0-9-9.9492V1H15V3.0508A10.014,10.014,0,0,0,6,13v3.586L3.293,19.293A1,1,0,0,0,3,20v3a1,1,0,0,0,1,1h7v.7768a5.152,5.152,0,0,0,4.5,5.1987A5.0057,5.0057,0,0,0,21,25V24h7a1,1,0,0,0,1-1V20A1,1,0,0,0,28.707,19.293ZM19,25a3,3,0,0,1-3.2261,2.9917A3.1463,3.1463,0,0,1,13,24.7768V24h6Zm8-3H5V20.414L7.707,17.707A1,1,0,0,0,8,17V13a8,8,0,0,1,16,0v4a1,1,0,0,0,.293.707L27,20.414Z"/></svg>';
+
+  let items = [];
 
   function getSeen() {
     try {
@@ -35,24 +45,40 @@
     return new Date(t).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
+  // Markup of the Actions menu item (inserted by nav-rigs.js / nav-plexes.js)
+  window.ppNotificationsMenuItem = function () {
+    return '<div class="pp-action-separator"></div>' +
+      '<button class="pp-action-item" id="pp-action-notifications" type="button">' +
+      ICON_BELL + ' <span>Notifications</span></button>';
+  };
+
   function injectStyle() {
     if (document.getElementById('pp-notif-style')) return;
     const style = document.createElement('style');
     style.id = 'pp-notif-style';
     style.textContent = `
-      #pp-notif-wrapper { position: relative; }
       #pp-notif-dot {
         display: none;
         position: absolute;
-        top: 6px;
-        right: 6px;
+        top: -3px;
+        right: -3px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #da1e28;
+        pointer-events: none;
+        z-index: 1;
+      }
+      #pp-actions-wrapper.has-unread #pp-notif-dot { display: block; }
+      #pp-actions-wrapper.has-unread #pp-action-notifications span::after {
+        content: '';
+        display: inline-block;
         width: 8px;
         height: 8px;
+        margin-left: 8px;
         border-radius: 50%;
-        background: #9C54D5;
-        pointer-events: none;
+        background: #da1e28;
       }
-      #pp-notif-wrapper.has-unread #pp-notif-dot { display: block; }
       #pp-notif-menu {
         display: none;
         position: absolute;
@@ -111,7 +137,7 @@
     document.head.appendChild(style);
   }
 
-  function renderItems(menu, items) {
+  function renderItems(menu) {
     menu.innerHTML = '';
     const heading = document.createElement('div');
     heading.className = 'pp-notif-heading';
@@ -159,54 +185,81 @@
   }
 
   window.initNotifications = function () {
-    if (document.getElementById('pp-notif-wrapper')) return;
-    const anchor = document.getElementById('pp-actions-wrapper');
-    if (!anchor) return;
+    const wrapper = document.getElementById('pp-actions-wrapper');
+    if (!wrapper || document.getElementById('pp-notif-menu')) return;
 
     injectStyle();
 
-    const wrapper = document.createElement('div');
-    wrapper.id = 'pp-notif-wrapper';
-    wrapper.innerHTML = `
-      <button id="pp-notif-btn" class="bx--btn bx--btn--tertiary bx--btn--sm bx--btn--icon-only"
-              type="button" aria-label="PedalPlex updates" aria-haspopup="true" aria-expanded="false">
-        ${ICON_BELL}
-      </button>
-      <span id="pp-notif-dot" aria-hidden="true"></span>
-      <div id="pp-notif-menu" role="menu"></div>`;
-    anchor.parentNode.insertBefore(wrapper, anchor);
+    const dot = document.createElement('span');
+    dot.id = 'pp-notif-dot';
+    dot.setAttribute('aria-hidden', 'true');
+    wrapper.appendChild(dot);
 
-    const btn  = wrapper.querySelector('#pp-notif-btn');
-    const menu = wrapper.querySelector('#pp-notif-menu');
-    let items = [];
+    const menu = document.createElement('div');
+    menu.id = 'pp-notif-menu';
+    menu.setAttribute('role', 'menu');
+    wrapper.appendChild(menu);
 
     function setOpen(open) {
       menu.style.display = open ? 'block' : 'none';
-      btn.setAttribute('aria-expanded', String(open));
     }
 
-    btn.addEventListener('click', function () {
-      const open = menu.style.display !== 'block';
-      setOpen(open);
-      if (open && items.length) {
-        // Opening the panel marks everything currently listed as seen
-        setSeen(items.map(function (n) { return n.id; }));
-        wrapper.classList.remove('has-unread');
-      }
-    });
+    // Click on the "Notifications" item inside the Actions dropdown
+    // (delegated: the item may be rendered after this init runs)
     document.addEventListener('click', function (e) {
-      if (!wrapper.contains(e.target)) setOpen(false);
+      const item = e.target.closest ? e.target.closest('#pp-action-notifications') : null;
+      if (item) {
+        const actionsMenu = document.getElementById('pp-actions-menu');
+        if (actionsMenu) actionsMenu.style.display = 'none';
+        setOpen(true);
+        if (items.length) {
+          // Opening the panel marks everything currently listed as seen
+          setSeen(items.map(function (n) { return n.id; }));
+          wrapper.classList.remove('has-unread');
+        }
+        return;
+      }
+      if (!menu.contains(e.target)) setOpen(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);
     });
+    // Opening the Actions menu again closes the updates panel
+    wrapper.addEventListener('click', function (e) {
+      if (e.target.closest('#pp-actions-btn, #pp-actions-btn-tablet, #pp-actions-btn-mobile')) setOpen(false);
+    });
 
-    fetch(API_URL)
+    // Each source fails independently: a missing one must not hide the other
+    const gearsP = fetch(API_URL)
       .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (!Array.isArray(data)) return;
-        items = data.slice(0, 10);
-        renderItems(menu, items);
+      .then(function (data) { return Array.isArray(data) ? data : []; })
+      .catch(function () { return []; });
+
+    const featuresP = fetch(FEATURES_URL, { cache: 'no-cache' })
+      .then(function (r) { return r.json(); })
+      .then(function (list) {
+        if (!Array.isArray(list)) return [];
+        return list
+          .filter(function (f) { return f && f.id && f.date && f.title; })
+          .map(function (f) {
+            return {
+              id: 'feature:' + f.id,
+              type: 'feature',
+              title: f.title,
+              text: f.text || '',
+              link: f.link || '',
+              date: f.date
+            };
+          });
+      })
+      .catch(function () { return []; });
+
+    Promise.all([gearsP, featuresP])
+      .then(function (res) {
+        items = res[0].concat(res[1])
+          .sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); })
+          .slice(0, MAX_ITEMS);
+        renderItems(menu);
         const seen = getSeen();
         if (items.some(function (n) { return seen.indexOf(n.id) === -1; })) {
           wrapper.classList.add('has-unread');

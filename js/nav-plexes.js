@@ -129,7 +129,8 @@ function initNavPreset() {
       <button class="pp-action-item" id="pp-action-lock"  data-action="lock">${SVG.lock}  <span>Lock Preset</span></button>
       <button class="pp-action-item" data-action="download">${SVG.download} <span>Download Preset</span></button>
       <div class="pp-action-separator"></div>
-      <a class="pp-action-item" href="rigs">${SVG.manageRigs} <span>Manage Rigs</span></a>`;
+      <a class="pp-action-item" href="rigs">${SVG.manageRigs} <span>Manage Rigs</span></a>
+      ${typeof window.ppNotificationsMenuItem === 'function' ? window.ppNotificationsMenuItem() : ''}`;
   }
 
   // Inject styles

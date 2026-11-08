@@ -1,0 +1,16 @@
+[
+  {
+    "id": "feat-light-theme",
+    "date": "2026-11-08",
+    "title": "Light theme",
+    "text": "Choose Dark, Light or Auto from the new Settings menu.",
+    "link": ""
+  },
+  {
+    "id": "feat-rig-autosave",
+    "date": "2026-10-30",
+    "title": "Rig autosave",
+    "text": "Your rig is now saved automatically as you build it.",
+    "link": "rigs"
+  }
+]

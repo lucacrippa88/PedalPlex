@@ -101,6 +101,7 @@ function initNavPedalboard(userRole) {
             ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login to sync your Rigs</span></a><a class="pp-action-item" href="/#why-becoming-a-pedalplexer" target="_blank"><svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/><path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/></svg> <span>Why registering?</span></a><div class="pp-action-separator"></div>` : ''}
             ${buildRigItem}
             ${editRigItem}
+            ${typeof window.ppNotificationsMenuItem === 'function' ? window.ppNotificationsMenuItem() : ''}
           </div>
         </div>
       </div>
