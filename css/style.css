@@ -2616,9 +2616,9 @@ html[data-theme="light"] .pedal-empty-slot:hover { color: #161616; }
 }
 
 /* Light theme: inline white text used on profile / gears */
-html[data-theme="light"] [style*="color: #fff"],
-html[data-theme="light"] [style*="color:#fff"],
-html[data-theme="light"] [style*="color: #ffffff"] { color: #161616 !important; }
+html[data-theme="light"] [style*="color: #fff"]:not([style*="background"]),
+html[data-theme="light"] [style*="color:#fff"]:not([style*="background"]),
+html[data-theme="light"] [style*="color: #ffffff"]:not([style*="background"]) { color: #161616 !important; }
 html[data-theme="light"] #admin-preview-inner { background: #ffffff; }
 html[data-theme="light"] #admin-preview-close { color: #161616; }
 html[data-theme="light"] .admin-user-row { border-bottom-color: rgba(0,0,0,0.1); }
@@ -2648,3 +2648,8 @@ html[data-theme="light"] .preset-icon { fill: #161616; }
 
 /* Light theme: share icon shown on catalog pedal hover */
 html[data-theme="light"] .pedal-share-icon { color: #161616; }
+
+/* Light theme: Discord card on the landing page */
+html[data-theme="light"] .discord-card { background: #ffffff !important; border-color: #d0d0d0 !important; }
+html[data-theme="light"] .discord-card .discord-card-title { color: #161616 !important; }
+html[data-theme="light"] .discord-card .discord-card-text { color: #525252 !important; }
