@@ -26,8 +26,6 @@ function initNavPedalboard(userRole) {
     login:    `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/><path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/></svg>`,
   };
 
-  const saveLabelDesktop = isGuest ? `${SVG.check} Save Rig Offline` : `${SVG.save} Save Rig`;
-
   // ── Navbar HTML (Actions sempre nell'header) ──────────────────────────────
   const buildRigItem = !isGuest
     ? `<button class="pp-action-item" data-action="buildRig">${SVG.buildRig} <span>Build new Rig</span></button>`
@@ -62,25 +60,13 @@ function initNavPedalboard(userRole) {
                 type="button" style="display:flex;align-items:center;gap:0.4rem;">
           ${SVG.addGear} Add Gear
         </button>
-        <button id="saveBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm"
-                type="button" style="display:flex;align-items:center;gap:0.5rem;white-space:nowrap;max-width:none!important;">
-          ${saveLabelDesktop}
-        </button>
         <button id="addGearsTriggerTablet" class="showTablet bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only"
                 type="button" aria-label="Add Gear">
           ${SVG.addGear}
         </button>
-        <button id="saveBtnTablet" class="showTablet bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
-                type="button" aria-label="${isGuest ? 'Save Rig Offline' : 'Save Rig'}">
-          ${isGuest ? SVG.check : SVG.save}
-        </button>
         <button id="addGearsTriggerMobile" class="showMobile bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only"
                 type="button" aria-label="Add Gear">
           ${SVG.addGear}
-        </button>
-        <button id="saveBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only"
-                type="button" aria-label="${isGuest ? 'Save Rig Offline' : 'Save Rig'}">
-          ${isGuest ? SVG.check : SVG.save}
         </button>
         <div id="pp-actions-wrapper" style="position:relative;">
           <button id="pp-actions-btn"
@@ -352,6 +338,7 @@ function initNavPedalboard(userRole) {
         if (typeof recordGuestEvent === 'function') recordGuestEvent('gear_added');
         if (typeof window.deactivateSlot === 'function') window.deactivateSlot();
         if (typeof renderPedalboard === 'function') renderPedalboard();
+        if (typeof autoSavePedalboard === 'function') autoSavePedalboard();
 
         // Conferma: icona check sul bottone + toast, poi riabilita dopo un breve cooldown
         btn.innerHTML = ICON_CHECK;
@@ -570,26 +557,13 @@ function initNavPedalboard(userRole) {
   window.updateRigsCTAState = function (pedalCount) {
     const isEmpty = (!pedalCount || pedalCount === 0);
     const $add  = $("#addGearsTrigger, #addGearsTriggerTablet, #addGearsTriggerMobile");
-    const $save = $("#saveBtn, #saveBtnTablet, #saveBtnMobile");
     const $view = $("#viewPreset");
     // Il bottone + mobile resta sempre secondary (Carbon)
     const $addCta = $add.not("#addGearsTriggerMobile");
     $("#addGearsTriggerMobile").removeClass('bx--btn--primary bx--btn--tertiary').addClass('bx--btn--secondary');
-    if (isEmpty) { $addCta.removeClass('bx--btn--secondary bx--btn--tertiary').addClass('bx--btn--primary'); $save.addClass('rig-cta-subtle'); $view.hide(); }
-    else         { $addCta.removeClass('bx--btn--primary bx--btn--tertiary').addClass('bx--btn--secondary'); $save.removeClass('rig-cta-subtle'); $view.show(); }
+    if (isEmpty) { $addCta.removeClass('bx--btn--secondary bx--btn--tertiary').addClass('bx--btn--primary'); $view.hide(); }
+    else         { $addCta.removeClass('bx--btn--primary bx--btn--tertiary').addClass('bx--btn--secondary'); $view.show(); }
   };
 
   window.updateNavFilterVisibility = function () {};
-
-  // ── Guest / logged-in wiring ───────────────────────────────────────────────
-  if (isGuest) {
-    $("#saveBtn, #saveBtnMobile").on("click", function () {
-      if (typeof saveGuestPedalboard === "function") saveGuestPedalboard();
-      if (window.allPedalboards?.length === 1) setupPedalboardDropdownAndRender();
-    });
-  } else {
-    $("#saveBtn").on("click",        function () { if (typeof savePedalboard === "function") savePedalboard(); });
-    $("#saveBtnTablet").on("click",  function () { if (typeof savePedalboard === "function") savePedalboard(); });
-    $("#saveBtnMobile").on("click",  function () { if (typeof savePedalboard === "function") savePedalboard(); });
-  }
 }

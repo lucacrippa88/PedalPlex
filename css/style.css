@@ -439,6 +439,29 @@ html { box-sizing: content-box !important; }
 
 
 
+/* Rig autosave status indicator */
+.rig-autosave-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #888;
+  margin-left: 6px;
+  white-space: nowrap;
+  user-select: none;
+  transition: opacity 0.25s ease;
+}
+.rig-autosave-indicator.saving {
+  color: #888;
+}
+.rig-autosave-indicator.saved {
+  color: #42be65;
+}
+.rig-autosave-indicator.error {
+  color: #da1e28;
+}
+
 /* Pedal dropdowns, catalog */
 #pedalAddDropdownContainer {
   background: #ffffff;

@@ -42,18 +42,10 @@
     },
     {
       page: 'rigs',
-      target: '#saveBtn',
-      waitFor: '#saveBtn',
-      title: 'Step 2 — Save your Rig',
-      text: 'Happy with the setup? Click <strong>Save Rig</strong> to preserve your Rig so you can come back to it any time.',
-      position: 'bottom',
-    },
-    {
-      page: 'rigs',
       target: '#viewPreset',
       waitFor: '#viewPreset',
-      title: 'Step 3 — Go to Presets',
-      text: 'Click <strong>Go to Presets</strong> to start saving your tones for the selected Rig.',
+      title: 'Step 2 — Save your Tones',
+      text: 'Your Rig is automatically saved! Click <strong>Save your Tones</strong> to start storing and recalling your gear settings in Plexes.',
       position: 'bottom',
     },
     // {
