@@ -12,8 +12,6 @@
  *   • Lock 🔒
  *   • Download
  *   • Manage Rigs
- *   • ── separator ──
- *   • Guided Tour
  */
 function initNavPreset() {
 
@@ -41,7 +39,6 @@ function initNavPreset() {
     lock:       `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M24,14H22V10a6,6,0,0,0-12,0v4H8a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V16A2,2,0,0,0,24,14ZM12,10a4,4,0,0,1,8,0v4H12ZM24,28H8V16H24Z"></path><circle cx="16" cy="22" r="2"></circle></svg>`,
     download:   `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M26,24v4H6V24H4v4H4a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2h0V24Z"/><polygon points="26 14 24.59 12.59 17 20.17 17 2 15 2 15 20.17 7.41 12.59 6 14 16 24 26 14"/></svg>`,
     manageRigs: `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M14 26L15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26z"/></svg>`,
-    tour:       `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/><path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/></svg>`,
     login:      `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/><path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/></svg>`,
   };
 
@@ -131,8 +128,7 @@ function initNavPreset() {
       <button class="pp-action-item" id="pp-action-lock"  data-action="lock">${SVG.lock}  <span>Lock Preset</span></button>
       <button class="pp-action-item" data-action="download">${SVG.download} <span>Download Preset</span></button>
       <div class="pp-action-separator"></div>
-      <a class="pp-action-item" href="rigs">${SVG.manageRigs} <span>Manage Rigs</span></a>
-      <button class="pp-action-item" data-action="tour">${SVG.tour} <span>Guided Tour</span></button>`;
+      <a class="pp-action-item" href="rigs">${SVG.manageRigs} <span>Manage Rigs</span></a>`;
   }
 
   // Inject styles
@@ -278,10 +274,6 @@ function initNavPreset() {
         _refreshOnSwalClose();
         break;
       case 'download':      document.getElementById('downloadPlexBtn')?.click(); break;
-      case 'tour':
-        if (typeof window.startTour === 'function') window.startTour(0);
-        else { localStorage.setItem('pp_tour_active','true'); localStorage.setItem('pp_tour_step','0'); window.location.href='/rigs'; }
-        break;
     }
   });
 

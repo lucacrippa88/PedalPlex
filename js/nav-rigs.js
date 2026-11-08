@@ -7,8 +7,6 @@
  * Actions dropdown:
  *   • Build Rig (solo logged-in)
  *   • Save your Presets
- *   • ── separator ──
- *   • Guided Tour
  *
  * Tutta la logica openPedalSearch / lazy-load è copiata da nav-rigs.js
  * per evitare il doppio caricamento del file originale.
@@ -25,7 +23,6 @@ function initNavPedalboard(userRole) {
     dots:     `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><circle cx="8" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><circle cx="24" cy="16" r="2"/></svg>`,
     buildRig: `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><g transform="rotate(90 16 16)"><path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"/><path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"/></g></svg>`,
     plexes:   `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/></svg>`,
-    tour:     `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/><path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/></svg>`,
     login:    `<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2,2V28A2,2,0,0,1,26,30Z"/><path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/></svg>`,
   };
 
@@ -118,8 +115,6 @@ function initNavPedalboard(userRole) {
             ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login to sync your Rigs</span></a><a class="pp-action-item" href="/#why-becoming-a-pedalplexer" target="_blank"><svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/><path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/></svg> <span>Why registering?</span></a><div class="pp-action-separator"></div>` : ''}
             ${buildRigItem}
             ${editRigItem}
-            <div class="pp-action-separator"></div>
-            <button class="pp-action-item" data-action="tour">${SVG.tour} <span>Guided Tour</span></button>
           </div>
         </div>
       </div>
@@ -198,9 +193,6 @@ function initNavPedalboard(userRole) {
         break;
       case 'editRig':
         document.getElementById('renameBoardBtn')?.click();
-        break;
-      case 'tour':
-        if (typeof window.startTour === 'function') window.startTour(0);
         break;
     }
   });
