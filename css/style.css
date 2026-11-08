@@ -2305,8 +2305,8 @@ body.gears-page #catalog {
 }
 
 .gear-card {
-  background: #1f1f1f;
-  border: 1px solid #444;
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: 8px;
   padding: 10px;
   display: inline-flex;
