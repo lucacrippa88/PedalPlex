@@ -112,6 +112,7 @@ function initNavPreset() {
     </header>`;
 
   $("body").prepend(navHtml);
+  if (typeof window.initNotifications === 'function') window.initNotifications();
 
   // ── Populate Actions menu items (wrapper is already in the header) ─────────
   function injectActionsDropdown() {

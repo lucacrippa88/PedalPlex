@@ -107,6 +107,7 @@ function initNavPedalboard(userRole) {
     </header>`;
 
   $("body").prepend(navHtml);
+  if (typeof window.initNotifications === 'function') window.initNotifications();
 
   if (!document.getElementById('pp-actions-style')) {
     const style = document.createElement('style');
