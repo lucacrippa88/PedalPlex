@@ -73,18 +73,23 @@
   }
 
   function init() {
+    if (document.getElementById('pp-settings-wrapper')) return;
     const bar = document.querySelector('.zoom-controls');
-    if (!bar || document.getElementById('pp-settings-wrapper')) return;
-
-    // rigs: the right-aligned group already exists; plexes: append to the bar itself
-    const group = bar.querySelector(':scope > div');
-    const container = group || bar;
 
     const wrapper = document.createElement('div');
     wrapper.id = 'pp-settings-wrapper';
-    if (!group) wrapper.style.marginLeft = 'auto';
     wrapper.innerHTML = buildHtml();
-    container.appendChild(wrapper);
+
+    if (bar) {
+      // rigs: the right-aligned group already exists; plexes: append to the bar itself
+      const group = bar.querySelector(':scope > div');
+      if (!group) wrapper.style.marginLeft = 'auto';
+      (group || bar).appendChild(wrapper);
+    } else {
+      // pages without a bottom bar (terms, privacy, profile, gears): floating button
+      wrapper.classList.add('pp-settings-floating');
+      document.body.appendChild(wrapper);
+    }
 
     const btn  = wrapper.querySelector('#pp-settings-btn');
     const menu = wrapper.querySelector('#pp-settings-menu');
@@ -120,7 +125,16 @@
 
     wrapper.querySelector('#pp-settings-tour').addEventListener('click', function () {
       setOpen(false);
-      if (typeof window.startTour === 'function') window.startTour(0);
+      if (typeof window.startTour === 'function') {
+        window.startTour(0);
+      } else {
+        // tour.js is not loaded here: start it on /rigs (first tour page)
+        localStorage.setItem('pp_tour_active', 'true');
+        localStorage.setItem('pp_tour_step', '0');
+        localStorage.removeItem('pp_tour_paused');
+        sessionStorage.setItem('pp_tour_session', '1');
+        window.location.href = '/rigs';
+      }
     });
   }
 

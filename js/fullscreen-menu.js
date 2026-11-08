@@ -120,7 +120,7 @@ window.fullscreenMenuHtml = `
     <hr style="border:none; border-top:1px solid rgba(255,255,255,0.12); margin:0.5rem 0;">
     <a href="/about-us">About Us</a>
     <br><br>
-    <span id="guestLoginMessage" style="color:#161616; font-size:0.875rem; display:none;">
+    <span id="guestLoginMessage" class="fullscreen-guest-msg" style="font-size:0.875rem; display:none;">
       Login to enable cross-device sync
     </span>
     <br><br>
@@ -131,14 +131,6 @@ window.fullscreenMenuHtml = `
           <path d="M16 4a5 5 0 11-5 5 5 5 0 015-5m0-2a7 7 0 107 7A7 7 0 0016 2zM26 30H24V25a5 5 0 00-5-5H13a5 5 0 00-5 5v5H6V25a7 7 0 017-7h6a7 7 0 017 7z"/>
         </svg>
         <span class="btn-label">Your profile</span>
-      </button>
-
-      <button id="settingsBtn" class="bx--btn bx--btn--secondary" type="button" aria-label="Settings" style="display: flex; align-items: center; gap: 0.5rem;">
-        <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-          <path d="M27,16.76c0-.25,0-.5,0-.76s0-.51,0-.77l1.92-1.68A2,2,0,0,0,29.3,11L26.94,7a2,2,0,0,0-1.73-1,2,2,0,0,0-.64.1l-2.43.82a11.35,11.35,0,0,0-1.31-.75l-.51-2.52a2,2,0,0,0-2-1.61H13.64a2,2,0,0,0-2,1.61l-.51,2.52a11.48,11.48,0,0,0-1.32.75L7.43,6.06A2,2,0,0,0,6.79,6,2,2,0,0,0,5.06,7L2.7,11a2,2,0,0,0,.41,2.51L5,15.24c0,.25,0,.5,0,.76s0,.51,0,.77L3.11,18.45A2,2,0,0,0,2.7,21L5.06,25a2,2,0,0,0,1.73,1,2,2,0,0,0,.64-.1l2.43-.82a11.35,11.35,0,0,0,1.31.75l.51,2.52a2,2,0,0,0,2,1.61h4.72a2,2,0,0,0,2-1.61l.51-2.52a11.48,11.48,0,0,0,1.32-.75l2.42.82a2,2,0,0,0,.64.1,2,2,0,0,0,1.73-1L29.3,21a2,2,0,0,0-.41-2.51ZM25.21,24l-3.43-1.16a8.86,8.86,0,0,1-2.71,1.57L18.36,28H13.64l-.71-3.55a9.36,9.36,0,0,1-2.7-1.57L6.79,24,4.43,20l2.72-2.4a8.9,8.9,0,0,1,0-3.13L4.43,12,6.79,8l3.43,1.16a8.86,8.86,0,0,1,2.71-1.57L13.64,4h4.72l.71,3.55a9.36,9.36,0,0,1,2.7,1.57L25.21,8,27.57,12l-2.72,2.4a8.9,8.9,0,0,1,0,3.13L27.57,20Z"/>
-          <path d="M16,22a6,6,0,1,1,6-6A5.94,5.94,0,0,1,16,22Zm0-10a3.91,3.91,0,0,0-4,4,3.91,3.91,0,0,0,4,4,3.91,3.91,0,0,0,4-4A3.91,3.91,0,0,0,16,12Z"/>
-        </svg>
-        <span class="btn-label">Settings</span>
       </button>
 
       <button id="logoutBtn" class="bx--btn bx--btn--primary" type="button" aria-label="Logout" style="display: flex; align-items: center; gap: 0.5rem;">
@@ -159,7 +151,7 @@ window.fullscreenMenuHtml = `
     </button>
   </div>
 
-  <div id="song-quote" class="menu-bottom" style="text-align: center; margin-top: auto; padding: 1.5rem; font-size: 1rem; color: #000;">
+  <div id="song-quote" class="menu-bottom" style="text-align: center; margin-top: auto; padding: 1.5rem; font-size: 1rem;">
     <span style='font-style:italic'>Rock 'n' roll will never die!</span>
   </div>
 
@@ -187,7 +179,7 @@ window.fullscreenMenuHtml = `
     </a>
   </div>
 
-  <div class='menu-footer' style="margin-top:0.5rem; text-align:center; padding:1rem; font-size:0.875rem; color:#aaa;">
+  <div class='menu-footer' style="margin-top:0.5rem; text-align:center; padding:1rem; font-size:0.875rem;">
       <a href="https://paypal.me/lucacrippa88" target="_blank" class="bx--btn bx--btn--ghost bx--btn--sm" style="display:inline-flex; align-items:center; gap:0.5rem; color:#a3a3a3; font-weight:normal; white-space:nowrap; max-width:none !important; margin-bottom:1.5rem;">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
         <path d="M13 11H20V13H13z"></path>
@@ -211,10 +203,10 @@ window.fullscreenMenuHtml = `
 function updateFullscreenMenu() {
   if (!window.currentUser || window.currentUser.role === "guest") {
     $("#loginFullscreenBtn, #guestLoginMessage").show();
-    $("#profileBtn, #settingsBtn, #logoutBtn").hide();
+    $("#profileBtn, #logoutBtn").hide();
   } else {
     $("#loginFullscreenBtn, #guestLoginMessage").hide();
-    $("#profileBtn, #settingsBtn, #logoutBtn").show();
+    $("#profileBtn, #logoutBtn").show();
   }
 }
 
@@ -254,21 +246,6 @@ $(document).ready(function () {
         icon: 'info',
         title: 'Guest mode',
         text: 'Please log in to access your profile.',
-        confirmButtonText: 'OK',
-        customClass: { container: 'swal-above-menu' }
-      });
-    }
-  });
-
-  // Settings button
-  $(document).on('click', '#settingsBtn', function () {
-    if (window.currentUser && window.currentUser.role !== "guest") {
-      window.location.href = '/settings';
-    } else {
-      Swal.fire({
-        icon: 'info',
-        title: 'Guest mode',
-        text: 'Please log in to access settings.',
         confirmButtonText: 'OK',
         customClass: { container: 'swal-above-menu' }
       });

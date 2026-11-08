@@ -264,7 +264,7 @@ header {
   height: 24px;
 }
 .menu-icon { fill: #ffffff; }
-.close-icon { fill: #161616; }
+.close-icon { fill: #f4f4f4; }
 
 /* Title */
 .title {
@@ -281,7 +281,8 @@ header {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #f4f4f4;
+  background: rgb(25,25,25);
+  color: #f4f4f4;
   display: none;
   flex-direction: column;
   z-index: 99990;
@@ -309,7 +310,7 @@ header {
   margin: 0.5rem;
   font-size: 1.5rem;
   text-decoration: none;
-  color: #161616;
+  color: #f4f4f4;
 }
 .fullscreen-social a {
   transition: opacity 0.15s ease;
@@ -2605,3 +2606,33 @@ html[data-theme="light"] .pedal-author { color: #6f6f6f !important; }
 html[data-theme="light"] .subtitle { color: #6f6f6f !important; }
 html[data-theme="light"] .pedal-empty-slot { color: #6f6f6f; border-color: #a8a8a8; }
 html[data-theme="light"] .pedal-empty-slot:hover { color: #161616; }
+
+/* Settings button on pages without a bottom bar (terms, privacy, profile, gears) */
+#pp-settings-wrapper.pp-settings-floating {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  z-index: 3500;
+}
+
+/* Light theme: inline white text used on profile / gears */
+html[data-theme="light"] [style*="color: #fff"],
+html[data-theme="light"] [style*="color:#fff"],
+html[data-theme="light"] [style*="color: #ffffff"] { color: #161616 !important; }
+html[data-theme="light"] #admin-preview-inner { background: #ffffff; }
+html[data-theme="light"] #admin-preview-close { color: #161616; }
+html[data-theme="light"] .admin-user-row { border-bottom-color: rgba(0,0,0,0.1); }
+
+/* Fullscreen menu: dark by default, light only in the light theme */
+.fullscreen-guest-msg { color: #c6c6c6; }
+#song-quote { color: #f4f4f4; }
+.menu-footer { color: #a8a8a8; }
+.menu-footer a:not(.bx--btn) { color: #78a9ff; }
+html[data-theme="light"] .fullscreen-menu { background: #f4f4f4; color: #161616; }
+html[data-theme="light"] .fullscreen-nav a { color: #161616; }
+html[data-theme="light"] .close-icon { fill: #161616; }
+html[data-theme="light"] .fullscreen-guest-msg { color: #161616; }
+html[data-theme="light"] #song-quote { color: #000; }
+html[data-theme="light"] .menu-footer { color: #6f6f6f; }
+html[data-theme="light"] .menu-footer a:not(.bx--btn) { color: #0f62fe; }
+html[data-theme="light"] .fullscreen-nav hr { border-top-color: rgba(0,0,0,0.12) !important; }

@@ -145,7 +145,7 @@
   // prima che parta la navigazione e mostriamo uno Swal. Se l'utente conferma,
   // rilanciamo il click (evento non "trusted", quindi non ri-intercettato) e
   // disattiviamo temporaneamente beforeunload.
-  const NAV_BUTTONS = '#profileBtn, #settingsBtn, #logoutBtn, #loginFullscreenBtn, #loginBtn, #loginBtnMobile';
+  const NAV_BUTTONS = '#profileBtn, #logoutBtn, #loginFullscreenBtn, #loginBtn, #loginBtnMobile';
   let leaving = false;
 
   document.addEventListener('click', (e) => {

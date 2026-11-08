@@ -3,6 +3,5 @@ Allow: /
 
 # Blocca la scansione delle pagine private o di gestione
 Disallow: /profile
-Disallow: /settings
 
 Sitemap: https://pedalplex.com/sitemap.xml
