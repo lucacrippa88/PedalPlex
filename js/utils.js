@@ -1566,32 +1566,29 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
       });
     });
 
-    // Save pedal in preset only if at least a LED is turned on
-    if (hasColoredLed) {
-      const pedalObj = {
-        id: pedalId,
-        name: pedalName,
-        controls: controlsArray
+    const pedalObj = {
+      id: pedalId,
+      name: pedalName,
+      controls: controlsArray
+    };
+
+    // SubPlex
+    const appliedSubplexData = $pedal.data('applied-subplex');
+    if (appliedSubplexData) {
+
+      pedalObj.subplex = {
+        subplexId: appliedSubplexData.id || appliedSubplexData._id || appliedSubplexData.subplexId,
+        presetName: appliedSubplexData.presetName || appliedSubplexData.name,
+        published: appliedSubplexData.published,
+        source: appliedSubplexData.source,
+        description: appliedSubplexData.description,
+        style: appliedSubplexData.style || [],
+        authorId: appliedSubplexData.authorId || appliedSubplexData.user_id,
+        version: appliedSubplexData.version || 1
       };
-
-      // SubPlex
-      const appliedSubplexData = $pedal.data('applied-subplex');
-      if (appliedSubplexData) {
-
-        pedalObj.subplex = {
-          subplexId: appliedSubplexData.id || appliedSubplexData._id || appliedSubplexData.subplexId,
-          presetName: appliedSubplexData.presetName || appliedSubplexData.name,
-          published: appliedSubplexData.published,
-          source: appliedSubplexData.source,
-          description: appliedSubplexData.description,
-          style: appliedSubplexData.style || [],
-          authorId: appliedSubplexData.authorId || appliedSubplexData.user_id,
-          version: appliedSubplexData.version || 1
-        };
-      }
-
-      pedals.push(pedalObj);
     }
+
+    pedals.push(pedalObj);
 
   });
 
