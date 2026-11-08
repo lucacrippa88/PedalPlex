@@ -16,6 +16,7 @@
   <link rel="icon" href="logos/pedalplex_logo_gradient.png" type="image/x-icon">
   <link rel="stylesheet" href="css/carbon-components.min.css">
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/settings-menu.js"></script>
   <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
@@ -85,6 +86,13 @@
       transition: opacity 0.15s ease;
     }
     .about-wrap .about-social a:hover { opacity: 0.75; }
+
+    /* Light theme */
+    html[data-theme="light"] .about-wrap .about-subtitle,
+    html[data-theme="light"] .about-wrap strong { color: #161616; }
+    html[data-theme="light"] .about-wrap p { color: #525252; }
+    html[data-theme="light"] .about-wrap p.about-signature { color: #161616 !important; }
+    html[data-theme="light"] .about-wrap .about-divider { border-top-color: #d0d0d0; }
   </style>
 </head>
 
@@ -117,7 +125,7 @@
     <p><strong>Because Great Tones Deserve a Save Button.</strong></p>
 
 
-    <p style="color:#f4f4f4; font-size:1.25rem; margin-bottom:0.25rem;">Luca <span style="display:inline-block; width:20px; height:4px; background:linear-gradient(to right, #008C45 33.33%, #F4F5F0 33.33% 66.66%, #CD212A 66.66%); vertical-align:middle;"></span></p>
+    <p class="about-signature" style="color:#f4f4f4; font-size:1.25rem; margin-bottom:0.25rem;">Luca <span style="display:inline-block; width:20px; height:4px; background:linear-gradient(to right, #008C45 33.33%, #F4F5F0 33.33% 66.66%, #CD212A 66.66%); vertical-align:middle;"></span></p>
 
     <hr class="about-divider">
 

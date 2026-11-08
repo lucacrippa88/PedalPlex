@@ -70,7 +70,7 @@ function renderBackToCatalogButton() {
 
           link.innerHTML = pedal._id || pedal.name;
 
-          link.style.color = '#ffffff';
+          link.style.color = 'inherit';
           link.style.textDecoration = 'none';
           link.style.fontSize = '1.1rem';
 

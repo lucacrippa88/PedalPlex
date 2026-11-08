@@ -10,6 +10,8 @@
  *   • Terms · Privacy
  */
 (function () {
+  // <script ... data-no-button>: apply the saved theme only (e.g. login page)
+  const NO_BUTTON = !!(document.currentScript && document.currentScript.hasAttribute('data-no-button'));
   const STORAGE_KEY = 'pp_theme';
   const MODES = ['dark', 'light', 'auto'];
   const darkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
@@ -73,7 +75,7 @@
   }
 
   function init() {
-    if (document.getElementById('pp-settings-wrapper')) return;
+    if (NO_BUTTON || document.getElementById('pp-settings-wrapper')) return;
     const bar = document.querySelector('.zoom-controls');
 
     const wrapper = document.createElement('div');
@@ -81,10 +83,17 @@
     wrapper.innerHTML = buildHtml();
 
     if (bar) {
-      // rigs: the right-aligned group already exists; plexes: append to the bar itself
+      // rigs: the right-aligned group already exists; append to it
+      // plexes: zoom buttons sit directly in the bar -> Settings goes first, pushed to the
+      // right, so the zoom icons follow it on the right side
       const group = bar.querySelector(':scope > div');
-      if (!group) wrapper.style.marginLeft = 'auto';
-      (group || bar).appendChild(wrapper);
+      if (group) {
+        group.appendChild(wrapper);
+      } else {
+        wrapper.style.marginLeft = 'auto';
+        const firstZoom = bar.querySelector('#zoomIn');
+        bar.insertBefore(wrapper, firstZoom || null);
+      }
     } else {
       // pages without a bottom bar (terms, privacy, profile, gears): floating button
       wrapper.classList.add('pp-settings-floating');

@@ -51,6 +51,30 @@
     </style>
 
     <style>
+      /* ---- Instruments tab ---- */
+      .profile-instruments-wrap { max-width: 640px; margin: 2rem auto 0; padding: 0 1rem; }
+      #instrumentCheckboxes {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 10px;
+      }
+      #instrumentCheckboxes .bx--checkbox-wrapper {
+        margin: 0;
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 6px;
+        padding: 10px 12px;
+        transition: border-color 0.15s ease, background 0.15s ease;
+      }
+      #instrumentCheckboxes .bx--checkbox-wrapper:hover { border-color: #9C54D5; }
+      #instrumentCheckboxes .bx--checkbox-wrapper:has(input:checked) {
+        border-color: #9C54D5;
+        background: rgba(156, 84, 213, 0.12);
+      }
+      #instrumentCheckboxes .bx--checkbox-label { width: 100%; cursor: pointer; }
+      html[data-theme="light"] #instrumentCheckboxes .bx--checkbox-wrapper { border-color: rgba(0,0,0,0.18); }
+    </style>
+
+    <style>
       /* ---- Admin: Users tab ---- */
       #admin-user-list { max-width: 860px; margin: 0 auto; padding: 0 16px 80px; }
       .admin-user-row {
@@ -90,28 +114,6 @@
 
     <div class="bx--content-switcher" role="tablist" aria-label="Profile sections">
       <button
-        id="switch-stats"
-        class="bx--content-switcher-btn"
-        data-target="tab-panel-stats"
-        role="tab"
-        type="button"
-        aria-selected="false"
-        aria-controls="tab-panel-stats"
-        style="display: none;">
-        <span class="bx--content-switcher__label">Stats</span>
-      </button>
-      <button
-        id="switch-users"
-        class="bx--content-switcher-btn"
-        data-target="tab-panel-users"
-        role="tab"
-        type="button"
-        aria-selected="false"
-        aria-controls="tab-panel-users"
-        style="display: none;">
-        <span class="bx--content-switcher__label">Users</span>
-      </button>
-      <button
         id="switch-achievements"
         class="bx--content-switcher-btn bx--content-switcher--selected"
         data-target="tab-panel-achievements"
@@ -130,28 +132,6 @@
         aria-selected="false"
         aria-controls="tab-panel-shared-plexes">
         <span class="bx--content-switcher__label">Shared Plexes</span>
-      </button>
-      <button
-        id="switch-instruments"
-        class="bx--content-switcher-btn"
-        data-target="tab-panel-instruments"
-        role="tab"
-        type="button"
-        aria-selected="false"
-        aria-controls="tab-panel-instruments"
-        style="display: none;">
-        <span class="bx--content-switcher__label">Instruments</span>
-      </button>
-      <button
-        id="switch-password"
-        class="bx--content-switcher-btn"
-        data-target="tab-panel-password"
-        role="tab"
-        type="button"
-        aria-selected="false"
-        aria-controls="tab-panel-password"
-        style="display: none;">
-        <span class="bx--content-switcher__label">Password</span>
       </button>
     </div>
 
@@ -373,76 +353,76 @@
 
     <!-- Private profile only: Instruments tab -->
     <div id="tab-panel-instruments" role="tabpanel" aria-labelledby="switch-instruments" hidden>
-      <div style="max-width: 400px; margin: 2rem auto 0; padding: 0 1rem;">
-    <div class="bx--form__helper-text" style="margin-bottom: 16px;">Select your instruments and click Save</div>
-    <div id="instrumentCheckboxes" style="max-width: 400px;">
-      <div class="bx--form-item bx--checkbox-wrapper" style="margin-bottom: 8px;">
+      <div class="profile-instruments-wrap">
+    <div class="bx--form__helper-text" style="margin-bottom: 16px; text-align: center;">Select your instruments and click Save</div>
+    <div id="instrumentCheckboxes">
+      <div class="bx--form-item bx--checkbox-wrapper">
         <input id="instrument-electric-guitar" class="bx--checkbox instrument-checkbox" type="checkbox" value="electric-guitar">
         <label for="instrument-electric-guitar" class="bx--checkbox-label">
           <span class="bx--checkbox-label-text">Electric Guitar</span>
         </label>
       </div>
-      <div class="bx--form-item bx--checkbox-wrapper" style="margin-bottom: 8px;">
+      <div class="bx--form-item bx--checkbox-wrapper">
         <input id="instrument-acoustic-guitar" class="bx--checkbox instrument-checkbox" type="checkbox" value="acoustic-guitar">
         <label for="instrument-acoustic-guitar" class="bx--checkbox-label">
           <span class="bx--checkbox-label-text">Acoustic Guitar</span>
         </label>
       </div>
-      <div class="bx--form-item bx--checkbox-wrapper" style="margin-bottom: 8px;">
+      <div class="bx--form-item bx--checkbox-wrapper">
         <input id="instrument-bass" class="bx--checkbox instrument-checkbox" type="checkbox" value="bass">
         <label for="instrument-bass" class="bx--checkbox-label">
           <span class="bx--checkbox-label-text">Bass</span>
         </label>
       </div>
-      <div class="bx--form-item bx--checkbox-wrapper" style="margin-bottom: 8px;">
+      <div class="bx--form-item bx--checkbox-wrapper">
         <input id="instrument-keyboard" class="bx--checkbox instrument-checkbox" type="checkbox" value="keyboard">
         <label for="instrument-keyboard" class="bx--checkbox-label">
           <span class="bx--checkbox-label-text">Keyboard</span>
         </label>
       </div>
-      <div class="bx--form-item bx--checkbox-wrapper" style="margin-bottom: 8px;">
+      <div class="bx--form-item bx--checkbox-wrapper">
         <input id="instrument-vocals" class="bx--checkbox instrument-checkbox" type="checkbox" value="vocals">
         <label for="instrument-vocals" class="bx--checkbox-label">
           <span class="bx--checkbox-label-text">Vocals</span>
         </label>
       </div>
-      <div class="bx--form-item bx--checkbox-wrapper" style="margin-bottom: 8px;">
+      <div class="bx--form-item bx--checkbox-wrapper">
         <input id="instrument-strings" class="bx--checkbox instrument-checkbox" type="checkbox" value="strings">
         <label for="instrument-strings" class="bx--checkbox-label">
           <span class="bx--checkbox-label-text">Strings</span>
         </label>
       </div>
-      <div class="bx--form-item bx--checkbox-wrapper" style="margin-bottom: 8px;">
+      <div class="bx--form-item bx--checkbox-wrapper">
         <input id="instrument-harp" class="bx--checkbox instrument-checkbox" type="checkbox" value="harp">
         <label for="instrument-harp" class="bx--checkbox-label">
           <span class="bx--checkbox-label-text">Harp</span>
         </label>
       </div>
-      <div class="bx--form-item bx--checkbox-wrapper" style="margin-bottom: 8px;">
+      <div class="bx--form-item bx--checkbox-wrapper">
         <input id="instrument-brass" class="bx--checkbox instrument-checkbox" type="checkbox" value="brass">
         <label for="instrument-brass" class="bx--checkbox-label">
           <span class="bx--checkbox-label-text">Brass</span>
         </label>
       </div>
-      <div class="bx--form-item bx--checkbox-wrapper" style="margin-bottom: 8px;">
+      <div class="bx--form-item bx--checkbox-wrapper">
         <input id="instrument-harmonica" class="bx--checkbox instrument-checkbox" type="checkbox" value="harmonica">
         <label for="instrument-harmonica" class="bx--checkbox-label">
           <span class="bx--checkbox-label-text">Harmonica</span>
         </label>
       </div>
-      <div class="bx--form-item bx--checkbox-wrapper" style="margin-bottom: 8px;">
+      <div class="bx--form-item bx--checkbox-wrapper">
         <input id="instrument-flute" class="bx--checkbox instrument-checkbox" type="checkbox" value="flute">
         <label for="instrument-flute" class="bx--checkbox-label">
           <span class="bx--checkbox-label-text">Flute</span>
         </label>
       </div>
-      <div class="bx--form-item bx--checkbox-wrapper" style="margin-bottom: 8px;">
+      <div class="bx--form-item bx--checkbox-wrapper">
         <input id="instrument-percussions" class="bx--checkbox instrument-checkbox" type="checkbox" value="percussions">
         <label for="instrument-percussions" class="bx--checkbox-label">
           <span class="bx--checkbox-label-text">Percussions</span>
         </label>
       </div>
-      <div class="bx--form-item bx--checkbox-wrapper" style="margin-bottom: 8px;">
+      <div class="bx--form-item bx--checkbox-wrapper">
         <input id="instrument-other" class="bx--checkbox instrument-checkbox" type="checkbox" value="other">
         <label for="instrument-other" class="bx--checkbox-label">
           <span class="bx--checkbox-label-text">Other</span>
@@ -452,6 +432,7 @@
 
     <br>
 
+    <div style="text-align: center;">
     <button id="saveInstrumentsBtn" class="bx--btn bx--btn--primary" type="button">
       <svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'>
         <path d="M27.6,13.4l-14-14C13.2,0,12.6,0,12.2,0.4L2.4,10.2C2,10.6,2,11.4,2.4,11.8l14,14c0.2,0.2,0.4,0.2,0.6,0.2s0.4,0,0.6-0.2l9.8-9.8C27.8,15.6,28,15.2,28,14.8S28,14,27.6,13.4z M16,24L8,16l8-8l8,8L16,24z"></path>
@@ -459,6 +440,7 @@
       </svg>
       Save Instruments
     </button>
+    </div>
       </div>
     </div>
 
@@ -1859,7 +1841,30 @@ async function initAdminUsersTab() {
   }
 }
 
+// Conditional tabs are created on demand (not kept hidden in the DOM): Carbon styles the
+// first/last switcher button via :first-child / :last-child, so hidden siblings would break it.
+function addProfileTab(key, label, position) {
+  if (document.getElementById('switch-' + key)) return;
+  const btn = document.createElement('button');
+  btn.id = 'switch-' + key;
+  btn.className = 'bx--content-switcher-btn';
+  btn.dataset.target = 'tab-panel-' + key;
+  btn.setAttribute('role', 'tab');
+  btn.type = 'button';
+  btn.setAttribute('aria-selected', 'false');
+  btn.setAttribute('aria-controls', 'tab-panel-' + key);
+  btn.innerHTML = '<span class="bx--content-switcher__label">' + label + '</span>';
+  const bar = document.querySelector('.bx--content-switcher');
+  if (position === 'start') bar.insertBefore(btn, bar.firstChild);
+  else bar.appendChild(btn);
+}
+
 function initProfileTabs() {
+  // Private profile: account tabs (appended after the common ones)
+  if (!window.isPublicProfile) {
+    addProfileTab('instruments', 'Instruments');
+    addProfileTab('password', 'Password');
+  }
   const switchButtons = document.querySelectorAll('.bx--content-switcher-btn');
   const panels = [
     document.getElementById('tab-panel-achievements'),
@@ -1893,10 +1898,9 @@ function initProfileTabs() {
 
   // Private profile: show account tabs and honour ?tab=instruments|password
   if (!window.isPublicProfile) {
-    $('#switch-instruments, #switch-password').show();
     const requested = new URLSearchParams(window.location.search).get('tab');
     const requestedBtn = requested && document.getElementById('switch-' + requested);
-    if (requestedBtn && requestedBtn.style.display !== 'none') activateTab(requestedBtn);
+    if (requestedBtn) activateTab(requestedBtn);
   }
 }
 
@@ -2041,8 +2045,9 @@ function displayNoSharedPlexes(message) {
 function loadAdminStats() {
   if (!window.currentUser || window.currentUser.role !== 'admin') return;
 
-  $('#switch-stats').show();
-  $('#switch-users').show();
+  // Admin-only tabs, placed before the common ones: Stats, Users
+  addProfileTab('users', 'Users', 'start');
+  addProfileTab('stats', 'Stats', 'start');
 
   // Make Stats the active tab for admin
   $('.bx--content-switcher-btn').removeClass('bx--content-switcher--selected').attr('aria-selected', 'false');

@@ -2636,3 +2636,15 @@ html[data-theme="light"] #song-quote { color: #000; }
 html[data-theme="light"] .menu-footer { color: #6f6f6f; }
 html[data-theme="light"] .menu-footer a:not(.bx--btn) { color: #0f62fe; }
 html[data-theme="light"] .fullscreen-nav hr { border-top-color: rgba(0,0,0,0.12) !important; }
+
+/* Light theme: gear catalog cards (name, meta, dividers, scrollbar) */
+html[data-theme="light"] .gear-meta-id { color: #161616; }
+html[data-theme="light"] .gear-meta-row { color: #525252; }
+html[data-theme="light"] .gear-meta,
+html[data-theme="light"] .gear-footer { border-top-color: #d0d0d0; }
+
+/* Light theme: SubPlex menu icon shown on pedal hover */
+html[data-theme="light"] .preset-icon { fill: #161616; }
+
+/* Light theme: share icon shown on catalog pedal hover */
+html[data-theme="light"] .pedal-share-icon { color: #161616; }
