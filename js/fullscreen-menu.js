@@ -307,3 +307,49 @@ $(document).ready(function () {
     }, 100);
   }
 });
+
+
+// ==========================
+// Navbar avatar button (opens the user profile)
+// ==========================
+(function () {
+  const USER_ICON = '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M16 4a5 5 0 11-5 5 5 5 0 015-5m0-2a7 7 0 107 7A7 7 0 0016 2zM26 30H24V25a5 5 0 00-5-5H13a5 5 0 00-5 5v5H6V25a7 7 0 017-7h6a7 7 0 017 7z"/></svg>';
+
+  // Adds (or refreshes) the avatar button. Returns true when the button is in place.
+  window.ppUpdateAvatarButton = function () {
+    const u = window.currentUser;
+    if (!u || u.role === 'guest' || !u.userid) return false;
+    const $header = $('body > header').first();
+    if (!$header.length) return false;
+
+    // currentUser may come from the JWT payload (no avatar): fall back to the last known one
+    const key = 'ppAvatar:' + u.userid;
+    if (u.avatar) localStorage.setItem(key, u.avatar);
+    const avatar = parseInt(u.avatar || localStorage.getItem(key), 10);
+
+    $('#ppAvatarBtn').remove();
+    const $btn = $('<button id="ppAvatarBtn" type="button" class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" aria-label="Your profile" title="Your profile"></button>')
+      .css({ padding: 0, width: '2rem', minWidth: '2rem', height: '2rem', minHeight: '2rem', borderRadius: '50%', flexShrink: 0, marginLeft: '0.5rem' });
+    if (avatar > 0) {
+      $btn.css({ backgroundImage: 'url(/faces/' + avatar + '.png)', backgroundSize: 'cover', backgroundPosition: 'center' });
+    } else {
+      $btn.html(USER_ICON);
+    }
+
+    // Headers with a right-hand group get the button there; otherwise it becomes the right-hand item
+    const $children = $header.children().not('.pp-search-overlay');
+    ($children.length >= 2 ? $children.last() : $header).append($btn);
+    return true;
+  };
+
+  $(document).on('click', '#ppAvatarBtn', function () {
+    window.location.href = '/profile';
+  });
+
+  $(function () {
+    let tries = 0;
+    const id = setInterval(() => {
+      if (window.ppUpdateAvatarButton() || ++tries >= 100) clearInterval(id);
+    }, 100);
+  });
+})();

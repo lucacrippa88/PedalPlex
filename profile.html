@@ -75,6 +75,25 @@
     </style>
 
     <style>
+      /* ---- Avatar tab ---- */
+      .profile-avatar-wrap { max-width: 640px; margin: 2rem auto 0; padding: 0 1rem; }
+      #avatarGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+        gap: 12px;
+      }
+      .avatar-option {
+        padding: 0; border: 2px solid transparent; border-radius: 50%;
+        background: none; cursor: pointer; line-height: 0;
+        transition: border-color 0.15s ease, transform 0.15s ease;
+      }
+      .avatar-option img { width: 100%; height: auto; border-radius: 50%; display: block; }
+      .avatar-option:hover { transform: scale(1.06); }
+      .avatar-option:focus-visible { outline: 2px solid #9C54D5; outline-offset: 2px; }
+      .avatar-option.selected { border-color: #9C54D5; }
+    </style>
+
+    <style>
       /* ---- Admin: Users tab ---- */
       #admin-user-list { max-width: 860px; margin: 0 auto; padding: 0 16px 80px; }
       .admin-user-row {
@@ -444,6 +463,18 @@
       </div>
     </div>
 
+    <!-- Private profile only: Avatar tab -->
+    <div id="tab-panel-avatar" role="tabpanel" aria-labelledby="switch-avatar" hidden>
+      <div class="profile-avatar-wrap">
+        <div class="bx--form__helper-text" style="margin-bottom: 16px; text-align: center;">Choose your avatar and click Save</div>
+        <div id="avatarGrid" role="radiogroup" aria-label="Avatar"></div>
+        <br>
+        <div style="text-align: center;">
+          <button id="saveAvatarBtn" class="bx--btn bx--btn--primary" type="button" disabled>Save Avatar</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Private profile only: Password tab -->
     <div id="tab-panel-password" role="tabpanel" aria-labelledby="switch-password" hidden>
       <div style="max-width: 400px; margin: 2rem auto 0; padding: 0 1rem;">
@@ -732,6 +763,74 @@
         }
       });
     });
+    // ── Avatar picker ────────────────────────────────────────────────────
+    const AVATAR_COUNT = 49; // faces/1.png ... faces/49.png
+    let selectedAvatar = null;
+
+    function buildAvatarGrid() {
+      const grid = document.getElementById('avatarGrid');
+      if (!grid || grid.children.length) return;
+      for (let i = 1; i <= AVATAR_COUNT; i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'avatar-option';
+        btn.dataset.avatar = i;
+        btn.setAttribute('role', 'radio');
+        btn.setAttribute('aria-checked', 'false');
+        btn.setAttribute('aria-label', 'Avatar ' + i);
+        btn.innerHTML = '<img src="faces/' + i + '.png" alt="" loading="lazy">';
+        grid.appendChild(btn);
+      }
+    }
+
+    function markSelectedAvatar(n) {
+      selectedAvatar = n;
+      document.querySelectorAll('.avatar-option').forEach(b => {
+        const on = parseInt(b.dataset.avatar, 10) === n;
+        b.classList.toggle('selected', on);
+        b.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+    }
+
+    function loadUserAvatar() {
+      buildAvatarGrid();
+      markSelectedAvatar(parseInt(window.currentUser && window.currentUser.avatar, 10) || null);
+      $('#saveAvatarBtn').prop('disabled', true);
+    }
+
+    $(document).on('click', '.avatar-option', function () {
+      markSelectedAvatar(parseInt(this.dataset.avatar, 10));
+      $('#saveAvatarBtn').prop('disabled', false);
+    });
+
+    $('#saveAvatarBtn').click(function () {
+      if (!selectedAvatar) return;
+      const token = localStorage.getItem('authToken');
+      const $btn = $(this).prop('disabled', true);
+      $.ajax({
+        url: 'https://api.pedalplex.com/USER_UPDATE_AVATAR.php',
+        type: 'POST',
+        contentType: 'application/json',
+        headers: { 'Authorization': 'Bearer ' + token },
+        data: JSON.stringify({ avatar: selectedAvatar }),
+        success: function (res) {
+          if (res.success) {
+            window.currentUser.avatar = res.avatar;
+            if (typeof window.ppUpdateAvatarButton === 'function') window.ppUpdateAvatarButton();
+            Swal.fire({ title: 'Success!', text: 'Avatar saved successfully!', icon: 'success', timer: 2000, showConfirmButton: false });
+          } else {
+            $btn.prop('disabled', false);
+            Swal.fire({ icon: 'error', title: 'Update Failed', text: res.error || 'Unknown error' });
+          }
+        },
+        error: function (xhr) {
+          $btn.prop('disabled', false);
+          let errorMsg = 'Failed to save avatar';
+          try { errorMsg = JSON.parse(xhr.responseText).error || errorMsg; } catch (e) {}
+          Swal.fire({ icon: 'error', title: 'Save Failed', text: errorMsg });
+        }
+      });
+    });
   </script>
 
   <script>
@@ -808,6 +907,8 @@
         // Pre-check the user's instruments in the Instruments tab
         if (!window.currentUser.instruments) window.currentUser.instruments = [];
         loadUserInstruments();
+        loadUserAvatar();
+        if (typeof window.ppUpdateAvatarButton === 'function') window.ppUpdateAvatarButton();
         
         // Award and load badges
         awardAndLoadBadges();
@@ -1862,6 +1963,7 @@ function addProfileTab(key, label, position) {
 function initProfileTabs() {
   // Private profile: account tabs (appended after the common ones)
   if (!window.isPublicProfile) {
+    addProfileTab('avatar', 'Avatar');
     addProfileTab('instruments', 'Instruments');
     addProfileTab('password', 'Password');
   }
@@ -1869,6 +1971,7 @@ function initProfileTabs() {
   const panels = [
     document.getElementById('tab-panel-achievements'),
     document.getElementById('tab-panel-shared-plexes'),
+    document.getElementById('tab-panel-avatar'),
     document.getElementById('tab-panel-instruments'),
     document.getElementById('tab-panel-password'),
     document.getElementById('tab-panel-stats'),
@@ -2052,7 +2155,7 @@ function loadAdminStats() {
   // Make Stats the active tab for admin
   $('.bx--content-switcher-btn').removeClass('bx--content-switcher--selected').attr('aria-selected', 'false');
   $('#switch-stats').addClass('bx--content-switcher--selected').attr('aria-selected', 'true');
-  $('#tab-panel-achievements, #tab-panel-shared-plexes, #tab-panel-users, #tab-panel-instruments, #tab-panel-password').attr('hidden', true);
+  $('#tab-panel-achievements, #tab-panel-shared-plexes, #tab-panel-users, #tab-panel-avatar, #tab-panel-instruments, #tab-panel-password').attr('hidden', true);
   $('#tab-panel-stats').removeAttr('hidden');
 
   $.ajax({
