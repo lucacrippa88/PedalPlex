@@ -119,6 +119,9 @@ var searchBookmark = null;
 var currentSearchQuery = null;
 var currentCategory = 'all';
 var currentPublishedFilter = 'all'; // all | draft | reviewing | publicByMe | template | user
+var currentSort = 'alpha'; // alpha | latest | oldest (latest/oldest: by publishedAt, via GET_CATALOG_LAZY.php)
+// ?sort=latest (e.g. from the "Latest gear added" notification) preselects "newest published"
+if (new URLSearchParams(window.location.search).get("sort") === "latest") currentSort = 'latest';
 
 // ==================== Helpers ====================
 function setPedalJSON(jsonString) { pedalJSON = jsonString; }
@@ -150,6 +153,18 @@ $(function () {
   }).fail(function () {
     console.error("Failed to load categories.json");
   });
+});
+
+// ==================== Sort Filter ====================
+$(function () {
+  $("#sortFilter").val(currentSort);
+});
+
+$(document).on("change", "#sortFilter", function () {
+  currentSort = $(this).val();
+  searchBookmark = null;
+  resetCatalogState();
+  loadNextCatalogPage();
 });
 
 function updateGearsCatalogHeader() {
@@ -222,10 +237,17 @@ function loadNextCatalogPage(extraParams = {}) {
   const token = localStorage.getItem("authToken");
 
   // ==================== SEARCH MODE (search + category + published filter) ====================
-  const isSearchMode = currentSearchQuery !== null ||
+  // A date sort (latest/oldest) with no text search / published filter goes through the catalog
+  // endpoint, which supports both the category and the sort.
+  const dateSortOnly = currentSort !== 'alpha' &&
+                       currentSearchQuery === null &&
+                       currentPublishedFilter === 'all' &&
+                       Object.keys(extraParams).length === 0;
+  const isSearchMode = !dateSortOnly && (
+                       currentSearchQuery !== null ||
                        currentCategory !== 'all' ||
                        currentPublishedFilter !== 'all' ||
-                       Object.keys(extraParams).length > 0;
+                       Object.keys(extraParams).length > 0);
 
   if (isSearchMode) {
     url = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
@@ -262,9 +284,9 @@ function loadNextCatalogPage(extraParams = {}) {
     params.push("page=" + currentPage);
     params.push("limit=100");
 
-    // ?sort=latest (e.g. from the "Latest gear added" notification): newest publications first
-    if (new URLSearchParams(window.location.search).get("sort") === "latest") {
-      params.push("sort=latest");
+    // newest / oldest publications first
+    if (currentSort === 'latest' || currentSort === 'oldest') {
+      params.push("sort=" + currentSort);
     }
 
     if (currentCategory && currentCategory !== "all") {
