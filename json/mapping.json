@@ -15646,6 +15646,78 @@
     "pedalplex_url": "https://www.pedalplex.com/gear/anasound-dystopia",
     "brand": "Anasound",
     "seo_description": "A versatile delay pedal designed to create rich, atmospheric echoes and rhythmic repeats. Ideal for adding depth, space, and texture to your sound, from subtle slapback and classic delay effects to expansive, experimental soundscapes."
+  },
+  {
+    "pedalplex_id": "Alexander Pedals Riff",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/alexander/riff",
+    "pedalplex_url": "https://www.pedalplex.com/gear/alexander-pedals-riff",
+    "brand": "Alexander Pedals",
+    "seo_description": "The Alexander Pedals Riff is a limited-edition Class-A preamp boost designed to add character, warmth and presence to your guitar signal. Its three intuitive controls let you shape the output level, adjust high-frequency response and fine-tune the low-end content, ranging from a transparent, glassy boost to a fuller, more powerful sound. Featuring true-bypass switching, it can also push a tube amplifier into natural overdrive."
+  },
+  {
+    "pedalplex_id": "Arc Effects Shepherd",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/arc-effects-sheperd",
+    "brand": "Arc Effects",
+    "seo_description": "The ARC Effects Shepherd is a boutique fuzz pedal inspired by the classic 1973 Electro-Harmonix Violet Ram’s Head Big Muff, with a more aggressive gain character. It delivers rich, sustaining fuzz tones while maintaining excellent note definition and pick responsiveness. An external three-position toggle switch offers different midrange voicings: scooped, flat and boosted, allowing players to tailor the sound from classic vintage fuzz to a more focused, cutting tone. It also features true-bypass switching and top-mounted connections."
+  },
+    {
+    "pedalplex_id": "Arc Effects Shepherd",
+    "status": "missing",
+    "fxdb_url": null,
+    "pedalplex_url": "https://www.pedalplex.com/gear/arc-effects-sheperd",
+    "brand": "Arc Effects",
+    "seo_description": "The ARC Effects Shepherd is a boutique fuzz pedal inspired by the classic 1973 Electro-Harmonix Violet Ram’s Head Big Muff, with a more aggressive gain character. It delivers rich, sustaining fuzz tones while maintaining excellent note definition and pick responsiveness. An external three-position toggle switch offers different midrange voicings: scooped, flat and boosted, allowing players to tailor the sound from classic vintage fuzz to a more focused, cutting tone. It also features true-bypass switching and top-mounted connections."
+  },
+      {
+    "pedalplex_id": "Arc Effects Big Green",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/arceffects/biggreenpi",
+    "pedalplex_url": "https://www.pedalplex.com/gear/arc-effects-big-green",
+    "brand": "Arc Effects",
+    "seo_description": "The ARC Effects Big Green is a versatile fuzz pedal built around a rich, powerful vintage-inspired sound. It produces thick, woolly distortion with pronounced low-end, smooth sustain and a characteristic fuzzy texture that works particularly well for heavy riffs, expansive chords and bass lines. Its additional voicing options let players reshape the midrange and experiment with a more open, aggressive response, making it a flexible take on a classic fuzz sound."
+  },
+       {
+    "pedalplex_id": "Arc Effects Soothsayer",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/arceffects/soothsayer",
+    "pedalplex_url": "https://www.pedalplex.com/gear/arc-effects-big-green",
+    "brand": "Arc Effects",
+    "seo_description": "A dynamic drive pedal with a wide tonal range, capable of moving from warm, lightly saturated tones to gritty, aggressive distortion. Its adjustable clipping options offer different levels of punch, compression and harmonic character, while the flexible gain settings make it equally suitable for subtle tonal enhancement and heavier, more pronounced sounds."
+  },
+         {
+    "pedalplex_id": "Arc Effects Klone V2 - Silver",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/arceffects/klone/v2",
+    "pedalplex_url": "https://www.pedalplex.com/gear/arc-effects-klone-v2-silver",
+    "brand": "Arc Effects",
+    "seo_description": "The ARC Effects Klone V2 delivers a broad range of overdrive textures, from clean signal enhancement with added presence to smooth, harmonically rich saturation. Its responsive Gain, Tone and Volume controls preserve playing dynamics while allowing the sound to become progressively fuller and more driven. An internal bass-boost switch adds extra low-frequency weight when needed, offering a second tonal character without changing the pedal's straightforward operation."
+  },
+           {
+    "pedalplex_id": "Arc Effects Klone V2 - Gold",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/arceffects/klone/v2",
+    "pedalplex_url": "https://www.pedalplex.com/gear/arc-effects-klone-v2-gold",
+    "brand": "Arc Effects",
+    "seo_description": "The ARC Effects Klone V2 delivers a broad range of overdrive textures, from clean signal enhancement with added presence to smooth, harmonically rich saturation. Its responsive Gain, Tone and Volume controls preserve playing dynamics while allowing the sound to become progressively fuller and more driven. An internal bass-boost switch adds extra low-frequency weight when needed, offering a second tonal character without changing the pedal's straightforward operation."
+  },
+           {
+    "pedalplex_id": "Arc Effects Klone V2 - Black",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/arceffects/klone/v2",
+    "pedalplex_url": "https://www.pedalplex.com/gear/arc-effects-klone-v2-black",
+    "brand": "Arc Effects",
+    "seo_description": "The ARC Effects Klone V2 delivers a broad range of overdrive textures, from clean signal enhancement with added presence to smooth, harmonically rich saturation. Its responsive Gain, Tone and Volume controls preserve playing dynamics while allowing the sound to become progressively fuller and more driven. An internal bass-boost switch adds extra low-frequency weight when needed, offering a second tonal character without changing the pedal's straightforward operation."
+  },
+           {
+    "pedalplex_id": "Arc Effects Klone V2 - White",
+    "status": "found",
+    "fxdb_url": "https://www.effectsdatabase.com/model/arceffects/klone/v2",
+    "pedalplex_url": "https://www.pedalplex.com/gear/arc-effects-klone-v2-white",
+    "brand": "Arc Effects",
+    "seo_description": "The ARC Effects Klone V2 delivers a broad range of overdrive textures, from clean signal enhancement with added presence to smooth, harmonically rich saturation. Its responsive Gain, Tone and Volume controls preserve playing dynamics while allowing the sound to become progressively fuller and more driven. An internal bass-boost switch adds extra low-frequency weight when needed, offering a second tonal character without changing the pedal's straightforward operation."
   }
 ]
 
