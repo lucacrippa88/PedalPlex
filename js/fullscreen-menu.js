@@ -330,12 +330,11 @@ $(document).ready(function () {
       (u.avatar !== undefined && u.avatar !== null) ? u.avatar : localStorage.getItem(key), 10);
 
     $('#ppAvatarBtn').remove();
-    const $btn = $('<button id="ppAvatarBtn" type="button" class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" aria-label="Your profile" title="Your profile"></button>')
-      .css({ padding: 0, width: '2rem', minWidth: '2rem', height: '2rem', minHeight: '2rem', borderRadius: '50%', flexShrink: 0, marginLeft: '0.5rem' });
+    const $btn = $('<button id="ppAvatarBtn" type="button" class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" aria-label="Your profile" title="Your profile"></button>');
     if (avatar > 0) {
-      $btn.css({ backgroundImage: 'url(/faces/' + avatar + '.png)', backgroundSize: 'cover', backgroundPosition: 'center' });
+      $btn.empty().css({ backgroundImage: 'url(/faces/' + avatar + '.png)', backgroundSize: 'cover', backgroundPosition: 'center' });
     } else {
-      $btn.html(USER_ICON);
+      $btn.css({ backgroundImage: 'none' }).html(USER_ICON);
     }
 
     // Headers with a right-hand group get the button there; otherwise it becomes the right-hand item

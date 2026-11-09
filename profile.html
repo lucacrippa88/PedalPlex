@@ -87,16 +87,37 @@
         #avatarGrid { grid-template-columns: repeat(5, 1fr); gap: 12px; }
       }
       .avatar-option {
-        padding: 0; border: 2px solid transparent; border-radius: 50%;
-        background: none; cursor: pointer; line-height: 0;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        box-sizing: border-box;
+        padding: 0;
+        border: 2px solid transparent;
+        border-radius: 50%;
+        background: none;
+        cursor: pointer;
+        line-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         transition: border-color 0.15s ease, transform 0.15s ease;
       }
-      .avatar-option img { width: 100%; height: auto; border-radius: 50%; display: block; }
-      .avatar-option--none {
-        display: flex; align-items: center; justify-content: center;
-        aspect-ratio: 1 / 1; color: #c6c6c6; background: #393939;
+      .avatar-option img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        display: block;
       }
-      .avatar-option--none svg { width: 45%; height: 45%; }
+      .avatar-option--none {
+        color: #c6c6c6;
+        background: #393939;
+        background-clip: padding-box;
+      }
+      .avatar-option--none svg {
+        width: 48%;
+        height: 48%;
+        display: block;
+      }
       .avatar-option:hover { transform: scale(1.06); }
       .avatar-option:focus-visible { outline: 2px solid #9C54D5; outline-offset: 2px; }
       .avatar-option.selected { border-color: #9C54D5; }
@@ -138,6 +159,44 @@
       /* rows created by renderFullPedalboard have inline margin-top:-12px: override only here */
       #admin-preset-container #preset > div { margin-top: 12px !important; }
       #admin-preset-container #preset .pedal-catalog { cursor: default !important; }
+
+      /* Tab switcher responsive: text on desktop, icons on mobile */
+      .bx--content-switcher-btn .tab-icon {
+        display: none;
+      }
+      .bx--content-switcher-btn .tab-text {
+        display: inline;
+      }
+      @media (max-width: 768px) {
+        .bx--content-switcher {
+          width: 100%;
+        }
+        .bx--content-switcher-btn {
+          padding: 0 !important;
+          min-width: 0 !important;
+        }
+        .bx--content-switcher-btn .bx--content-switcher__label {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          width: 100% !important;
+          padding: 0 !important;
+        }
+        .bx--content-switcher-btn .tab-text {
+          display: none !important;
+        }
+        .bx--content-switcher-btn .tab-icon {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          line-height: 0;
+        }
+        .bx--content-switcher-btn .tab-icon svg {
+          width: 18px !important;
+          height: 18px !important;
+          display: block;
+        }
+      }
     </style>
 
     <div class="bx--content-switcher" role="tablist" aria-label="Profile sections">
@@ -147,9 +206,16 @@
         data-target="tab-panel-achievements"
         role="tab"
         type="button"
+        title="Achievements"
+        aria-label="Achievements"
         aria-selected="true"
         aria-controls="tab-panel-achievements">
-        <span class="bx--content-switcher__label">Achievements</span>
+        <span class="bx--content-switcher__label">
+          <span class="tab-icon" aria-hidden="true">
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><path d="M26 4h-4V2H10v2H6a2 2 0 00-2 2v4a8 8 0 007.2 7.9A8.008 8.008 0 0015 21.9V26h-5v2h12v-2h-5v-4.1a8.008 8.008 0 003.8-4A8 8 0 0028 12V6a2 2 0 00-2-2zM6 12V6h4v7.8A6.01 6.01 0 016 12zm16 1.8V6h4v6a6.01 6.01 0 01-4 1.8z"/></svg>
+          </span>
+          <span class="tab-text">Achievements</span>
+        </span>
       </button>
       <button
         id="switch-shared-plexes"
@@ -157,9 +223,16 @@
         data-target="tab-panel-shared-plexes"
         role="tab"
         type="button"
+        title="Shared Plexes"
+        aria-label="Shared Plexes"
         aria-selected="false"
         aria-controls="tab-panel-shared-plexes">
-        <span class="bx--content-switcher__label">Shared Plexes</span>
+        <span class="bx--content-switcher__label">
+          <span class="tab-icon" aria-hidden="true">
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><path d="M23 20a5 5 0 00-3.89 1.89L11.8 17.32a4.46 4.46 0 000-2.64l7.31-4.57A5 5 0 1018 7a4.79 4.79 0 00.2 1.32l-7.31 4.57a5 5 0 100 6.22l7.31 4.57A4.79 4.79 0 0018 25a5 5 0 105-5z"/></svg>
+          </span>
+          <span class="tab-text">Shared Plexes</span>
+        </span>
       </button>
     </div>
 
@@ -1956,6 +2029,17 @@ async function initAdminUsersTab() {
   }
 }
 
+// Icons for mobile tab switcher
+const PROFILE_TAB_ICONS = {
+  achievements: '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><path d="M26 4h-4V2H10v2H6a2 2 0 00-2 2v4a8 8 0 007.2 7.9A8.008 8.008 0 0015 21.9V26h-5v2h12v-2h-5v-4.1a8.008 8.008 0 003.8-4A8 8 0 0028 12V6a2 2 0 00-2-2zM6 12V6h4v7.8A6.01 6.01 0 016 12zm16 1.8V6h4v6a6.01 6.01 0 01-4 1.8z"/></svg>',
+  'shared-plexes': '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><path d="M23 20a5 5 0 00-3.89 1.89L11.8 17.32a4.46 4.46 0 000-2.64l7.31-4.57A5 5 0 1018 7a4.79 4.79 0 00.2 1.32l-7.31 4.57a5 5 0 100 6.22l7.31 4.57A4.79 4.79 0 0018 25a5 5 0 105-5z"/></svg>',
+  avatar: '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4a5 5 0 11-5 5 5 5 0 015-5m0-2a7 7 0 107 7A7 7 0 0016 2zM26 30H24V25a5 5 0 00-5-5H13a5 5 0 00-5 5v5H6V25a7 7 0 017-7h6a7 7 0 017 7z"/></svg>',
+  instruments: '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><path d="M25 4H10a2 2 0 00-2 2v14.556A3.955 3.955 0 006 20a4 4 0 104 4V12h15v8.556A3.955 3.955 0 0023 20a4 4 0 104 4V6a2 2 0 00-2-2zM6 26a2 2 0 112-2 2 2 0 01-2 2zm17 0a2 2 0 112-2 2 2 0 01-2 2zM10 6h15v4H10z"/></svg>',
+  password: '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><path d="M24 14H22V10a6 6 0 00-12 0v4H8a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V16a2 2 0 00-2-2zM12 10a4 4 0 018 0v4H12zm12 18H8V16h16z"/><circle cx="16" cy="22" r="2"/></svg>',
+  stats: '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 2H2v26a2 2 0 002 2h26v-2H4V2zm6 22H8V12h2v12zm6 0h-2V8h2v16zm6 0h-2v-9h2v9zm6 0h-2V6h2v18z"/></svg>',
+  users: '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true"><path d="M9 14a5 5 0 10-5-5 5 5 0 005 5zm0-8a3 3 0 11-3 3 3 3 0 013-3zm14 8a5 5 0 10-5-5 5 5 0 005 5zm0-8a3 3 0 11-3 3 3 3 0 013-3zM9 16a7 7 0 00-7 7v5h2v-5a5 5 0 015-5h0a5 5 0 015 5v5h2v-5a7 7 0 00-7-7zm14 0a7 7 0 00-7 7v5h2v-5a5 5 0 015-5h0a5 5 0 015 5v5h2v-5a7 7 0 00-7-7z"/></svg>'
+};
+
 // Conditional tabs are created on demand (not kept hidden in the DOM): Carbon styles the
 // first/last switcher button via :first-child / :last-child, so hidden siblings would break it.
 function addProfileTab(key, label, position) {
@@ -1966,9 +2050,15 @@ function addProfileTab(key, label, position) {
   btn.dataset.target = 'tab-panel-' + key;
   btn.setAttribute('role', 'tab');
   btn.type = 'button';
+  btn.title = label;
+  btn.setAttribute('aria-label', label);
   btn.setAttribute('aria-selected', 'false');
   btn.setAttribute('aria-controls', 'tab-panel-' + key);
-  btn.innerHTML = '<span class="bx--content-switcher__label">' + label + '</span>';
+  const icon = PROFILE_TAB_ICONS[key] || '';
+  btn.innerHTML = '<span class="bx--content-switcher__label">' +
+    (icon ? '<span class="tab-icon" aria-hidden="true">' + icon + '</span>' : '') +
+    '<span class="tab-text">' + label + '</span>' +
+    '</span>';
   const bar = document.querySelector('.bx--content-switcher');
   if (position === 'start') bar.insertBefore(btn, bar.firstChild);
   else bar.appendChild(btn);
