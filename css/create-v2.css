@@ -885,3 +885,13 @@ body.v2 .swal2-actions .bx--btn {
 body.v2 #status-buttons .bx--btn { gap: 8px; }
 /* the pills below already show the status; the button stays in the DOM because buildJSON() reads its text */
 body.v2 #pedal-published-button { display: none; }
+
+/* =====================================================================
+   Light theme: the builder UI is designed on dark panels only.
+   Without this, style.css light rules turn inherited / inline-white text
+   dark (#161616) on top of the dark panels → unreadable.
+   ===================================================================== */
+html[data-theme="light"] body.v2 { background: #2e2e2e; color: #f4f4f4; }
+html[data-theme="light"] body.v2 [style*="color: #fff"]:not([style*="background"]),
+html[data-theme="light"] body.v2 [style*="color:#fff"]:not([style*="background"]),
+html[data-theme="light"] body.v2 [style*="color: #ffffff"]:not([style*="background"]) { color: #fff !important; }
