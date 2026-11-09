@@ -1283,6 +1283,33 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
 }
 // ------------------------------------------------
 
+// ==================== Static gear pages ====================
+// json/mapping.json lists the gears that have a page in gear/ (pedalplex_id + pedalplex_url).
+// The "Details" link is shown only when the gear has a pedalplex_url. If the file can't be
+// loaded the link is shown anyway.
+var _gearPagesPromise = null;
+function getGearsWithPage() {
+  if (!_gearPagesPromise) {
+    _gearPagesPromise = fetch('/json/mapping.json')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (list) {
+        if (!Array.isArray(list)) return null;
+        const ids = new Set();
+        list.forEach(function (p) { if (p.pedalplex_url) ids.add(p.pedalplex_id); });
+        return ids;
+      })
+      .catch(function () { return null; });
+  }
+  return _gearPagesPromise;
+}
+// Hides $el now, then shows it only if the gear has a page.
+function showIfGearPageExists($el, pedalId) {
+  $el.css('display', 'none');
+  getGearsWithPage().then(function (ids) {
+    if (!ids || ids.has(pedalId)) $el.css('display', '');
+  });
+}
+
 // ==================== Gear Catalog Card Wrapper ====================
 // Wraps a renderPedal() result into the new .gear-card layout (thumb + meta).
 // Used by gears.js / renderCatalogIncremental when on the gears page.
@@ -1373,10 +1400,10 @@ function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
 
   // Details link
   if (!hideDetails) {
-    $actions.append(
-      $('<a>').addClass('gear-details-link').attr({ href: detailUrl })
-        .html('<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" fill="currentColor"><path d="M26,28H6a2,2,0,0,1-2-2V6A2,2,0,0,1,6,4H16V6H6V26H26V16h2V26A2,2,0,0,1,26,28Z"/><path d="M20 2 20 4 26.586 4 18 12.586 19.414 14 28 5.414 28 12 30 2 20 2z"/></svg>Details')
-    );
+    const $details = $('<a>').addClass('gear-details-link').attr({ href: detailUrl })
+      .html('<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" fill="currentColor"><path d="M26,28H6a2,2,0,0,1-2-2V6A2,2,0,0,1,6,4H16V6H6V26H26V16h2V26A2,2,0,0,1,26,28Z"/><path d="M20 2 20 4 26.586 4 18 12.586 19.414 14 28 5.414 28 12 30 2 20 2z"/></svg>Details');
+    showIfGearPageExists($details, pedalId);
+    $actions.append($details);
   }
 
   // Edit / Clone button

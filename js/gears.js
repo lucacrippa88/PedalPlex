@@ -119,7 +119,7 @@ var searchBookmark = null;
 var currentSearchQuery = null;
 var currentCategory = 'all';
 var currentPublishedFilter = 'all'; // all | draft | reviewing | publicByMe | template | user
-var currentSort = 'alpha'; // alpha | latest | oldest (latest/oldest: by publishedAt, via GET_CATALOG_LAZY.php)
+var currentSort = 'alpha'; // alpha (A-Z) | latest (New: by publishedAt) | trending (by rig usage) - via GET_CATALOG_LAZY.php
 // ?sort=latest (e.g. from the "Latest gear added" notification) preselects "newest published"
 if (new URLSearchParams(window.location.search).get("sort") === "latest") currentSort = 'latest';
 
@@ -156,12 +156,18 @@ $(function () {
 });
 
 // ==================== Sort Filter ====================
-$(function () {
-  $("#sortFilter").val(currentSort);
-});
+function syncSortButtons() {
+  $("#sortFilter .pp-sort-btn").each(function () {
+    $(this).toggleClass("active", $(this).data("sort") === currentSort);
+  });
+}
+$(syncSortButtons);
 
-$(document).on("change", "#sortFilter", function () {
-  currentSort = $(this).val();
+$(document).on("click", "#sortFilter .pp-sort-btn", function () {
+  const sort = $(this).data("sort");
+  if (sort === currentSort) return;
+  currentSort = sort;
+  syncSortButtons();
   searchBookmark = null;
   resetCatalogState();
   loadNextCatalogPage();
@@ -284,8 +290,8 @@ function loadNextCatalogPage(extraParams = {}) {
     params.push("page=" + currentPage);
     params.push("limit=100");
 
-    // newest / oldest publications first
-    if (currentSort === 'latest' || currentSort === 'oldest') {
+    // newest publications first / most used in rigs first
+    if (currentSort === 'latest' || currentSort === 'trending') {
       params.push("sort=" + currentSort);
     }
 

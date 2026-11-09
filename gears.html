@@ -53,13 +53,11 @@
         <option value="all" selected>All categories</option>
         <!-- options loaded from categories.json (gears.js) -->
       </select>
-      <select id="sortFilter" aria-label="Sort gears">
-        <option value="alpha" selected>Alphabetical</option>
-        <option value="latest">Recently published</option>
-        <option value="oldest">Oldest published</option>
-      </select>
-
-
+      <div id="sortFilter" class="pp-sort-group" role="group" aria-label="Sort gears">
+        <button type="button" class="pp-sort-btn" data-sort="latest">New</button>
+        <button type="button" class="pp-sort-btn" data-sort="trending">Trending</button>
+        <button type="button" class="pp-sort-btn active" data-sort="alpha">A-Z</button>
+      </div>
 
       <a id="goToRigs" href="rigs" class="showDesktop bx--btn bx--btn--tertiary" type="button" style="margin-left: auto!important; max-width:500px!important;">Go to Rigs
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
@@ -93,7 +91,7 @@
     <div id="catalog"></div>
 
 
-    <button id="backToTop" class="bx--btn bx--btn--primary" type="button" style="position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: none; border-radius: 50%; width: 48px; height: 48px; padding: 0; min-height: 48px;">
+    <button id="backToTop" class="bx--btn bx--btn--primary" type="button" style="position: fixed; bottom: 72px; right: 24px; z-index: 9999; display: none; border-radius: 50%; width: 48px; height: 48px; padding: 0; min-height: 48px;">
       <svg style="margin:auto;" focusable="false" preserveAspectRatio="xMidYMid meet"
           xmlns="http://www.w3.org/2000/svg" fill="currentColor"
           width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
