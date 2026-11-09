@@ -53,10 +53,16 @@
         <option value="all" selected>All categories</option>
         <!-- options loaded from categories.json (gears.js) -->
       </select>
-      <div id="sortFilter" class="pp-sort-group" role="group" aria-label="Sort gears">
-        <button type="button" class="pp-sort-btn" data-sort="latest">New</button>
-        <button type="button" class="pp-sort-btn" data-sort="trending">Trending</button>
-        <button type="button" class="pp-sort-btn active" data-sort="alpha">A-Z</button>
+      <div id="sortFilter" class="bx--content-switcher" role="tablist" aria-label="Sort gears">
+        <button type="button" class="bx--content-switcher-btn" role="tab" aria-selected="false" data-sort="latest">
+          <span class="bx--content-switcher__label">New</span>
+        </button>
+        <button type="button" class="bx--content-switcher-btn" role="tab" aria-selected="false" data-sort="trending">
+          <span class="bx--content-switcher__label">Trending</span>
+        </button>
+        <button type="button" class="bx--content-switcher-btn bx--content-switcher--selected" role="tab" aria-selected="true" data-sort="alpha">
+          <span class="bx--content-switcher__label">A-Z</span>
+        </button>
       </div>
 
       <a id="goToRigs" href="rigs" class="showDesktop bx--btn bx--btn--tertiary" type="button" style="margin-left: auto!important; max-width:500px!important;">Go to Rigs

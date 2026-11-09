@@ -157,13 +157,14 @@ $(function () {
 
 // ==================== Sort Filter ====================
 function syncSortButtons() {
-  $("#sortFilter .pp-sort-btn").each(function () {
-    $(this).toggleClass("active", $(this).data("sort") === currentSort);
+  $("#sortFilter .bx--content-switcher-btn").each(function () {
+    const selected = $(this).data("sort") === currentSort;
+    $(this).toggleClass("bx--content-switcher--selected", selected).attr("aria-selected", selected);
   });
 }
 $(syncSortButtons);
 
-$(document).on("click", "#sortFilter .pp-sort-btn", function () {
+$(document).on("click", "#sortFilter .bx--content-switcher-btn", function () {
   const sort = $(this).data("sort");
   if (sort === currentSort) return;
   currentSort = sort;

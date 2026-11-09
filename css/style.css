@@ -538,12 +538,9 @@ html { box-sizing: content-box !important; }
 .row > div > select { margin-bottom: 10px; }
 #categoryFilter, #angleSelect, #pedalboardSelect, #presetSelect, #folderSelect, #folderSelectInput, #selectFolder { height: 40px; font-size: initial; max-width: 11rem; }
 #categoryFilter { font-size: 0.8rem; }
-/* Gears sort: segmented control, same height as the category select */
-.pp-sort-group { display: inline-flex; height: 40px; flex: 0 0 auto; border: 1px solid #8d8d8d; }
-.pp-sort-btn { height: 100%; padding: 0 0.9rem; background: transparent; color: inherit; border: 0; border-left: 1px solid #8d8d8d; font-size: 0.8rem; cursor: pointer; font-family: inherit; }
-.pp-sort-btn:first-child { border-left: 0; }
-.pp-sort-btn:hover { background: rgba(156,84,213,0.18); }
-.pp-sort-btn.active { background: #9C54D5; color: #fff; }
+/* Gears sort: Carbon content switcher (as in profile), sized to its content next to the category select */
+#sortFilter { width: auto; flex: 0 0 auto; }
+#sortFilter .bx--content-switcher-btn { width: auto; }
 /* #pedalFilterInput { height: 13px; } */
 .lower-row { position: relative; top: 50px; }
 .lowest-row { position: relative; top: 85px; }
