@@ -1,5 +1,12 @@
 [
   {
+    "id": "feat-gear-sort",
+    "date": "2026-11-09",
+    "title": "Catalog filter",
+    "text": "Sort the Gear catalog by newest or trending.",
+    "link": "gears"
+  },
+  {
     "id": "feat-light-theme",
     "date": "2026-11-08",
     "title": "Light theme",
@@ -10,7 +17,7 @@
     "id": "feat-rig-autosave",
     "date": "2026-10-30",
     "title": "Rig autosave",
-    "text": "Your rig is now saved automatically as you build it.",
+    "text": "Your Rig is now saved automatically as you build it.",
     "link": "rigs"
   }
 ]
