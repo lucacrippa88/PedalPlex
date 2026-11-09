@@ -322,10 +322,12 @@ $(document).ready(function () {
     const $header = $('body > header').first();
     if (!$header.length) return false;
 
-    // currentUser may come from the JWT payload (no avatar): fall back to the last known one
+    // currentUser may come from the JWT payload (no avatar field): fall back to the last known one.
+    // avatar 0 = "no avatar" chosen explicitly (shows the default user icon)
     const key = 'ppAvatar:' + u.userid;
-    if (u.avatar) localStorage.setItem(key, u.avatar);
-    const avatar = parseInt(u.avatar || localStorage.getItem(key), 10);
+    if (u.avatar !== undefined && u.avatar !== null) localStorage.setItem(key, u.avatar);
+    const avatar = parseInt(
+      (u.avatar !== undefined && u.avatar !== null) ? u.avatar : localStorage.getItem(key), 10);
 
     $('#ppAvatarBtn').remove();
     const $btn = $('<button id="ppAvatarBtn" type="button" class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" aria-label="Your profile" title="Your profile"></button>')

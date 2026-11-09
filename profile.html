@@ -76,11 +76,15 @@
 
     <style>
       /* ---- Avatar tab ---- */
-      .profile-avatar-wrap { max-width: 640px; margin: 2rem auto 0; padding: 0 1rem; }
+      .profile-avatar-wrap { max-width: 760px; margin: 2rem auto 0; padding: 0 1rem; }
+      /* 50 options: 5 rows x 10 on desktop/tablet, 10 rows x 5 on mobile */
       #avatarGrid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
-        gap: 12px;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 10px;
+      }
+      @media (max-width: 768px) {
+        #avatarGrid { grid-template-columns: repeat(5, 1fr); gap: 12px; }
       }
       .avatar-option {
         padding: 0; border: 2px solid transparent; border-radius: 50%;
@@ -88,6 +92,11 @@
         transition: border-color 0.15s ease, transform 0.15s ease;
       }
       .avatar-option img { width: 100%; height: auto; border-radius: 50%; display: block; }
+      .avatar-option--none {
+        display: flex; align-items: center; justify-content: center;
+        aspect-ratio: 1 / 1; color: #c6c6c6; background: #393939;
+      }
+      .avatar-option--none svg { width: 45%; height: 45%; }
       .avatar-option:hover { transform: scale(1.06); }
       .avatar-option:focus-visible { outline: 2px solid #9C54D5; outline-offset: 2px; }
       .avatar-option.selected { border-color: #9C54D5; }
@@ -770,15 +779,19 @@
     function buildAvatarGrid() {
       const grid = document.getElementById('avatarGrid');
       if (!grid || grid.children.length) return;
-      for (let i = 1; i <= AVATAR_COUNT; i++) {
+      // 0 = "No avatar" (default user icon in the navbar), then faces/1.png ... faces/N.png
+      for (let i = 0; i <= AVATAR_COUNT; i++) {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'avatar-option';
+        btn.className = 'avatar-option' + (i === 0 ? ' avatar-option--none' : '');
         btn.dataset.avatar = i;
         btn.setAttribute('role', 'radio');
         btn.setAttribute('aria-checked', 'false');
-        btn.setAttribute('aria-label', 'Avatar ' + i);
-        btn.innerHTML = '<img src="faces/' + i + '.png" alt="" loading="lazy">';
+        btn.setAttribute('aria-label', i === 0 ? 'No avatar' : 'Avatar ' + i);
+        if (i === 0) btn.title = 'No avatar';
+        btn.innerHTML = i === 0
+          ? '<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4a5 5 0 11-5 5 5 5 0 015-5m0-2a7 7 0 107 7A7 7 0 0016 2zM26 30H24V25a5 5 0 00-5-5H13a5 5 0 00-5 5v5H6V25a7 7 0 017-7h6a7 7 0 017 7z"/></svg>'
+          : '<img src="faces/' + i + '.png" alt="" loading="lazy">';
         grid.appendChild(btn);
       }
     }
@@ -794,7 +807,8 @@
 
     function loadUserAvatar() {
       buildAvatarGrid();
-      markSelectedAvatar(parseInt(window.currentUser && window.currentUser.avatar, 10) || null);
+      const current = parseInt(window.currentUser && window.currentUser.avatar, 10);
+      markSelectedAvatar(isNaN(current) ? 0 : current);
       $('#saveAvatarBtn').prop('disabled', true);
     }
 
@@ -804,7 +818,7 @@
     });
 
     $('#saveAvatarBtn').click(function () {
-      if (!selectedAvatar) return;
+      if (selectedAvatar === null) return;
       const token = localStorage.getItem('authToken');
       const $btn = $(this).prop('disabled', true);
       $.ajax({

@@ -11,12 +11,11 @@ function initPedalboard(userRole) {
 
   const userId = window.currentUser?.userid;
   const resultsDiv = document.getElementById("pedalboard");
+  const pageLoader = document.getElementById("pageLoader");
+  if (pageLoader) pageLoader.style.display = "flex";
 
   window.catalog = [];
   window.pedalboard = { pedals: [] };
-
-  // Loader
-  resultsDiv.innerHTML = `<div class="bx--loading-overlay"><div class="bx--loading" role="status"><svg class="bx--loading__svg" viewBox="-75 -75 150 150"><circle class="bx--loading__background" cx="0" cy="0" r="37.5"/><circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/></svg></div></div>`;
 
   // --- GUEST USER ---
   if (userRole === "guest") {
@@ -56,6 +55,7 @@ function initPedalboard(userRole) {
       dropdown.appendChild(option);
 
       renderPedalboard();
+      if (pageLoader) pageLoader.style.display = "none";
       if (typeof onPedalboardLoaded === "function") setTimeout(onPedalboardLoaded, 100);
       handlePendingPedalAdd();
       maybeConsumePresetNudgePending();
@@ -68,6 +68,7 @@ function initPedalboard(userRole) {
     })
     .catch(err => {
       console.error("Guest gears fetch failed:", err);
+      if (pageLoader) pageLoader.style.display = "none";
       resultsDiv.innerHTML = `<p style="color:red;">Error loading guest pedals: ${err}</p>`;
     });
 
@@ -79,6 +80,7 @@ function initPedalboard(userRole) {
   // Check if guest pedalboard exists
   const savedGuestBoards = JSON.parse(localStorage.getItem("guestPedalboard") || "[]");
   if (savedGuestBoards.length > 0) {
+    if (pageLoader) pageLoader.style.display = "none";
     const localGuestPlexes = (() => {
       try { return JSON.parse(localStorage.getItem('guestPlexes') || '[]'); } catch(e) { return []; }
     })().filter(p => p.board_id === 'guest_board');
@@ -99,6 +101,7 @@ function initPedalboard(userRole) {
       }
     }).then(result => {
       if (result.isConfirmed) {
+        if (pageLoader) pageLoader.style.display = "flex";
         importGuestPedalboard(savedGuestBoards[0])
           .then(async (resp) => {
             localStorage.removeItem("guestPedalboard");
@@ -128,11 +131,14 @@ function initPedalboard(userRole) {
 
             initPedalboard(userRole); // reload after import
           })
-          .catch(err => console.error("Import failed:", err));
+          .catch(err => {
+            console.error("Import failed:", err);
+            if (pageLoader) pageLoader.style.display = "none";
+          });
         return;
       } else {
         localStorage.removeItem("guestPedalboard");
-        initLoggedInPedalboards(userRole); // continue normally
+        initPedalboard(userRole); // continue normally
       }
     });
     return;
@@ -151,7 +157,6 @@ function initPedalboard(userRole) {
       if (!data.docs || !Array.isArray(data.docs) || data.docs.length === 0) {
         // Auto-create a default Rig for registered users who have none
         const token = localStorage.getItem('authToken');
-        resultsDiv.innerHTML = `<div class="bx--loading-overlay"><div class="bx--loading" role="status"><svg class="bx--loading__svg" viewBox="-75 -75 150 150"><circle class="bx--loading__background" cx="0" cy="0" r="37.5"/><circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"/></svg></div></div>`;
         try {
           const createRes = await fetch('https://api.pedalplex.com/CREATE_RIG.php', {
             method: 'POST',
@@ -166,6 +171,7 @@ function initPedalboard(userRole) {
           }
         } catch (err) {
           console.error('Auto-create rig failed:', err);
+          if (pageLoader) pageLoader.style.display = "none";
           $("#pedalboard-controls").css("display", "none");
           resultsDiv.innerHTML = `
             <div class="empty-state-container">
@@ -218,6 +224,7 @@ function initPedalboard(userRole) {
           $("#pedalboardSelect").css("display", "inline-flex");
     
           renderPedalboard();
+          if (pageLoader) pageLoader.style.display = "none";
           if (typeof onPedalboardLoaded === "function") setTimeout(onPedalboardLoaded, 100);
           handlePendingPedalAdd();
 
@@ -244,6 +251,7 @@ function initPedalboard(userRole) {
     })
     .catch(error => {
       console.error('Error:', error.message || error);
+      if (pageLoader) pageLoader.style.display = "none";
       resultsDiv.innerHTML = `<p style="color:red;">Error loading pedalboard: ${error}</p>`;
     });
   }
@@ -1353,6 +1361,9 @@ function setupPedalboardDropdownAndRender() {
   window.pedalboard = selectedBoard;
 
   // --- FETCH PEDALS ---
+  const pageLoader = document.getElementById("pageLoader");
+  if (pageLoader) pageLoader.style.display = "flex";
+
   const pedalIds = selectedBoard.pedals.map(p => p.pedal_id);
   fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
     method: "POST",
@@ -1363,11 +1374,15 @@ function setupPedalboardDropdownAndRender() {
   .then(result => {
     window.catalog = result.docs || [];
     renderPedalboard();
+    if (pageLoader) pageLoader.style.display = "none";
     if (typeof onPedalboardLoaded === "function") setTimeout(onPedalboardLoaded, 100);
     handlePendingPedalAdd();
     maybeConsumePresetNudgePending();
   })
-  .catch(err => console.error("Error fetching pedals:", err));
+  .catch(err => {
+    console.error("Error fetching pedals:", err);
+    if (pageLoader) pageLoader.style.display = "none";
+  });
 
   // Cambiamento dropdown
   dropdown.addEventListener('change', (e) => {

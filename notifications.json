@@ -1,5 +1,12 @@
 [
   {
+    "id": "feat-avatars",
+    "date": "2026-11-09",
+    "title": "Choose your avatar",
+    "text": "Pick an avatar from your profile: it shows up in the top bar.",
+    "link": "profile?tab=avatar"
+  },
+  {
     "id": "feat-gear-sort",
     "date": "2026-11-09",
     "title": "Catalog filter",
