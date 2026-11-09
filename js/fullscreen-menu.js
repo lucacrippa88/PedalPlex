@@ -310,12 +310,20 @@ $(document).ready(function () {
 
 
 // ==========================
-// Navbar avatar button (opens the user profile)
+// Navbar avatar button & profile actions dropdown menu
 // ==========================
 (function () {
   const USER_ICON = '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M16 4a5 5 0 11-5 5 5 5 0 015-5m0-2a7 7 0 107 7A7 7 0 0016 2zM26 30H24V25a5 5 0 00-5-5H13a5 5 0 00-5 5v5H6V25a7 7 0 017-7h6a7 7 0 017 7z"/></svg>';
 
-  // Adds (or refreshes) the avatar button. Returns true when the button is in place.
+  const AVATAR_MENU_ICONS = {
+    achievements: '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M26 4h-4V2H10v2H6a2 2 0 00-2 2v4a8 8 0 007.2 7.9A8.008 8.008 0 0015 21.9V26h-5v2h12v-2h-5v-4.1a8.008 8.008 0 003.8-4A8 8 0 0028 12V6a2 2 0 00-2-2zM6 12V6h4v7.8A6.01 6.01 0 016 12zm16 1.8V6h4v6a6.01 6.01 0 01-4 1.8z"/></svg>',
+    sharedPlexes: '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M23 20a5 5 0 00-3.89 1.89L11.8 17.32a4.46 4.46 0 000-2.64l7.31-4.57A5 5 0 1018 7a4.79 4.79 0 00.2 1.32l-7.31 4.57a5 5 0 100 6.22l7.31 4.57A4.79 4.79 0 0018 25a5 5 0 105-5z"/></svg>',
+    avatar: '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4a5 5 0 11-5 5 5 5 0 015-5m0-2a7 7 0 107 7A7 7 0 0016 2zM26 30H24V25a5 5 0 00-5-5H13a5 5 0 00-5 5v5H6V25a7 7 0 017-7h6a7 7 0 017 7z"/></svg>',
+    instruments: '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M25 4H10a2 2 0 00-2 2v14.556A3.955 3.955 0 006 20a4 4 0 104 4V12h15v8.556A3.955 3.955 0 0023 20a4 4 0 104 4V6a2 2 0 00-2-2zM6 26a2 2 0 112-2 2 2 0 01-2 2zm17 0a2 2 0 112-2 2 2 0 01-2 2zM10 6h15v4H10z"/></svg>',
+    password: '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M24 14H22V10a6 6 0 00-12 0v4H8a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V16a2 2 0 00-2-2zM12 10a4 4 0 018 0v4H12zm12 18H8V16h16z"/><circle cx="16" cy="22" r="2"/></svg>'
+  };
+
+  // Adds (or refreshes) the avatar button and dropdown menu. Returns true when in place.
   window.ppUpdateAvatarButton = function () {
     const u = window.currentUser;
     if (!u || u.role === 'guest' || !u.userid) return false;
@@ -329,22 +337,80 @@ $(document).ready(function () {
     const avatar = parseInt(
       (u.avatar !== undefined && u.avatar !== null) ? u.avatar : localStorage.getItem(key), 10);
 
+    $('#pp-avatar-wrapper').remove();
     $('#ppAvatarBtn').remove();
-    const $btn = $('<button id="ppAvatarBtn" type="button" class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" aria-label="Your profile" title="Your profile"></button>');
+
+    const $wrapper = $('<div id="pp-avatar-wrapper" style="position:relative; display:inline-flex; align-items:center; flex-shrink:0;"></div>');
+    const $btn = $('<button id="ppAvatarBtn" type="button" class="bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" aria-label="Profile menu" title="Profile menu"></button>');
     if (avatar > 0) {
       $btn.empty().css({ backgroundImage: 'url(/faces/' + avatar + '.png)', backgroundSize: 'cover', backgroundPosition: 'center' });
     } else {
       $btn.css({ backgroundImage: 'none' }).html(USER_ICON);
     }
 
+    const menuHtml = `
+      <div id="pp-avatar-menu" style="
+          display:none;
+          position:absolute;
+          top:calc(100% + 6px);
+          right:0;
+          width:190px;
+          overflow:hidden;
+          background:rgb(30,30,30);
+          border:1px solid #525252;
+          border-radius:8px;
+          box-shadow:0 8px 24px rgba(0,0,0,0.5);
+          z-index:4000;
+          padding:4px 0;">
+        <a class="pp-action-item" href="/profile?tab=achievements" data-tab="achievements">${AVATAR_MENU_ICONS.achievements} <span>Achievements</span></a>
+        <a class="pp-action-item" href="/profile?tab=shared-plexes" data-tab="shared-plexes">${AVATAR_MENU_ICONS.sharedPlexes} <span>Shared Presets</span></a>
+        <a class="pp-action-item" href="/profile?tab=avatar" data-tab="avatar">${AVATAR_MENU_ICONS.avatar} <span>Avatar</span></a>
+        <a class="pp-action-item" href="/profile?tab=instruments" data-tab="instruments">${AVATAR_MENU_ICONS.instruments} <span>Instruments</span></a>
+        <a class="pp-action-item" href="/profile?tab=password" data-tab="password">${AVATAR_MENU_ICONS.password} <span>Change Password</span></a>
+      </div>
+    `;
+
+    $wrapper.append($btn).append(menuHtml);
+
     // Headers with a right-hand group get the button there; otherwise it becomes the right-hand item
     const $children = $header.children().not('.pp-search-overlay');
-    ($children.length >= 2 ? $children.last() : $header).append($btn);
+    ($children.length >= 2 ? $children.last() : $header).append($wrapper);
     return true;
   };
 
-  $(document).on('click', '#ppAvatarBtn', function () {
-    window.location.href = '/profile';
+  // Toggle avatar menu
+  $(document).on('click', '#ppAvatarBtn', function (e) {
+    e.stopPropagation();
+    const $menu = $('#pp-avatar-menu');
+    const isVisible = $menu.is(':visible');
+    // Close any other open dropdowns
+    $('#pp-actions-menu').hide();
+    $('#pp-settings-menu').hide();
+    if (isVisible) {
+      $menu.hide();
+    } else {
+      $menu.show();
+    }
+  });
+
+  // Close when clicking outside
+  $(document).on('click', function (e) {
+    if (!$(e.target).closest('#pp-avatar-wrapper').length) {
+      $('#pp-avatar-menu').hide();
+    }
+  });
+
+  // Switch tab if already on profile page
+  $(document).on('click', '#pp-avatar-menu a[data-tab]', function (e) {
+    const tab = $(this).data('tab');
+    const btn = document.getElementById('switch-' + tab);
+    if (btn && window.location.pathname.includes('profile')) {
+      e.preventDefault();
+      btn.click();
+      $('#pp-avatar-menu').hide();
+      const newUrl = window.location.pathname + '?tab=' + tab;
+      window.history.replaceState(null, '', newUrl);
+    }
   });
 
   $(function () {

@@ -356,7 +356,14 @@ header {
   }
 }
 
-/* Navbar Avatar Button */
+/* Navbar Avatar Button & Dropdown Menu */
+#pp-avatar-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
 #ppAvatarBtn {
   display: inline-flex !important;
   align-items: center !important;
@@ -368,9 +375,10 @@ header {
   min-height: 2rem !important;
   border-radius: 50% !important;
   flex-shrink: 0 !important;
-  margin-left: 0.5rem !important;
+  margin-left: 0 !important;
   box-sizing: border-box;
   overflow: hidden;
+  cursor: pointer;
 }
 #ppAvatarBtn svg,
 #ppAvatarBtn .bx--btn__icon {
@@ -384,6 +392,35 @@ header {
   display: block !important;
   flex-shrink: 0 !important;
 }
+#pp-avatar-menu {
+  border: 1px solid #525252 !important;
+  animation: ppFadeIn 0.1s ease;
+}
+.pp-action-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 16px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
+  margin-left: 0 !important;
+  border-radius: 0;
+  box-shadow: none;
+  max-width: none !important;
+  min-height: 0;
+}
+.pp-action-item:hover {
+  background: rgba(156, 84, 213, 0.18);
+  color: #9C54D5;
+}
+.pp-action-item svg { flex-shrink: 0; }
+@keyframes ppFadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
 
 @media (min-width: 769px) {
   .pedalplex-logo-fullscreen-menu {
@@ -2667,10 +2704,11 @@ html[data-theme="light"] .status-filter.active-filter { color: #161616; border-b
 html[data-theme="light"] .pp-search-overlay input { color: #161616; }
 html[data-theme="light"] .pp-search-overlay input::placeholder { color: #6f6f6f; }
 
-/* Dropdown menus (Actions, preset dropdown, settings) */
+/* Dropdown menus (Actions, avatar menu, preset dropdown, settings) */
 html[data-theme="light"] #pp-actions-menu,
 html[data-theme="light"] .preset-dropdown,
 html[data-theme="light"] #pp-settings-menu { background: #ffffff !important; box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+html[data-theme="light"] #pp-avatar-menu { background: #ffffff !important; border-color: #e0e0e0 !important; box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
 html[data-theme="light"] .pp-action-item,
 html[data-theme="light"] .preset-dropdown li,
 html[data-theme="light"] .pp-settings-item { color: #161616; }
