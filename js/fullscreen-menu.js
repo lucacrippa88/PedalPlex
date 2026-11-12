@@ -202,8 +202,8 @@ window.fullscreenMenuHtml = `
 // ==========================
 function updateFullscreenMenu() {
   if (!window.currentUser || window.currentUser.role === "guest") {
-    $("#loginFullscreenBtn, #guestLoginMessage").show();
-    $("#profileBtn, #logoutBtn").hide();
+    $("#loginFullscreenBtn, #guestLoginMessage, #profileBtn").show();
+    $("#logoutBtn").hide();
   } else {
     $("#loginFullscreenBtn, #guestLoginMessage").hide();
     $("#profileBtn, #logoutBtn").show();
@@ -239,17 +239,7 @@ $(document).ready(function () {
 
   // Profile button
   $(document).on('click', '#profileBtn', function () {
-    if (window.currentUser && window.currentUser.role !== "guest") {
-      window.location.href = '/profile';
-    } else {
-      Swal.fire({
-        icon: 'info',
-        title: 'Guest mode',
-        text: 'Please log in to access your profile.',
-        confirmButtonText: 'OK',
-        customClass: { container: 'swal-above-menu' }
-      });
-    }
+    window.location.href = '/profile';
   });
 
   // Logout button
@@ -325,17 +315,20 @@ $(document).ready(function () {
 
   // Adds (or refreshes) the avatar button and dropdown menu. Returns true when in place.
   window.ppUpdateAvatarButton = function () {
-    const u = window.currentUser;
-    if (!u || u.role === 'guest' || !u.userid) return false;
+    const u = window.currentUser || { role: 'guest', username: 'guest' };
     const $header = $('body > header').first();
     if (!$header.length) return false;
 
-    // currentUser may come from the JWT payload (no avatar field): fall back to the last known one.
-    // avatar 0 = "no avatar" chosen explicitly (shows the default user icon)
-    const key = 'ppAvatar:' + u.userid;
-    if (u.avatar !== undefined && u.avatar !== null) localStorage.setItem(key, u.avatar);
+    const isGuest = !u || u.role === 'guest' || !u.userid;
+    const key = isGuest ? 'ppAvatar:guest' : ('ppAvatar:' + u.userid);
+    if (!isGuest && u.avatar !== undefined && u.avatar !== null) localStorage.setItem(key, u.avatar);
+    const stored = localStorage.getItem(key);
     const avatar = parseInt(
-      (u.avatar !== undefined && u.avatar !== null) ? u.avatar : localStorage.getItem(key), 10);
+      (!isGuest && u.avatar !== undefined && u.avatar !== null)
+        ? u.avatar
+        : (stored !== null ? stored : (isGuest ? (localStorage.getItem('guestAvatar') || '0') : '0')),
+      10
+    );
 
     $('#pp-avatar-wrapper').remove();
     $('#ppAvatarBtn').remove();
@@ -348,7 +341,25 @@ $(document).ready(function () {
       $btn.css({ backgroundImage: 'none' }).html(USER_ICON);
     }
 
-    const menuHtml = `
+    const menuHtml = isGuest ? `
+      <div id="pp-avatar-menu" style="
+          display:none;
+          position:absolute;
+          top:calc(100% + 6px);
+          right:0;
+          width:190px;
+          overflow:hidden;
+          background:rgb(30,30,30);
+          border:1px solid #525252;
+          border-radius:8px;
+          box-shadow:0 8px 24px rgba(0,0,0,0.5);
+          z-index:4000;
+          padding:4px 0;">
+        <a class="pp-action-item" href="/profile?tab=avatar" data-tab="avatar">${AVATAR_MENU_ICONS.avatar} <span>Avatar</span></a>
+        <div style="height:1px; background:rgba(255,255,255,0.1); margin:4px 0;"></div>
+        <a class="pp-action-item" href="/login"><svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2 2V28A2,2,0,0,1,26,30Z"/><path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/></svg> <span>Login / Sign Up</span></a>
+      </div>
+    ` : `
       <div id="pp-avatar-menu" style="
           display:none;
           position:absolute;

@@ -875,7 +875,11 @@
 
     function loadUserAvatar() {
       buildAvatarGrid();
-      const current = parseInt(window.currentUser && window.currentUser.avatar, 10);
+      let current = parseInt(window.currentUser && window.currentUser.avatar, 10);
+      if (isNaN(current)) {
+        const key = (window.currentUser && window.currentUser.userid) ? ('ppAvatar:' + window.currentUser.userid) : 'ppAvatar:guest';
+        current = parseInt(localStorage.getItem(key) || localStorage.getItem('guestAvatar') || '0', 10);
+      }
       markSelectedAvatar(isNaN(current) ? 0 : current);
       $('#saveAvatarBtn').prop('disabled', true);
     }
@@ -887,8 +891,30 @@
 
     $('#saveAvatarBtn').click(function () {
       if (selectedAvatar === null) return;
-      const token = localStorage.getItem('authToken');
       const $btn = $(this).prop('disabled', true);
+
+      // Guest profile: save locally
+      if (window.isGuestProfile || !localStorage.getItem('authToken')) {
+        localStorage.setItem('ppAvatar:guest', selectedAvatar);
+        localStorage.setItem('guestAvatar', selectedAvatar);
+        if (window.currentUser) {
+          window.currentUser.avatar = selectedAvatar;
+        }
+        if (typeof window.ppUpdateAvatarButton === 'function') {
+          window.ppUpdateAvatarButton();
+        }
+        Swal.fire({
+          title: 'Success!',
+          text: 'Avatar saved locally!',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        return;
+      }
+
+      // Registered user: save to server
+      const token = localStorage.getItem('authToken');
       $.ajax({
         url: 'https://api.pedalplex.com/USER_UPDATE_AVATAR.php',
         type: 'POST',
@@ -898,6 +924,9 @@
         success: function (res) {
           if (res.success) {
             window.currentUser.avatar = res.avatar;
+            if (window.currentUser.userid) {
+              localStorage.setItem('ppAvatar:' + window.currentUser.userid, res.avatar);
+            }
             if (typeof window.ppUpdateAvatarButton === 'function') window.ppUpdateAvatarButton();
             Swal.fire({ title: 'Success!', text: 'Avatar saved successfully!', icon: 'success', timer: 2000, showConfirmButton: false });
           } else {
@@ -949,12 +978,26 @@
       return;
     }
 
-    // PRIVATE PROFILE MODE (requires authentication)
+    // GUEST PROFILE MODE (no token / unauthenticated)
     if (!token) {
-      window.location.href = 'login';
+      $('#page-content').show();
+      const guestAvatar = parseInt(localStorage.getItem('ppAvatar:guest') || localStorage.getItem('guestAvatar') || '0', 10);
+      window.currentUser = { role: 'guest', username: 'guest', avatar: isNaN(guestAvatar) ? 0 : guestAvatar };
+      window.isPublicProfile = false;
+      window.isGuestProfile = true;
+
+      // Guest header
+      $('#profile-username').text('#guest');
+      $('#profile-member-since').html('Guest mode · Avatar saved locally on this device · <a href="/login" style="color: #9C54D5; text-decoration: underline;">Log in to sync</a>');
+      $('#share-profile-btn').hide();
+
+      initProfileTabs();
+      loadUserAvatar();
+      if (typeof window.ppUpdateAvatarButton === 'function') window.ppUpdateAvatarButton();
       return;
     }
 
+    // PRIVATE PROFILE MODE (requires authentication)
     $.ajax({
       url: 'https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php',
       method: 'GET',
@@ -964,6 +1007,7 @@
         $('#page-content').show();
         window.currentUser = userFromServer;
         window.isPublicProfile = false;
+        window.isGuestProfile = false;
 
         // Display username with # and member since
         $('#profile-username').text('#' + (window.currentUser.username || ''));
@@ -999,7 +1043,7 @@
       error: function(xhr) {
         if (xhr.status === 401) {
           localStorage.removeItem('authToken');
-          window.location.href = 'login';
+          window.location.reload();
         } else {
           alert('Failed to verify authentication.');
         }
@@ -2060,8 +2104,10 @@ function addProfileTab(key, label, position) {
 }
 
 function initProfileTabs() {
-  // Private profile: account tabs (appended after the common ones)
-  if (!window.isPublicProfile) {
+  if (window.isGuestProfile) {
+    $('#switch-achievements, #switch-shared-plexes').remove();
+    addProfileTab('avatar', 'Avatar');
+  } else if (!window.isPublicProfile) {
     addProfileTab('avatar', 'Avatar');
     addProfileTab('instruments', 'Instruments');
     addProfileTab('password', 'Password');
@@ -2087,7 +2133,7 @@ function initProfileTabs() {
     });
 
     panels.forEach(panel => {
-      panel.hidden = panel.id !== targetId;
+      if (panel) panel.hidden = panel.id !== targetId;
     });
 
     button.classList.add('bx--content-switcher--selected');
@@ -2098,8 +2144,10 @@ function initProfileTabs() {
     button.addEventListener('click', () => activateTab(button));
   });
 
-  // Private profile: show account tabs and honour ?tab=instruments|password
-  if (!window.isPublicProfile) {
+  if (window.isGuestProfile) {
+    const avatarBtn = document.getElementById('switch-avatar');
+    if (avatarBtn) activateTab(avatarBtn);
+  } else if (!window.isPublicProfile) {
     const requested = new URLSearchParams(window.location.search).get('tab');
     const requestedBtn = requested && document.getElementById('switch-' + requested);
     if (requestedBtn) activateTab(requestedBtn);
