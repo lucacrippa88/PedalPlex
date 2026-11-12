@@ -257,7 +257,6 @@ function initNavPreset() {
         else document.getElementById('renameFolderBtn')?.click();
         break;
       case 'newTone':
-        if (typeof recordGuestEvent === 'function') recordGuestEvent('create_preset_click');
         if (typeof window.createPreset === 'function') window.createPreset();
         else if (typeof createPreset === 'function') createPreset();
         else document.getElementById('createPstBtn')?.click();
@@ -319,11 +318,15 @@ function initNavPreset() {
   });
 
   $('#savePstBtn, #savePstBtnMobile').on('click', async () => {
-    if (typeof recordGuestEvent === 'function') recordGuestEvent('save_preset_click');
     const presetName = $('#presetSelect option:selected').text().trim() || `Untitled ${L.Plex}`;
     const result = collectPedalControlValues(presetName);
     const pedalArray = result[presetName];
-    if (!pedalArray || pedalArray.length === 0) return;
+    if (!pedalArray || pedalArray.length === 0) {
+      if (typeof recordGuestEvent === 'function') recordGuestEvent('save_preset_empty');
+      Swal.fire({ icon:'info', title:'Nothing to save', text:`Add at least one gear to this ${L.plex} before saving.`, timer:2500, showConfirmButton:false });
+      return;
+    }
+    if (typeof recordGuestEvent === 'function') recordGuestEvent('save_preset_click');
 
     const pedalsObject = {};
     for (const pedal of pedalArray) {

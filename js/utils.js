@@ -2615,7 +2615,7 @@ async function triggerGuestStatsPing(force = false) {
     } catch (e) {}
 
     // Send payload to backend
-    await fetch('https://api.pedalplex.com/RECORD_GUEST_STATS.php', {
+    const response = await fetch('https://api.pedalplex.com/RECORD_GUEST_STATS.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -2632,8 +2632,25 @@ async function triggerGuestStatsPing(force = false) {
       })
     });
 
-    // Reset flushed events and update ping timestamp/version
-    localStorage.removeItem('guest_events');
+    // Keep events if the backend did not accept the payload
+    if (!response.ok) return;
+
+    // Subtract only the events that were sent: events recorded during the
+    // fetch must survive until the next ping.
+    try {
+      const raw = localStorage.getItem('guest_events');
+      const current = (raw ? JSON.parse(raw) : null) || {};
+      const remaining = {};
+      for (const key in current) {
+        const left = current[key] - (guestEvents[key] || 0);
+        if (left > 0) remaining[key] = left;
+      }
+      if (Object.keys(remaining).length) {
+        localStorage.setItem('guest_events', JSON.stringify(remaining));
+      } else {
+        localStorage.removeItem('guest_events');
+      }
+    } catch (e) {}
     localStorage.setItem('guest_stats_last_ping',    now.toString());
     localStorage.setItem('guest_stats_ping_version', PING_VERSION.toString());
   } catch (err) {

@@ -1234,8 +1234,11 @@ async function savePreset(presetId, updateData) {
         }
       }
     }
-    if (typeof recordGuestEvent === 'function') recordGuestEvent('preset_saved');
     const ok = updateGuestPlex(presetId, updateData);
+    if (ok && typeof recordGuestEvent === 'function') {
+      recordGuestEvent('preset_saved');
+      if (typeof triggerGuestStatsPing === 'function') triggerGuestStatsPing(true);
+    }
     if (ok && window.presetMap && window.presetMap[presetId]) {
       Object.assign(window.presetMap[presetId], updateData);
     }
@@ -1563,8 +1566,6 @@ $(".pedal-catalog").each(function () {
 
 // Create preset function
 async function createPreset() {
-  if (typeof recordGuestEvent === 'function') recordGuestEvent('create_preset_click');
-
   // ── GUEST PATH ───────────────────────────────────────────────────────────
   if (!window.currentUser || window.currentUser.role === 'guest') {
     const existingCount = getGuestPlexes().filter(p => p.board_id === 'guest_board').length;
@@ -1580,6 +1581,8 @@ async function createPreset() {
       });
       return;
     }
+
+    if (typeof recordGuestEvent === 'function') recordGuestEvent('create_preset_click');
 
     const { value: guestPresetName } = await Swal.fire({
       title: `New Tone as ${L.Plex} (local)`,
