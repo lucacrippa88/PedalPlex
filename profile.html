@@ -22,6 +22,7 @@
   <div id="page-content">
 
     <div style="text-align: center; margin-bottom: 2rem;">
+      <img id="profile-header-avatar" alt="" style="display: none; width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 0.75rem;">
       <h2 id="profile-username" style="margin-bottom: 0.5rem;">Loading...</h2>
       <p id="profile-member-since" style="color: #888; font-size: 0.9rem;"></p>
       
@@ -116,6 +117,8 @@
       .avatar-option:hover { transform: scale(1.06); }
       .avatar-option:focus-visible { outline: 2px solid #9C54D5; outline-offset: 2px; }
       .avatar-option.selected { border-color: #9C54D5; }
+      /* Admin heatmap: glow size set inline via --glow-r / --glow-a (no glow = never picked) */
+      .avatar-option.heat { box-shadow: 0 0 var(--glow-r) calc(var(--glow-r) / 3) rgba(156, 84, 213, var(--glow-a)); }
     </style>
 
     <style>
@@ -800,6 +803,40 @@
       }
     }
 
+    // Avatar shown above the profile name (0/invalid = hidden)
+    window.setProfileHeaderAvatar = function (n) {
+      const img = document.getElementById('profile-header-avatar');
+      if (!img) return;
+      n = parseInt(n, 10);
+      if (isNaN(n) || n < 1) {
+        img.style.display = 'none';
+        img.removeAttribute('src');
+        return;
+      }
+      img.src = '/faces/' + n + '.png';
+      img.style.display = 'block';
+    };
+
+    // Admin only: glow on avatars proportional to how many accounts (users + guests) picked them
+    window.applyAvatarHeatmap = function () {
+      const counts = window.adminAvatarCounts;
+      if (!counts) return;
+      const max = Math.max(0, ...Object.values(counts).map(Number));
+      document.querySelectorAll('.avatar-option').forEach(b => {
+        const n = parseInt(b.dataset.avatar, 10);
+        const c = parseInt(counts[n], 10) || 0;
+        if (n < 1 || c < 1) {
+          b.classList.remove('heat');
+          return;
+        }
+        const ratio = c / max;
+        b.classList.add('heat');
+        b.style.setProperty('--glow-r', (4 + 20 * ratio).toFixed(1) + 'px');
+        b.style.setProperty('--glow-a', (0.35 + 0.65 * ratio).toFixed(2));
+        b.title = 'Avatar ' + n + ' · ' + c + (c === 1 ? ' account' : ' accounts');
+      });
+    };
+
     function markSelectedAvatar(n) {
       selectedAvatar = n;
       document.querySelectorAll('.avatar-option').forEach(b => {
@@ -817,7 +854,24 @@
         current = parseInt(localStorage.getItem(key) || localStorage.getItem('guestAvatar') || '0', 10);
       }
       markSelectedAvatar(isNaN(current) ? 0 : current);
+      window.setProfileHeaderAvatar(isNaN(current) ? 0 : current);
+      window.applyAvatarHeatmap();
       $('#saveAvatarBtn').prop('disabled', true);
+    }
+
+    // Guests: register the chosen avatar server-side (anonymous guest_id only) for admin stats
+    function trackGuestAvatar(avatar) {
+      let gid = localStorage.getItem('guest_id') || localStorage.getItem('guest_anonymous_id');
+      if (!gid) {
+        gid = 'guest_' + ((window.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+        localStorage.setItem('guest_id', gid);
+      }
+      fetch('https://api.pedalplex.com/GUEST_TRACK.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'guest', guest_id: gid, avatar: avatar }),
+        keepalive: true
+      }).catch(() => {});
     }
 
     $(document).on('click', '.avatar-option', function () {
@@ -839,6 +893,8 @@
         if (typeof window.ppUpdateAvatarButton === 'function') {
           window.ppUpdateAvatarButton();
         }
+        window.setProfileHeaderAvatar(selectedAvatar);
+        trackGuestAvatar(selectedAvatar);
         Swal.fire({
           title: 'Success!',
           text: 'Avatar saved locally!',
@@ -864,6 +920,7 @@
               localStorage.setItem('ppAvatar:' + window.currentUser.userid, res.avatar);
             }
             if (typeof window.ppUpdateAvatarButton === 'function') window.ppUpdateAvatarButton();
+            window.setProfileHeaderAvatar(res.avatar);
             Swal.fire({ title: 'Success!', text: 'Avatar saved successfully!', icon: 'success', timer: 2000, showConfirmButton: false });
           } else {
             $btn.prop('disabled', false);
@@ -1018,6 +1075,7 @@
   function displayPublicProfile(profileData) {
     // Display username with #
     $('#profile-username').text('#' + profileData.username);
+    window.setProfileHeaderAvatar(profileData.avatar);
     
     // Display member since date
     if (profileData.created_at) {
@@ -2250,6 +2308,8 @@ function loadAdminStats() {
     success: function (d) {
       window.adminBadgeCounts = d.badge_counts || null;
       updateAdminBadgeCounts();
+      window.adminAvatarCounts = (d.avatar_counts && d.avatar_counts.total) || {};
+      if (typeof window.applyAvatarHeatmap === 'function') window.applyAvatarHeatmap();
 
       var fmt = function(v) { return v !== null && v !== undefined ? v : '–'; };
       var pct = function(count, p) {

@@ -464,7 +464,11 @@ async function loadSharedPlexPreview() {
         const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) +
                               ', ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         const authorName = plex.original_author.replace(/^user_/, '');
-        $("#previewPlexData").html(`Previewing <strong>${plex.preset_name}</strong>, by <strong>${authorName}</strong> - shared on ${formattedDate}`)
+        const authorAvatar = parseInt(plexData.author_avatar, 10);
+        const avatarImg = authorAvatar > 0
+            ? `<img src="/faces/${authorAvatar}.png" alt="" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;margin:0 4px 2px 0;">`
+            : '';
+        $("#previewPlexData").html(`Previewing <strong>${plex.preset_name}</strong>, by ${avatarImg}<strong>${authorName}</strong> - shared on ${formattedDate}`)
                                .css("display", "block");
 
     } catch (err) {
