@@ -189,7 +189,7 @@ async function addPedalToRig(pedalId) {
       } else {
         localStorage.setItem('pendingPedalAddDuplicate', 'true');
       }
-      if (typeof recordGuestEvent === 'function') recordGuestEvent('gear_added');
+      if (typeof addGuestMeritPoint === 'function') addGuestMeritPoint();
     }
 
     if (mode === 'logged') {
@@ -214,6 +214,5 @@ async function addPedalToRig(pedalId) {
 $('#addToRig').on('click', function (e) {
   e.preventDefault();
   if (!selectedPedalId) return;
-  if (typeof recordGuestEvent === 'function') recordGuestEvent('add_gear_click');
   addPedalToRig(selectedPedalId);
 });

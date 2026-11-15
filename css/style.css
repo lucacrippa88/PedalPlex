@@ -340,10 +340,12 @@ header {
   display: block;
 }
 @media (max-width: 768px) {
-  .fullscreen-user-btns .btn-label {
+  .fullscreen-user-btns .btn-label,
+  #loginFullscreenBtn .btn-label {
     display: none;
   }
-  .fullscreen-user-btns .bx--btn {
+  .fullscreen-user-btns .bx--btn,
+  #loginFullscreenBtn {
     width: 2.5rem;
     height: 2.5rem;
     min-width: 2.5rem;

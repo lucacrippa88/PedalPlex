@@ -2514,155 +2514,102 @@ function resolveImageUrl(path) {
   return `/${trimmed}`;
 }
 
-// Record a named guest funnel event (increments a counter in localStorage).
-// Events are flushed and reset on the next ping.
-// Only runs for non-logged-in users; safe to call from any page.
-//
-// Merit-point events: 'preset_saved' and 'gear_added' each award 1 merit point,
-// which unlocks extra local Plex slots (see getGuestPlexMax in plexes.js).
-const GUEST_MERIT_EVENTS = new Set(['preset_saved', 'gear_added']);
+// ─── Guest Statistics & Identity Helpers ─────────────────────────────────────
+function generateGuestUUID() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 
-function recordGuestEvent(eventName) {
+function getGuestId() {
+  let gid = localStorage.getItem('guest_id') || localStorage.getItem('guest_anonymous_id');
+  if (!gid) {
+    gid = 'guest_' + generateGuestUUID();
+    localStorage.setItem('guest_id', gid);
+  }
+  return gid;
+}
+
+function getGuestRigId() {
+  let rid = localStorage.getItem('guest_rig_id');
+  if (!rid) {
+    rid = 'rig_' + generateGuestUUID();
+    localStorage.setItem('guest_rig_id', rid);
+  }
+  return rid;
+}
+
+function addGuestMeritPoint() {
   if (localStorage.getItem('authToken')) return;
   try {
-    const raw = localStorage.getItem('guest_events');
-    const events = (raw ? JSON.parse(raw) : null) || {};
-    events[eventName] = (events[eventName] || 0) + 1;
-    localStorage.setItem('guest_events', JSON.stringify(events));
+    const MERIT_KEY = 'guestPlexMerit';
+    const current = parseInt(localStorage.getItem(MERIT_KEY) || '0', 10) || 0;
+    localStorage.setItem(MERIT_KEY, (current + 1).toString());
   } catch (e) {}
-
-  // Award a merit point for high-value actions
-  if (GUEST_MERIT_EVENTS.has(eventName)) {
-    try {
-      const MERIT_KEY = 'guestPlexMerit';
-      const current = parseInt(localStorage.getItem(MERIT_KEY) || '0', 10) || 0;
-      localStorage.setItem(MERIT_KEY, (current + 1).toString());
-    } catch (e) {}
-  }
 }
 
-// Anonymous Guest Statistics Tracker
-async function triggerGuestStatsPing(force = false) {
-  try {
-    // If logged in, do not report as guest stats
-    if (localStorage.getItem('authToken')) {
-      return;
-    }
+function trackGuestVisit() {
+  if (localStorage.getItem('authToken')) return;
+  const guestId = getGuestId();
+  const sessionKey = 'pp_guest_visit_' + guestId;
+  if (sessionStorage.getItem(sessionKey)) return;
 
-    const now = Date.now();
-    const lastPing     = parseInt(localStorage.getItem('guest_stats_last_ping')     || '0', 10);
-    const lastVersion  = parseInt(localStorage.getItem('guest_stats_ping_version')  || '0', 10);
-    const PING_VERSION = 2; // bump when the payload schema changes (forces re-ping)
-    const cooldown     = 60 * 60 * 1000; // 1 hour
-
-    // Re-ping immediately if the stored version is older than PING_VERSION,
-    // otherwise respect the 24-hour cooldown.
-    const versionStale = lastVersion < PING_VERSION;
-    if (!force && !versionStale && (now - lastPing < cooldown)) {
-      return;
-    }
-
-    // Get anonymous ID
-    let anonId = localStorage.getItem('guest_anonymous_id');
-    if (!anonId) {
-      anonId = 'anon_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      localStorage.setItem('guest_anonymous_id', anonId);
-    }
-
-    // Check local rig
-    const guestBoardsRaw = localStorage.getItem("guestPedalboard");
-    let hasLocalRig = false;
-    let localRigPedalsCount = 0;
-    if (guestBoardsRaw) {
-      try {
-        const guestBoards = JSON.parse(guestBoardsRaw);
-        if (Array.isArray(guestBoards) && guestBoards.length > 0) {
-          const firstBoard = guestBoards[0];
-          if (firstBoard) {
-            hasLocalRig = true;
-            if (Array.isArray(firstBoard.pedals)) {
-              localRigPedalsCount = firstBoard.pedals.length;
-            }
-          }
-        }
-      } catch (e) {}
-    }
-
-    // Check local plexes
-    const guestPlexesRaw = localStorage.getItem("guestPlexes") || localStorage.getItem("guest_plexes");
-    let localPlexCount = 0;
-    let localPlexWithGearCount = 0;
-    if (guestPlexesRaw) {
-      try {
-        const guestPlexes = JSON.parse(guestPlexesRaw);
-        if (Array.isArray(guestPlexes)) {
-          localPlexCount = guestPlexes.length;
-          // pedals is an object keyed by pedal_id (not an array) in guest plexes
-          localPlexWithGearCount = guestPlexes.filter(p => {
-            if (!p.pedals) return false;
-            if (Array.isArray(p.pedals)) return p.pedals.length > 0;
-            return typeof p.pedals === 'object' && Object.keys(p.pedals).length > 0;
-          }).length;
-        }
-      } catch (e) {}
-    }
-
-    // Read accumulated funnel events and reset them
-    let guestEvents = {};
-    try {
-      const raw = localStorage.getItem('guest_events');
-      guestEvents = (raw ? JSON.parse(raw) : null) || {};
-    } catch (e) {}
-
-    // Send payload to backend
-    const response = await fetch('https://api.pedalplex.com/RECORD_GUEST_STATS.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        anonymous_id: anonId,
-        has_local_rig: hasLocalRig,
-        local_rig_pedals_count: localRigPedalsCount,
-        local_plex_count: localPlexCount,
-        local_plex_with_gear_count: localPlexWithGearCount,
-        page: window.location.pathname,
-        referrer: document.referrer || null,
-        events: guestEvents
-      })
-    });
-
-    // Keep events if the backend did not accept the payload
-    if (!response.ok) return;
-
-    // Subtract only the events that were sent: events recorded during the
-    // fetch must survive until the next ping.
-    try {
-      const raw = localStorage.getItem('guest_events');
-      const current = (raw ? JSON.parse(raw) : null) || {};
-      const remaining = {};
-      for (const key in current) {
-        const left = current[key] - (guestEvents[key] || 0);
-        if (left > 0) remaining[key] = left;
-      }
-      if (Object.keys(remaining).length) {
-        localStorage.setItem('guest_events', JSON.stringify(remaining));
-      } else {
-        localStorage.removeItem('guest_events');
-      }
-    } catch (e) {}
-    localStorage.setItem('guest_stats_last_ping',    now.toString());
-    localStorage.setItem('guest_stats_ping_version', PING_VERSION.toString());
-  } catch (err) {
-    // Fail silently to not impact user experience
-    console.warn('Silent stats error:', err);
-  }
+  fetch('https://api.pedalplex.com/GUEST_TRACK.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type: 'guest',
+      guest_id: guestId
+    }),
+    keepalive: true
+  }).then(() => {
+    sessionStorage.setItem(sessionKey, '1');
+  }).catch(() => {});
 }
 
-// Auto-run guest stats ping 3 seconds after load (non-blocking)
-setTimeout(() => {
-  triggerGuestStatsPing();
-}, 3000);
+function trackGuestRig(rigId, pedalsCount) {
+  if (localStorage.getItem('authToken')) return;
+  const guestId = getGuestId();
+  const rId = rigId || getGuestRigId();
+  fetch('https://api.pedalplex.com/GUEST_TRACK.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type: 'rig',
+      guest_id: guestId,
+      rig_id: rId,
+      pedals_count: typeof pedalsCount === 'number' ? pedalsCount : 0
+    }),
+    keepalive: true
+  }).catch(() => {});
+}
+
+function trackGuestPreset(presetId, rigId, pedalsCount, status = 'active') {
+  if (localStorage.getItem('authToken')) return;
+  if (!presetId) return;
+  const guestId = getGuestId();
+  const rId = rigId || getGuestRigId();
+  fetch('https://api.pedalplex.com/GUEST_TRACK.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type: 'preset',
+      guest_id: guestId,
+      rig_id: rId,
+      preset_id: presetId,
+      pedals_count: typeof pedalsCount === 'number' ? pedalsCount : 0,
+      status: (status === 'delete' || status === 'deleted') ? 'deleted' : 'active'
+    }),
+    keepalive: true
+  }).catch(() => {});
+}
+
+// Track guest visitor on non-logged-in session
+setTimeout(trackGuestVisit, 2000);
 
 // Ensure guest users have default Rig and Plex in localStorage only when entering Rigs or Presets page.
 (function ensureGuestDefaults() {
@@ -2674,22 +2621,31 @@ setTimeout(() => {
   // --- Rig ---
   let boards = [];
   try { boards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]'); } catch (e) { boards = []; }
+  const rigId = getGuestRigId();
   if (!Array.isArray(boards) || boards.length === 0) {
-    localStorage.setItem('guestPedalboard', JSON.stringify([{ board_name: 'My Rig', pedals: [] }]));
+    boards = [{ _id: rigId, board_name: 'My Rig', pedals: [] }];
+    localStorage.setItem('guestPedalboard', JSON.stringify(boards));
+    trackGuestRig(rigId, 0);
+  } else if (!boards[0]._id) {
+    boards[0]._id = rigId;
+    localStorage.setItem('guestPedalboard', JSON.stringify(boards));
+    trackGuestRig(rigId, Array.isArray(boards[0].pedals) ? boards[0].pedals.length : 0);
   }
 
   // --- Plex ---
   const GUEST_PLEXES_KEY = 'guestPlexes';
   let plexes = [];
   try { plexes = JSON.parse(localStorage.getItem(GUEST_PLEXES_KEY) || '[]'); } catch (e) { plexes = []; }
-  if (!Array.isArray(plexes) || !plexes.some(p => p.board_id === 'guest_board')) {
+  if (!Array.isArray(plexes) || !plexes.some(p => p.board_id === 'guest_board' || p.board_id === rigId)) {
+    const defaultPlexId = 'preset_' + generateGuestUUID();
     const defaultPlex = {
-      _id:         'guest_plex_' + Date.now(),
+      _id:         defaultPlexId,
       preset_name: 'My Tone',
       board_id:    'guest_board',
       pedals:      {}
     };
     plexes.push(defaultPlex);
     localStorage.setItem(GUEST_PLEXES_KEY, JSON.stringify(plexes));
+    trackGuestPreset(defaultPlexId, rigId, 0, 'active');
   }
 })();

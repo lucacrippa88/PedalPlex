@@ -5,10 +5,6 @@ window.allPedalboards = []; // store all pedalboards here
 // ------------------------------------------------------------------------------
 // Main
 function initPedalboard(userRole) {
-  // Track rig page view for guest funnel analytics — force ping immediately
-  if (typeof recordGuestEvent === 'function') recordGuestEvent('rig_page_view');
-  if (typeof triggerGuestStatsPing === 'function') triggerGuestStatsPing(true);
-
   const userId = window.currentUser?.userid;
   const resultsDiv = document.getElementById("pedalboard");
   const pageLoader = document.getElementById("pageLoader");
@@ -19,14 +15,22 @@ function initPedalboard(userRole) {
 
   // --- GUEST USER ---
   if (userRole === "guest") {
+  if (typeof trackGuestVisit === 'function') trackGuestVisit();
+
   const savedBoard = localStorage.getItem("guestPedalboard");   // Recupera eventuale pedalboard guest dal localStorage
   let boards = savedBoard ? JSON.parse(savedBoard) : [];
+  const guestRigId = (typeof getGuestRigId === 'function') ? getGuestRigId() : 'guest_rig';
 
   if (boards.length === 0) {
     // Auto-create a default Rig for guest users (same as registered users)
-    const defaultBoard = { board_name: "My Rig", pedals: [] };
+    const defaultBoard = { _id: guestRigId, board_name: "My Rig", pedals: [] };
     boards = [defaultBoard];
     localStorage.setItem("guestPedalboard", JSON.stringify(boards));
+    if (typeof trackGuestRig === 'function') trackGuestRig(guestRigId, 0);
+  } else if (!boards[0]._id) {
+    boards[0]._id = guestRigId;
+    localStorage.setItem("guestPedalboard", JSON.stringify(boards));
+    if (typeof trackGuestRig === 'function') trackGuestRig(guestRigId, Array.isArray(boards[0].pedals) ? boards[0].pedals.length : 0);
   }
 
   // --- Fetch pedal data dal server ---
@@ -608,7 +612,13 @@ function _doAutoSave() {
     _setAutosaveState('saving');
     setTimeout(() => {
       const board = window.allPedalboards[selectedBoardIndex];
-      localStorage.setItem('guestPedalboard', JSON.stringify([board]));
+      if (board) {
+        if (!board._id && typeof getGuestRigId === 'function') board._id = getGuestRigId();
+        localStorage.setItem('guestPedalboard', JSON.stringify([board]));
+        if (typeof trackGuestRig === 'function') {
+          trackGuestRig(board._id, Array.isArray(board.pedals) ? board.pedals.length : 0);
+        }
+      }
       window.PPUnsaved?.markRigClean();
       _setAutosaveState('saved');
     }, 250);
@@ -752,9 +762,11 @@ function createNewPedalboard() {
         }
 
         const guestBoards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
-        const newBoard = { board_name: sanitizedBoardName, pedals: [] };
+        const newRigId = 'rig_' + ((typeof generateGuestUUID === 'function') ? generateGuestUUID() : Date.now());
+        const newBoard = { _id: newRigId, board_name: sanitizedBoardName, pedals: [] };
         guestBoards.push(newBoard);
         localStorage.setItem('guestPedalboard', JSON.stringify(guestBoards));
+        if (typeof trackGuestRig === 'function') trackGuestRig(newRigId, 0);
         window.allPedalboards = guestBoards;
         selectedBoardIndex = guestBoards.length - 1;
         window.pedalboard = structuredClone(newBoard);
@@ -949,9 +961,6 @@ document.getElementById('renameBoardBtn').addEventListener('click', () => {
             let guestBoards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
             guestBoards.splice(selectedBoardIndex, 1);
             localStorage.setItem('guestPedalboard', JSON.stringify(guestBoards));
-            if (typeof triggerGuestStatsPing === 'function') {
-              triggerGuestStatsPing(true);
-            }
 
             // Update in-memory
             window.allPedalboards = guestBoards;
@@ -1234,12 +1243,13 @@ function maybeConsumePresetNudgePending() {
 
 function saveGuestPedalboard() {
   const board = getCurrentPedalboard();
+  if (!board._id && typeof getGuestRigId === 'function') board._id = getGuestRigId();
   const guestBoards = [board]; // always save as array
   localStorage.setItem("guestPedalboard", JSON.stringify(guestBoards));
   window.allPedalboards = guestBoards;
   window.PPUnsaved?.markRigClean();
-  if (typeof triggerGuestStatsPing === 'function') {
-    triggerGuestStatsPing(true);
+  if (typeof trackGuestRig === 'function') {
+    trackGuestRig(board._id, Array.isArray(board.pedals) ? board.pedals.length : 0);
   }
   Swal.fire({
     icon: 'success',

@@ -337,7 +337,7 @@ function initNavPedalboard(userRole) {
         window.pedalboard.pedals.push({ pedal_id: pedal._id, rotation: 0, row: targetRow, slot_pos: slotPos });
         window._emptySlotRow = null;
         window._emptySlotInsertAt = null;
-        if (typeof recordGuestEvent === 'function') recordGuestEvent('gear_added');
+        if (typeof addGuestMeritPoint === 'function') addGuestMeritPoint();
         if (typeof window.deactivateSlot === 'function') window.deactivateSlot();
         if (typeof renderPedalboard === 'function') renderPedalboard();
         if (typeof autoSavePedalboard === 'function') autoSavePedalboard();
@@ -506,7 +506,6 @@ function initNavPedalboard(userRole) {
   }
 
   window.openPedalSearch = function () {
-    if (typeof recordGuestEvent === 'function') recordGuestEvent('add_gear_click');
     if (isMobileSearch()) {
       // Mobile: mostra overlay a tutta larghezza sopra la navbar
       const overlay = document.getElementById('pp-search-overlay');

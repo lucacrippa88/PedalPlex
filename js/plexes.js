@@ -126,26 +126,28 @@ function getGuestPlexes() {
 
 function saveGuestPlexes(plexes) {
   localStorage.setItem(GUEST_PLEXES_KEY, JSON.stringify(plexes));
-  if (typeof triggerGuestStatsPing === 'function') {
-    triggerGuestStatsPing(true);
-  }
 }
 
 /** Returns false if at limit, otherwise creates and returns the new plex object */
 function createGuestPlex(name, boardId, pedalsObject, isDefault = false) {
   const plexes = getGuestPlexes();
   if (plexes.length >= getGuestPlexMax()) return false;
+  const presetUuid = typeof generateGuestUUID === 'function' ? generateGuestUUID() : Date.now();
   const newPlex = {
-    _id:         'guest_plex_' + Date.now(),
+    _id:         'preset_' + presetUuid,
     preset_name: name,
-    board_id:    boardId,
+    board_id:    boardId || 'guest_board',
     pedals:      pedalsObject || {}
   };
   plexes.push(newPlex);
-  if (!isDefault && typeof recordGuestEvent === 'function') {
-    recordGuestEvent('preset_created');
+  if (!isDefault && typeof addGuestMeritPoint === 'function') {
+    addGuestMeritPoint();
   }
   saveGuestPlexes(plexes);
+  if (typeof trackGuestPreset === 'function') {
+    const pCount = (pedalsObject && typeof pedalsObject === 'object') ? Object.keys(pedalsObject).length : 0;
+    trackGuestPreset(newPlex._id, boardId, pCount, 'active');
+  }
   return newPlex;
 }
 
@@ -156,15 +158,24 @@ function updateGuestPlex(plexId, updateData) {
   if (idx === -1) return false;
   plexes[idx] = { ...plexes[idx], ...updateData };
   saveGuestPlexes(plexes);
+  if (typeof trackGuestPreset === 'function') {
+    const pedals = plexes[idx].pedals;
+    const pCount = (pedals && typeof pedals === 'object') ? (Array.isArray(pedals) ? pedals.length : Object.keys(pedals).length) : 0;
+    trackGuestPreset(plexId, plexes[idx].board_id, pCount, 'active');
+  }
   return true;
 }
 
 /** Deletes a guest plex by ID; returns true on success */
 function deleteGuestPlex(plexId) {
   const plexes = getGuestPlexes();
+  const target = plexes.find(p => p._id === plexId);
   const filtered = plexes.filter(p => p._id !== plexId);
   if (filtered.length === plexes.length) return false;
   saveGuestPlexes(filtered);
+  if (typeof trackGuestPreset === 'function') {
+    trackGuestPreset(plexId, target?.board_id, 0, 'delete');
+  }
   return true;
 }
 // ─────────────────────────────────────────────────────────────────────────────
@@ -333,9 +344,7 @@ function _maybeAutoExplore() {
 
 
 async function initPreset() {
-  // Track preset page view for guest funnel analytics — force ping immediately
-  if (typeof recordGuestEvent === 'function') recordGuestEvent('preset_page_view');
-  if (typeof triggerGuestStatsPing === 'function') triggerGuestStatsPing(true);
+  if (typeof trackGuestVisit === 'function') trackGuestVisit();
 
   const isGuest = !window.currentUser;
   const userId = window.currentUser?.userid;
@@ -1235,9 +1244,8 @@ async function savePreset(presetId, updateData) {
       }
     }
     const ok = updateGuestPlex(presetId, updateData);
-    if (ok && typeof recordGuestEvent === 'function') {
-      recordGuestEvent('preset_saved');
-      if (typeof triggerGuestStatsPing === 'function') triggerGuestStatsPing(true);
+    if (ok && typeof addGuestMeritPoint === 'function') {
+      addGuestMeritPoint();
     }
     if (ok && window.presetMap && window.presetMap[presetId]) {
       Object.assign(window.presetMap[presetId], updateData);
@@ -1328,7 +1336,6 @@ async function duplicatePreset(presetId, newName, folderId) {
         return;
       }
 
-      if (typeof recordGuestEvent === 'function') recordGuestEvent('create_preset_click');
       const remixedName = `${newName} - Copy`;
       const pedalsCopy = JSON.parse(JSON.stringify(original.pedals || {}));
       const newGuestPlex = createGuestPlex(remixedName, 'guest_board', pedalsCopy);
@@ -1581,8 +1588,6 @@ async function createPreset() {
       });
       return;
     }
-
-    if (typeof recordGuestEvent === 'function') recordGuestEvent('create_preset_click');
 
     const { value: guestPresetName } = await Swal.fire({
       title: `New Tone as ${L.Plex} (local)`,

@@ -349,98 +349,34 @@
              FUNNEL — GUEST USERS
         ════════════════════════════════════════════════════════ -->
         <h4 style="font-weight: 700; margin-bottom: 0.25rem; color: #fff;">Funnel — Guest Users</h4>
-        <p style="color: #6f6f6f; font-size: 0.8rem; margin-bottom: 1rem;">Behaviour of non-registered users — each step shows how many guests reach that point</p>
+        <p style="color: #6f6f6f; font-size: 0.8rem; margin-bottom: 1rem;">Activity of non-registered users recorded in dedicated DB (pedalplex_guest_stats)</p>
 
-        <!-- Step 1 — Landing -->
-        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 1 — Landing</p>
+        <!-- Step 1 — Overview -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 1 — Overview</p>
         <div class="bx--row">
           <div class="bx--col"><strong>Unique guest users:</strong> <span id="g-guest-total"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Guests who have a local Rig (may be empty)"><strong>Total local Rigs:</strong> <span id="g-guest-total-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Total local Presets:</strong> <span id="g-guest-total-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Total Guest Rigs created"><strong>Total Guest Rigs:</strong> <span id="g-guest-total-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Total Guest Presets created"><strong>Total Guest Presets:</strong> <span id="g-guest-total-plexes"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
           <div class="bx--col"></div>
         </div>
         <br>
 
-        <!-- Step 1b — Micro-funnel rig -->
-        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 1b — Rig engagement funnel</p>
+        <!-- Step 2 — Rig Engagement -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 2 — Rig Engagement</p>
         <div class="bx--row">
-          <div class="bx--col" title="Guests who visited the Rig builder page at least once"><strong>Visited Rig page:</strong> <span id="g-guest-rig-page-view"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Guests who clicked 'Add to Rig' at least once"><strong>Clicked Add to Rig:</strong> <span id="g-guest-add-gear-click"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Guests who successfully added at least 1 Gear to their local Rig (unsaved)"><strong>Added a Gear (unsaved):</strong> <span id="g-guest-gear-added"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"></div>
+          <div class="bx--col" title="Guests with at least 1 Gear in their Rig"><strong>Guests with ≥1 Gear in Rig:</strong> <span id="g-guest-with-gear-rig-1"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Guests with at least 2 Gears in their Rig"><strong>Guests with ≥2 Gears in Rig:</strong> <span id="g-guest-with-gear-rig-2"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Guests with at least 3 Gears in their Rig"><strong>Guests with ≥3 Gears in Rig:</strong> <span id="g-guest-with-gear-rig-3"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Avg Gears per Rig:</strong> <span id="g-guest-avg-pedals"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
         </div>
         <br>
 
-        <!-- Step 1c — Micro-funnel preset -->
-        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 1c — Preset engagement funnel</p>
+        <!-- Step 3 — Preset Engagement -->
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 3 — Preset Engagement</p>
         <div class="bx--row">
-          <div class="bx--col" title="Guests who visited the Preset page at least once"><strong>Visited Preset page:</strong> <span id="g-guest-preset-page-view"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Guests who clicked 'Create Preset' at least once"><strong>Clicked Create Preset:</strong> <span id="g-guest-create-preset-click"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Guests who successfully created at least 1 Preset locally"><strong>Created a Preset:</strong> <span id="g-guest-preset-created"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"></div>
-        </div>
-        <div class="bx--row" style="margin-top:0.5rem;">
-          <div class="bx--col" title="Guests who clicked 'Save Preset' at least once"><strong>Clicked Save Preset:</strong> <span id="g-guest-save-preset-click"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Guests who successfully saved at least 1 Preset with gear locally"><strong>Saved a Preset (with gear):</strong> <span id="g-guest-preset-saved"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"></div>
-          <div class="bx--col"></div>
-        </div>
-        <br>
-
-        <!-- Step 2 — Local rig building -->
-        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 2 — Local rig building</p>
-        <div class="bx--row">
-          <div class="bx--col" title="Guests with at least 1 Gear in their local Rig"><strong>Guests with ≥1 Gear in Rig:</strong> <span id="g-guest-with-gear-rig-1"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Guests with at least 2 Gears in their local Rig"><strong>Guests with ≥2 Gears in Rig:</strong> <span id="g-guest-with-gear-rig-2"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Guests with at least 3 Gears in their local Rig"><strong>Guests with ≥3 Gears in Rig:</strong> <span id="g-guest-with-gear-rig-3"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"><strong>Avg Gears per local Rig:</strong> <span id="g-guest-avg-pedals"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-        </div>
-        <br>
-
-        <!-- Step 3 — Local preset creation -->
-        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 3 — Local preset creation</p>
-        <div class="bx--row">
-          <div class="bx--col" title="Guests with at least 1 local preset containing at least 1 gear"><strong>Guests with ≥1 Preset w/ Gear:</strong> <span id="g-guest-with-preset-gear-1"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Guests with at least 2 local presets each containing at least 1 gear"><strong>Guests with ≥2 Presets w/ Gear:</strong> <span id="g-guest-with-preset-gear-2"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Guests with at least 3 local presets each containing at least 1 gear"><strong>Guests with ≥3 Presets w/ Gear:</strong> <span id="g-guest-with-preset-gear-3"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"></div>
-        </div>
-        <br>
-
-        <!-- Step 4 — Come back and update -->
-        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 4 — Come back and update</p>
-        <div class="bx--row">
-          <div class="bx--col" title="Local Rigs that have been updated — count and % of total local Rigs"><strong>Updated local Rigs (% of local Rigs):</strong> <span id="g-guest-updated-local-rigs"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Local Presets that have been updated — count and % of total local Presets"><strong>Updated local Presets (% of local Presets):</strong> <span id="g-guest-updated-local-presets"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Distinct guests who updated their local Rig — count and % of total guests"><strong>Guests w/ updated Rig (% of guests):</strong> <span id="g-guest-users-updated-rig"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col" title="Distinct guests who updated their local Preset — count and % of total guests"><strong>Guests w/ updated Preset (% of guests):</strong> <span id="g-guest-users-updated-preset"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-        </div>
-        <br>
-
-        <!-- Step 5 — Ready to convert -->
-        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Step 5 — Ready to convert</p>
-        <div class="bx--row">
-          <div class="bx--col" title="Guests with both an updated local Rig AND an updated local Preset — ideal conversion profile"><strong>Guests with updated Rig + updated Preset:</strong> <span id="g-guest-with-both-updated"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
-          <div class="bx--col"></div>
-          <div class="bx--col"></div>
-          <div class="bx--col"></div>
-        </div>
-
-        <br><hr style="border-color: #333;"><br>
-
-        <!-- ═══════════════════════════════════════════════════════
-             TRAFFIC
-        ════════════════════════════════════════════════════════ -->
-        <h4 style="font-weight: 700; margin-bottom: 0.25rem; color: #fff;">Traffic</h4>
-        <p style="color: #6f6f6f; font-size: 0.8rem; margin-bottom: 1rem;">Landing pages and referrers for guest visitors</p>
-        <div class="bx--row">
-          <div class="bx--col">
-            <strong>Top landing pages:</strong> <span id="v-top-pages"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span>
-          </div>
-          <div class="bx--col">
-            <strong>Top referrers:</strong> <span id="v-top-referrers"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span>
-          </div>
-          <div class="bx--col"></div>
+          <div class="bx--col" title="Guests with at least 1 preset containing at least 1 gear"><strong>Guests with ≥1 Preset w/ Gear:</strong> <span id="g-guest-with-preset-gear-1"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Guests with at least 2 presets each containing at least 1 gear"><strong>Guests with ≥2 Presets w/ Gear:</strong> <span id="g-guest-with-preset-gear-2"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Guests with at least 3 presets each containing at least 1 gear"><strong>Guests with ≥3 Presets w/ Gear:</strong> <span id="g-guest-with-preset-gear-3"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
           <div class="bx--col"></div>
         </div>
 
@@ -2369,18 +2305,6 @@ function loadAdminStats() {
         $('#g-guest-total-rigs').text(fmt(g.total_local_rigs));
         $('#g-guest-total-plexes').text(fmt(g.total_local_presets));
 
-        // step 1b — rig engagement funnel
-        $('#g-guest-rig-page-view').text(fmt(g.guests_with_rig_page_view));
-        $('#g-guest-add-gear-click').text(fmt(g.guests_with_add_gear_click));
-        $('#g-guest-gear-added').text(fmt(g.guests_with_gear_added));
-
-        // step 1c — preset engagement funnel
-        $('#g-guest-preset-page-view').text(fmt(g.guests_with_preset_page_view));
-        $('#g-guest-create-preset-click').text(fmt(g.guests_with_create_preset_click));
-        $('#g-guest-preset-created').text(fmt(g.guests_with_preset_created));
-        $('#g-guest-save-preset-click').text(fmt(g.guests_with_save_preset_click));
-        $('#g-guest-preset-saved').text(fmt(g.guests_with_preset_saved));
-
         // step 2
         $('#g-guest-with-gear-rig-1').text(fmt(g.guests_with_gear_rig_1));
         $('#g-guest-with-gear-rig-2').text(fmt(g.guests_with_gear_rig_2));
@@ -2391,38 +2315,6 @@ function loadAdminStats() {
         $('#g-guest-with-preset-gear-1').text(fmt(g.guests_with_preset_gear_1));
         $('#g-guest-with-preset-gear-2').text(fmt(g.guests_with_preset_gear_2));
         $('#g-guest-with-preset-gear-3').text(fmt(g.guests_with_preset_gear_3));
-
-        // step 4
-        $('#g-guest-updated-local-rigs').text(pct(g.updated_local_rigs_count, g.updated_local_rigs_pct));
-        $('#g-guest-updated-local-presets').text(pct(g.updated_local_presets_count, g.updated_local_presets_pct));
-        $('#g-guest-users-updated-rig').text(pct(g.guests_with_updated_rig, g.guests_with_updated_rig_pct));
-        $('#g-guest-users-updated-preset').text(pct(g.guests_with_updated_preset, g.guests_with_updated_preset_pct));
-
-        // step 5
-        $('#g-guest-with-both-updated').text(fmt(g.guests_with_both_updated));
-      }
-
-      // ── Traffic ────────────────────────────────────────────────
-      if (d.guests && d.guests.top_pages && Object.keys(d.guests.top_pages).length > 0) {
-        var pagesHtml = '<ol style="display:inline-block; margin: 0.25rem 0 0 0.5rem; padding-left: 1.25rem; color: #c6c6c6;">';
-        $.each(d.guests.top_pages, function(path, count) {
-          pagesHtml += '<li><code style="color:#78a9ff;">' + $('<span>').text(path).html() + '</code> &mdash; ' + fmt(count) + '</li>';
-        });
-        pagesHtml += '</ol>';
-        $('#v-top-pages').html(pagesHtml);
-      } else {
-        $('#v-top-pages').html('<span style="color:#6f6f6f;">–</span>');
-      }
-
-      if (d.guests && d.guests.top_referrers && Object.keys(d.guests.top_referrers).length > 0) {
-        var refHtml = '<ol style="display:inline-block; margin: 0.25rem 0 0 0.5rem; padding-left: 1.25rem; color: #c6c6c6;">';
-        $.each(d.guests.top_referrers, function(host, count) {
-          refHtml += '<li>' + $('<span>').text(host).html() + ' &mdash; ' + fmt(count) + '</li>';
-        });
-        refHtml += '</ol>';
-        $('#v-top-referrers').html(refHtml);
-      } else {
-        $('#v-top-referrers').html('<span style="color:#6f6f6f;">–</span>');
       }
     },
     error: function () {
