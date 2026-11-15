@@ -22,3 +22,5 @@ json/categories_backup_20261010_144249.json
 
 # Local config (contains real secrets)
 js/config.js
+public_gear.xlsx
+json/gear_pages.json
