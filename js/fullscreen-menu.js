@@ -113,22 +113,26 @@ window.fullscreenMenuHtml = `
   </div>
 
   <div class="fullscreen-nav">
-    <a href='/' class="pedalplex-logo-fullscreen-menu"></a><br>
+    <a href='/?about' class="pedalplex-logo-fullscreen-menu"></a><br>
     <a href="/plexes" class="fullscreen-nav-link">
-      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><path d="M21 2v18.556A3.955 3.955 0 0019 20a4 4 0 104 4V8h6V2zM19 26a2 2 0 112-2 2 2 0 01-2 2zM27 6h-4V4h4z"/></svg>
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><path d="M25,4H10A2.002,2.002,0,0,0,8,6V20.5563A3.9551,3.9551,0,0,0,6,20a4,4,0,1,0,4,4V12H25v8.5562A3.9545,3.9545,0,0,0,23,20a4,4,0,1,0,4,4V6A2.0023,2.0023,0,0,0,25,4ZM6,26a2,2,0,1,1,2-2A2.0023,2.0023,0,0,1,6,26Zm17,0a2,2,0,1,1,2-2A2.0027,2.0027,0,0,1,23,26ZM10,6H25v4H10Z"/></svg>
       <span>Save your ${L.Plexes}</span>
     </a>
     <a href="/rigs" class="fullscreen-nav-link">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><g transform="rotate(90 16 16)"><path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"/><path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"/></g></svg>
       <span>Manage your Rigs</span>
     </a>
+    <a href="/gears" class="fullscreen-nav-link">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><path fill-rule="evenodd" d="M 25.336 2.2682 H 22.0511 L 10.0511 2.2682 H 7.0511 A 2.0058 2.0058 0 0 0 5.0511 4.2682 L 5 28 a 2.0058 2.0058 0 0 0 2 2 H 17 V 28 H 7 L 7.0511 4.2682 h 3 L 22.0511 4.2682 h 3 l -0.0511 11.7318 h 2 L 27.0511 4.2682 A 2.0058 2.0058 0 0 0 25.0511 2.2682 Z M 31 24 H 27 V 20 H 25 V 24 H 21 V 26 H 25 V 30 H 27 V 26 H 31 V 24 Z"/><circle cx="19.992" cy="10.653" r="2.7073"/><circle cx="12.196" cy="10.653" r="2.7073"/></svg>
+      <span>View Gear catalog</span>
+    </a>
     <hr style="border:none; border-top:1px solid rgba(255,255,255,0.12); margin:0.5rem 0;">
-    <a href="/" class="fullscreen-nav-link">
-      <span class="pedalplex-logo-fullscreen-menu-small" aria-hidden="true"></span>
+    <a href="/?about" class="fullscreen-nav-link">
+      <img src="/logos/pedalplex_logo_white.png" width="24" height="24" alt="" aria-hidden="true">
       <span>About</span>
     </a>
     <a href="/about-us" class="fullscreen-nav-link">
-      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><g transform="rotate(-90 16 16)"><path d="M25.7 9.3l-7-7A.9.9 0 0018 2H8a2 2 0 00-2 2v24a2 2 0 002 2h16a2 2 0 002-2V10a.9.9 0 00-.3-.7zM18 4.4l5.6 5.6H18zM24 28H8V4h8v6a2 2 0 002 2h6z"/></g></svg>
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><path d="M28,6H4A2.0023,2.0023,0,0,0,2,8V24a2.0023,2.0023,0,0,0,2,2H28a2.0023,2.0023,0,0,0,2-2V8A2.0023,2.0023,0,0,0,28,6ZM20,24H12V22a1,1,0,0,1,1-1h6a1,1,0,0,1,1,1Zm8,0H22V22a3,3,0,0,0-3-3H13a3,3,0,0,0-3,3v2H4V8H28Z"/><path d="M16,18a4,4,0,1,0-4-4A4,4,0,0,0,16,18Zm0-6a2,2,0,1,1-2,2A2,2,0,0,1,16,12Z"/></svg>
       <span>Our story</span>
     </a>
     <br><br>

@@ -2,6 +2,59 @@
 <html lang="en">
 
 <head>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const bypassRedirect = params.has('about') || params.has('ref') || params.has('intro') || params.has('menu') || params.has('home') || params.has('landing') || window.location.hash.includes('about');
+      if (bypassRedirect) {
+        return;
+      }
+
+      // Hide document while routing to prevent content flash
+      document.documentElement.style.display = 'none';
+
+      function parseJwt(token) {
+        try {
+          const base64Url = token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          return JSON.parse(atob(base64));
+        } catch (e) {
+          return null;
+        }
+      }
+
+      const token = localStorage.getItem('authToken');
+      const currentUser = token ? parseJwt(token) : null;
+
+      if (currentUser && currentUser.userid) {
+        fetch('https://api.pedalplex.com/GET_RIG.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ user_id: currentUser.userid })
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          const hasRigWithPedals = Array.isArray(data.docs) &&
+            data.docs.some(function (rig) { return Array.isArray(rig.pedals) && rig.pedals.length > 0; });
+          window.location.replace(hasRigWithPedals ? '/plexes' : '/rigs');
+        })
+        .catch(function () {
+          window.location.replace('/rigs');
+        });
+      } else {
+        let boards = [];
+        try {
+          boards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]');
+        } catch (err) {}
+        const hasRigWithPedals = Array.isArray(boards) &&
+          boards.some(function (rig) { return Array.isArray(rig.pedals) && rig.pedals.length > 0; });
+        window.location.replace(hasRigWithPedals ? '/plexes' : '/rigs');
+      }
+    })();
+  </script>
   <title>PedalPlex – Guitar & Bass Pedalboard Builder, Tone Presets & Rig Memory</title>
   <meta name="description" content="PedalPlex helps guitarists and bassists build, save, and recall pedalboard and amp settings. Create visual rigs, store tone presets, and never forget why a tone worked. Free and hardware-agnostic.">
   <link rel="canonical" href="https://pedalplex.com/">

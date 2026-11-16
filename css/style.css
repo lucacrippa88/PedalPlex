@@ -194,22 +194,6 @@ header {
 }
 
 
-.pedalplex-logo-fullscreen-menu-small {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-  mask-image: url('../logos/pedalplex_logo_white.png');
-  -webkit-mask-image: url('../logos/pedalplex_logo_white.png');
-  mask-repeat: no-repeat;
-  -webkit-mask-repeat: no-repeat;
-  mask-size: contain;
-  -webkit-mask-size: contain;
-  mask-position: center;
-  -webkit-mask-position: center;
-  background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
-  display: inline-block;
-}
-
 .fullscreen-nav .fullscreen-nav-link {
   display: inline-flex;
   align-items: center;
@@ -2787,6 +2771,8 @@ html[data-theme="light"] .admin-user-row { border-bottom-color: rgba(0,0,0,0.1);
 .menu-footer a:not(.bx--btn) { color: #78a9ff; }
 html[data-theme="light"] .fullscreen-menu { background: #f4f4f4; color: #161616; }
 html[data-theme="light"] .fullscreen-nav a { color: #161616; }
+html[data-theme="light"] .fullscreen-nav .fullscreen-nav-link img { filter: invert(1); }
+
 html[data-theme="light"] .close-icon { fill: #161616; }
 html[data-theme="light"] .fullscreen-guest-msg { color: #161616; }
 html[data-theme="light"] #song-quote { color: #000; }
