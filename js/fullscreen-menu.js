@@ -114,11 +114,23 @@ window.fullscreenMenuHtml = `
 
   <div class="fullscreen-nav">
     <a href='/' class="pedalplex-logo-fullscreen-menu"></a><br>
-    <a href="/plexes">Edit your ${L.Plexes}</a>
-    <a href="/rigs">Manage Rigs</a>
-    <a href="/gears">View Gears Catalog</a>
+    <a href="/plexes" class="fullscreen-nav-link">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><path d="M21 2v18.556A3.955 3.955 0 0019 20a4 4 0 104 4V8h6V2zM19 26a2 2 0 112-2 2 2 0 01-2 2zM27 6h-4V4h4z"/></svg>
+      <span>Save your ${L.Plexes}</span>
+    </a>
+    <a href="/rigs" class="fullscreen-nav-link">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><g transform="rotate(90 16 16)"><path d="M28 24L24 24 24 20 22 20 22 24 18 24 18 26 22 26 22 30 24 30 24 26 28 26 28 24z"/><path d="M10,28V10H22v7h2V6a2.0023,2.0023,0,0,0-2-2H10A2.002,2.002,0,0,0,8,6V28a2.0023,2.0023,0,0,0,2,2h6l0-2ZM10,6H22l0,2H10Z"/></g></svg>
+      <span>Manage your Rigs</span>
+    </a>
     <hr style="border:none; border-top:1px solid rgba(255,255,255,0.12); margin:0.5rem 0;">
-    <a href="/about-us">About Us</a>
+    <a href="/" class="fullscreen-nav-link">
+      <span class="pedalplex-logo-fullscreen-menu-small" aria-hidden="true"></span>
+      <span>About</span>
+    </a>
+    <a href="/about-us" class="fullscreen-nav-link">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><g transform="rotate(-90 16 16)"><path d="M25.7 9.3l-7-7A.9.9 0 0018 2H8a2 2 0 00-2 2v24a2 2 0 002 2h16a2 2 0 002-2V10a.9.9 0 00-.3-.7zM18 4.4l5.6 5.6H18zM24 28H8V4h8v6a2 2 0 002 2h6z"/></g></svg>
+      <span>Our story</span>
+    </a>
     <br><br>
     <span id="guestLoginMessage" class="fullscreen-guest-msg" style="font-size:0.875rem; display:none;">
       Login to enable cross-device sync
