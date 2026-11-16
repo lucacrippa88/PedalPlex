@@ -128,7 +128,7 @@ window.fullscreenMenuHtml = `
     </a>
     <hr style="border:none; border-top:1px solid rgba(255,255,255,0.12); margin:0.5rem 0;">
     <a href="/?about" class="fullscreen-nav-link">
-      <img src="/logos/pedalplex_logo_white.png" width="24" height="24" alt="" aria-hidden="true">
+      <span class="pedalplex-menu-icon-logo" aria-hidden="true"></span>
       <span>About</span>
     </a>
     <a href="/about-us" class="fullscreen-nav-link">

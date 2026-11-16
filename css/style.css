@@ -187,12 +187,33 @@ header {
   -webkit-mask-position: center;
   background: linear-gradient(45deg, #462964, #9C54D5, #5EE2F0);
   display: inline-block;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.pedalplex-logo-fullscreen-menu:hover {
+.pedalplex-logo-fullscreen-menu:hover,
+.pedalplex-logo-fullscreen-menu:active {
   background-position: 100% 50%;
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 10px rgba(156, 84, 213, 0.5));
 }
 
+.pedalplex-menu-icon-logo {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  flex-shrink: 0;
+  mask-image: url('../logos/pedalplex_logo_white.png');
+  -webkit-mask-image: url('../logos/pedalplex_logo_white.png');
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor;
+  transition: background-color 0.2s ease;
+}
 
 .fullscreen-nav .fullscreen-nav-link {
   display: inline-flex;
@@ -305,6 +326,18 @@ header {
   cursor: pointer;
   position: absolute;
   left: 16px;
+  transition: transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.close-btn .close-icon {
+  transition: fill 0.2s ease;
+}
+.close-btn:hover .close-icon,
+.close-btn:active .close-icon {
+  fill: #9C54D5;
+}
+.close-btn:active {
+  transform: scale(0.9);
 }
 .fullscreen-nav {
   flex: 1;
@@ -317,12 +350,25 @@ header {
   font-size: 1.5rem;
   text-decoration: none;
   color: #f4f4f4;
+  transition: color 0.2s ease, opacity 0.2s ease, transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.fullscreen-nav a:hover,
+.fullscreen-nav a:active,
+.fullscreen-nav a:focus-visible {
+  color: #9C54D5;
+}
+.fullscreen-nav a:active {
+  transform: scale(0.96);
 }
 .fullscreen-social a {
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
 }
-.fullscreen-social a:hover {
+.fullscreen-social a:hover,
+.fullscreen-social a:active {
   opacity: 0.75;
+  transform: scale(1.05);
 }
 .fullscreen-user-btns {
   display: flex;
@@ -2771,9 +2817,14 @@ html[data-theme="light"] .admin-user-row { border-bottom-color: rgba(0,0,0,0.1);
 .menu-footer a:not(.bx--btn) { color: #78a9ff; }
 html[data-theme="light"] .fullscreen-menu { background: #f4f4f4; color: #161616; }
 html[data-theme="light"] .fullscreen-nav a { color: #161616; }
+html[data-theme="light"] .fullscreen-nav a:hover,
+html[data-theme="light"] .fullscreen-nav a:active,
+html[data-theme="light"] .fullscreen-nav a:focus-visible { color: #9C54D5; }
 html[data-theme="light"] .fullscreen-nav .fullscreen-nav-link img { filter: invert(1); }
 
 html[data-theme="light"] .close-icon { fill: #161616; }
+html[data-theme="light"] .close-btn:hover .close-icon,
+html[data-theme="light"] .close-btn:active .close-icon { fill: #9C54D5; }
 html[data-theme="light"] .fullscreen-guest-msg { color: #161616; }
 html[data-theme="light"] #song-quote { color: #000; }
 html[data-theme="light"] .menu-footer { color: #6f6f6f; }
