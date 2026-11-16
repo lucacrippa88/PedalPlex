@@ -313,7 +313,10 @@ function initNavPedalboard(userRole) {
         addCooldownUntil = Date.now() + 600;
         btn.disabled = true;
         const releaseItem = () => { busy = false; btn.disabled = false; btn.innerHTML = ICON_PLUS; };
+        if (typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_select', { gear_id: pedal._id });
+
         if (!Array.isArray(window.pedalboard.pedals)) window.pedalboard.pedals = [];
+        const wasRigEmpty = (window.pedalboard.pedals.length === 0);
 
         let pedalData = window.catalog.find(p => p._id === pedal._id);
         if (!pedalData) {
@@ -338,6 +341,7 @@ function initNavPedalboard(userRole) {
         window._emptySlotRow = null;
         window._emptySlotInsertAt = null;
         if (typeof addGuestMeritPoint === 'function') addGuestMeritPoint();
+        if (wasRigEmpty && typeof trackFunnelEvent === 'function') trackFunnelEvent('first_gear_added', { gear_id: pedal._id });
         if (typeof window.deactivateSlot === 'function') window.deactivateSlot();
         if (typeof renderPedalboard === 'function') renderPedalboard();
         if (typeof autoSavePedalboard === 'function') autoSavePedalboard();
@@ -506,6 +510,7 @@ function initNavPedalboard(userRole) {
   }
 
   window.openPedalSearch = function () {
+    if (typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_search_open');
     if (isMobileSearch()) {
       // Mobile: mostra overlay a tutta larghezza sopra la navbar
       const overlay = document.getElementById('pp-search-overlay');
@@ -559,11 +564,24 @@ function initNavPedalboard(userRole) {
     const isEmpty = (!pedalCount || pedalCount === 0);
     const $add  = $("#addGearsTrigger, #addGearsTriggerTablet, #addGearsTriggerMobile");
     const $view = $("#viewPreset");
+    const $viewSubtitle = $("#viewPresetSubtitle");
+    const $viewFooter = $("#viewPresetFooter");
+
     // Il bottone + mobile resta sempre secondary (Carbon)
     const $addCta = $add.not("#addGearsTriggerMobile");
     $("#addGearsTriggerMobile").removeClass('bx--btn--primary bx--btn--tertiary').addClass('bx--btn--secondary');
-    if (isEmpty) { $addCta.removeClass('bx--btn--secondary bx--btn--tertiary').addClass('bx--btn--primary'); $view.hide(); }
-    else         { $addCta.removeClass('bx--btn--primary bx--btn--tertiary').addClass('bx--btn--secondary'); $view.show(); }
+
+    if (isEmpty) {
+      $addCta.removeClass('bx--btn--secondary bx--btn--tertiary').addClass('bx--btn--primary');
+      $view.show().removeClass('bx--btn--primary').addClass('bx--btn--secondary rig-cta-subtle');
+      if ($viewSubtitle.length) $viewSubtitle.text('Available after adding your first gear.');
+      if ($viewFooter.length) $viewFooter.removeClass('bx--btn--primary').addClass('bx--btn--secondary rig-cta-subtle');
+    } else {
+      $addCta.removeClass('bx--btn--primary bx--btn--tertiary').addClass('bx--btn--secondary');
+      $view.show().removeClass('bx--btn--secondary rig-cta-subtle').addClass('bx--btn--primary');
+      if ($viewSubtitle.length) $viewSubtitle.text('Store and recall your gear settings');
+      if ($viewFooter.length) $viewFooter.removeClass('bx--btn--secondary rig-cta-subtle').addClass('bx--btn--primary');
+    }
   };
 
   window.updateNavFilterVisibility = function () {};

@@ -279,6 +279,7 @@
   <script src="js/subplexes.js"></script>
   <script src="js/utils.js"></script>
   <script>
+    if (typeof trackFunnelEvent === 'function') trackFunnelEvent('landing_visit');
     var resultsDiv = document.getElementById('results');
 
     const SPLASH_PEDALS = [

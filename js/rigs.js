@@ -14,6 +14,8 @@ function initPedalboard(userRole) {
   window.pedalboard = { pedals: [] };
 
   // --- GUEST USER ---
+  if (typeof trackFunnelEvent === 'function') trackFunnelEvent('rigs_open');
+
   if (userRole === "guest") {
   if (typeof trackGuestVisit === 'function') trackGuestVisit();
 

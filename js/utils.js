@@ -2608,6 +2608,30 @@ function trackGuestPreset(presetId, rigId, pedalsCount, status = 'active') {
   }).catch(() => {});
 }
 
+function trackFunnelEvent(stepName, metadata) {
+  try {
+    const isGuest = !localStorage.getItem('authToken');
+    const guestId = getGuestId();
+    metadata = metadata || {};
+
+    const sessionKey = 'pp_funnel_' + stepName + '_' + guestId;
+    const isUniqueSession = !sessionStorage.getItem(sessionKey);
+    if (isUniqueSession) {
+      sessionStorage.setItem(sessionKey, '1');
+    }
+
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', stepName, Object.assign({
+        event_category: 'activation_funnel',
+        user_type: isGuest ? 'guest' : 'registered',
+        guest_id: guestId,
+        is_unique_session: isUniqueSession
+      }, metadata));
+    }
+  } catch (err) {}
+}
+window.trackFunnelEvent = trackFunnelEvent;
+
 // Track guest visitor on non-logged-in session
 setTimeout(trackGuestVisit, 2000);
 

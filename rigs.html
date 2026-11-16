@@ -184,11 +184,26 @@
 
     /* Subtle state for CTA when rig is empty */
     .rig-cta-subtle {
-      opacity: 0.55;
+      opacity: 0.55 !important;
       transition: opacity 0.2s ease;
     }
     .rig-cta-subtle:hover {
-      opacity: 0.85;
+      opacity: 0.85 !important;
+    }
+
+    .rig-first-pedal-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .rig-first-pedal-card:hover {
+      background: rgba(255, 255, 255, 0.09) !important;
+      border-color: rgba(142, 68, 240, 0.6) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(142, 68, 240, 0.2);
     }
 
   </style>
@@ -233,10 +248,10 @@
             <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/>
           </svg>
         </a>   -->
-        <a id="viewPreset" href="presets" class="showDesktop bx--btn bx--btn--primary" type="button" style="display:none; margin-left:auto!important; white-space:nowrap; max-width:none!important; align-items:center; gap:0.6rem; padding-top:0.5rem; padding-bottom:0.5rem;">
+        <a id="viewPreset" href="presets" class="showDesktop bx--btn bx--btn--secondary rig-cta-subtle" type="button" style="display:flex; margin-left:auto!important; white-space:nowrap; max-width:none!important; align-items:center; gap:0.6rem; padding-top:0.5rem; padding-bottom:0.5rem;">
           <span style="display:flex; flex-direction:column; align-items:flex-start; gap:0.1rem;">
             <span style="font-size:0.875rem; font-weight:600; line-height:1.2;">Save your Tones</span>
-            <span style="font-size:0.7rem; font-weight:400; opacity:0.75; line-height:1.2;">Store and recall your gear settings</span>
+            <span id="viewPresetSubtitle" style="font-size:0.7rem; font-weight:400; opacity:0.75; line-height:1.2;">Available after adding your first gear.</span>
           </span>
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon" style="flex-shrink:0; margin-left:0.25rem;">
             <path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/>
@@ -322,6 +337,7 @@
 
         el.addEventListener('click', function (e) {
           e.stopPropagation();
+          if (typeof trackFunnelEvent === 'function') trackFunnelEvent('empty_slot_click', { row: row, insertAt: insertAt, is_first: isFirstFocus });
           openSearch(row, insertAt, el);
         });
         return el;
@@ -357,12 +373,40 @@
           var banner = document.createElement('div');
           banner.className = 'rig-empty-banner';
           banner.innerHTML = [
-            '<h3 style="margin:0 0 0.25rem 0; font-size:1.15rem; font-weight:600; color:#ffffff;">Build your Rig and start saving your Tones</h3>',
-            '<p style="margin:0; font-size:0.875rem; color:#c6c6c6; line-height:1.45;">',
-              'Tap an empty slot below to choose your first pedal and arrange your Rig, then start saving your Tone settings.',
-            '</p>'
+            '<span class="bx--tag bx--tag--green" style="margin:0 0 0.6rem 0; font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">YOUR FIRST RIG</span>',
+            '<h3 style="margin:0 0 0.35rem 0; font-size:1.25rem; font-weight:600; color:#ffffff;">Build your first Rig.</h3>',
+            '<p style="margin:0 0 1rem 0; font-size:0.875rem; color:#c6c6c6; line-height:1.45;">',
+              'Add your first pedal to get started. Choose an empty slot below, find your gear, and start building your pedalboard.',
+            '</p>',
+            '<div class="rig-first-pedal-card" id="rigFirstPedalCta" style="padding:1.1rem 1.25rem;">',
+              '<div style="font-size:1.4rem; line-height:1; margin-bottom:0.35rem; color:#fff;">',
+                '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">',
+                  '<path d="M16 2A14 14 0 1 0 30 16 14 14 0 0 0 16 2zm0 26A12 12 0 1 1 28 16 12 12 0 0 1 16 28z"/>',
+                  '<path d="M17 9h-2v6H9v2h6v6h2v-6h6v-2h-6z"/>',
+                '</svg>',
+              '</div>',
+              '<div style="font-size:1.05rem; font-weight:600; color:#ffffff; margin-bottom:0.2rem;">Add your first pedal</div>',
+              '<div style="font-size:0.8rem; color:#a0a0a0;">Choose an empty slot below</div>',
+            '</div>'
           ].join('');
+
+          var ctaBox = banner.querySelector('#rigFirstPedalCta');
+          if (ctaBox) {
+            ctaBox.addEventListener('click', function (e) {
+              e.stopPropagation();
+              if (typeof trackFunnelEvent === 'function') trackFunnelEvent('empty_slot_click', { source: 'banner_card' });
+              var firstSlot = document.querySelector('.pedal-empty-slot');
+              openSearch(1, 0, firstSlot);
+            });
+          }
+
           container.appendChild(banner);
+
+          var sectionLabel = document.createElement('div');
+          sectionLabel.className = 'pedalboard-section-label';
+          sectionLabel.style.cssText = 'font-size:0.75rem; font-weight:600; color:#888; text-transform:uppercase; letter-spacing:0.08em; text-align:center; margin:0.25rem 0 0.85rem 0; width:100%;';
+          sectionLabel.textContent = 'YOUR PEDALBOARD';
+          container.appendChild(sectionLabel);
         }
 
         // Raccoglie tutte le row presenti + row 1, 2 sempre visibili + extra rows aggiunte manualmente
@@ -446,7 +490,7 @@
               var isFirstFocus = (isRigEmpty && rowNum === 1 && i === 0);
               var slotLabel = isAmpRow
                 ? 'Add amplifier'
-                : (isFirstFocus ? 'Add your first pedal' : 'Add pedal');
+                : (isRigEmpty ? 'Empty slot' : 'Add pedal');
 
               // insertAt = indice assoluto in allPedals dove fare splice
               var slot = makeSlot(w, h, rowNum, globalStart + pedalsInRow.length, slotLabel, isFirstFocus);
