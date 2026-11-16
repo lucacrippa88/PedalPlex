@@ -171,11 +171,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Footer tip: touch vs mouse
   const tip = document.getElementById("footer-tip");
-  if (tip) {
-    tip.textContent = window.matchMedia("(pointer: coarse)").matches
-      ? "Tap & Hold a gear to move it."
-      : "Click & Hold a gear to move it.";
-  }
+  // if (tip) {
+  //   tip.textContent = window.matchMedia("(pointer: coarse)").matches
+  //     ? "Tap & Hold a gear to move it."
+  //     : "Click & Hold a gear to move it.";
+  // }
 });
 
 /**
