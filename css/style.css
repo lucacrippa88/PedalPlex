@@ -2277,11 +2277,13 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 
 /* ── Mobile rig layout ── */
 @media (max-width: 768px) {
-  /* Contenitore principale: bounded, scrollabile lateralmente per le righe pedali */
+  /* Contenitore principale: sempre dentro la viewport, contenuti allineati a sinistra */
   #pedalboard {
     width: 100% !important;
+    min-width: 0 !important;
     max-width: 100% !important;
     overflow-x: visible !important;
+    align-items: flex-start !important;
   }
 
   /* Banner: dentro la viewport */
@@ -2291,7 +2293,16 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     box-sizing: border-box !important;
   }
 
-  /* Righe pedali: una riga sola, slot affiancati, sbordano leggermente per dare hint di scroll */
+  /* Righe pedali: una riga sola, slot affiancati, allineati a sinistra.
+     Se la riga diventa più larga dello schermo scorre dentro il suo contenitore
+     (la pagina non esce mai dalla viewport). */
+  #pedalboard .row-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: auto !important;
+    padding-top: 4px !important;
+  }
   #pedalboard .pedal-row:not(.amp-row) {
     flex-wrap: nowrap !important;
     width: auto !important;
@@ -2312,15 +2323,15 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     min-height: 100px !important;
     box-sizing: border-box !important;
   }
-  /* Amp: centrato come in Plexes (il pedale viene scalato per stare nella larghezza) */
+  /* Amp: allineato a sinistra (il pedale viene scalato per stare nella larghezza) */
   #pedalboard .amp-row .pedal-wrapper {
-    justify-content: center !important;
+    justify-content: flex-start !important;
   }
 
   /* Remove-row: bottone sotto la riga */
   #pedalboard .row-wrap {
     flex-direction: column !important;
-    align-items: center !important;
+    align-items: flex-start !important;
     gap: 4px !important;
   }
   #pedalboard .row-wrap > .remove-row-btn {
