@@ -125,7 +125,9 @@
     @media (max-width: 768px) {
       #pedalboard { width:100%!important; min-width:0!important; max-width:100%!important; overflow-x:visible!important; align-items:flex-start!important; }
       #pedalboard .rig-empty-banner { width:100%!important; max-width:100%!important; box-sizing:border-box!important; }
-      #pedalboard .pedal-row:not(.amp-row) { flex-wrap:nowrap!important; width:auto!important; max-width:none!important; }
+      #pedalboard .pedal-row:not(.amp-row) { flex-wrap:nowrap!important; width:max-content!important; max-width:none!important; }
+      #pedalboard .pedal-row:not(.amp-row) > * { flex-shrink:0!important; }
+      #pedalboard .pedal-wrapper > .pedal-catalog { flex-shrink:0!important; }
       #pedalboard .amp-row { width:100%!important; max-width:100%!important; box-sizing:border-box!important; flex-direction:column!important; align-items:flex-start!important; }
       #pedalboard .amp-row .pedal-empty-slot { width:100%!important; max-width:100%!important; height:auto!important; min-height:100px!important; box-sizing:border-box!important; }
       #pedalboard .amp-row .pedal-wrapper { height:auto!important; box-sizing:border-box!important; justify-content:flex-start!important; }

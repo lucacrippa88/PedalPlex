@@ -2357,9 +2357,12 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   }
   #pedalboard .pedal-row:not(.amp-row) {
     flex-wrap: nowrap !important;
-    width: auto !important;
+    width: max-content !important;
     max-width: none !important;
   }
+  /* Gear e slot mantengono sempre le dimensioni naturali (mai compressi dal flex) */
+  #pedalboard .pedal-row:not(.amp-row) > * { flex-shrink: 0 !important; }
+  #pedalboard .pedal-wrapper > .pedal-catalog { flex-shrink: 0 !important; }
 
   /* Amp row: riempie tutta la larghezza visibile, non sborda */
   #pedalboard .amp-row {
