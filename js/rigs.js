@@ -1202,7 +1202,7 @@ function _firePresetNudgeToast() {
 
   document.getElementById('pp-preset-nudge-close').addEventListener('click', dismiss);
   document.getElementById('pp-preset-nudge-cta').addEventListener('click', () => {
-    window.location.href = '/plexes';
+    window.location.href = '/presets';
   });
 
   // Auto-dismiss after 8s; pause while hovering

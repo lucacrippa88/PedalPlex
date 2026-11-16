@@ -57,7 +57,7 @@
     //   position: 'bottom',
     // },
     {
-      page: 'plexes',
+      page: 'presets',
       target: '#preset',
       waitFor: '#preset',
       title: 'Step 4 — Set controls',
@@ -65,7 +65,7 @@
       position: 'top',
     },
     {
-      page: 'plexes',
+      page: 'presets',
       target: '#savePstBtn',
       waitFor: '#savePstBtn',
       title: 'Step 5 — Save your Preset',
@@ -75,15 +75,16 @@
     },
   ];
 
-  // Index of the first plexes step (used for the "has rig, no plexes" nudge path)
-  const FIRST_PLEXES_STEP = TOUR_STEPS.findIndex(function (s) { return s.page === 'plexes'; });
+  // Index of the first presets step (used for the "has rig, no presets" nudge path)
+  const FIRST_PLEXES_STEP = TOUR_STEPS.findIndex(function (s) { return s.page === 'presets' || s.page === 'plexes'; });
 
   // ----------------------------------------------------------
   // Helpers
   // ----------------------------------------------------------
   function currentPage() {
-    const path = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '') || 'index';
-    return path; // 'rigs' | 'plexes' | 'index' | etc.
+    let path = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '') || 'index';
+    if (path === 'plexes') path = 'presets';
+    return path; // 'rigs' | 'presets' | 'index' | etc.
   }
 
   function saveState(step) {
@@ -244,7 +245,7 @@
       title: 'You have a Rig. Now save a Preset!',
       text: 'Dial in your tone and lock it in as a Preset to recall it any time.',
       ctaLabel: 'Show me how',
-      ctaPage: '/plexes',
+      ctaPage: '/presets',
     };
   }
 
@@ -475,7 +476,7 @@
     //   (rate-limited) toast may offer it again in a later session.
     const page = currentPage();
     const pastPlexesEntry = _currentStep >= FIRST_PLEXES_STEP;
-    if (page === 'plexes' || pastPlexesEntry) {
+    if (page === 'presets' || page === 'plexes' || pastPlexesEntry) {
       finishTour();
     } else {
       clearHighlight();
@@ -616,7 +617,7 @@
       } else {
         // Already on the right page or navigate there
         saveState(scenario.fromStep);
-        if (currentPage() === 'plexes') {
+        if (currentPage() === 'presets' || currentPage() === 'plexes') {
           injectDOM();
           showStep(scenario.fromStep);
         } else {
@@ -688,7 +689,7 @@
     // The tour never starts by itself: users opt in via the toast (or the navbar trigger).
     // Toast is shown only if the tour was never completed, at most once per session
     // (max NUDGE_MAX_SHOWS times overall), and never again once dismissed.
-    if (page === 'index' || page === 'rigs' || page === 'plexes') {
+    if (page === 'index' || page === 'rigs' || page === 'presets' || page === 'plexes') {
       const scenario = resolveNudgeScenario();
       if (scenario) showNudge(scenario);
     }

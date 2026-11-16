@@ -1076,12 +1076,12 @@ async function _importSharedPlexToExistingRig(plex, token) {
             icon: 'success',
             title: `${L.Plex} imported!`,
             html: `<strong>${plexName}</strong> has been added to <strong>${targetBoard.board_name}</strong>.
-                   <br><a href="/plexes" style="color:var(--cds-link-01,#0f62fe);">Go to ${L.Plexes} →</a>`,
+                   <br><a href="/presets" style="color:var(--cds-link-01,#0f62fe);">Go to ${L.Plexes} →</a>`,
             confirmButtonText: `Go to ${L.Plexes}`,
             showCancelButton: true,
             cancelButtonText: 'Stay here',
             customClass: { confirmButton: 'bx--btn bx--btn--primary', cancelButton: 'bx--btn bx--btn--secondary' }
-        }).then(r => { if (r.isConfirmed) window.location.href = '/plexes'; });
+        }).then(r => { if (r.isConfirmed) window.location.href = '/presets'; });
     } catch (e) {
         Swal.fire({ icon: 'error', title: 'Import failed', text: e.message || `Could not save the ${L.Plex}. Please try again.`, showConfirmButton: false, timer: 2500 });
     }

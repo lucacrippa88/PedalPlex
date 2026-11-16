@@ -110,7 +110,7 @@ $('#authForm').on('submit', function (e) {
               allowOutsideClick: false,
               allowEscapeKey: false
             });
-            setTimeout(() => { window.location.href = 'plexes'; }, 1000);
+            setTimeout(() => { window.location.href = 'presets'; }, 1000);
           },
           error: function() {
             Swal.fire({
@@ -122,7 +122,7 @@ $('#authForm').on('submit', function (e) {
               allowOutsideClick: false,
               allowEscapeKey: false
             });
-            setTimeout(() => { window.location.href = 'plexes'; }, 1000);
+            setTimeout(() => { window.location.href = 'presets'; }, 1000);
           }
         });
 
@@ -260,7 +260,7 @@ function onGoogleLogin(response) {
               allowOutsideClick: false,
               allowEscapeKey: false
             });
-            setTimeout(() => { window.location.href = "plexes"; }, 1000);
+            setTimeout(() => { window.location.href = "presets"; }, 1000);
           },
           error: function() {
             Swal.fire({
@@ -271,7 +271,7 @@ function onGoogleLogin(response) {
               allowOutsideClick: false,
               allowEscapeKey: false
             });
-            setTimeout(() => { window.location.href = "plexes"; }, 1000);
+            setTimeout(() => { window.location.href = "presets"; }, 1000);
           }
         });
         

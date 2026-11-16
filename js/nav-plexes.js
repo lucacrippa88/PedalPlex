@@ -54,7 +54,7 @@ function initNavPreset() {
           <span class="menu-morph" aria-hidden="true"><i class="menu-morph__ham"></i><i class="menu-morph__logo"></i></span>
         </button>
         <a href="" style="text-decoration:none;" class="title">PedalPlex</a>
-        <a href="plexes" class="subtitle" style="font-size:1.25rem;color:#aaa;font-weight:600;text-decoration:none">${L.Plexes}</a>
+        <a href="presets" class="subtitle" style="font-size:1.25rem;color:#aaa;font-weight:600;text-decoration:none">${L.Plexes}</a>
       </div>
 
       <!-- Right: all buttons + Actions always visible -->

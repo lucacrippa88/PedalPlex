@@ -39,7 +39,7 @@
         .then(function (data) {
           const hasRigWithPedals = Array.isArray(data.docs) &&
             data.docs.some(function (rig) { return Array.isArray(rig.pedals) && rig.pedals.length > 0; });
-          window.location.replace(hasRigWithPedals ? '/plexes' : '/rigs');
+          window.location.replace(hasRigWithPedals ? '/presets' : '/rigs');
         })
         .catch(function () {
           window.location.replace('/rigs');
@@ -51,7 +51,7 @@
         } catch (err) {}
         const hasRigWithPedals = Array.isArray(boards) &&
           boards.some(function (rig) { return Array.isArray(rig.pedals) && rig.pedals.length > 0; });
-        window.location.replace(hasRigWithPedals ? '/plexes' : '/rigs');
+        window.location.replace(hasRigWithPedals ? '/presets' : '/rigs');
       }
     })();
   </script>
@@ -211,7 +211,7 @@
             const data = await res.json();
             const hasRigWithPedals = Array.isArray(data.docs) &&
               data.docs.some(rig => Array.isArray(rig.pedals) && rig.pedals.length > 0);
-            window.location.href = hasRigWithPedals ? 'plexes' : 'rigs';
+            window.location.href = hasRigWithPedals ? 'presets' : 'rigs';
           } catch (err) {
             window.location.href = 'rigs'; // fallback on error
           }
@@ -226,7 +226,7 @@
           try { boards = JSON.parse(localStorage.getItem('guestPedalboard') || '[]'); } catch (err) {}
           const hasRigWithPedals = Array.isArray(boards) &&
             boards.some(rig => Array.isArray(rig.pedals) && rig.pedals.length > 0);
-          window.location.href = hasRigWithPedals ? 'plexes' : 'rigs';
+          window.location.href = hasRigWithPedals ? 'presets' : 'rigs';
         });
         ctaContainer.appendChild(guestBtn);
         ctaContainer.appendChild(createButton('login', 'bx--btn bx--btn--primary', 'Login', svgLogin));
@@ -419,7 +419,7 @@
         </p>
       </div>
       <div class="bx--col">
-        <h3><a style="color:#fff; text-decoration:none" href="/plexes">Plexes</a></h3>
+        <h3><a style="color:#fff; text-decoration:none" href="/presets">Plexes</a></h3>
         <p style="font-size:1.25rem; margin-bottom:1rem; color:#717171;">
           Capture the exact knob and switch positions of your rig for a song or a riff.
           <!-- <span style="color:#9C54D5">Capture exact knob and switch positions</span> for instant recall. Organize your tones and riffs for easy access anytime. -->        </p>

@@ -2615,7 +2615,7 @@ setTimeout(trackGuestVisit, 2000);
 (function ensureGuestDefaults() {
   if (localStorage.getItem('authToken')) return; // logged-in user — skip
   const path = window.location.pathname;
-  const isRigOrPlex = path.includes('/rigs') || path.includes('/plexes');
+  const isRigOrPlex = path.includes('/rigs') || path.includes('/plexes') || path.includes('/presets');
   if (!isRigOrPlex) return;
 
   // --- Rig ---
