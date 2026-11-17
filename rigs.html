@@ -128,9 +128,10 @@
       #pedalboard .pedal-row:not(.amp-row) { flex-wrap:nowrap!important; width:max-content!important; max-width:none!important; }
       #pedalboard .pedal-row:not(.amp-row) > * { flex-shrink:0!important; }
       #pedalboard .pedal-wrapper > .pedal-catalog { flex-shrink:0!important; }
-      #pedalboard .amp-row { width:100%!important; max-width:100%!important; box-sizing:border-box!important; flex-direction:column!important; align-items:flex-start!important; }
+      #pedalboard .pedal-catalog { box-sizing:content-box!important; }
+      #pedalboard .amp-row { width:100%!important; max-width:100%!important; box-sizing:border-box!important; flex-direction:column!important; align-items:flex-start!important; overflow-x:auto!important; }
       #pedalboard .amp-row .pedal-empty-slot { width:100%!important; max-width:100%!important; height:auto!important; min-height:100px!important; box-sizing:border-box!important; }
-      #pedalboard .amp-row .pedal-wrapper { height:auto!important; box-sizing:border-box!important; justify-content:flex-start!important; }
+      #pedalboard .amp-row .pedal-wrapper { width:max-content!important; max-width:none!important; flex-shrink:0!important; box-sizing:border-box!important; justify-content:flex-start!important; }
       #pedalboard .row-wrap { width:100%!important; max-width:100%!important; box-sizing:border-box!important; overflow-x:auto!important; padding-top:4px!important; flex-direction:column!important; align-items:flex-start!important; gap:4px!important; }
       #pedalboard .row-wrap > .remove-row-btn { position:static!important; transform:none!important; margin:0!important; }
     }
@@ -595,20 +596,6 @@
         buildFixedRow(ampDiv, ampRow, pedalsByRow[ampRow], globalStarts[ampRow]);
         container.appendChild(ampDiv);
 
-        // Mobile: gli amplificatori (es. 400px) sono più larghi dello schermo.
-        // Allineati a sinistra e ridimensionati per stare nella larghezza disponibile.
-        if (window.innerWidth <= 768) {
-          var availW = ampDiv.clientWidth;
-          if (availW > 0) {
-            ampDiv.querySelectorAll('.pedal-wrapper').forEach(function (wrap) {
-              var pedalEl = wrap.firstElementChild;
-              if (!pedalEl) return;
-              pedalEl.style.flexShrink = '0';
-              var natW = parseFloat(pedalEl.style.width) || pedalEl.offsetWidth;
-              if (natW > availW) pedalEl.style.zoom = (availW / natW).toString();
-            });
-          }
-        }
       };
 
     })();

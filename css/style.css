@@ -2363,23 +2363,31 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   /* Gear e slot mantengono sempre le dimensioni naturali (mai compressi dal flex) */
   #pedalboard .pedal-row:not(.amp-row) > * { flex-shrink: 0 !important; }
   #pedalboard .pedal-wrapper > .pedal-catalog { flex-shrink: 0 !important; }
+  /* style.css ha `* { box-sizing: inherit !important }`: il border-box !important di .row-wrap/.amp-row
+     scenderebbe ai gear, togliendo bordo+padding dalla loro larghezza (gear più piccoli che su desktop).
+     I gear restano content-box come su desktop. */
+  #pedalboard .pedal-catalog { box-sizing: content-box !important; }
 
-  /* Amp row: riempie tutta la larghezza visibile, non sborda */
+  /* Amp row: contenitore largo come lo schermo; l'ampli mantiene la dimensione naturale
+     e, se più largo, scorre orizzontalmente (nessuno zoom/riduzione). */
   #pedalboard .amp-row {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
+    overflow-x: auto !important;
   }
-  #pedalboard .amp-row .pedal-empty-slot,
-  #pedalboard .amp-row .pedal-wrapper {
+  #pedalboard .amp-row .pedal-empty-slot {
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
     min-height: 100px !important;
     box-sizing: border-box !important;
   }
-  /* Amp: allineato a sinistra (il pedale viene scalato per stare nella larghezza) */
   #pedalboard .amp-row .pedal-wrapper {
+    width: max-content !important;
+    max-width: none !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
     justify-content: flex-start !important;
   }
 
