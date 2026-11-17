@@ -1,5 +1,12 @@
 [
   {
+    "id": "feat-onboarding",
+    "date": "2026-11-17",
+    "title": "Easier onboarding",
+    "text": "Create your first Rig and find your Presets more easily.",
+    "link": "rigs"
+  },
+  {
     "id": "feat-avatars",
     "date": "2026-11-09",
     "title": "Choose your avatar",
