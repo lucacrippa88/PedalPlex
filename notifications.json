@@ -1,5 +1,12 @@
 [
   {
+    "id": "feat-catalog-brand-filter",
+    "date": "2026-11-20",
+    "title": "Filter by brand",
+    "text": "Find gear faster: filter the catalog by brand or category, with item counts. Active filters show as removable chips.",
+    "link": "gears"
+  },
+  {
     "id": "feat-onboarding",
     "date": "2026-11-17",
     "title": "Easier onboarding",

@@ -219,6 +219,62 @@ function updateGearsCatalogHeader() {
   }
 }
 
+// ==================== Active Filter Tags ====================
+function renderActiveFilters() {
+  const $bar = $('#active-filters');
+  $bar.empty();
+
+  const tags = [];
+
+  if (currentCategory && currentCategory !== 'all') {
+    tags.push({ label: currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1), clear: function() {
+      currentCategory = 'all';
+      $('#categoryFilter').val('all');
+      searchBookmark = null; currentSearchQuery = null;
+      resetCatalogState(); loadNextCatalogPage();
+      updateGearsCatalogHeader(); renderActiveFilters();
+    }});
+  }
+
+  if (currentBrand && currentBrand !== 'all') {
+    tags.push({ label: currentBrand, clear: function() {
+      currentBrand = 'all';
+      $('#brandFilter').val('all');
+      searchBookmark = null; currentSearchQuery = null;
+      resetCatalogState(); loadNextCatalogPage();
+      updateGearsCatalogHeader(); renderActiveFilters();
+    }});
+  }
+
+  if (tags.length === 0) {
+    $bar.hide();
+    return;
+  }
+
+  tags.forEach(function(tag) {
+    const $tag = $('<span class="active-filter-tag">')
+      .text(tag.label);
+    const $x = $('<button class="active-filter-tag__close" aria-label="Remove filter">')
+      .html('&times;')
+      .on('click', tag.clear);
+    $tag.append($x);
+    $bar.append($tag);
+  });
+
+  if (tags.length > 1) {
+    const $clearAll = $('<button class="active-filter-clear-all">').text('Clear all').on('click', function() {
+      currentCategory = 'all'; currentBrand = 'all';
+      $('#categoryFilter').val('all'); $('#brandFilter').val('all');
+      searchBookmark = null; currentSearchQuery = null;
+      resetCatalogState(); loadNextCatalogPage();
+      updateGearsCatalogHeader(); renderActiveFilters();
+    });
+    $bar.append($clearAll);
+  }
+
+  $bar.css('display', 'flex');
+}
+
 $(document).on("change", "#categoryFilter", function () {
   currentCategory = $(this).val();
   searchBookmark = null;
@@ -226,6 +282,7 @@ $(document).on("change", "#categoryFilter", function () {
   resetCatalogState();
   loadNextCatalogPage();
   updateGearsCatalogHeader();
+  renderActiveFilters();
 });
 
 $(document).on("change", "#brandFilter", function () {
@@ -235,6 +292,7 @@ $(document).on("change", "#brandFilter", function () {
   resetCatalogState();
   loadNextCatalogPage();
   updateGearsCatalogHeader();
+  renderActiveFilters();
 });
 
 // ==================== Lazy Catalog Render ====================
