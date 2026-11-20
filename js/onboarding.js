@@ -33,8 +33,12 @@
 
   let currentPage = null;
 
+  // Gli step sono sequenziali: uno step non può risultare fatto se il precedente non lo è
   function completedFlags() {
-    return [read(KEYS.step1), read(KEYS.step2), read(KEYS.done)];
+    const s1 = read(KEYS.step1);
+    const s2 = s1 && read(KEYS.step2);
+    const s3 = s2 && read(KEYS.done);
+    return [s1, s2, s3];
   }
 
   function fill(el) {
@@ -43,26 +47,28 @@
     const firstOpen = flags.indexOf(false);
     const plexesLabel = (typeof L !== 'undefined' && L.Plexes) ? L.Plexes : 'Presets';
 
+    // CTA verso i Preset: affiancata allo step 3, solo in pagina Rigs e a step 1 completato
+    const showCta = currentPage === 'rigs' && flags[0] && !flags[2];
+    const cta = showCta
+      ? '<a href="presets" class="pp-onboarding__cta bx--btn bx--btn--primary bx--btn--sm" style="display:inline-flex;align-items:center;gap:0.5rem;max-width:none;">' +
+          'Go to ' + plexesLabel + ARROW_SVG + '</a>'
+      : '';
+
     const items = STEPS.map(function (text, i) {
       const cls = flags[i] ? ' pp-onboarding__step--done' : (i === firstOpen ? ' pp-onboarding__step--current' : '');
       return '<li class="pp-onboarding__step' + cls + '">' +
                '<span class="pp-onboarding__bullet">' + (flags[i] ? CHECK_SVG : (i + 1)) + '</span>' +
                '<span class="pp-onboarding__text"><strong>Step ' + (i + 1) + '</strong> &mdash; ' + text + '</span>' +
+               (i === 2 ? cta : '') +
              '</li>';
     }).join('');
-
-    const showCta = currentPage === 'rigs' && flags[0];
-    const cta = showCta
-      ? '<div class="pp-onboarding__cta"><a href="presets" class="bx--btn bx--btn--primary bx--btn--sm" style="display:inline-flex;align-items:center;gap:0.5rem;max-width:none;">' +
-          'Go to ' + plexesLabel + ARROW_SVG + '</a></div>'
-      : '';
 
     el.innerHTML =
       '<div class="pp-onboarding__head">' +
         '<h3 class="pp-onboarding__title">Build your Rig. Save your Tones.</h3>' +
         '<span class="pp-onboarding__counter" aria-live="polite">Step ' + count + ' of 3 completed</span>' +
       '</div>' +
-      '<ol class="pp-onboarding__steps">' + items + '</ol>' + cta;
+      '<ol class="pp-onboarding__steps">' + items + '</ol>';
   }
 
   function create() {
@@ -95,7 +101,10 @@
 
     if (page === 'rigs' && opts && typeof opts.gearCount === 'number') {
       write(KEYS.step1, opts.gearCount > 0);
-      if (opts.gearCount === 0) write(KEYS.active, true);
+      if (opts.gearCount === 0) {
+        write(KEYS.active, true);
+        write(KEYS.step2, false); // Rig svuotato: si riparte dallo step 1
+      }
     }
 
     if (!isVisible()) { remove(); return null; }
