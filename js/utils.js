@@ -402,6 +402,207 @@ function setKnobRotation($knob, deg) {
   });
 }
 
+// Default value of a knob: the one in the catalog entry (if valid for this control), else the current one
+function getKnobDefaultValue(catalogPedal, control) {
+  for (const row of (catalogPedal && catalogPedal.controls) || []) {
+    for (const c of (row && row.row) || []) {
+      if (c.label !== control.label || c.value === undefined) continue;
+      if (Array.isArray(control.values) && !control.values.includes(c.value)) continue;
+      return c.value;
+    }
+  }
+  return control.value;
+}
+
+// ============================================================================
+//  KNOB INTERACTION  (drag + physics)
+//   - drag vertically to change the value; the further the pointer is moved away
+//     horizontally from the knob, the finer the adjustment
+//   - discrete knobs (control.values) snap to detents with a springy easing
+//   - releasing a fast drag keeps the knob turning (inertia)
+//   - at the ends the knob stretches a few degrees (rubber band) and springs back
+//   - double click / double tap resets the knob to its default value
+//  hooks: { onValueChange(), showTip(boolean) }
+// ============================================================================
+function attachKnobInteraction($knob, control, defaultValue, hooks) {
+  const discrete = Array.isArray(control.values);
+  const min = discrete ? 0 : (control.min ?? 0);
+  const max = discrete ? control.values.length - 1 : (control.max ?? 100);
+  const range = max - min;
+  const scale = range || 1;   // for thresholds (avoids a zero threshold on single-value knobs)
+
+  const UNITS_PER_PX   = discrete ? 1 / 5 : 1 / 10;  // same sensitivity as before
+  const FINE_DEADZONE  = 24;    // px of horizontal travel (beyond the knob radius) before fine mode kicks in
+  const FINE_FALLOFF   = 60;    // px of extra horizontal travel that halve the speed
+  const FINE_MIN       = 0.08;  // slowest drag speed factor
+  const OVER_CAP_DEG   = 12;    // max drag past the end (deg)
+  const OVER_MAX_DEG   = 8;     // max visual stretch past the end (deg)
+  const FRICTION       = 3.5;   // inertia decay (1/s)
+  const SPRING_K       = 200;   // bounce back / reset spring
+  const SPRING_C       = 2 * Math.sqrt(SPRING_K) * 0.9;
+  const DETENT_K       = 420;   // detent snap spring (underdamped => small overshoot)
+  const DETENT_C       = 2 * Math.sqrt(DETENT_K) * 0.55;
+  const DOUBLE_TAP_MS  = 320;
+  const TAP_SLOP_PX    = 4;
+  const reduceMotion   = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const clamp = p => Math.min(Math.max(p, min), max);
+  const valueToPos = v => discrete ? Math.max(control.values.indexOf(v), 0) : (parseFloat(v) || 0);
+  const posToValue = p => discrete ? control.values[Math.round(clamp(p))] : parseFloat(clamp(p).toFixed(1));
+
+  // Linear angle mapping, extrapolated from the first/last value (so it works for every `span`)
+  const rotMin = getRotationFromValue(control, discrete ? control.values[0] : min);
+  const rotMax = getRotationFromValue(control, discrete ? control.values[max] : max);
+  const degPerUnit = range ? (rotMax - rotMin) / range : 0;
+  const degAbs = Math.abs(degPerUnit);
+  const rotationAt = p => rotMin + (p - min) * degPerUnit;
+  const capUnits = degAbs ? OVER_CAP_DEG / degAbs : 0;
+
+  // Rubber band: position actually shown when `p` is beyond the ends
+  function softPos(p) {
+    if (!degAbs || (p >= min && p <= max)) return clamp(p);
+    const bound = p < min ? min : max;
+    const overDeg = Math.abs(p - bound) * degAbs;
+    const visDeg = OVER_MAX_DEG * (1 - Math.exp(-overDeg / OVER_MAX_DEG));
+    return bound + Math.sign(p - bound) * visDeg / degAbs;
+  }
+
+  let raw = clamp(valueToPos(control.value)); // continuous position, in value units
+  let committedRaw = raw;                     // last position written to control.value
+  let vel = 0;                                // units/s
+  let ang = rotationAt(raw), angVel = 0;      // displayed angle (discrete knobs spring towards the detent)
+  let dragging = false, springTarget = null, rafId = null, lastFrame = 0;
+  let lastTapTime = 0, lastTapX = 0, lastTapY = 0;
+
+  function commit() {
+    if (raw === committedRaw) return;   // nothing moved (e.g. a plain tap)
+    committedRaw = raw;
+    const v = posToValue(raw);
+    if (v === control.value) return;
+    control.value = v;
+    $knob.data("control-value", v);
+    $knob.data("rotation", rotationAt(valueToPos(v)));
+    hooks.onValueChange();
+  }
+
+  function stepPhysics(dt) {
+    if (springTarget !== null) {
+      vel += (-SPRING_K * (raw - springTarget) - SPRING_C * vel) * dt;
+      raw += vel * dt;
+      if (Math.abs(raw - springTarget) < scale * 0.0005 && Math.abs(vel) < scale * 0.005) {
+        raw = springTarget; vel = 0; springTarget = null;
+      }
+    } else {
+      raw += vel * dt;
+      vel *= Math.exp(-FRICTION * dt);
+      if (raw < min || raw > max) springTarget = clamp(raw);                 // hit an end: bounce back
+      else if (Math.abs(vel) < scale * 0.02) { vel = 0; if (discrete) springTarget = Math.round(raw); }
+    }
+  }
+
+  function stepAngle(dt) {
+    const target = discrete
+      ? rotationAt(Math.round(clamp(raw))) + (rotationAt(softPos(raw)) - rotationAt(clamp(raw)))
+      : rotationAt(softPos(raw));
+    if (!discrete || reduceMotion) { ang = target; angVel = 0; return true; }
+    angVel += (-DETENT_K * (ang - target) - DETENT_C * angVel) * dt;
+    ang += angVel * dt;
+    if (Math.abs(ang - target) < 0.05 && Math.abs(angVel) < 0.5) { ang = target; angVel = 0; return true; }
+    return false;
+  }
+
+  function frame(t) {
+    rafId = null;
+    const total = Math.min((t - lastFrame) / 1000, 1 / 30);
+    lastFrame = t;
+    const n = Math.max(1, Math.ceil(total / (1 / 120)));
+    let angleSettled = true;
+    for (let i = 0; i < n; i++) {
+      if (!dragging) stepPhysics(total / n);
+      angleSettled = stepAngle(total / n);
+    }
+    commit();
+    setKnobRotation($knob, ang);
+    const idle = !dragging && springTarget === null && vel === 0 && angleSettled;
+    if (idle) hooks.showTip(false);
+    else start();
+  }
+
+  function start() {
+    if (rafId === null) {
+      if (!dragging && springTarget === null && vel === 0) lastFrame = performance.now();
+      rafId = requestAnimationFrame(frame);
+    }
+  }
+
+  function startDrag(e) {
+    e.preventDefault();
+    const isTouch = e.type.startsWith("touch");
+    const point = ev => (isTouch ? ev.touches[0] : ev);
+    const p0 = point(e);
+    const rect = $knob[0].getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const deadzone = rect.width / 2 + FINE_DEADZONE;
+    const downX = p0.clientX, downY = p0.clientY;
+    let prevY = p0.clientY, prevT = performance.now(), moved = false;
+
+    dragging = true; springTarget = null; vel = 0;
+    $knob.addClass("knob-active");
+    lastFrame = prevT;
+    start();
+
+    function onMove(e2) {
+      const p = point(e2);
+      if (!moved && Math.hypot(p.clientX - downX, p.clientY - downY) < TAP_SLOP_PX) return;
+      moved = true;
+      hooks.showTip(true);
+
+      const now = performance.now();
+      const away = Math.max(0, Math.abs(p.clientX - centerX) - deadzone);
+      const factor = Math.max(FINE_MIN, 1 / (1 + away / FINE_FALLOFF));
+      const dRaw = (prevY - p.clientY) * UNITS_PER_PX * factor;
+      raw = Math.min(Math.max(raw + dRaw, min - capUnits), max + capUnits);
+
+      const dt = Math.max(now - prevT, 1) / 1000;
+      vel = 0.6 * (dRaw / dt) + 0.4 * vel;
+      prevY = p.clientY; prevT = now;
+    }
+
+    function endDrag(e2) {
+      $(document).off("mousemove.knob touchmove.knob", onMove);
+      $(document).off("mouseup.knob touchend.knob touchcancel.knob", endDrag);
+      dragging = false;
+      $knob.removeClass("knob-active");
+
+      const now = performance.now();
+      if (!moved) {
+        // tap: second tap on the same spot within the interval => reset to default
+        if (e2.type !== "touchcancel" && now - lastTapTime < DOUBLE_TAP_MS &&
+            Math.hypot(downX - lastTapX, downY - lastTapY) < 24) {
+          lastTapTime = 0;
+          springTarget = clamp(valueToPos(defaultValue));
+          hooks.showTip(true);
+        } else {
+          lastTapTime = now; lastTapX = downX; lastTapY = downY;
+        }
+        vel = 0;
+      } else {
+        if (now - prevT > 80) vel = 0;                                  // stopped before releasing: no fling
+        vel = Math.max(Math.min(vel, scale * 1.5), -scale * 1.5);
+        if (reduceMotion) vel = 0;
+        if (raw < min || raw > max) springTarget = clamp(raw);
+        else if (Math.abs(vel) < scale * 0.02) { vel = 0; if (discrete) springTarget = Math.round(raw); }
+      }
+      start();
+    }
+
+    $(document).on("mousemove.knob touchmove.knob", onMove);
+    $(document).on("mouseup.knob touchend.knob touchcancel.knob", endDrag);
+  }
+
+  $knob.on("mousedown touchstart", startDrag);
+}
+
 // Utility function to slugify pedal names for URL generation
 function slugify(text) {
 
@@ -439,6 +640,10 @@ function renderPedalControls(pedal, $pedalDiv) {
   $pedalDiv.removeData("subplexInvalidated"); // flag reset for SubPlex invalidation
 
   if (!pedal.controls || !Array.isArray(pedal.controls)) return; // metadata only protection
+
+  // Pristine catalog entry of this gear: source of the knobs' default values (double-tap reset)
+  const pedalCatalogId = pedal._id || pedal.id;
+  const catalogPedal = (window.catalog || []).find(p => p && (p._id === pedalCatalogId || p.id === pedalCatalogId));
 
   const editMode = window.isEditMode;
 
@@ -545,65 +750,20 @@ function renderPedalControls(pedal, $pedalDiv) {
           }
         }
 
-        // Drag handler
-        function startDrag(e) {
-          e.preventDefault();
-          const startY = e.type.startsWith("touch") ? e.touches[0].pageY : e.pageY;
-          const startValue = control.value;
-
-          function onMove(e2) {
-            const currentY = e2.type.startsWith("touch") ? e2.touches[0].pageY : e2.pageY;
-            const delta = startY - currentY;
-
-            if (control.values && Array.isArray(control.values)) {
-              const steps = Math.round(delta / 5);
-              let currentIndex = control.values.indexOf(startValue);
-              if (currentIndex === -1) currentIndex = 0;
-              let newIndex = Math.min(Math.max(currentIndex + steps, 0), control.values.length - 1);
-              control.value = control.values[newIndex];
-              if (!$pedalDiv.data("subplexInvalidated")) {
-                $pedalDiv.data("subplexInvalidated", true);
-                invalidateSubplex($pedalDiv); // mark SubPlex as changed
-              }
-            } else {
-              const min = control.min ?? 0;
-              const max = control.max ?? 100;
-              const steps = (delta / 5) / 2;
-              let newValue = startValue + steps;
-              newValue = Math.min(Math.max(newValue, min), max);
-              control.value = parseFloat(newValue.toFixed(1));
-
-              if (!$pedalDiv.data("subplexInvalidated")) {
-                $pedalDiv.data("subplexInvalidated", true);
-                invalidateSubplex($pedalDiv); // mark SubPlex as changed
-              }
+        // Drag / physics / double-tap reset (see attachKnobInteraction)
+        attachKnobInteraction(knob, control, getKnobDefaultValue(catalogPedal, control), {
+          onValueChange() {
+            if (!$pedalDiv.data("subplexInvalidated")) {
+              $pedalDiv.data("subplexInvalidated", true);
+              invalidateSubplex($pedalDiv); // mark SubPlex as changed
             }
-
-            const newRotation = getRotationFromValue(control, control.value);
-            knob.data("rotation", newRotation);
-            knob.data("control-value", control.value);
-            setKnobRotation(knob, newRotation);
             if ($valueLabel) $valueLabel.text(control.value);
-
-            // if (!editMode && $tooltipText) {
-            if ($tooltipText) {
-              $tooltipText.text(control.value);
-              $tooltip.show();
-            }
+            if ($tooltipText) $tooltipText.text(control.value);
+          },
+          showTip(show) {
+            if ($tooltip) show ? $tooltip.show() : $tooltip.hide();
           }
-
-          function endDrag() {
-            $(document).off("mousemove.knob touchmove.knob", onMove);
-            $(document).off("mouseup.knob touchend.knob", endDrag);
-            // if (!editMode && $tooltip) $tooltip.hide();
-            if ($tooltip) $tooltip.hide();
-          }
-
-          $(document).on("mousemove.knob touchmove.knob", onMove);
-          $(document).on("mouseup.knob touchend.knob", endDrag);
-        }
-
-        knob.on("mousedown touchstart", startDrag);
+        });
 
         let $label;
 
