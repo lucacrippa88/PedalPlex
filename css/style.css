@@ -1460,7 +1460,9 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   padding: 1.15rem 1.4rem;
   margin: 0 auto 1.75rem auto;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  box-sizing: border-box;
+  /* html/* impongono box-sizing con !important (riga ~497): serve !important anche qui,
+     altrimenti padding + bordo si sommano alla larghezza e il box esce dalla pagina su mobile. */
+  box-sizing: border-box !important;
   /* 3 slot × 190px + 2 gap × 10px = 590px — allineato con la riga pedali */
   width: 590px;
   max-width: 100%;
@@ -1530,6 +1532,7 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
   color: #ffffff;
 }
 .pp-onboarding__step--done .pp-onboarding__text { text-decoration: line-through; text-decoration-color: rgba(198, 198, 198, 0.4); }
+.pp-onboarding .pp-ob-short { display: none; }
 .pp-onboarding__cta { margin-left: auto; flex-shrink: 0; align-self: center; }
 .pp-onboarding__step .pp-onboarding__text { flex: 1 1 auto; min-width: 0; }
 
@@ -1548,6 +1551,8 @@ body.pp-onboarding-active #viewPresetFooter {
 }
 @media (max-width: 768px) {
   .pp-onboarding { padding: 0.9rem 1rem; margin-bottom: 1.25rem; }
+  .pp-onboarding .pp-ob-long { display: none; }
+  .pp-onboarding .pp-ob-short { display: inline; }
   .pp-onboarding__title { font-size: 1rem; }
   .pp-onboarding__head { flex-direction: column; gap: 0.25rem; }
   .pp-onboarding__counter { padding-top: 0; }

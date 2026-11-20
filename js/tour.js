@@ -222,6 +222,9 @@
     // If a tour is actively in progress, no nudge
     if (localStorage.getItem('pp_tour_active') === 'true') return null;
 
+    // Onboarding checklist (js/onboarding.js) in corso: il tour viene proposto solo dopo
+    if (window.PPOnboarding && window.PPOnboarding.isPending()) return null;
+
     // Tour finished → never bother the user again
     if (hasCompleted()) return null;
 

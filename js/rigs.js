@@ -1168,6 +1168,8 @@ const _NUDGE_PENDING_KEY = 'pedalplex_preset_nudge_pending';
 // Same look & feel as the tour nudge (see #pp-tour-nudge in css/style.css).
 function _firePresetNudgeToast() {
   if (document.getElementById('pp-preset-nudge')) return;
+  // Con la checklist di onboarding attiva la CTA "Continue" fa già lo stesso lavoro: niente toast
+  if (window.PPOnboarding && window.PPOnboarding.isPending()) return;
 
   const nudge = document.createElement('div');
   nudge.id = 'pp-preset-nudge';

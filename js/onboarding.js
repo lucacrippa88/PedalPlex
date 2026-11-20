@@ -41,6 +41,13 @@
     return [s1, s2, s3];
   }
 
+  // Versione breve del testo, mostrata via CSS su mobile (<= 768px)
+  const STEPS_SHORT = [
+    'Add your pedals and amps',
+    'Adjust your gears\u2019 controls',
+    'Save your tone'
+  ];
+
   function fill(el) {
     const flags = completedFlags();
     const count = flags.filter(Boolean).length;
@@ -56,7 +63,10 @@
       const cls = flags[i] ? ' pp-onboarding__step--done' : (i === firstOpen ? ' pp-onboarding__step--current' : '');
       return '<li class="pp-onboarding__step' + cls + '">' +
                '<span class="pp-onboarding__bullet">' + (flags[i] ? CHECK_SVG : (i + 1)) + '</span>' +
-               '<span class="pp-onboarding__text">' + text + '</span>' +
+               '<span class="pp-onboarding__text">' +
+                 '<span class="pp-ob-long">' + text + '</span>' +
+                 '<span class="pp-ob-short">' + STEPS_SHORT[i] + '</span>' +
+               '</span>' +
                (i === 1 ? cta : '') +
              '</li>';
     }).join('');
@@ -64,7 +74,10 @@
     el.innerHTML =
       '<div class="pp-onboarding__head">' +
         '<h3 class="pp-onboarding__title">Build your Rig. Save your Tones.</h3>' +
-        '<span class="pp-onboarding__counter" aria-live="polite">Step ' + count + ' of 3 completed</span>' +
+        '<span class="pp-onboarding__counter" aria-live="polite">' +
+          '<span class="pp-ob-long">Step ' + count + ' of 3 completed</span>' +
+          '<span class="pp-ob-short">' + count + '/3 done</span>' +
+        '</span>' +
       '</div>' +
       '<ol class="pp-onboarding__steps">' + items + '</ol>';
   }
@@ -111,7 +124,26 @@
     const el = create();
     container.appendChild(el);
     document.body.classList.add(BODY_CLASS);
+    suppressTourNudge();
     return el;
+  }
+
+  // Il toast "New to PedalPlex?" (js/tour.js) parte prima che il Rig sia caricato, quindi può
+  // essere già comparso quando la checklist si monta: lo rimuoviamo e non lo contiamo come "mostrato",
+  // così potrà essere riproposto a onboarding concluso.
+  function suppressTourNudge() {
+    ['pp-tour-nudge', 'pp-preset-nudge'].forEach(function (id) {
+      const n = document.getElementById(id);
+      if (!n) return;
+      n.remove();
+      if (id === 'pp-tour-nudge') {
+        try {
+          sessionStorage.removeItem('pp_tour_nudge_shown');
+          const c = parseInt(localStorage.getItem('pp_tour_nudge_count') || '0', 10);
+          if (c > 0) localStorage.setItem('pp_tour_nudge_count', String(c - 1));
+        } catch (e) {}
+      }
+    });
   }
 
   function complete() {
@@ -146,7 +178,11 @@
     if (mount(slot, 'presets')) watchControls();
   }
 
-  window.PPOnboarding = { mount: mount, complete: complete, update: update };
+  // true mentre la checklist è (o sta per essere) visibile: il tour/toast non devono comparire
+  function isPending() { return isVisible(); }
+  function isDone() { return read(KEYS.done); }
+
+  window.PPOnboarding = { mount: mount, complete: complete, update: update, isPending: isPending, isDone: isDone };
 
   if (/(^|\/)(presets|plexes)(\.html)?$/.test(window.location.pathname)) {
     if (document.readyState === 'loading') {
