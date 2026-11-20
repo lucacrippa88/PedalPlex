@@ -144,32 +144,28 @@ function resetCatalogState() {
 }
 
 // ==================== Category Filter ====================
-// Populate filter options from categories.json; counts come from GET_CATALOG_COUNTS.php?breakdown=category
+// Populate filter options from categories.json; counts from category_counts.json (generated statically)
 $(function () {
-  const catPromise = $.getJSON("json/categories.json");
-  const countsPromise = $.ajax({
-    url: "https://api.pedalplex.com/GET_CATALOG_COUNTS.php?breakdown=category",
-    headers: localStorage.getItem("authToken") ? { Authorization: "Bearer " + localStorage.getItem("authToken") } : {}
-  });
-
-  catPromise.done(function (list) {
-    countsPromise.done(function (counts) {
-      const catCounts = (counts && typeof counts.categories === "object") ? counts.categories : {};
-      const $filter = $("#categoryFilter");
-      list.forEach(cat => {
-        const label = cat.charAt(0).toUpperCase() + cat.slice(1);
-        const n = catCounts[cat];
-        $filter.append($("<option>").val(cat).text(n != null ? label + " (" + n + ")" : label));
-      });
-    }).fail(function () {
-      // No category counts available — render without numbers
+  $.when(
+    $.getJSON("json/categories.json"),
+    $.getJSON("json/category_counts.json")
+  ).done(function (catResult, countsResult) {
+    const list      = catResult[0];
+    const catCounts = countsResult[0] || {};
+    const $filter   = $("#categoryFilter");
+    list.forEach(cat => {
+      const label = cat.charAt(0).toUpperCase() + cat.slice(1);
+      const n = catCounts[cat];
+      $filter.append($("<option>").val(cat).text(n != null ? label + " (" + n + ")" : label));
+    });
+  }).fail(function () {
+    // Fallback: load categories without counts
+    $.getJSON("json/categories.json").done(function (list) {
       const $filter = $("#categoryFilter");
       list.forEach(cat => {
         $filter.append($("<option>").val(cat).text(cat.charAt(0).toUpperCase() + cat.slice(1)));
       });
     });
-  }).fail(function () {
-    console.error("Failed to load categories.json");
   });
 });
 
@@ -188,6 +184,7 @@ $(function () {
     brands.forEach(brand => {
       $filter.append($("<option>").val(brand).text(brand + " (" + brandCounts[brand] + ")"));
     });
+    $("#brandCount").text(brands.length + " brands");
   }).fail(function () {
     console.error("Failed to load mapping.json for brand filter");
   });

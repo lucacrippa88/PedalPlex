@@ -667,8 +667,8 @@ html { box-sizing: content-box !important; }
 .row > div { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 0px; min-width: 40px; }
 .row.lowest-row > div { min-width: 0px; }
 .row > div > select { margin-bottom: 10px; }
-#categoryFilter, #angleSelect, #pedalboardSelect, #presetSelect, #folderSelect, #folderSelectInput, #selectFolder { height: 40px; font-size: initial; max-width: 11rem; }
-#categoryFilter { font-size: 0.8rem; }
+#categoryFilter, #brandFilter, #angleSelect, #pedalboardSelect, #presetSelect, #folderSelect, #folderSelectInput, #selectFolder { height: 40px; font-size: initial; max-width: 11rem; }
+#categoryFilter, #brandFilter { font-size: 0.8rem; }
 /* Gears sort: Carbon content switcher (as in profile), sized to its content next to the category select */
 #sortFilter { width: auto; flex: 0 0 auto; }
 #sortFilter .bx--content-switcher-btn { width: auto; }
