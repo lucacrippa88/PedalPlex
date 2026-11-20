@@ -1452,6 +1452,109 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
     max-width: 100% !important;
   }
 }
+/* ── Onboarding checklist (js/onboarding.js) — rigs + presets ─────────────── */
+.pp-onboarding {
+  background: linear-gradient(135deg, rgba(105, 41, 196, 0.18) 0%, rgba(15, 98, 254, 0.1) 100%);
+  border: 1px solid rgba(142, 68, 240, 0.4);
+  border-radius: 8px;
+  padding: 1.15rem 1.4rem;
+  margin: 0 auto 1.75rem auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  /* 3 slot × 190px + 2 gap × 10px = 590px — allineato con la riga pedali */
+  width: 590px;
+  max-width: 100%;
+  text-align: left;
+}
+.pp-onboarding__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+.pp-onboarding__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+.pp-onboarding__counter {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #c6c6c6;
+  white-space: nowrap;
+  padding-top: 0.3rem;
+}
+.pp-onboarding__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.pp-onboarding__step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: #a0a0a0;
+}
+.pp-onboarding__step strong { font-weight: 600; }
+.pp-onboarding__bullet {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #6f6f6f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+.pp-onboarding__step--current { color: #ffffff; }
+.pp-onboarding__step--current .pp-onboarding__bullet {
+  border-color: #8a3ffc;
+  background: rgba(138, 63, 252, 0.25);
+  color: #ffffff;
+}
+.pp-onboarding__step--done { color: #c6c6c6; }
+.pp-onboarding__step--done .pp-onboarding__bullet {
+  border-color: #24a148;
+  background: #24a148;
+  color: #ffffff;
+}
+.pp-onboarding__step--done .pp-onboarding__text { text-decoration: line-through; text-decoration-color: rgba(198, 198, 198, 0.4); }
+.pp-onboarding__cta { margin-top: 1rem; }
+
+/* Mentre l'onboarding è attivo la CTA verso i Preset sta nel banner: nascondi gli altri bottoni (pagina Rigs) */
+body.pp-onboarding-active #pedalboard-controls #viewPreset,
+body.pp-onboarding-active #viewPresetFooter {
+  display: none !important;
+}
+
+@media (max-width: 1024px) {
+  #pedalboard .pp-onboarding,
+  #preset-controls ~ #ppOnboardingSlot .pp-onboarding {
+    width: 590px !important;
+    max-width: 100% !important;
+  }
+}
+@media (max-width: 768px) {
+  .pp-onboarding { padding: 0.9rem 1rem; margin-bottom: 1.25rem; }
+  .pp-onboarding__title { font-size: 1rem; }
+  .pp-onboarding__head { flex-direction: column; gap: 0.25rem; }
+  .pp-onboarding__counter { padding-top: 0; }
+  .pp-onboarding__step { font-size: 0.8rem; }
+  #pedalboard .pp-onboarding { width: 100% !important; max-width: 100% !important; align-self: stretch; }
+}
+
+
 
 
 

@@ -349,6 +349,7 @@ function initNavPreset() {
     const success = await savePreset(currentPresetId, { preset_name: presetName, pedals: pedalsObject });
     if (success) {
       window.PPUnsaved?.markPresetClean();
+      window.PPOnboarding?.complete();
       Swal.close();
       Swal.fire({ icon:"success", title:`${L.Plex} Saved`, text:`Your Tone "${presetName}" has been saved successfully.`, timer:1000, showConfirmButton:false })
         .then(() => location.reload());

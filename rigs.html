@@ -273,6 +273,7 @@
     <script src="js/labels.js"></script>
     <script src="js/helpers.js"></script>
     <script src="js/unsaved-guard.js"></script>
+    <script src="js/onboarding.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/subplexes.js"></script>
     <script src="js/rigs.js"></script>
@@ -371,45 +372,10 @@
           }
         }
 
-        // Empty state onboarding banner se la pedaliera non ha pedali
-        if (isRigEmpty) {
-          var banner = document.createElement('div');
-          banner.className = 'rig-empty-banner';
-          banner.innerHTML = [
-            '<span class="bx--tag bx--tag--green" style="margin:0 0 0.6rem 0; font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">YOUR FIRST RIG</span>',
-            '<h3 style="margin:0 0 0.35rem 0; font-size:1.25rem; font-weight:600; color:#ffffff;">Build your Rig. Save your Tones.</h3>',
-            '<p style="margin:0 0 1rem 0; font-size:0.875rem; color:#c6c6c6; line-height:1.45;">',
-              'Add your first pedal to get started. Choose an empty slot below and find your gears.',
-            '</p>',
-            // '<div class="rig-first-pedal-card" id="rigFirstPedalCta" style="padding:1.1rem 1.25rem;">',
-            //   '<div style="font-size:1.4rem; line-height:1; margin-bottom:0.35rem; color:#fff;">',
-            //     '<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">',
-            //       '<path d="M16 2A14 14 0 1 0 30 16 14 14 0 0 0 16 2zm0 26A12 12 0 1 1 28 16 12 12 0 0 1 16 28z"/>',
-            //       '<path d="M17 9h-2v6H9v2h6v6h2v-6h6v-2h-6z"/>',
-            //     '</svg>',
-            //   '</div>',
-            //   '<div style="font-size:1.05rem; font-weight:600; color:#ffffff; margin-bottom:0.2rem;">Add your first pedal</div>',
-            //   '<div style="font-size:0.8rem; color:#a0a0a0;">Choose an empty slot below</div>',
-            // '</div>'
-          ].join('');
-
-          var ctaBox = banner.querySelector('#rigFirstPedalCta');
-          if (ctaBox) {
-            ctaBox.addEventListener('click', function (e) {
-              e.stopPropagation();
-              if (typeof trackFunnelEvent === 'function') trackFunnelEvent('empty_slot_click', { source: 'banner_card' });
-              var firstSlot = document.querySelector('.pedal-empty-slot');
-              openSearch(1, 0, firstSlot);
-            });
-          }
-
-          container.appendChild(banner);
-
-          var sectionLabel = document.createElement('div');
-          sectionLabel.className = 'pedalboard-section-label';
-          sectionLabel.style.cssText = 'font-size:0.75rem; font-weight:600; color:#888; text-transform:uppercase; letter-spacing:0.08em; text-align:center; margin:0.25rem 0 0.85rem 0; width:100%;';
-          sectionLabel.textContent = 'YOUR PEDALBOARD';
-          // container.appendChild(sectionLabel);
+        // Checklist di onboarding (3 step): compare ai nuovi utenti con Rig vuoto
+        // e resta finché l'utente non salva il Preset. Vedi js/onboarding.js.
+        if (window.PPOnboarding) {
+          window.PPOnboarding.mount(container, 'rigs', { gearCount: allPedals.length });
         }
 
         // Raccoglie tutte le row presenti + row 1, 2 sempre visibili + extra rows aggiunte manualmente
