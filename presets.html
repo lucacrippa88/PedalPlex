@@ -21,6 +21,10 @@
     pointer-events: none;
     cursor: not-allowed;
   }
+  /* Bottone Edit accanto al dropdown rimosso dalla UI: "Edit Preset" resta nel menu Actions,
+     che lo aziona con .click() (l'elemento deve restare nel DOM). plexes.js gli imposta
+     display inline: serve !important da foglio di stile per prevalere. */
+  #renamePresetBtn { display: none !important; }
   #preset {
     /* spazio sopra la prima riga: la toolbar dei gear preset (sopra ogni gear)
        e il tooltip con la descrizione non devono finire sopra ai dropdown dei Plex */

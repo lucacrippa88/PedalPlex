@@ -1,10 +1,11 @@
 /**
  * nav-plexes.js — NAVBAR SEMPLIFICATA
  *
- * Navbar:  [☰] PedalPlex  Plexes  |  [Explore]  [Lock Tone]  [Login?]
- * Barra:   [Rig ▾] [Folder ▾] [Plex ▾]  [⋯ Actions ▾]
+ * Navbar:  [☰] PedalPlex  Plexes  |  [New Preset]  [Save Preset]  [⋯ Actions ▾]
+ * Barra:   [Rig ▾] [Folder ▾] [Plex ▾]
  *
  * Il dropdown "Actions" raggruppa:
+ *   • Explore (evidenziato in azzurro)
  *   • Edit Folder
  *   • Edit Plex / New Tone
  *   • Add Folder
@@ -61,9 +62,9 @@ function initNavPreset() {
       <div style="display:flex;align-items:center;gap:0.5rem;">
 
         <!-- desktop-only buttons -->
-        <button id="exploreBtn" class="showDesktop bx--btn bx--btn--danger bx--btn--sm" type="button"
-            style="display:flex;align-items:center;gap:0.5rem;">
-          ${SVG.explore} Explore
+        <button id="createPstBtn" class="showDesktop bx--btn bx--btn--secondary bx--btn--sm" type="button"
+            style="display:flex;align-items:center;gap:0.5rem;white-space:nowrap;max-width:none!important;">
+          ${SVG.newTone} New Preset
         </button>
         <button id="savePstBtn" class="showDesktop bx--btn bx--btn--primary bx--btn--sm" type="button" disabled
             style="display:flex;align-items:center;gap:0.5rem;white-space:nowrap;max-width:none!important;">
@@ -71,8 +72,8 @@ function initNavPreset() {
         </button>
 
         <!-- mobile-only buttons -->
-        <button id="exploreBtnMobile" class="showMobile bx--btn bx--btn--danger bx--btn--sm bx--btn--icon-only" type="button" aria-label="Explore">
-          ${SVG.explore}
+        <button id="createPstBtnMobile" class="showMobile bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" type="button" aria-label="New Preset">
+          ${SVG.newTone}
         </button>
         <button id="savePstBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" disabled aria-label="${lockLabel}">
           ${SVG.check}
@@ -120,6 +121,7 @@ function initNavPreset() {
     if (!menu || menu.children.length > 0) return; // already populated
     menu.innerHTML = `
       ${isGuest ? `<a class="pp-action-item pp-action-login" href="login">${SVG.login} <span>Login to sync Presets</span></a><a class="pp-action-item" href="/#why-becoming-a-pedalplexer" target="_blank"><svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z"/><path d="M16 11a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 11zM15 17h2v8h-2z"/></svg> <span>Why registering?</span></a><div class="pp-action-separator"></div>` : ''}
+      ${!window.isPreviewMode ? `<button class="pp-action-item pp-action-explore" data-action="explore">${SVG.explore} <span>Explore</span></button><div class="pp-action-separator"></div>` : ''}
       <button class="pp-action-item" data-action="newTone">${SVG.newTone} <span>New Preset</span></button>
       <button class="pp-action-item" data-action="renamePreset">${SVG.editPreset} <span>Edit Preset</span></button>
       <button class="pp-action-item" data-action="addFolder">${SVG.addFolder} <span>Add Folder</span></button>
@@ -167,6 +169,14 @@ function initNavPreset() {
     .pp-action-login:hover {
       background: rgba(139, 92, 246, 0.22) !important;
       color: #c4b5fd !important;
+    }
+    .pp-action-explore {
+      color: #5EE2F0 !important;
+      font-weight: 600;
+    }
+    .pp-action-explore:hover {
+      background: rgba(94, 226, 240, 0.16) !important;
+      color: #8ef0fa !important;
     }
     .pp-action-separator {
       height: 1px;
@@ -252,6 +262,9 @@ function initNavPreset() {
     if (menu) menu.style.display = 'none';
 
     switch (action) {
+      case 'explore':
+        if (typeof openExploreModal === 'function') openExploreModal();
+        break;
       case 'renameFolder':
         if (typeof window.openRenameFolderModal === 'function') window.openRenameFolderModal();
         else document.getElementById('renameFolderBtn')?.click();
@@ -281,7 +294,7 @@ function initNavPreset() {
   // ── Existing button wiring (unchanged logic) ───────────────────────────────
 
   if (window.isPreviewMode) {
-    ["exploreBtn","exploreBtnMobile","savePstBtn","savePstBtnMobile"].forEach(id => {
+    ["createPstBtn","createPstBtnMobile","savePstBtn","savePstBtnMobile"].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.remove();
     });
@@ -294,8 +307,8 @@ function initNavPreset() {
     });
   }
 
-  $("#exploreBtn, #exploreBtnMobile").on("click", () => {
-    if (typeof openExploreModal === "function") openExploreModal();
+  $("#createPstBtn, #createPstBtnMobile").on("click", () => {
+    if (typeof window.createPreset === "function") window.createPreset();
   });
 
   $("#menuToggle").on("click", function () {
