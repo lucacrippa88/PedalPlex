@@ -292,11 +292,14 @@ function loadNextCatalogPage(extraParams = {}) {
   // endpoint, which supports both the category and the sort.
   const dateSortOnly = currentSort !== 'alpha' &&
                        currentSearchQuery === null &&
+                       currentCategory === 'all' &&
+                       currentBrand === 'all' &&
                        currentPublishedFilter === 'all' &&
                        Object.keys(extraParams).length === 0;
   const isSearchMode = !dateSortOnly && (
                        currentSearchQuery !== null ||
                        currentCategory !== 'all' ||
+                       currentBrand !== 'all' ||
                        currentPublishedFilter !== 'all' ||
                        Object.keys(extraParams).length > 0);
 
