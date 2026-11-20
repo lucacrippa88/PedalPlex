@@ -450,9 +450,11 @@ function attachKnobInteraction($knob, control, defaultValue, hooks) {
   const valueToPos = v => discrete ? Math.max(control.values.indexOf(v), 0) : (parseFloat(v) || 0);
   const posToValue = p => discrete ? control.values[Math.round(clamp(p))] : parseFloat(clamp(p).toFixed(1));
 
-  // Linear angle mapping, extrapolated from the first/last value (so it works for every `span`)
-  const rotMin = getRotationFromValue(control, discrete ? control.values[0] : min);
-  const rotMax = getRotationFromValue(control, discrete ? control.values[max] : max);
+  // Linear angle mapping, computed from the position (not from the value: with a full-turn knob the
+  // last value can equal the first one, and indexOf() would give both the same angle)
+  const posControl = { span: control.span, min, max };
+  const rotMin = getRotationFromValue(posControl, min);
+  const rotMax = getRotationFromValue(posControl, max);
   const degPerUnit = range ? (rotMax - rotMin) / range : 0;
   const degAbs = Math.abs(degPerUnit);
   const rotationAt = p => rotMin + (p - min) * degPerUnit;
@@ -481,7 +483,7 @@ function attachKnobInteraction($knob, control, defaultValue, hooks) {
     if (v === control.value) return;
     control.value = v;
     $knob.data("control-value", v);
-    $knob.data("rotation", rotationAt(valueToPos(v)));
+    $knob.data("rotation", rotationAt(discrete ? Math.round(clamp(raw)) : valueToPos(v)));
     hooks.onValueChange();
   }
 
