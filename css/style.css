@@ -1887,6 +1887,27 @@ body.pp-onboarding-active #viewPresetFooter {
   position: relative; /* serve per posizionare icona */
 }
 
+/* Effetto 3D: luce globale da alto-sinistra.
+   Overlay non interattivo con gradiente leggerissimo + bordino sottile
+   (highlight in alto/sinistra, ombra in basso/destra). */
+.pedal-catalog::after {
+  content: "";
+  position: absolute;
+  inset: -5px; /* copre anche il bordo del pedale (5px) */
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.10) 0%,
+    rgba(255, 255, 255, 0) 45%,
+    rgba(0, 0, 0, 0) 55%,
+    rgba(0, 0, 0, 0.10) 100%
+  );
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.22),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.22);
+}
+
 .pedal-share-icon {
   position: absolute;
   bottom: 5px;
