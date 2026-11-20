@@ -570,6 +570,18 @@ html { box-sizing: content-box !important; }
 
 
 
+/* Catalog loader (shown while first page is fetching) */
+#catalog-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 0;
+}
+#catalog-loader .bx--loading--small {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
 /* Active filter tags (category / brand chips under the filter bar) */
 .active-filter-tag {
   display: inline-flex;

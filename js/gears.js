@@ -137,7 +137,14 @@ function resetCatalogState() {
   searchBookmark = null;
 
   const catalog = document.getElementById("catalog");
-  catalog.innerHTML = "";
+  catalog.innerHTML = `
+    <div id="catalog-loader">
+      <div class="bx--loading bx--loading--small">
+        <svg class="bx--loading__svg" viewBox="0 0 100 100">
+          <circle class="bx--loading__stroke" cx="50" cy="50" r="44"></circle>
+        </svg>
+      </div>
+    </div>`;
 
   if (sentinel) { sentinel.remove(); sentinel = null; }
   setupCatalogObserver();
@@ -323,6 +330,10 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
     }
   });
 
+  // Rimuovi loader alla prima batch renderizzata
+  const loaderEl = document.getElementById('catalog-loader');
+  if (loaderEl) loaderEl.remove();
+
   container.appendChild(frag);
   catalogRenderIndex += batch.length;
 
@@ -457,6 +468,8 @@ function loadNextCatalogPage(extraParams = {}) {
     })
     .catch(err => {
       console.error("Catalog lazy error:", err);
+      const loaderEl = document.getElementById('catalog-loader');
+      if (loaderEl) loaderEl.remove();
       isLoading = false;
     })
     .finally(() => {
