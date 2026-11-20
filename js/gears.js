@@ -118,6 +118,7 @@ let sentinel = null;
 var searchBookmark = null;
 var currentSearchQuery = null;
 var currentCategory = 'all';
+var currentBrand = 'all';
 var currentPublishedFilter = 'all'; // all | draft | reviewing | publicByMe | template | user
 var currentSort = 'alpha'; // alpha (A-Z) | latest (New: by publishedAt) | trending (by rig usage) - via GET_CATALOG_LAZY.php
 // ?sort=latest (e.g. from the "Latest gear added" notification) preselects "newest published"
@@ -143,15 +144,52 @@ function resetCatalogState() {
 }
 
 // ==================== Category Filter ====================
-// Populate filter options from categories.json
+// Populate filter options from categories.json; counts come from GET_CATALOG_COUNTS.php?breakdown=category
 $(function () {
-  $.getJSON("json/categories.json").done(function (list) {
-    const $filter = $("#categoryFilter");
-    list.forEach(cat => {
-      $filter.append($("<option>").val(cat).text(cat.charAt(0).toUpperCase() + cat.slice(1)));
+  const catPromise = $.getJSON("json/categories.json");
+  const countsPromise = $.ajax({
+    url: "https://api.pedalplex.com/GET_CATALOG_COUNTS.php?breakdown=category",
+    headers: localStorage.getItem("authToken") ? { Authorization: "Bearer " + localStorage.getItem("authToken") } : {}
+  });
+
+  catPromise.done(function (list) {
+    countsPromise.done(function (counts) {
+      const catCounts = (counts && typeof counts.categories === "object") ? counts.categories : {};
+      const $filter = $("#categoryFilter");
+      list.forEach(cat => {
+        const label = cat.charAt(0).toUpperCase() + cat.slice(1);
+        const n = catCounts[cat];
+        $filter.append($("<option>").val(cat).text(n != null ? label + " (" + n + ")" : label));
+      });
+    }).fail(function () {
+      // No category counts available — render without numbers
+      const $filter = $("#categoryFilter");
+      list.forEach(cat => {
+        $filter.append($("<option>").val(cat).text(cat.charAt(0).toUpperCase() + cat.slice(1)));
+      });
     });
   }).fail(function () {
     console.error("Failed to load categories.json");
+  });
+});
+
+// ==================== Brand Filter ====================
+// Populate brand filter options from mapping.json with per-brand counts
+$(function () {
+  $.getJSON("json/mapping.json").done(function (list) {
+    // Count entries per brand
+    const brandCounts = {};
+    list.forEach(item => {
+      if (!item.brand) return;
+      brandCounts[item.brand] = (brandCounts[item.brand] || 0) + 1;
+    });
+    const brands = Object.keys(brandCounts).sort((a, b) => a.localeCompare(b));
+    const $filter = $("#brandFilter");
+    brands.forEach(brand => {
+      $filter.append($("<option>").val(brand).text(brand + " (" + brandCounts[brand] + ")"));
+    });
+  }).fail(function () {
+    console.error("Failed to load mapping.json for brand filter");
   });
 });
 
@@ -175,7 +213,7 @@ $(document).on("click", "#sortFilter .bx--content-switcher-btn", function () {
 });
 
 function updateGearsCatalogHeader() {
-  const isFiltered = (currentCategory !== 'all') || (currentSearchQuery !== null && currentSearchQuery !== '');
+  const isFiltered = (currentCategory !== 'all') || (currentBrand !== 'all') || (currentSearchQuery !== null && currentSearchQuery !== '');
   const isMobile = window.innerWidth <= 1024;
   if (isFiltered && isMobile) {
     $('#pedalplex-gears-catalog, #about-pedalplex-gears-catalog').hide();
@@ -186,8 +224,17 @@ function updateGearsCatalogHeader() {
 
 $(document).on("change", "#categoryFilter", function () {
   currentCategory = $(this).val();
-  searchBookmark = null;        // reset bookmark
-  currentSearchQuery = null;      // forziamo anche solo category
+  searchBookmark = null;
+  currentSearchQuery = null;
+  resetCatalogState();
+  loadNextCatalogPage();
+  updateGearsCatalogHeader();
+});
+
+$(document).on("change", "#brandFilter", function () {
+  currentBrand = $(this).val();
+  searchBookmark = null;
+  currentSearchQuery = null;
   resetCatalogState();
   loadNextCatalogPage();
   updateGearsCatalogHeader();
@@ -269,6 +316,11 @@ function loadNextCatalogPage(extraParams = {}) {
       params.push("category=" + encodeURIComponent(currentCategory));
     }
 
+    // filtro brand
+    if (currentBrand && currentBrand !== "all") {
+      params.push("brand=" + encodeURIComponent(currentBrand));
+    }
+
     // filtro published
     if (currentPublishedFilter && currentPublishedFilter !== 'all') {
       params.push("published=" + encodeURIComponent(currentPublishedFilter));
@@ -298,6 +350,10 @@ function loadNextCatalogPage(extraParams = {}) {
 
     if (currentCategory && currentCategory !== "all") {
       params.push("category=" + encodeURIComponent(currentCategory));
+    }
+
+    if (currentBrand && currentBrand !== "all") {
+      params.push("brand=" + encodeURIComponent(currentBrand));
     }
   }
 

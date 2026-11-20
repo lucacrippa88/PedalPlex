@@ -53,6 +53,10 @@
         <option value="all" selected>All categories</option>
         <!-- options loaded from categories.json (gears.js) -->
       </select>
+      <select id="brandFilter">
+        <option value="all" selected>All brands</option>
+        <!-- options loaded from mapping.json (gears.js) -->
+      </select>
       <div id="sortFilter" class="bx--content-switcher" role="tablist" aria-label="Sort gears">
         <button type="button" class="bx--content-switcher-btn" role="tab" aria-selected="false" data-sort="latest">
           <span class="bx--content-switcher__label">New</span>
@@ -124,8 +128,8 @@
 
 
   <script>
-  // Reset selected pedal when changing category
-  $('#categoryFilter').on('change', () => {
+  // Reset selected pedal when changing category or brand
+  $('#categoryFilter, #brandFilter').on('change', () => {
     selectedPedalId = null;
     $('#addToRig').hide();
   });
