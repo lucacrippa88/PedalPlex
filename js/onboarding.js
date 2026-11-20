@@ -45,20 +45,18 @@
     const flags = completedFlags();
     const count = flags.filter(Boolean).length;
     const firstOpen = flags.indexOf(false);
-    const plexesLabel = (typeof L !== 'undefined' && L.Plexes) ? L.Plexes : 'Presets';
-
     // CTA verso i Preset: affiancata allo step 2, solo in pagina Rigs e a step 1 completato
     const showCta = currentPage === 'rigs' && flags[0] && !flags[2];
     const cta = showCta
       ? '<a href="presets" class="pp-onboarding__cta bx--btn bx--btn--primary bx--btn--sm" style="display:inline-flex;align-items:center;gap:0.5rem;max-width:none;">' +
-          'Go to ' + plexesLabel + ARROW_SVG + '</a>'
+          'Continue' + ARROW_SVG + '</a>'
       : '';
 
     const items = STEPS.map(function (text, i) {
       const cls = flags[i] ? ' pp-onboarding__step--done' : (i === firstOpen ? ' pp-onboarding__step--current' : '');
       return '<li class="pp-onboarding__step' + cls + '">' +
                '<span class="pp-onboarding__bullet">' + (flags[i] ? CHECK_SVG : (i + 1)) + '</span>' +
-               '<span class="pp-onboarding__text"><strong>Step ' + (i + 1) + '</strong> &mdash; ' + text + '</span>' +
+               '<span class="pp-onboarding__text">' + text + '</span>' +
                (i === 1 ? cta : '') +
              '</li>';
     }).join('');
