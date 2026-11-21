@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">29 Pedals</div>
       <h1 id="gearName">Euna</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">buffer</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The 29 Pedals EUNA (Elite Unity Amplifier) is a premium input buffer designed to preserve the integrity of your guitar signal at the start of a pedalboard. Built to solve common tone loss issues caused by long cable runs and complex signal chains, the EUNA delivers exceptional clarity, extended frequency response, and improved dynamic feel. The pedal features selectable filters that allow players to optimize the response of their guitar and pickups while maintaining a natural tone. Unlike standard buffers, the EUNA is engineered with audiophile-grade components and a carefully tuned circuit that enhances articulation without altering the core character of the instrument. Guitarists and bassists often place it first in the signal chain to ensure consistent tone across large pedalboards. Discover how the 29 Pedals EUNA improves signal clarity and pedalboard performance on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/29pedals/euna" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The 29 Pedals EUNA (Elite Unity Amplifier) is a premium input buffer designed to preserve the integrity of your guitar signal at the start of a pedalboard. Built to solve common tone loss issues caused by long cable runs and complex signal chains, the EUNA delivers exceptional clarity, extended frequency response, and improved dynamic feel. The pedal features selectable filters that allow players to optimize the response of their guitar and pickups while maintaining a natural tone. Unlike standard buffers, the EUNA is engineered with audiophile-grade components and a carefully tuned circuit that enhances articulation without altering the core character of the instrument. Guitarists and bassists often place it first in the signal chain to ensure consistent tone across large pedalboards. Discover how the 29 Pedals EUNA improves signal clarity and pedalboard performance on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/29pedals/euna" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

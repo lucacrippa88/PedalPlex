@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">AMT</div>
       <h1 id="gearName">BULAVA SS-30 3 Channel Guitar Preamp</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">preamp</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The AMT BULAVA SS-30 is a powerful three-channel guitar preamp designed to deliver full amplifier-style tone shaping in pedal format. Featuring clean, crunch, and lead channels, the SS-30 provides a wide tonal range suitable for modern guitar rigs and direct recording setups. Each channel offers dedicated controls that allow players to dial in sparkling cleans, dynamic mid-gain crunch, or saturated high-gain lead tones. Built with AMT’s tube-based preamp design philosophy, the BULAVA SS-30 delivers rich harmonic content and responsive dynamics. The pedal can be used as the front end of a power amp, integrated into effects loops, or sent directly to recording systems and PA setups. Its flexible routing and professional-grade tone shaping make it ideal for advanced pedalboard and rack-style configurations. Discover tone ideas and signal chain setups for the AMT BULAVA SS-30 on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/amt/ss30" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The AMT BULAVA SS-30 is a powerful three-channel guitar preamp designed to deliver full amplifier-style tone shaping in pedal format. Featuring clean, crunch, and lead channels, the SS-30 provides a wide tonal range suitable for modern guitar rigs and direct recording setups. Each channel offers dedicated controls that allow players to dial in sparkling cleans, dynamic mid-gain crunch, or saturated high-gain lead tones. Built with AMT’s tube-based preamp design philosophy, the BULAVA SS-30 delivers rich harmonic content and responsive dynamics. The pedal can be used as the front end of a power amp, integrated into effects loops, or sent directly to recording systems and PA setups. Its flexible routing and professional-grade tone shaping make it ideal for advanced pedalboard and rack-style configurations. Discover tone ideas and signal chain setups for the AMT BULAVA SS-30 on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/amt/ss30" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

@@ -177,24 +177,31 @@ $(function () {
 });
 
 // ==================== Brand Filter ====================
-// Populate brand filter options from mapping.json with per-brand counts
+// Populate brand filter options: {brand: public gears} from the brands DB (GET_BRANDS.php?counts=1, so a brand added
+// from create.html shows up by itself); json/brands.json (written by generate_pages.py) is the fallback.
 $(function () {
-  $.getJSON("json/mapping.json").done(function (list) {
-    // Count entries per brand
-    const brandCounts = {};
-    list.forEach(item => {
-      if (!item.brand) return;
-      brandCounts[item.brand] = (brandCounts[item.brand] || 0) + 1;
-    });
+  function fill(brandCounts) {
     const brands = Object.keys(brandCounts).sort((a, b) => a.localeCompare(b));
     const $filter = $("#brandFilter");
     brands.forEach(brand => {
       $filter.append($("<option>").val(brand).text(brand + " (" + brandCounts[brand] + ")"));
     });
     $("#brandCount").text(brands.length + " brands");
-  }).fail(function () {
-    console.error("Failed to load mapping.json for brand filter");
-  });
+  }
+
+  $.getJSON("https://api.pedalplex.com/GET_BRANDS.php?counts=1").done(function (brandCounts) {
+    if (brandCounts && !Array.isArray(brandCounts) && Object.keys(brandCounts).length) {
+      fill(brandCounts);
+    } else {
+      loadFallback();
+    }
+  }).fail(loadFallback);
+
+  function loadFallback() {
+    $.getJSON("json/brands.json").done(fill).fail(function () {
+      console.error("Failed to load brands for the brand filter");
+    });
+  }
 });
 
 // ==================== Sort Filter ====================

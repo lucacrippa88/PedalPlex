@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Bananana Effects</div>
       <h1 id="gearName">Aurora Pitch Shift</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">pitch shifter</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Bananana Effects Aurora Pitch Shift is a creative pitch-shifting pedal designed to explore harmonies, octave effects, and experimental tonal transformations. Pitch shifting allows guitarists to alter the pitch of their signal in real time, creating harmonized leads, octave textures, or unusual detuned effects. The Aurora focuses on playful sound design and compact usability, making it ideal for experimental guitarists and modern pedalboard setups. Discover pitch-shifting textures and creative harmonic effects with the Bananana Effects Aurora on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/bananana/aurora-pitch-shift" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Bananana Effects Aurora Pitch Shift is a creative pitch-shifting pedal designed to explore harmonies, octave effects, and experimental tonal transformations. Pitch shifting allows guitarists to alter the pitch of their signal in real time, creating harmonized leads, octave textures, or unusual detuned effects. The Aurora focuses on playful sound design and compact usability, making it ideal for experimental guitarists and modern pedalboard setups. Discover pitch-shifting textures and creative harmonic effects with the Bananana Effects Aurora on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/bananana/aurora-pitch-shift" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

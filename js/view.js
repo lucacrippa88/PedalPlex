@@ -206,6 +206,8 @@ if (!window.catalogMap || !window.catalogMap[pedalId]) {
     $fxdb.attr({ href: fxdbUrl, target: '_blank', rel: 'noopener noreferrer' }).prop('hidden', false);
   }
 
+  $('#gearAbout').prop('hidden', !(pedal.description || /^https?:\/\//i.test(fxdbUrl)));
+
   // Product schema: set category for crawlers that execute JS
   $('script[type="application/ld+json"]').each(function () {
     try {

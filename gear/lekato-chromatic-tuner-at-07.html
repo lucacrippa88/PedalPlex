@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Lekato</div>
       <h1 id="gearName">Chromatic Tuner AT-07</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">tuner</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Lekato Chromatic Tuner AT-07 is a compact and affordable pedal tuner designed for reliable tuning on stage and in the studio. Featuring fast detection and accurate chromatic tuning, the AT-07 ensures guitars and basses remain perfectly in tune during performances. The bright LED display provides clear visibility even in low-light stage environments, making quick adjustments easy between songs. True bypass switching preserves the integrity of the instrument’s signal when the tuner is not engaged. Its durable metal enclosure is built to withstand regular gigging and pedalboard use. The Lekato AT-07 supports standard guitar and bass tunings as well as alternate tuning setups. Simple operation and dependable performance make it a practical addition to any pedalboard.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Lekato Chromatic Tuner AT-07 is a compact and affordable pedal tuner designed for reliable tuning on stage and in the studio. Featuring fast detection and accurate chromatic tuning, the AT-07 ensures guitars and basses remain perfectly in tune during performances. The bright LED display provides clear visibility even in low-light stage environments, making quick adjustments easy between songs. True bypass switching preserves the integrity of the instrument’s signal when the tuner is not engaged. Its durable metal enclosure is built to withstand regular gigging and pedalboard use. The Lekato AT-07 supports standard guitar and bass tunings as well as alternate tuning setups. Simple operation and dependable performance make it a practical addition to any pedalboard.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

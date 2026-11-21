@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Analog.Man</div>
       <h1 id="gearName">Beano Boost</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">boost</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Analogman Beano Boost is a legendary germanium treble booster inspired by the classic circuits used in early British rock recordings. Designed to push tube amplifiers into rich harmonic overdrive, the pedal emphasizes upper frequencies while tightening low end response. Germanium transistors provide warm vintage character and strong dynamic interaction with the guitar’s volume knob. The Beano Boost is widely associated with classic rock tones from the late 1960s and remains a favorite among vintage tone enthusiasts. Discover classic treble boost tones with the Analogman Beano Boost on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/analogman/beanoboost" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Analogman Beano Boost is a legendary germanium treble booster inspired by the classic circuits used in early British rock recordings. Designed to push tube amplifiers into rich harmonic overdrive, the pedal emphasizes upper frequencies while tightening low end response. Germanium transistors provide warm vintage character and strong dynamic interaction with the guitar’s volume knob. The Beano Boost is widely associated with classic rock tones from the late 1960s and remains a favorite among vintage tone enthusiasts. Discover classic treble boost tones with the Analogman Beano Boost on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/analogman/beanoboost" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

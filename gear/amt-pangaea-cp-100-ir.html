@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">AMT</div>
       <h1 id="gearName">PANGAEA CP-100 IR</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">ir loader</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The AMT PANGAEA CP-100 IR is a compact impulse response cabinet simulator designed to reproduce miked guitar cabinet tones without needing a physical speaker and microphone setup. By loading cabinet IR files into its internal memory, players can send realistic cab-sim tones directly to a mixer, audio interface, headphones, or full-range system. The CP-100 supports up to 100 impulse responses and connects to a computer as a USB storage device, making IR management straightforward. Built-in sound-shaping tools such as volume control, a five-band equalizer, and room ambience allow players to refine the cabinet response for recording, live performance, or silent practice. It can be used after a preamp, with a power amp and cabinet through connection, or as part of a direct pedalboard rig. Discover direct recording setups and pedalboard ideas for the AMT PANGAEA CP-100 IR on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/amt/cp100" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The AMT PANGAEA CP-100 IR is a compact impulse response cabinet simulator designed to reproduce miked guitar cabinet tones without needing a physical speaker and microphone setup. By loading cabinet IR files into its internal memory, players can send realistic cab-sim tones directly to a mixer, audio interface, headphones, or full-range system. The CP-100 supports up to 100 impulse responses and connects to a computer as a USB storage device, making IR management straightforward. Built-in sound-shaping tools such as volume control, a five-band equalizer, and room ambience allow players to refine the cabinet response for recording, live performance, or silent practice. It can be used after a preamp, with a power amp and cabinet through connection, or as part of a direct pedalboard rig. Discover direct recording setups and pedalboard ideas for the AMT PANGAEA CP-100 IR on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/amt/cp100" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">3Degrees Audio</div>
       <h1 id="gearName">Bygones V3</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">delay</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The 3Degrees Audio Bygones V3 is a unique delay pedal designed to recreate the lo-fi character of vintage digital delay units. Instead of pristine repeats, the Bygones V3 delivers gritty, degraded echoes reminiscent of early rack processors and classic studio effects. Players can shape the tone and texture of the repeats to create everything from subtle ambience to heavily degraded delay trails. The pedal excels at adding character and atmosphere to guitar parts, making it popular among experimental players and producers. Its flexible controls allow users to dial in darker echoes, bit-reduced textures, or glitch-like delay effects. Built with boutique craftsmanship, the Bygones V3 offers a distinctive alternative to traditional delay pedals. Discover creative delay textures and pedalboard uses for the 3Degrees Audio Bygones V3 on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The 3Degrees Audio Bygones V3 is a unique delay pedal designed to recreate the lo-fi character of vintage digital delay units. Instead of pristine repeats, the Bygones V3 delivers gritty, degraded echoes reminiscent of early rack processors and classic studio effects. Players can shape the tone and texture of the repeats to create everything from subtle ambience to heavily degraded delay trails. The pedal excels at adding character and atmosphere to guitar parts, making it popular among experimental players and producers. Its flexible controls allow users to dial in darker echoes, bit-reduced textures, or glitch-like delay effects. Built with boutique craftsmanship, the Bygones V3 offers a distinctive alternative to traditional delay pedals. Discover creative delay textures and pedalboard uses for the 3Degrees Audio Bygones V3 on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

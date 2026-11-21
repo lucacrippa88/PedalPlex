@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">JHS</div>
       <h1 id="gearName">Harmonic Trem 3 series</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">tremolo</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The JHS 3 Series Harmonic Trem recreates the harmonic tremolo effect originally found in certain vintage amplifier circuits. Unlike traditional tremolo, harmonic tremolo alternates between high and low frequencies to create a swirling, almost phaser-like modulation. The result is a rich and dimensional effect that adds movement and complexity to guitar tones. Players can adjust the speed and intensity of the modulation to achieve subtle rhythmic pulses or dramatic vintage-style textures. The Harmonic Trem 3 Series offers this classic modulation style in a simple and accessible pedal format.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/jhspedals/series3/harmonictrem" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The JHS 3 Series Harmonic Trem recreates the harmonic tremolo effect originally found in certain vintage amplifier circuits. Unlike traditional tremolo, harmonic tremolo alternates between high and low frequencies to create a swirling, almost phaser-like modulation. The result is a rich and dimensional effect that adds movement and complexity to guitar tones. Players can adjust the speed and intensity of the modulation to achieve subtle rhythmic pulses or dramatic vintage-style textures. The Harmonic Trem 3 Series offers this classic modulation style in a simple and accessible pedal format.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/jhspedals/series3/harmonictrem" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Moog</div>
       <h1 id="gearName">Minifooger Delay</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">delay</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Moog Minifooger Delay is a compact analog delay pedal offering warm bucket-brigade echoes and expressive modulation capabilities. Designed with Moog’s analog expertise, the pedal produces organic repeats that gradually degrade in a musical way. Controls for delay time, feedback, and mix allow players to create anything from classic slapback to atmospheric delay textures. Built-in modulation adds subtle movement reminiscent of vintage tape delays. The Minifooger Delay also supports expression pedal control for real-time manipulation of parameters. Its rich analog tone and compact design make it a favorite among guitarists seeking classic delay sounds.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/moog/minifooger/delay" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Moog Minifooger Delay is a compact analog delay pedal offering warm bucket-brigade echoes and expressive modulation capabilities. Designed with Moog’s analog expertise, the pedal produces organic repeats that gradually degrade in a musical way. Controls for delay time, feedback, and mix allow players to create anything from classic slapback to atmospheric delay textures. Built-in modulation adds subtle movement reminiscent of vintage tape delays. The Minifooger Delay also supports expression pedal control for real-time manipulation of parameters. Its rich analog tone and compact design make it a favorite among guitarists seeking classic delay sounds.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/moog/minifooger/delay" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

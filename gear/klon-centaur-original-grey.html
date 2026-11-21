@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Klon</div>
       <h1 id="gearName">Centaur Original - Grey</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">overdrive</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Klon Centaur Original Grey is an early and extremely collectible version of the legendary Klon overdrive pedal. Celebrated for its transparent tone and exceptional dynamic response, the Centaur enhances an amplifier’s natural character while adding harmonic richness and sustain. Its unique circuit blends a clean signal with an overdriven signal, allowing notes to remain clear and articulate even at higher gain settings. The pedal excels as both a subtle overdrive and a powerful clean boost for driving tube amplifiers. The simple control layout—Gain, Treble, and Output—offers a wide range of tones suitable for blues, rock, and modern guitar styles. The rare grey enclosure version is especially valued by collectors and tone purists. The Klon Centaur Original Grey continues to represent one of the most influential boutique overdrive designs in the history of guitar effects.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/klon/centaur" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Klon Centaur Original Grey is an early and extremely collectible version of the legendary Klon overdrive pedal. Celebrated for its transparent tone and exceptional dynamic response, the Centaur enhances an amplifier’s natural character while adding harmonic richness and sustain. Its unique circuit blends a clean signal with an overdriven signal, allowing notes to remain clear and articulate even at higher gain settings. The pedal excels as both a subtle overdrive and a powerful clean boost for driving tube amplifiers. The simple control layout—Gain, Treble, and Output—offers a wide range of tones suitable for blues, rock, and modern guitar styles. The rare grey enclosure version is especially valued by collectors and tone purists. The Klon Centaur Original Grey continues to represent one of the most influential boutique overdrive designs in the history of guitar effects.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/klon/centaur" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

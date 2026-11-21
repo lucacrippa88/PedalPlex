@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Ibanez</div>
       <h1 id="gearName">Tube Screamer TS9DX</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">overdrive</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Ibanez Tube Screamer TS9DX Turbo Tube Screamer expands the classic TS9 formula with multiple clipping modes for greater tonal versatility. In addition to the traditional Tube Screamer sound, the pedal features turbo modes that increase gain, output, and low-end response for thicker distortion textures. This allows players to move from smooth blues overdrive to heavier rock tones while retaining the signature midrange boost that defines the Tube Screamer family. The TS9DX works equally well as a standalone overdrive or as a boost pushing a driven amplifier. With its flexible gain structure and recognizable tone profile, it remains one of the most adaptable versions of the iconic Tube Screamer design.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/ibanez/9/ts9dx" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Ibanez Tube Screamer TS9DX Turbo Tube Screamer expands the classic TS9 formula with multiple clipping modes for greater tonal versatility. In addition to the traditional Tube Screamer sound, the pedal features turbo modes that increase gain, output, and low-end response for thicker distortion textures. This allows players to move from smooth blues overdrive to heavier rock tones while retaining the signature midrange boost that defines the Tube Screamer family. The TS9DX works equally well as a standalone overdrive or as a boost pushing a driven amplifier. With its flexible gain structure and recognizable tone profile, it remains one of the most adaptable versions of the iconic Tube Screamer design.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/ibanez/9/ts9dx" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

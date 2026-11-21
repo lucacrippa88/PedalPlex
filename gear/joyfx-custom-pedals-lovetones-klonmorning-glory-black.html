@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Joyfx Custom Pedals</div>
       <h1 id="gearName">LoveTones - KLON/Morning Glory - Black</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">overdrive</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Joyfx Custom Pedals LoveTones KLON/Morning Glory Black edition combines Klon-style boost and Bluesbreaker-style overdrive circuits in a sleek black enclosure. This dual-drive configuration offers two complementary gain stages that can be used separately or stacked together for expanded tonal possibilities. The Klon-inspired side provides articulate clean boost and mid-focused drive, while the Morning Glory style circuit delivers smooth, transparent overdrive with excellent dynamic response. Stacking the two circuits produces rich, harmonically complex tones that remain clear and defined. The pedal is ideal for players who need multiple gain textures within a compact footprint. Built with attention to reliability and tonal detail, the Joyfx LoveTones KLON/Morning Glory Black edition provides versatile drive tones for modern pedalboards.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Joyfx Custom Pedals LoveTones KLON/Morning Glory Black edition combines Klon-style boost and Bluesbreaker-style overdrive circuits in a sleek black enclosure. This dual-drive configuration offers two complementary gain stages that can be used separately or stacked together for expanded tonal possibilities. The Klon-inspired side provides articulate clean boost and mid-focused drive, while the Morning Glory style circuit delivers smooth, transparent overdrive with excellent dynamic response. Stacking the two circuits produces rich, harmonically complex tones that remain clear and defined. The pedal is ideal for players who need multiple gain textures within a compact footprint. Built with attention to reliability and tonal detail, the Joyfx LoveTones KLON/Morning Glory Black edition provides versatile drive tones for modern pedalboards.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Alexander Pedals</div>
       <h1 id="gearName">Syntax Error Bitcrusher / Pitch Shifter / Modulation</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">bitcrusher</span><span style="font-size:12px" class="bx--tag bx--tag--teal">pitch shifter</span><span style="font-size:12px" class="bx--tag bx--tag--teal">modulation</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Alexander Pedals Syntax Error is a compact digital audio computer designed for bitcrushing, sample-rate reduction, ring modulation, pitch-adjacent glitches, and lo-fi modulation effects. Its Stretch, Cube, and Ring modes create broken delays, cubic distortion, filtering, and unstable digital textures inspired by early computer and arcade sounds. With expression and MIDI support, it is a creative tool for guitar, bass, synth, and experimental pedalboards. Discover tone settings and signal-chain ideas for the Alexander Pedals Syntax Error on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/alexander/syntaxerror" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Alexander Pedals Syntax Error is a compact digital audio computer designed for bitcrushing, sample-rate reduction, ring modulation, pitch-adjacent glitches, and lo-fi modulation effects. Its Stretch, Cube, and Ring modes create broken delays, cubic distortion, filtering, and unstable digital textures inspired by early computer and arcade sounds. With expression and MIDI support, it is a creative tool for guitar, bass, synth, and experimental pedalboards. Discover tone settings and signal-chain ideas for the Alexander Pedals Syntax Error on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/alexander/syntaxerror" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

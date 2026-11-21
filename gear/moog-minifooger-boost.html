@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Moog</div>
       <h1 id="gearName">Minifooger Boost</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">boost</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Moog Minifooger Boost is a compact analog boost pedal designed to add warmth, volume, and subtle harmonic coloration to a guitar signal. Inspired by Moog’s classic analog circuitry, the pedal provides up to 20dB of clean boost while preserving the natural character of the instrument. The tone control allows players to shape high frequencies for brighter or warmer results. The Minifooger Boost can be used to drive amplifiers into natural saturation or to enhance the signal before other pedals in the chain. Its compact design and rugged construction make it an excellent addition to modern pedalboards.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/moog/minifooger/boost" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Moog Minifooger Boost is a compact analog boost pedal designed to add warmth, volume, and subtle harmonic coloration to a guitar signal. Inspired by Moog’s classic analog circuitry, the pedal provides up to 20dB of clean boost while preserving the natural character of the instrument. The tone control allows players to shape high frequencies for brighter or warmer results. The Minifooger Boost can be used to drive amplifiers into natural saturation or to enhance the signal before other pedals in the chain. Its compact design and rugged construction make it an excellent addition to modern pedalboards.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/moog/minifooger/boost" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

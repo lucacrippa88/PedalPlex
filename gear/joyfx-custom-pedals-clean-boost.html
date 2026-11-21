@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Joyfx Custom Pedals</div>
       <h1 id="gearName">Clean Boost</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">boost</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Joyfx Custom Pedals Clean Boost is a straightforward yet powerful pedal designed to increase signal level without altering the core tone of your guitar. Ideal for pushing tube amplifiers into natural breakup or elevating lead parts in a mix, this pedal provides transparent gain with minimal coloration. The simple control layout allows players to quickly dial in the desired boost level, making it perfect for live performance situations where reliability and ease of use are essential. When placed before drive pedals, the Clean Boost can add saturation and sustain, while positioning it after overdrives increases overall volume for solos. Joyfx’s build quality ensures low noise and consistent performance across different rigs. Whether used to push an amp, balance levels between guitars, or add presence to lead lines, the Joyfx Clean Boost delivers clear and powerful signal enhancement.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Joyfx Custom Pedals Clean Boost is a straightforward yet powerful pedal designed to increase signal level without altering the core tone of your guitar. Ideal for pushing tube amplifiers into natural breakup or elevating lead parts in a mix, this pedal provides transparent gain with minimal coloration. The simple control layout allows players to quickly dial in the desired boost level, making it perfect for live performance situations where reliability and ease of use are essential. When placed before drive pedals, the Clean Boost can add saturation and sustain, while positioning it after overdrives increases overall volume for solos. Joyfx’s build quality ensures low noise and consistent performance across different rigs. Whether used to push an amp, balance levels between guitars, or add presence to lead lines, the Joyfx Clean Boost delivers clear and powerful signal enhancement.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

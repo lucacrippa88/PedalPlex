@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Keeley</div>
       <h1 id="gearName">Manis Overdrive Black</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">overdrive</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Keeley Manis Overdrive Black edition delivers the same expressive drive tones as the standard model while featuring a sleek black enclosure. The pedal offers a wide range of gain textures from subtle edge-of-breakup tones to rich lead overdrive. Its responsive circuit maintains excellent clarity and dynamic response, making it suitable for both rhythm and lead applications. The tone shaping controls allow players to adapt the sound to different guitars and amplifiers. Built with Keeley’s commitment to quality and reliability, the Manis Overdrive Black edition provides versatile boutique-style drive tones.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/keeley/4in1/manis" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Keeley Manis Overdrive Black edition delivers the same expressive drive tones as the standard model while featuring a sleek black enclosure. The pedal offers a wide range of gain textures from subtle edge-of-breakup tones to rich lead overdrive. Its responsive circuit maintains excellent clarity and dynamic response, making it suitable for both rhythm and lead applications. The tone shaping controls allow players to adapt the sound to different guitars and amplifiers. Built with Keeley’s commitment to quality and reliability, the Manis Overdrive Black edition provides versatile boutique-style drive tones.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/keeley/4in1/manis" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

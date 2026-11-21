@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Line 6</div>
       <h1 id="gearName">DL4 Delay Modeler</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">delay</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Line 6 DL4 Delay Modeler is one of the most influential delay pedals ever produced. Known for its wide range of delay algorithms and intuitive stompbox interface, the DL4 recreates classic analog, tape, and digital delay sounds along with unique creative effects. The pedal provides multiple presets that can be accessed instantly during performance, making it a favorite among touring musicians. Additional features include a built-in looper, tap tempo, and extended delay times suitable for ambient soundscapes. The DL4’s warm delay tones and flexible controls allow guitarists to create everything from subtle slapback echoes to expansive atmospheric textures. Its rugged green enclosure and user-friendly layout have made it a staple on professional pedalboards for decades.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/line6/dl4" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Line 6 DL4 Delay Modeler is one of the most influential delay pedals ever produced. Known for its wide range of delay algorithms and intuitive stompbox interface, the DL4 recreates classic analog, tape, and digital delay sounds along with unique creative effects. The pedal provides multiple presets that can be accessed instantly during performance, making it a favorite among touring musicians. Additional features include a built-in looper, tap tempo, and extended delay times suitable for ambient soundscapes. The DL4’s warm delay tones and flexible controls allow guitarists to create everything from subtle slapback echoes to expansive atmospheric textures. Its rugged green enclosure and user-friendly layout have made it a staple on professional pedalboards for decades.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/line6/dl4" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Aion FX</div>
       <h1 id="gearName">Maelstrom Bass Drive</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">overdrive</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Aion FX Maelstrom Bass Drive is designed to add warm saturation and aggressive growl to bass guitar signals while preserving low-end clarity. The pedal provides a wide range of gain from subtle harmonic enhancement to heavier drive textures. Bass-specific drive circuits ensure that the fundamental frequencies remain strong and defined in a mix. Discover bass drive tones with the Aion FX Maelstrom on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Aion FX Maelstrom Bass Drive is designed to add warm saturation and aggressive growl to bass guitar signals while preserving low-end clarity. The pedal provides a wide range of gain from subtle harmonic enhancement to heavier drive textures. Bass-specific drive circuits ensure that the fundamental frequencies remain strong and defined in a mix. Discover bass drive tones with the Aion FX Maelstrom on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

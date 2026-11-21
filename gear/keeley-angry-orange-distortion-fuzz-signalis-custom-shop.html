@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Keeley</div>
       <h1 id="gearName">Angry Orange Distortion &amp; Fuzz - Signalis Custom Shop</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">distortion</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Keeley Angry Orange Distortion &amp; Fuzz Signalis Custom Shop edition delivers the same powerful distortion and fuzz circuitry as the standard model while featuring a limited custom shop aesthetic. Designed to capture the aggressive energy of classic British drive tones combined with thick vintage fuzz textures, the pedal offers a broad range of gain levels suitable for modern rock and alternative guitar styles. The circuit maintains strong note clarity even when heavily saturated, ensuring chords remain articulate and lead lines sustain smoothly. Players can shape the tone using intuitive gain, tone, and level controls, adapting the pedal to different guitars and amplifier setups. As part of Keeley’s Custom Shop lineup, this version reflects the company’s commitment to craftsmanship, tone, and collectible design.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/keeley/4in1/angryorange" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Keeley Angry Orange Distortion &amp; Fuzz Signalis Custom Shop edition delivers the same powerful distortion and fuzz circuitry as the standard model while featuring a limited custom shop aesthetic. Designed to capture the aggressive energy of classic British drive tones combined with thick vintage fuzz textures, the pedal offers a broad range of gain levels suitable for modern rock and alternative guitar styles. The circuit maintains strong note clarity even when heavily saturated, ensuring chords remain articulate and lead lines sustain smoothly. Players can shape the tone using intuitive gain, tone, and level controls, adapting the pedal to different guitars and amplifier setups. As part of Keeley’s Custom Shop lineup, this version reflects the company’s commitment to craftsmanship, tone, and collectible design.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/keeley/4in1/angryorange" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

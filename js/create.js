@@ -1,6 +1,6 @@
 let lastValidation = null;
 
-// --- Gear brands (loaded from DB via GET_BRANDS.php, with fallback to mapping.json) ---
+// --- Gear brands (loaded from the brands DB "pedalplex_brands" via GET_BRANDS.php, with fallback to json/brands.json) ---
 let GEAR_BRANDS = [];
 
 function populateBrandList(brands) {
@@ -63,15 +63,8 @@ $(function () {
     });
 
     function loadBrandsFallback() {
-        $.getJSON("json/mapping.json").done(function (list) {
-            const brandSet = new Set();
-            list.forEach(item => {
-                if (item.brand && typeof item.brand === "string") {
-                    const b = item.brand.trim();
-                    if (b) brandSet.add(b);
-                }
-            });
-            GEAR_BRANDS = Array.from(brandSet).sort((a, b) => a.localeCompare(b));
+        $.getJSON("json/brands.json").done(function (counts) {
+            GEAR_BRANDS = Object.keys(counts).sort((a, b) => a.localeCompare(b));
             populateBrandList(GEAR_BRANDS);
         }).fail(function () {
             console.error("Failed to load brands fallback");

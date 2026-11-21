@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">JHS</div>
       <h1 id="gearName">Colour Box v2</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">preamp</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The JHS Colour Box v2 expands on the original design by offering additional gain range, improved noise performance, and expanded EQ capabilities. Inspired by classic studio console circuits, it allows users to shape tone with precision while adding analog warmth and saturation. The pedal can be used as a high-quality guitar preamp, a DI box for recording, or a creative tone-shaping device for keyboards, bass, and vocals. With its ability to move from subtle coloration to aggressive distortion, the Colour Box v2 is one of the most flexible analog preamp pedals available today.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/jhspedals/colourbox" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The JHS Colour Box v2 expands on the original design by offering additional gain range, improved noise performance, and expanded EQ capabilities. Inspired by classic studio console circuits, it allows users to shape tone with precision while adding analog warmth and saturation. The pedal can be used as a high-quality guitar preamp, a DI box for recording, or a creative tone-shaping device for keyboards, bass, and vocals. With its ability to move from subtle coloration to aggressive distortion, the Colour Box v2 is one of the most flexible analog preamp pedals available today.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/jhspedals/colourbox" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

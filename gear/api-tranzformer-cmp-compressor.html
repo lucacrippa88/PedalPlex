@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">API</div>
       <h1 id="gearName">TranZformer CMP Compressor</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">compressor</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The API TranZformer CMP is a high-end compressor pedal designed using the same engineering philosophy found in API’s legendary studio equipment. Built around API’s proprietary analog circuitry, the pedal delivers transparent dynamic control with musical compression characteristics. It can add sustain, tighten dynamics, and enhance overall signal consistency while preserving clarity and articulation. The CMP works well with both guitar and bass, offering studio-quality compression in pedalboard format. Its premium build quality and professional tone shaping make it suitable for stage and recording environments alike. Discover dynamic control techniques and pedalboard integration ideas for the API TranZformer CMP on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/api/TranZformer/cmp" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The API TranZformer CMP is a high-end compressor pedal designed using the same engineering philosophy found in API’s legendary studio equipment. Built around API’s proprietary analog circuitry, the pedal delivers transparent dynamic control with musical compression characteristics. It can add sustain, tighten dynamics, and enhance overall signal consistency while preserving clarity and articulation. The CMP works well with both guitar and bass, offering studio-quality compression in pedalboard format. Its premium build quality and professional tone shaping make it suitable for stage and recording environments alike. Discover dynamic control techniques and pedalboard integration ideas for the API TranZformer CMP on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/api/TranZformer/cmp" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Aguilar</div>
       <h1 id="gearName">DB599 Bass Preamp</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">preamp</span><span style="font-size:12px" class="bx--tag bx--tag--teal">bass</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Aguilar DB599 is a compact bass compressor pedal designed to give bassists simple, musical control over dynamics in a micro-sized format. Built around a VCA compressor with a soft-knee threshold circuit, it is voiced specifically for bass and uses carefully chosen compression ratios, attack, and release behavior to keep the instrument natural and articulate. The two-knob layout makes it easy to dial in a polished tone: the COMP control increases compression and lowers the threshold, while GAIN sets the output level. Its studio-quiet performance helps smooth peaks, add consistency, and keep bass lines present without unwanted artifacts. With rugged steel construction, 9V DC operation, and a pedalboard-friendly footprint, the DB599 is a practical dynamics tool for live and studio bass rigs. Discover tone settings and pedalboard ideas for the Aguilar DB599 on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/aguilar/db599" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Aguilar DB599 is a compact bass compressor pedal designed to give bassists simple, musical control over dynamics in a micro-sized format. Built around a VCA compressor with a soft-knee threshold circuit, it is voiced specifically for bass and uses carefully chosen compression ratios, attack, and release behavior to keep the instrument natural and articulate. The two-knob layout makes it easy to dial in a polished tone: the COMP control increases compression and lowers the threshold, while GAIN sets the output level. Its studio-quiet performance helps smooth peaks, add consistency, and keep bass lines present without unwanted artifacts. With rugged steel construction, 9V DC operation, and a pedalboard-friendly footprint, the DB599 is a practical dynamics tool for live and studio bass rigs. Discover tone settings and pedalboard ideas for the Aguilar DB599 on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/aguilar/db599" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

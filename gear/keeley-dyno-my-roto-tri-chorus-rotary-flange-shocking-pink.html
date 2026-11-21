@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Keeley</div>
       <h1 id="gearName">Dyno my Roto Tri-Chorus Rotary Flange - Shocking Pink</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">rotary</span><span style="font-size:12px" class="bx--tag bx--tag--teal">flanger</span><span style="font-size:12px" class="bx--tag bx--tag--teal">chorus</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Keeley Dyno My Roto Tri-Chorus Rotary Flange Shocking Pink edition offers the same iconic multi-modulation engine as the standard model with a distinctive custom finish. Inspired by legendary rack effects units from the 1980s, the pedal combines tri-chorus, rotary speaker simulation, and flanger modulation in a single versatile unit. The tri-chorus mode produces lush, wide modulation textures, while the rotary mode captures the swirling motion of a rotating speaker cabinet. The flanger mode adds dramatic movement for experimental tones. Perfect for players who want classic studio modulation sounds in pedal form, the Dyno My Roto Shocking Pink edition pairs boutique tone with bold visual style.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/keeley/dynomyroto" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Keeley Dyno My Roto Tri-Chorus Rotary Flange Shocking Pink edition offers the same iconic multi-modulation engine as the standard model with a distinctive custom finish. Inspired by legendary rack effects units from the 1980s, the pedal combines tri-chorus, rotary speaker simulation, and flanger modulation in a single versatile unit. The tri-chorus mode produces lush, wide modulation textures, while the rotary mode captures the swirling motion of a rotating speaker cabinet. The flanger mode adds dramatic movement for experimental tones. Perfect for players who want classic studio modulation sounds in pedal form, the Dyno My Roto Shocking Pink edition pairs boutique tone with bold visual style.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/keeley/dynomyroto" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

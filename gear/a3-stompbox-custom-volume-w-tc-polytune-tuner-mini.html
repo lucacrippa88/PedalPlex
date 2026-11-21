@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">A3 Stompbox</div>
       <h1 id="gearName">Custom Volume w/ TC PolyTune Tuner (Mini)</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">volume</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The A3 Stompbox Custom Volume w/ TC PolyTune Tuner (Mini) combines a compact volume pedal with integrated tuning functionality. Designed for space-efficient pedalboards, this unit allows players to control volume swells while also accessing accurate tuning directly from the same device. The mini treadle design provides smooth volume response while preserving valuable pedalboard space. Integrating a PolyTune tuner ensures fast and reliable pitch detection during performances. This hybrid design simplifies pedalboard setups by combining two essential utilities into a single compact pedal. Discover pedalboard optimization ideas and performance techniques for the A3 Stompbox Custom Volume w/ TC PolyTune Tuner on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The A3 Stompbox Custom Volume w/ TC PolyTune Tuner (Mini) combines a compact volume pedal with integrated tuning functionality. Designed for space-efficient pedalboards, this unit allows players to control volume swells while also accessing accurate tuning directly from the same device. The mini treadle design provides smooth volume response while preserving valuable pedalboard space. Integrating a PolyTune tuner ensures fast and reliable pitch detection during performances. This hybrid design simplifies pedalboard setups by combining two essential utilities into a single compact pedal. Discover pedalboard optimization ideas and performance techniques for the A3 Stompbox Custom Volume w/ TC PolyTune Tuner on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">KMA Machines</div>
       <h1 id="gearName">GEMINUS Stereo True Double Tracker</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">delay</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Geminus by KMA Machines is a stereo True Double Tracker pedal designed to recreate the natural width and depth of double-tracked recordings in real time. Instead of adding gain, Geminus generates a second, slightly detuned and time-shifted signal, emulating how two separate performances interact in a studio. The result is a wide, organic stereo image that goes far beyond typical chorus or delay effects. It features independent control over timing and modulation, allowing you to dial in anything from subtle thickening to dramatic stereo spread. The pedal also includes stereo I/O and flexible routing, making it ideal for complex rigs, wet/dry setups, or direct recording. Unlike modulation effects that rely on LFOs, Geminus focuses on micro-variations and realism, avoiding the “wobble” of chorus and delivering a more natural doubling effect. It’s particularly suited for players who want to enhance riffs, leads, or clean passages with studio-grade width and dimension, whether live or in the studio.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Geminus by KMA Machines is a stereo True Double Tracker pedal designed to recreate the natural width and depth of double-tracked recordings in real time. Instead of adding gain, Geminus generates a second, slightly detuned and time-shifted signal, emulating how two separate performances interact in a studio. The result is a wide, organic stereo image that goes far beyond typical chorus or delay effects. It features independent control over timing and modulation, allowing you to dial in anything from subtle thickening to dramatic stereo spread. The pedal also includes stereo I/O and flexible routing, making it ideal for complex rigs, wet/dry setups, or direct recording. Unlike modulation effects that rely on LFOs, Geminus focuses on micro-variations and realism, avoiding the “wobble” of chorus and delivering a more natural doubling effect. It’s particularly suited for players who want to enhance riffs, leads, or clean passages with studio-grade width and dimension, whether live or in the studio.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">AC Noises</div>
       <h1 id="gearName">AMA V2 Reverb with Oscillation &amp; Bit Crush - Retro Series</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">reverb</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The AC Noises AMA V2 Retro Series offers the same experimental reverb design found in the standard AMA V2 while featuring a distinctive retro aesthetic. Combining ambient reverb with oscillation and bit-crushing effects, the pedal enables musicians to create atmospheric textures, glitch-like reverbs, and evolving feedback soundscapes. Its flexible control layout allows players to experiment with different levels of ambience and digital degradation. Discover creative ambient sound design techniques with the AC Noises AMA V2 Retro Series on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/acnoises/ama" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The AC Noises AMA V2 Retro Series offers the same experimental reverb design found in the standard AMA V2 while featuring a distinctive retro aesthetic. Combining ambient reverb with oscillation and bit-crushing effects, the pedal enables musicians to create atmospheric textures, glitch-like reverbs, and evolving feedback soundscapes. Its flexible control layout allows players to experiment with different levels of ambience and digital degradation. Discover creative ambient sound design techniques with the AC Noises AMA V2 Retro Series on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/acnoises/ama" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

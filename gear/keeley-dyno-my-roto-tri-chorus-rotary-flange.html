@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Keeley</div>
       <h1 id="gearName">Dyno my Roto Tri-Chorus Rotary Flange</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">rotary</span><span style="font-size:12px" class="bx--tag bx--tag--teal">flanger</span><span style="font-size:12px" class="bx--tag bx--tag--teal">chorus</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Keeley Dyno My Roto Tri-Chorus Rotary Flange is a multi-modulation pedal inspired by the lush rack effects used in iconic studio recordings of the 1980s. The pedal combines three modulation styles—tri-chorus, rotary speaker simulation, and flanger—allowing players to explore a wide range of rich and spacious modulation textures. Each mode recreates the shimmering movement and depth associated with vintage rack processors used by legendary guitarists. The tri-chorus mode produces wide stereo-style chorus tones, while the rotary mode simulates the swirling sound of a rotating speaker cabinet. The flanger mode adds dramatic sweeping modulation. Designed with Keeley’s signature attention to detail, the Dyno My Roto brings classic studio modulation sounds to modern pedalboards.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/keeley/dynomyroto" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Keeley Dyno My Roto Tri-Chorus Rotary Flange is a multi-modulation pedal inspired by the lush rack effects used in iconic studio recordings of the 1980s. The pedal combines three modulation styles—tri-chorus, rotary speaker simulation, and flanger—allowing players to explore a wide range of rich and spacious modulation textures. Each mode recreates the shimmering movement and depth associated with vintage rack processors used by legendary guitarists. The tri-chorus mode produces wide stereo-style chorus tones, while the rotary mode simulates the swirling sound of a rotating speaker cabinet. The flanger mode adds dramatic sweeping modulation. Designed with Keeley’s signature attention to detail, the Dyno My Roto brings classic studio modulation sounds to modern pedalboards.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/keeley/dynomyroto" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

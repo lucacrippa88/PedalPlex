@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">JHS</div>
       <h1 id="gearName">Hall Reverb 3 series</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">reverb</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The JHS 3 Series Hall Reverb provides spacious ambient reverb inspired by large concert halls and studio reverberation units. It is designed to add depth and dimension to guitar tones without overwhelming the natural character of the instrument. Players can control the reverb mix and decay length to achieve subtle ambience or expansive atmospheric textures. The pedal includes a toggle switch that alters the reverb character for additional tonal flexibility. With its simple layout and high-quality sound, the Hall Reverb 3 Series is ideal for guitarists who want lush ambience in an easy-to-use pedal.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/jhspedals/series3/hallreverb" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The JHS 3 Series Hall Reverb provides spacious ambient reverb inspired by large concert halls and studio reverberation units. It is designed to add depth and dimension to guitar tones without overwhelming the natural character of the instrument. Players can control the reverb mix and decay length to achieve subtle ambience or expansive atmospheric textures. The pedal includes a toggle switch that alters the reverb character for additional tonal flexibility. With its simple layout and high-quality sound, the Hall Reverb 3 Series is ideal for guitarists who want lush ambience in an easy-to-use pedal.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/jhspedals/series3/hallreverb" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

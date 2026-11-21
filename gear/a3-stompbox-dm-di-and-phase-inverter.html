@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">A3 Stompbox</div>
       <h1 id="gearName">DM DI and Phase Inverter</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">di</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The A3 Stompbox DM DI and Phase Inverter is a utility pedal designed to provide direct signal output and phase control for guitar and bass rigs. The integrated DI functionality allows players to send a balanced signal directly to a mixing console, audio interface, or recording system. A phase inverter switch helps resolve phase conflicts that may occur when combining multiple signal paths, amplifiers, or microphones. Built for reliability and clarity, the DM DI ensures a clean signal suitable for live and studio environments. Utility pedals like this are essential for musicians running complex rigs or direct-to-PA setups. Discover signal routing tips and pedalboard integration ideas for the A3 Stompbox DM DI and Phase Inverter on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The A3 Stompbox DM DI and Phase Inverter is a utility pedal designed to provide direct signal output and phase control for guitar and bass rigs. The integrated DI functionality allows players to send a balanced signal directly to a mixing console, audio interface, or recording system. A phase inverter switch helps resolve phase conflicts that may occur when combining multiple signal paths, amplifiers, or microphones. Built for reliability and clarity, the DM DI ensures a clean signal suitable for live and studio environments. Utility pedals like this are essential for musicians running complex rigs or direct-to-PA setups. Discover signal routing tips and pedalboard integration ideas for the A3 Stompbox DM DI and Phase Inverter on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

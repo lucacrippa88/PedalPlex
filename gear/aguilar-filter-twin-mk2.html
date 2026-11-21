@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Aguilar</div>
       <h1 id="gearName">Filter Twin Mk2</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">filter</span><span style="font-size:12px" class="bx--tag bx--tag--teal">bass</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Aguilar Filter Twin Mk2 is a bass envelope filter pedal built around a dual-filter design that creates expressive, vocal-style modulation. Its signature sound comes from two filters sweeping in opposite directions, one upward and one downward, producing classic funk tones as well as more modern and animated filter textures. The blend control lets players balance the two filter movements, while threshold adjusts sensitivity to playing dynamics and the velocity controls shape the speed of each sweep. Designed for bass, the Filter Twin Mk2 reacts naturally to touch, note attack, and groove, making it useful for slap lines, synth-like passages, and rhythmic funk parts. With a rugged enclosure and straightforward control layout, it brings deep envelope-filter movement to modern bass pedalboards. Discover tone settings and pedalboard ideas for the Aguilar Filter Twin Mk2 on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/aguilar/filtertwin" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Aguilar Filter Twin Mk2 is a bass envelope filter pedal built around a dual-filter design that creates expressive, vocal-style modulation. Its signature sound comes from two filters sweeping in opposite directions, one upward and one downward, producing classic funk tones as well as more modern and animated filter textures. The blend control lets players balance the two filter movements, while threshold adjusts sensitivity to playing dynamics and the velocity controls shape the speed of each sweep. Designed for bass, the Filter Twin Mk2 reacts naturally to touch, note attack, and groove, making it useful for slap lines, synth-like passages, and rhythmic funk parts. With a rugged enclosure and straightforward control layout, it brings deep envelope-filter movement to modern bass pedalboards. Discover tone settings and pedalboard ideas for the Aguilar Filter Twin Mk2 on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/aguilar/filtertwin" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

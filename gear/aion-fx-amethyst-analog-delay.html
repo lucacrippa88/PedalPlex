@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Aion FX</div>
       <h1 id="gearName">Amethyst Analog Delay</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">delay</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Aion FX Amethyst Analog Delay delivers warm, organic echo tones inspired by classic bucket-brigade delay circuits. Known for their musical degradation and smooth repeats, analog delays add depth and ambience without overpowering the original guitar signal. The Amethyst provides rich modulation and natural decay that blends beautifully with both clean and driven tones. Guitarists can dial in subtle slapback, rhythmic echoes, or atmospheric ambient textures. Its analog character makes it especially well suited for vintage-inspired rigs and expressive playing styles. Discover analog delay textures and creative signal chain ideas for the Aion FX Amethyst on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Aion FX Amethyst Analog Delay delivers warm, organic echo tones inspired by classic bucket-brigade delay circuits. Known for their musical degradation and smooth repeats, analog delays add depth and ambience without overpowering the original guitar signal. The Amethyst provides rich modulation and natural decay that blends beautifully with both clean and driven tones. Guitarists can dial in subtle slapback, rhythmic echoes, or atmospheric ambient textures. Its analog character makes it especially well suited for vintage-inspired rigs and expressive playing styles. Discover analog delay textures and creative signal chain ideas for the Aion FX Amethyst on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

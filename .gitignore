@@ -40,3 +40,7 @@ json/deleted_gears_*.json
 update_description_db.py
 json/description_backup_*.json
 json/mapping_backup_*.json
+
+# brand DB: script + backup generati
+update_brands_catalog_db.py
+json/brands_catalog_backup_*.json

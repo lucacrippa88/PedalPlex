@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">A3 Stompbox</div>
       <h1 id="gearName">Angel Overdrive</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">overdrive</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The A3 Stompbox Angel Overdrive is designed to deliver smooth, amp-like overdrive with strong dynamic response and musical clarity. Built for players who want a natural drive tone, the Angel Overdrive enhances the character of the guitar and amplifier rather than masking it. The pedal provides a wide gain range, moving from subtle edge-of-breakup tones to richer, saturated overdrive suitable for lead playing. Its responsive circuit reacts to picking intensity and guitar volume adjustments, allowing expressive control directly from the instrument. Carefully tuned EQ keeps the low end tight while maintaining clear highs and balanced mids. The Angel Overdrive also stacks well with boosts, fuzz, and distortion pedals, making it a flexible addition to modern pedalboards. Discover tones, settings, and pedalboard combinations for the A3 Stompbox Angel Overdrive on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The A3 Stompbox Angel Overdrive is designed to deliver smooth, amp-like overdrive with strong dynamic response and musical clarity. Built for players who want a natural drive tone, the Angel Overdrive enhances the character of the guitar and amplifier rather than masking it. The pedal provides a wide gain range, moving from subtle edge-of-breakup tones to richer, saturated overdrive suitable for lead playing. Its responsive circuit reacts to picking intensity and guitar volume adjustments, allowing expressive control directly from the instrument. Carefully tuned EQ keeps the low end tight while maintaining clear highs and balanced mids. The Angel Overdrive also stacks well with boosts, fuzz, and distortion pedals, making it a flexible addition to modern pedalboards. Discover tones, settings, and pedalboard combinations for the A3 Stompbox Angel Overdrive on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Joyfx Custom Pedals</div>
       <h1 id="gearName">JanRay Drive</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">overdrive</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Joyfx Custom Pedals JanRay Drive is an overdrive inspired by the smooth and transparent tones of boutique low-gain drive circuits. Designed to enhance the natural character of your guitar and amplifier, the pedal delivers warm breakup, rich harmonic response, and excellent note clarity. Its responsive gain structure allows players to move from subtle edge-of-breakup tones to thicker blues and rock overdrive. Controls typically include gain, tone, and volume adjustments for shaping the sound precisely. The JanRay style circuit is known for its ability to retain the feel of the original amp tone while adding musical saturation and sustain. It works exceptionally well with single-coil and humbucker guitars alike and stacks beautifully with other overdrive or boost pedals. The Joyfx JanRay Drive offers dynamic response and boutique-style tone for players seeking expressive low-to-medium gain sounds.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Joyfx Custom Pedals JanRay Drive is an overdrive inspired by the smooth and transparent tones of boutique low-gain drive circuits. Designed to enhance the natural character of your guitar and amplifier, the pedal delivers warm breakup, rich harmonic response, and excellent note clarity. Its responsive gain structure allows players to move from subtle edge-of-breakup tones to thicker blues and rock overdrive. Controls typically include gain, tone, and volume adjustments for shaping the sound precisely. The JanRay style circuit is known for its ability to retain the feel of the original amp tone while adding musical saturation and sustain. It works exceptionally well with single-coil and humbucker guitars alike and stacks beautifully with other overdrive or boost pedals. The Joyfx JanRay Drive offers dynamic response and boutique-style tone for players seeking expressive low-to-medium gain sounds.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

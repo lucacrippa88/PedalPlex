@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Joyfx Custom Pedals</div>
       <h1 id="gearName">King Blues - Blues Power Clone</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">overdrive</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Joyfx Custom Pedals King Blues Blues Power Clone delivers smooth low-gain overdrive inspired by classic blues drive circuits. The pedal emphasizes warmth, clarity, and dynamic response, making it well suited for expressive blues and vintage rock tones. At lower gain settings it adds subtle harmonic richness and light breakup, while higher settings provide fuller overdrive with singing sustain. The circuit maintains strong note definition, allowing complex chords and melodic lines to remain clear even with added saturation. Players often use this style of overdrive to enhance the natural tone of tube amplifiers rather than drastically altering it. Built with careful component selection by Joyfx Custom Pedals, the King Blues Blues Power Clone offers musical drive textures and vintage-inspired tone shaping.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Joyfx Custom Pedals King Blues Blues Power Clone delivers smooth low-gain overdrive inspired by classic blues drive circuits. The pedal emphasizes warmth, clarity, and dynamic response, making it well suited for expressive blues and vintage rock tones. At lower gain settings it adds subtle harmonic richness and light breakup, while higher settings provide fuller overdrive with singing sustain. The circuit maintains strong note definition, allowing complex chords and melodic lines to remain clear even with added saturation. Players often use this style of overdrive to enhance the natural tone of tube amplifiers rather than drastically altering it. Built with careful component selection by Joyfx Custom Pedals, the King Blues Blues Power Clone offers musical drive textures and vintage-inspired tone shaping.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

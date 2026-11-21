@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">JHS</div>
       <h1 id="gearName">Compressor 3 series</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">compressor</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The JHS 3 Series Compressor is a simple yet powerful dynamics pedal designed to deliver smooth sustain and balanced signal levels. It features intuitive controls that allow players to adjust compression intensity and output volume without complex setup. The pedal enhances note clarity and sustain, making it ideal for clean rhythm playing, country lead tones, and expressive fingerstyle guitar. A toggle switch adds additional tonal flexibility, letting players adjust the feel of the compression response. As part of the JHS 3 Series lineup, it focuses on high-quality sound and reliability while maintaining an accessible design.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/jhspedals/series3/compressor" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The JHS 3 Series Compressor is a simple yet powerful dynamics pedal designed to deliver smooth sustain and balanced signal levels. It features intuitive controls that allow players to adjust compression intensity and output volume without complex setup. The pedal enhances note clarity and sustain, making it ideal for clean rhythm playing, country lead tones, and expressive fingerstyle guitar. A toggle switch adds additional tonal flexibility, letting players adjust the feel of the compression response. As part of the JHS 3 Series lineup, it focuses on high-quality sound and reliability while maintaining an accessible design.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/jhspedals/series3/compressor" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

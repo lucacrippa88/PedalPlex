@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">AMT</div>
       <h1 id="gearName">M-1 Guitar Preamp</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">preamp</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The AMT M-1 Guitar Preamp is a compact JFET-based preamp pedal designed to capture the tone and response of classic American-style high-gain amplifiers. It delivers tight low-end, aggressive distortion, and focused midrange, making it well suited for modern rock and metal applications. The analog JFET circuitry provides tube-like dynamics and responsiveness, allowing players to achieve expressive picking articulation and natural compression. Equipped with flexible EQ controls and strong output level, the M-1 can be used as a standalone preamp, a drive pedal in front of an amplifier, or for direct recording when paired with cabinet simulation. Its versatile design makes it a reliable solution for both live performance and studio use.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/amt/legendamp/m1" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The AMT M-1 Guitar Preamp is a compact JFET-based preamp pedal designed to capture the tone and response of classic American-style high-gain amplifiers. It delivers tight low-end, aggressive distortion, and focused midrange, making it well suited for modern rock and metal applications. The analog JFET circuitry provides tube-like dynamics and responsiveness, allowing players to achieve expressive picking articulation and natural compression. Equipped with flexible EQ controls and strong output level, the M-1 can be used as a standalone preamp, a drive pedal in front of an amplifier, or for direct recording when paired with cabinet simulation. Its versatile design makes it a reliable solution for both live performance and studio use.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/amt/legendamp/m1" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

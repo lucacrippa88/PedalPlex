@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Line 6</div>
       <h1 id="gearName">AM4 Amp Modeler</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">preamp</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Line 6 AM4 Amp Modeler is a versatile modeling pedal that recreates the sound of several classic guitar amplifiers in a compact stompbox format. Using Line 6 digital modeling technology, the AM4 provides access to a range of iconic amp tones including vintage clean amps, classic British crunch, and modern high-gain sounds. Players can easily switch between models and adjust gain, EQ, and output levels to match their rig. The pedal works well as a direct tone-shaping tool or as a front-end gain stage into a clean amplifier. Rugged construction and intuitive controls make it suitable for both live performance and studio use. The Line 6 AM4 Amp Modeler offers guitarists a flexible solution for exploring multiple amplifier sounds within a single pedal.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/line6/am4" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Line 6 AM4 Amp Modeler is a versatile modeling pedal that recreates the sound of several classic guitar amplifiers in a compact stompbox format. Using Line 6 digital modeling technology, the AM4 provides access to a range of iconic amp tones including vintage clean amps, classic British crunch, and modern high-gain sounds. Players can easily switch between models and adjust gain, EQ, and output levels to match their rig. The pedal works well as a direct tone-shaping tool or as a front-end gain stage into a clean amplifier. Rugged construction and intuitive controls make it suitable for both live performance and studio use. The Line 6 AM4 Amp Modeler offers guitarists a flexible solution for exploring multiple amplifier sounds within a single pedal.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/line6/am4" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

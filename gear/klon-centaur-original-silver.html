@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Klon</div>
       <h1 id="gearName">Centaur Original - Silver</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">overdrive</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Klon Centaur Original Silver edition is a revered boutique overdrive pedal known for its clarity, transparency, and musical response. Designed to enhance the natural tone of a guitar and amplifier, the Centaur blends a clean signal with an overdriven signal to maintain articulation and definition. Guitarists often rely on the pedal as a clean boost to push tube amplifiers into natural breakup or as a smooth overdrive for expressive lead tones. The Gain, Treble, and Output controls offer a wide tonal range while keeping operation intuitive. The silver enclosure variant is part of the original production run and has become highly collectible among enthusiasts and professionals alike. Thanks to its legendary tone and build quality, the Klon Centaur remains a benchmark in the world of boutique overdrive pedals.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/klon/centaur" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Klon Centaur Original Silver edition is a revered boutique overdrive pedal known for its clarity, transparency, and musical response. Designed to enhance the natural tone of a guitar and amplifier, the Centaur blends a clean signal with an overdriven signal to maintain articulation and definition. Guitarists often rely on the pedal as a clean boost to push tube amplifiers into natural breakup or as a smooth overdrive for expressive lead tones. The Gain, Treble, and Output controls offer a wide tonal range while keeping operation intuitive. The silver enclosure variant is part of the original production run and has become highly collectible among enthusiasts and professionals alike. Thanks to its legendary tone and build quality, the Klon Centaur remains a benchmark in the world of boutique overdrive pedals.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/klon/centaur" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

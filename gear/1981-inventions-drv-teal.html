@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">1981 Inventions</div>
       <h1 id="gearName">DRV (Teal)</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">distortion</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The 1981 Inventions DRV (Teal) is a boutique distortion pedal praised for its articulate gain and refined tonal balance. Inspired by the legendary RAT circuit, the DRV offers a wide range of tones from gritty drive to saturated distortion while preserving note clarity and dynamic feel. Its three-knob control layout—Volume, Tone, and Drive—makes tone shaping simple and effective, allowing guitarists to dial in focused rhythm sounds or expressive lead tones. The pedal’s carefully tuned EQ keeps the low end tight and the highs smooth, ensuring it cuts through a mix without sounding harsh. Known for stacking well with boosts and overdrives, the DRV is a versatile addition to modern pedalboards. The Teal finish gives this edition a distinctive look while retaining the same celebrated sound. Explore tones and pedalboard setups for the 1981 Inventions DRV on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/1981inventions/drv" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The 1981 Inventions DRV (Teal) is a boutique distortion pedal praised for its articulate gain and refined tonal balance. Inspired by the legendary RAT circuit, the DRV offers a wide range of tones from gritty drive to saturated distortion while preserving note clarity and dynamic feel. Its three-knob control layout—Volume, Tone, and Drive—makes tone shaping simple and effective, allowing guitarists to dial in focused rhythm sounds or expressive lead tones. The pedal’s carefully tuned EQ keeps the low end tight and the highs smooth, ensuring it cuts through a mix without sounding harsh. Known for stacking well with boosts and overdrives, the DRV is a versatile addition to modern pedalboards. The Teal finish gives this edition a distinctive look while retaining the same celebrated sound. Explore tones and pedalboard setups for the 1981 Inventions DRV on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/1981inventions/drv" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

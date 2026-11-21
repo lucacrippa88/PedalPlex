@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Bananana Effects</div>
       <h1 id="gearName">Abracadabra Shimmer Reverb</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">reverb</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Bananana Effects Abracadabra is a compact shimmer reverb pedal designed to create bright, atmospheric soundscapes. Shimmer reverbs combine traditional reverb tails with pitch-shifted harmonics, producing an ethereal effect often used in ambient, post-rock, and cinematic guitar styles. The Abracadabra delivers sparkling octave textures that float above the original signal, transforming simple chords into expansive sonic landscapes. Its compact form factor makes it easy to integrate into modern pedalboards while still offering deep ambient character. Discover shimmering reverb textures and ambient guitar sounds with the Bananana Effects Abracadabra on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/bananana/abracadabra-shimmer-reverb" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Bananana Effects Abracadabra is a compact shimmer reverb pedal designed to create bright, atmospheric soundscapes. Shimmer reverbs combine traditional reverb tails with pitch-shifted harmonics, producing an ethereal effect often used in ambient, post-rock, and cinematic guitar styles. The Abracadabra delivers sparkling octave textures that float above the original signal, transforming simple chords into expansive sonic landscapes. Its compact form factor makes it easy to integrate into modern pedalboards while still offering deep ambient character. Discover shimmering reverb textures and ambient guitar sounds with the Bananana Effects Abracadabra on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/bananana/abracadabra-shimmer-reverb" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

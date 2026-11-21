@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Keeley</div>
       <h1 id="gearName">Abbey Chamber Verb</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">reverb</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Keeley Abbey Chamber Verb is a studio-inspired reverb pedal designed to recreate the warm ambience of vintage chamber reverbs used in classic recording studios. Inspired by the iconic echo chambers found in legendary facilities like Abbey Road Studios, this pedal delivers rich, natural reverberation with musical depth and clarity. Guitarists can dial in subtle room ambience for clean tones or lush spatial textures that enhance lead playing and ambient soundscapes. The pedal features intuitive controls that shape the decay, tone, and mix of the reverb signal, allowing precise adjustments for different musical styles. The Abbey Chamber Verb works beautifully with clean amplifiers, modulation pedals, and delay effects, adding a sense of depth and dimension to the guitar signal. Built with Keeley’s reputation for high-quality engineering, this pedal provides studio-style reverb tones in a compact pedalboard format.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/keeley/abbeychamber" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Keeley Abbey Chamber Verb is a studio-inspired reverb pedal designed to recreate the warm ambience of vintage chamber reverbs used in classic recording studios. Inspired by the iconic echo chambers found in legendary facilities like Abbey Road Studios, this pedal delivers rich, natural reverberation with musical depth and clarity. Guitarists can dial in subtle room ambience for clean tones or lush spatial textures that enhance lead playing and ambient soundscapes. The pedal features intuitive controls that shape the decay, tone, and mix of the reverb signal, allowing precise adjustments for different musical styles. The Abbey Chamber Verb works beautifully with clean amplifiers, modulation pedals, and delay effects, adding a sense of depth and dimension to the guitar signal. Built with Keeley’s reputation for high-quality engineering, this pedal provides studio-style reverb tones in a compact pedalboard format.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/keeley/abbeychamber" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

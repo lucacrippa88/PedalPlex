@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">1981 Inventions</div>
       <h1 id="gearName">DRV (Pink)</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">distortion</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The 1981 Inventions DRV (Pink) is a boutique distortion pedal known for delivering articulate, balanced gain inspired by the classic RAT circuit. With a carefully refined design, the DRV provides everything from gritty overdrive textures to powerful distortion while keeping notes clear and defined. The intuitive three-knob layout—Volume, Tone, and Drive—offers precise control over output level, brightness, and saturation. Players appreciate the DRV for its tight low end, smooth clipping response, and the way it maintains the natural character of both the guitar and amplifier. It stacks exceptionally well with boosts and other drive pedals, making it a flexible addition to modern pedalboards. The Pink finish adds a striking visual touch to this sought-after pedal while retaining the same highly respected sonic performance. Discover tones, settings, and pedalboard combinations for the 1981 Inventions DRV on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/1981inventions/drv" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The 1981 Inventions DRV (Pink) is a boutique distortion pedal known for delivering articulate, balanced gain inspired by the classic RAT circuit. With a carefully refined design, the DRV provides everything from gritty overdrive textures to powerful distortion while keeping notes clear and defined. The intuitive three-knob layout—Volume, Tone, and Drive—offers precise control over output level, brightness, and saturation. Players appreciate the DRV for its tight low end, smooth clipping response, and the way it maintains the natural character of both the guitar and amplifier. It stacks exceptionally well with boosts and other drive pedals, making it a flexible addition to modern pedalboards. The Pink finish adds a striking visual touch to this sought-after pedal while retaining the same highly respected sonic performance. Discover tones, settings, and pedalboard combinations for the 1981 Inventions DRV on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/1981inventions/drv" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

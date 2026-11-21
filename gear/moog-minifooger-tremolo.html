@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Moog</div>
       <h1 id="gearName">Minifooger Tremolo</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">tremolo</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Moog Minifooger Tremolo is an analog tremolo pedal that delivers smooth and musical amplitude modulation inspired by classic vintage amplifiers. Controls for rate and depth allow players to shape subtle rhythmic pulsing or dramatic volume swells. The pedal’s analog circuitry ensures warm and natural modulation without digital artifacts. Expression pedal compatibility allows real-time adjustment of tremolo speed or intensity during performance. With its compact design and Moog’s signature sound quality, the Minifooger Tremolo provides classic tremolo tones suitable for a wide range of musical styles.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/moog/minifooger/tremolo" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Moog Minifooger Tremolo is an analog tremolo pedal that delivers smooth and musical amplitude modulation inspired by classic vintage amplifiers. Controls for rate and depth allow players to shape subtle rhythmic pulsing or dramatic volume swells. The pedal’s analog circuitry ensures warm and natural modulation without digital artifacts. Expression pedal compatibility allows real-time adjustment of tremolo speed or intensity during performance. With its compact design and Moog’s signature sound quality, the Minifooger Tremolo provides classic tremolo tones suitable for a wide range of musical styles.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/moog/minifooger/tremolo" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Anasounds</div>
       <h1 id="gearName">Utopia Deluxe</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">delay</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Anasounds Utopia Deluxe is a versatile delay pedal designed to deliver rich echo textures and expressive ambience. Featuring flexible controls for delay time, repeats, and tone shaping, the Utopia Deluxe can produce subtle slapback echoes or long atmospheric trails. The pedal blends easily with both clean and driven tones, making it suitable for modern ambient playing as well as classic delay sounds. Discover creative delay textures with the Anasounds Utopia Deluxe on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/anasounds/utopia-deluxe" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Anasounds Utopia Deluxe is a versatile delay pedal designed to deliver rich echo textures and expressive ambience. Featuring flexible controls for delay time, repeats, and tone shaping, the Utopia Deluxe can produce subtle slapback echoes or long atmospheric trails. The pedal blends easily with both clean and driven tones, making it suitable for modern ambient playing as well as classic delay sounds. Discover creative delay textures with the Anasounds Utopia Deluxe on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/anasounds/utopia-deluxe" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

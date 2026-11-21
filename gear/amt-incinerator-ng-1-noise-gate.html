@@ -145,21 +145,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">AMT</div>
       <h1 id="gearName">Incinerator NG-1 Noise Gate</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">noise gate</span><span style="font-size:12px" class="bx--tag bx--tag--teal">bass</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The AMT Incinerator NG-1 Noise Gate is a compact noise suppression pedal designed to clean up high-gain guitar and bass signal chains without complicated setup. Its main Threshold control sets the level where noise reduction engages, making it easy to tame hiss, hum, and idle noise from drive pedals, preamps, and amplifiers. The NG-1 is designed for quick response when a note is played and automatic decay behavior when the signal fades, helping preserve attack while cutting unwanted noise between phrases. A built-in loop allows noisy gain pedals or preamps to be placed inside the gate circuit, so the detector can track the direct instrument signal while attenuation happens after the noisy device. With a small enclosure, simple controls, and selectable bypass behavior, the Incinerator NG-1 is a practical utility pedal for tight, quiet pedalboards and high-gain rigs. Discover signal-chain ideas and pedalboard setups for the AMT Incinerator NG-1 Noise Gate on PedalPlex.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -176,6 +170,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The AMT Incinerator NG-1 Noise Gate is a compact noise suppression pedal designed to clean up high-gain guitar and bass signal chains without complicated setup. Its main Threshold control sets the level where noise reduction engages, making it easy to tame hiss, hum, and idle noise from drive pedals, preamps, and amplifiers. The NG-1 is designed for quick response when a note is played and automatic decay behavior when the signal fades, helping preserve attack while cutting unwanted noise between phrases. A built-in loop allows noisy gain pedals or preamps to be placed inside the gate circuit, so the detector can track the direct instrument signal while attenuation happens after the noisy device. With a small enclosure, simple controls, and selectable bypass behavior, the Incinerator NG-1 is a practical utility pedal for tight, quiet pedalboards and high-gain rigs. Discover signal-chain ideas and pedalboard setups for the AMT Incinerator NG-1 Noise Gate on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>

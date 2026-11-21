@@ -3123,19 +3123,16 @@ html[data-theme="light"] .pedal { color: #fff; }
 
 
 /* ============================================================
-   GEAR PAGE (static /gear/<slug>.html): hero + stage
+   GEAR PAGE (static /gear/<slug>.html): header, stage (the gear), about
    ============================================================ */
-.gear-hero[hidden], .gear-hero [hidden] { display: none !important; }
+.gear-head[hidden], .gear-about[hidden], .gear-head [hidden], .gear-about [hidden] { display: none !important; }
 
-.gear-hero {
-  max-width: 860px;
-  margin: 12px auto 0;
-  padding: 36px 28px 32px;
+/* 1-3: name, brand, effect type: compact, right above the gear */
+.gear-head {
+  max-width: 900px;
+  margin: 18px auto 0;
+  padding: 0 12px;
   text-align: center;
-  background: #262626;
-  border: 1px solid #393939;
-  border-radius: 14px;
-  box-sizing: border-box;
 }
 .gear-hero-brand {
   font-size: .8rem;
@@ -3143,68 +3140,53 @@ html[data-theme="light"] .pedal { color: #fff; }
   letter-spacing: .18em;
   text-transform: uppercase;
   color: #b88ae6;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
-.gear-hero h1#gearName {
+.gear-head h1#gearName {
   margin: 0;
-  font-size: clamp(1.9rem, 5vw, 2.8rem);
+  font-size: clamp(1.7rem, 4.5vw, 2.4rem);
   font-weight: 600;
   line-height: 1.15;
   color: #f4f4f4;
 }
-.gear-hero-tags { margin: 16px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.gear-hero-tags { margin: 12px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
 .gear-hero-tags:empty { display: none; }
 .gear-hero-tags .bx--tag { margin: 0; font-size: .75rem; }
-.gear-hero-desc {
-  max-width: 68ch;
-  margin: 22px auto 0;
-  font-size: 1rem;
-  line-height: 1.7;
-  color: #c6c6c6;
-  text-align: center;
-}
-.gear-hero-fxdb {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 26px;
-  padding: 10px 20px 10px 14px;
-  border: 1px solid #659BCD;
-  border-radius: 999px;
-  color: #8fbbe6;
-  font-size: .9rem;
-  text-decoration: none;
-  transition: background .15s ease, color .15s ease;
-}
-.gear-hero-fxdb:hover { background: #659BCD; color: #fff; }
-.gear-hero-fxdb img { width: 24px; height: 24px; object-fit: contain; }
 
+/* 4: the gear */
 .gear-stage {
   max-width: 1000px;
-  margin: 24px auto 0;
-  padding: 18px 12px 28px;
+  margin: 14px auto 0;
+  padding: 8px 12px 28px;
   background: #262626;
   border: 1px solid #393939;
   border-radius: 14px;
   box-sizing: border-box;
 }
-.gear-stage-label {
-  text-align: center;
-  font-size: .75rem;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: #8d8d8d;
-}
 /* SubPlex icon always visible on the gear page (no hover needed, works on touch too) */
 .gear-stage .preset-container { opacity: 1; pointer-events: auto; }
-.gear-stage #preset-wrapper { top: 0 !important; margin-top: 56px; }
+.gear-stage #preset-wrapper { top: 0 !important; margin-top: 40px; }
 .gear-stage #preset > div { justify-content: center; }
 
-html[data-theme="light"] .gear-hero,
+/* 5: description + FXDB link (secondary) */
+.gear-about {
+  max-width: 68ch;
+  margin: 22px auto 0;
+  padding: 0 12px;
+  text-align: center;
+}
+.gear-hero-desc {
+  margin: 0;
+  font-size: .95rem;
+  line-height: 1.7;
+  color: #a8a8a8;
+  text-align: center;
+}
+/* same look as the other buttons (bx--btn bx--btn--tertiary): only icon and spacing here */
+.gear-hero-fxdb { margin: 16px 0 0 !important; max-width: none !important; }
+.gear-hero-fxdb img.bx--btn__icon { width: 20px; height: 20px; object-fit: contain; }
+
 html[data-theme="light"] .gear-stage { background: #ffffff; border-color: #e0e0e0; }
 html[data-theme="light"] .gear-hero-brand { color: #8a3ffc; }
-html[data-theme="light"] .gear-hero h1#gearName { color: #161616; }
+html[data-theme="light"] .gear-head h1#gearName { color: #161616; }
 html[data-theme="light"] .gear-hero-desc { color: #525252; }
-html[data-theme="light"] .gear-hero-fxdb { color: #0f62fe; border-color: #78a9ff; }
-html[data-theme="light"] .gear-hero-fxdb:hover { background: #0f62fe; color: #fff; }
-html[data-theme="light"] .gear-stage-label { color: #6f6f6f; }

@@ -146,21 +146,15 @@
 
     </div>
 
-    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
-    <section class="gear-hero">
+    <!-- HEADER: name, brand, effect type (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <div class="gear-head">
       <div class="gear-hero-brand" id="gearBrand">Keeley</div>
       <h1 id="gearName">Angry Orange Distortion &amp; Fuzz - White</h1>
       <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">distortion</span></div>
-      <p class="gear-hero-desc" id="gearDesc">The Keeley Angry Orange Distortion &amp; Fuzz White edition offers the same aggressive dual-gain circuitry as the original pedal but in a striking white enclosure. Designed to combine classic distortion with saturated fuzz tones, the pedal produces powerful gain with excellent sustain and harmonic richness. It moves easily from tight distortion suitable for heavy rhythm playing to thick fuzz textures for expressive lead tones. The circuit remains dynamic and responsive, allowing players to control the amount of saturation using picking attack or guitar volume adjustments. With its intuitive control layout and robust build quality, the Angry Orange Distortion &amp; Fuzz White edition delivers versatile high-gain tones for modern guitarists.</p>
-      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/keeley/4in1/angryorange" target="_blank" rel="noopener noreferrer">
-        <img src="../logos/fxdb_icon.png" alt="" />
-        <span>Open in Effects Database</span>
-      </a>
-    </section>
+    </div>
 
     <!-- STAGE: the gear with its controls and the SubPlex menu -->
     <section class="gear-stage">
-      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
 
       <div id="preset-wrapper" style="position:relative;min-height:200px;">
 
@@ -177,6 +171,15 @@
         <div id="results"></div>
 
       </div>
+    </section>
+
+    <!-- ABOUT: description + Effects Database link (secondary) -->
+    <section class="gear-about" id="gearAbout">
+      <p class="gear-hero-desc" id="gearDesc">The Keeley Angry Orange Distortion &amp; Fuzz White edition offers the same aggressive dual-gain circuitry as the original pedal but in a striking white enclosure. Designed to combine classic distortion with saturated fuzz tones, the pedal produces powerful gain with excellent sustain and harmonic richness. It moves easily from tight distortion suitable for heavy rhythm playing to thick fuzz textures for expressive lead tones. The circuit remains dynamic and responsive, allowing players to control the amount of saturation using picking attack or guitar volume adjustments. With its intuitive control layout and robust build quality, the Angry Orange Distortion &amp; Fuzz White edition delivers versatile high-gain tones for modern guitarists.</p>
+      <a class="js-openFXDB gear-hero-fxdb bx--btn bx--btn--tertiary" id="gearFxdb" href="https://www.effectsdatabase.com/model/keeley/4in1/angryorange" target="_blank" rel="noopener noreferrer">
+        <span>Open in Effects Database</span>
+        <img src="../logos/fxdb_icon.png" alt="" class="bx--btn__icon" />
+      </a>
     </section>
 
     <br><br>
