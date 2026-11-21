@@ -201,7 +201,7 @@ function initNavPedalboard(userRole) {
 
   $("#pedalFilterInput, #pedalFilterInputDesktop").on("click", function (e) { e.stopPropagation(); });
 
-  window.catalog = window.catalog || [];
+  window.catalog = Array.isArray(window.catalog) ? window.catalog : [];
 
   // ── openPedalSearch + lazy-load (da nav-rigs.js) ──────────────────────────
   function debounce(func, wait) {

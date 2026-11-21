@@ -1491,7 +1491,7 @@ $(".pedal-catalog").each(function () {
   const $pedalDiv = $(this);
   const pedalId = $pedalDiv.data("pedal-id");
 
-  const defaultPedalFromCatalog = window.catalog.find(p => p._id === pedalId || p.name === pedalId);
+  const defaultPedalFromCatalog = Array.isArray(window.catalog) ? window.catalog.find(p => p._id === pedalId || p.name === pedalId) : null;
   if (!defaultPedalFromCatalog) return;
 
   // Step 1: Deep clone del pedale

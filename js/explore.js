@@ -951,7 +951,7 @@ function getPedalsOnBoard() {
   for (const p of pedals) {
     const id  = p.pedal_id || p._id || p.id;
     const cat = window.catalogMap?.[id]?.category
-             || window.catalog?.find(c => c._id === id)?.category
+             || (Array.isArray(window.catalog) ? window.catalog.find(c => c._id === id)?.category : "")
              || "";
     const name = window.catalogMap?.[id]?.name || id;
     result.push({ id, name, category: cat });

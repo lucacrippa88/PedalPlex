@@ -241,7 +241,7 @@ function adminApplyPreset(presetDoc) {
     const pedalId   = $pedalDiv.data('pedal-id') || pedalEl.dataset.pedalId;
     if (!pedalId) return;
 
-    const defaultPedalFromCatalog = window.catalog.find(p => p._id === pedalId);
+    const defaultPedalFromCatalog = Array.isArray(window.catalog) ? window.catalog.find(p => p._id === pedalId) : null;
     if (!defaultPedalFromCatalog) return;
 
     // Deep-clone the catalog entry and overlay preset values

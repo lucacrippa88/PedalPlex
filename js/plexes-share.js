@@ -637,7 +637,7 @@ async function _importSharedPlexToExistingRig(plex, token) {
     // Source gear info from the already-loaded catalogMap (populated by loadSharedPlexPreview)
     const sourceGearMap = {};  // { id: gear doc }
     sourcePedalIds.forEach(id => {
-        const g = window.catalogMap?.[id] || window.catalog?.find(c => c._id === id);
+        const g = window.catalogMap?.[id] || (Array.isArray(window.catalog) ? window.catalog.find(c => c._id === id) : null);
         if (g) sourceGearMap[id] = g;
     });
 

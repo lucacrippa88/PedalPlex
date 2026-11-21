@@ -404,7 +404,7 @@
 
         // ── Helper: renderizza un singolo pedale ──────────────────────
         function renderPedalWrapper(pbPedal) {
-          var pedalData = window.catalog && window.catalog.find(function(p){ return p._id === pbPedal.pedal_id; });
+          var pedalData = Array.isArray(window.catalog) ? window.catalog.find(function(p){ return p._id === pbPedal.pedal_id; }) : null;
           if (!pedalData) return null;
           var $pedalEl = renderPedal(pedalData, (window.currentUser && window.currentUser.role) || 'guest', true);
           $pedalEl.css('cursor', 'pointer');

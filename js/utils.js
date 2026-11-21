@@ -611,7 +611,10 @@ function renderPedalControls(pedal, $pedalDiv) {
 
   // Pristine catalog entry of this gear: source of the knobs' default values (double-tap reset)
   const pedalCatalogId = pedal._id || pedal.id;
-  const catalogPedal = (window.catalog || []).find(p => p && (p._id === pedalCatalogId || p.id === pedalCatalogId));
+  const catalogList = Array.isArray(window.catalog) ? window.catalog : (typeof catalogData !== 'undefined' && Array.isArray(catalogData) ? catalogData : []);
+  const catalogPedal = (window.catalogMap && pedalCatalogId && window.catalogMap[pedalCatalogId])
+    || catalogList.find(p => p && (p._id === pedalCatalogId || p.id === pedalCatalogId))
+    || pedal;
 
   const editMode = window.isEditMode;
 
