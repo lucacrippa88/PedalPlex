@@ -1,5 +1,16 @@
 let lastValidation = null;
 
+// --- Gear brands (loaded from DB via GET_BRANDS.php, with fallback to mapping.json) ---
+let GEAR_BRANDS = [];
+
+function populateBrandList(brands) {
+    const $list = $("#brand-list");
+    $list.empty();
+    brands.forEach(b => {
+        $list.append($("<option>").val(b));
+    });
+}
+
 // --- Gear categories (multi-select, stored as "cat1/cat2/..."), loaded from categories.json ---
 let GEAR_CATEGORIES = [];
 let categoryOrder = []; // keeps selection order
@@ -38,6 +49,34 @@ $(function () {
     }).fail(function () {
         console.error("Failed to load categories.json");
     });
+
+    // Load brands from database
+    $.getJSON("https://api.pedalplex.com/GET_BRANDS.php").done(function (list) {
+        if (Array.isArray(list) && list.length > 0) {
+            GEAR_BRANDS = list;
+            populateBrandList(GEAR_BRANDS);
+        } else {
+            loadBrandsFallback();
+        }
+    }).fail(function () {
+        loadBrandsFallback();
+    });
+
+    function loadBrandsFallback() {
+        $.getJSON("json/mapping.json").done(function (list) {
+            const brandSet = new Set();
+            list.forEach(item => {
+                if (item.brand && typeof item.brand === "string") {
+                    const b = item.brand.trim();
+                    if (b) brandSet.add(b);
+                }
+            });
+            GEAR_BRANDS = Array.from(brandSet).sort((a, b) => a.localeCompare(b));
+            populateBrandList(GEAR_BRANDS);
+        }).fail(function () {
+            console.error("Failed to load brands fallback");
+        });
+    }
 });
 
 $(document).on("click", "#pedal-category-button", function (e) {
@@ -86,6 +125,11 @@ function buildJSON() {
         ...( $("#knobs-style").val() ? { "knobs-style": $("#knobs-style").val() } : {} ),
         controls: []
     };
+
+    const selectedBrand = ($("#pedal-brand").val() || "").trim();
+    if (selectedBrand) {
+        pedal.brand = selectedBrand;
+    }
 
     // --- Category (multi-select) ---
     const categories = getSelectedCategories();
@@ -564,6 +608,7 @@ function syncUIFromJSON(pedal) {
 
     // --- Basic pedal info ---
     $("#pedal-id").val(pedal._id || "");
+    $("#pedal-brand").val(pedal.brand || "");
     $("#pedal-name").val(pedal.name || "");
     $("#pedal-logo").val(pedal.logo || "");
     $("#pedal-type").val(pedal.type || "pedal");

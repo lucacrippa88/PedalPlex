@@ -1044,7 +1044,7 @@
     "status": "missing",
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/alexander-space-force",
-    "brand": "Alexander",
+    "brand": "Alexander Pedals",
     "seo_description": "The Alexander Space Force is a powerful multi-algorithm reverb pedal designed for expansive ambient sound design. Featuring several reverb engines ranging from classic room and plate simulations to massive atmospheric textures, the Space Force allows players to build immersive soundscapes directly from their pedalboard. Advanced controls provide deep editing options for decay, modulation, tone, and spatial character, making the pedal suitable for ambient guitar, cinematic music, and experimental setups. Its flexible architecture allows musicians to move from subtle ambience to enormous evolving reverbs. Discover atmospheric reverb tones and creative ambient pedalboard setups with the Alexander Space Force on PedalPlex."
   },
   {
@@ -1148,7 +1148,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/analogman/beanoboost",
     "pedalplex_url": "https://www.pedalplex.com/gear/analogman-beano-boost",
-    "brand": "Analogman",
+    "brand": "Analog.Man",
     "seo_description": "The Analogman Beano Boost is a legendary germanium treble booster inspired by the classic circuits used in early British rock recordings. Designed to push tube amplifiers into rich harmonic overdrive, the pedal emphasizes upper frequencies while tightening low end response. Germanium transistors provide warm vintage character and strong dynamic interaction with the guitar\u2019s volume knob. The Beano Boost is widely associated with classic rock tones from the late 1960s and remains a favorite among vintage tone enthusiasts. Discover classic treble boost tones with the Analogman Beano Boost on PedalPlex."
   },
   {
@@ -1156,7 +1156,7 @@
     "status": "missing",
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/analogman-ds-1pro-with-mids",
-    "brand": "Analogman",
+    "brand": "Analog.Man",
     "seo_description": "The Analogman DS-1/Pro with Mids is a modified version of the classic distortion pedal designed to deliver improved clarity and stronger midrange presence. Analogman\u2019s modifications refine the gain structure and EQ response to create smoother distortion with better note definition. The added midrange control helps the guitar sit more effectively in a band mix. This upgraded circuit maintains the aggressive character of the original design while offering more musical tonal shaping. Discover refined distortion tones with the Analogman DS-1/Pro with Mids on PedalPlex."
   },
   {
@@ -1268,7 +1268,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/atomic/amplifirebox",
     "pedalplex_url": "https://www.pedalplex.com/gear/atomic-ampli-firebox-amp-modeling-cab-simulator",
-    "brand": "Atomic",
+    "brand": "Atomic Amps",
     "seo_description": "The Atomic Ampli-Firebox is a compact amp modeling and cabinet simulation pedal designed to deliver realistic amplifier tones without a traditional amp. Featuring advanced digital modeling technology, the pedal recreates the sound and response of classic amplifiers and speaker cabinets. It can be used for direct recording, silent practice, or live performance setups with FRFR systems. Discover modern amp modeling solutions with the Atomic Ampli-Firebox on PedalPlex."
   },
   {
@@ -3716,7 +3716,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/digitech/x/xmc",
     "pedalplex_url": "https://www.pedalplex.com/gear/digitech-bass-multi-chorus",
-    "brand": "Digitech",
+    "brand": "DigiTech",
     "seo_description": "Bass Multi Chorus provides rich, deep chorus tones specifically tailored for bass guitar, enhancing depth and stereo presence."
   },
   {
@@ -3724,7 +3724,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/reviews/digitech/drop",
     "pedalplex_url": "https://www.pedalplex.com/gear/digitech-the-drop-polyphonic-drop-tune",
-    "brand": "Digitech",
+    "brand": "DigiTech",
     "seo_description": "The Drop pedal enables instant polyphonic detuning, allowing guitarists to drop or raise pitch across all strings quickly and accurately."
   },
   {
@@ -3732,7 +3732,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/reviews/digitech/drop",
     "pedalplex_url": "https://www.pedalplex.com/gear/digitech-the-drop-polyphonic-drop-tune-limited-blackout-edition",
-    "brand": "Digitech",
+    "brand": "DigiTech",
     "seo_description": "This Limited Blackout Edition offers the same polyphonic tuning functionality with a sleek black aesthetic and enhanced circuitry."
   },
   {
@@ -4108,7 +4108,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/dunlop/crybaby/sc95",
     "pedalplex_url": "https://www.pedalplex.com/gear/dunlop-cry-baby-sw-95-slash-wah",
-    "brand": "DUNLOP",
+    "brand": "Dunlop",
     "seo_description": "The SW-95 Slash Cry Baby Wah offers the iconic Slash tone with expressive wah sweep, ideal for rock solos and lead lines."
   },
   {
@@ -4172,7 +4172,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/dunlop/crybaby/gcb95",
     "pedalplex_url": "https://www.pedalplex.com/gear/dunlop-gcb95-cry-baby-standard-wah",
-    "brand": "DUNLOP",
+    "brand": "Dunlop",
     "seo_description": "The GCB95 is the classic Cry Baby Wah pedal, delivering the standard wah effect with a smooth sweep and vintage tonal character."
   },
   {
@@ -5092,7 +5092,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/eh/nano/battalion",
     "pedalplex_url": "https://www.pedalplex.com/gear/ehx-battalion-nano",
-    "brand": "EHX",
+    "brand": "Electro-Harmonix",
     "seo_description": "Battalion Nano provides versatile overdrive with classic tonal warmth, responsive touch dynamics, and compact pedalboard-friendly design."
   },
   {
@@ -8580,7 +8580,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/mooer/micro/anaecho",
     "pedalplex_url": "https://www.pedalplex.com/gear/mooer-ana-echo-analog-delay",
-    "brand": "MOOER",
+    "brand": "Mooer",
     "seo_description": "The Mooer Ana Echo Analog Delay is a compact pedal designed to recreate the warm, natural repeats of classic analog delay units. Using bucket-brigade style circuitry, the pedal produces soft and musical echoes that gradually degrade over time, creating a vintage character favored by many guitarists. Controls for delay time, feedback, and level allow players to dial in everything from subtle slapback to atmospheric ambient repeats. The small enclosure makes the Ana Echo ideal for space-conscious pedalboards while still delivering rich analog tone. True bypass switching ensures signal integrity when the effect is disengaged. The Mooer Ana Echo is a popular choice for players seeking classic analog delay warmth in a miniature format."
   },
   {
@@ -12252,7 +12252,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/solarguitars/chug/eqboost",
     "pedalplex_url": "https://www.pedalplex.com/gear/solar-chug-eq-boost",
-    "brand": "Solar Chug",
+    "brand": "Solar Guitars",
     "seo_description": "EQ-Boost by Solar Chug provides precise tonal shaping with a clean boost, perfect for solos and stacking."
   },
   {
@@ -12260,7 +12260,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/solarguitars/chug",
     "pedalplex_url": "https://www.pedalplex.com/gear/solar-chug-high-gain-preamp-with-gate",
-    "brand": "Solar Chug",
+    "brand": "Solar Guitars",
     "seo_description": "High Gain Preamp with Gate delivers aggressive distortion tones with a built-in noise gate for tight, controlled sound."
   },
   {
@@ -12268,7 +12268,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/solarguitars/chug/lite",
     "pedalplex_url": "https://www.pedalplex.com/gear/solar-chug-lite-high-gain-distortion",
-    "brand": "Solar Chug",
+    "brand": "Solar Guitars",
     "seo_description": "Lite High Gain Distortion provides heavy, saturated tones in a compact and versatile pedal format."
   },
   {
@@ -12276,7 +12276,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/solarguitars/chug/tuner",
     "pedalplex_url": "https://www.pedalplex.com/gear/solar-chug-tuner-booster",
-    "brand": "Solar Chug",
+    "brand": "Solar Guitars",
     "seo_description": "Tuner+ Booster combines accurate tuning with a transparent clean boost for seamless performance."
   },
   {
@@ -14692,7 +14692,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/59sound",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-59-sound-vertical-overdrive",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "\u201959 Sound Vertical Overdrive provides vintage-inspired overdrive tones with smooth dynamics and harmonic richness."
   },
   {
@@ -14700,7 +14700,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/vexter/bom",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-box-of-metal-vexter-distortion",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Box of Metal Vexter delivers aggressive distortion with tight low-end and expressive high-gain tones."
   },
   {
@@ -14708,7 +14708,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/boxofrock",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-box-of-rock-overdrive",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Box of Rock delivers classic overdrive tones with warm harmonics and dynamic touch response."
   },
   {
@@ -14716,7 +14716,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/vexter/boxofrock",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-box-of-rock-vexter-overdrive",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Vexter edition of Box of Rock provides overdrive with enhanced tonal clarity and responsive dynamics."
   },
   {
@@ -14740,7 +14740,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/fuzzolo",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-fuzzolo-fuzz",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Fuzzolo delivers dynamic fuzz tones with touch-sensitive response and rich harmonic content."
   },
   {
@@ -14748,7 +14748,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/ringtone",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-ringtone-tt-modulator",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Ringtone TT Modulator creates dynamic, expressive modulation effects with analog warmth and unique tonal textures."
   },
   {
@@ -14764,7 +14764,7 @@
     "status": "missing",
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-silicon-fuzz-factory",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Silicon Fuzz Factory delivers interactive, high-gain fuzz with responsive touch, versatile tones, and wild sonic possibilities."
   },
   {
@@ -14772,7 +14772,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/sonar",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-sonar-tremolo",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Sonar Tremolo provides vintage-inspired analog tremolo with smooth depth and speed control for expressive rhythmic modulation."
   },
   {
@@ -14780,7 +14780,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/vexter/sonar",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-sonar-vexter-tremolo",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Vexter edition of Sonar Tremolo delivers compact, expressive analog tremolo with full depth and speed control."
   },
   {
@@ -14788,7 +14788,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/vexter/basstortion",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-vexter-basstortion-bass-distortion",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Basstortion delivers rich, high-gain bass distortion with deep lows, punchy mids, and harmonic clarity."
   },
   {
@@ -14796,7 +14796,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/vibrophase",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-vibrophase-vibratophaser",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Vibrophase combines vintage vibrato and phaser effects, offering dynamic modulation with analog warmth."
   },
   {
@@ -14804,7 +14804,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/woollymammoth/7",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-woolly-mammoth-7-distortion",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Woolly Mammoth 7 delivers thick, fuzz-heavy distortion with expressive gain control and rich harmonics."
   },
   {
@@ -14812,7 +14812,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/woolly-mammoth",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-woolly-mammoth-distortion",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Woolly Mammoth provides massive, fuzz-driven distortion with vintage tonal character and dynamic response."
   },
   {
@@ -14820,7 +14820,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/woollymammoth",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-woolly-mammoth-vexter-distortion",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "Vexter edition of Woolly Mammoth delivers compact, high-gain fuzz/distortion with thick harmonics and responsive touch."
   },
   {
@@ -14948,7 +14948,7 @@
     "status": "missing",
     "fxdb_url": null,
     "pedalplex_url": "https://www.pedalplex.com/gear/sonar-fx-atlantis-multimode-modulation",
-    "brand": "Sonar Fx",
+    "brand": "Sonar FX",
     "seo_description": "The Sonar Fx Atlantis - Multimode Modulation is a high-quality modulation pedal designed for musicians who need reliable, low-noise switching. It features true bypass technology and a robust build quality, making it an essential tool for live performance and studio recording."
   },
   {
@@ -15100,23 +15100,23 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/allpedal/devilstriad/essentials",
     "pedalplex_url": "https://www.pedalplex.com/gear/allpedal-devils-triad-overdrive-boost-essentials",
-    "brand": "All-Pedal",
-    "seo_description": "The AllPedal Devil's Triad Overdrive/Boost (Essentials) is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. Built by All-Pedal, it fits the overdrive, booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the AllPedal Devil's Triad Overdrive/Boost (Essentials) on PedalPlex."
+    "brand": "AllPedal",
+    "seo_description": "The AllPedal Devil's Triad Overdrive/Boost (Essentials) is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. Built by AllPedal, it fits the overdrive, booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the AllPedal Devil's Triad Overdrive/Boost (Essentials) on PedalPlex."
   },
   {
     "pedalplex_id": "AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/allpedal/devilstriad",
     "pedalplex_url": "https://www.pedalplex.com/gear/allpedal-devils-triad-overdrive-boost-reverb-delay",
-    "brand": "All-Pedal",
-    "seo_description": "The AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. Built by All-Pedal, it fits the overdrive, booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay on PedalPlex."
+    "brand": "AllPedal",
+    "seo_description": "The AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. Built by AllPedal, it fits the overdrive, booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay on PedalPlex."
   },
   {
     "pedalplex_id": "ZVEX Effects Super Duper 2 in 1 Booster",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/superduper",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-effects-super-duper-2-in-1-booster",
-    "brand": "ZVEX",
+    "brand": "ZVEX Effects",
     "seo_description": "The ZVEX Effects Super Duper 2 in 1 Booster is a boost pedal designed to raise level, push amplifiers, and add presence or gain to a signal chain. Built by ZVEX, it fits the booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the ZVEX Effects Super Duper 2 in 1 Booster on PedalPlex."
   },
   {
@@ -15204,7 +15204,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/vexter/doublerock",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-vexter-double-rock-distortion-boost",
-    "brand": "ZVEX",
+    "brand": "ZVEX Effects",
     "seo_description": "The Zvex Vexter Double Rock Distortion Boost is a distortion pedal designed for focused gain, strong sustain, and powerful rhythm or lead tones. Built by ZVEX, it fits the distortion, booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the Zvex Vexter Double Rock Distortion Boost on PedalPlex."
   },
   {
@@ -15324,7 +15324,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/vexter/boxofrock",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-box-of-rock-vertical-vexter-overdrive",
-    "brand": "ZVEX",
+    "brand": "ZVEX Effects",
     "seo_description": "The Zvex Box of Rock Vertical Vexter Overdrive is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. Built by ZVEX, it fits the overdrive category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the Zvex Box of Rock Vertical Vexter Overdrive on PedalPlex."
   },
   {
@@ -15412,16 +15412,16 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/analogman/peppermintfuzz",
     "pedalplex_url": "https://www.pedalplex.com/gear/analogman-peppermint-fuzz",
-    "brand": "Analog Man",
-    "seo_description": "The Analogman Peppermint Fuzz is a fuzz pedal designed for saturated textures, harmonic edge, and expressive gain tones. Built by Analog Man, it fits the fuzz category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the Analogman Peppermint Fuzz on PedalPlex."
+    "brand": "Analog.Man",
+    "seo_description": "The Analogman Peppermint Fuzz is a fuzz pedal designed for saturated textures, harmonic edge, and expressive gain tones. Built by Analog.Man, it fits the fuzz category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the Analogman Peppermint Fuzz on PedalPlex."
   },
   {
     "pedalplex_id": "Analogman Peppermint Fuzz Dark",
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/analogman/peppermintfuzz",
     "pedalplex_url": "https://www.pedalplex.com/gear/analogman-peppermint-fuzz-dark",
-    "brand": "Analog Man",
-    "seo_description": "The Analogman Peppermint Fuzz Dark is a fuzz pedal designed for saturated textures, harmonic edge, and expressive gain tones. Built by Analog Man, it fits the fuzz category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the Analogman Peppermint Fuzz Dark on PedalPlex."
+    "brand": "Analog.Man",
+    "seo_description": "The Analogman Peppermint Fuzz Dark is a fuzz pedal designed for saturated textures, harmonic edge, and expressive gain tones. Built by Analog.Man, it fits the fuzz category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the Analogman Peppermint Fuzz Dark on PedalPlex."
   },
   {
     "pedalplex_id": "Analogwise Pocket Rocket",
@@ -15508,7 +15508,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/zvex/machine",
     "pedalplex_url": "https://www.pedalplex.com/gear/zvex-machine-overdrive",
-    "brand": "Zvex",
+    "brand": "ZVEX Effects",
     "seo_description": "The ZVEX Machine Overdrive is a high-gain overdrive pedal that delivers a powerful, saturated tone with a unique, warm distortion. It features a simple control layout with a gain knob, a tone knob, and a footswitch for bypass, making it easy to dial in your desired sound. The pedal is built to last and is a favorite among guitarists looking for a reliable, high-gain overdrive effect."
   },
   {
@@ -15596,7 +15596,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/dod/carcosa",
     "pedalplex_url": "https://www.pedalplex.com/gear/digitech-dod-carcosa-fuzz",
-    "brand": "Digitech",
+    "brand": "DigiTech",
     "seo_description": "DOD Carcosa Fuzz is a highly versatile fuzz pedal known for its aggressive, gritty character and wide range of tones. It can deliver anything from sharp, sputtery fuzz to thick, saturated distortion, with strong note definition and plenty of harmonic texture. Its controls allow precise shaping of the fuzz character, brightness, and overall output, making it suitable for everything from garage rock and alternative to stoner, doom, and heavier styles."
   },
     {
@@ -15644,7 +15644,7 @@
     "status": "found",
     "fxdb_url": "https://www.effectsdatabase.com/model/anasounds/utopia",
     "pedalplex_url": "https://www.pedalplex.com/gear/anasound-dystopia",
-    "brand": "Anasound",
+    "brand": "Anasounds",
     "seo_description": "A versatile delay pedal designed to create rich, atmospheric echoes and rhythmic repeats. Ideal for adding depth, space, and texture to your sound, from subtle slapback and classic delay effects to expansive, experimental soundscapes."
   },
   {
@@ -15656,14 +15656,6 @@
     "seo_description": "The Alexander Pedals Riff is a limited-edition Class-A preamp boost designed to add character, warmth and presence to your guitar signal. Its three intuitive controls let you shape the output level, adjust high-frequency response and fine-tune the low-end content, ranging from a transparent, glassy boost to a fuller, more powerful sound. Featuring true-bypass switching, it can also push a tube amplifier into natural overdrive."
   },
   {
-    "pedalplex_id": "Arc Effects Shepherd",
-    "status": "missing",
-    "fxdb_url": null,
-    "pedalplex_url": "https://www.pedalplex.com/gear/arc-effects-sheperd",
-    "brand": "Arc Effects",
-    "seo_description": "The ARC Effects Shepherd is a boutique fuzz pedal inspired by the classic 1973 Electro-Harmonix Violet Ram’s Head Big Muff, with a more aggressive gain character. It delivers rich, sustaining fuzz tones while maintaining excellent note definition and pick responsiveness. An external three-position toggle switch offers different midrange voicings: scooped, flat and boosted, allowing players to tailor the sound from classic vintage fuzz to a more focused, cutting tone. It also features true-bypass switching and top-mounted connections."
-  },
-    {
     "pedalplex_id": "Arc Effects Shepherd",
     "status": "missing",
     "fxdb_url": null,

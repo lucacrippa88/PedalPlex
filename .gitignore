@@ -24,3 +24,6 @@ json/categories_backup_20261010_144249.json
 js/config.js
 public_gear.xlsx
 json/gear_pages.json
+__pycache__/update_brands_db.cpython-313.pyc
+update_brands_db.py
+json/brands_backup_20261121_143620.json

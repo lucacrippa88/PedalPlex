@@ -1472,6 +1472,12 @@ function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
   // ID
   $meta.append($('<div>').addClass('gear-meta-id').text(pedalId));
 
+  // Brand (più piccolo sotto il nome del pedale)
+  const brand = pedal.brand || '';
+  if (brand) {
+    $meta.append($('<div>').addClass('gear-meta-brand').text(brand));
+  }
+
   // Category tags inline (below ID, instead of type text)
   const categories = (pedal.category || '').split('/').map(c => c.trim()).filter(Boolean);
   if (categories.length) {

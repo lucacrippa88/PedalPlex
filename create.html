@@ -57,6 +57,9 @@
                 <div class="sec-body">
                     <div class="fields">
                         <label class="field wide">ID <input type="text" class="create-gear-input" id="pedal-id" autocomplete="off" placeholder="Insert unique gear ID (e.g. Boss Distortion DS-1)..."></label>
+                        <label class="field wide">Brand <input type="text" list="brand-list" class="create-gear-input" id="pedal-brand" autocomplete="off" placeholder="Select or type brand (e.g. Boss, Fender, Custom)...">
+                            <datalist id="brand-list"></datalist>
+                        </label>
                         <label class="field wide">Name <input type="text" class="create-gear-input" id="pedal-name" autocomplete="off" placeholder="Insert gear name to be displayed as logo..."></label>
                         <div class="lint wide" id="lint-name" aria-live="polite"></div>
                         <label class="field wide">Logo style <input type="text" class="create-gear-input" id="pedal-logo" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Set valid CSS to style the logo..."></label>

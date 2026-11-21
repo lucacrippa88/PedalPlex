@@ -2746,6 +2746,13 @@ html[data-theme="light"] body.gears-page .gear-card:hover { border-color: #9C54D
   line-height: 1.3;
 }
 
+.gear-meta-brand {
+  font-size: 0.75rem;
+  color: #8c8c8c;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
 .gear-meta-row {
   color: #a8a8a8;
   display: flex;
@@ -3067,6 +3074,7 @@ html[data-theme="light"] .fullscreen-nav hr { border-top-color: rgba(0,0,0,0.12)
 
 /* Light theme: gear catalog cards (name, meta, dividers, scrollbar) */
 html[data-theme="light"] .gear-meta-id { color: #161616; }
+html[data-theme="light"] .gear-meta-brand { color: #6f6f6f; }
 html[data-theme="light"] .gear-meta-row { color: #525252; }
 html[data-theme="light"] .gear-meta,
 html[data-theme="light"] .gear-footer { border-top-color: #d0d0d0; }
