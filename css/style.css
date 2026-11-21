@@ -3162,6 +3162,7 @@ html[data-theme="light"] .pedal { color: #fff; }
   border: 1px solid #393939;
   border-radius: 14px;
   box-sizing: border-box;
+  padding-top:20px;
 }
 /* SubPlex icon always visible on the gear page (no hover needed, works on touch too) */
 .gear-stage .preset-container { opacity: 1; pointer-events: auto; }
