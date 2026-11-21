@@ -375,8 +375,16 @@ function loadNextCatalogPage(extraParams = {}) {
   if (isSearchMode) {
     url = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
 
-    // query testo libero
-    let queryToSend = currentSearchQuery || "";
+    // query testo libero: se è impostato un brand e q è vuoto, usa il brand per cercare nell'indice testuale
+    let queryParts = [];
+    if (currentSearchQuery && currentSearchQuery.trim()) {
+      queryParts.push(currentSearchQuery.trim());
+    }
+    if (currentBrand && currentBrand !== "all") {
+      queryParts.push(currentBrand);
+    }
+    let queryToSend = queryParts.join(" ");
+
     params.push("q=" + encodeURIComponent(queryToSend));
     params.push("limit=100");
 
@@ -442,15 +450,22 @@ function loadNextCatalogPage(extraParams = {}) {
         if (!Array.isArray(data.docs) || data.docs.length === 0) {
           hasMore = false;
           if (sentinel) sentinel.remove();
+          const loaderEl = document.getElementById('catalog-loader');
+          if (loaderEl) loaderEl.remove();
+          if (catalogData.length === 0) {
+            const container = document.getElementById("catalog");
+            if (container) {
+              container.innerHTML = '<div style="width:100%; text-align:center; padding: 3rem 1rem; color: #888; font-size: 1.1rem;">No gear found.</div>';
+            }
+          }
           return;
         }
 
         catalogData = catalogData.concat(data.docs);
         searchBookmark = data.bookmark || null;
-        hasMore = !!searchBookmark; // se c'è bookmark, ci sono altri risultati
+        hasMore = !!searchBookmark && data.docs.length >= 100;
 
-        if (!searchBookmark) {
-          hasMore = false;
+        if (!hasMore) {
           if (sentinel) sentinel.remove();
         }
 
@@ -459,6 +474,14 @@ function loadNextCatalogPage(extraParams = {}) {
         if (!Array.isArray(data) || data.length === 0) {
           hasMore = false;
           if (sentinel) sentinel.remove();
+          const loaderEl = document.getElementById('catalog-loader');
+          if (loaderEl) loaderEl.remove();
+          if (catalogData.length === 0) {
+            const container = document.getElementById("catalog");
+            if (container) {
+              container.innerHTML = '<div style="width:100%; text-align:center; padding: 3rem 1rem; color: #888; font-size: 1.1rem;">No gear found.</div>';
+            }
+          }
           return;
         }
         catalogData = catalogData.concat(data);
