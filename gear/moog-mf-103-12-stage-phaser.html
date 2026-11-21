@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>MOOG MF-103 12 Stage Phaser – Controls, SubPlexes & Rig Builder | PedalPlex</title>
+  <title>Moog MF-103 12 Stage Phaser – Controls, SubPlexes &amp; Rig Builder | PedalPlex</title>
 
   <meta name="description" content="The Moog MF-103 12 Stage Phaser is a premium analog phaser pedal known for its lush modulation and extensive control options. Unlike typical phasers, the M">
   <meta name="robots" content="index,follow,max-image-preview:large">
@@ -15,7 +15,7 @@
 
   <!-- Open Graph -->
   <meta property="og:type" content="product">
-  <meta property="og:title" content="MOOG MF-103 12 Stage Phaser">
+  <meta property="og:title" content="Moog MF-103 12 Stage Phaser">
   <meta property="og:description" content="The Moog MF-103 12 Stage Phaser is a premium analog phaser pedal known for its lush modulation and extensive control options. Unlike typical phasers, the M">
   <meta property="og:url" content="https://pedalplex.com/gear/moog-mf-103-12-stage-phaser">
   <meta property="og:site_name" content="PedalPlex">
@@ -23,7 +23,7 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MOOG MF-103 12 Stage Phaser">
+  <meta name="twitter:title" content="Moog MF-103 12 Stage Phaser">
   <meta name="twitter:description" content="The Moog MF-103 12 Stage Phaser is a premium analog phaser pedal known for its lush modulation and extensive control options. Unlike typical phasers, the M">
   <meta name="twitter:image" content="https://pedalplex.com/img/pedals/moog-mf-103-12-stage-phaser.jpg">
 
@@ -49,16 +49,18 @@
   <!-- Global vars -->
   <script>
     window.PEDAL_ID = "MOOG MF-103 12 Stage Phaser";
-    window.FXDB_URL = "https://www.effectsdatabase.com/model/moog/moogerfooger/mf103";
     window.SUBPLEX_EDIT_MODE = false;
   </script>
+
+  <!-- Session (JWT read locally, never drops the user on a network error) -->
+  <script src="../js/static-auth.js"></script>
 
   <!-- Product Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Product",
-    "name": "MOOG MF-103 12 Stage Phaser",
+    "name": "Moog MF-103 12 Stage Phaser",
     "description": "The Moog MF-103 12 Stage Phaser is a premium analog phaser pedal known for its lush modulation and extensive control options. Unlike typical phasers, the M",
     "image": "https://pedalplex.com/img/pedals/moog-mf-103-12-stage-phaser.jpg",
     "sku": "MOOG_MF_103_12_STAGE_PHASER",
@@ -98,7 +100,7 @@
       {
         "@type": "ListItem",
         "position": 3,
-        "name": "MOOG MF-103 12 Stage Phaser",
+        "name": "Moog MF-103 12 Stage Phaser",
         "item": "https://pedalplex.com/gear/moog-mf-103-12-stage-phaser"
       }
     ]
@@ -124,11 +126,7 @@
 
 <body>
 
-  <div id="catalog">
-    <div class="gear-item" data-id="MOOG MF-103 12 Stage Phaser"></div>
-  </div>
-
-  <div id="page-content" style="padding-top:16px!important;">
+  <div id="page-content">
 
     <div id="pedalboard-controls" style="display:flex;align-items:center;gap:8px;width:100%;">
 
@@ -148,75 +146,40 @@
 
     </div>
 
-    <br>
-
-    <h1 id="gearName" style="text-align:center;font-size:2.1rem;font-weight:400">
-      MOOG MF-103 12 Stage Phaser
-    </h1>
-
-    <br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Controls & Settings
-    </h2>
-
-    <br><br>
-
-    <div id="preset-wrapper" style="position:relative;min-height:200px;">
-
-      <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
-        <div class="bx--loading" role="status">
-          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
-            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
-          </svg>
-        </div>
-      </div>
-
-      <div id="preset"></div>
-      <div id="results"></div>
-
-    </div>
-
-    <br><br>
-
-    <!-- <div style="text-align:center;">
-      <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
-        href="https://www.effectsdatabase.com/model/moog/moogerfooger/mf103" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-          style="width:32px;height:32px;object-fit:contain;" />
+    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <section class="gear-hero">
+      <div class="gear-hero-brand" id="gearBrand">Moog</div>
+      <h1 id="gearName">MF-103 12 Stage Phaser</h1>
+      <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">phaser</span></div>
+      <p class="gear-hero-desc" id="gearDesc">The Moog MF-103 12 Stage Phaser is a premium analog phaser pedal known for its lush modulation and extensive control options. Unlike typical phasers, the MF-103 offers selectable 6-stage and 12-stage phasing, allowing players to choose between subtle movement and deep swirling textures. Built-in LFO modulation provides adjustable rate and depth, while resonance and sweep controls enable dramatic filter sweeps. The pedal also supports external control via expression pedals and control voltage inputs, making it highly versatile for experimental setups. With its warm analog circuitry and Moog ladder filter design elements, the MF-103 produces rich and musical phasing effects ideal for guitar, bass, and synthesizers.</p>
+      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/moog/moogerfooger/mf103" target="_blank" rel="noopener noreferrer">
+        <img src="../logos/fxdb_icon.png" alt="" />
+        <span>Open in Effects Database</span>
       </a>
-    </div> -->
-    <div style="text-align:center;" id="fxdb-wrapper">
-    <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
-        href="https://www.effectsdatabase.com/model/moog/moogerfooger/mf103" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-        style="width:32px;height:32px;object-fit:contain;" />
-    </a>
-    </div>
+    </section>
 
-    <div id="admin-gear-stats" style="display:none;text-align:center;margin:24px 0 0;opacity:0.55;font-size:0.82em;letter-spacing:0.03em;"></div>
+    <!-- STAGE: the gear with its controls and the SubPlex menu -->
+    <section class="gear-stage">
+      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
+
+      <div id="preset-wrapper" style="position:relative;min-height:200px;">
+
+        <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
+          <div class="bx--loading" role="status">
+            <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+              <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+              <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <div id="preset"></div>
+        <div id="results"></div>
+
+      </div>
+    </section>
 
     <br><br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Gear Description & Specs
-    </h2>
-
-    <br>
-
-    <p style="max-width:70%;margin:auto;text-align:center;">
-      The Moog MF-103 12 Stage Phaser is a premium analog phaser pedal known for its lush modulation and extensive control options. Unlike typical phasers, the MF-103 offers selectable 6-stage and 12-stage phasing, allowing players to choose between subtle movement and deep swirling textures. Built-in LFO modulation provides adjustable rate and depth, while resonance and sweep controls enable dramatic filter sweeps. The pedal also supports external control via expression pedals and control voltage inputs, making it highly versatile for experimental setups. With its warm analog circuitry and Moog ladder filter design elements, the MF-103 produces rich and musical phasing effects ideal for guitar, bass, and synthesizers.
-
-      <br><br>
-
-      <span style="font-size:12px" class="bx--tag bx--tag--purple">Moog</span>
-      <span id="gear-category-tags"></span>
-    </p>
 
     <!-- APP SCRIPTS -->
     <script defer src="../js/labels.js"></script>
@@ -238,30 +201,6 @@
       // Show page
       const page = document.getElementById('page-content');
       if (page) page.style.display = 'block';
-
-      // Auth (fetch instead of jQuery)
-      const token = localStorage.getItem('authToken');
-
-      function startAppAs(role, userInfo = {}) {
-        window.currentUser = Object.assign({ role }, userInfo);
-        if (typeof initNavCatalog === 'function') {
-          initNavCatalog(role);
-        }
-      }
-
-      if (!token) {
-        startAppAs('guest');
-      } else {
-        fetch('https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        })
-        .then(res => res.json())
-        .then(user => startAppAs(user.role, user))
-        .catch(() => {
-          localStorage.removeItem('authToken');
-          startAppAs('guest');
-        });
-      }
 
       // Spinner logic (robust)
       const preset = document.getElementById("preset");

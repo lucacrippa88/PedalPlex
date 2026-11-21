@@ -736,10 +736,10 @@ html { box-sizing: content-box !important; }
   box-shadow:
     calc(4px * var(--knob-rs, 0) * var(--knob-d, 1)) calc(4px * var(--knob-rc, 1) * var(--knob-d, 1)) calc(8px * var(--knob-d, 1)) rgba(0, 0, 0, 0.45),
     calc(1px * var(--knob-rs, 0) * var(--knob-d, 1)) calc(1px * var(--knob-rc, 1) * var(--knob-d, 1)) 3px rgba(0, 0, 0, 0.3),
-    inset calc(1.5px * var(--knob-rs, 0)) calc(1.5px * var(--knob-rc, 1)) 2px rgba(255, 255, 255, 0.35),
-    inset calc(-2px * var(--knob-rs, 0)) calc(-2px * var(--knob-rc, 1)) 3px rgba(0, 0, 0, 0.25);
+    inset calc(1px * var(--knob-rs, 0)) calc(1px * var(--knob-rc, 1)) 2px rgba(255, 255, 255, 0.1),
+    inset calc(-1px * var(--knob-rs, 0)) calc(-1px * var(--knob-rc, 1)) 2px rgba(0, 0, 0, 0.07);
 }
-.knob-active { --knob-d: 0.5; }
+.knob-active { --knob-d: 0.8; }
 .smallknob  { width: 26px; height: 26px; margin-bottom: 4px; }
 .largeknob  { width: 52px; height: 52px; margin-bottom: 4px; }
 .largerknob { width: 63px; height: 63px; margin-bottom: 4px; }
@@ -3120,3 +3120,91 @@ html[data-theme="light"] .pp-onboarding__step--done .pp-onboarding__text { text-
    ============================================================ */
 html[data-theme="light"] .pedal-catalog,
 html[data-theme="light"] .pedal { color: #fff; }
+
+
+/* ============================================================
+   GEAR PAGE (static /gear/<slug>.html): hero + stage
+   ============================================================ */
+.gear-hero[hidden], .gear-hero [hidden] { display: none !important; }
+
+.gear-hero {
+  max-width: 860px;
+  margin: 12px auto 0;
+  padding: 36px 28px 32px;
+  text-align: center;
+  background: #262626;
+  border: 1px solid #393939;
+  border-radius: 14px;
+  box-sizing: border-box;
+}
+.gear-hero-brand {
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #b88ae6;
+  margin-bottom: 8px;
+}
+.gear-hero h1#gearName {
+  margin: 0;
+  font-size: clamp(1.9rem, 5vw, 2.8rem);
+  font-weight: 600;
+  line-height: 1.15;
+  color: #f4f4f4;
+}
+.gear-hero-tags { margin: 16px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.gear-hero-tags:empty { display: none; }
+.gear-hero-tags .bx--tag { margin: 0; font-size: .75rem; }
+.gear-hero-desc {
+  max-width: 68ch;
+  margin: 22px auto 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #c6c6c6;
+  text-align: center;
+}
+.gear-hero-fxdb {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+  padding: 10px 20px 10px 14px;
+  border: 1px solid #659BCD;
+  border-radius: 999px;
+  color: #8fbbe6;
+  font-size: .9rem;
+  text-decoration: none;
+  transition: background .15s ease, color .15s ease;
+}
+.gear-hero-fxdb:hover { background: #659BCD; color: #fff; }
+.gear-hero-fxdb img { width: 24px; height: 24px; object-fit: contain; }
+
+.gear-stage {
+  max-width: 1000px;
+  margin: 24px auto 0;
+  padding: 18px 12px 28px;
+  background: #262626;
+  border: 1px solid #393939;
+  border-radius: 14px;
+  box-sizing: border-box;
+}
+.gear-stage-label {
+  text-align: center;
+  font-size: .75rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #8d8d8d;
+}
+/* SubPlex icon always visible on the gear page (no hover needed, works on touch too) */
+.gear-stage .preset-container { opacity: 1; pointer-events: auto; }
+.gear-stage #preset-wrapper { top: 0 !important; margin-top: 56px; }
+.gear-stage #preset > div { justify-content: center; }
+
+html[data-theme="light"] .gear-hero,
+html[data-theme="light"] .gear-stage { background: #ffffff; border-color: #e0e0e0; }
+html[data-theme="light"] .gear-hero-brand { color: #8a3ffc; }
+html[data-theme="light"] .gear-hero h1#gearName { color: #161616; }
+html[data-theme="light"] .gear-hero-desc { color: #525252; }
+html[data-theme="light"] .gear-hero-fxdb { color: #0f62fe; border-color: #78a9ff; }
+html[data-theme="light"] .gear-hero-fxdb:hover { background: #0f62fe; color: #fff; }
+html[data-theme="light"] .gear-stage-label { color: #6f6f6f; }

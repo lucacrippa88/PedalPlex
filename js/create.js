@@ -102,6 +102,9 @@ function normalizeStyleAttributeQuotes(value) {
 
 
 // Builder logic
+// affiliate_links of the gear being edited (admin-only field: other keys are preserved when saving)
+let loadedAffiliateLinks = {};
+
 function buildJSON() {
     if (isSyncing) return lastValidation; // Skip rebuild during JSON sync
 
@@ -134,6 +137,19 @@ function buildJSON() {
     const gearName = ($("#pedal-gear-name").val() || "").trim();
     if (gearName) {
         pedal.gearName = gearName;
+    }
+
+    const description = ($("#pedal-description").val() || "").trim();
+    if (description) {
+        pedal.description = description;
+    }
+
+    // affiliate_links: admin only (the backend ignores it for everybody else)
+    if ((parent?.window?.currentUser?.role || '').toLowerCase() === 'admin') {
+        const links = Object.assign({}, loadedAffiliateLinks);
+        const fxdb = ($("#pedal-fxdb").val() || "").trim();
+        if (fxdb) links.fxdb = fxdb; else delete links.fxdb;
+        pedal.affiliate_links = links;
     }
 
     // --- Category (multi-select) ---
@@ -618,6 +634,9 @@ function syncUIFromJSON(pedal) {
     $("#pedal-id").val(pedal._id || "");
     $("#pedal-brand").val(pedal.brand || "");
     $("#pedal-gear-name").val(pedal.gearName || "");
+    $("#pedal-description").val(pedal.description || "");
+    loadedAffiliateLinks = (pedal.affiliate_links && typeof pedal.affiliate_links === 'object') ? Object.assign({}, pedal.affiliate_links) : {};
+    $("#pedal-fxdb").val(loadedAffiliateLinks.fxdb || "");
     $("#pedal-name").val(pedal.name || "");
     $("#pedal-logo").val(pedal.logo || "");
     $("#pedal-type").val(pedal.type || "pedal");

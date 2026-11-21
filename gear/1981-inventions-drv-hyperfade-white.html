@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>1981 Inventions DRV (Hyperfade white) – Controls, SubPlexes & Rig Builder | PedalPlex</title>
+  <title>1981 Inventions DRV (Hyperfade white) – Controls, SubPlexes &amp; Rig Builder | PedalPlex</title>
 
   <meta name="description" content="The 1981 Inventions DRV (Hyperfade White) is a special finish version of the acclaimed DRV distortion pedal, known for its articulate gain and refined take">
   <meta name="robots" content="index,follow,max-image-preview:large">
@@ -49,9 +49,11 @@
   <!-- Global vars -->
   <script>
     window.PEDAL_ID = "1981 Inventions DRV (Hyperfade white)";
-    window.FXDB_URL = "";
     window.SUBPLEX_EDIT_MODE = false;
   </script>
+
+  <!-- Session (JWT read locally, never drops the user on a network error) -->
+  <script src="../js/static-auth.js"></script>
 
   <!-- Product Schema -->
   <script type="application/ld+json">
@@ -67,7 +69,7 @@
       "name": "1981 Inventions"
     },
     "url": "https://pedalplex.com/gear/1981-inventions-drv-hyperfade-white",
-    "sameAs": "",
+    "sameAs": "https://www.effectsdatabase.com/model/1981inventions/drv",
     "isRelatedTo": {
       "@type": "SoftwareApplication",
       "name": "PedalPlex",
@@ -124,11 +126,7 @@
 
 <body>
 
-  <div id="catalog">
-    <div class="gear-item" data-id="1981 Inventions DRV (Hyperfade white)"></div>
-  </div>
-
-  <div id="page-content" style="padding-top:16px!important;">
+  <div id="page-content">
 
     <div id="pedalboard-controls" style="display:flex;align-items:center;gap:8px;width:100%;">
 
@@ -148,75 +146,40 @@
 
     </div>
 
-    <br>
-
-    <h1 id="gearName" style="text-align:center;font-size:2.1rem;font-weight:400">
-      1981 Inventions DRV (Hyperfade white)
-    </h1>
-
-    <br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Controls & Settings
-    </h2>
-
-    <br><br>
-
-    <div id="preset-wrapper" style="position:relative;min-height:200px;">
-
-      <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
-        <div class="bx--loading" role="status">
-          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
-            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
-          </svg>
-        </div>
-      </div>
-
-      <div id="preset"></div>
-      <div id="results"></div>
-
-    </div>
-
-    <br><br>
-
-    <!-- <div style="text-align:center;">
-      <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
-        href="" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-          style="width:32px;height:32px;object-fit:contain;" />
+    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <section class="gear-hero">
+      <div class="gear-hero-brand" id="gearBrand">1981 Inventions</div>
+      <h1 id="gearName">DRV (Hyperfade white)</h1>
+      <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">distortion</span></div>
+      <p class="gear-hero-desc" id="gearDesc">The 1981 Inventions DRV (Hyperfade White) is a special finish version of the acclaimed DRV distortion pedal, known for its articulate gain and refined take on the classic RAT-style circuit. Delivering everything from gritty drive to full-bodied distortion, the DRV is designed to retain clarity and punch even at higher gain settings. The three-knob interface—Volume, Tone, and Drive—offers precise control over output level, brightness, and saturation. Players value the DRV for its tight low end, smooth clipping character, and the way it preserves the character of the guitar and amplifier. Whether used as a main distortion or stacked with boosts and overdrives, it maintains excellent note definition and dynamic response. The Hyperfade White finish adds a distinctive aesthetic to an already sought-after boutique pedal. Explore tones, settings, and pedalboard combinations for the 1981 Inventions DRV on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/1981inventions/drv" target="_blank" rel="noopener noreferrer">
+        <img src="../logos/fxdb_icon.png" alt="" />
+        <span>Open in Effects Database</span>
       </a>
-    </div> -->
-    <div style="display:none;" id="fxdb-wrapper">
-    <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
-        href="" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-        style="width:32px;height:32px;object-fit:contain;" />
-    </a>
-    </div>
+    </section>
 
-    <div id="admin-gear-stats" style="display:none;text-align:center;margin:24px 0 0;opacity:0.55;font-size:0.82em;letter-spacing:0.03em;"></div>
+    <!-- STAGE: the gear with its controls and the SubPlex menu -->
+    <section class="gear-stage">
+      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
+
+      <div id="preset-wrapper" style="position:relative;min-height:200px;">
+
+        <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
+          <div class="bx--loading" role="status">
+            <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+              <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+              <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <div id="preset"></div>
+        <div id="results"></div>
+
+      </div>
+    </section>
 
     <br><br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Gear Description & Specs
-    </h2>
-
-    <br>
-
-    <p style="max-width:70%;margin:auto;text-align:center;">
-      The 1981 Inventions DRV (Hyperfade White) is a special finish version of the acclaimed DRV distortion pedal, known for its articulate gain and refined take on the classic RAT-style circuit. Delivering everything from gritty drive to full-bodied distortion, the DRV is designed to retain clarity and punch even at higher gain settings. The three-knob interface—Volume, Tone, and Drive—offers precise control over output level, brightness, and saturation. Players value the DRV for its tight low end, smooth clipping character, and the way it preserves the character of the guitar and amplifier. Whether used as a main distortion or stacked with boosts and overdrives, it maintains excellent note definition and dynamic response. The Hyperfade White finish adds a distinctive aesthetic to an already sought-after boutique pedal. Explore tones, settings, and pedalboard combinations for the 1981 Inventions DRV on PedalPlex.
-
-      <br><br>
-
-      <span style="font-size:12px" class="bx--tag bx--tag--purple">1981 Inventions</span>
-      <span id="gear-category-tags"></span>
-    </p>
 
     <!-- APP SCRIPTS -->
     <script defer src="../js/labels.js"></script>
@@ -238,30 +201,6 @@
       // Show page
       const page = document.getElementById('page-content');
       if (page) page.style.display = 'block';
-
-      // Auth (fetch instead of jQuery)
-      const token = localStorage.getItem('authToken');
-
-      function startAppAs(role, userInfo = {}) {
-        window.currentUser = Object.assign({ role }, userInfo);
-        if (typeof initNavCatalog === 'function') {
-          initNavCatalog(role);
-        }
-      }
-
-      if (!token) {
-        startAppAs('guest');
-      } else {
-        fetch('https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        })
-        .then(res => res.json())
-        .then(user => startAppAs(user.role, user))
-        .catch(() => {
-          localStorage.removeItem('authToken');
-          startAppAs('guest');
-        });
-      }
 
       // Spinner logic (robust)
       const preset = document.getElementById("preset");

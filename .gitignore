@@ -35,3 +35,8 @@ update_gearname_db.py
 json/gearname_backup_*.json
 json/gearname_unresolved.json
 json/deleted_gears_*.json
+
+# description / affiliate_links migration: script + backup generati
+update_description_db.py
+json/description_backup_*.json
+json/mapping_backup_*.json

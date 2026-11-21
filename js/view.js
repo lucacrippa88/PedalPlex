@@ -104,34 +104,6 @@ function renderBackToCatalogButton() {
     resultsDiv.textContent = 'Pedal ID missing';
     return;
   }
-  let urlFXDB;
-
-if (window.FXDB_URL) {
-
-  // usa il link diretto se definito nella pagina statica
-  urlFXDB = window.FXDB_URL;
-
-} else {
-
-  // fallback: search su EffectsDatabase
-  const fxdbSearch = pedalId
-    .normalize('NFKD')
-    .replace(/[^\w\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '+');
-
-    urlFXDB = `https://www.effectsdatabase.com/search?search=${fxdbSearch}&op=Search`;
-
-  }
-
-  const fxdbButton = document.querySelector('.js-openFXDB');
-
-  if (fxdbButton) {
-    fxdbButton.href = urlFXDB;
-    fxdbButton.target = '_blank';
-    fxdbButton.rel = 'noopener noreferrer';
-  }
-
 
   async function fetchPedals(ids) {
 
@@ -183,8 +155,7 @@ if (window.FXDB_URL) {
     pedals: [{
       pedal_id: pedalId,
       row: 1,
-      rotation: 0,
-      subplex: pedal.subplex || []
+      rotation: 0
     }]
   };
 
@@ -201,11 +172,11 @@ if (!window.catalogMap || !window.catalogMap[pedalId]) {
 }
 // ==============================================
 
-  /* ================= CATEGORY (from DB) ================= */
+  /* ================= HERO (live refresh from the DB; the page already carries the same data statically) ================= */
   const categories = (pedal.category || '').split('/').map(c => c.trim()).filter(Boolean);
   let $catTags = $('#gear-category-tags');
   if (!$catTags.length) {
-    // pages generated before the dynamic category: replace hardcoded tags
+    // pages without the hero container (e.g. 404): replace hardcoded tags
     const $old = $('.bx--tag--teal');
     $catTags = $('<span id="gear-category-tags"></span>');
     if ($old.length) $old.first().before($catTags); else $('.bx--tag--purple').first().after($catTags);
@@ -213,8 +184,27 @@ if (!window.catalogMap || !window.catalogMap[pedalId]) {
   }
   $catTags.empty();
   categories.forEach(c => {
-    $catTags.append(' ', $('<span style="font-size:12px" class="bx--tag bx--tag--teal"></span>').text(c));
+    $catTags.append($('<span style="font-size:12px" class="bx--tag bx--tag--teal"></span>').text(c));
   });
+
+  const $brand = $('#gearBrand');
+  if ($brand.length) {
+    // hero layout: brand on top, gear name as title
+    $brand.text(pedal.brand || '').prop('hidden', !pedal.brand);
+    $('#gearName').text(gearShortName(pedal));
+  } else {
+    $('#gearName').text(gearLabel(pedal));
+  }
+
+  const $desc = $('#gearDesc');
+  if ($desc.length && pedal.description) $desc.text(pedal.description).prop('hidden', false);
+
+  // Effects Database link: shown only when the gear has one (affiliate_links.fxdb)
+  const fxdbUrl = pedal.affiliate_links && typeof pedal.affiliate_links.fxdb === 'string' ? pedal.affiliate_links.fxdb : '';
+  const $fxdb = $('.js-openFXDB');
+  if (/^https?:\/\//i.test(fxdbUrl)) {
+    $fxdb.attr({ href: fxdbUrl, target: '_blank', rel: 'noopener noreferrer' }).prop('hidden', false);
+  }
 
   // Product schema: set category for crawlers that execute JS
   $('script[type="application/ld+json"]').each(function () {
@@ -227,57 +217,14 @@ if (!window.catalogMap || !window.catalogMap[pedalId]) {
   });
 
   /* ================= RENDER ================= */
+  // renderFullPedalboard builds the gear together with its SubPlex dropdown (.preset-container)
   try {
-    $("#gearName").text(gearLabel(pedal));
-    const role = window.currentUser?.role || (token ? 'user' : 'guest');
-    const $pedalDiv = renderPedal(pedal, role, false);
-    const $card = wrapGearCard(pedal, $pedalDiv, role, { hideDetails: true, hideEdit: true });
-    $('#preset').empty().append($card);
+    await renderFullPedalboard(fakeBoard);
+    // renderFullPedalboard always shows Reset: hide it until a SubPlex is applied
+    $('.pedal-catalog').each(function () { updateSubplexButtonsUI($(this)); });
     $('#presetSpinner').hide();
   } catch (err) {
-    // console.error('[TEST-PLEX] Render error:', err);
     resultsDiv.textContent = 'Errore nel render: ' + err.message;
-  }
-
-  /* ================= ADMIN STATS ================= */
-  // Only for admin. currentUser is set asynchronously by the auth fetch in the page,
-  // so we poll briefly until it resolves before deciding whether to call the API.
-  if (token) {
-    const checkAdmin = (attempts) => {
-      if (window.currentUser) {
-        if (window.currentUser.role === 'admin') {
-          // Build the stats div in JS so it works on all existing static pages
-          // without needing to regenerate them. Insert between preset-wrapper and fxdb-wrapper.
-          const $statsDiv = $('<div>')
-            .attr('id', 'admin-gear-stats')
-            .css({ textAlign: 'center', margin: '16px 0', opacity: '0.55', fontSize: '0.82em', letterSpacing: '0.03em' })
-            .text('…');
-          const $fxdb = $('#fxdb-wrapper');
-          const $preset = $('#preset-wrapper');
-          if ($fxdb.length) {
-            $statsDiv.insertBefore($fxdb);
-          } else if ($preset.length) {
-            $statsDiv.insertAfter($preset);
-          } else {
-            $('#preset').append($statsDiv);
-          }
-
-          fetch(
-            'https://api.pedalplex.com/GET_GEAR_ADMIN_STATS.php?pedalId=' + encodeURIComponent(pedalId),
-            { headers: { Authorization: 'Bearer ' + token } }
-          )
-            .then(r => r.ok ? r.json() : null)
-            .then(d => {
-              if (!d || d.plexes === undefined) { $statsDiv.remove(); return; }
-              $statsDiv.text(`P:${d.plexes}  S:${d.subplexes}  R:${d.rigs}`);
-            })
-            .catch(() => { $statsDiv.remove(); });
-        }
-        return;
-      }
-      if (attempts > 0) setTimeout(() => checkAdmin(attempts - 1), 200);
-    };
-    checkAdmin(15); // up to ~3s wait
   }
 
 })();

@@ -28,6 +28,9 @@
     window.SUBPLEX_EDIT_MODE = false;
   </script>
 
+  <!-- Session (JWT read locally, never drops the user on a network error) -->
+  <script src="js/static-auth.js"></script>
+
 </head>
 
 <body>
@@ -114,30 +117,6 @@
       // Show page
       const page = document.getElementById('page-content');
       if (page) page.style.display = 'block';
-
-      // Auth (fetch instead of jQuery)
-      const token = localStorage.getItem('authToken');
-
-      function startAppAs(role, userInfo = {}) {
-        window.currentUser = Object.assign({ role }, userInfo);
-        if (typeof initNavCatalog === 'function') {
-          initNavCatalog(role);
-        }
-      }
-
-      if (!token) {
-        startAppAs('guest');
-      } else {
-        fetch('https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        })
-        .then(res => res.json())
-        .then(user => startAppAs(user.role, user))
-        .catch(() => {
-          localStorage.removeItem('authToken');
-          startAppAs('guest');
-        });
-      }
 
       // Spinner logic (robust)
       const preset = document.getElementById("preset");

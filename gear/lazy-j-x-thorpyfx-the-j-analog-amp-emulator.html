@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>LAZY J x ThorpyFx THE J Analog Amp Emulator – Controls, SubPlexes & Rig Builder | PedalPlex</title>
+  <title>ThorpyFx THE J Analog Amp Emulator – Controls, SubPlexes &amp; Rig Builder | PedalPlex</title>
 
   <meta name="description" content="The LAZY J x ThorpyFx THE J Analog Amp Emulator is a high-end analog preamp pedal designed to replicate the feel and tone of classic tube amplifiers. Devel">
   <meta name="robots" content="index,follow,max-image-preview:large">
@@ -15,7 +15,7 @@
 
   <!-- Open Graph -->
   <meta property="og:type" content="product">
-  <meta property="og:title" content="LAZY J x ThorpyFx THE J Analog Amp Emulator">
+  <meta property="og:title" content="ThorpyFx THE J Analog Amp Emulator">
   <meta property="og:description" content="The LAZY J x ThorpyFx THE J Analog Amp Emulator is a high-end analog preamp pedal designed to replicate the feel and tone of classic tube amplifiers. Devel">
   <meta property="og:url" content="https://pedalplex.com/gear/lazy-j-x-thorpyfx-the-j-analog-amp-emulator">
   <meta property="og:site_name" content="PedalPlex">
@@ -23,7 +23,7 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="LAZY J x ThorpyFx THE J Analog Amp Emulator">
+  <meta name="twitter:title" content="ThorpyFx THE J Analog Amp Emulator">
   <meta name="twitter:description" content="The LAZY J x ThorpyFx THE J Analog Amp Emulator is a high-end analog preamp pedal designed to replicate the feel and tone of classic tube amplifiers. Devel">
   <meta name="twitter:image" content="https://pedalplex.com/img/pedals/lazy-j-x-thorpyfx-the-j-analog-amp-emulator.jpg">
 
@@ -49,16 +49,18 @@
   <!-- Global vars -->
   <script>
     window.PEDAL_ID = "LAZY J x ThorpyFx THE J Analog Amp Emulator";
-    window.FXDB_URL = "https://www.effectsdatabase.com/model/thorpyfx/thej";
     window.SUBPLEX_EDIT_MODE = false;
   </script>
+
+  <!-- Session (JWT read locally, never drops the user on a network error) -->
+  <script src="../js/static-auth.js"></script>
 
   <!-- Product Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Product",
-    "name": "LAZY J x ThorpyFx THE J Analog Amp Emulator",
+    "name": "ThorpyFx THE J Analog Amp Emulator",
     "description": "The LAZY J x ThorpyFx THE J Analog Amp Emulator is a high-end analog preamp pedal designed to replicate the feel and tone of classic tube amplifiers. Devel",
     "image": "https://pedalplex.com/img/pedals/lazy-j-x-thorpyfx-the-j-analog-amp-emulator.jpg",
     "sku": "LAZY_J_X_THORPYFX_THE_J_ANALOG_AMP_EMULATOR",
@@ -98,7 +100,7 @@
       {
         "@type": "ListItem",
         "position": 3,
-        "name": "LAZY J x ThorpyFx THE J Analog Amp Emulator",
+        "name": "ThorpyFx THE J Analog Amp Emulator",
         "item": "https://pedalplex.com/gear/lazy-j-x-thorpyfx-the-j-analog-amp-emulator"
       }
     ]
@@ -124,11 +126,7 @@
 
 <body>
 
-  <div id="catalog">
-    <div class="gear-item" data-id="LAZY J x ThorpyFx THE J Analog Amp Emulator"></div>
-  </div>
-
-  <div id="page-content" style="padding-top:16px!important;">
+  <div id="page-content">
 
     <div id="pedalboard-controls" style="display:flex;align-items:center;gap:8px;width:100%;">
 
@@ -148,75 +146,40 @@
 
     </div>
 
-    <br>
-
-    <h1 id="gearName" style="text-align:center;font-size:2.1rem;font-weight:400">
-      LAZY J x ThorpyFx THE J Analog Amp Emulator
-    </h1>
-
-    <br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Controls & Settings
-    </h2>
-
-    <br><br>
-
-    <div id="preset-wrapper" style="position:relative;min-height:200px;">
-
-      <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
-        <div class="bx--loading" role="status">
-          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
-            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
-          </svg>
-        </div>
-      </div>
-
-      <div id="preset"></div>
-      <div id="results"></div>
-
-    </div>
-
-    <br><br>
-
-    <!-- <div style="text-align:center;">
-      <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
-        href="https://www.effectsdatabase.com/model/thorpyfx/thej" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-          style="width:32px;height:32px;object-fit:contain;" />
+    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <section class="gear-hero">
+      <div class="gear-hero-brand" id="gearBrand">ThorpyFx</div>
+      <h1 id="gearName">THE J Analog Amp Emulator</h1>
+      <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">preamp</span></div>
+      <p class="gear-hero-desc" id="gearDesc">The LAZY J x ThorpyFx THE J Analog Amp Emulator is a high-end analog preamp pedal designed to replicate the feel and tone of classic tube amplifiers. Developed as a collaboration between Lazy J Amps and ThorpyFX, the pedal delivers rich harmonic saturation, responsive dynamics, and authentic amp-like breakup. Instead of relying on digital modeling, THE J uses carefully engineered analog circuitry to recreate the touch sensitivity and warmth of vintage amplifiers. Controls allow players to shape gain, EQ, and output levels for a wide range of tones, from clean boost to full overdrive. The pedal works equally well as a standalone amp emulator, a studio tone-shaping tool, or as a front-end preamp pushing a traditional guitar amplifier. Built with premium components and rugged construction, THE J is designed for professional musicians seeking authentic amplifier tone in a pedal format.</p>
+      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/thorpyfx/thej" target="_blank" rel="noopener noreferrer">
+        <img src="../logos/fxdb_icon.png" alt="" />
+        <span>Open in Effects Database</span>
       </a>
-    </div> -->
-    <div style="text-align:center;" id="fxdb-wrapper">
-    <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
-        href="https://www.effectsdatabase.com/model/thorpyfx/thej" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-        style="width:32px;height:32px;object-fit:contain;" />
-    </a>
-    </div>
+    </section>
 
-    <div id="admin-gear-stats" style="display:none;text-align:center;margin:24px 0 0;opacity:0.55;font-size:0.82em;letter-spacing:0.03em;"></div>
+    <!-- STAGE: the gear with its controls and the SubPlex menu -->
+    <section class="gear-stage">
+      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
+
+      <div id="preset-wrapper" style="position:relative;min-height:200px;">
+
+        <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
+          <div class="bx--loading" role="status">
+            <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+              <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+              <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <div id="preset"></div>
+        <div id="results"></div>
+
+      </div>
+    </section>
 
     <br><br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Gear Description & Specs
-    </h2>
-
-    <br>
-
-    <p style="max-width:70%;margin:auto;text-align:center;">
-      The LAZY J x ThorpyFx THE J Analog Amp Emulator is a high-end analog preamp pedal designed to replicate the feel and tone of classic tube amplifiers. Developed as a collaboration between Lazy J Amps and ThorpyFX, the pedal delivers rich harmonic saturation, responsive dynamics, and authentic amp-like breakup. Instead of relying on digital modeling, THE J uses carefully engineered analog circuitry to recreate the touch sensitivity and warmth of vintage amplifiers. Controls allow players to shape gain, EQ, and output levels for a wide range of tones, from clean boost to full overdrive. The pedal works equally well as a standalone amp emulator, a studio tone-shaping tool, or as a front-end preamp pushing a traditional guitar amplifier. Built with premium components and rugged construction, THE J is designed for professional musicians seeking authentic amplifier tone in a pedal format.
-
-      <br><br>
-
-      <span style="font-size:12px" class="bx--tag bx--tag--purple">ThorpyFx</span>
-      <span id="gear-category-tags"></span>
-    </p>
 
     <!-- APP SCRIPTS -->
     <script defer src="../js/labels.js"></script>
@@ -238,30 +201,6 @@
       // Show page
       const page = document.getElementById('page-content');
       if (page) page.style.display = 'block';
-
-      // Auth (fetch instead of jQuery)
-      const token = localStorage.getItem('authToken');
-
-      function startAppAs(role, userInfo = {}) {
-        window.currentUser = Object.assign({ role }, userInfo);
-        if (typeof initNavCatalog === 'function') {
-          initNavCatalog(role);
-        }
-      }
-
-      if (!token) {
-        startAppAs('guest');
-      } else {
-        fetch('https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        })
-        .then(res => res.json())
-        .then(user => startAppAs(user.role, user))
-        .catch(() => {
-          localStorage.removeItem('authToken');
-          startAppAs('guest');
-        });
-      }
 
       // Spinner logic (robust)
       const preset = document.getElementById("preset");

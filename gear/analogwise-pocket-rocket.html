@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Analogwise Pocket Rocket – Controls, SubPlexes & Rig Builder | PedalPlex</title>
+  <title>Analogwise Pocket Rocket – Controls, SubPlexes &amp; Rig Builder | PedalPlex</title>
 
   <meta name="description" content="The Analogwise Pocket Rocket is a handmade germanium overdrive, boost, and fuzz pedal built for players who want vintage transistor character in a compact">
   <meta name="robots" content="index,follow,max-image-preview:large">
@@ -49,9 +49,11 @@
   <!-- Global vars -->
   <script>
     window.PEDAL_ID = "Analogwise Pocket Rocket";
-    window.FXDB_URL = "https://www.effectsdatabase.com/model/analogwise/pocketrocket";
     window.SUBPLEX_EDIT_MODE = false;
   </script>
+
+  <!-- Session (JWT read locally, never drops the user on a network error) -->
+  <script src="../js/static-auth.js"></script>
 
   <!-- Product Schema -->
   <script type="application/ld+json">
@@ -124,11 +126,7 @@
 
 <body>
 
-  <div id="catalog">
-    <div class="gear-item" data-id="Analogwise Pocket Rocket"></div>
-  </div>
-
-  <div id="page-content" style="padding-top:16px!important;">
+  <div id="page-content">
 
     <div id="pedalboard-controls" style="display:flex;align-items:center;gap:8px;width:100%;">
 
@@ -148,75 +146,40 @@
 
     </div>
 
-    <br>
-
-    <h1 id="gearName" style="text-align:center;font-size:2.1rem;font-weight:400">
-      Analogwise Pocket Rocket
-    </h1>
-
-    <br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Controls & Settings
-    </h2>
-
-    <br><br>
-
-    <div id="preset-wrapper" style="position:relative;min-height:200px;">
-
-      <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
-        <div class="bx--loading" role="status">
-          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
-            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
-          </svg>
-        </div>
-      </div>
-
-      <div id="preset"></div>
-      <div id="results"></div>
-
-    </div>
-
-    <br><br>
-
-    <!-- <div style="text-align:center;">
-      <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
-        href="https://www.effectsdatabase.com/model/analogwise/pocketrocket" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-          style="width:32px;height:32px;object-fit:contain;" />
+    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <section class="gear-hero">
+      <div class="gear-hero-brand" id="gearBrand">Analogwise</div>
+      <h1 id="gearName">Pocket Rocket</h1>
+      <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">overdrive</span></div>
+      <p class="gear-hero-desc" id="gearDesc">The Analogwise Pocket Rocket is a handmade germanium overdrive, boost, and fuzz pedal built for players who want vintage transistor character in a compact format. Using NOS germanium transistors, it can move from an almost clean boost through thick, touch-sensitive overdrive and into heavier fuzz textures. The drive/gain control sets the main amount of saturation, while the volume control offers plenty of output for pushing tube amps or stacking with other pedals. A bias control adds another layer of feel and gain shaping, letting the pedal shift from warm bluesy breakup to more aggressive, ragged fuzz tones. With no traditional tone control, the Pocket Rocket focuses on the natural voice of its circuit, adding body and low-end weight while keeping the sound musical and direct. Discover tone settings and pedalboard ideas for the Analogwise Pocket Rocket on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/analogwise/pocketrocket" target="_blank" rel="noopener noreferrer">
+        <img src="../logos/fxdb_icon.png" alt="" />
+        <span>Open in Effects Database</span>
       </a>
-    </div> -->
-    <div style="text-align:center;" id="fxdb-wrapper">
-    <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
-        href="https://www.effectsdatabase.com/model/analogwise/pocketrocket" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-        style="width:32px;height:32px;object-fit:contain;" />
-    </a>
-    </div>
+    </section>
 
-    <div id="admin-gear-stats" style="display:none;text-align:center;margin:24px 0 0;opacity:0.55;font-size:0.82em;letter-spacing:0.03em;"></div>
+    <!-- STAGE: the gear with its controls and the SubPlex menu -->
+    <section class="gear-stage">
+      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
+
+      <div id="preset-wrapper" style="position:relative;min-height:200px;">
+
+        <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
+          <div class="bx--loading" role="status">
+            <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+              <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+              <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <div id="preset"></div>
+        <div id="results"></div>
+
+      </div>
+    </section>
 
     <br><br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Gear Description & Specs
-    </h2>
-
-    <br>
-
-    <p style="max-width:70%;margin:auto;text-align:center;">
-      The Analogwise Pocket Rocket is a handmade germanium overdrive, boost, and fuzz pedal built for players who want vintage transistor character in a compact format. Using NOS germanium transistors, it can move from an almost clean boost through thick, touch-sensitive overdrive and into heavier fuzz textures. The drive/gain control sets the main amount of saturation, while the volume control offers plenty of output for pushing tube amps or stacking with other pedals. A bias control adds another layer of feel and gain shaping, letting the pedal shift from warm bluesy breakup to more aggressive, ragged fuzz tones. With no traditional tone control, the Pocket Rocket focuses on the natural voice of its circuit, adding body and low-end weight while keeping the sound musical and direct. Discover tone settings and pedalboard ideas for the Analogwise Pocket Rocket on PedalPlex.
-
-      <br><br>
-
-      <span style="font-size:12px" class="bx--tag bx--tag--purple">Analogwise</span>
-      <span id="gear-category-tags"></span>
-    </p>
 
     <!-- APP SCRIPTS -->
     <script defer src="../js/labels.js"></script>
@@ -238,30 +201,6 @@
       // Show page
       const page = document.getElementById('page-content');
       if (page) page.style.display = 'block';
-
-      // Auth (fetch instead of jQuery)
-      const token = localStorage.getItem('authToken');
-
-      function startAppAs(role, userInfo = {}) {
-        window.currentUser = Object.assign({ role }, userInfo);
-        if (typeof initNavCatalog === 'function') {
-          initNavCatalog(role);
-        }
-      }
-
-      if (!token) {
-        startAppAs('guest');
-      } else {
-        fetch('https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        })
-        .then(res => res.json())
-        .then(user => startAppAs(user.role, user))
-        .catch(() => {
-          localStorage.removeItem('authToken');
-          startAppAs('guest');
-        });
-      }
 
       // Spinner logic (robust)
       const preset = document.getElementById("preset");

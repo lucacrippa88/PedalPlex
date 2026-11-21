@@ -6,25 +6,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Way Huge Pork & Pickle Bass Overdrive & Fuzz – Controls, SubPlexes & Rig Builder | PedalPlex</title>
+  <title>Way Huge Pork &amp; Pickle Bass Overdrive &amp; Fuzz – Controls, SubPlexes &amp; Rig Builder | PedalPlex</title>
 
-  <meta name="description" content="Pork & Pickle provides both overdrive and fuzz for bass, offering thick, dynamic low-end tones with harmonic richness.">
+  <meta name="description" content="Pork &amp; Pickle provides both overdrive and fuzz for bass, offering thick, dynamic low-end tones with harmonic richness.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="author" content="PedalPlex">
   <meta name="theme-color" content="#0f0f0f">
 
   <!-- Open Graph -->
   <meta property="og:type" content="product">
-  <meta property="og:title" content="Way Huge Pork & Pickle Bass Overdrive & Fuzz">
-  <meta property="og:description" content="Pork & Pickle provides both overdrive and fuzz for bass, offering thick, dynamic low-end tones with harmonic richness.">
+  <meta property="og:title" content="Way Huge Pork &amp; Pickle Bass Overdrive &amp; Fuzz">
+  <meta property="og:description" content="Pork &amp; Pickle provides both overdrive and fuzz for bass, offering thick, dynamic low-end tones with harmonic richness.">
   <meta property="og:url" content="https://pedalplex.com/gear/way-huge-pork-pickle-bass-overdrive-fuzz">
   <meta property="og:site_name" content="PedalPlex">
   <meta property="og:image" content="https://pedalplex.com/img/pedals/way-huge-pork-pickle-bass-overdrive-fuzz.jpg">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Way Huge Pork & Pickle Bass Overdrive & Fuzz">
-  <meta name="twitter:description" content="Pork & Pickle provides both overdrive and fuzz for bass, offering thick, dynamic low-end tones with harmonic richness.">
+  <meta name="twitter:title" content="Way Huge Pork &amp; Pickle Bass Overdrive &amp; Fuzz">
+  <meta name="twitter:description" content="Pork &amp; Pickle provides both overdrive and fuzz for bass, offering thick, dynamic low-end tones with harmonic richness.">
   <meta name="twitter:image" content="https://pedalplex.com/img/pedals/way-huge-pork-pickle-bass-overdrive-fuzz.jpg">
 
   <link rel="canonical" href="https://pedalplex.com/gear/way-huge-pork-pickle-bass-overdrive-fuzz">
@@ -49,9 +49,11 @@
   <!-- Global vars -->
   <script>
     window.PEDAL_ID = "Way Huge Pork & Pickle Bass Overdrive & Fuzz";
-    window.FXDB_URL = "https://www.effectsdatabase.com/model/wayhuge/dunlop/porknpickle";
     window.SUBPLEX_EDIT_MODE = false;
   </script>
+
+  <!-- Session (JWT read locally, never drops the user on a network error) -->
+  <script src="../js/static-auth.js"></script>
 
   <!-- Product Schema -->
   <script type="application/ld+json">
@@ -124,11 +126,7 @@
 
 <body>
 
-  <div id="catalog">
-    <div class="gear-item" data-id="Way Huge Pork & Pickle Bass Overdrive & Fuzz"></div>
-  </div>
-
-  <div id="page-content" style="padding-top:16px!important;">
+  <div id="page-content">
 
     <div id="pedalboard-controls" style="display:flex;align-items:center;gap:8px;width:100%;">
 
@@ -148,75 +146,40 @@
 
     </div>
 
-    <br>
-
-    <h1 id="gearName" style="text-align:center;font-size:2.1rem;font-weight:400">
-      Way Huge Pork & Pickle Bass Overdrive & Fuzz
-    </h1>
-
-    <br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Controls & Settings
-    </h2>
-
-    <br><br>
-
-    <div id="preset-wrapper" style="position:relative;min-height:200px;">
-
-      <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
-        <div class="bx--loading" role="status">
-          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
-            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
-          </svg>
-        </div>
-      </div>
-
-      <div id="preset"></div>
-      <div id="results"></div>
-
-    </div>
-
-    <br><br>
-
-    <!-- <div style="text-align:center;">
-      <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
-        href="https://www.effectsdatabase.com/model/wayhuge/dunlop/porknpickle" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-          style="width:32px;height:32px;object-fit:contain;" />
+    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <section class="gear-hero">
+      <div class="gear-hero-brand" id="gearBrand">Way Huge</div>
+      <h1 id="gearName">Pork &amp; Pickle Bass Overdrive &amp; Fuzz</h1>
+      <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">bass</span><span style="font-size:12px" class="bx--tag bx--tag--teal">overdrive</span><span style="font-size:12px" class="bx--tag bx--tag--teal">fuzz</span></div>
+      <p class="gear-hero-desc" id="gearDesc">Pork &amp; Pickle provides both overdrive and fuzz for bass, offering thick, dynamic low-end tones with harmonic richness.</p>
+      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/wayhuge/dunlop/porknpickle" target="_blank" rel="noopener noreferrer">
+        <img src="../logos/fxdb_icon.png" alt="" />
+        <span>Open in Effects Database</span>
       </a>
-    </div> -->
-    <div style="text-align:center;" id="fxdb-wrapper">
-    <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
-        href="https://www.effectsdatabase.com/model/wayhuge/dunlop/porknpickle" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-        style="width:32px;height:32px;object-fit:contain;" />
-    </a>
-    </div>
+    </section>
 
-    <div id="admin-gear-stats" style="display:none;text-align:center;margin:24px 0 0;opacity:0.55;font-size:0.82em;letter-spacing:0.03em;"></div>
+    <!-- STAGE: the gear with its controls and the SubPlex menu -->
+    <section class="gear-stage">
+      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
+
+      <div id="preset-wrapper" style="position:relative;min-height:200px;">
+
+        <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
+          <div class="bx--loading" role="status">
+            <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+              <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+              <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <div id="preset"></div>
+        <div id="results"></div>
+
+      </div>
+    </section>
 
     <br><br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Gear Description & Specs
-    </h2>
-
-    <br>
-
-    <p style="max-width:70%;margin:auto;text-align:center;">
-      Pork & Pickle provides both overdrive and fuzz for bass, offering thick, dynamic low-end tones with harmonic richness.
-
-      <br><br>
-
-      <span style="font-size:12px" class="bx--tag bx--tag--purple">Way Huge</span>
-      <span id="gear-category-tags"></span>
-    </p>
 
     <!-- APP SCRIPTS -->
     <script defer src="../js/labels.js"></script>
@@ -238,30 +201,6 @@
       // Show page
       const page = document.getElementById('page-content');
       if (page) page.style.display = 'block';
-
-      // Auth (fetch instead of jQuery)
-      const token = localStorage.getItem('authToken');
-
-      function startAppAs(role, userInfo = {}) {
-        window.currentUser = Object.assign({ role }, userInfo);
-        if (typeof initNavCatalog === 'function') {
-          initNavCatalog(role);
-        }
-      }
-
-      if (!token) {
-        startAppAs('guest');
-      } else {
-        fetch('https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        })
-        .then(res => res.json())
-        .then(user => startAppAs(user.role, user))
-        .catch(() => {
-          localStorage.removeItem('authToken');
-          startAppAs('guest');
-        });
-      }
 
       // Spinner logic (robust)
       const preset = document.getElementById("preset");

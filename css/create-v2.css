@@ -156,6 +156,7 @@ body.v2 #editor .cap { font-size: .75rem; color: #c6c6c6; }
 
 body.v2 #editor input[type="text"],
 body.v2 #editor input[type="number"],
+body.v2 #editor textarea,
 body.v2 #editor select {
   width: 100%;
   min-height: 40px;
@@ -168,7 +169,9 @@ body.v2 #editor select {
   font-size: .875rem;
   font-family: inherit;
 }
+body.v2 #editor textarea { min-height: 72px; resize: vertical; line-height: 1.4; }
 body.v2 #editor input:focus,
+body.v2 #editor textarea:focus,
 body.v2 #editor select:focus,
 body.v2 #editor button:focus-visible,
 body.v2 #editor summary:focus-visible {

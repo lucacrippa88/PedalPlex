@@ -6,25 +6,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay – Controls, SubPlexes & Rig Builder | PedalPlex</title>
+  <title>AllPedal Devil&#x27;s Triad Overdrive/Boost/Reverb/Delay – Controls, SubPlexes &amp; Rig Builder | PedalPlex</title>
 
-  <meta name="description" content="The AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. B">
+  <meta name="description" content="The AllPedal Devil&#x27;s Triad Overdrive/Boost/Reverb/Delay is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. B">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="author" content="PedalPlex">
   <meta name="theme-color" content="#0f0f0f">
 
   <!-- Open Graph -->
   <meta property="og:type" content="product">
-  <meta property="og:title" content="AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay">
-  <meta property="og:description" content="The AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. B">
+  <meta property="og:title" content="AllPedal Devil&#x27;s Triad Overdrive/Boost/Reverb/Delay">
+  <meta property="og:description" content="The AllPedal Devil&#x27;s Triad Overdrive/Boost/Reverb/Delay is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. B">
   <meta property="og:url" content="https://pedalplex.com/gear/allpedal-devils-triad-overdriveboostreverbdelay">
   <meta property="og:site_name" content="PedalPlex">
   <meta property="og:image" content="https://pedalplex.com/img/pedals/allpedal-devils-triad-overdriveboostreverbdelay.jpg">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay">
-  <meta name="twitter:description" content="The AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. B">
+  <meta name="twitter:title" content="AllPedal Devil&#x27;s Triad Overdrive/Boost/Reverb/Delay">
+  <meta name="twitter:description" content="The AllPedal Devil&#x27;s Triad Overdrive/Boost/Reverb/Delay is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. B">
   <meta name="twitter:image" content="https://pedalplex.com/img/pedals/allpedal-devils-triad-overdriveboostreverbdelay.jpg">
 
   <link rel="canonical" href="https://pedalplex.com/gear/allpedal-devils-triad-overdriveboostreverbdelay">
@@ -49,9 +49,11 @@
   <!-- Global vars -->
   <script>
     window.PEDAL_ID = "AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay";
-    window.FXDB_URL = "https://www.effectsdatabase.com/model/allpedal/devilstriad";
     window.SUBPLEX_EDIT_MODE = false;
   </script>
+
+  <!-- Session (JWT read locally, never drops the user on a network error) -->
+  <script src="../js/static-auth.js"></script>
 
   <!-- Product Schema -->
   <script type="application/ld+json">
@@ -64,7 +66,7 @@
     "sku": "ALLPEDAL_DEVILS_TRIAD_OVERDRIVEBOOSTREVERBDELAY",
     "brand": {
       "@type": "Brand",
-      "name": "All-Pedal"
+      "name": "AllPedal"
     },
     "url": "https://pedalplex.com/gear/allpedal-devils-triad-overdriveboostreverbdelay",
     "sameAs": "https://www.effectsdatabase.com/model/allpedal/devilstriad",
@@ -124,11 +126,7 @@
 
 <body>
 
-  <div id="catalog">
-    <div class="gear-item" data-id="AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay"></div>
-  </div>
-
-  <div id="page-content" style="padding-top:16px!important;">
+  <div id="page-content">
 
     <div id="pedalboard-controls" style="display:flex;align-items:center;gap:8px;width:100%;">
 
@@ -148,75 +146,40 @@
 
     </div>
 
-    <br>
-
-    <h1 id="gearName" style="text-align:center;font-size:2.1rem;font-weight:400">
-      AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay
-    </h1>
-
-    <br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Controls & Settings
-    </h2>
-
-    <br><br>
-
-    <div id="preset-wrapper" style="position:relative;min-height:200px;">
-
-      <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
-        <div class="bx--loading" role="status">
-          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
-            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
-          </svg>
-        </div>
-      </div>
-
-      <div id="preset"></div>
-      <div id="results"></div>
-
-    </div>
-
-    <br><br>
-
-    <!-- <div style="text-align:center;">
-      <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
-        href="https://www.effectsdatabase.com/model/allpedal/devilstriad" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-          style="width:32px;height:32px;object-fit:contain;" />
+    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <section class="gear-hero">
+      <div class="gear-hero-brand" id="gearBrand">AllPedal</div>
+      <h1 id="gearName">Devil&#x27;s Triad Overdrive/Boost/Reverb/Delay</h1>
+      <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">overdrive</span><span style="font-size:12px" class="bx--tag bx--tag--teal">boost</span></div>
+      <p class="gear-hero-desc" id="gearDesc">The AllPedal Devil&#x27;s Triad Overdrive/Boost/Reverb/Delay is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. Built by AllPedal, it fits the overdrive, booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the AllPedal Devil&#x27;s Triad Overdrive/Boost/Reverb/Delay on PedalPlex.</p>
+      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="https://www.effectsdatabase.com/model/allpedal/devilstriad" target="_blank" rel="noopener noreferrer">
+        <img src="../logos/fxdb_icon.png" alt="" />
+        <span>Open in Effects Database</span>
       </a>
-    </div> -->
-    <div style="text-align:center;" id="fxdb-wrapper">
-    <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
-        href="https://www.effectsdatabase.com/model/allpedal/devilstriad" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-        style="width:32px;height:32px;object-fit:contain;" />
-    </a>
-    </div>
+    </section>
 
-    <div id="admin-gear-stats" style="display:none;text-align:center;margin:24px 0 0;opacity:0.55;font-size:0.82em;letter-spacing:0.03em;"></div>
+    <!-- STAGE: the gear with its controls and the SubPlex menu -->
+    <section class="gear-stage">
+      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
+
+      <div id="preset-wrapper" style="position:relative;min-height:200px;">
+
+        <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
+          <div class="bx--loading" role="status">
+            <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+              <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+              <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <div id="preset"></div>
+        <div id="results"></div>
+
+      </div>
+    </section>
 
     <br><br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Gear Description & Specs
-    </h2>
-
-    <br>
-
-    <p style="max-width:70%;margin:auto;text-align:center;">
-      The AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay is an overdrive pedal designed for dynamic breakup, amp-like response, and flexible gain staging. Built by All-Pedal, it fits the overdrive, booster category and gives players a practical way to shape their sound for recording, live performance, or creative pedalboard combinations. Discover tone settings, signal-chain ideas, and pedalboard inspiration for the AllPedal Devil's Triad Overdrive/Boost/Reverb/Delay on PedalPlex.
-
-      <br><br>
-
-      <span style="font-size:12px" class="bx--tag bx--tag--purple">All-Pedal</span>
-      <span id="gear-category-tags"></span>
-    </p>
 
     <!-- APP SCRIPTS -->
     <script defer src="../js/labels.js"></script>
@@ -238,30 +201,6 @@
       // Show page
       const page = document.getElementById('page-content');
       if (page) page.style.display = 'block';
-
-      // Auth (fetch instead of jQuery)
-      const token = localStorage.getItem('authToken');
-
-      function startAppAs(role, userInfo = {}) {
-        window.currentUser = Object.assign({ role }, userInfo);
-        if (typeof initNavCatalog === 'function') {
-          initNavCatalog(role);
-        }
-      }
-
-      if (!token) {
-        startAppAs('guest');
-      } else {
-        fetch('https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        })
-        .then(res => res.json())
-        .then(user => startAppAs(user.role, user))
-        .catch(() => {
-          localStorage.removeItem('authToken');
-          startAppAs('guest');
-        });
-      }
 
       // Spinner logic (robust)
       const preset = document.getElementById("preset");

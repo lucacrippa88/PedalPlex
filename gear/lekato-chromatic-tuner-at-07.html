@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Lekato Chromatic Tuner AT-07 – Controls, SubPlexes & Rig Builder | PedalPlex</title>
+  <title>Lekato Chromatic Tuner AT-07 – Controls, SubPlexes &amp; Rig Builder | PedalPlex</title>
 
   <meta name="description" content="The Lekato Chromatic Tuner AT-07 is a compact and affordable pedal tuner designed for reliable tuning on stage and in the studio. Featuring fast detection">
   <meta name="robots" content="index,follow,max-image-preview:large">
@@ -49,9 +49,11 @@
   <!-- Global vars -->
   <script>
     window.PEDAL_ID = "Lekato Chromatic Tuner AT-07";
-    window.FXDB_URL = "";
     window.SUBPLEX_EDIT_MODE = false;
   </script>
+
+  <!-- Session (JWT read locally, never drops the user on a network error) -->
+  <script src="../js/static-auth.js"></script>
 
   <!-- Product Schema -->
   <script type="application/ld+json">
@@ -67,7 +69,6 @@
       "name": "Lekato"
     },
     "url": "https://pedalplex.com/gear/lekato-chromatic-tuner-at-07",
-    "sameAs": "",
     "isRelatedTo": {
       "@type": "SoftwareApplication",
       "name": "PedalPlex",
@@ -124,11 +125,7 @@
 
 <body>
 
-  <div id="catalog">
-    <div class="gear-item" data-id="Lekato Chromatic Tuner AT-07"></div>
-  </div>
-
-  <div id="page-content" style="padding-top:16px!important;">
+  <div id="page-content">
 
     <div id="pedalboard-controls" style="display:flex;align-items:center;gap:8px;width:100%;">
 
@@ -148,75 +145,40 @@
 
     </div>
 
-    <br>
-
-    <h1 id="gearName" style="text-align:center;font-size:2.1rem;font-weight:400">
-      Lekato Chromatic Tuner AT-07
-    </h1>
-
-    <br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Controls & Settings
-    </h2>
-
-    <br><br>
-
-    <div id="preset-wrapper" style="position:relative;min-height:200px;">
-
-      <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
-        <div class="bx--loading" role="status">
-          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
-            <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
-            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
-          </svg>
-        </div>
-      </div>
-
-      <div id="preset"></div>
-      <div id="results"></div>
-
-    </div>
-
-    <br><br>
-
-    <!-- <div style="text-align:center;">
-      <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;"
-        href="" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-          style="width:32px;height:32px;object-fit:contain;" />
+    <!-- HERO: name, brand, effect type, description, FXDB link (written by generate_pages.py from the DB; view.js refreshes it live) -->
+    <section class="gear-hero">
+      <div class="gear-hero-brand" id="gearBrand">Lekato</div>
+      <h1 id="gearName">Chromatic Tuner AT-07</h1>
+      <div class="gear-hero-tags" id="gear-category-tags"><span style="font-size:12px" class="bx--tag bx--tag--teal">tuner</span></div>
+      <p class="gear-hero-desc" id="gearDesc">The Lekato Chromatic Tuner AT-07 is a compact and affordable pedal tuner designed for reliable tuning on stage and in the studio. Featuring fast detection and accurate chromatic tuning, the AT-07 ensures guitars and basses remain perfectly in tune during performances. The bright LED display provides clear visibility even in low-light stage environments, making quick adjustments easy between songs. True bypass switching preserves the integrity of the instrument’s signal when the tuner is not engaged. Its durable metal enclosure is built to withstand regular gigging and pedalboard use. The Lekato AT-07 supports standard guitar and bass tunings as well as alternate tuning setups. Simple operation and dependable performance make it a practical addition to any pedalboard.</p>
+      <a class="js-openFXDB gear-hero-fxdb" id="gearFxdb" href="" target="_blank" rel="noopener noreferrer" hidden>
+        <img src="../logos/fxdb_icon.png" alt="" />
+        <span>Open in Effects Database</span>
       </a>
-    </div> -->
-    <div style="display:none;" id="fxdb-wrapper">
-    <a class="js-openFXDB bx--btn"
-        style="background-color:#659BCD!important;color:#fff;margin-left:0px!important;"
-        href="" target="_blank" rel="noopener noreferrer">
-        Open in FXDB
-        <img src="../logos/fxdb_icon.png" alt="Open in FXDB" class="bx--btn__icon"
-        style="width:32px;height:32px;object-fit:contain;" />
-    </a>
-    </div>
+    </section>
 
-    <div id="admin-gear-stats" style="display:none;text-align:center;margin:24px 0 0;opacity:0.55;font-size:0.82em;letter-spacing:0.03em;"></div>
+    <!-- STAGE: the gear with its controls and the SubPlex menu -->
+    <section class="gear-stage">
+      <div class="gear-stage-label">Controls &amp; SubPlexes</div>
+
+      <div id="preset-wrapper" style="position:relative;min-height:200px;">
+
+        <div id="presetSpinner" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;">
+          <div class="bx--loading" role="status">
+            <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+              <circle class="bx--loading__background" cx="0" cy="0" r="37.5"></circle>
+              <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <div id="preset"></div>
+        <div id="results"></div>
+
+      </div>
+    </section>
 
     <br><br>
-
-    <h2 style="text-align:center;font-size:1.3rem;font-weight:400">
-      Gear Description & Specs
-    </h2>
-
-    <br>
-
-    <p style="max-width:70%;margin:auto;text-align:center;">
-      The Lekato Chromatic Tuner AT-07 is a compact and affordable pedal tuner designed for reliable tuning on stage and in the studio. Featuring fast detection and accurate chromatic tuning, the AT-07 ensures guitars and basses remain perfectly in tune during performances. The bright LED display provides clear visibility even in low-light stage environments, making quick adjustments easy between songs. True bypass switching preserves the integrity of the instrument’s signal when the tuner is not engaged. Its durable metal enclosure is built to withstand regular gigging and pedalboard use. The Lekato AT-07 supports standard guitar and bass tunings as well as alternate tuning setups. Simple operation and dependable performance make it a practical addition to any pedalboard.
-
-      <br><br>
-
-      <span style="font-size:12px" class="bx--tag bx--tag--purple">Lekato</span>
-      <span id="gear-category-tags"></span>
-    </p>
 
     <!-- APP SCRIPTS -->
     <script defer src="../js/labels.js"></script>
@@ -238,30 +200,6 @@
       // Show page
       const page = document.getElementById('page-content');
       if (page) page.style.display = 'block';
-
-      // Auth (fetch instead of jQuery)
-      const token = localStorage.getItem('authToken');
-
-      function startAppAs(role, userInfo = {}) {
-        window.currentUser = Object.assign({ role }, userInfo);
-        if (typeof initNavCatalog === 'function') {
-          initNavCatalog(role);
-        }
-      }
-
-      if (!token) {
-        startAppAs('guest');
-      } else {
-        fetch('https://api.pedalplex.com/USER_CHECK_AUTH_JWT.php', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        })
-        .then(res => res.json())
-        .then(user => startAppAs(user.role, user))
-        .catch(() => {
-          localStorage.removeItem('authToken');
-          startAppAs('guest');
-        });
-      }
 
       // Spinner logic (robust)
       const preset = document.getElementById("preset");

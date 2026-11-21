@@ -62,6 +62,9 @@
                             <datalist id="brand-list"></datalist>
                         </label>
                         <label class="field wide">Name <input type="text" class="create-gear-input" id="pedal-gear-name" autocomplete="off" placeholder="Insert gear name (e.g. Distortion DS-1)..."></label>
+                        <label class="field wide">Description <textarea class="create-gear-input" id="pedal-description" rows="3" maxlength="1500" placeholder="Short description of the gear (shown on its public page)..."></textarea></label>
+                        <!-- affiliate links (admin only, shown by the script at the bottom) -->
+                        <label class="field wide" id="fxdb-container" style="display:none;">Effects Database link <input type="text" class="create-gear-input" id="pedal-fxdb" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://www.effectsdatabase.com/model/..."></label>
                         <label class="field wide">Logo text <input type="text" class="create-gear-input" id="pedal-name" autocomplete="off" placeholder="Insert gear name to be displayed as logo..."></label>
                         <div class="lint wide" id="lint-name" aria-live="polite"></div>
                         <label class="field wide">Logo style <input type="text" class="create-gear-input" id="pedal-logo" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Set valid CSS to style the logo..."></label>
@@ -880,6 +883,7 @@ $(function() {
   const isAdmin = (parent?.window?.currentUser?.role || '').toLowerCase() === 'admin';
   if (isAdmin) {
     $('#verified-container').show();
+    $('#fxdb-container').show();
   }
 });
 </script>
