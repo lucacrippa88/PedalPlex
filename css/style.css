@@ -2959,6 +2959,26 @@ html[data-theme="light"] .title,
 html[data-theme="light"] .menu-icon { color: #161616; fill: #161616; }
 html[data-theme="light"] .menu-morph__ham,
 html[data-theme="light"] .pedalplex-logo { background: #161616; }
+html[data-theme="light"] #ppAvatarBtn {
+  background: #e0e0e0;
+  color: #161616;
+  border: 1px solid #d0d0d0;
+}
+html[data-theme="light"] #ppAvatarBtn:hover {
+  background: #d4d4d4;
+  color: #161616;
+  border-color: #a8a8a8;
+}
+html[data-theme="light"] #ppAvatarBtn svg,
+html[data-theme="light"] #ppAvatarBtn .bx--btn__icon {
+  fill: #161616 !important;
+  color: #161616 !important;
+}
+html[data-theme="light"] .avatar-option--none {
+  background: #e0e0e0 !important;
+  color: #525252 !important;
+  border-color: #d0d0d0;
+}
 html[data-theme="light"] .zoom-controls { background-color: #f4f4f4; }
 html[data-theme="light"] .status-filter { color: #525252; }
 html[data-theme="light"] .status-filter.active-filter { color: #161616; border-bottom-color: #161616; }
