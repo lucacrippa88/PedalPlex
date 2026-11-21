@@ -2748,10 +2748,13 @@ html[data-theme="light"] body.gears-page .gear-card:hover { border-color: #9C54D
 
 .gear-meta-brand {
   font-size: 0.75rem;
-  color: #8c8c8c;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #b88ae6;
   line-height: 1.2;
 }
+html[data-theme="light"] .gear-meta-brand { color: #8a3ffc; }
 
 .gear-meta-row {
   color: #a8a8a8;
@@ -2787,6 +2790,16 @@ html[data-theme="light"] body.gears-page .gear-card:hover { border-color: #9C54D
 }
 /* I tag Carbon dentro la barra non devono avere margin extra */
 .gear-tag-bar .bx--tag { margin: 0 !important; }
+
+/* Autore + badge verified: accanto al link Details */
+.gear-author-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: #a8a8a8;
+  line-height: 1;
+}
 
 /* Verified badge inline */
 .gear-verified-badge {

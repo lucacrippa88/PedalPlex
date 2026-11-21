@@ -1484,14 +1484,14 @@ function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
   // ---- meta ----
   const $meta = $('<div>').addClass('gear-meta');
 
-  // Name (the internal id is never shown)
-  $meta.append($('<div>').addClass('gear-meta-id').text(gearShortName(pedal)));
-
-  // Brand (più piccolo sotto il nome del pedale)
+  // Brand sopra il nome, stampatello (come l'header delle pagine specifiche)
   const brand = pedal.brand || '';
   if (brand) {
     $meta.append($('<div>').addClass('gear-meta-brand').text(brand));
   }
+
+  // Name (the internal id is never shown)
+  $meta.append($('<div>').addClass('gear-meta-id').text(gearShortName(pedal)));
 
   // Category tags inline (below ID, instead of type text)
   const categories = (pedal.category || '').split('/').map(c => c.trim()).filter(Boolean);
@@ -1503,13 +1503,18 @@ function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
     $meta.append($catRow);
   }
 
-  // Verified badge + author row
+  // ---- footer: status tag (left) + creator, details and actions (right) ----
+  const $footer  = $('<div>').addClass('gear-footer');
+  const $tagBar  = $('<div>').addClass('gear-tag-bar');
+  const $actions = $('<div>').addClass('gear-actions');
+
+  // Verified badge + author (right side, just before Details)
   const ADMIN_AUTHOR_ID = 'user_admin';
   const authorIsAdmin   = pedal.authorId === ADMIN_AUTHOR_ID;
   const showAuthor      = isAdminUser || !authorIsAdmin;
 
   if (pedal.verified == 'true' || (showAuthor && pedal.author)) {
-    const $row = $('<div>').addClass('gear-meta-row');
+    const $row = $('<div>').addClass('gear-author-row');
     if (pedal.verified == 'true') {
       const $vb = $('<span>').addClass('gear-verified-badge').html(
         '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
@@ -1522,13 +1527,8 @@ function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
     if (showAuthor && pedal.author) {
       $row.append(document.createTextNode('by ' + pedal.author));
     }
-    $meta.append($row);
+    $actions.append($row);
   }
-
-  // ---- footer: status tag (left) + actions (right) ----
-  const $footer  = $('<div>').addClass('gear-footer');
-  const $tagBar  = $('<div>').addClass('gear-tag-bar');
-  const $actions = $('<div>').addClass('gear-actions');
 
   // Status tag — shown only to admin (all), or non-admin logged-in for own draft/reviewing
   const showStatus = (function () {
@@ -1588,10 +1588,8 @@ function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
     }
   }
 
-  if ($actions.children().length > 0 || showStatus) {
-    if ($actions.children().length > 0) $footer.append($actions);
-    $meta.append($footer);
-  }
+  if ($actions.children().length > 0) $footer.append($actions);
+  if ($footer.children().length > 0) $meta.append($footer);
 
   $card.append($thumb).append($meta);
 
