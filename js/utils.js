@@ -419,8 +419,6 @@ function getKnobDefaultValue(catalogPedal, control) {
 //   - drag vertically to change the value; the further the pointer is moved away
 //     horizontally from the knob, the finer the adjustment
 //   - discrete knobs (control.values) snap to detents with a springy easing
-//   - releasing a fast drag keeps the knob turning (inertia)
-//   - at the ends the knob stretches a few degrees (rubber band) and springs back
 //   - double click / double tap resets the knob to its default value
 //  hooks: { onValueChange(), showTip(boolean) }
 // ============================================================================
@@ -435,10 +433,7 @@ function attachKnobInteraction($knob, control, defaultValue, hooks) {
   const FINE_DEADZONE  = 24;    // px of horizontal travel (beyond the knob radius) before fine mode kicks in
   const FINE_FALLOFF   = 60;    // px of extra horizontal travel that halve the speed
   const FINE_MIN       = 0.08;  // slowest drag speed factor
-  const OVER_CAP_DEG   = 12;    // max drag past the end (deg)
-  const OVER_MAX_DEG   = 8;     // max visual stretch past the end (deg)
-  const FRICTION       = 3.5;   // inertia decay (1/s)
-  const SPRING_K       = 200;   // bounce back / reset spring
+  const SPRING_K       = 200;   // reset spring
   const SPRING_C       = 2 * Math.sqrt(SPRING_K) * 0.9;
   const DETENT_K       = 420;   // detent snap spring (underdamped => small overshoot)
   const DETENT_C       = 2 * Math.sqrt(DETENT_K) * 0.55;
@@ -456,22 +451,11 @@ function attachKnobInteraction($knob, control, defaultValue, hooks) {
   const rotMin = getRotationFromValue(posControl, min);
   const rotMax = getRotationFromValue(posControl, max);
   const degPerUnit = range ? (rotMax - rotMin) / range : 0;
-  const degAbs = Math.abs(degPerUnit);
   const rotationAt = p => rotMin + (p - min) * degPerUnit;
-  const capUnits = degAbs ? OVER_CAP_DEG / degAbs : 0;
-
-  // Rubber band: position actually shown when `p` is beyond the ends
-  function softPos(p) {
-    if (!degAbs || (p >= min && p <= max)) return clamp(p);
-    const bound = p < min ? min : max;
-    const overDeg = Math.abs(p - bound) * degAbs;
-    const visDeg = OVER_MAX_DEG * (1 - Math.exp(-overDeg / OVER_MAX_DEG));
-    return bound + Math.sign(p - bound) * visDeg / degAbs;
-  }
 
   let raw = clamp(valueToPos(control.value)); // continuous position, in value units
   let committedRaw = raw;                     // last position written to control.value
-  let vel = 0;                                // units/s
+  let vel = 0;                                // units/s (only used by the reset spring)
   let ang = rotationAt(raw), angVel = 0;      // displayed angle (discrete knobs spring towards the detent)
   let dragging = false, springTarget = null, rafId = null, lastFrame = 0;
   let lastTapTime = 0, lastTapX = 0, lastTapY = 0;
@@ -488,24 +472,16 @@ function attachKnobInteraction($knob, control, defaultValue, hooks) {
   }
 
   function stepPhysics(dt) {
-    if (springTarget !== null) {
-      vel += (-SPRING_K * (raw - springTarget) - SPRING_C * vel) * dt;
-      raw += vel * dt;
-      if (Math.abs(raw - springTarget) < scale * 0.0005 && Math.abs(vel) < scale * 0.005) {
-        raw = springTarget; vel = 0; springTarget = null;
-      }
-    } else {
-      raw += vel * dt;
-      vel *= Math.exp(-FRICTION * dt);
-      if (raw < min || raw > max) springTarget = clamp(raw);                 // hit an end: bounce back
-      else if (Math.abs(vel) < scale * 0.02) { vel = 0; if (discrete) springTarget = Math.round(raw); }
+    if (springTarget === null) return;
+    vel += (-SPRING_K * (raw - springTarget) - SPRING_C * vel) * dt;
+    raw += vel * dt;
+    if (Math.abs(raw - springTarget) < scale * 0.0005 && Math.abs(vel) < scale * 0.005) {
+      raw = springTarget; vel = 0; springTarget = null;
     }
   }
 
   function stepAngle(dt) {
-    const target = discrete
-      ? rotationAt(Math.round(clamp(raw))) + (rotationAt(softPos(raw)) - rotationAt(clamp(raw)))
-      : rotationAt(softPos(raw));
+    const target = rotationAt(discrete ? Math.round(clamp(raw)) : clamp(raw));
     if (!discrete || reduceMotion) { ang = target; angVel = 0; return true; }
     angVel += (-DETENT_K * (ang - target) - DETENT_C * angVel) * dt;
     ang += angVel * dt;
@@ -546,11 +522,11 @@ function attachKnobInteraction($knob, control, defaultValue, hooks) {
     const centerX = rect.left + rect.width / 2;
     const deadzone = rect.width / 2 + FINE_DEADZONE;
     const downX = p0.clientX, downY = p0.clientY;
-    let prevY = p0.clientY, prevT = performance.now(), moved = false;
+    let prevY = p0.clientY, moved = false;
 
     dragging = true; springTarget = null; vel = 0;
     $knob.addClass("knob-active");
-    lastFrame = prevT;
+    lastFrame = performance.now();
     start();
 
     function onMove(e2) {
@@ -559,15 +535,10 @@ function attachKnobInteraction($knob, control, defaultValue, hooks) {
       moved = true;
       hooks.showTip(true);
 
-      const now = performance.now();
       const away = Math.max(0, Math.abs(p.clientX - centerX) - deadzone);
       const factor = Math.max(FINE_MIN, 1 / (1 + away / FINE_FALLOFF));
-      const dRaw = (prevY - p.clientY) * UNITS_PER_PX * factor;
-      raw = Math.min(Math.max(raw + dRaw, min - capUnits), max + capUnits);
-
-      const dt = Math.max(now - prevT, 1) / 1000;
-      vel = 0.6 * (dRaw / dt) + 0.4 * vel;
-      prevY = p.clientY; prevT = now;
+      raw = clamp(raw + (prevY - p.clientY) * UNITS_PER_PX * factor);
+      prevY = p.clientY;
     }
 
     function endDrag(e2) {
@@ -587,13 +558,8 @@ function attachKnobInteraction($knob, control, defaultValue, hooks) {
         } else {
           lastTapTime = now; lastTapX = downX; lastTapY = downY;
         }
-        vel = 0;
-      } else {
-        if (now - prevT > 80) vel = 0;                                  // stopped before releasing: no fling
-        vel = Math.max(Math.min(vel, scale * 1.5), -scale * 1.5);
-        if (reduceMotion) vel = 0;
-        if (raw < min || raw > max) springTarget = clamp(raw);
-        else if (Math.abs(vel) < scale * 0.02) { vel = 0; if (discrete) springTarget = Math.round(raw); }
+      } else if (discrete) {
+        raw = Math.round(raw);   // snap to the detent (the angle eases into it)
       }
       start();
     }
