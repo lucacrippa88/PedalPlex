@@ -1208,6 +1208,21 @@ function renderPedalControls(pedal, $pedalDiv) {
 
 
 
+// The _id ("Brand-Name") is internal and must never be shown: UI text uses gearName / brand.
+// gearShortName: the model name only (brand is shown separately). gearLabel: "Brand Name" for lists/dialogs.
+// Both fall back to the raw id for gears that have no gearName yet (e.g. templates).
+function gearShortName(pedal) {
+  if (!pedal) return '';
+  return (pedal.gearName && String(pedal.gearName).trim()) || pedal._id || pedal.id || '';
+}
+function gearLabel(pedal) {
+  if (!pedal) return '';
+  const n = pedal.gearName && String(pedal.gearName).trim();
+  if (!n) return pedal._id || pedal.id || '';
+  const b = pedal.brand && String(pedal.brand).trim();
+  return b ? b + ' ' + n : n;
+}
+
 // Render a gear in catalog and editor -------------------------------
 function renderPedal(pedal, userRole, pedalboardPage = false) {
 
@@ -1469,8 +1484,8 @@ function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
   // ---- meta ----
   const $meta = $('<div>').addClass('gear-meta');
 
-  // ID
-  $meta.append($('<div>').addClass('gear-meta-id').text(pedalId));
+  // Name (the internal id is never shown)
+  $meta.append($('<div>').addClass('gear-meta-id').text(gearShortName(pedal)));
 
   // Brand (più piccolo sotto il nome del pedale)
   const brand = pedal.brand || '';

@@ -199,13 +199,13 @@
         card.tabIndex = 0;
         card.__gear = t; card.__kind = kind;
         if (typeof getPedalWidth === "function" && parseInt(getPedalWidth(t.width), 10) > 400) card.className += " wide";
-        card.setAttribute("data-search", [t._id, t.category, t.type, t.author, t.published].join(" ").toLowerCase());
+        card.setAttribute("data-search", [t._id, t.brand, t.gearName, t.category, t.type, t.author, t.published].join(" ").toLowerCase());
 
         var thumb = el("div", "tpl-thumb");
         thumb.appendChild(el("div", "tpl-holder"));
 
         var meta = el("div", "tpl-meta");
-        var title = el("b", null, clean(t._id));
+        var title = el("b", null, clean(gearLabel(t)));
         var n = 0; (t.controls || []).forEach(function (r) { n += (r.row || []).length; });
         var rows = (t.controls || []).length;
         meta.appendChild(title);
@@ -356,7 +356,7 @@
     // ---------- apply ----------
     function pristine() {
         var $ = window.jQuery;
-        return !$("#pedal-id").val().trim() && !$("#pedal-name").val().trim() && !$("#controls .control").length;
+        return !$("#pedal-id").val().trim() && !$("#pedal-gear-name").val().trim() && !$("#pedal-name").val().trim() && !$("#controls .control").length;
     }
 
     function apply(src, kind) {
@@ -369,10 +369,10 @@
 
         editedAfter = false;
         syncUIFromJSON(t);
-        usedName = src._id; usedKind = kind;
+        usedName = gearLabel(src); usedKind = kind;
         setTimeout(function () {
             refreshStart();
-            var id = document.getElementById("pedal-id");
+            var id = document.getElementById("pedal-gear-name");
             id.scrollIntoView({ block: "center", behavior: "smooth" });
             if (!window.matchMedia("(max-width: 860px)").matches) id.focus(); // don't pop the keyboard on phones
         }, 60);
@@ -402,8 +402,8 @@
         var note = document.getElementById("tpl-note"), btn = document.getElementById("clone-open");
         var admin = me().admin;
         btn.textContent = admin ? "Clone any gear" : "Clone my gear";
-        if (usedName && usedKind === "clone") note.textContent = "Cloned from “" + usedName + "”. Give the copy a new unique ID, then adapt it.";
-        else if (usedName) note.textContent = "Started from template “" + usedName + "”. Give your gear a new unique ID, then adapt it.";
+        if (usedName && usedKind === "clone") note.textContent = "Cloned from “" + usedName + "”. Give the copy a new Name, then adapt it.";
+        else if (usedName) note.textContent = "Started from template “" + usedName + "”. Give your gear a Brand and a Name, then adapt it.";
         else note.textContent = admin
             ? "Start from a template or clone any existing gear, or build from scratch below."
             : "Start from a template or clone one of your gears, or build from scratch below.";

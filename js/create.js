@@ -131,6 +131,11 @@ function buildJSON() {
         pedal.brand = selectedBrand;
     }
 
+    const gearName = ($("#pedal-gear-name").val() || "").trim();
+    if (gearName) {
+        pedal.gearName = gearName;
+    }
+
     // --- Category (multi-select) ---
     const categories = getSelectedCategories();
     if (categories.length) pedal.category = categories.join("/");
@@ -412,14 +417,17 @@ function getKnobPosition($ctrl) {
 
 function highlightRequiredFields() {
     // Clear previous highlights
-    $("#pedal-id, #controls .ctrl-label, #controls .ctrl-values-list").css("border", "");
+    $("#pedal-gear-name, #pedal-brand, #controls .ctrl-label, #controls .ctrl-values-list").css("border", "");
 
     let hasError = false;
 
-    // Check Pedal ID
-    const pedalId = $("#pedal-id").val().trim();
-    if (!pedalId) {
-        $("#pedal-id").css("border", "2px solid red");
+    // Name is always required; Brand is required for a new gear (its id is built from both)
+    if (!$("#pedal-gear-name").val().trim()) {
+        $("#pedal-gear-name").css("border", "2px solid red");
+        hasError = true;
+    }
+    if (!$("#pedal-id").val().trim() && !$("#pedal-brand").val().trim()) {
+        $("#pedal-brand").css("border", "2px solid red");
         hasError = true;
     }
 
@@ -609,6 +617,7 @@ function syncUIFromJSON(pedal) {
     // --- Basic pedal info ---
     $("#pedal-id").val(pedal._id || "");
     $("#pedal-brand").val(pedal.brand || "");
+    $("#pedal-gear-name").val(pedal.gearName || "");
     $("#pedal-name").val(pedal.name || "");
     $("#pedal-logo").val(pedal.logo || "");
     $("#pedal-type").val(pedal.type || "pedal");

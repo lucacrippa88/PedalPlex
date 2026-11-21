@@ -56,7 +56,7 @@ function setupEditPedalHandler(pedals) {
       delete pedalCopy._rev;
 
       Swal.fire({
-        title: `Edit ${pedal._id}`,
+        title: `Edit ${gearLabel(pedal)}`,
         html: `
           <div class="builder-wrap" style="position:relative; width:100%; height:80vh;">
             <div id="builder-spinner" style="position:absolute;top:0;left:0;width:100%;height:100%;
@@ -123,7 +123,7 @@ function setupEditPedalHandler(pedals) {
 
             setTimeout(() => {
               Swal.fire({
-                title: `Clone of ${pedal._id}`,
+                title: `Clone of ${gearLabel(pedal)}`,
                 html: `<iframe src="create.html" class="builder-iframe" style="width:100%; height:80vh; border:none;" id="swal-duplicate-iframe"></iframe>`,
                 width: '100%',
                 showConfirmButton: true,
@@ -300,7 +300,7 @@ function setupEditPedalHandler(pedals) {
         } else if (result.isDenied) {
           Swal.fire({
             title: 'Are you sure?',
-            text: `This will permanently delete "${pedal._id}"`,
+            text: `This will permanently delete "${gearLabel(pedal)}"`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M12 12H14V24H12z'></path><path d='M18 12H20V24H18z'></path><path d='M4,6V8H6V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V8h2V6ZM8,28V8H24V28Z'></path><path d='M12 2H20V4H12z'></path></svg>Yes, Delete",

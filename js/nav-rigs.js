@@ -295,12 +295,12 @@ function initNavPedalboard(userRole) {
       item.classList.add('pedal-dropdown-item');
       const label = document.createElement('span');
       label.className = 'pedal-dropdown-label';
-      label.textContent = pedal._id;
+      label.textContent = gearLabel(pedal);
       item.appendChild(label);
       const btn = document.createElement('button');
       btn.classList.add('bx--btn', 'bx--btn--primary', 'bx--btn--sm', 'pedal-dropdown-btn');
       btn.setAttribute('type', 'button');
-      btn.setAttribute('aria-label', `Add ${pedal._id}`);
+      btn.setAttribute('aria-label', `Add ${gearLabel(pedal)}`);
       btn.innerHTML = ICON_PLUS;
       let busy = false;
 
@@ -406,7 +406,7 @@ function initNavPedalboard(userRole) {
         // e si ri-osserva per forzare un nuovo controllo di intersezione
         // (altrimenti restava a metà lista e non scattava più il caricamento)
         if (lazyHasMore) sentinel.remove();
-        appendPedalItems(data.map(i => ({ _id: i._id })), dropdown);
+        appendPedalItems(data.map(i => ({ _id: i._id, brand: i.brand, gearName: i.gearName })), dropdown);
         if (lazyHasMore) {
           dropdown.appendChild(sentinel);
           if (lazySentinelObserver) { lazySentinelObserver.unobserve(sentinel); lazySentinelObserver.observe(sentinel); }
@@ -460,7 +460,7 @@ function initNavPedalboard(userRole) {
         if (Array.isArray(data)) {
           data.forEach(item => { if (item?._id && !window.catalog.some(p => p._id === item._id)) window.catalog.push(item); });
           if (data.length < LAZY_LIMIT) lazyHasMore = false;
-          pedalsList = data.map(item => ({ _id: item._id }));
+          pedalsList = data.map(item => ({ _id: item._id, brand: item.brand, gearName: item.gearName }));
         }
       }
 

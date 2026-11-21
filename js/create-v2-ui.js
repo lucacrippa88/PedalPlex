@@ -64,8 +64,9 @@
     }
 
     function refreshSections() {
-        var id = ($("#pedal-id").val() || "").trim();
-        $("#sec-identity .sec-hint").text(id || "ID required");
+        var gname = ($("#pedal-gear-name").val() || "").trim();
+        var gbrand = ($("#pedal-brand").val() || "").trim();
+        $("#sec-identity .sec-hint").text([gbrand, gname].filter(Boolean).join(" ") || "Name required");
 
         var cats = typeof getSelectedCategories === "function" ? getSelectedCategories().length : 0;
         $("#sec-shape .sec-hint").text(

@@ -68,7 +68,7 @@ function renderBackToCatalogButton() {
             '?id=' +
             encodeURIComponent(pedal._id);
 
-          link.innerHTML = pedal._id || pedal.name;
+          link.textContent = gearLabel(pedal) || pedal.name;
 
           link.style.color = 'inherit';
           link.style.textDecoration = 'none';
@@ -228,7 +228,7 @@ if (!window.catalogMap || !window.catalogMap[pedalId]) {
 
   /* ================= RENDER ================= */
   try {
-    $('#gearName').text(pedalId);
+    $("#gearName").text(gearLabel(pedal));
     const role = window.currentUser?.role || (token ? 'user' : 'guest');
     const $pedalDiv = renderPedal(pedal, role, false);
     const $card = wrapGearCard(pedal, $pedalDiv, role, { hideDetails: true, hideEdit: true });
