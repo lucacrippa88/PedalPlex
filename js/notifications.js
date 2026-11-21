@@ -16,6 +16,9 @@
  */
 (function () {
   const API_URL      = 'https://api.pedalplex.com/GET_NOTIFICATIONS.php'; // latest gear added
+  const SEEN_URL     = 'https://api.pedalplex.com/NOTIFICATION_SEEN.php';       // records views (users + guests)
+  const STATS_URL    = 'https://api.pedalplex.com/GET_NOTIFICATION_STATS.php';  // view counts (admin only)
+  const REPORTED_KEY = 'pp_notif_reported';
   const FEATURES_URL = '/notifications.json';                             // hand-curated features (frontend root)
   const MAX_ITEMS    = 10;
   const STORAGE_KEY  = 'pp_notif_seen';
@@ -23,6 +26,56 @@
   const ICON_BELL = '<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M28.707,19.293,26,16.586V13a10.014,10.014,0,0,0-9-9.9492V1H15V3.0508A10.014,10.014,0,0,0,6,13v3.586L3.293,19.293A1,1,0,0,0,3,20v3a1,1,0,0,0,1,1h7v.7768a5.152,5.152,0,0,0,4.5,5.1987A5.0057,5.0057,0,0,0,21,25V24h7a1,1,0,0,0,1-1V20A1,1,0,0,0,28.707,19.293ZM19,25a3,3,0,0,1-3.2261,2.9917A3.1463,3.1463,0,0,1,13,24.7768V24h6Zm8-3H5V20.414L7.707,17.707A1,1,0,0,0,8,17V13a8,8,0,0,1,16,0v4a1,1,0,0,0,.293.707L27,20.414Z"/></svg>';
 
   let items = [];
+  let stats = null; // { statsKey: { users, guests } } — loaded for admins only
+
+  function isAdmin() {
+    return !!(window.currentUser && String(window.currentUser.role).toLowerCase() === 'admin');
+  }
+
+  // Tell the backend which notifications this viewer has seen (once per viewer kind + notification)
+  function reportViews() {
+    const token = localStorage.getItem('authToken');
+    const kind = token ? 'user' : 'guest';
+    let reported = [];
+    try { reported = JSON.parse(localStorage.getItem(REPORTED_KEY)) || []; } catch (e) {}
+
+    const keys = items
+      .map(function (n) { return n.statsKey; })
+      .filter(function (k) { return k && reported.indexOf(kind + '|' + k) === -1; });
+    if (!keys.length) return;
+
+    const guestId = token ? null : (typeof getGuestId === 'function' ? getGuestId() : localStorage.getItem('guest_id'));
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+
+    fetch(SEEN_URL, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ keys: keys, guest_id: guestId }),
+      keepalive: true
+    }).then(function (r) {
+      if (!r.ok) return;
+      try {
+        localStorage.setItem(REPORTED_KEY, JSON.stringify(
+          reported.concat(keys.map(function (k) { return kind + '|' + k; })).slice(-200)
+        ));
+      } catch (e) {}
+    }).catch(function () {});
+  }
+
+  function loadStats(menu) {
+    const token = localStorage.getItem('authToken');
+    const keys = items.map(function (n) { return n.statsKey; }).filter(Boolean);
+    if (!token || !keys.length) return;
+    fetch(STATS_URL + '?keys=' + encodeURIComponent(keys.join(',')), {
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (data && typeof data === 'object') { stats = data; renderItems(menu); }
+      })
+      .catch(function () {});
+  }
 
   function getSeen() {
     try {
@@ -117,11 +170,13 @@
       .pp-notif-date { flex-shrink: 0; font-size: 0.75rem; color: #a8a8a8; }
       .pp-notif-text { margin-top: 2px; font-size: 0.8125rem; color: #c6c6c6; }
       .pp-notif-tag { color: #9C54D5; font-weight: 600; }
+      .pp-notif-views { margin-top: 4px; font-size: 0.75rem; color: #a8a8a8; }
       .pp-notif-empty { padding: 14px 16px; font-size: 0.875rem; color: #a8a8a8; }
       html[data-theme="light"] #pp-notif-menu { background: #ffffff; box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
       html[data-theme="light"] .pp-notif-item { color: #161616; }
       html[data-theme="light"] .pp-notif-heading,
       html[data-theme="light"] .pp-notif-date,
+      html[data-theme="light"] .pp-notif-views,
       html[data-theme="light"] .pp-notif-empty { color: #6f6f6f; }
       html[data-theme="light"] .pp-notif-text { color: #525252; }
       @media (max-width: 768px) {
@@ -180,6 +235,16 @@
       text.appendChild(document.createTextNode(n.text || ''));
       el.appendChild(text);
 
+      // Admin only: how many registered users / guests have seen this notification
+      const s = stats && n.statsKey ? stats[n.statsKey] : null;
+      if (s) {
+        const views = document.createElement('div');
+        views.className = 'pp-notif-views';
+        views.textContent = 'Seen by ' + s.users + ' user' + (s.users === 1 ? '' : 's') +
+          ' · ' + s.guests + ' guest' + (s.guests === 1 ? '' : 's');
+        el.appendChild(views);
+      }
+
       menu.appendChild(el);
     });
   }
@@ -216,6 +281,8 @@
           // Opening the panel marks everything currently listed as seen
           setSeen(items.map(function (n) { return n.id; }));
           wrapper.classList.remove('has-unread');
+          reportViews();
+          if (isAdmin()) loadStats(menu);
         }
         return;
       }
@@ -244,6 +311,7 @@
           .map(function (f) {
             return {
               id: 'feature:' + f.id,
+              statsKey: 'feature:' + f.id,
               type: 'feature',
               title: f.title,
               text: f.text || '',

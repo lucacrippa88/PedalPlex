@@ -3043,6 +3043,27 @@ html[data-theme="light"] .pedal-share-icon { color: #161616; }
 html[data-theme="light"] .discord-card { background: #ffffff !important; border-color: #d0d0d0 !important; }
 html[data-theme="light"] .discord-card .discord-card-title { color: #161616 !important; }
 html[data-theme="light"] .discord-card .discord-card-text { color: #525252 !important; }
+/* Light theme: onboarding checklist (js/onboarding.js) */
+html[data-theme="light"] .pp-onboarding {
+  background: linear-gradient(135deg, rgba(105, 41, 196, 0.1) 0%, rgba(15, 98, 254, 0.06) 100%), #ffffff;
+  border-color: rgba(105, 41, 196, 0.45);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+html[data-theme="light"] .pp-onboarding__title { color: #161616; }
+html[data-theme="light"] .pp-onboarding__counter { color: #525252; }
+html[data-theme="light"] .pp-onboarding__step { color: #525252; }
+html[data-theme="light"] .pp-onboarding__bullet { border-color: #8d8d8d; }
+html[data-theme="light"] .pp-onboarding__step--current { color: #161616; }
+html[data-theme="light"] .pp-onboarding__step--current .pp-onboarding__bullet {
+  border-color: #8a3ffc;
+  background: rgba(138, 63, 252, 0.15);
+  color: #161616;
+}
+html[data-theme="light"] .pp-onboarding__step--done { color: #6f6f6f; }
+html[data-theme="light"] .pp-onboarding__step--done .pp-onboarding__bullet { color: #ffffff; }
+html[data-theme="light"] .pp-onboarding__step--done .pp-onboarding__text { text-decoration-color: rgba(111, 111, 111, 0.5); }
+
+
 
 /* ============================================================
    GEAR GRAPHICS ARE THEME-INDEPENDENT
