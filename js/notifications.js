@@ -32,18 +32,39 @@
     return !!(window.currentUser && String(window.currentUser.role).toLowerCase() === 'admin');
   }
 
-  // Tell the backend which notifications this viewer has seen (once per viewer kind + notification)
-  function reportViews() {
-    const token = localStorage.getItem('authToken');
-    const kind = token ? 'user' : 'guest';
-    let reported = [];
-    try { reported = JSON.parse(localStorage.getItem(REPORTED_KEY)) || []; } catch (e) {}
+  // ---- Per-notification view tracking -------------------------------------------------------
+  // A notification counts as "seen" only when its item is actually visible inside the open panel
+  // (IntersectionObserver rooted on the panel, so items scrolled out of view are not counted).
+  // Each (viewer kind + notification) is reported once; reports are batched for a short moment.
+  const VISIBLE_RATIO = 0.6;   // fraction of the item that must be visible
+  const FLUSH_DELAY   = 400;   // ms: batches items revealed together
+  let pending = {};            // statsKey -> true, waiting to be sent
+  let inFlight = {};           // statsKey -> true, being sent
+  let flushTimer = null;
+  let viewObserver = null;
 
-    const keys = items
-      .map(function (n) { return n.statsKey; })
-      .filter(function (k) { return k && reported.indexOf(kind + '|' + k) === -1; });
+  function viewerKind() { return localStorage.getItem('authToken') ? 'user' : 'guest'; }
+
+  function getReported() {
+    try { return JSON.parse(localStorage.getItem(REPORTED_KEY)) || []; } catch (e) { return []; }
+  }
+
+  function queueView(key) {
+    if (!key || pending[key] || inFlight[key]) return;
+    if (getReported().indexOf(viewerKind() + '|' + key) !== -1) return;
+    pending[key] = true;
+    if (!flushTimer) flushTimer = setTimeout(flushViews, FLUSH_DELAY);
+  }
+
+  function flushViews() {
+    flushTimer = null;
+    const keys = Object.keys(pending);
+    pending = {};
     if (!keys.length) return;
+    keys.forEach(function (k) { inFlight[k] = true; });
 
+    const token = localStorage.getItem('authToken');
+    const kind = viewerKind();
     const guestId = token ? null : (typeof getGuestId === 'function' ? getGuestId() : localStorage.getItem('guest_id'));
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = 'Bearer ' + token;
@@ -57,10 +78,26 @@
       if (!r.ok) return;
       try {
         localStorage.setItem(REPORTED_KEY, JSON.stringify(
-          reported.concat(keys.map(function (k) { return kind + '|' + k; })).slice(-200)
+          getReported().concat(keys.map(function (k) { return kind + '|' + k; })).slice(-200)
         ));
       } catch (e) {}
-    }).catch(function () {});
+    }).catch(function () {}).then(function () {
+      keys.forEach(function (k) { delete inFlight[k]; }); // on failure it can be retried next time it is visible
+    });
+  }
+
+  // Observe the rendered items of the panel (called after every render)
+  function observeViews(menu) {
+    if (viewObserver) { viewObserver.disconnect(); viewObserver = null; }
+    if (typeof IntersectionObserver !== 'function') return; // no reliable way to know what was seen
+    viewObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        queueView(en.target.getAttribute('data-stats-key'));
+        viewObserver.unobserve(en.target);
+      });
+    }, { root: menu, threshold: VISIBLE_RATIO });
+    menu.querySelectorAll('[data-stats-key]').forEach(function (el) { viewObserver.observe(el); });
   }
 
   function loadStats(menu) {
@@ -210,6 +247,7 @@
     items.forEach(function (n) {
       const el = document.createElement(n.link ? 'a' : 'div');
       el.className = 'pp-notif-item';
+      if (n.statsKey) el.setAttribute('data-stats-key', n.statsKey);
       if (n.link) el.href = n.link;
 
       const top = document.createElement('div');
@@ -247,6 +285,8 @@
 
       menu.appendChild(el);
     });
+
+    observeViews(menu);
   }
 
   window.initNotifications = function () {
@@ -281,7 +321,7 @@
           // Opening the panel marks everything currently listed as seen
           setSeen(items.map(function (n) { return n.id; }));
           wrapper.classList.remove('has-unread');
-          reportViews();
+          // Views are reported per item by the IntersectionObserver as they become visible
           if (isAdmin()) loadStats(menu);
         }
         return;
