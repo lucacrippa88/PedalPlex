@@ -3183,7 +3183,8 @@ html[data-theme="light"] .pedal { color: #fff; }
   text-align: center;
 }
 /* same look as the other buttons (bx--btn bx--btn--tertiary): only icon and spacing here */
-.gear-hero-fxdb { margin: 16px 0 0 !important; max-width: none !important; }
+.gear-hero-fxdb.bx--btn--tertiary { margin: 16px 0 0 !important; max-width: none !important; border-color: #659BCD; color: #8fbbe6; }
+.gear-hero-fxdb.bx--btn--tertiary:hover { background: #659BCD; border-color: #659BCD; color: #fff; }
 .gear-hero-fxdb img.bx--btn__icon { width: 20px; height: 20px; object-fit: contain; }
 
 html[data-theme="light"] .gear-stage { background: #ffffff; border-color: #e0e0e0; }

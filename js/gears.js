@@ -116,6 +116,7 @@ let catalogRenderIndex = 0;
 let pedalJSON = null;
 let sentinel = null;
 var searchBookmark = null;
+var catalogRequestId = 0; // incremented on every reset; responses from older requests are ignored
 var currentSearchQuery = null;
 var currentCategory = 'all';
 var currentBrand = 'all';
@@ -128,6 +129,7 @@ if (new URLSearchParams(window.location.search).get("sort") === "latest") curren
 function setPedalJSON(jsonString) { pedalJSON = jsonString; }
 
 function resetCatalogState() {
+  catalogRequestId++;
   currentPage = 0;
   isLoading = false;
   hasMore = true;
@@ -357,6 +359,7 @@ function renderCatalogIncremental(_, containerId, userRole, batchSize = 12) {
 function loadNextCatalogPage(extraParams = {}) {
   if (isLoading || !hasMore) return;
   isLoading = true;
+  const requestId = catalogRequestId;
 
   let url = "";
   let params = [];
@@ -446,6 +449,7 @@ function loadNextCatalogPage(extraParams = {}) {
   fetch(url, { headers: token ? { Authorization: "Bearer " + token } : {} })
     .then(r => r.json())
     .then(data => {
+      if (requestId !== catalogRequestId) return;
       if (!data) {
         hasMore = false;
         if (sentinel) sentinel.remove();
@@ -497,13 +501,14 @@ function loadNextCatalogPage(extraParams = {}) {
       renderCatalogIncremental([], "catalog", (window.currentUser?.role) || "guest", 100);
     })
     .catch(err => {
+      if (requestId !== catalogRequestId) return;
       console.error("Catalog lazy error:", err);
       const loaderEl = document.getElementById('catalog-loader');
       if (loaderEl) loaderEl.remove();
       isLoading = false;
     })
     .finally(() => {
-      isLoading = false;
+      if (requestId === catalogRequestId) isLoading = false;
     });
 }
 
