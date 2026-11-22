@@ -36,7 +36,7 @@ function renderNavBar(userRole) {
 
       <div style="display: flex; align-items: center; gap: 1rem;">
         <span id="pedalCount" style="font-size: 0.75rem; color:#aaa"></span>
-        <span id="brandCount" style="font-size: 0.75rem; color:#aaa"></span>
+        <span id="brandCount" style="font-size: 0.75rem; color:#aaa">${window.brandsTotal != null ? window.brandsTotal + " brands" : ""}</span>
 
         <input
           type="text"

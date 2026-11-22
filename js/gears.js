@@ -188,6 +188,7 @@ $(function () {
     brands.forEach(brand => {
       $filter.append($("<option>").val(brand).text(brand + " (" + brandCounts[brand] + ")"));
     });
+    window.brandsTotal = brands.length;
     $("#brandCount").text(brands.length + " brands");
   }
 
