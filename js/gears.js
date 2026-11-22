@@ -386,15 +386,9 @@ function loadNextCatalogPage(extraParams = {}) {
   if (isSearchMode) {
     url = "https://api.pedalplex.com/SEARCH_GEAR_LAZY.php";
 
-    // query testo libero: se è impostato un brand e q è vuoto, usa il brand per cercare nell'indice testuale
-    let queryParts = [];
-    if (currentSearchQuery && currentSearchQuery.trim()) {
-      queryParts.push(currentSearchQuery.trim());
-    }
-    if (currentBrand && currentBrand !== "all") {
-      queryParts.push(currentBrand);
-    }
-    let queryToSend = queryParts.join(" ");
+    // query testo libero: il brand NON va nel testo, perché il backend lo filtra già in modo esatto
+    // con il parametro brand. Nel full-text i token numerici ("1981", "29") non fanno match.
+    let queryToSend = (currentSearchQuery && currentSearchQuery.trim()) ? currentSearchQuery.trim() : "";
 
     params.push("q=" + encodeURIComponent(queryToSend));
     params.push("limit=100");
