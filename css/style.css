@@ -2740,7 +2740,7 @@ html[data-theme="light"] body.gears-page .gear-card:hover { border-color: #9C54D
 
 .gear-meta-id {
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 1.05rem;
   color: #e0e0e0;
   overflow-wrap: anywhere;
   line-height: 1.3;
