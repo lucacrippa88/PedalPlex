@@ -474,7 +474,7 @@ function loadNextCatalogPage(extraParams = {}) {
 
         catalogData = catalogData.concat(data.docs);
         searchBookmark = data.bookmark || null;
-        hasMore = !!searchBookmark && data.docs.length >= 100;
+        hasMore = !!searchBookmark;
 
         if (!hasMore) {
           if (sentinel) sentinel.remove();
