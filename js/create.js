@@ -802,6 +802,8 @@ function syncUIFromJSON(pedal) {
                     }
                     if (ctrl.labelPos === "inverted") {
                         $ctrl.find(".ctrl-knob-label-inverted").prop("checked", true);
+                    } else {
+                        $ctrl.find(".ctrl-knob-label-inverted").prop("checked", false);
                     }
 
                     applyPosition($ctrl, ctrl);
