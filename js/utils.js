@@ -1732,7 +1732,8 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
             if (!Array.isArray(rowWrapper.row)) continue;
 
             for (const control of rowWrapper.row) {
-              if (control.label === label && Array.isArray(control.colors)) {
+              // String() on both sides: jQuery .data() turns a label like "1" into the number 1
+              if (String(control.label) === String(label) && Array.isArray(control.colors)) {
                 foundControl = control;
                 const catalogColors = control.colors.map(c => normalizeHex(c));
 

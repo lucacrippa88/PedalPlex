@@ -590,7 +590,7 @@ function collectSinglePedalControlsMap($pedalDiv, pedalId) {
         outerLoop: for (const rowWrapper of pedalData.controls) {
           if (!Array.isArray(rowWrapper.row)) continue;
           for (const ctrl of rowWrapper.row) {
-            if (ctrl.label === label && Array.isArray(ctrl.colors)) {
+            if (String(ctrl.label) === String(label) && Array.isArray(ctrl.colors)) {
               const catalogColors = ctrl.colors.map(c => typeof normalizeHex === 'function' ? normalizeHex(c) : c);
               const idx = catalogColors.indexOf(hexColor);
               if (idx !== -1) { matchedIndex = idx; break outerLoop; }
