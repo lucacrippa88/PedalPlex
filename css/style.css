@@ -2813,6 +2813,10 @@ html[data-theme="light"] .gear-meta-brand { color: #8a3ffc; }
 }
 .gear-verified-badge svg { width: 16px; height: 16px; }
 
+/* Unverified flag (amber shield with "?"): gear created by the community, not checked yet */
+.unverified-badge svg { width: 18px; height: 18px; display: block; }
+.gear-unverified-badge { cursor: help; }
+
 /* Barra azioni: allineata a destra */
 .gear-actions {
   display: flex;

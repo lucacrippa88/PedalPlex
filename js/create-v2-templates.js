@@ -363,7 +363,7 @@
         var t = JSON.parse(JSON.stringify(src));
         Object.keys(t).forEach(function (k) { if (k.charAt(0) === "_") delete t[k]; }); // _id, _rev, _attachments…
         delete t.id; delete t.verified; delete t.canEdit;
-        t.published = "draft";
+        t.published = "unverified";
         var u = me();
         if (!u.guest) { t.author = u.username; t.authorId = u.userid; } else { delete t.author; delete t.authorId; }
 

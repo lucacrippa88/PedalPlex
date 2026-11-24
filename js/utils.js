@@ -1332,6 +1332,10 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       `);
     }
 
+    // Unverified flag: community gear not yet checked by the admin
+    const isUnverifiedGear = (pedal.published || '').toLowerCase() === 'unverified';
+    const $unverifiedBadge = isUnverifiedGear ? unverifiedBadge('verified-badge unverified-badge') : null;
+
     let showAuthor = false;
 
     if (isAdminUser) { showAuthor = true;
@@ -1339,7 +1343,7 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
     }
 
     // Create container
-    if ($verifiedBadge || showAuthor) {
+    if ($verifiedBadge || $unverifiedBadge || showAuthor) {
 
       const $authorDiv = $("<div>").addClass("pedal-author");
 
@@ -1347,12 +1351,15 @@ function renderPedal(pedal, userRole, pedalboardPage = false) {
       if ($verifiedBadge) {
         $authorDiv.append($verifiedBadge);
       }
+      if ($unverifiedBadge) {
+        $authorDiv.append($unverifiedBadge);
+      }
 
       // Show author conditionally
       if (showAuthor) {
         let authorText = `By: ${pedal.author}`;
         const published = (pedal.published || '').toLowerCase();
-        const showPublishedStatuses = ['draft', 'reviewing', 'template'];
+        const showPublishedStatuses = ['draft', 'private', 'reviewing', 'template', 'unverified'];
 
         if (showPublishedStatuses.indexOf(published) !== -1) { authorText += `, ${published}`; }
 
@@ -1513,8 +1520,13 @@ function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
   const authorIsAdmin   = pedal.authorId === ADMIN_AUTHOR_ID;
   const showAuthor      = isAdminUser || !authorIsAdmin;
 
-  if (pedal.verified == 'true' || (showAuthor && pedal.author)) {
+  const isUnverified = published === 'unverified';
+
+  if (pedal.verified == 'true' || isUnverified || (showAuthor && pedal.author)) {
     const $row = $('<div>').addClass('gear-author-row');
+    if (isUnverified) {
+      $row.append(unverifiedBadge('gear-verified-badge gear-unverified-badge'));
+    }
     if (pedal.verified == 'true') {
       const $vb = $('<span>').addClass('gear-verified-badge').html(
         '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
@@ -1534,7 +1546,7 @@ function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
   const showStatus = (function () {
     if (isGuest) return false;
     if (isAdminUser) return true;
-    if (isAuthorUser && (published === 'draft' || published === 'reviewing')) return true;
+    if (isAuthorUser && (published === 'draft' || published === 'private' || published === 'reviewing')) return true;
     return false;
   })();
 
@@ -1542,6 +1554,8 @@ function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
     const statusMap = {
       'public':    { color: 'bx--tag--green',  letter: 'P' },
       'draft':     { color: 'bx--tag--yellow', letter: 'D' },
+      'private':   { color: 'bx--tag--purple', letter: 'Pv' },
+      'unverified': { color: 'bx--tag--magenta', letter: 'U' },
       'reviewing': { color: 'bx--tag--red',    letter: 'R' },
       'template':  { color: 'bx--tag--blue',   letter: 'T' },
     };
@@ -1602,6 +1616,22 @@ function wrapGearCard(pedal, $pedalDiv, userRole, options = {}) {
 }
 
 window.wrapGearCard = wrapGearCard;
+
+// Flag shown on "unverified" gears (created by guests / users, not yet checked by the admin).
+// Same shield as the green "verified" one (checked by the brand), amber with a question mark.
+function unverifiedBadge(wrapperClass) {
+  return $('<span>')
+    .addClass(wrapperClass)
+    .attr({ title: 'Unverified gear: created by the community, not checked yet', 'aria-label': 'Unverified gear' })
+    .html(
+      '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<path d="M12 1.5L3 6V12C3 17 7 21 12 22.5C17 21 21 17 21 12V6L12 1.5Z" fill="#f1c21b"/>' +
+      '<path d="M9.7 9.2C9.7 6.6 14.3 6.6 14.3 9.2C14.3 11.1 12 11.1 12 13.3" stroke="#161616" stroke-width="1.7" stroke-linecap="round"/>' +
+      '<circle cx="12" cy="16.4" r="1.1" fill="#161616"/>' +
+      '</svg>'
+    );
+}
+window.unverifiedBadge = unverifiedBadge;
 
 
 // Get all active gears controls to save the preset

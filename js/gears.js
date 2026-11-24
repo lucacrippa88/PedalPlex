@@ -120,7 +120,7 @@ var catalogRequestId = 0; // incremented on every reset; responses from older re
 var currentSearchQuery = null;
 var currentCategory = 'all';
 var currentBrand = 'all';
-var currentPublishedFilter = 'all'; // all | draft | reviewing | publicByMe | template | user
+var currentPublishedFilter = 'all'; // all | unverified | draft | private | reviewing | publicByMe | template | user
 var currentSort = 'alpha'; // alpha (A-Z) | latest (New: by publishedAt) | trending (by rig usage) - via GET_CATALOG_LAZY.php
 // ?sort=latest (e.g. from the "Latest gear added" notification) preselects "newest published"
 if (new URLSearchParams(window.location.search).get("sort") === "latest") currentSort = 'latest';
@@ -678,12 +678,13 @@ function createNewPedal() {
         if (data.success) {
           Swal.fire({
             title: isGuest ? 'Submitted!' : 'Created!',
-            text: isGuest ? 'Thanks! Your gear will appear in the catalog once it has been reviewed.' : undefined,
+            text: isGuest ? 'Thanks! Your gear is now in the catalog, flagged as unverified until it has been checked.' : undefined,
             icon: 'success',
             confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Ok",
             customClass: { confirmButton: 'bx--btn bx--btn--primary' }
           }).then(() => {
-            if (isGuest) return; // not visible until reviewed
+            // guests: the server forces "unverified" and the gear is visible to everyone, so reload from the server
+            if (isGuest) { resetCatalogState(); loadNextCatalogPage(); updatePedalCountsFromServer(); return; }
             pedals.push({...newPedal, _id:data.id, _rev:data.rev, canEdit:true});
             catalogData.push({...newPedal, _id:data.id, _rev:data.rev, canEdit:true});
             renderCatalogIncremental([], 'catalog', window.currentUser.role || "user", 12);
@@ -719,10 +720,18 @@ function updatePedalCountsFromServer(activeFilter = null) {
       `${counts.total} gear${counts.total === 1 ? "" : "s"} (` +
       `All: <span class="status-filter ${isActive("all")}" data-filter="all">${counts.total}</span>`;
 
+    // Unverified gears (community-made, not checked yet) are visible to everyone; the admin gets the queue highlighted
+    if (counts.unverified > 0 || window.currentUser?.role === "admin") {
+      const unverifiedStyle = (window.currentUser?.role === "admin" && counts.unverified > 0)
+        ? 'style="background:#f1c21b;color:#161616;border-radius:50%;padding:1px 5px;font-size:0.75rem;font-weight:bold;min-width:18px;text-align:center;"'
+        : '';
+      countsHtml += `, Unverified: <span class="status-filter ${isActive("unverified")}" data-filter="unverified" ${unverifiedStyle}>${counts.unverified || 0}</span>`;
+    }
+
     if (window.currentUser?.role !== "guest") {
 
       countsHtml += `, Draft: <span class="status-filter ${isActive("draft")}" data-filter="draft">${counts.draft}</span>`;
-      // countsHtml += `, Private: <span class="status-filter ${isActive("private")}" data-filter="private">${counts.private}</span>`;
+      countsHtml += `, Private: <span class="status-filter ${isActive("private")}" data-filter="private">${counts.private}</span>`;
 
       const reviewingStyle = counts.reviewing > 0
         ? 'style="background:#ff0000;color:white;border-radius:50%;padding:1px 5px;font-size:0.75rem;font-weight:bold;min-width:18px;text-align:center;"'

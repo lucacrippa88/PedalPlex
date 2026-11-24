@@ -853,6 +853,7 @@ dialog#tpl-dialog .tpl-holder, dialog#tpl-dialog .tpl-holder * { box-sizing: con
 }
 .tpl-badge.st-draft { background: #5a4a00; color: #fddc69; }
 .tpl-badge.st-private { background: #393939; }
+.tpl-badge.st-unverified { background: #5a4a00; color: #f1c21b; }
 .tpl-badge.st-reviewing { background: #3a2a5c; color: #d4bbff; }
 .tpl-badge.st-public { background: #0e4d2a; color: #8ee0ad; }
 .tpl-badge.st-template { background: #00396b; color: #a6c8ff; }

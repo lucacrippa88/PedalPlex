@@ -117,7 +117,7 @@ function setupEditPedalHandler(pedals) {
             const newPedal = JSON.parse(JSON.stringify(pedal));
             delete newPedal._id;
             delete newPedal._rev;
-            newPedal.published = "draft";
+            newPedal.published = "unverified";
 
             Swal.close();
 

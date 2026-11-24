@@ -211,10 +211,11 @@
                     <div class="field">
                         <span class="cap">Status</span>
                         <div id="pedal-published-wrapper" class="custom-dropdown">
-                            <button type="button" class="bx--btn bx--btn--sm bx--btn--secondary" style="color:#ffffff" id="pedal-published-button">Draft</button><span id="status-buttons"></span>
+                            <button type="button" class="bx--btn bx--btn--sm bx--btn--secondary" style="color:#ffffff" id="pedal-published-button">Unverified</button><span id="status-buttons"></span>
                             <ul id="pedal-published-options" class="dropdown-options">
+                                <li data-value="unverified">Unverified</li>
                                 <li data-value="draft">Draft</li>
-                                <!-- <li data-value="private">Private</li> -->
+                                <li data-value="private">Private</li>
                                 <li data-value="reviewing">Reviewing</li>
                                 <li data-value="template">Template</li>
                                 <li data-value="public">Public</li>
@@ -835,7 +836,11 @@
 // Handle moderation flow
 $(function() {
   let userRole = parent?.window?.currentUser?.role || "user";
-  const allowedForUser = userRole === "admin" ? ["draft", "reviewing", "template", "public"] : ["draft"];
+  // "unverified": created by anyone (guests included), usable by everyone but flagged; only the admin makes it public.
+  // "private": only its author and the admin can see / use / edit it. Guests have no account → no private/draft.
+  const isGuestUser = !parent?.window?.currentUser || userRole === "guest";
+  const allowedForUser = userRole === "admin" ? ["unverified", "draft", "private", "reviewing", "template", "public"]
+                       : (isGuestUser ? ["unverified"] : ["unverified", "draft", "private"]);
 
 
   $("#pedal-published-options li").each(function() {
@@ -847,44 +852,7 @@ $(function() {
     buildJSON(); // always use .text().toLowerCase() for JSON
   });
 
-  // Ask publication button
-  if (userRole !== "admin" && userRole !== "guest" && !$("#request-publication").length) {
-    $("#status-buttons").append(`<button id="request-publication" class="bx--btn bx--btn--primary bx--btn--sm" type="button" aria-label="Create New Gear">
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon">
-            <path d="M27.45,15.11l-22-11a1,1,0,0,0-1.08.12,1,1,0,0,0-.33,1L7,16,4,26.74A1,1,0,0,0,5,28a1,1,0,0,0,.45-.11l22-11a1,1,0,0,0,0-1.78Zm-20.9,10L8.76,17H18V15H8.76L6.55,6.89,24.76,16Z"/>
-          </svg>
-          Ask publication
-        </button>`);
-
-    // SweetAlert2 confirmation
-    $("#request-publication").on("click", function() {
-      Swal.fire({
-        title: 'Ask for publication?',
-        text: "Do you want to submit this gear for review to be publicly available in the catalog?",
-        showCancelButton: true,
-        confirmButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M13 24 4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z'></path></svg>Yes, submit",
-        cancelButtonText: "<svg focusable='false' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' fill='currentColor' width='16' height='16' viewBox='0 0 32 32' aria-hidden='true' class='bx--btn__icon'><path d='M20,10H7.8149l3.5874-3.5859L10,5,4,11,10,17l1.4023-1.4146L7.8179,12H20a6,6,0,0,1,0,12H12v2h8a8,8,0,0,0,0-16Z'></path></svg>No, Cancel",
-        showCancelButton: true,
-        customClass: {
-            confirmButton: 'bx--btn bx--btn--primary askpub-swal-style',
-            cancelButton: 'bx--btn bx--btn--secondary askpub-swal-style'
-        }
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Update published status
-          $("#pedal-published-button").text("Reviewing");
-          buildJSON(); // update JSON with new status
-
-          Swal.fire({
-            title: 'Done!',
-            text: 'Click Save to finalize your submission.',
-            timer: 1000,
-            showConfirmButton: false
-          });
-        }
-      });
-    });
-  }
+  // No "Ask publication" step any more: new gears are "unverified" (usable by everyone, flagged); only the admin makes them public.
 });
 
 // Show verified checkbox only for admins

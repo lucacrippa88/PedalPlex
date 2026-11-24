@@ -317,9 +317,9 @@ function buildJSON() {
 
     // Published: editable via custom select (defaults to draft if not set)
     const selectedText = $("#pedal-published-button").text().trim().toLowerCase();
-    // const validStatuses = ["draft", "private", "reviewing", "template", "public"];
-    const validStatuses = ["draft", "reviewing", "template", "public"];
-    pedal.published = validStatuses.includes(selectedText) ? selectedText : "draft";
+    // "unverified" (default): usable by everyone but flagged; only the admin can make a gear "public"
+    const validStatuses = ["unverified", "draft", "private", "reviewing", "template", "public"];
+    pedal.published = validStatuses.includes(selectedText) ? selectedText : "unverified";
 
     // Verified field (admin only)
     const isAdmin = (parent?.window?.currentUser?.role || '').toLowerCase() === 'admin';
@@ -884,9 +884,8 @@ function syncUIFromJSON(pedal) {
 
 // --- Published (custom dropdown) ---
 if ($("#pedal-published-button").length) {
-    // const validStatuses = ["draft", "private", "reviewing", "template", "public"];
-    const validStatuses = ["draft", "reviewing", "template", "public"];
-    const status = validStatuses.includes(pedal.published) ? pedal.published : "draft";
+    const validStatuses = ["unverified", "draft", "private", "reviewing", "template", "public"];
+    const status = validStatuses.includes(pedal.published) ? pedal.published : "unverified";
 
     // Set the button text to reflect the current status
     $("#pedal-published-button").text(status.charAt(0).toUpperCase() + status.slice(1));
