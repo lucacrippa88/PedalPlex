@@ -160,6 +160,11 @@
 
     if (typeof initNavCatalog === 'function') initNavCatalog('guest');
 
+    // ?create=1 — open builder directly (guests submit via captcha)
+    if (new URLSearchParams(window.location.search).get('create') === '1') {
+      if (typeof createNewPedal === 'function') createNewPedal();
+    }
+
     return;
   }
 
