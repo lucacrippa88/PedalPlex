@@ -340,6 +340,7 @@ function initNavPedalboard(userRole) {
         window._emptySlotInsertAt = null;
         if (typeof addGuestMeritPoint === 'function') addGuestMeritPoint();
         if (wasRigEmpty && typeof trackFunnelEvent === 'function') trackFunnelEvent('first_gear_added', { gear_id: pedal._id });
+        if (typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_added_to_rig', { gear_id: pedal._id });
         if (typeof window.deactivateSlot === 'function') window.deactivateSlot();
         if (typeof renderPedalboard === 'function') renderPedalboard();
         if (typeof autoSavePedalboard === 'function') autoSavePedalboard();
@@ -420,6 +421,7 @@ function initNavPedalboard(userRole) {
 
   async function fetchAndRenderPedals(rawQuery = '') {
     const query = (rawQuery || '').trim().toLowerCase();
+    if (query && typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_search', { search_term: query });
     const dropdown = getOrCreateDropdown();
     const categoryFilter = window._emptySlotCategory || null;
     window._emptySlotCategory = null;
@@ -464,6 +466,7 @@ function initNavPedalboard(userRole) {
 
       dropdown.innerHTML = '';
       if (!pedalsList?.length) {
+        if (query && typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_search_no_results', { search_term: query });
         const escapedQuery = (query || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         dropdown.innerHTML = `
           <div style="padding:14px 16px;font-size:0.875rem;line-height:1.6;">
