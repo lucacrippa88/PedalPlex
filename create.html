@@ -30,7 +30,7 @@
     </style>
 </head>
 
-<body class="v2">
+<body class="v2 simple">
 
     <div id="builder">
 
@@ -38,6 +38,15 @@
 
             <input type="hidden" id="pedal-author" />
             <input type="hidden" id="pedal-author-id" />
+
+            <!-- ============ Simple / Advanced switch (elements marked .adv-only are hidden in Simple; they stay in the DOM so no data is lost) ============ -->
+            <div class="mode-bar" id="mode-bar">
+                <div class="mode-switch" role="group" aria-label="Builder mode">
+                    <button type="button" id="mode-simple" aria-pressed="true">Simple</button>
+                    <button type="button" id="mode-advanced" aria-pressed="false">Advanced</button>
+                </div>
+                <span class="mode-note" id="mode-note"></span>
+            </div>
 
             <!-- ============ 0. Start from a template or clone a gear (hidden automatically when editing an existing gear) ============ -->
             <div class="start-card" id="tpl-start">
@@ -62,21 +71,21 @@
                             <datalist id="brand-list"></datalist>
                         </label>
                         <label class="field wide">Name <input type="text" class="create-gear-input" id="pedal-gear-name" autocomplete="off" placeholder="Insert gear name (e.g. Distortion DS-1)..."></label>
-                        <label class="field wide">Description <textarea class="create-gear-input" id="pedal-description" rows="3" maxlength="1500" placeholder="Short description of the gear (shown on its public page)..."></textarea></label>
+                        <label class="field wide adv-only">Description <textarea class="create-gear-input" id="pedal-description" rows="3" maxlength="1500" placeholder="Short description of the gear (shown on its public page)..."></textarea></label>
                         <!-- affiliate links (admin only, shown by the script at the bottom) -->
                         <label class="field wide" id="fxdb-container" style="display:none;">Effects Database link <input type="text" class="create-gear-input" id="pedal-fxdb" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://www.effectsdatabase.com/model/..."></label>
                         <label class="field wide">Logo text <input type="text" class="create-gear-input" id="pedal-name" autocomplete="off" placeholder="Insert gear name to be displayed as logo..."></label>
                         <div class="lint wide" id="lint-name" aria-live="polite"></div>
-                        <label class="field wide">Logo style <input type="text" class="create-gear-input" id="pedal-logo" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Set valid CSS to style the logo..."></label>
-                        <div class="lint wide" id="lint-logo" aria-live="polite"></div>
+                        <label class="field wide adv-only">Logo style <input type="text" class="create-gear-input" id="pedal-logo" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Set valid CSS to style the logo..."></label>
+                        <div class="lint wide adv-only" id="lint-logo" aria-live="polite"></div>
                     </div>
 
                     <!-- filled by js/create-v2-help.js from the same rule lists used by the live checker -->
-                    <details class="help" id="help-rules">
+                    <details class="help adv-only" id="help-rules">
                         <summary>What can I use in Name &amp; Logo style?</summary>
                         <div class="help-body" id="help-rules-body"></div>
                     </details>
-                    <details class="help" id="help-fonts">
+                    <details class="help adv-only" id="help-fonts">
                         <summary>Fonts you can use <span class="help-count"></span></summary>
                         <div class="help-body">
                             <p class="help-p">Put the font name in the <b>Logo style</b> as <code>font-family: name;</code> — or tap <b>Use</b>. Fonts load the first time you open this list.</p>
@@ -104,7 +113,7 @@
                         <label class="field">Width <select id="pedal-width"></select></label>
                         <label class="field">Height <select id="pedal-height"></select></label>
                     </div>
-                    <div class="field">
+                    <div class="field adv-only">
                         <span class="cap">Category</span>
                         <div id="pedal-category-wrapper">
                             <button type="button" class="bx--btn bx--btn--sm bx--btn--secondary" id="pedal-category-button">Select categories</button>
@@ -152,7 +161,7 @@
             </details>
 
             <!-- ============ 4. Default knobs ============ -->
-            <details class="sec" id="sec-knobs" open>
+            <details class="sec adv-only" id="sec-knobs" open>
                 <summary><span>Default knobs</span><span class="sec-hint"></span></summary>
                 <div class="sec-body">
                     <div class="fields">
@@ -360,7 +369,7 @@
               <input type="number" class="ctrl-position-margin-value" placeholder="px" min="0" style="display:none;">
             </div>
 
-            <details class="adv">
+            <details class="adv adv-only">
               <summary>Style &amp; colors</summary>
               <div class="fields">
                 <label class="field wide">Style

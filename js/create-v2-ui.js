@@ -168,8 +168,55 @@
         schedule();
     }
 
+    // ---------- Simple / Advanced mode ----------
+    // Advanced-only elements (.adv-only) are only hidden by CSS: their values are still read by buildJSON().
+    var MODE_KEY = "pedalplex.builderMode";
+
+    function setMode(mode, remember) {
+        var adv = mode === "advanced";
+        $("body").toggleClass("simple", !adv);
+        $("#mode-simple").attr("aria-pressed", String(!adv));
+        $("#mode-advanced").attr("aria-pressed", String(adv));
+        $("#mode-note").text(adv
+            ? "All features are shown."
+            : "Showing the essentials. Switch to Advanced for description, logo style, fonts, categories and knob styling.");
+        if (remember) { try { localStorage.setItem(MODE_KEY, mode); } catch (e) {} }
+        schedule();
+    }
+
+    // true when a loaded gear uses something that Simple mode hides
+    function usesAdvanced(p) {
+        if (!p) return false;
+        if (p.description || p.logo || p.category || p["knobs-style"] || p["knobs-inner-color"]) return true;
+        if (p["knobs-color"] && p["knobs-color"].toLowerCase() !== "#191919") return true;
+        if (p["knobs-border"] && p["knobs-border"].toLowerCase() !== "#424242") return true;
+        if (p["knobs-indicator"] && p["knobs-indicator"].toLowerCase() !== "#ffffff") return true;
+        return (p.controls || []).some(function (r) {
+            return (r.row || []).some(function (c) {
+                return Object.keys(c).some(function (k) { return /^knob-/.test(k) || k === "border" || k === "labelPos"; });
+            });
+        });
+    }
+
+    // Editing an existing gear (it has an _id) that already uses advanced features: don't hide them from its author.
+    // Templates / clones keep the current mode (their hidden values are still loaded and saved).
+    var origSync = window.syncUIFromJSON;
+    if (typeof origSync === "function") {
+        window.syncUIFromJSON = function (pedal) {
+            var r = origSync.apply(this, arguments);
+            if (pedal && pedal._id && usesAdvanced(pedal)) setMode("advanced", false);
+            return r;
+        };
+    }
+
     // ---------- init ----------
     $(function () {
+        var saved = null;
+        try { saved = localStorage.getItem(MODE_KEY); } catch (e) {}
+        setMode(saved === "advanced" ? "advanced" : "simple", false);
+        $("#mode-simple").on("click", function () { setMode("simple", true); });
+        $("#mode-advanced").on("click", function () { setMode("advanced", true); });
+
         // flag set in CAPTURE phase: the add handler (delegated on #controls) would otherwise run first
         document.addEventListener("click", function (e) {
             if (e.target.closest && e.target.closest(".add-control")) {

@@ -890,6 +890,31 @@ body.v2 #status-buttons .bx--btn { gap: 8px; }
 body.v2 #pedal-published-button { display: none; }
 
 /* =====================================================================
+   Simple / Advanced mode.
+   Advanced-only elements stay in the DOM (buildJSON keeps reading their
+   defaults), they are just not displayed in Simple mode.
+   ===================================================================== */
+body.v2.simple .adv-only { display: none !important; }
+
+body.v2 .mode-bar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+body.v2 .mode-switch {
+  display: inline-flex; padding: 3px; gap: 2px;
+  background: #161616; border: 1px solid #393939; border-radius: 8px;
+}
+body.v2 .mode-switch button {
+  min-height: 36px; padding: 4px 16px; border: 0; border-radius: 6px;
+  background: transparent; color: #c6c6c6; font: inherit; font-size: .875rem; cursor: pointer;
+}
+body.v2 .mode-switch button[aria-pressed="true"] { background: #0f62fe; color: #fff; font-weight: 600; }
+body.v2 .mode-switch button:focus-visible { outline: 2px solid #78a9ff; outline-offset: 1px; }
+body.v2 .mode-note { flex: 1 1 200px; min-width: 0; font-size: .75rem; color: #a8a8a8; }
+@media (max-width: 860px) {
+  body.v2 .mode-switch button { min-height: 44px; }
+}
+
+/* =====================================================================
    Light theme: the builder UI is designed on dark panels only.
    Without this, style.css light rules turn inherited / inline-white text
    dark (#161616) on top of the dark panels → unreadable.
