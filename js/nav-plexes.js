@@ -113,7 +113,6 @@ function initNavPreset() {
     </header>`;
 
   $("body").prepend(navHtml);
-  if (typeof window.initNotifications === 'function') window.initNotifications();
 
   // ── Populate Actions menu items (wrapper is already in the header) ─────────
   function injectActionsDropdown() {
@@ -131,8 +130,7 @@ function initNavPreset() {
       <button class="pp-action-item" id="pp-action-lock"  data-action="lock">${SVG.lock}  <span>Lock Preset</span></button>
       <button class="pp-action-item" data-action="download">${SVG.download} <span>Download Preset</span></button>
       <div class="pp-action-separator"></div>
-      <a class="pp-action-item" href="rigs">${SVG.manageRigs} <span>Manage Rigs</span></a>
-      ${typeof window.ppNotificationsMenuItem === 'function' ? window.ppNotificationsMenuItem() : ''}`;
+      <a class="pp-action-item" href="rigs">${SVG.manageRigs} <span>Manage Rigs</span></a>`;
   }
 
   // Inject styles

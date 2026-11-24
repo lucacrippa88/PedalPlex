@@ -362,6 +362,8 @@ $(document).ready(function () {
       $btn.css({ backgroundImage: 'none' }).html(USER_ICON);
     }
 
+    const notificationsItem = typeof window.ppNotificationsMenuItem === 'function' ? window.ppNotificationsMenuItem() : '';
+
     const menuHtml = isGuest ? `
       <div id="pp-avatar-menu" style="
           display:none;
@@ -377,6 +379,7 @@ $(document).ready(function () {
           z-index:4000;
           padding:4px 0;">
         <a class="pp-action-item" href="/profile?tab=avatar" data-tab="avatar">${AVATAR_MENU_ICONS.avatar} <span>Avatar</span></a>
+        ${notificationsItem}
         <div style="height:1px; background:rgba(255,255,255,0.1); margin:4px 0;"></div>
         <a class="pp-action-item" href="/login"><svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M26,30H14a2,2,0,0,1-2-2V25h2v3H26V4H14V7H12V4a2,2,0,0,1,2-2H26a2,2,0,0,1,2 2V28A2,2,0,0,1,26,30Z"/><path d="M14.59 20.59L18.17 17 4 17 4 15 18.17 15 14.59 11.41 16 10 22 16 16 22 14.59 20.59z"/></svg> <span>Login / Sign Up</span></a>
       </div>
@@ -399,6 +402,7 @@ $(document).ready(function () {
         <a class="pp-action-item" href="/profile?tab=avatar" data-tab="avatar">${AVATAR_MENU_ICONS.avatar} <span>Avatar</span></a>
         <a class="pp-action-item" href="/profile?tab=instruments" data-tab="instruments">${AVATAR_MENU_ICONS.instruments} <span>Instruments</span></a>
         <a class="pp-action-item" href="/profile?tab=password" data-tab="password">${AVATAR_MENU_ICONS.password} <span>Change Password</span></a>
+        ${notificationsItem}
       </div>
     `;
 
@@ -407,6 +411,8 @@ $(document).ready(function () {
     // Headers with a right-hand group get the button there; otherwise it becomes the right-hand item
     const $children = $header.children().not('.pp-search-overlay');
     ($children.length >= 2 ? $children.last() : $header).append($wrapper);
+    // Notifications: unread dot on the profile button + updates panel (only where notifications.js is loaded)
+    if (typeof window.ppNotificationsAttach === 'function') window.ppNotificationsAttach();
     return true;
   };
 

@@ -1,18 +1,21 @@
 /**
  * notifications.js — "PedalPlex updates".
  *
- * Entry point is a "Notifications" item inside the Actions dropdown (#pp-actions-menu).
- * A red dot on the Actions button (and next to the item) signals unread updates.
- * Clicking the item closes the Actions menu and opens the updates panel in its place.
+ * Entry point is a "Notifications" item inside the profile dropdown (#pp-avatar-menu).
+ * A red dot on the navbar profile button (and next to the item) signals unread updates.
+ * Clicking the item closes the profile menu and opens the updates panel in its place.
  *
  * Data: GET_NOTIFICATIONS.php -> latest gear + curated features (max 10).
  * Unread state: ids already seen are kept in localStorage; the dot shows while the list
  * contains at least one id that has not been seen yet. Opening the panel marks all as seen.
  *
  * Usage:
- *   - load this script BEFORE nav-rigs.js / nav-plexes.js
- *   - put window.ppNotificationsMenuItem() in the Actions menu markup
- *   - call window.initNotifications() once #pp-actions-wrapper is in the DOM
+ *   - load this script BEFORE nav-rigs.js / nav-plexes.js (it must be defined when the profile
+ *     menu is built by ppUpdateAvatarButton in fullscreen-menu.js)
+ *   - window.ppNotificationsMenuItem() is put in the profile menu markup
+ *   - window.ppNotificationsAttach() is called by ppUpdateAvatarButton every time the profile
+ *     wrapper (#pp-avatar-wrapper) is (re)created: it adds the dot and the panel to it
+ *   - window.initNotifications() loads the data once
  */
 (function () {
   const API_URL      = 'https://api.pedalplex.com/GET_NOTIFICATIONS.php'; // latest gear added
@@ -27,6 +30,9 @@
 
   let items = [];
   let stats = null; // { statsKey: { users, guests } } — loaded for admins only
+  let unread = false;
+  let initialized = false;
+  let listenersBound = false;
 
   function isAdmin() {
     return !!(window.currentUser && String(window.currentUser.role).toLowerCase() === 'admin');
@@ -135,10 +141,9 @@
     return new Date(t).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
-  // Markup of the Actions menu item (inserted by nav-rigs.js / nav-plexes.js)
+  // Markup of the profile menu item (inserted by ppUpdateAvatarButton in fullscreen-menu.js)
   window.ppNotificationsMenuItem = function () {
-    return '<div class="pp-action-separator"></div>' +
-      '<button class="pp-action-item" id="pp-action-notifications" type="button">' +
+    return '<button class="pp-action-item" id="pp-action-notifications" type="button">' +
       ICON_BELL + ' <span>Notifications</span></button>';
   };
 
@@ -159,8 +164,8 @@
         pointer-events: none;
         z-index: 1;
       }
-      #pp-actions-wrapper.has-unread #pp-notif-dot { display: block; }
-      #pp-actions-wrapper.has-unread #pp-action-notifications span::after {
+      #pp-avatar-wrapper.has-unread #pp-notif-dot { display: block; }
+      #pp-avatar-wrapper.has-unread #pp-action-notifications span::after {
         content: '';
         display: inline-block;
         width: 8px;
@@ -289,11 +294,57 @@
     observeViews(menu);
   }
 
-  window.initNotifications = function () {
-    const wrapper = document.getElementById('pp-actions-wrapper');
-    if (!wrapper || document.getElementById('pp-notif-menu')) return;
+  function getWrapper() { return document.getElementById('pp-avatar-wrapper'); }
+  function getPanel()   { return document.getElementById('pp-notif-menu'); }
+
+  function setOpen(open) {
+    const panel = getPanel();
+    if (panel) panel.style.display = open ? 'block' : 'none';
+  }
+
+  function applyUnread() {
+    const wrapper = getWrapper();
+    if (wrapper) wrapper.classList.toggle('has-unread', unread);
+  }
+
+  function bindListeners() {
+    if (listenersBound) return;
+    listenersBound = true;
+
+    // Click on the "Notifications" item inside the profile dropdown
+    // (delegated: the wrapper is recreated every time the avatar button is refreshed)
+    document.addEventListener('click', function (e) {
+      const item = e.target.closest ? e.target.closest('#pp-action-notifications') : null;
+      if (item) {
+        const profileMenu = document.getElementById('pp-avatar-menu');
+        if (profileMenu) profileMenu.style.display = 'none';
+        setOpen(true);
+        if (items.length) {
+          // Opening the panel marks everything currently listed as seen
+          setSeen(items.map(function (n) { return n.id; }));
+          unread = false;
+          applyUnread();
+          // Views are reported per item by the IntersectionObserver as they become visible
+          if (isAdmin()) loadStats(getPanel());
+        }
+        return;
+      }
+      const panel = getPanel();
+      if (panel && !panel.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  }
+
+  // Adds the unread dot and the updates panel to the profile wrapper (#pp-avatar-wrapper).
+  // Called by ppUpdateAvatarButton every time the wrapper is (re)created.
+  window.ppNotificationsAttach = function () {
+    const wrapper = getWrapper();
+    if (!wrapper || getPanel()) return;
 
     injectStyle();
+    bindListeners();
 
     const dot = document.createElement('span');
     dot.id = 'pp-notif-dot';
@@ -305,36 +356,15 @@
     menu.setAttribute('role', 'menu');
     wrapper.appendChild(menu);
 
-    function setOpen(open) {
-      menu.style.display = open ? 'block' : 'none';
-    }
+    renderItems(menu);
+    applyUnread();
+    window.initNotifications();
+  };
 
-    // Click on the "Notifications" item inside the Actions dropdown
-    // (delegated: the item may be rendered after this init runs)
-    document.addEventListener('click', function (e) {
-      const item = e.target.closest ? e.target.closest('#pp-action-notifications') : null;
-      if (item) {
-        const actionsMenu = document.getElementById('pp-actions-menu');
-        if (actionsMenu) actionsMenu.style.display = 'none';
-        setOpen(true);
-        if (items.length) {
-          // Opening the panel marks everything currently listed as seen
-          setSeen(items.map(function (n) { return n.id; }));
-          wrapper.classList.remove('has-unread');
-          // Views are reported per item by the IntersectionObserver as they become visible
-          if (isAdmin()) loadStats(menu);
-        }
-        return;
-      }
-      if (!menu.contains(e.target)) setOpen(false);
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') setOpen(false);
-    });
-    // Opening the Actions menu again closes the updates panel
-    wrapper.addEventListener('click', function (e) {
-      if (e.target.closest('#pp-actions-btn, #pp-actions-btn-tablet, #pp-actions-btn-mobile')) setOpen(false);
-    });
+  // Loads the data (once) and refreshes the panel / dot currently in the DOM
+  window.initNotifications = function () {
+    if (initialized) return;
+    initialized = true;
 
     // Each source fails independently: a missing one must not hide the other
     const gearsP = fetch(API_URL)
@@ -367,11 +397,11 @@
         items = res[0].concat(res[1])
           .sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); })
           .slice(0, MAX_ITEMS);
-        renderItems(menu);
+        const panel = getPanel();
+        if (panel) renderItems(panel);
         const seen = getSeen();
-        if (items.some(function (n) { return seen.indexOf(n.id) === -1; })) {
-          wrapper.classList.add('has-unread');
-        }
+        unread = items.some(function (n) { return seen.indexOf(n.id) === -1; });
+        applyUnread();
       })
       .catch(function () { /* notifications are optional: fail silently */ });
   };
