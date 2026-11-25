@@ -340,10 +340,10 @@ function initNavPedalboard(userRole) {
         window._emptySlotInsertAt = null;
         if (typeof addGuestMeritPoint === 'function') addGuestMeritPoint();
         if (wasRigEmpty && typeof trackFunnelEvent === 'function') trackFunnelEvent('first_gear_added', { gear_id: pedal._id });
-        if (typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_added_to_rig', { gear_id: pedal._id });
         if (typeof window.deactivateSlot === 'function') window.deactivateSlot();
         if (typeof renderPedalboard === 'function') renderPedalboard();
         if (typeof autoSavePedalboard === 'function') autoSavePedalboard();
+        if (typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_added_to_rig', { gear_id: pedal._id });
 
         // Conferma: icona check sul bottone + toast, poi riabilita dopo un breve cooldown
         btn.innerHTML = ICON_CHECK;

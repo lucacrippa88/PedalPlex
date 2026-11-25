@@ -1434,8 +1434,10 @@ function extractColorFromLogo(logoCss) {
 // Handle pending pedal add (from gears page)
 function handlePendingPedalAdd() {
   // Check guest notification flags
-  if (localStorage.getItem('pendingPedalAddSuccess')) {
+  const successPedalId = localStorage.getItem('pendingPedalAddSuccess');
+  if (successPedalId) {
     localStorage.removeItem('pendingPedalAddSuccess');
+    if (typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_added_to_rig', { gear_id: successPedalId });
     window.PPUnsaved?.markRigClean();
     Swal.fire({
       icon: 'success',
@@ -1527,6 +1529,7 @@ function handlePendingPedalAdd() {
     rotation: pending.rotation ?? 0,
     row: pending.row ?? 1
   });
+  if (typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_added_to_rig', { gear_id: pending.pedal_id });
 
   // Sync runtime state
   window.pedalboard = structuredClone(board);

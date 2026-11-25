@@ -185,7 +185,7 @@ async function addPedalToRig(pedalId) {
         if (!boards[0].pedals) boards[0].pedals = [];
         boards[0].pedals.push({ pedal_id: pedalId, rotation: 0, row: 1 });
         localStorage.setItem('guestPedalboard', JSON.stringify(boards));
-        localStorage.setItem('pendingPedalAddSuccess', 'true');
+        localStorage.setItem('pendingPedalAddSuccess', pedalId);
       } else {
         localStorage.setItem('pendingPedalAddDuplicate', 'true');
       }
