@@ -49,7 +49,7 @@ function initPedalboard(userRole) {
       window.allPedalboards = boards;
       window.pedalboard = structuredClone(boards[0]);
 
-      $("#pedalboard-controls").css("display", "inline-flex");
+      $("#pedalboard-controls").css("display", "flex");
       $("#pedalboardSelect").css("display", "none");
       $("#renameBoardBtn").css("display", "none");
 
@@ -226,7 +226,7 @@ function initPedalboard(userRole) {
           window.catalog = result.docs || [];
           window.pedalboard = selectedBoard;
 
-          $("#pedalboard-controls").css("display", "inline-flex");
+          $("#pedalboard-controls").css("display", "flex");
           $("#pedalboardSelect").css("display", "inline-flex");
     
           renderPedalboard();
@@ -781,7 +781,7 @@ function createNewPedalboard() {
           showConfirmButton: false
         });
 
-        $("#pedalboard-controls").css("display", "inline-flex");
+        $("#pedalboard-controls").css("display", "flex");
         return;
       }
 

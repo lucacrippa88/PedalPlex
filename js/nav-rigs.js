@@ -590,7 +590,7 @@ function initNavPedalboard(userRole) {
     const $add  = $("#addGearsTrigger, #addGearsTriggerTablet, #addGearsTriggerMobile");
     const $view = $("#viewPreset");
     const $viewSubtitle = $("#viewPresetSubtitle");
-    const $viewFooter = $("#viewPresetFooter");
+    const $viewFooter = $("#viewPresetFooter").css('display', 'flex');
 
     // Il bottone + mobile resta sempre secondary (Carbon)
     const $addCta = $add.not("#addGearsTriggerMobile");
