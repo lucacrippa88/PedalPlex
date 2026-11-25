@@ -2813,6 +2813,26 @@ function trackFunnelEvent(stepName, metadata) {
 }
 window.trackFunnelEvent = trackFunnelEvent;
 
+// Eventi di ricerca gear: GA4 (come trackFunnelEvent) + salvataggio su GEAR_EVENT_TRACK.php
+// per la dashboard admin. Il backend accetta solo i tre eventi della whitelist.
+function trackGearEvent(eventName, metadata) {
+  try {
+    trackFunnelEvent(eventName, metadata);
+    const isGuest = !localStorage.getItem('authToken');
+    fetch('https://api.pedalplex.com/GEAR_EVENT_TRACK.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.assign({
+        event: eventName,
+        user_type: isGuest ? 'guest' : 'registered',
+        guest_id: getGuestId()
+      }, metadata || {})),
+      keepalive: true
+    }).catch(() => {});
+  } catch (err) {}
+}
+window.trackGearEvent = trackGearEvent;
+
 // Track guest visitor on non-logged-in session
 setTimeout(trackGuestVisit, 2000);
 

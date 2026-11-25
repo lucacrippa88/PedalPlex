@@ -1437,7 +1437,7 @@ function handlePendingPedalAdd() {
   const successPedalId = localStorage.getItem('pendingPedalAddSuccess');
   if (successPedalId) {
     localStorage.removeItem('pendingPedalAddSuccess');
-    if (typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_added_to_rig', { gear_id: successPedalId });
+    if (typeof trackGearEvent === 'function') trackGearEvent('gear_added_to_rig', { gear_id: successPedalId });
     window.PPUnsaved?.markRigClean();
     Swal.fire({
       icon: 'success',
@@ -1529,7 +1529,6 @@ function handlePendingPedalAdd() {
     rotation: pending.rotation ?? 0,
     row: pending.row ?? 1
   });
-  if (typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_added_to_rig', { gear_id: pending.pedal_id });
 
   // Sync runtime state
   window.pedalboard = structuredClone(board);
@@ -1579,6 +1578,7 @@ function handlePendingPedalAdd() {
     })
     .then(data => {
       window.PPUnsaved?.markRigClean();
+      if (typeof trackGearEvent === 'function') trackGearEvent('gear_added_to_rig', { gear_id: pending.pedal_id });
       localStorage.removeItem('pendingPedalAdd');
       localStorage.removeItem('lastPedalboardId');
       Swal.fire({

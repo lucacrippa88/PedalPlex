@@ -317,7 +317,8 @@ function initNavPedalboard(userRole) {
         const wasRigEmpty = (window.pedalboard.pedals.length === 0);
 
         let pedalData = window.catalog.find(p => p._id === pedal._id);
-        if (!pedalData) {
+        // Le voci della ricerca (GET_CATALOG_IDS) hanno solo _id/brand/gearName: serve il documento completo
+        if (!pedalData?.type) {
           try {
             const res = await fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
               method: "POST",
@@ -325,7 +326,11 @@ function initNavPedalboard(userRole) {
               body: JSON.stringify({ ids: [pedal._id] })
             });
             const result = await res.json();
-            if (result?.docs?.length > 0) { pedalData = result.docs[0]; window.catalog.push(pedalData); }
+            if (result?.docs?.length > 0) {
+              pedalData = result.docs[0];
+              const idx = window.catalog.findIndex(p => p._id === pedal._id);
+              if (idx !== -1) window.catalog[idx] = pedalData; else window.catalog.push(pedalData);
+            }
             else { releaseItem(); return; }
           } catch (err) { console.error("Fetch error:", err); releaseItem(); return; }
         }
@@ -343,7 +348,7 @@ function initNavPedalboard(userRole) {
         if (typeof window.deactivateSlot === 'function') window.deactivateSlot();
         if (typeof renderPedalboard === 'function') renderPedalboard();
         if (typeof autoSavePedalboard === 'function') autoSavePedalboard();
-        if (typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_added_to_rig', { gear_id: pedal._id });
+        if (typeof trackGearEvent === 'function') trackGearEvent('gear_added_to_rig', { gear_id: pedal._id });
 
         // Conferma: icona check sul bottone + toast, poi riabilita dopo un breve cooldown
         btn.innerHTML = ICON_CHECK;
@@ -419,9 +424,23 @@ function initNavPedalboard(userRole) {
     lazyLoading = false;
   }
 
+  // Conteggio ricerca: una sola volta per query assestata (1 s senza nuove digitazioni),
+  // così "zzq", "zzqx", "zzqxv" non diventano tre ricerche.
+  let searchTrackingTimer = null;
+  let noResultsTimer = null;
+  let searchTrackingQuery = null;
+  function scheduleSearchTracking(query) {
+    clearTimeout(searchTrackingTimer);
+    searchTrackingQuery = query;
+    if (!query || typeof trackGearEvent !== 'function') return;
+    searchTrackingTimer = setTimeout(() => {
+      if (query === searchTrackingQuery) trackGearEvent('gear_search', { search_term: query });
+    }, 1000);
+  }
+
   async function fetchAndRenderPedals(rawQuery = '') {
     const query = (rawQuery || '').trim().toLowerCase();
-    if (query && typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_search', { search_term: query });
+    scheduleSearchTracking(query);
     const dropdown = getOrCreateDropdown();
     const categoryFilter = window._emptySlotCategory || null;
     window._emptySlotCategory = null;
@@ -466,7 +485,12 @@ function initNavPedalboard(userRole) {
 
       dropdown.innerHTML = '';
       if (!pedalsList?.length) {
-        if (query && typeof trackFunnelEvent === 'function') trackFunnelEvent('gear_search_no_results', { search_term: query });
+        if (query && typeof trackGearEvent === 'function') {
+          clearTimeout(noResultsTimer);
+          noResultsTimer = setTimeout(() => {
+            if (query === searchTrackingQuery) trackGearEvent('gear_search_no_results', { search_term: query });
+          }, 1000);
+        }
         const escapedQuery = (query || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         dropdown.innerHTML = `
           <div style="padding:14px 16px;font-size:0.875rem;line-height:1.6;">

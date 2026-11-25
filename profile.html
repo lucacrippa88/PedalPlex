@@ -384,6 +384,46 @@
           <div class="bx--col"></div>
         </div>
 
+        <br><hr style="border-color: #333;"><br>
+
+        <!-- ═══════════════════════════════════════════════════════
+             GEAR SEARCH — guest + registered users
+        ════════════════════════════════════════════════════════ -->
+        <h4 style="font-weight: 700; margin-bottom: 0.25rem; color: #fff;">Gear search</h4>
+        <p style="color: #6f6f6f; font-size: 0.8rem; margin-bottom: 1rem;">Searches and gear added to the Rig from the Add Gear menu (pedalplex_gear_events)</p>
+
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Totals</p>
+        <div class="bx--row">
+          <div class="bx--col" title="Searches typed in the Add Gear menu (settled query)"><strong>Searches:</strong> <span id="ge-total-searches"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Searches that returned no gear"><strong>No results:</strong> <span id="ge-total-no-results"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Share of searches with no results"><strong>No-results rate:</strong> <span id="ge-no-results-rate"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col" title="Gear added to a Rig from the Add Gear menu"><strong>Added to Rig:</strong> <span id="ge-total-added"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        </div>
+        <br>
+
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">By user type</p>
+        <div class="bx--row">
+          <div class="bx--col"><strong>Searches — guests:</strong> <span id="ge-searches-guest"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Searches — registered:</strong> <span id="ge-searches-registered"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>No results — guests:</strong> <span id="ge-no-results-guest"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>No results — registered:</strong> <span id="ge-no-results-registered"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        </div>
+        <div class="bx--row">
+          <div class="bx--col"><strong>Added — guests:</strong> <span id="ge-added-guest"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"><strong>Added — registered:</strong> <span id="ge-added-registered"><svg class="stat-inline-loader" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#c6c6c6" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#0f62fe" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+          <div class="bx--col"></div>
+          <div class="bx--col"></div>
+        </div>
+        <br>
+
+        <p style="color: #8d8d8d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Top searches</p>
+        <div class="bx--row">
+          <div class="bx--col"><strong>Most searched:</strong><ol id="ge-top-searches" style="margin: 4px 0 0 1.2rem; padding: 0;"></ol></div>
+          <div class="bx--col"><strong>Most searched with no results:</strong><ol id="ge-top-no-results" style="margin: 4px 0 0 1.2rem; padding: 0;"></ol></div>
+          <div class="bx--col"><strong>Most added to Rig:</strong><ol id="ge-top-added" style="margin: 4px 0 0 1.2rem; padding: 0;"></ol></div>
+          <div class="bx--col"></div>
+        </div>
+
       </div>
     </div>
 
@@ -2378,6 +2418,29 @@ function loadAdminStats() {
         $('#g-guest-with-preset-gear-2').text(fmt(g.guests_with_preset_gear_2));
         $('#g-guest-with-preset-gear-3').text(fmt(g.guests_with_preset_gear_3));
       }
+
+      // ── Gear search: guests + registered ──────────────────────
+      var ge = d.gear_events || {};
+      var fillTop = function (sel, items) {
+        var $ol = $(sel).empty();
+        if (!items || !items.length) { $ol.append($('<li>').text('–')); return; }
+        items.forEach(function (it) {
+          $ol.append($('<li>').text(it.term + ' (' + it.count + ')'));
+        });
+      };
+      $('#ge-total-searches').text(fmt(ge.total_searches));
+      $('#ge-total-no-results').text(fmt(ge.total_no_results));
+      $('#ge-no-results-rate').text(ge.no_results_rate != null ? ge.no_results_rate + '%' : '–');
+      $('#ge-total-added').text(fmt(ge.total_added_to_rig));
+      $('#ge-searches-guest').text(fmt(ge.searches_guest));
+      $('#ge-searches-registered').text(fmt(ge.searches_registered));
+      $('#ge-no-results-guest').text(fmt(ge.no_results_guest));
+      $('#ge-no-results-registered').text(fmt(ge.no_results_registered));
+      $('#ge-added-guest').text(fmt(ge.added_guest));
+      $('#ge-added-registered').text(fmt(ge.added_registered));
+      fillTop('#ge-top-searches', ge.top_searches);
+      fillTop('#ge-top-no-results', ge.top_no_results);
+      fillTop('#ge-top-added', ge.top_added_gears);
     },
     error: function () {
       Swal.fire('Error', 'Failed to load admin stats', 'error');
