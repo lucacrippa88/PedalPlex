@@ -606,12 +606,32 @@ function askGuestCaptcha() {
   });
 }
 
-function createNewPedal() {
+// source (optional): an existing gear to clone; the builder opens pre-filled with a copy of it
+function createNewPedal(source) {
   const isGuest = !window.currentUser || window.currentUser.role === "guest";
+  const cloneSource = (source && source._id) ? source : null;
 
   Swal.fire({
-    title: 'Gear Builder',
+    title: cloneSource ? `Clone of ${gearLabel(cloneSource)}` : 'Gear Builder',
     html: `<iframe src="create.html" class="builder-iframe" style="width:100%; height:80vh; border:none;" id="swal-builder-iframe"></iframe>`,
+    didOpen: () => {
+      if (!cloneSource) return;
+      const copy = JSON.parse(JSON.stringify(cloneSource));
+      Object.keys(copy).forEach(k => { if (k.charAt(0) === '_') delete copy[k]; }); // _id, _rev, _attachments...
+      delete copy.id; delete copy.verified; delete copy.canEdit; delete copy.publishedAt; delete copy.createdByGuest;
+      delete copy.author; delete copy.authorId;
+      copy.published = 'unverified';
+
+      const iframe = document.getElementById('swal-builder-iframe');
+      iframe.addEventListener('load', () => {
+        const checkReady = setInterval(() => {
+          if (iframe.contentWindow && typeof iframe.contentWindow.syncUIFromJSON === 'function') {
+            clearInterval(checkReady);
+            iframe.contentWindow.syncUIFromJSON(copy);
+          }
+        }, 100);
+      });
+    },
     width: '100%',
     allowOutsideClick: false,
     allowEscapeKey: false,
@@ -700,6 +720,30 @@ function createNewPedal() {
     }
   });
 }
+
+// ==================== CLONE GEAR (everyone, guests included) ====================
+// The catalog list may carry a light version of the gear: fetch the full document when controls are missing.
+$(document).on("click", ".clone-btn", function () {
+  const pedal = $(this).data("pedal");
+  if (!pedal) return;
+
+  if (pedal.controls && pedal.controls.length) { createNewPedal(pedal); return; }
+
+  const token = localStorage.getItem("authToken");
+  fetch("https://api.pedalplex.com/GET_GEARS_BY_IDS.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": token ? "Bearer " + token : "" },
+    body: JSON.stringify({ ids: [pedal._id] })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (!data.docs || !data.docs.length) throw new Error("Gear not found");
+    createNewPedal(data.docs[0]);
+  })
+  .catch(err => Swal.fire('Error', err.message || 'Failed to load the gear', 'error'));
+});
+
+
 
 // ==================== UPDATE PEDAL COUNTS ====================
 function updatePedalCountsFromServer(activeFilter = null) {
