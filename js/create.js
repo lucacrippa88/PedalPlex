@@ -215,7 +215,7 @@ function buildJSON() {
             const type = $(this).data("type");
             const ctrl = { label: $(this).find(".ctrl-label").val(), type };
 
-            const label = ctrl.label?.trim();
+            const label = ctrl.label?.trim().toLowerCase(); // labels are case-insensitive
             if (label) {
                 if (allLabels[label]) {
                     allLabels[label].push($(this));

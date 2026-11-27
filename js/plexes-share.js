@@ -862,7 +862,7 @@ async function _importSharedPlexToExistingRig(plex, token) {
         if (!gear || !Array.isArray(gear.controls)) return meta;
         gear.controls.forEach(row => {
             (row.row || []).forEach(ctrl => {
-                if (ctrl.label) meta[ctrl.label] = ctrl;
+                if (ctrl.label) meta[String(ctrl.label).toLowerCase()] = ctrl; // case-insensitive lookup
             });
         });
         return meta;
@@ -881,10 +881,9 @@ async function _importSharedPlexToExistingRig(plex, token) {
         const hasValues = Array.isArray(targetCtrl.values) && targetCtrl.values.length > 0;
         if (hasValues) {
             // Discrete / multi: value must be in the target's allowed set
-            const strVal = String(value);
-            if (targetCtrl.values.includes(strVal) || targetCtrl.values.includes(value)) {
-                return value; // valid
-            }
+            // Case-insensitive: "hi" matches the option "Hi"; store the option as the gear defines it
+            const matched = matchControlValue(targetCtrl.values, value);
+            if (matched !== undefined) return matched;
             // Not valid → use target's default (first value or stored default)
             return targetCtrl.value !== undefined ? targetCtrl.value : targetCtrl.values[0];
         }
@@ -923,7 +922,7 @@ async function _importSharedPlexToExistingRig(plex, token) {
                 const tGearMeta = _buildCtrlMeta(targetCatalogMap[match.targetId]);
                 const sanitised = {};
                 Object.entries(srcControls).forEach(([label, value]) => {
-                    sanitised[label] = _sanitiseValue(value, tGearMeta[label]);
+                    sanitised[label] = _sanitiseValue(value, tGearMeta[String(label).toLowerCase()]);
                 });
                 result[match.targetId] = { ...sourcePedalSettings[srcId], controls: sanitised };
                 return;
@@ -933,9 +932,10 @@ async function _importSharedPlexToExistingRig(plex, token) {
             const tGearMeta = _buildCtrlMeta(match.tGear);
             const filteredControls = {};
             Object.entries(srcControls).forEach(([srcLabel, value]) => {
-                const targetLabel = match.labelMap?.[srcLabel];
+                const mapKey = findControlKey(match.labelMap, srcLabel);
+                const targetLabel = mapKey !== undefined ? match.labelMap[mapKey] : undefined;
                 if (!targetLabel) return;
-                const sanitised = _sanitiseValue(value, tGearMeta[targetLabel]);
+                const sanitised = _sanitiseValue(value, tGearMeta[String(targetLabel).toLowerCase()]);
                 if (sanitised !== null) filteredControls[targetLabel] = sanitised;
             });
             if (Object.keys(filteredControls).length > 0) {

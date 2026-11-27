@@ -348,7 +348,11 @@ function initNavPreset() {
       pedalsObject[pedal.id] = { controls: flatControls };
       const originalControls = window.originalPedalControls?.[pedal.id];
       if (originalControls) {
-        const controlsChanged = Object.keys(flatControls).some(key => flatControls[key] !== originalControls[key]);
+        const sameValue = (a, b) => a === b || (typeof a === 'string' && typeof b === 'string' && a.toLowerCase() === b.toLowerCase());
+        const controlsChanged = Object.keys(flatControls).some(key => {
+          const origKey = findControlKey(originalControls, key);
+          return origKey === undefined || !sameValue(flatControls[key], originalControls[origKey]);
+        });
         if (!controlsChanged) {
           const existingSubplex = window.presetMap?.[currentPresetId]?.pedals?.[pedal.id]?.subplex;
           if (existingSubplex) pedalsObject[pedal.id].subplex = existingSubplex;

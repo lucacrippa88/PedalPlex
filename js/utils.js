@@ -402,12 +402,38 @@ function setKnobRotation($knob, deg) {
   });
 }
 
+// Control labels are matched case-insensitively ("Tone" == "TONE" == "tone").
+function sameControlLabel(a, b) {
+  return String(a).toLowerCase() === String(b).toLowerCase();
+}
+
+// Finds the key of `controlsMap` matching `label` (exact match wins, then case-insensitive).
+// Returns undefined when there is none.
+function findControlKey(controlsMap, label) {
+  if (!controlsMap || label === undefined || label === null) return undefined;
+  if (Object.prototype.hasOwnProperty.call(controlsMap, label)) return label;
+  return Object.keys(controlsMap).find(k => sameControlLabel(k, label));
+}
+
+// Finds the option of `values` matching `value` (exact match wins, then case-insensitive).
+// Returns the option as written in `values`, or undefined when there is none.
+function matchControlValue(values, value) {
+  if (!Array.isArray(values) || value === undefined || value === null) return undefined;
+  if (values.includes(value)) return value;
+  const v = String(value).toLowerCase();
+  return values.find(o => String(o).toLowerCase() === v);
+}
+
 // Default value of a knob: the one in the catalog entry (if valid for this control), else the current one
 function getKnobDefaultValue(catalogPedal, control) {
   for (const row of (catalogPedal && catalogPedal.controls) || []) {
     for (const c of (row && row.row) || []) {
-      if (c.label !== control.label || c.value === undefined) continue;
-      if (Array.isArray(control.values) && !control.values.includes(c.value)) continue;
+      if (!sameControlLabel(c.label, control.label) || c.value === undefined) continue;
+      if (Array.isArray(control.values)) {
+        const match = matchControlValue(control.values, c.value);
+        if (match === undefined) continue;
+        return match;
+      }
       return c.value;
     }
   }
@@ -625,6 +651,13 @@ function renderPedalControls(pedal, $pedalDiv) {
     if (pedal.type === "pedal-inverted") { $row.addClass("lower-row"); }
 
     controlRow.row.forEach(control => {
+      // Discrete knobs / dropdowns: option values are case-insensitive ("Hi" == "HI"),
+      // so snap a differently-cased value to the option as defined on the gear.
+      if (Array.isArray(control.values)) {
+        const match = matchControlValue(control.values, control.value);
+        if (match !== undefined) control.value = match;
+      }
+
       // Knobs ======================================================================
       if (["knob", "smallknob", "largeknob", "largerknob", "xlargeknob"].includes(control.type)) {
         const isSmall  = control.type === "smallknob";
@@ -1707,7 +1740,7 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
 
     // LEDs
     $pedal.find('.led[data-control-label]').each(function () {
-      const label = $(this).data('control-label'); // case-sensitive
+      const label = $(this).data('control-label');
       const bgColor = ($(this).css('background-color') || '').trim();
       const hexColor = normalizeHex(bgColor); // DOM color converted in HEX
 
@@ -1728,7 +1761,7 @@ function collectPedalControlValues(presetName = "Untitled Preset") {
 
             for (const control of rowWrapper.row) {
               // String() on both sides: jQuery .data() turns a label like "1" into the number 1
-              if (String(control.label) === String(label) && Array.isArray(control.colors)) {
+              if (sameControlLabel(control.label, label) && Array.isArray(control.colors)) {
                 foundControl = control;
                 const catalogColors = control.colors.map(c => normalizeHex(c));
 

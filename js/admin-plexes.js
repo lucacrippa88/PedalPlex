@@ -250,8 +250,9 @@ function adminApplyPreset(presetDoc) {
     if (presetPedal && presetPedal.controls) {
       (resetPedal.controls || []).forEach(row => {
         (row.row || []).forEach(ctrl => {
-          if (Object.prototype.hasOwnProperty.call(presetPedal.controls, ctrl.label)) {
-            ctrl.value = presetPedal.controls[ctrl.label];
+          const key = findControlKey(presetPedal.controls, ctrl.label);
+          if (key !== undefined) {
+            ctrl.value = presetPedal.controls[key];
           }
         });
       });

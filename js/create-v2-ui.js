@@ -55,7 +55,7 @@
         var issues = [];
         if (!label) issues.push("Label is required.");
         if (missingValues) issues.push("Values are required.");
-        if (label && duplicateLabels[label] > 1) issues.push("Another control already uses the label “" + label + "”. Labels must be unique.");
+        if (label && duplicateLabels[label.toLowerCase()] > 1) issues.push("Another control already uses the label “" + label + "”. Labels must be unique.");
 
         $c.find("> .ctrl-head .ctrl-title").text(label || "(no label yet)").toggleClass("is-empty", !label);
         $c.find("> .ctrl-head .ctrl-sub").text(sub);
@@ -120,7 +120,7 @@
     function refreshAll() {
         duplicateLabels = {};
         $("#controls .ctrl-label").each(function () {
-            var l = ($(this).val() || "").trim();
+            var l = ($(this).val() || "").trim().toLowerCase();
             if (l) duplicateLabels[l] = (duplicateLabels[l] || 0) + 1;
         });
         $("#controls .control").each(function () { refreshCard($(this)); });

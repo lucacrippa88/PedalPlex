@@ -243,9 +243,9 @@ function applyCatalogPresetToSinglePedal(pedalId, preset) {
   if (preset.controls) {
     pedalClone.controls.forEach(row => {
       row.row.forEach(ctrl => {
-        const label = ctrl.label;
-        if (preset.controls.hasOwnProperty(label)) {
-          ctrl.value = preset.controls[label];
+        const key = findControlKey(preset.controls, ctrl.label);
+        if (key !== undefined) {
+          ctrl.value = preset.controls[key];
         }
       });
     });
@@ -590,7 +590,7 @@ function collectSinglePedalControlsMap($pedalDiv, pedalId) {
         outerLoop: for (const rowWrapper of pedalData.controls) {
           if (!Array.isArray(rowWrapper.row)) continue;
           for (const ctrl of rowWrapper.row) {
-            if (String(ctrl.label) === String(label) && Array.isArray(ctrl.colors)) {
+            if (sameControlLabel(ctrl.label, label) && Array.isArray(ctrl.colors)) {
               const catalogColors = ctrl.colors.map(c => typeof normalizeHex === 'function' ? normalizeHex(c) : c);
               const idx = catalogColors.indexOf(hexColor);
               if (idx !== -1) { matchedIndex = idx; break outerLoop; }

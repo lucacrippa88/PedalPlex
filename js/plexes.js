@@ -1503,9 +1503,9 @@ $(".pedal-catalog").each(function () {
     if (presetPedal.controls) {
       resetPedal.controls.forEach(row => {
         row.row.forEach(ctrl => {
-          const controlLabel = ctrl.label;
-          if (presetPedal.controls.hasOwnProperty(controlLabel)) {
-            ctrl.value = presetPedal.controls[controlLabel];
+          const controlKey = findControlKey(presetPedal.controls, ctrl.label);
+          if (controlKey !== undefined) {
+            ctrl.value = presetPedal.controls[controlKey];
           }
         });
       });
