@@ -299,6 +299,10 @@ window.updateSharePresetButtonState = updateSharePresetButtonState;
 window.allPedalboards = [];
 
 
+// Flag: abilita/disabilita l'apertura automatica della modale Explore
+// quando il rig non ha preset impostati. Metti true per riattivarla.
+const AUTO_EXPLORE_ENABLED = false;
+
 /**
  * Auto-trigger Explore if:
  *  - the current rig has at least one pedal, AND
@@ -307,6 +311,8 @@ window.allPedalboards = [];
  * Fires at most once per board, ever (flag stored in localStorage).
  */
 function _maybeAutoExplore() {
+  if (!AUTO_EXPLORE_ENABLED) return;
+
   const pedals = window.pedalboard?.pedals || [];
   if (pedals.length === 0) return;
 

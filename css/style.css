@@ -1587,7 +1587,15 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 }
 .pp-onboarding__step--done .pp-onboarding__text { text-decoration: line-through; text-decoration-color: rgba(198, 198, 198, 0.4); }
 .pp-onboarding .pp-ob-short { display: none; }
-.pp-onboarding__cta { margin-left: auto; flex-shrink: 0; align-self: center; }
+.pp-onboarding__cta {
+  margin-left: auto;
+  flex-shrink: 0;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: none;
+}
 .pp-onboarding__step .pp-onboarding__text { flex: 1 1 auto; min-width: 0; }
 
 /* Mentre l'onboarding è attivo la CTA verso i Preset sta nel banner: nascondi gli altri bottoni (pagina Rigs) */
@@ -1610,8 +1618,8 @@ body.pp-onboarding-active #viewPresetFooter {
   .pp-onboarding__title { font-size: 1rem; }
   .pp-onboarding__head { flex-direction: column; gap: 0.25rem; }
   .pp-onboarding__counter { padding-top: 0; }
-  .pp-onboarding__step { font-size: 0.8rem; flex-wrap: wrap; }
-  .pp-onboarding__cta { margin-left: calc(22px + 0.7rem); align-self: flex-start; }
+  .pp-onboarding__step { font-size: 0.8rem; align-items: center; }
+  .pp-onboarding__cta { margin-left: auto; align-self: center; white-space: nowrap; }
   #pedalboard .pp-onboarding { width: 100% !important; max-width: 100% !important; align-self: stretch; }
 }
 

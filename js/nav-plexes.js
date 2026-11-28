@@ -71,12 +71,10 @@ function initNavPreset() {
           ${SVG.check} ${lockLabel}
         </button>
 
-        <!-- mobile-only buttons -->
-        <button id="createPstBtnMobile" class="showMobile bx--btn bx--btn--secondary bx--btn--sm bx--btn--icon-only" type="button" aria-label="New Preset">
-          ${SVG.newTone}
-        </button>
-        <button id="savePstBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm bx--btn--icon-only" type="button" disabled aria-label="${lockLabel}">
-          ${SVG.check}
+        <!-- mobile-only buttons (New Preset su mobile è nel menu Actions) -->
+        <button id="savePstBtnMobile" class="showMobile bx--btn bx--btn--primary bx--btn--sm" type="button" disabled
+            style="align-items:center;gap:0.5rem;white-space:nowrap;max-width:none!important;">
+          ${SVG.check} Save
         </button>
 
         <!-- Actions: always visible, desktop label / mobile icon -->

@@ -29,7 +29,8 @@
   ];
 
   const CHECK_SVG = '<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="12" height="12" viewBox="0 0 32 32" aria-hidden="true"><path d="M13 24L4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z"/></svg>';
-  const ARROW_SVG = '<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true" class="bx--btn__icon"><path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/></svg>';
+  const ARROW_SVG = '<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M18 6L16.57 7.393 24.15 15 4 15 4 17 24.15 17 16.57 24.573 18 26 28 16 18 6z"/></svg>';
+  const SAVE_SVG  = '<svg focusable="false" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><path d="M12 20.414L7.293 15.707 6 17l6 6 14-14-1.293-1.293z"/></svg>';
 
   let currentPage = null;
 
@@ -53,10 +54,16 @@
     const count = flags.filter(Boolean).length;
     const firstOpen = flags.indexOf(false);
     // CTA verso i Preset: affiancata allo step 2, solo in pagina Rigs e a step 1 completato
+    // (scompare da sola perché in pagina Presets la checklist non la renderizza)
     const showCta = currentPage === 'rigs' && flags[0] && !flags[2];
     const cta = showCta
-      ? '<a href="presets" class="pp-onboarding__cta bx--btn bx--btn--primary bx--btn--sm" style="display:inline-flex;align-items:center;gap:0.5rem;max-width:none;">' +
-          'Continue' + ARROW_SVG + '</a>'
+      ? '<a href="presets" class="pp-onboarding__cta bx--btn bx--btn--primary bx--btn--sm">' +
+          'Go to Presets' + ARROW_SVG + '</a>'
+      : '';
+    // Bottone Save affiancato allo step 3, solo in pagina Presets (replica #savePstBtn della navbar)
+    const saveCta = (currentPage === 'presets' && !flags[2])
+      ? '<button type="button" class="pp-onboarding__cta pp-onboarding__save bx--btn bx--btn--primary bx--btn--sm">' +
+          SAVE_SVG + 'Save</button>'
       : '';
 
     const items = STEPS.map(function (text, i) {
@@ -68,6 +75,7 @@
                  '<span class="pp-ob-short">' + STEPS_SHORT[i] + '</span>' +
                '</span>' +
                (i === 1 ? cta : '') +
+               (i === 2 ? saveCta : '') +
              '</li>';
     }).join('');
 
@@ -90,6 +98,15 @@
     fill(el);
     return el;
   }
+
+  // Il bottone Save della guida inoltra il click al bottone Save della navbar
+  // (desktop o mobile: i handler sono collegati ad entrambi, che sia visibile o no)
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest && e.target.closest('.pp-onboarding__save');
+    if (!btn) return;
+    const target = document.getElementById('savePstBtn') || document.getElementById('savePstBtnMobile');
+    if (target && !target.disabled) target.click();
+  });
 
   function update() {
     document.querySelectorAll('.pp-onboarding').forEach(fill);
