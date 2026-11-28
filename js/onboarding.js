@@ -60,8 +60,8 @@
       ? '<a href="presets" class="pp-onboarding__cta bx--btn bx--btn--primary bx--btn--sm">' +
           'Go to Presets' + ARROW_SVG + '</a>'
       : '';
-    // Bottone Save affiancato allo step 3, solo in pagina Presets (replica #savePstBtn della navbar)
-    const saveCta = (currentPage === 'presets' && !flags[2])
+    // Bottone Save affiancato allo step 3, solo in pagina Presets e a step 2 completato (replica #savePstBtn della navbar)
+    const saveCta = (currentPage === 'presets' && flags[1] && !flags[2])
       ? '<button type="button" class="pp-onboarding__cta pp-onboarding__save bx--btn bx--btn--primary bx--btn--sm">' +
           SAVE_SVG + 'Save</button>'
       : '';

@@ -1587,15 +1587,20 @@ input[type="color"] { width: 30px; border: 0px; margin:0px; cursor: pointer; pad
 }
 .pp-onboarding__step--done .pp-onboarding__text { text-decoration: line-through; text-decoration-color: rgba(198, 198, 198, 0.4); }
 .pp-onboarding .pp-ob-short { display: none; }
+/* !important: `.bx--btn` globale impone max-width:8rem e margin-left:8px con !important (riga ~870),
+   Carbon aggiunge padding-right 63px: il testo riempiva il bottone e l'icona veniva tagliata. */
 .pp-onboarding__cta {
-  margin-left: auto;
+  margin-left: auto !important;
   flex-shrink: 0;
   align-self: center;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  max-width: none;
+  max-width: none !important;
+  padding-right: 1rem !important;
+  white-space: nowrap;
 }
+.pp-onboarding__cta svg { flex: 0 0 auto; }
 .pp-onboarding__step .pp-onboarding__text { flex: 1 1 auto; min-width: 0; }
 
 /* Mentre l'onboarding è attivo la CTA verso i Preset sta nel banner: nascondi gli altri bottoni (pagina Rigs) */
